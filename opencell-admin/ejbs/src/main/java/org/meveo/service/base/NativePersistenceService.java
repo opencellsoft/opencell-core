@@ -22,6 +22,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -51,9 +54,13 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.IdentifiableEnum;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
 
 /**
@@ -95,6 +102,9 @@ public class NativePersistenceService extends BaseService {
 
     @Inject
     private DeletionService deletionService;
+
+    @Inject
+    private CustomFieldTemplateService customFieldTemplateService;
 
     /**
      * Find record by its identifier
@@ -160,9 +170,9 @@ public class NativePersistenceService extends BaseService {
         StringBuffer fields = new StringBuffer();
         StringBuffer fieldValues = new StringBuffer();
         List<String> fieldNames = new LinkedList<>();
-
+        Map<String, Object> customTableFields = getFields(tableName);
         boolean first = true;
-        for (String fieldName : firstValue.keySet()) {
+        for (String fieldName : customTableFields.keySet()) {
 
             if (!first) {
                 fields.append(",");
@@ -193,10 +203,11 @@ public class NativePersistenceService extends BaseService {
                         i = 1;
                         for (String fieldName : fieldNames) {
                             fieldValue = value.get(fieldName);
-
+                            Object defaultValue = customTableFields.get(fieldName);
                             if (fieldValue == null) {
-                                preparedStatement.setNull(i, Types.NULL);
-                            } else if (fieldValue instanceof String) {
+                                fieldValue = defaultValue;
+                            }
+                            if (fieldValue instanceof String) {
                                 preparedStatement.setString(i, (String) fieldValue);
                             } else if (fieldValue instanceof Long) {
                                 preparedStatement.setLong(i, (Long) fieldValue);
@@ -210,7 +221,12 @@ public class NativePersistenceService extends BaseService {
                                 preparedStatement.setBigDecimal(i, (BigDecimal) fieldValue);
                             } else if (fieldValue instanceof Date) {
                                 preparedStatement.setDate(i, new java.sql.Date(((Date) fieldValue).getTime()));
+                            } else if (fieldValue instanceof Boolean) {
+                                preparedStatement.setBoolean(i, (Boolean) fieldValue);
+                            } else if (fieldValue == null) {
+                                preparedStatement.setNull(i, Types.NULL);
                             }
+
 
                             i++;
                         }
@@ -231,6 +247,44 @@ public class NativePersistenceService extends BaseService {
                 }
             }
         });
+    }
+
+    /**
+     * List all fields with thier default values of tableName
+     * @param tableName the table name
+     * @return
+     */
+    private Map<String, Object> getFields(String tableName) {
+        Map<String, Object> fields = new HashedMap();
+        Map<String, CustomFieldTemplate> customFieldTemplateMap = customFieldTemplateService.findByAppliesTo(CustomEntityTemplate.CFT_PREFIX + "_" + tableName);
+        for (String key : customFieldTemplateMap.keySet()) {
+            CustomFieldTemplate cft = customFieldTemplateMap.get(key);
+            Class clazz = cft.getFieldType().getDataClass();
+            String defaultValueString = cft.getDefaultValue();
+            if (StringUtils.isBlank(defaultValueString)) {
+                fields.put(cft.getDbFieldname(), defaultValueString);
+                continue;
+            }
+            Object defaultValue = defaultValueString;
+
+            if (Long.class.equals(clazz)) {
+                defaultValue = new Long(defaultValueString);
+            } else if (Double.class.equals(clazz)) {
+                defaultValue = new Double(defaultValueString);
+            } else if (BigInteger.class.equals(clazz)) {
+                defaultValue = new BigInteger(defaultValueString);
+            } else if (Integer.class.equals(clazz)) {
+                defaultValue = new Integer(defaultValueString);
+            } else if (BigDecimal.class.equals(clazz)) {
+                defaultValue = new BigDecimal(defaultValueString);
+            } else if (Date.class.equals(clazz)) {
+                defaultValue = DateUtils.parseDateWithPattern(defaultValueString, DateUtils.DATE_TIME_PATTERN);
+            } else if (Boolean.class.equals(clazz)) {
+                defaultValue = new Boolean(defaultValueString);
+            }
+            fields.put(cft.getDbFieldname(), defaultValue);
+        }
+        return fields;
     }
 
     /**
