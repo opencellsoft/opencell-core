@@ -55,6 +55,12 @@ public class CustomEntityTemplate extends EnableBusinessEntity implements Compar
     @NotNull
     private boolean storeAsTable;
 
+
+    @Column(name = "unique_constraint_name", length = 100)
+    @Size(max = 100)
+    private String uniqueContraintName;
+
+
     /**
      * A database table name derived from a code value
      */
@@ -126,5 +132,13 @@ public class CustomEntityTemplate extends EnableBusinessEntity implements Compar
      */
     public static String getDbTablename(String code) {
         return BaseEntity.cleanUpAndLowercaseCodeOrId(code);
+    }
+
+    public String getUniqueContraintName() {
+        return uniqueContraintName;
+    }
+
+    public void setUniqueContraintName(String uniqueContraintName) {
+        this.uniqueContraintName = uniqueContraintName;
     }
 }

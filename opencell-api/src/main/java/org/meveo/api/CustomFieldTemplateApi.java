@@ -467,6 +467,10 @@ public class CustomFieldTemplateApi extends BaseApi {
             cft.setRoundingMode(dto.getRoundingMode());
         }
 
+        if(dto.getUniqueConstraint() != null){
+            cft.setUniqueConstraint(dto.getUniqueConstraint());
+        }
+
         return cft;
     }
 
