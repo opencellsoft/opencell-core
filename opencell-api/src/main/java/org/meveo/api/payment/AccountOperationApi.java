@@ -1,18 +1,12 @@
 package org.meveo.api.payment;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.DiscriminatorValue;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.account.TransferAccountOperationDto;
+import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
@@ -47,6 +41,13 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * The Class AccountOperationApi.
@@ -515,5 +516,37 @@ public class AccountOperationApi extends BaseApi {
         }
 
         return matchedOperationsDtos;
+    }
+
+    /**
+     * Transfer an account operation from a customer account to an other.
+     *
+     * @param transferAccountOperationDto the transfer account operation Dto
+     */
+    public void transferAccountOperation(TransferAccountOperationDto transferAccountOperationDto) {
+
+        if (StringUtils.isBlank(transferAccountOperationDto.getFromCustomerAccountCode())) {
+            missingParameters.add("fromCustomerAccountCode");
+        }
+        if (StringUtils.isBlank(transferAccountOperationDto.getAccountOperationId())) {
+            missingParameters.add("accountOperationId");
+        }
+        if (transferAccountOperationDto.getToCustomerAccounts() == null || transferAccountOperationDto.getToCustomerAccounts().isEmpty()) {
+            missingParameters.add("toCustomerAccounts");
+        } else {
+            for (int i = 0; i < transferAccountOperationDto.getToCustomerAccounts().size(); i++) {
+                TransferCustomerAccountDto transferCustomerAccountDto = transferAccountOperationDto.getToCustomerAccounts().get(i);
+                if (StringUtils.isBlank(transferCustomerAccountDto.getToCustomerAccountCode())) {
+                    missingParameters.add("customerAccounts[" + i + "].toCustomerAccountCode");
+                }
+                if (transferCustomerAccountDto.getAmount() == null || transferCustomerAccountDto.getAmount().compareTo(BigDecimal.ZERO) == 0) {
+                    missingParameters.add("customerAccounts[" + i + "].amount");
+                }
+            }
+        }
+
+        handleMissingParameters();
+
+        accountOperationService.transferAccountOperation(transferAccountOperationDto);
     }
 }
