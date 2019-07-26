@@ -60,7 +60,6 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 
-
 	/** The dd request item service. */
 	@Inject
 	private DDRequestItemService ddRequestItemService;
@@ -71,39 +70,33 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	@Inject
 	private SepaDirectDebitAsync sepaDirectDebitAsync;
 
-
 	/**
 	 * Creates the DDRequest lot.
 	 *
 	 * @param ddrequestLotOp   the ddrequest lot op
 	 * @param listAoToPay      list of account operations
 	 * @param ddRequestBuilder direct debit request builder
-	 * @param result           the result
 	 * @return the DD request LOT
 	 * @throws BusinessEntityException the business entity exception
 	 * @throws Exception               the exception
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public DDRequestLOT createDDRquestLot(DDRequestLotOp ddrequestLotOp, List<AccountOperation> listAoToPay, DDRequestBuilder ddRequestBuilder, JobExecutionResultImpl result)
-			throws BusinessEntityException, Exception {
+	public DDRequestLOT createDDRquestLot(DDRequestLotOp ddrequestLotOp, List<AccountOperation> listAoToPay, DDRequestBuilder ddRequestBuilder) throws BusinessException {
 
-		try {
-			if (listAoToPay == null || listAoToPay.isEmpty()) {
-				throw new BusinessEntityException("no invoices!");
-			}
-			Future<DDRequestLOT> futureisNow = sepaDirectDebitAsync.launchAndForgetDDRequesltLotCreation(ddrequestLotOp, ddRequestBuilder, listAoToPay, appProvider);
-			DDRequestLOT ddRequestLOT = retrieveIfNotManaged(futureisNow.get());
-			create(ddRequestLOT);
-			log.info("Successful createDDRquestLot totalAmount: {}", ddRequestLOT.getTotalAmount());
-			return ddRequestLOT;
-		} catch (Exception e) {
-			log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
-			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
-			ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
-			result.registerError(ddrequestLotOp.getId(), e.getMessage());
-			result.addReport("ddrequestLotOp id : " + ddrequestLotOp.getId() + " RejectReason : " + e.getMessage());
-			return null;
+		if (listAoToPay == null || listAoToPay.isEmpty()) {
+			throw new BusinessEntityException("no invoices!");
 		}
+		Future<DDRequestLOT> futureisNow = sepaDirectDebitAsync.launchAndForgetDDRequesltLotCreation(ddrequestLotOp, ddRequestBuilder, listAoToPay, appProvider);
+		DDRequestLOT ddRequestLOT = null;		
+		try {
+			ddRequestLOT = retrieveIfNotManaged(futureisNow.get());
+		} catch (Exception e) {
+			log.error("Error on createDDRquestLot:", e);
+			throw new BusinessException(e.getMessage());
+		}
+		create(ddRequestLOT);
+		log.info("Successful createDDRquestLot totalAmount: {}", ddRequestLOT.getTotalAmount());
+		return ddRequestLOT;
 
 	}
 
@@ -119,9 +112,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		update(ddRequestLOT);
 
 	}
-	
+
 	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT) throws Exception {
-		createPaymentsOrRefundsForDDRequestLot( ddRequestLOT ,1L, 0L,null);
+		createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, 1L, 0L, null);
 	}
 
 	/**
@@ -130,7 +123,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	 * @param ddRequestLOT the dd request LOT
 	 * @throws Exception
 	 */
-	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT ,Long nbRuns, Long waitingMillis,JobExecutionResultImpl result) throws Exception {
+	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT, Long nbRuns, Long waitingMillis, JobExecutionResultImpl result) throws Exception {
 		ddRequestLOT = refreshOrRetrieve(ddRequestLOT);
 		log.info("createPaymentsForDDRequestLot ddRequestLotId: {}, size:{}", ddRequestLOT.getId(), ddRequestLOT.getDdrequestItems().size());
 		if (ddRequestLOT.isPaymentCreated()) {
@@ -140,7 +133,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		SubListCreator subListCreator = new SubListCreator(ddRequestLOT.getDdrequestItems(), nbRuns.intValue());
 		List<Future<String>> futures = new ArrayList<Future<String>>();
 		while (subListCreator.isHasNext()) {
-			futures.add(sepaDirectDebitAsync.launchAndForgetPaymentCreation((List<DDRequestItem>) subListCreator.getNextWorkSet(),result));
+			futures.add(sepaDirectDebitAsync.launchAndForgetPaymentCreation((List<DDRequestItem>) subListCreator.getNextWorkSet(), result));
 			try {
 				Thread.sleep(waitingMillis);
 			} catch (InterruptedException e) {
@@ -155,7 +148,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 				// It was cancelled from outside - no interest
 			} catch (ExecutionException e) {
 				Throwable cause = e.getCause();
-				if(result != null) {
+				if (result != null) {
 					result.registerError(cause.getMessage());
 					result.addReport(cause.getMessage());
 				}
