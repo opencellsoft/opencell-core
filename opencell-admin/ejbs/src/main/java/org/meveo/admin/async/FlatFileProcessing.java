@@ -22,7 +22,6 @@ import org.meveo.admin.job.UnitFlatFileProcessingJobBean;
 import org.meveo.admin.util.FlatFileValidator;
 import org.meveo.commons.parsers.IFileParser;
 import org.meveo.commons.parsers.RecordContext;
-import org.meveo.commons.parsers.RecordRejectedException;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.bi.FileStatusEnum;
 import org.meveo.model.bi.FlatFile;
@@ -194,8 +193,8 @@ public class FlatFileProcessing {
 
             } catch (Exception e) {
                 String errorReason = ((recordContext == null || recordContext.getRejectReason() == null) ? e.getMessage() : recordContext.getRejectReason().getMessage());
-                log.error("Failed to process a record line content:{} from file {} error {}",
-                    e instanceof RecordRejectedException ? null : (recordContext != null ? recordContext.getLineContent() : null), fileName, errorReason, e);
+                log.error("Failed to process a record line content:{} from file {} error {}", recordContext != null ? recordContext.getLineContent() : null, fileName, errorReason,
+                    e);
 
                 synchronized (rejectFileWriter) {
                     rejectFileWriter.println(recordContext.getLineContent() + "=>" + errorReason);
