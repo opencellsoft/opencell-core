@@ -76,7 +76,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "CustomFieldTemplate.getCFTForIndex", query = "SELECT cft from CustomFieldTemplate cft where cft.disabled=false and cft.indexType is not null "),
         @NamedQuery(name = "CustomFieldTemplate.getCFTByCodeAndAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.code=:code and cft.appliesTo=:appliesTo", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-        @NamedQuery(name = "CustomFieldTemplate.getCFTByAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo=:appliesTo order by cft.code", hints = {
+        @NamedQuery(name = "CustomFieldTemplate.getCFTByAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where lower(cft.appliesTo)=:appliesTo order by cft.code", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
         @NamedQuery(name = "CustomFieldTemplate.getCFTsForAccumulation", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo='Seller' or cft.code in (SELECT cftu.code from CustomFieldTemplate cftu where cftu.appliesTo in :appliesTo group by cftu.code having count(cftu.code)>1) order by cft.code"),
         @NamedQuery(name = "CustomFieldTemplate.getUniqueFromTable", query = "SELECT cft from CustomFieldTemplate cft where cft.uniqueConstraint = true and lower(cft.appliesTo) = :appliesTo") })

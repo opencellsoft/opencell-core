@@ -135,7 +135,7 @@ public class CustomTableService extends NativePersistenceService {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void createInNewTx(String tableName, List<Map<String, Object>> values, boolean updateES) throws BusinessException {
+    public void createInNewTx(String tableName, String code , List<Map<String, Object>> values, boolean updateES) throws BusinessException {
 
         // Insert record to db, with ID returned, but flush to ES after the values are processed
         if (updateES) {
@@ -143,7 +143,7 @@ public class CustomTableService extends NativePersistenceService {
             create(tableName, values);
 
         } else {
-            super.create(tableName, values);
+            super.create(tableName, code, values);
         }
     }
 
@@ -408,7 +408,7 @@ public class CustomTableService extends NativePersistenceService {
                 if (importedLines >= 500) {
 
                     values = convertValues(values, fieldTypes, false);
-                    customTableService.createInNewTx(tableName, values, updateESImediately);
+                    customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), values, updateESImediately);
 
                     values.clear();
                     importedLines = 0;
@@ -427,7 +427,7 @@ public class CustomTableService extends NativePersistenceService {
 
             // Save to DB remaining records
             values = convertValues(values, fieldTypes, false);
-            customTableService.createInNewTx(tableName, values, updateESImediately);
+            customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), values, updateESImediately);
 
             // Re-populate ES index
             if (!updateESImediately) {
@@ -507,7 +507,7 @@ public class CustomTableService extends NativePersistenceService {
                 if (importedLines >= 1000) {
 
                     valuesPartial = convertValues(valuesPartial, fieldTypes, false);
-                    customTableService.createInNewTx(tableName, valuesPartial, updateESImediately);
+                    customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
 
                     valuesPartial.clear();
                     importedLines = 0;
@@ -521,7 +521,7 @@ public class CustomTableService extends NativePersistenceService {
 
             // Save to DB remaining records
             valuesPartial = convertValues(valuesPartial, fieldTypes, false);
-            customTableService.createInNewTx(tableName, valuesPartial, updateESImediately);
+            customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
 
             // Repopulate ES index
             if (!updateESImediately) {

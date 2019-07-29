@@ -157,7 +157,7 @@ public class NativePersistenceService extends BaseService {
      * @param values A list of values to insert
      * @throws BusinessException General exception
      */
-    public void create(String tableName, List<Map<String, Object>> values) throws BusinessException {
+    public void create(String tableName, String code, List<Map<String, Object>> values) throws BusinessException {
 
         if (values == null || values.isEmpty()) {
             return;
@@ -170,7 +170,7 @@ public class NativePersistenceService extends BaseService {
         StringBuffer fields = new StringBuffer();
         StringBuffer fieldValues = new StringBuffer();
         List<String> fieldNames = new LinkedList<>();
-        Map<String, Object> customTableFields = getFields(tableName);
+        Map<String, Object> customTableFields = getFields(code);
         boolean first = true;
         for (String fieldName : customTableFields.keySet()) {
 
