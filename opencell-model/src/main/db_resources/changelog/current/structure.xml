@@ -1285,4 +1285,8 @@
         <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_rated_transaction"/>
     </changeSet>
 
+    <changeSet id="#4457_20190728" author="AndriusKarpavicius">
+        <sql>update ${db.schema.adapted}crm_custom_field_tmpl_val set listvalues='Rollback', listvalues_key='ROLLBACK' where listvalues_key='ROLLBBACK'</sql>    
+    </changeSet> 
+
 </databaseChangeLog>

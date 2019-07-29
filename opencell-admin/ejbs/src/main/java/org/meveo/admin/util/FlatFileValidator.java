@@ -1,5 +1,16 @@
 package org.meveo.admin.util;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.apache.commons.io.FilenameUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.parsers.FileParserBeanio;
@@ -16,16 +27,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.bi.impl.FlatFileService;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * Flat file validator
@@ -56,7 +57,7 @@ public class FlatFileValidator {
     /**
      * Get property value. Return a default value if value was not set previously.
      *
-     * @param key          Property key
+     * @param key Property key
      * @param defaultValue Default value
      * @return Value of property, or a default value if it is not set yet
      */
@@ -110,8 +111,8 @@ public class FlatFileValidator {
     /**
      * Move file.
      *
-     * @param file        the file
-     * @param flatFile    the flat file
+     * @param file the file
+     * @param flatFile the flat file
      * @param destination the destination
      */
     private void moveFile(File file, FlatFile flatFile, String destination) {
@@ -128,7 +129,7 @@ public class FlatFileValidator {
     }
 
     private String getFileManagementDirectory(String subdirectory) {
-        //StringBuilder reportDir = new StringBuilder(ParamBean.getInstance().getChrootDir(provider.getCode()));
+        // StringBuilder reportDir = new StringBuilder(ParamBean.getInstance().getChrootDir(provider.getCode()));
         StringBuilder reportDir = new StringBuilder(ParamBean.getInstance().getChrootDir(""));
         reportDir.append(File.separator).append(subdirectory);
         return reportDir.toString();
@@ -137,7 +138,7 @@ public class FlatFileValidator {
     /**
      * Get input directory
      *
-     * @param fileFormat        the file format
+     * @param fileFormat the file format
      * @param newInputDirectory the new input directory
      * @return the new input directory if it is provided else the return the fileFormat input directory
      * @throws BusinessException the business exception
@@ -158,7 +159,7 @@ public class FlatFileValidator {
     /**
      * Get reject directory
      *
-     * @param fileFormat        the file format
+     * @param fileFormat the file format
      * @param newInputDirectory the new input directory
      * @return the reject directory
      */
@@ -182,9 +183,9 @@ public class FlatFileValidator {
     /**
      * Move the file in input directory or reject directory
      *
-     * @param file            the file
-     * @param flatFile        the flat file
-     * @param inputDirectory  the input directory
+     * @param file the file
+     * @param flatFile the flat file
+     * @param inputDirectory the input directory
      * @param rejectDirectory the reject directory
      */
     private void moveFile(File file, FlatFile flatFile, String inputDirectory, String rejectDirectory) {
@@ -217,17 +218,20 @@ public class FlatFileValidator {
             int badLinesLimit = getBadLinesLimit();
 
             long linesCounter = 0;
-            while (fileParser.hasNext()) {
-                RecordContext recordContext = null;
+            RecordContext recordContext = null;
+            while (true) {
                 linesCounter++;
                 try {
                     recordContext = fileParser.getNextRecord();
+                    if (recordContext == null) {
+                        break;
+                    }
                     log.trace("record line content:{}", recordContext.getLineContent());
                     if (recordContext.getRecord() == null) {
-                        throw new Exception(recordContext.getReason());
+                        throw recordContext.getRejectReason();
                     }
                 } catch (Throwable e) {
-                    String erreur = (recordContext == null || recordContext.getReason() == null) ? e.getMessage() : recordContext.getReason();
+                    String erreur = (recordContext == null || recordContext.getRejectReason() == null) ? e.getMessage() : recordContext.getRejectReason().getMessage();
                     log.warn("record on error :" + erreur);
                     errors.add("line=" + linesCounter + ": " + erreur);
                     if (errors.size() >= badLinesLimit) {
@@ -245,9 +249,9 @@ public class FlatFileValidator {
     /**
      * Validate the file by its format
      *
-     * @param file           the file
-     * @param fileName       the file name
-     * @param fileFormat     the file format
+     * @param file the file
+     * @param fileName the file name
+     * @param fileFormat the file format
      * @param inputDirectory the input directory
      * @return errors if the file is not valid
      * @throws BusinessException
@@ -303,23 +307,23 @@ public class FlatFileValidator {
     /**
      * Validate and log the file by its format
      *
-     * @param file            the file
-     * @param fileFormat      the faile format
-     * @param fileName        the file name
-     * @param inputDirectory  the input directory
+     * @param file the file
+     * @param fileFormat the faile format
+     * @param fileName the file name
+     * @param inputDirectory the input directory
      * @param rejectDirectory the reject directory
      * @return the flat file
      * @throws BusinessException the business exception
      */
     private FlatFile validateAndLogFile(File file, FileFormat fileFormat, String fileName, String inputDirectory, String rejectDirectory) throws BusinessException {
 
-        //Validate the input file
+        // Validate the input file
         StringBuilder errors = validate(file, fileName, fileFormat, inputDirectory);
 
-        //Log in database the input file.
+        // Log in database the input file.
         FlatFile flatFile = flatFileService.create(fileName, fileFormat, errors.toString(), errors.length() > 0 ? FileStatusEnum.BAD_FORMED : FileStatusEnum.WELL_FORMED);
 
-        //Move the file to the corresponding directory
+        // Move the file to the corresponding directory
         moveFile(file, flatFile, inputDirectory, rejectDirectory);
 
         return flatFile;
@@ -328,9 +332,9 @@ public class FlatFileValidator {
     /**
      * Validate and log the file by its format
      *
-     * @param file              the file
-     * @param fileName          the file name
-     * @param fileFormatCode    the faile format code
+     * @param file the file
+     * @param fileName the file name
+     * @param fileFormatCode the faile format code
      * @param newInputDirectory the new input directory
      * @return the flat file
      * @throws BusinessException the business exception
@@ -350,8 +354,8 @@ public class FlatFileValidator {
     }
 
     /**
-     * @param files             the files list
-     * @param fileFormatCode    the file format code
+     * @param files the files list
+     * @param fileFormatCode the file format code
      * @param newInputDirectory the new input directory
      * @return the messages
      * @throws BusinessException the business exception

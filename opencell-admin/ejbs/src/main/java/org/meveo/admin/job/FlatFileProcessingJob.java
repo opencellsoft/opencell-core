@@ -23,9 +23,9 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
-
 /**
  * The Class FlatFileProcessingJob consume any flat file and execute the given script for each line/record, the beanIO is used to describe file format.
+ * 
  * @author anasseh
  *
  * @lastModifiedVersion willBeSetLater
@@ -74,65 +74,60 @@ public class FlatFileProcessingJob extends Job {
     /** The param bean factory. */
     @Inject
     private ParamBeanFactory paramBeanFactory;
-    
+
     /** The Constant CONTINUE. */
     public static final String CONTINUE = "CONTINUE";
-    
+
     /** The Constant STOP. */
     public static final String STOP = "STOP";
-    
-    /** The Constant ROLLBBACK. */
-    public static final String ROLLBBACK = "ROLLBBACK";
+
+    /** The Constant ROLLBACK. */
+    public static final String ROLLBACK = "ROLLBACK";
 
     @SuppressWarnings("unchecked")
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         try {
-            String mappingConf = null;
-            String inputDir = null;
+            String mappingConf = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_MAPPING_CONF);
+            String inputDir = paramBeanFactory.getChrootDir() + File.separator
+                    + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_INPUT_DIR)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
             String outputDir = null;
             String archiveDir = null;
             String rejectDir = null;
             String fileNameFilter = null;
-            String scriptInstanceFlowCode = null;
-            String fileNameExtension = null;
-            String recordVariableName = null;
-            String originFilename = null;
-            String formatTransfo = null;
-            String errorAction = null;
+            String scriptInstanceFlowCode = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_SCRIPTS_FLOW);
+            String fileNameExtension = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_EXTENSION);
+            String recordVariableName = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_RECORD_VARIABLE_NAME);
+            String originFilename = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ORIGIN_FILENAME);
+            String formatTransfo = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FORMAT_TRANSFO);
+            String errorAction = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ERROR_ACTION);
             Map<String, Object> initContext = new HashMap<String, Object>();
-            try {
-                recordVariableName = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_RECORD_VARIABLE_NAME);
-                originFilename = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ORIGIN_FILENAME);
-                mappingConf = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_MAPPING_CONF);
-                inputDir = paramBeanFactory.getChrootDir() + File.separator + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_INPUT_DIR)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-                fileNameExtension = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_EXTENSION);
-                scriptInstanceFlowCode = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_SCRIPTS_FLOW);
-                formatTransfo = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FORMAT_TRANSFO);
-                errorAction = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ERROR_ACTION);
-                if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES) != null) {
-                    initContext = (Map<String, Object>) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES);
-                }
-                if(this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR) != null) {
-                    outputDir = paramBeanFactory.getChrootDir() + File.separator + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-                }
-                if(this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_REJECT_DIR) != null) {
-                    rejectDir = paramBeanFactory.getChrootDir() + File.separator + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_REJECT_DIR)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-                }
-                if(this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR) != null) {
-                    archiveDir = paramBeanFactory.getChrootDir() + File.separator + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-                }
-                if(this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER) != null) {
-                    fileNameFilter = ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER));
-                    fileNameFilter = fileNameFilter.replaceAll(Pattern.quote("*"), "");
-                }
-                
-                
-                
-                
-            } catch (Exception e) {
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
+
+            Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", 1L);
+            if (nbRuns == -1) {
+                nbRuns = (long) Runtime.getRuntime().availableProcessors();
+            }
+            Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+
+            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES) != null) {
+                initContext = (Map<String, Object>) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES);
+            }
+            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR) != null) {
+                outputDir = paramBeanFactory.getChrootDir() + File.separator
+                        + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+            }
+            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_REJECT_DIR) != null) {
+                rejectDir = paramBeanFactory.getChrootDir() + File.separator
+                        + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_REJECT_DIR)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+            }
+            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR) != null) {
+                archiveDir = paramBeanFactory.getChrootDir() + File.separator
+                        + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+            }
+            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER) != null) {
+                fileNameFilter = ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER));
+                fileNameFilter = fileNameFilter.replaceAll(Pattern.quote("*"), "");
             }
 
             ArrayList<String> fileExtensions = new ArrayList<String>();
@@ -140,26 +135,24 @@ public class FlatFileProcessingJob extends Job {
 
             File f = new File(inputDir);
             if (!f.exists()) {
-                log.debug("inputDir {} not exist", inputDir);
                 f.mkdirs();
-                log.debug("inputDir {} creation ok", inputDir);
             }
-            File[] files = FileUtils.listFilesByNameFilter(inputDir, fileExtensions,fileNameFilter);
+            File[] files = FileUtils.listFilesByNameFilter(inputDir, fileExtensions, fileNameFilter);
             if (files == null || files.length == 0) {
                 String msg = String.format("there is no file in %s with extension %s", inputDir, fileExtensions);
                 log.debug(msg);
-                result.registerError(msg);
                 return;
             }
             for (File file : files) {
                 if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
-                flatFileProcessingJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext, originFilename, formatTransfo,errorAction);
+                flatFileProcessingJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext,
+                    originFilename, formatTransfo, errorAction, nbRuns, waitingMillis);
             }
 
         } catch (Exception e) {
-            log.error("Failed to run mediation", e);
+            log.error("Failed to run flat file processing job", e);
             result.registerError(e.getMessage());
         }
     }
@@ -184,49 +177,49 @@ public class FlatFileProcessingJob extends Job {
         inputDirectoryCF.setMaxValue(256L);
         result.put(FLAT_FILE_PROCESSING_JOB_INPUT_DIR, inputDirectoryCF);
 
-         CustomFieldTemplate archiveDirectoryCF = new CustomFieldTemplate();
-         archiveDirectoryCF.setCode(FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR);
-         archiveDirectoryCF.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
-         archiveDirectoryCF.setActive(true);
-         archiveDirectoryCF.setDescription(resourceMessages.getString("flatFile.archiveDir"));
-         archiveDirectoryCF.setFieldType(CustomFieldTypeEnum.STRING);
-         archiveDirectoryCF.setDefaultValue(null);
-         archiveDirectoryCF.setValueRequired(false);
-         archiveDirectoryCF.setMaxValue(256L);
-         result.put(FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR, archiveDirectoryCF);
-        
-         CustomFieldTemplate rejectDirectoryCF = new CustomFieldTemplate();
-         rejectDirectoryCF.setCode(FLAT_FILE_PROCESSING_JOB_REJECT_DIR);
-         rejectDirectoryCF.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
-         rejectDirectoryCF.setActive(true);
-         rejectDirectoryCF.setDescription(resourceMessages.getString("flatFile.rejectDir"));
-         rejectDirectoryCF.setFieldType(CustomFieldTypeEnum.STRING);
-         rejectDirectoryCF.setDefaultValue(null);
-         rejectDirectoryCF.setValueRequired(false);
-         rejectDirectoryCF.setMaxValue(256L);
-         result.put(FLAT_FILE_PROCESSING_JOB_REJECT_DIR, rejectDirectoryCF);
-        
-         CustomFieldTemplate outputDirectoryCF = new CustomFieldTemplate();
-         outputDirectoryCF.setCode(FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR);
-         outputDirectoryCF.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
-         outputDirectoryCF.setActive(true);
-         outputDirectoryCF.setDescription(resourceMessages.getString("flatFile.outputDir"));
-         outputDirectoryCF.setFieldType(CustomFieldTypeEnum.STRING);
-         outputDirectoryCF.setDefaultValue(null);
-         outputDirectoryCF.setValueRequired(false);
-         outputDirectoryCF.setMaxValue(256L);
-         result.put(FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR, outputDirectoryCF);
-         
-         CustomFieldTemplate fileNameKeyCF = new CustomFieldTemplate();
-         fileNameKeyCF.setCode(FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER);
-         fileNameKeyCF.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
-         fileNameKeyCF.setActive(true);
-         fileNameKeyCF.setDescription(resourceMessages.getString("flatFile.fileNameFilter"));
-         fileNameKeyCF.setFieldType(CustomFieldTypeEnum.STRING);
-         fileNameKeyCF.setDefaultValue(null);
-         fileNameKeyCF.setValueRequired(false);
-         fileNameKeyCF.setMaxValue(256L);
-         result.put(FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER, fileNameKeyCF);
+        CustomFieldTemplate archiveDirectoryCF = new CustomFieldTemplate();
+        archiveDirectoryCF.setCode(FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR);
+        archiveDirectoryCF.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
+        archiveDirectoryCF.setActive(true);
+        archiveDirectoryCF.setDescription(resourceMessages.getString("flatFile.archiveDir"));
+        archiveDirectoryCF.setFieldType(CustomFieldTypeEnum.STRING);
+        archiveDirectoryCF.setDefaultValue(null);
+        archiveDirectoryCF.setValueRequired(false);
+        archiveDirectoryCF.setMaxValue(256L);
+        result.put(FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR, archiveDirectoryCF);
+
+        CustomFieldTemplate rejectDirectoryCF = new CustomFieldTemplate();
+        rejectDirectoryCF.setCode(FLAT_FILE_PROCESSING_JOB_REJECT_DIR);
+        rejectDirectoryCF.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
+        rejectDirectoryCF.setActive(true);
+        rejectDirectoryCF.setDescription(resourceMessages.getString("flatFile.rejectDir"));
+        rejectDirectoryCF.setFieldType(CustomFieldTypeEnum.STRING);
+        rejectDirectoryCF.setDefaultValue(null);
+        rejectDirectoryCF.setValueRequired(false);
+        rejectDirectoryCF.setMaxValue(256L);
+        result.put(FLAT_FILE_PROCESSING_JOB_REJECT_DIR, rejectDirectoryCF);
+
+        CustomFieldTemplate outputDirectoryCF = new CustomFieldTemplate();
+        outputDirectoryCF.setCode(FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR);
+        outputDirectoryCF.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
+        outputDirectoryCF.setActive(true);
+        outputDirectoryCF.setDescription(resourceMessages.getString("flatFile.outputDir"));
+        outputDirectoryCF.setFieldType(CustomFieldTypeEnum.STRING);
+        outputDirectoryCF.setDefaultValue(null);
+        outputDirectoryCF.setValueRequired(false);
+        outputDirectoryCF.setMaxValue(256L);
+        result.put(FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR, outputDirectoryCF);
+
+        CustomFieldTemplate fileNameKeyCF = new CustomFieldTemplate();
+        fileNameKeyCF.setCode(FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER);
+        fileNameKeyCF.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
+        fileNameKeyCF.setActive(true);
+        fileNameKeyCF.setDescription(resourceMessages.getString("flatFile.fileNameFilter"));
+        fileNameKeyCF.setFieldType(CustomFieldTypeEnum.STRING);
+        fileNameKeyCF.setDefaultValue(null);
+        fileNameKeyCF.setValueRequired(false);
+        fileNameKeyCF.setMaxValue(256L);
+        result.put(FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER, fileNameKeyCF);
 
         CustomFieldTemplate fileNameExtensionCF = new CustomFieldTemplate();
         fileNameExtensionCF.setCode(FLAT_FILE_PROCESSING_JOB_FILE_NAME_EXTENSION);
@@ -307,7 +300,7 @@ public class FlatFileProcessingJob extends Job {
         listValues.put("Xlsx_to_Csv", "Excel cvs");
         formatTransfo.setListValues(listValues);
         result.put(FLAT_FILE_PROCESSING_JOB_FORMAT_TRANSFO, formatTransfo);
-        
+
         CustomFieldTemplate errorAction = new CustomFieldTemplate();
         errorAction.setCode(FLAT_FILE_PROCESSING_JOB_ERROR_ACTION);
         errorAction.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
@@ -319,9 +312,29 @@ public class FlatFileProcessingJob extends Job {
         Map<String, String> listValuesErrorAction = new HashMap<String, String>();
         listValuesErrorAction.put(FlatFileProcessingJob.CONTINUE, "Continue");
         listValuesErrorAction.put(FlatFileProcessingJob.STOP, "Stop");
-        listValuesErrorAction.put(FlatFileProcessingJob.ROLLBBACK, "Rollback");
+        listValuesErrorAction.put(FlatFileProcessingJob.ROLLBACK, "Rollback");
         errorAction.setListValues(listValuesErrorAction);
         result.put(FLAT_FILE_PROCESSING_JOB_ERROR_ACTION, errorAction);
+
+        CustomFieldTemplate nbRuns = new CustomFieldTemplate();
+        nbRuns.setCode("nbRuns");
+        nbRuns.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
+        nbRuns.setActive(true);
+        nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
+        nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
+        nbRuns.setDefaultValue("1");
+        nbRuns.setValueRequired(false);
+        result.put("nbRuns", nbRuns);
+
+        CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
+        waitingMillis.setCode("waitingMillis");
+        waitingMillis.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
+        waitingMillis.setActive(true);
+        waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
+        waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
+        waitingMillis.setDefaultValue("0");
+        waitingMillis.setValueRequired(false);
+        result.put("waitingMillis", waitingMillis);
 
         return result;
     }
