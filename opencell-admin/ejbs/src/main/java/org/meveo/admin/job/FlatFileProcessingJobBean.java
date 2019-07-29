@@ -1,5 +1,20 @@
 package org.meveo.admin.job;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.meveo.admin.async.FlatFileAsyncListResponse;
 import org.meveo.admin.async.FlatFileAsyncUnitResponse;
 import org.meveo.admin.async.FlatFileProcessingAsync;
@@ -19,24 +34,12 @@ import org.meveo.model.bi.FileStatusEnum;
 import org.meveo.model.bi.FlatFile;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.bi.impl.FlatFileService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Future;
 
 /**
  * The Class FlatFileProcessingJobBean.
@@ -65,7 +68,10 @@ public class FlatFileProcessingJobBean {
     @Inject
     private FlatFileValidator flatFileValidator;
 
-    
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
     /** The Constant DATETIME_FORMAT. */
     private static final String DATETIME_FORMAT = "dd_MM_yyyy-HHmmss";
 
@@ -173,8 +179,10 @@ public class FlatFileProcessingJobBean {
                 fileParser.setDataName(recordVariableName);
                 fileParser.parsing();
 
-                Future<FlatFileAsyncListResponse> futures = flatFileProcessingAsync
-                        .launchAndForget(fileParser, result, script, recordVariableName, fileName, originFilename, errorAction);
+                MeveoUser lastCurrentUser = currentUser.unProxy();
+
+                Future<FlatFileAsyncListResponse> futures = flatFileProcessingAsync.launchAndForget(fileParser, result, script, recordVariableName, fileName, originFilename,
+                    errorAction, lastCurrentUser);
                 for (FlatFileAsyncUnitResponse flatFileAsyncResponse : futures.get().getResponses()) {
                     cpLines++;
                     if (!flatFileAsyncResponse.isSuccess()) {
@@ -270,10 +278,10 @@ public class FlatFileProcessingJobBean {
      */
     private void moveFile(String dest, File file, String name) {
         String destName = name;
-        if((new File(dest + File.separator + name)).exists()) {
-            destName += "_COPY_"+DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT);
+        if ((new File(dest + File.separator + name)).exists()) {
+            destName += "_COPY_" + DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT);
         }
-        FileUtils.moveFile(dest, file, destName);        
+        FileUtils.moveFile(dest, file, destName);
     }
 
     /**
@@ -301,8 +309,8 @@ public class FlatFileProcessingJobBean {
     private void outputRecord(String lineRecord) throws FileNotFoundException {
         if (outputFileWriter == null) {
             File outputFile = new File(outputDir + File.separator + fileName + ".processed");
-            if(outputFile.exists()) {
-                outputFile = new File(outputDir + File.separator + fileName + "_COPY_"+DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT)+".processed");
+            if (outputFile.exists()) {
+                outputFile = new File(outputDir + File.separator + fileName + "_COPY_" + DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT) + ".processed");
             }
             outputFileWriter = new PrintWriter(outputFile);
             outputFileWriter.print(lineRecord);
@@ -321,8 +329,8 @@ public class FlatFileProcessingJobBean {
     private void rejectRecord(String lineRecord, String reason) {
         if (rejectFileWriter == null) {
             File rejectFile = new File(rejectDir + File.separator + fileName + ".rejected");
-            if(rejectFile.exists()) {
-                rejectFile = new File(rejectDir + File.separator + fileName + "_COPY_"+DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT)+".rejected");
+            if (rejectFile.exists()) {
+                rejectFile = new File(rejectDir + File.separator + fileName + "_COPY_" + DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT) + ".rejected");
             }
             try {
                 rejectFileWriter = new PrintWriter(rejectFile);
