@@ -37,7 +37,7 @@ public class TransferCustomerAccountDto implements Serializable {
     /**
      * The amount.
      */
-    @XmlElement(required = true)
+    @XmlElement()
     private BigDecimal amount;
 
     /**
