@@ -161,6 +161,7 @@ public interface SubscriptionRs extends IBaseRs {
      * 
      * @param subscriptionCode The subscription's code
      * @param mergedCF true if merge inherited custom fields.
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
      * @return Request processing status
      */
     @GET
