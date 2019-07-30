@@ -97,7 +97,7 @@ public interface OfferTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    public GetListOfferTemplateResponseDto listGet(@Deprecated @QueryParam("offerTemplateCode") String code, @Deprecated @QueryParam("validFrom") @RestDateParam Date validFrom,
+     GetListOfferTemplateResponseDto listGet(@Deprecated @QueryParam("offerTemplateCode") String code, @Deprecated @QueryParam("validFrom") @RestDateParam Date validFrom,
             @Deprecated @QueryParam("validTo") @RestDateParam Date validTo, @QueryParam("query") String query, @QueryParam("fields") String fields,
             @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy,
             @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
@@ -111,7 +111,7 @@ public interface OfferTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/list")
-    public GetListOfferTemplateResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+     GetListOfferTemplateResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
      * Remove offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be deleted.

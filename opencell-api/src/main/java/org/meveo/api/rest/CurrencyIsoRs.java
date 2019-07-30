@@ -34,7 +34,8 @@ public interface CurrencyIsoRs extends IBaseRs {
      * @return action status.
      */
     @POST
-    @Path("/") ActionStatus create(CurrencyIsoDto currencyIsoDto);
+    @Path("/") 
+    ActionStatus create(CurrencyIsoDto currencyIsoDto);
 
     /**
      * Search currency with a given currency code.
@@ -43,7 +44,8 @@ public interface CurrencyIsoRs extends IBaseRs {
      * @return currency iso if found.
      */
     @GET
-    @Path("/") GetCurrencyIsoResponse find(@QueryParam("currencyCode") String currencyCode);
+    @Path("/") 
+    GetCurrencyIsoResponse find(@QueryParam("currencyCode") String currencyCode);
 
     /**
      * Remove currency with a given currency code.
@@ -52,7 +54,8 @@ public interface CurrencyIsoRs extends IBaseRs {
      * @return action status.
      */
     @DELETE
-    @Path("/{currencyCode}") ActionStatus remove(@PathParam("currencyCode") String currencyCode);
+    @Path("/{currencyCode}") 
+    ActionStatus remove(@PathParam("currencyCode") String currencyCode);
 
     /**
      * Modify a tradingCurrency. Same input parameter as create. The currency and tradingCurrency are created if they don't exists. The operation fails if the tradingCurrency is
@@ -62,7 +65,8 @@ public interface CurrencyIsoRs extends IBaseRs {
      * @return action status.
      */
     @PUT
-    @Path("/") ActionStatus update(CurrencyIsoDto currencyIsoDto);
+    @Path("/")
+    ActionStatus update(CurrencyIsoDto currencyIsoDto);
 
     /**
      * Creates or modify a tradingCurrency base on currency code. 
@@ -70,7 +74,8 @@ public interface CurrencyIsoRs extends IBaseRs {
      * @return action status.
      */
     @POST
-    @Path("/createOrUpdate") ActionStatus createOrUpdate(CurrencyIsoDto currencyIsoDto);
+    @Path("/createOrUpdate") 
+    ActionStatus createOrUpdate(CurrencyIsoDto currencyIsoDto);
 
     /**
      * List all currencies.

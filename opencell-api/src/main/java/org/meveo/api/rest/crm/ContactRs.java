@@ -111,7 +111,7 @@ public interface ContactRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    public ContactsResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
+     ContactsResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
     
@@ -122,7 +122,7 @@ public interface ContactRs extends IBaseRs {
      */
     @POST
     @Path("/list")
-    public ContactsResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+     ContactsResponseDto listPost(PagingAndFiltering pagingAndFiltering);
     
     /**
      * Import the contact list to a CSV file text

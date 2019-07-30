@@ -93,5 +93,5 @@ public interface BusinessServiceModelRs extends IBaseRs {
      */
     @PUT
     @Path("/install")
-    public ActionStatus install(BusinessServiceModelDto moduleDto);
+     ActionStatus install(BusinessServiceModelDto moduleDto);
 }

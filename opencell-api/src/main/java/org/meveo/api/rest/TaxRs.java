@@ -74,7 +74,8 @@ public interface TaxRs extends IBaseRs {
      * @return action status
      */
     @Path("/createOrUpdate")
-    @POST ActionStatus createOrUpdate(TaxDto postData);
+    @POST 
+    ActionStatus createOrUpdate(TaxDto postData);
 
     /**
      * Search for the list of taxes.
@@ -82,5 +83,6 @@ public interface TaxRs extends IBaseRs {
      * @return list of all taxes.
      */
     @Path("/list")
-    @GET GetTaxesResponse list();
+    @GET 
+    GetTaxesResponse list();
 }

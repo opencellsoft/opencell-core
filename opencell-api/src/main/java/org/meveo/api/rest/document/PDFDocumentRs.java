@@ -28,5 +28,5 @@ public interface PDFDocumentRs extends IBaseRs {
      */
     @POST
     @Path("/")
-    public PDFDocumentResponseDto generatePDF(PDFDocumentRequestDto postData);
+    PDFDocumentResponseDto generatePDF(PDFDocumentRequestDto postData);
 }

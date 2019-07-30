@@ -92,7 +92,7 @@ public interface OccTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    public GetOccTemplatesResponseDto listGet(@QueryParam("query") String query,
+    GetOccTemplatesResponseDto listGet(@QueryParam("query") String query,
             @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("accountCode") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -104,6 +104,6 @@ public interface OccTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/list")
-    public GetOccTemplatesResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+    GetOccTemplatesResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }

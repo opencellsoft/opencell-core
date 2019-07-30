@@ -24,6 +24,7 @@ public interface ConfigurationRs extends IBaseRs {
 	 * @return system properties
 	 */
 	@GET
+	@Path()
 	ActionStatus systemProperties();
 
 }

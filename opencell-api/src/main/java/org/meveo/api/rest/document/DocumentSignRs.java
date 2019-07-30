@@ -32,7 +32,7 @@ public interface DocumentSignRs extends IBaseRs {
      */
     @POST 
     @Path("/procedures") 
-    public SignProcedureResponseDto createProcedure(CreateProcedureRequestDto postData); 
+     SignProcedureResponseDto createProcedure(CreateProcedureRequestDto postData); 
     
     /**
      * Gets the procedure by id.
@@ -42,7 +42,7 @@ public interface DocumentSignRs extends IBaseRs {
      */    
     @GET 
     @Path("/procedures/{id}") 
-    public SignProcedureResponseDto getProcedureById(@PathParam("id") String id); 
+     SignProcedureResponseDto getProcedureById(@PathParam("id") String id); 
     
     /**
      * Gets the procedure status by id.
@@ -52,7 +52,7 @@ public interface DocumentSignRs extends IBaseRs {
      */    
     @GET 
     @Path("/procedures/{id}/status") 
-    public RawResponseDto<String> getProcedureStatusById(@PathParam("id") String id); 
+     RawResponseDto<String> getProcedureStatusById(@PathParam("id") String id); 
     
     /**
      * Download the files with the given id
@@ -62,6 +62,6 @@ public interface DocumentSignRs extends IBaseRs {
      */    
     @GET 
     @Path("/files/{id}/download") 
-    public SignFileResponseDto downloadFileById(@PathParam("id") String id); 
+     SignFileResponseDto downloadFileById(@PathParam("id") String id); 
 
 }
