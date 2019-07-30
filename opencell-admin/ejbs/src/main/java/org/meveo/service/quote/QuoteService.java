@@ -129,15 +129,21 @@ public class QuoteService extends BusinessService<Quote> {
 
                         // Add subscription charges
                         for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
-                            walletOperations.add(oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, subscriptionCharge,
-                                serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity()));
+                            WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, subscriptionCharge,
+                                serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
+                            if(wo != null) {
+                                walletOperations.add(wo);
+                            }
                         }
 
                         // Add termination charges
                         if (serviceInstance.getTerminationDate() != null && serviceInstance.getSubscriptionTerminationReason().isApplyTerminationCharges()) {
                             for (OneShotChargeInstance terminationCharge : serviceInstance.getTerminationChargeInstances()) {
-                                walletOperations.add(oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, terminationCharge,
-                                    serviceInstance.getTerminationDate(), serviceInstance.getQuantity()));
+                                WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, terminationCharge,
+                                    serviceInstance.getTerminationDate(), serviceInstance.getQuantity());
+                                if(wo != null) {
+                                    walletOperations.add(wo);
+                                }
                             }
                         }
 
