@@ -895,11 +895,20 @@ public class CustomTableService extends NativePersistenceService {
             return Collections.EMPTY_LIST;
         }
     }
-
+    
     public boolean containsRecordOfTableByColumn(String tableName, String columnName, Long id) {
         QueryBuilder queryBuilder = getQuery(tableName, null);
         queryBuilder.addCriterion(columnName, "=", id, true);
         Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
         return !query.list().isEmpty();
     }
+    
+    public Object findFieldByIdAndTableName(Long id, String tableName, String fieldName) {
+        QueryBuilder queryBuilder = getQuery(tableName, null);
+        queryBuilder.addCriterion("id", "=", id, true);
+        Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
+        Map<String, Object> result = (Map<String, Object>) query.uniqueResult();
+		return result.get(fieldName);
+    }
+
 }

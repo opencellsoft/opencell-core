@@ -20,6 +20,7 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.custom.CustomTableService;
@@ -27,6 +28,8 @@ import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.bytebuddy.implementation.bytecode.Throw;
 
 /**
  * Provides custom functions for Meveo application. The following functions are provided:
@@ -226,6 +229,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
             addFunction("mv", "getCTValuesForDate", MeveoFunctionMapper.class.getMethod("getCTValues", String.class, Date.class, String.class, Object.class, String.class,
                 Object.class, String.class, Object.class, String.class, Object.class, String.class, Object.class));
+            
+            addFunction("mv", "getCFValueForCT", MeveoFunctionMapper.class.getMethod("getCFValueForCT", ICustomFieldEntity.class, String.class, String.class));
 
             //adding all Math methods with 'math' as prefix
 			for (Method method : Math.class.getMethods()) {
@@ -1752,4 +1757,20 @@ public class MeveoFunctionMapper extends FunctionMapper {
         }
         return getCustomTableService().getValues(customTableCode, null, date, queryValues);
     }
+    
+    public static Object getCFValueForCT(ICustomFieldEntity entity,String customTableCode, String fieldToReturn) throws BusinessException {
+
+    	Object cfValue = getCFValue(entity, customTableCode);
+    	if(cfValue instanceof EntityReferenceWrapper) {
+    		EntityReferenceWrapper referenceWrapper =(EntityReferenceWrapper) cfValue;
+    		return getCFValueFromCT(customTableCode, fieldToReturn,  Long.parseLong(referenceWrapper.getCode()));
+    	}
+    	throw new BusinessException("CF "+customTableCode+" is not a customTable ");
+    }
+    
+    public static Object getCFValueFromCT(String tableName, String fieldName, Long id) {
+    	return getCustomTableService().findFieldByIdAndTableName(id, tableName, fieldName);
+    }
+    
+    
 }
