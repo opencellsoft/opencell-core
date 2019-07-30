@@ -36,6 +36,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -86,6 +87,12 @@ import org.meveo.model.shared.InterBankTitle;
 public class Provider extends AuditableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * A hardcoded ID of a current provider/tenant. Each provider/tenant has its's own schema and all should have same ID for fast retrieval instead of ordering and taking a first
+     * record
+     */
+    public static long CURRENT_PROVIDER_ID = 1L;
 
     /**
      * Code
@@ -287,7 +294,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
-    private String uuid = UUID.randomUUID().toString();
+    private String uuid;
 
     /**
      * @deprecated As of version 5.0, replaced by {@link AccountingCode}
@@ -629,8 +636,19 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
         this.paymentMethods = paymentMethods;
     }
 
+    /**
+     * setting uuid if null
+     */
+    @PrePersist
+    public void setUUIDIfNull() {
+    	if (uuid == null) {
+    		uuid = UUID.randomUUID().toString();
+    	}
+    }
+    
     @Override
     public String getUuid() {
+    	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
         return uuid;
     }
 
@@ -740,5 +758,13 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Override
     public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
         this.cfAccumulatedValues = cfAccumulatedValues;
+    }
+
+    /**
+     * Check if this is a main provider A hardcoded ID = 1 of a current provider/tenant. Each provider/tenant has its's own schema and all should have same ID for fast retrieval
+     * instead of ordering and taking a first record
+     */
+    public boolean isCurrentProvider() {
+        return id != null && id == CURRENT_PROVIDER_ID;
     }
 }

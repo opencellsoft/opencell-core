@@ -43,11 +43,25 @@ public class ValidationException extends BusinessException {
     }
 
     /**
+     * Exception constructor
+     * 
      * @param message Message to log or display in GUI if message key is not provided
      * @param messageKey An optional message key to be displayed in GUI
      */
     public ValidationException(String message, String messageKey) {
         super(message);
+        this.messageKey = messageKey;
+    }
+
+    /**
+     * Exception constructor
+     * 
+     * @param message Message to log or display in GUI if message key is not provided
+     * @param messageKey An optional message key to be displayed in GUI
+     * @param cause Original exception
+     */
+    public ValidationException(String message, String messageKey, Throwable cause) {
+        super(message, cause);
         this.messageKey = messageKey;
     }
 

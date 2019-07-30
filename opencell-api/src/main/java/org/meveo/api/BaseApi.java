@@ -192,8 +192,8 @@ public abstract class BaseApi {
      * 
      * @throws MeveoApiException meveo api exception.
      */
-    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
-        populateCustomFields(customFieldsDto, entity, isNewEntity, true);
+    protected ICustomFieldEntity populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
+        return populateCustomFields(customFieldsDto, entity, isNewEntity, true);
     }
 
     /**
@@ -206,7 +206,7 @@ public abstract class BaseApi {
      * @param checkCustomField Should a check be made if CF field is required
      * @throws MeveoApiException meveo api exception.
      */
-    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, boolean checkCustomField) throws MeveoApiException {
+    protected ICustomFieldEntity populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, boolean checkCustomField) throws MeveoApiException {
 
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
 
@@ -217,7 +217,7 @@ public abstract class BaseApi {
             customFieldDtos = new ArrayList<CustomFieldDto>();
         }
 
-        populateCustomFields(customFieldTemplates, customFieldDtos, entity, isNewEntity, checkCustomField);
+        return populateCustomFields(customFieldTemplates, customFieldDtos, entity, isNewEntity, checkCustomField);
     }
 
     /**
@@ -227,14 +227,14 @@ public abstract class BaseApi {
      * @param customFieldDtos Custom field values
      * @param entity Entity
      * @param isNewEntity Is entity a newly saved entity
-     * 
+     *
      * @param checkCustomFields Should a check be made if CF field is required
      * @throws IllegalArgumentException illegal argument exception
      * @throws IllegalAccessException illegal access exception
      * @throws MeveoApiException
      */
     @SuppressWarnings("unchecked")
-    private void populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, boolean isNewEntity,
+    private ICustomFieldEntity populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, boolean isNewEntity,
             boolean checkCustomFields) throws MeveoApiException {
 
         // check if any templates are applicable
@@ -250,7 +250,7 @@ public abstract class BaseApi {
                 // throw new MissingParameterException("No Custom field
                 // templates were found to match provided custom field values");
             } else {
-                return;
+                return entity;
             }
         }
 
@@ -326,79 +326,80 @@ public abstract class BaseApi {
         // After saving passed CF values, validate that CustomField value is not
         // empty when field is mandatory. Check inherited values as well.
         // Instantiate CF with default value in case of a new entity
-
         if (customFieldTemplates != null) {
 
-        for (CustomFieldTemplate cft : customFieldTemplates.values()) {
-            if (cft.isDisabled() || (!cft.isValueRequired() && cft.getDefaultValue() == null && !cft.isUseInheritedAsDefaultValue())) {
-                continue;
-            }
-
-            // Does not apply at this moment
-            if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
-                    || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
-                continue;
-            }
-
-            boolean hasValue = entity.hasCfValue(cft.getCode());
-
-            // When no instance was found
-            if (!hasValue) {
-
-                // Need to instantiate default value either from inherited value or from a default value when cft.isInheritedAsDefaultValue()==true
-                if (isNewEntity && cft.isUseInheritedAsDefaultValue()) {
-                    Object value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
-                    hasValue = value != null;
+            for (CustomFieldTemplate cft : customFieldTemplates.values()) {
+            	
+                boolean cftValueRequired = cft.isValueRequired();
+                
+				if (cft.isDisabled() || (!cftValueRequired && cft.getDefaultValue() == null && !cft.isUseInheritedAsDefaultValue())) {
+                    continue;
                 }
 
-                // If no value was created, then check if there is any inherited value, as in case of versioned values, value could be set in some other period, and required
-                // field validation should pass even though current period wont have any value
+                // Does not apply at this moment
+                if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
+                        || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
+                    continue;
+                }
+
+                boolean hasValue = entity.hasCfValue(cft.getCode());
+
+                // When no instance was found
                 if (!hasValue) {
-                    if (cft.isVersionable()) {
-                        hasValue = customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode());
-                    } else {
-                        Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
+
+                    // Need to instantiate default value either from inherited value or from a default value when cft.isInheritedAsDefaultValue()==true
+                    if (isNewEntity && cft.isUseInheritedAsDefaultValue()) {
+                        Object value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
                         hasValue = value != null;
                     }
 
-                    if (!hasValue && isNewEntity && cft.getDefaultValue() != null) { // No need to check for !cft.isInheritedAsDefaultValue() as it was checked above
-                        Object value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode());
-                        hasValue = value != null;
+                    // If no value was created, then check if there is any inherited value, as in case of versioned values, value could be set in some other period, and required
+                    // field validation should pass even though current period wont have any value
+                    if (!hasValue) {
+                        if (cft.isVersionable()) {
+                            hasValue = customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode());
+                        } else {
+                            Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
+                            hasValue = value != null;
+                        }
+                        if (!hasValue && cft.getDefaultValue() != null && (isNewEntity || cftValueRequired)) { // No need to check for !cft.isInheritedAsDefaultValue() as it was checked above
+                            Object value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode());
+                            hasValue = value != null;
+                        }
                     }
-                }
 
-                if (!hasValue && cft.isValueRequired()) {
-                    missingParameters.add(cft.getCode());
-                }
-
-                // When instance, or multiple instances in case of versioned values, were found
-                // in case of empty value, check that inherited value is available or instantiate it from an inherited value if needed
-            } else {
-
-                boolean emptyValue = entity.hasCFValueNotEmpty(cft.getCode());
-
-                if (emptyValue) {
-                    Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
-
-                    if (isNewEntity && !emptyValue && ((value == null && cft.getDefaultValue() != null) || cft.isUseInheritedAsDefaultValue())) {
-                        value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
-                    }
-                    if (value == null && cft.isValueRequired()) {
+                    if (!hasValue && cftValueRequired) {
                         missingParameters.add(cft.getCode());
                     }
+
+                    // When instance, or multiple instances in case of versioned values, were found
+                    // in case of empty value, check that inherited value is available or instantiate it from an inherited value if needed
+                } else {
+
+                    boolean emptyValue = entity.hasCFValueNotEmpty(cft.getCode());
+
+                    if (emptyValue) {
+                        Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
+
+                        if (isNewEntity && !emptyValue && ((value == null && cft.getDefaultValue() != null) || cft.isUseInheritedAsDefaultValue())) {
+                            value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
+                        }
+                        if (value == null && cftValueRequired) {
+                            missingParameters.add(cft.getCode());
+                        }
+                    }
                 }
             }
-        }
         }
 
         handleMissingParameters();
-    }
-    
-    protected void validateAndConvertCustomFields(List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity) throws MeveoApiException {
-        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity); 
-        this.validateAndConvertCustomFields(customFieldTemplates, customFieldDtos, true, false, entity);
+        return entity;
     }
 
+    protected void validateAndConvertCustomFields(List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity) throws MeveoApiException {
+        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
+        this.validateAndConvertCustomFields(customFieldTemplates, customFieldDtos, true, false, entity);
+    }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void validateAndConvertCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, boolean checkCustomFields,
@@ -603,7 +604,7 @@ public abstract class BaseApi {
             throw new InvalidParameterException(sb.toString());
         }
     }
-    
+
     /**
      * From DTO.
      *
@@ -619,8 +620,7 @@ public abstract class BaseApi {
         }
         return values;
     }
-    
-    
+
     /**
      * Get a value converted from DTO a proper Map, List, EntityWrapper, Date, Long, Double or String value.
      * 
@@ -652,7 +652,6 @@ public abstract class BaseApi {
         }
         return null;
     }
-    
 
     /**
      * Get a value converted from DTO a proper Map, List, EntityWrapper, Date, Long, Double or String value.
@@ -1101,7 +1100,7 @@ public abstract class BaseApi {
     protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering,
             Class targetClass) throws InvalidParameterException {
 
-        if (pagingAndFiltering != null) {
+        if (pagingAndFiltering != null && targetClass != null) {
             pagingAndFiltering.setFilters(convertFilters(targetClass, pagingAndFiltering.getFilters()));
         }
 
@@ -1206,6 +1205,7 @@ public abstract class BaseApi {
             if (value instanceof List || value instanceof Set || value.getClass().isArray()) {
                 return value;
 
+                // Parse comma separated string
             } else if (value instanceof String) {
                 List valuesConverted = new ArrayList<>();
                 String[] valueItems = ((String) value).split(",");
@@ -1219,6 +1219,7 @@ public abstract class BaseApi {
                 }
                 return valuesConverted;
 
+                // A single value list
             } else {
                 Object valueConverted = castFilterValue(value, targetClass, false);
                 if (valueConverted != null) {

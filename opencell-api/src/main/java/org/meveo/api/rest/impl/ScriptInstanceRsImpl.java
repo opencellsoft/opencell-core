@@ -1,5 +1,9 @@
 package org.meveo.api.rest.impl;
 
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -15,11 +19,6 @@ import org.meveo.api.dto.response.ScriptInstanceReponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.ScriptInstanceRs;
-
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Edward P. Legaspi

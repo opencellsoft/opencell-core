@@ -46,18 +46,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.OneShotChargeInstance;
-import org.meveo.model.billing.ProductChargeInstance;
-import org.meveo.model.billing.ProductInstance;
-import org.meveo.model.billing.RecurringChargeInstance;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -68,16 +57,7 @@ import org.meveo.model.mediation.Access;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.OneShotChargeInstanceService;
-import org.meveo.service.billing.impl.ProductChargeInstanceService;
-import org.meveo.service.billing.impl.ProductInstanceService;
-import org.meveo.service.billing.impl.RecurringChargeInstanceService;
-import org.meveo.service.billing.impl.ServiceInstanceService;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.billing.impl.UsageChargeInstanceService;
-import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -152,6 +132,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @Inject
     private WalletTemplateService walletTemplateService;
 
+    @Inject
+    private CounterInstanceService counterInstanceService;
+
     private ServiceInstance selectedServiceInstance;
 
     private ProductInstance productInstance;
@@ -175,6 +158,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private Date terminationDate;
     
     private SubscriptionTerminationReason terminationReason;
+
+    private CounterInstance selectedCounterInstance;
 
     /**
      * User Account Id passed as a parameter. Used when creating new subscription entry from user account definition window, so default uset Account will be set on newly created
@@ -224,6 +209,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         } else {
             initServiceTemplates();
             initServiceInstances(entity.getServiceInstances());
+            selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
+
         }
 
         return entity;
@@ -1089,5 +1076,20 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
         this.terminationReason = terminationReason;
+    }
+
+    public CounterInstance getSelectedCounterInstance() {
+        if (entity == null) {
+            initEntity();
+        }
+        return selectedCounterInstance;
+    }
+
+    public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
+        if (selectedCounterInstance != null) {
+            this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
+        } else {
+            this.selectedCounterInstance = null;
+        }
     }
 }

@@ -149,7 +149,7 @@ public class CatalogHierarchyBuilderService {
     }
 
     public OfferProductTemplate duplicateProduct(OfferProductTemplate offerProductTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory,
-                                                 List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
+            List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
         return duplicateOfferProductTemplate(offerProductTemplate, prefix, null, pricePlansInMemory, chargeTemplateInMemory);
     }
 
@@ -165,7 +165,7 @@ public class CatalogHierarchyBuilderService {
      * @throws BusinessException business exception.
      */
     public OfferProductTemplate duplicateOfferProductTemplate(OfferProductTemplate offerProductTemplate, String prefix, ServiceConfigurationDto serviceConfiguration,
-                                                              List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
+            List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
 
         OfferProductTemplate newOfferProductTemplate = new OfferProductTemplate();
 
@@ -180,14 +180,14 @@ public class CatalogHierarchyBuilderService {
         ProductTemplate newProductTemplate = new ProductTemplate();
 
         duplicateProductTemplate(prefix, serviceConfiguration != null ? serviceConfiguration.getDescription() : "", productTemplate, newProductTemplate, pricePlansInMemory,
-                chargeTemplateInMemory, serviceConfiguration != null ? serviceConfiguration.getCfValues() : null);
+            chargeTemplateInMemory, serviceConfiguration != null ? serviceConfiguration.getCfValues() : null);
         newOfferProductTemplate.setProductTemplate(newProductTemplate);
 
         return newOfferProductTemplate;
     }
 
     public ProductTemplate duplicateProductTemplate(String prefix, String description, ProductTemplate productTemplate, ProductTemplate newProductTemplate,
-                                                    List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory, Map<String, List<CustomFieldValue>> customFieldValues) throws BusinessException {
+            List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory, Map<String, List<CustomFieldValue>> customFieldValues) throws BusinessException {
         try {
             BeanUtils.copyProperties(newProductTemplate, productTemplate);
             if (description != null) {
@@ -358,12 +358,12 @@ public class CatalogHierarchyBuilderService {
     }
 
     public OfferServiceTemplate duplicateService(OfferServiceTemplate offerServiceTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory,
-                                                 List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
+            List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
         return duplicateService(offerServiceTemplate, null, prefix, pricePlansInMemory, chargeTemplateInMemory);
     }
 
     public OfferServiceTemplate duplicateService(OfferServiceTemplate offerServiceTemplate, ServiceConfigurationDto serviceConfiguration, String prefix,
-                                                 List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
+            List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
         OfferServiceTemplate newOfferServiceTemplate = new OfferServiceTemplate();
 
         if (serviceConfiguration != null) {
@@ -378,13 +378,13 @@ public class CatalogHierarchyBuilderService {
         newOfferServiceTemplate.setValidity(offerServiceTemplate.getValidity());
 
         newOfferServiceTemplate.setServiceTemplate(
-                duplicateServiceTemplate(offerServiceTemplate.getServiceTemplate().getCode(), prefix, serviceConfiguration, pricePlansInMemory, chargeTemplateInMemory));
+            duplicateServiceTemplate(offerServiceTemplate.getServiceTemplate().getCode(), prefix, serviceConfiguration, pricePlansInMemory, chargeTemplateInMemory));
         return newOfferServiceTemplate;
 
     }
 
     public ServiceTemplate duplicateServiceTemplate(String serviceTemplateSourceCode, String prefix, ServiceConfigurationDto serviceConfiguration,
-                                                    List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
+            List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
 
         ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceTemplateSourceCode);
         serviceTemplate.getServiceRecurringCharges().size();
@@ -416,7 +416,7 @@ public class CatalogHierarchyBuilderService {
             newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
             newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
             
-            this.duplicateAndSetImgPath(serviceTemplate, newServiceTemplate, serviceConfiguration.getImagePath());
+            this.duplicateAndSetImgPath(serviceTemplate, newServiceTemplate, serviceConfiguration != null ? serviceConfiguration.getImagePath() : "");
 
             // set custom fields
             if (serviceConfiguration != null && serviceConfiguration.getCfValues() != null) {
@@ -426,11 +426,6 @@ public class CatalogHierarchyBuilderService {
             }
 
             serviceTemplateService.refresh(serviceTemplate);
-            newCode = newServiceTemplate.getCode();
-            if (serviceTemplateService.findByCode(newCode) != null) {
-                newServiceTemplate.setCode(newCode + "_" + UUID.randomUUID());
-            }
-            serviceTemplateService.create(newServiceTemplate);
 
             // update code if duplicate
             if (instantiatedFromBOM) {
@@ -441,8 +436,13 @@ public class CatalogHierarchyBuilderService {
                     prefix = prefix + newServiceTemplate.getId() + "_";
                 }
                 newServiceTemplate.setCode(prefix + serviceTemplate.getCode());
-                newServiceTemplate = serviceTemplateService.update(newServiceTemplate);
+
+            } else if (serviceTemplateService.findByCode(newCode) != null) {
+                newCode = newServiceTemplate.getCode();
+                newServiceTemplate.setCode(newCode + "_" + UUID.randomUUID());
             }
+
+            serviceTemplateService.create(newServiceTemplate);
 
             duplicatePrices(serviceTemplate, prefix, pricePlansInMemory);
             duplicateCharges(serviceTemplate, newServiceTemplate, prefix, chargeTemplateInMemory);
@@ -627,8 +627,7 @@ public class CatalogHierarchyBuilderService {
             if (newChargeTemplate.getId() == null) {
                 recurringChargeTemplateService.create((RecurringChargeTemplate) newChargeTemplate);
             }
-		} else if (serviceChargeTemplate instanceof ServiceChargeTemplateSubscription
-				|| serviceChargeTemplate instanceof ServiceChargeTemplateTermination) {
+        } else if (serviceChargeTemplate instanceof ServiceChargeTemplateSubscription || serviceChargeTemplate instanceof ServiceChargeTemplateTermination) {
             newChargeTemplate = new OneShotChargeTemplate();
             newChargeTemplate = setChargeTemplate(chargeTemplate, newChargeTemplate, chargeTemplateInMemory, prefix);
             if (newChargeTemplate.getId() == null) {
@@ -650,7 +649,7 @@ public class CatalogHierarchyBuilderService {
 
     @SuppressWarnings("unchecked")
     private void setServiceChargeTemplate(ServiceTemplate newServiceTemplate, @SuppressWarnings("rawtypes") ServiceChargeTemplate serviceChargeTemplate,
-                                          @SuppressWarnings("rawtypes") ServiceChargeTemplate newServiceChargeTemplate, List<ChargeTemplate> chargeTemplateInMemory, String prefix) throws BusinessException {
+            @SuppressWarnings("rawtypes") ServiceChargeTemplate newServiceChargeTemplate, List<ChargeTemplate> chargeTemplateInMemory, String prefix) throws BusinessException {
 
         ChargeTemplate newChargeTemplate = getChargeTemplate(serviceChargeTemplate, chargeTemplateInMemory, prefix);
         newServiceChargeTemplate.setChargeTemplate(newChargeTemplate);
@@ -663,7 +662,7 @@ public class CatalogHierarchyBuilderService {
     }
 
     private void createServiceChargeTemplateRecurring(ServiceTemplate serviceTemplate, ServiceChargeTemplateRecurring serviceChargeTemplate,
-                                                      List<ChargeTemplate> chargeTemplateInMemory, String prefix) throws BusinessException {
+            List<ChargeTemplate> chargeTemplateInMemory, String prefix) throws BusinessException {
         ServiceChargeTemplateRecurring newServiceChargeTemplate = new ServiceChargeTemplateRecurring();
         setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, newServiceChargeTemplate, chargeTemplateInMemory, prefix);
         serviceChargeTemplateRecurringService.create(newServiceChargeTemplate);
@@ -671,7 +670,7 @@ public class CatalogHierarchyBuilderService {
     }
 
     private void createServiceChargeTemplateSubscription(ServiceTemplate serviceTemplate, ServiceChargeTemplateSubscription serviceChargeTemplate,
-                                                         List<ChargeTemplate> chargeTemplateInMemory, String prefix) throws BusinessException {
+            List<ChargeTemplate> chargeTemplateInMemory, String prefix) throws BusinessException {
         ServiceChargeTemplateSubscription newServiceChargeTemplate = new ServiceChargeTemplateSubscription();
         setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, newServiceChargeTemplate, chargeTemplateInMemory, prefix);
         serviceChargeTemplateSubscriptionService.create(newServiceChargeTemplate);
@@ -679,7 +678,7 @@ public class CatalogHierarchyBuilderService {
     }
 
     private void createServiceChargeTemplateTermination(ServiceTemplate serviceTemplate, ServiceChargeTemplateTermination serviceChargeTemplate,
-                                                        List<ChargeTemplate> chargeTemplateInMemory, String prefix) throws BusinessException {
+            List<ChargeTemplate> chargeTemplateInMemory, String prefix) throws BusinessException {
         ServiceChargeTemplateTermination newServiceChargeTemplate = new ServiceChargeTemplateTermination();
         setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, newServiceChargeTemplate, chargeTemplateInMemory, prefix);
         serviceChargeTemplateTerminationService.create(newServiceChargeTemplate);
@@ -687,7 +686,7 @@ public class CatalogHierarchyBuilderService {
     }
 
     private void createServiceChargeTemplateUsage(ServiceTemplate serviceTemplate, ServiceChargeTemplateUsage serviceChargeTemplate, List<ChargeTemplate> chargeTemplateInMemory,
-                                                  String prefix) throws BusinessException {
+            String prefix) throws BusinessException {
         ServiceChargeTemplateUsage newServiceChargeTemplate = new ServiceChargeTemplateUsage();
         setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, newServiceChargeTemplate, chargeTemplateInMemory, prefix);
         serviceChargeTemplateUsageService.create(newServiceChargeTemplate);
@@ -756,9 +755,9 @@ public class CatalogHierarchyBuilderService {
     private void copyEdrTemplates(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetChargeTemplate) {
         if (sourceChargeTemplate.getEdrTemplates() != null && !sourceChargeTemplate.getEdrTemplates().isEmpty()) {
             for (TriggeredEDRTemplate triggeredEDRTemplate : sourceChargeTemplate.getEdrTemplates()) {
-				if (!targetChargeTemplate.getEdrTemplates().contains(triggeredEDRTemplate)) {
-					targetChargeTemplate.getEdrTemplates().add(triggeredEDRTemplate);
-				}
+                if (!targetChargeTemplate.getEdrTemplates().contains(triggeredEDRTemplate)) {
+                    targetChargeTemplate.getEdrTemplates().add(triggeredEDRTemplate);
+                }
             }
         }
     }
@@ -802,7 +801,7 @@ public class CatalogHierarchyBuilderService {
     }
 
     private void deleteUsageChargeTemplate(Map<String, List<ServiceChargeTemplateUsage>> usageCounterChargeMap,
-                                           @SuppressWarnings("rawtypes") ServiceChargeTemplate serviceChargeTemplate) throws BusinessException {
+            @SuppressWarnings("rawtypes") ServiceChargeTemplate serviceChargeTemplate) throws BusinessException {
         Long chargeId = serviceChargeTemplate.getChargeTemplate().getId();
         String chargeTemplateCode = serviceChargeTemplate.getChargeTemplate().getCode();
         List<Long> linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeUsage(chargeId);
@@ -833,7 +832,7 @@ public class CatalogHierarchyBuilderService {
     }
 
     private void deleteRecurringChargeTemplate(Map<String, List<ServiceChargeTemplateRecurring>> recurringCounterChargeMap,
-                                               @SuppressWarnings("rawtypes") ServiceChargeTemplate serviceChargeTemplate) throws BusinessException {
+            @SuppressWarnings("rawtypes") ServiceChargeTemplate serviceChargeTemplate) throws BusinessException {
         Long chargeId = serviceChargeTemplate.getChargeTemplate().getId();
         String chargeTemplateCode = serviceChargeTemplate.getChargeTemplate().getCode();
         List<Long> linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeRecurring(chargeId);
@@ -924,4 +923,3 @@ public class CatalogHierarchyBuilderService {
 
     }
 }
-

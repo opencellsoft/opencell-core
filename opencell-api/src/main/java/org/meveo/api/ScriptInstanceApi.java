@@ -163,7 +163,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
     public Map<String, Object> execute(String scriptInstanceCode, Map<String, Object> context) throws MeveoApiException, BusinessException {
 
         find(scriptInstanceCode);
-        Map<String, Object> result = scriptInstanceService.execute(scriptInstanceCode, context);
+        Map<String, Object> result = scriptInstanceService.executeWInitAndFinalize(scriptInstanceCode, context);
         return result;
     }
 

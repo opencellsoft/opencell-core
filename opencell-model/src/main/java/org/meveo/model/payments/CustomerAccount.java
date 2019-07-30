@@ -18,26 +18,33 @@
  */
 package org.meveo.model.payments;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
@@ -52,7 +59,6 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.intcrm.AddressBook;
-import org.meveo.model.shared.ContactInformation;
 
 /**
  * Customer Account
@@ -145,12 +151,6 @@ public class CustomerAccount extends AccountEntity {
     private Date dateDunningLevel;
 
     /**
-     * Contact information
-     */
-    @Embedded
-    private ContactInformation contactInformation;
-
-    /**
      * Parent customer
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -204,6 +204,24 @@ public class CustomerAccount extends AccountEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "excluded_from_payment")
     private boolean excludedFromPayment;
+
+    /**
+     * This method is called implicitly by hibernate, used to enable
+	 * encryption for custom fields of this entity
+     */
+    @PrePersist
+	@PreUpdate
+	public void preUpdate() {
+		if (cfValues != null) {
+			cfValues.setEncrypted(true);
+		}
+		if (cfAccumulatedValues != null) {
+			cfAccumulatedValues.setEncrypted(true);
+		}
+	}
+
+    @Transient
+    private Map<String, List<PaymentMethod>> auditedMethodPayments;
 
     public CustomerAccount() {
         accountType = ACCOUNT_TYPE;
@@ -266,14 +284,6 @@ public class CustomerAccount extends AccountEntity {
 
     public void setAccountOperations(List<AccountOperation> accountOperations) {
         this.accountOperations = accountOperations;
-    }
-
-    public ContactInformation getContactInformation() {
-        return contactInformation;
-    }
-
-    public void setContactInformation(ContactInformation contactInformation) {
-        this.contactInformation = contactInformation;
     }
 
     public void setDunningLevel(DunningLevelEnum dunningLevel) {
@@ -383,6 +393,8 @@ public class CustomerAccount extends AccountEntity {
             paymentMethods = new ArrayList<>();
         }
         paymentMethods.add(paymentMethod);
+        addPaymentMethodToAudit(new Object() {
+        }.getClass().getEnclosingMethod().getName(), paymentMethod);
     }
 
     public boolean isExcludedFromPayment() {
@@ -582,11 +594,39 @@ public class CustomerAccount extends AccountEntity {
     @Override
     public void anonymize(String code) {
         super.anonymize(code);
-        getContactInformationNullSafe().anonymize(code);
-        if (getBillingAccounts() != null) {
-            for (BillingAccount ba : getBillingAccounts()) {
-                ba.anonymize(code);
+        if(isNotEmpty(this.billingAccounts) ) {
+			this.billingAccounts.forEach(ba -> ba.anonymize(code));
+		}
+    }
+
+    public Map<String, List<PaymentMethod>> getAuditedMethodPayments() {
+        if (auditedMethodPayments == null) {
+            auditedMethodPayments = new HashMap<>();
+        }
+        return auditedMethodPayments;
+    }
+
+    public void setAuditedMethodPayments(Map<String, List<PaymentMethod>> auditedMethodPayments) {
+        this.auditedMethodPayments = auditedMethodPayments;
+    }
+
+    /**
+     * Add payment method action to auditing
+     *
+     * @param action        the action related to payment method
+     * @param paymentMethod the payment method
+     */
+    public void addPaymentMethodToAudit(String action, PaymentMethod paymentMethod) {
+        if (getAuditedMethodPayments().containsKey(action)) {
+            if (!getAuditedMethodPayments().get(action).contains(paymentMethod)) {
+                getAuditedMethodPayments().get(action).add(paymentMethod);
+            } else {
+                getAuditedMethodPayments().get(action).set(getAuditedMethodPayments().get(action).indexOf(paymentMethod), paymentMethod);
             }
+        } else {
+            List<PaymentMethod> PaymentMethods = new ArrayList<>();
+            PaymentMethods.add(paymentMethod);
+            getAuditedMethodPayments().put(action, PaymentMethods);
         }
     }
 }

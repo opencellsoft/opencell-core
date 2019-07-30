@@ -34,9 +34,7 @@ import org.keycloak.KeycloakSecurityContext;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.UserDto;
-import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.cache.TenantCacheContainerProvider;
-import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.keycloak.client.KeycloakAdminClientService;
@@ -59,12 +57,6 @@ import org.meveo.service.billing.impl.ServiceSingleton;
 public class ProviderService extends PersistenceService<Provider> {
 
     /**
-     * A hardcoded ID of a current provider/tenant. Each provider/tenant has its's own schema and all should have same ID for fast retrieval instead of ordering and taking a first
-     * record
-     */
-    private static long CURRENT_PROVIDER_ID = 1L;
-
-    /**
      * The tenant registry to add or remove a new tenant.
      */
     @EJB
@@ -81,6 +73,9 @@ public class ProviderService extends PersistenceService<Provider> {
 
     @Inject
     private TenantCacheContainerProvider tenantCacheContainerProvider;
+
+    @Inject
+    private KeycloakAdminClientService kcService;
 
     static boolean useTenantCache = true;
 
@@ -113,15 +108,21 @@ public class ProviderService extends PersistenceService<Provider> {
      */
     public Provider getProviderNoCache() {
 
-        Provider provider = getEntityManager().find(Provider.class, CURRENT_PROVIDER_ID);
+        Provider provider = getEntityManager().find(Provider.class, Provider.CURRENT_PROVIDER_ID);
+        if (provider.getInvoiceConfiguration() != null) {
+            provider.getInvoiceConfiguration().getDisplayBillingCycle();
+        }
+        if (provider.getGdprConfiguration() != null) {
+            provider.getGdprConfiguration().getInvoiceLife();
+        }
         return provider;
     }
 
     @Override
     public void create(Provider provider) throws BusinessException {
         super.create(provider);
+        createProviderUserInKC(provider);
         providerRegistry.addTenant(provider);
-        createProviderUser(provider);
     }
 
     @Override
@@ -132,24 +133,26 @@ public class ProviderService extends PersistenceService<Provider> {
 
     @Override
     public Provider update(Provider provider) throws BusinessException {
-        // Refresh appProvider application scope variable if applicable
+
+        provider = super.update(provider);
+
+        // Refresh appProvider request scope variable if applicable
         if (appProvider.getId().equals(provider.getId())) {
             refreshAppProvider(provider);
         }
 
-        provider = super.update(provider);
-
-        // clusterEventPublisher.publishEvent(provider, CrudActionEnum.update);
         return provider;
     }
 
     /**
-     * Update appProvider's code.
+     * Ensure that provider code in secondary provider schema matches the tenant/provider code as it was listed in main provider's secondary tenant/provider record.
+     * 
+     * Note: This is to ensure db level data correctness only to cover cases when database schema is initialized with a default data - thus a default (DEMO) provider code
      * 
      * @param newCode New code to update to
      * @throws BusinessException Business exception
      */
-    public void updateProviderCode(String newCode) throws BusinessException {
+    public void updateSecondaryTenantsCode(String newCode) throws BusinessException {
         Provider provider = getProviderNoCache();
         provider.setCode(newCode);
         updateNoCheck(provider);
@@ -163,7 +166,7 @@ public class ProviderService extends PersistenceService<Provider> {
     private void refreshAppProvider(Provider provider) {
         try {
             BeanUtils.copyProperties(appProvider, provider);
-            
+
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("Failed to update appProvider fields");
         }
@@ -205,8 +208,9 @@ public class ProviderService extends PersistenceService<Provider> {
      * Create the superadmin user of a new provider.
      * 
      * @param provider the tenant information
+     * @throws BusinessException Failed to create a user
      */
-    private void createProviderUser(Provider provider) {
+    private void createProviderUserInKC(Provider provider) throws BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
         log.info("> addTenant > getTokenString : " + session.getTokenString());
 
@@ -224,15 +228,11 @@ public class ProviderService extends PersistenceService<Provider> {
         userDto.setRoles(Arrays.asList("CUSTOMER_CARE_USER", "superAdministrateur"));
         userDto.setExternalRoles(Arrays.asList(new RoleDto("CC_ADMIN"), new RoleDto("SUPER_ADMIN")));
 
-        // Get services
-        KeycloakAdminClientService kc = (KeycloakAdminClientService) EjbUtils.getServiceInterface(KeycloakAdminClientService.class.getSimpleName());
         try {
-            kc.createUser(request, userDto, provider.getCode());
-        } catch (EntityDoesNotExistsException e) {
-            e.printStackTrace();
+            kcService.createUser(request, userDto, provider.getCode());
         } catch (BusinessException e) {
-            e.printStackTrace();
-
+            log.error("Failed to create a user in Keycloak", e);
+            throw e;
         }
     }
 

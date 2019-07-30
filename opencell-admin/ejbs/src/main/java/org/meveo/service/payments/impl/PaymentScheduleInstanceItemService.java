@@ -44,6 +44,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.util.ApplicationProvider;
 
@@ -92,6 +93,9 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
+
+    @Inject
+    private ServiceSingleton serviceSingleton;
 
     /**
      * Gets the items to process.
@@ -190,9 +194,9 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             invoice.setAmountWithTax(amounts[2]);
             invoice.setNetToPay(amounts[2]);
 
-            invoiceService.assignInvoiceNumber(invoice);
             invoiceService.create(invoice);
             invoiceService.postCreate(invoice);
+            invoice = serviceSingleton.assignInvoiceNumber(invoice);
 
             paymentScheduleInstanceItem.setInvoice(invoice);
         }
