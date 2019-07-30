@@ -120,6 +120,7 @@ public interface SubscriptionRs extends IBaseRs {
      * @param limit Pagination - number of records to retrieve
      * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      * @param sortOrder Sorting - sort order.
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
      * @return List of subscriptions
      */
     @GET
