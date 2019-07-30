@@ -84,15 +84,14 @@ public class SubscriptionRenewal implements Serializable {
     }
 
     /**
-	 * The default subscription renewal term type. A subscription can be
-	 * automatically renewed on a period basis or on a fixed date.
-	 */
+     * The default subscription renewal term type. A subscription can be automatically renewed on a period basis or on a fixed date.
+     */
     public enum InitialTermTypeEnum {
         /**
          * Uses RenewalPeriodUnitEnum.
          */
         RECURRING,
-        
+
         /**
          * Uses date picker.
          */
@@ -118,7 +117,7 @@ public class SubscriptionRenewal implements Serializable {
     @Column(name = "auto_renew_date")
     @JsonSerialize(using = CustomDateSerializer.class)
     private Date autoRenewDate;
-    
+
     /**
      * Number of days before the end of term to trigger notification event
      */
@@ -278,6 +277,7 @@ public class SubscriptionRenewal implements Serializable {
 
     /**
      * AutoRenewDate getter
+     * 
      * @return
      */
     public Date getAutoRenewDate() {
@@ -286,6 +286,7 @@ public class SubscriptionRenewal implements Serializable {
 
     /**
      * AutoRenewDate setter
+     * 
      * @param autoRenewDate
      */
     public void setAutoRenewDate(Date autoRenewDate) {
@@ -294,23 +295,39 @@ public class SubscriptionRenewal implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SubscriptionRenewal that = (SubscriptionRenewal) o;
-        return autoRenew == that.autoRenew &&
-                extendAgreementPeriodToSubscribedTillDate == that.extendAgreementPeriodToSubscribedTillDate &&
-                Objects.equals(autoRenewDate, that.autoRenewDate) &&
-                endOfTermAction == that.endOfTermAction &&
-                initialyActiveForUnit == that.initialyActiveForUnit &&
-                Objects.equals(initialyActiveFor, that.initialyActiveFor) &&
-                renewForUnit == that.renewForUnit &&
-                Objects.equals(renewFor, that.renewFor) &&
-                initialTermType == that.initialTermType;
+        return autoRenew == that.autoRenew && extendAgreementPeriodToSubscribedTillDate == that.extendAgreementPeriodToSubscribedTillDate
+                && Objects.equals(autoRenewDate, that.autoRenewDate) && endOfTermAction == that.endOfTermAction && initialyActiveForUnit == that.initialyActiveForUnit
+                && Objects.equals(initialyActiveFor, that.initialyActiveFor) && renewForUnit == that.renewForUnit && Objects.equals(renewFor, that.renewFor)
+                && initialTermType == that.initialTermType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(autoRenew, autoRenewDate, endOfTermAction, initialyActiveForUnit, initialyActiveFor, extendAgreementPeriodToSubscribedTillDate,
-                renewForUnit, renewFor, initialTermType);
+        return Objects.hash(autoRenew, autoRenewDate, endOfTermAction, initialyActiveForUnit, initialyActiveFor, extendAgreementPeriodToSubscribedTillDate, renewForUnit, renewFor,
+            initialTermType);
+    }
+
+    public SubscriptionRenewal copy() {
+        SubscriptionRenewal copy = new SubscriptionRenewal();
+        copy.setAutoRenew(isAutoRenew());
+        copy.setAutoRenewDate(this.getAutoRenewDate());
+        copy.setDaysNotifyRenewal(this.getDaysNotifyRenewal());
+        copy.setEndOfTermAction(this.getEndOfTermAction());
+        copy.setTerminationReason(this.getTerminationReason());
+        copy.setInitialyActiveForUnit(this.getInitialyActiveForUnit());
+        copy.setInitialyActiveFor(this.getInitialyActiveFor());
+        copy.setExtendAgreementPeriodToSubscribedTillDate(this.isExtendAgreementPeriodToSubscribedTillDate());
+        copy.setRenewForUnit(this.getRenewForUnit());
+        copy.setRenewFor(this.getRenewFor());
+        copy.setInitialTermType(this.getInitialTermType());
+
+        return copy;
     }
 }
