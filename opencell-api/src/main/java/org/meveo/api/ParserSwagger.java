@@ -18,7 +18,7 @@ public class ParserSwagger {
     public static void main(String[] args) throws Exception {
         String parentpath = System.getProperty("user.dir");
         System.out.println("Adding annotations to file:"+parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest");
-        String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest", "Rs.java");
+        String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest", "Rs.java");
       parsing.getAllInfo(allPathFiles);
     }
 
