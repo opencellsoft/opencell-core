@@ -5,7 +5,7 @@
 	<groupId>com.opencellsoft</groupId>
 	<artifactId>opencell</artifactId>
 	<packaging>pom</packaging>
-	<version>5.4.2-SNAPSHOT</version>
+	<version>5.5.3-SNAPSHOT</version>
 	<name>Opencell Parent Project</name>
 
 	<modules>
@@ -24,6 +24,7 @@
 		<env>dev</env>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
+		<version.ingenico-connect-sdk>5.25.0</version.ingenico-connect-sdk>
 		<version.keycloak>2.5.5.Final</version.keycloak>
         <version.pdfbox>2.0.11</version.pdfbox> 
         <version.barcode>2.1</version.barcode>

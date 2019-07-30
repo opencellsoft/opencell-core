@@ -185,7 +185,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
-    private String uuid = UUID.randomUUID().toString();
+    private String uuid;
 
     // @Type(type = "json")
     @Convert(converter = CustomFieldValuesConverter.class)
@@ -248,6 +248,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     public void prePersistOrUpdate() {
         this.dueDate =  DateUtils.truncateTime(this.dueDate);
         this.invoiceDate =  DateUtils.truncateTime(this.invoiceDate);
+        setUUIDIfNull();
     }
 
     public List<RatedTransaction> getRatedTransactions() {
@@ -553,11 +554,21 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         this.orders = orders;
     }
 
+    /**
+     * setting uuid if null
+     */
+    public void setUUIDIfNull() {
+    	if (uuid == null) {
+    		uuid = UUID.randomUUID().toString();
+    	}
+    }
+    
     @Override
     public String getUuid() {
+    	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
         return uuid;
     }
-
+    
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
