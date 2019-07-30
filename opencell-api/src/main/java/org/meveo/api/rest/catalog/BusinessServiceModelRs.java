@@ -83,7 +83,7 @@ public interface BusinessServiceModelRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    public MeveoModuleDtosResponse list();
+    MeveoModuleDtosResponse list();
 
     /**
      * Install business offer model module
