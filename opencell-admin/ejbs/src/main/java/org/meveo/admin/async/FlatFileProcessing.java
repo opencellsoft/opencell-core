@@ -172,7 +172,7 @@ public class FlatFileProcessing {
                     break;
                 }
 
-                log.trace("Processing record line content:{} from file {}", recordContext.getLineContent(), fileName);
+                log.info("Processing record line content:{} from file {}", recordContext.getLineContent(), fileName);
 
                 if (recordContext.getRecord() == null) {
                     throw recordContext.getRejectReason();
