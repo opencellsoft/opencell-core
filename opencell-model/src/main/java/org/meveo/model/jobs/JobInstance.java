@@ -198,13 +198,15 @@ public class JobInstance extends BusinessCFEntity {
         } else if (!(obj instanceof JobInstance)) {
             return false;
         }
-
-        JobInstance other = (JobInstance) obj;
-
-        if (this.getId() == other.getId()) {
+        
+        JobInstance other = (JobInstance)obj;  
+        
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }
+        
         return false;
+        
     }
 
     /**

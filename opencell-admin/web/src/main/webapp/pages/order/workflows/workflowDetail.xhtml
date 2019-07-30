@@ -10,7 +10,7 @@
     <ui:define name="body">
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                <p:menuitem outcome="mm_workflows" value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" />
+                <p:menuitem rendered="#{wfTransitionBean.workflowOrder != null}" outcome="mm_workflows" value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" />
                 <p:menuitem value="#{messages['mmTransition.new']}" disabled="true" rendered="#{wfTransitionBean.entity.transient}" />
                 <p:menuitem value="#{messages['mmTransition.editView']}" disabled="true" rendered="#{!wfTransitionBean.entity.transient}" />
             </p:breadCrumb>

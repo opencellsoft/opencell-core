@@ -28,6 +28,13 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+/**
+ * The CalendarPeriod class.
+ *
+ * @author Andrius Karpavicius
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @DiscriminatorValue("PERIOD")
 public class CalendarPeriod extends Calendar {
@@ -109,15 +116,24 @@ public class CalendarPeriod extends Calendar {
         // calendar.setTime(cleanDate);
 
         GregorianCalendar calendar = new GregorianCalendar();
+        GregorianCalendar calendarToReturn = new GregorianCalendar();
         calendar.setTime(getInitDate());
+        calendarToReturn.setTime(getInitDate());
 
         int i = 1;
+
         while (date.compareTo(calendar.getTime()) >= 0) {
             Date oldDate = calendar.getTime();
             calendar.add(periodUnit, periodLength);
             if (date.compareTo(oldDate) >= 0 && date.compareTo(calendar.getTime()) < 0) {
+                calendarToReturn.add(periodUnit, i);
                 truncateDateTime(calendar);
-                return calendar.getTime();
+                truncateDateTime(calendarToReturn);
+                if (periodUnit == java.util.Calendar.MONTH ) {
+                    return calendarToReturn.getTime();
+                } else {
+                    return calendar.getTime();
+                }
             }
 
             i++;

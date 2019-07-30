@@ -11,7 +11,7 @@
 
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                <p:menuitem value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" disabled="true" />
+                <p:menuitem rendered="#{wfTransitionBean.workflowOrder != null}" value="#{wfTransitionBean.workflowOrder.descriptionOrCode}" disabled="true" />
             </p:breadCrumb>
         </h:form>
 

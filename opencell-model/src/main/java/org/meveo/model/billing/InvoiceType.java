@@ -78,6 +78,14 @@ public class InvoiceType extends BusinessEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "matching_auto")
     private boolean matchingAuto = false;
+    
+
+    /** 
+     * Used to decide if AccountOperations will be created or not , during AO_Job execution
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "invoice_accountable")
+    private boolean invoiceAccountable = true;
 
     @Column(name = "billing_template_name")
     @Size(max = 50)
@@ -202,4 +210,13 @@ public class InvoiceType extends BusinessEntity {
     public void setBillingTemplateNameEL(String billingTemplateNameEL) {
         this.billingTemplateNameEL = billingTemplateNameEL;
     }
+    
+
+    public boolean isInvoiceAccountable() {
+		return invoiceAccountable;
+	}
+
+	public void setInvoiceAccountable(boolean invoiceAccountable) {
+		this.invoiceAccountable = invoiceAccountable;
+	}
 }

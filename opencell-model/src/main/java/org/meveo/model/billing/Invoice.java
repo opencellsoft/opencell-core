@@ -170,7 +170,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "detailed_invoice")
     private boolean isDetailedInvoice = true;
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     private Invoice adjustedInvoice;
@@ -584,7 +584,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
         this.linkedInvoices = linkedInvoices;
     }
 
-    public void addInvoiceAggregate(InvoiceAgregate obj) {
+	public void addInvoiceAggregate(InvoiceAgregate obj) {
         invoiceAgregates.add(obj);
     }
 

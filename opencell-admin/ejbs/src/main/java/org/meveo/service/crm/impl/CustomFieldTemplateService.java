@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -36,7 +37,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @author melyoussoufi
+ * @lastModifiedVersion 5.0.7
  * 
  */
 @Stateless
@@ -99,6 +101,48 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
             return findByAppliesToNoCache(appliesTo);
         }
     }
+    
+
+	/**
+	 * Find a list of custom field templates corresponding to a given appliesToValues list 
+	 * 
+	 * @param appliesToValues
+	 * @return
+	 */
+	public Map<String, CustomFieldTemplate> findByAppliesTo(Set<String> appliesToValues) {
+		
+		if (useCFTCache) {
+            Map<String, CustomFieldTemplate> cfts = customFieldsCache.getCustomFieldTemplates(appliesToValues);
+            // Populate cache if record is not found in cache
+            if (cfts == null) {
+                cfts = findByAppliesToNoCache(appliesToValues);
+                if (cfts.isEmpty()) {
+                    customFieldsCache.markNoCustomFieldTemplates(appliesToValues);
+                } else {
+                    cfts.forEach((code, cft) -> customFieldsCache.addUpdateCustomFieldTemplate(cft));
+                }
+            }
+            return cfts;
+
+        } else {
+        	return findByAppliesToNoCache(appliesToValues);
+        }
+		
+	}
+
+	/**
+	 * Find a list of custom field templates corresponding to a given appliesToValues list from DB
+	 * 
+	 * @param appliesToValues
+	 * @return
+	 */
+	private Map<String, CustomFieldTemplate> findByAppliesToNoCache(Set<String> appliesToValues) {
+		List<CustomFieldTemplate> values = getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTByAppliesTo", CustomFieldTemplate.class)
+	            .setParameter("appliesTo", appliesToValues).getResultList();
+	        Map<String, CustomFieldTemplate> cftMap = values.stream().collect(Collectors.toMap(cft -> cft.getCode(), cft -> cft));
+	        return cftMap;
+	}
+	
 
     /**
      * Find a list of custom field templates corresponding to a given entity - always do a lookup in DB

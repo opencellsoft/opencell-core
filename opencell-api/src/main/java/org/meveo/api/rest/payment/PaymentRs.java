@@ -55,11 +55,12 @@ public interface PaymentRs extends IBaseRs {
      * Returns a list of account operations along with the balance of a customer.
      * 
      * @param customerAccountCode customer account code
+     * @param pagingAndFiltering     
      * @return list of customer's response.
      */
     @GET
     @Path("/customerPayment")
-    public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode);
+    public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode,  PagingAndFiltering pagingAndFiltering);
 
     /************************************************************************************************/
     /**** Card Payment Method ****/

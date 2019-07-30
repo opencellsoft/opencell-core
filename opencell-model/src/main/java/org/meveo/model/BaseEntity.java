@@ -73,7 +73,7 @@ public abstract class BaseEntity implements Serializable, IEntity, IJPAVersioned
         this.version = version;
     }
 
-    public boolean isTransient() {
+	public boolean isTransient() {
         return id == null;
     }
 

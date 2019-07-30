@@ -183,113 +183,118 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
      */
     public void generateRecordedInvoice(Invoice invoice) throws InvoiceExistException, ImportInvoiceException, BusinessException {
 
-        CustomerAccount customerAccount = null;
-        RecordedInvoice recordedInvoice = new RecordedInvoice();
-        BillingAccount billingAccount = invoice.getBillingAccount();
-
-        if (isRecordedInvoiceExist(invoice.getInvoiceNumber())) {
-            throw new InvoiceExistException("Invoice id " + invoice.getId() + " already exist");
-        }
-
-        try {
-            customerAccount = invoice.getBillingAccount().getCustomerAccount();
-            recordedInvoice.setCustomerAccount(customerAccount);
-        } catch (Exception e) {
-            log.error("error while getting customer account ", e);
-            throw new ImportInvoiceException("Cant find customerAccount");
-        }
-        if (invoice.getNetToPay() == null) {
-            throw new ImportInvoiceException("Net to pay is null");
-        }
-        if (invoice.getInvoiceType() == null) {
-            throw new ImportInvoiceException("Invoice type is null");
-        }
-
-        OCCTemplate occTemplate = invoice.getInvoiceType().getOccTemplate();
-        if (occTemplate == null) {
-            throw new ImportInvoiceException("Cant find OccTemplate");
-        }
-        BigDecimal amountWithoutTax = invoice.getAmountWithoutTax();
-        BigDecimal amountTax = invoice.getAmountTax();
-        BigDecimal amountWithTax = invoice.getAmountWithTax();
-        BigDecimal netToPay = invoice.getNetToPay();
-
-        if (netToPay.compareTo(BigDecimal.ZERO) < 0) {
-            occTemplate = invoice.getInvoiceType().getOccTemplateNegative();
-            if (occTemplate == null) {
-                throw new ImportInvoiceException("Cant find negative OccTemplate");
-            }
-            netToPay = netToPay.abs();
-            if (amountWithoutTax != null) {
-                amountWithoutTax = amountWithoutTax.abs();
-            }
-            if (amountTax != null) {
-                amountTax = amountTax.abs();
-            }
-            if (amountWithTax != null) {
-                amountWithTax = amountWithTax.abs();
-            }
-        }
-
-        recordedInvoice.setReference(invoice.getInvoiceNumber());
-        recordedInvoice.setAccountingCode(occTemplate.getAccountingCode());
-        recordedInvoice.setOccCode(occTemplate.getCode());
-        recordedInvoice.setOccDescription(occTemplate.getDescription());
-        recordedInvoice.setTransactionCategory(occTemplate.getOccCategory());
-        recordedInvoice.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
-
-        recordedInvoice.setAmount(amountWithTax);
-        recordedInvoice.setUnMatchingAmount(amountWithTax);
-        recordedInvoice.setMatchingAmount(BigDecimal.ZERO);
-
-        recordedInvoice.setAmountWithoutTax(amountWithoutTax);
-        recordedInvoice.setTaxAmount(amountTax);
-        recordedInvoice.setNetToPay(invoice.getNetToPay());
-        List<String> orderNums = new ArrayList<String>();
-        if (invoice.getOrders() != null) {
-            for (Order order : invoice.getOrders()) {
-                if(order != null) {
-                    orderNums.add(order.getOrderNumber());
-                }
-            }
-            recordedInvoice.setOrderNumber(StringUtils.concatenate("|", orderNums));
-        }
-        try {
-            recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));
-        } catch (Exception e) {
-            log.error("error with due date ", e);
-            throw new ImportInvoiceException("Error on DueDate");
-        }
-
-        try {
-            recordedInvoice.setInvoiceDate(DateUtils.setTimeToZero(invoice.getInvoiceDate()));
-            recordedInvoice.setTransactionDate(DateUtils.setTimeToZero(invoice.getInvoiceDate()));
-        } catch (Exception e) {
-            log.error("error with invoice date", e);
-            throw new ImportInvoiceException("Error on invoiceDate");
-        }
-
-        PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
-        if (preferedPaymentMethod != null) {
-
-            recordedInvoice.setPaymentMethod(preferedPaymentMethod.getPaymentType());
-            BankCoordinates bankCoordiates = null;
-            if (preferedPaymentMethod instanceof DDPaymentMethod) {
-                bankCoordiates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
-            }
-            if (bankCoordiates != null) {
-                recordedInvoice.setPaymentInfo(bankCoordiates.getIban());
-                recordedInvoice.setPaymentInfo1(bankCoordiates.getBankCode());
-                recordedInvoice.setPaymentInfo2(bankCoordiates.getBranchCode());
-                recordedInvoice.setPaymentInfo3(bankCoordiates.getAccountNumber());
-                recordedInvoice.setPaymentInfo4(bankCoordiates.getKey());
-                recordedInvoice.setPaymentInfo5(bankCoordiates.getBankName());
-                recordedInvoice.setPaymentInfo6(bankCoordiates.getBic());
-                recordedInvoice.setBillingAccountName(bankCoordiates.getAccountOwner());
-            }
-        }
-        recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
-        create(recordedInvoice);
-        invoice.setRecordedInvoice(recordedInvoice);
+    	if (invoice.getInvoiceType().isInvoiceAccountable()) {
+    		
+	        CustomerAccount customerAccount = null;
+	        RecordedInvoice recordedInvoice = new RecordedInvoice();
+	        BillingAccount billingAccount = invoice.getBillingAccount();
+	
+	        if (isRecordedInvoiceExist(invoice.getInvoiceNumber())) {
+	            throw new InvoiceExistException("Invoice id " + invoice.getId() + " already exist");
+	        }
+	
+	        try {
+	            customerAccount = invoice.getBillingAccount().getCustomerAccount();
+	            recordedInvoice.setCustomerAccount(customerAccount);
+	        } catch (Exception e) {
+	            log.error("error while getting customer account ", e);
+	            throw new ImportInvoiceException("Cant find customerAccount");
+	        }
+	        if (invoice.getNetToPay() == null) {
+	            throw new ImportInvoiceException("Net to pay is null");
+	        }
+	        if (invoice.getInvoiceType() == null) {
+	            throw new ImportInvoiceException("Invoice type is null");
+	        }
+	
+	        OCCTemplate occTemplate = invoice.getInvoiceType().getOccTemplate();
+	        if (occTemplate == null) {
+	            throw new ImportInvoiceException("Cant find OccTemplate");
+	        }
+	        BigDecimal amountWithoutTax = invoice.getAmountWithoutTax();
+	        BigDecimal amountTax = invoice.getAmountTax();
+	        BigDecimal amountWithTax = invoice.getAmountWithTax();
+	        BigDecimal netToPay = invoice.getNetToPay();
+	
+	        if (netToPay.compareTo(BigDecimal.ZERO) < 0) {
+	            occTemplate = invoice.getInvoiceType().getOccTemplateNegative();
+	            if (occTemplate == null) {
+	                throw new ImportInvoiceException("Cant find negative OccTemplate");
+	            }
+	            netToPay = netToPay.abs();
+	            if (amountWithoutTax != null) {
+	                amountWithoutTax = amountWithoutTax.abs();
+	            }
+	            if (amountTax != null) {
+	                amountTax = amountTax.abs();
+	            }
+	            if (amountWithTax != null) {
+	                amountWithTax = amountWithTax.abs();
+	            }
+	        }
+	
+	        recordedInvoice.setReference(invoice.getInvoiceNumber());
+	        recordedInvoice.setAccountingCode(occTemplate.getAccountingCode());
+	        recordedInvoice.setOccCode(occTemplate.getCode());
+	        recordedInvoice.setOccDescription(occTemplate.getDescription());
+	        recordedInvoice.setTransactionCategory(occTemplate.getOccCategory());
+	        recordedInvoice.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
+	
+	        recordedInvoice.setAmount(amountWithTax);
+	        recordedInvoice.setUnMatchingAmount(amountWithTax);
+	        recordedInvoice.setMatchingAmount(BigDecimal.ZERO);
+	
+	        recordedInvoice.setAmountWithoutTax(amountWithoutTax);
+	        recordedInvoice.setTaxAmount(amountTax);
+	        recordedInvoice.setNetToPay(invoice.getNetToPay());
+	        List<String> orderNums = new ArrayList<String>();
+	        if (invoice.getOrders() != null) {
+	            for (Order order : invoice.getOrders()) {
+	                if(order != null) {
+	                    orderNums.add(order.getOrderNumber());
+	                }
+	            }
+	            recordedInvoice.setOrderNumber(StringUtils.concatenate("|", orderNums));
+	        }
+	        try {
+	            recordedInvoice.setDueDate(DateUtils.setTimeToZero(invoice.getDueDate()));
+	        } catch (Exception e) {
+	            log.error("error with due date ", e);
+	            throw new ImportInvoiceException("Error on DueDate");
+	        }
+	
+	        try {
+	            recordedInvoice.setInvoiceDate(DateUtils.setTimeToZero(invoice.getInvoiceDate()));
+	            recordedInvoice.setTransactionDate(DateUtils.setTimeToZero(invoice.getInvoiceDate()));
+	        } catch (Exception e) {
+	            log.error("error with invoice date", e);
+	            throw new ImportInvoiceException("Error on invoiceDate");
+	        }
+	
+	        PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
+	        if (preferedPaymentMethod != null) {
+	
+	            recordedInvoice.setPaymentMethod(preferedPaymentMethod.getPaymentType());
+	            BankCoordinates bankCoordiates = null;
+	            if (preferedPaymentMethod instanceof DDPaymentMethod) {
+	                bankCoordiates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
+	            }
+	            if (bankCoordiates != null) {
+	                recordedInvoice.setPaymentInfo(bankCoordiates.getIban());
+	                recordedInvoice.setPaymentInfo1(bankCoordiates.getBankCode());
+	                recordedInvoice.setPaymentInfo2(bankCoordiates.getBranchCode());
+	                recordedInvoice.setPaymentInfo3(bankCoordiates.getAccountNumber());
+	                recordedInvoice.setPaymentInfo4(bankCoordiates.getKey());
+	                recordedInvoice.setPaymentInfo5(bankCoordiates.getBankName());
+	                recordedInvoice.setPaymentInfo6(bankCoordiates.getBic());
+	                recordedInvoice.setBillingAccountName(bankCoordiates.getAccountOwner());
+	            }
+	        }
+	        recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
+	        create(recordedInvoice);
+	        invoice.setRecordedInvoice(recordedInvoice);
+    	} else {
+    		log.warn(" Invoice type is not accountable : {} ", invoice.getInvoiceType());
+    	}
     }
 }

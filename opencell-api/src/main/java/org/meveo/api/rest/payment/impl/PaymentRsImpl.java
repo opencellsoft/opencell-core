@@ -66,12 +66,12 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     }
 
     @Override
-    public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode) {
+    public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode, PagingAndFiltering pagingAndFiltering) {
         CustomerPaymentsResponse result = new CustomerPaymentsResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode));
+            result = paymentApi.getPaymentList(customerAccountCode, pagingAndFiltering);
             result.setBalance(paymentApi.getBalance(customerAccountCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
