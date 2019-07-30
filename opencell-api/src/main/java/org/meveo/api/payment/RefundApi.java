@@ -130,22 +130,8 @@ public class RefundApi extends BaseApi {
 
         refundService.create(refund);
 
-        int nbOccMatched = 0;
         if (refundDto.isToMatching()) {
-            List<Long> listReferenceToMatch = new ArrayList<Long>();
-            if (refundDto.getListOCCReferenceforMatching() != null) {
-                nbOccMatched = refundDto.getListOCCReferenceforMatching().size();
-                for (int i = 0; i < nbOccMatched; i++) {
-                    RecordedInvoice accountOperationToMatch = recordedInvoiceService.getRecordedInvoice(refundDto.getListOCCReferenceforMatching().get(i));
-                    if (accountOperationToMatch == null) {
-                        throw new BusinessApiException("Cannot find account operation with reference:" + refundDto.getListOCCReferenceforMatching().get(i));
-                    }
-                    listReferenceToMatch.add(accountOperationToMatch.getId());
-                }
-                listReferenceToMatch.add(refund.getId());
-                matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A);
-            }
-
+            matchRefunds(refundDto, customerAccount, refund);
         } else {
             log.info("no matching created ");
         }
@@ -153,6 +139,26 @@ public class RefundApi extends BaseApi {
 
         return refund.getId();
     }
+
+	private void matchRefunds(RefundDto refundDto, CustomerAccount customerAccount, Refund refund)
+			throws BusinessApiException, BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+		List<Long> listReferenceToMatch = new ArrayList<Long>();
+		if (refundDto.getListAoIdsForMatching()!=null && !refundDto.getListAoIdsForMatching().isEmpty() ) {
+			listReferenceToMatch.addAll(refundDto.getListAoIdsForMatching());
+		} else if (refundDto.getListOCCReferenceforMatching() != null) {
+		    for (String Reference: refundDto.getListOCCReferenceforMatching()) {
+		        List<RecordedInvoice> accountOperationToMatch = recordedInvoiceService.getRecordedInvoice(Reference);
+		        if (accountOperationToMatch == null || accountOperationToMatch.isEmpty()) {
+		            throw new BusinessApiException("Cannot find account operation with reference:" + Reference );
+		        } else if (accountOperationToMatch.size() > 1) {
+		            throw new BusinessApiException("More than one account operation with reference:" + Reference +". Please use ListAoIdsForMatching instead of ListOCCReferenceforMatching");
+		        }
+		        listReferenceToMatch.add(accountOperationToMatch.get(0).getId());
+		    }
+		}
+		listReferenceToMatch.add(refund.getId());
+		matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A);
+	}
 
     public List<RefundDto> getRefundList(String customerAccountCode) throws Exception {
         List<RefundDto> result = new ArrayList<>();
