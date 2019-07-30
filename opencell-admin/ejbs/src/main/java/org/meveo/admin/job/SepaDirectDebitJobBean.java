@@ -203,6 +203,9 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 					}
 				} catch (Exception e) {
 					log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
+					if (BooleanUtils.isTrue(ddrequestLotOp.getRecurrent())) {
+						this.createNewDdrequestLotOp(ddrequestLotOp);
+					}
 					ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
 					ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
 					dDRequestLotOpService.update(ddrequestLotOp);
@@ -253,6 +256,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 		try {
 			ScriptInstance scriptInstance = ddrequestLotOp.getScriptInstance();
 			if (scriptInstance != null) {
+				scriptInstance = scriptInstanceService.retrieveIfNotManaged(scriptInstance);
 				final String scriptCode = scriptInstance.getCode();
 				if (scriptCode != null) {
 					log.debug(" looking for ScriptInstance with code :  [{}] ", scriptCode);
