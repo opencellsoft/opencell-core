@@ -844,8 +844,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                 Map<InvoiceSubCategory, Map<String, BigDecimal>> subscriptionAmountMap = new HashMap<InvoiceSubCategory, Map<String, BigDecimal>>();
 
                 for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-                    if (serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
-
                         Map<InvoiceSubCategory, Map<String, BigDecimal>> serviceAmountMap = new HashMap<InvoiceSubCategory, Map<String, BigDecimal>>();
 
                         List<RecurringChargeInstance> recurringChargeInstanceList = serviceInstance.getRecurringChargeInstances();
@@ -1038,7 +1036,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                             }
 
                         }
-                    }
                 }
 
                 BigDecimal totalSubscriptionAmountWithoutTax = BigDecimal.ZERO;
