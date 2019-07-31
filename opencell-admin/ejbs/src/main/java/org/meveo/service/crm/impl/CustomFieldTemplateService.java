@@ -362,6 +362,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     @Override
     public CustomFieldTemplate enable(CustomFieldTemplate cft) throws BusinessException {
+        cft = refreshOrRetrieve(cft);
         cft = super.enable(cft);
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
         return cft;
