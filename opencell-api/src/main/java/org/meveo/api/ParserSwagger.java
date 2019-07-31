@@ -17,9 +17,10 @@ public class ParserSwagger {
  
     public static void main(String[] args) throws Exception {
         String parentpath = System.getProperty("user.dir");
-        //parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest"
-        System.out.println("Adding annotations to file:"+parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest");
-        String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest", "Rs.java");
+       // This should be use for local: parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest"
+       // This should be use for jenkins server: parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest"
+        System.out.println("Adding annotations to file:"+parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest");
+        String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest", "Rs.java");
       parsing.getAllInfo(allPathFiles);
     }
 
@@ -262,11 +263,11 @@ public class ParserSwagger {
                     annotationHere = true;
                 } else if (str.contains("*/")) {
                     javadocend = true;
-                } else if (str.contains("@Deprecated") && javadocend && javadocstart) {
+                } else if (str.contains("@Deprecated") && javadocend && javadocstart) {//@Deprecated Flag
                     deprecatedtag = true;
                 } else if (str.contains("public interface ")) {
                     publicinterfaceflag = true;
-                } else if (str.contains("@Path(")) {
+                } else if (str.contains("@Path(")) {//Generation for the Swagger @operation
                     String tmp = str.replaceAll("[ ]{3,}", "");
                     if (tmp.split(" ").length > 1) {
                         String[] tmpArray = tmp.split(" ");
@@ -278,7 +279,7 @@ public class ParserSwagger {
                     } else {
                         if (!tagflag && !publicinterfaceflag) {
                             tagflag = true;
-                            str = str + "\n@Tag(name = \"" + className + "\", description = \"@%" + className + " :\")";
+                            str = str + "\n@Tag(name = \"" + className + "\", description = \"@%" + className + "\")";
                         } else if (javadocstart && javadocend) {
                             combinaison = infoOfMethod[occuration] + returnTypeInfo[occuration];
                             str = str.substring(0, str.indexOf(")")) + ")\n" + swaggerGeneration(combinaison, deprecatedtag);
@@ -290,7 +291,7 @@ public class ParserSwagger {
                     }
                 } else if (str.contains("import ") && !swaggerAnnotationImport) {
                     importApparition = true;
-                } else if (importApparition && !swaggerAnnotationImport) {
+                } else if (importApparition && !swaggerAnnotationImport) {//Import libraries
                     swaggerAnnotationImport = true;
                     str = "import io.swagger.v3.oas.annotations.Operation;\n" +
                             "import io.swagger.v3.oas.annotations.Parameter;\n" +
@@ -300,7 +301,7 @@ public class ParserSwagger {
                             "import io.swagger.v3.oas.annotations.responses.ApiResponse;\n" +
                             "import io.swagger.v3.oas.annotations.tags.Tag;\n" +
                             "import io.swagger.v3.oas.annotations.Hidden;\n";
-                } else if ((str.contains(tmp2) && declarationflag) || deletedextraline) {
+                } else if ((str.contains(tmp2) && declarationflag) || deletedextraline) {//@Parameter generation in function
                     if (str.contains(";") && deletedextraline) {
                         str = parameterGeneration(declarationDoc[occuration - 1], infoOfMethod[occuration - 1]);
                         if (indexDeclaration == declarationDoc.length - 1) {
@@ -330,7 +331,7 @@ public class ParserSwagger {
                 String summary = "default", description = "default", returnValue = "default", typeValue = "default";
                 while ((str = lnr.readLine()) != null) {
                     String tmp2 = "    " + returnTypeInfo[indexDeclaration].replaceAll("\\*", "").replaceAll(".class", "").replaceAll("@type", "").replaceAll(" ", "").replace("\n", "").replace("\r", "");
-                    if (occuration < returnTypeInfo.length  && str.contains("@Operation")) {
+                    if (occuration < returnTypeInfo.length  && str.contains("@Operation")) {//When meating the @Operation will save the data for the next line
                         combinaison = infoOfMethod[occuration] + returnTypeInfo[occuration];
                         String[] info = separationData(combinaison);
                         description = info[0];
@@ -398,7 +399,7 @@ public class ParserSwagger {
 
     }
 
-    //Parse and replace the line by other information. This is for the case of missing comment in file, thus it will only add basic information
+    //Parse and replace the line by other information. This is for the case of missing comment in file, thus it will only add basic information. And in case of SwaggerAnnotation already here it will just copy the file
     private void defaultReaderGeneration(String filePath, String classNameTag) throws IOException {
         String filePathTemp = filePath.replaceAll("Rs.java", "Rs.txt");
         PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filePathTemp)));
@@ -456,7 +457,7 @@ public class ParserSwagger {
                     } else {
                         if (!tagflag && !publicinterfaceflag) {
                             tagflag = true;
-                            str = str + "\n@Tag(name = \"" + classNameTag + "\", description = \"@%" + classNameTag + " :\")";
+                            str = str + "\n@Tag(name = \"" + classNameTag + "\", description = \"@%" + classNameTag + "\")";
                         } else if (javadocstart && javadocend) {
                             combinaison = infoOfMethod[indexjavadoc] + returnTypeInfo[indexreturntype];
                             str = str.substring(0, str.indexOf(")")) + ")\n" + swaggerGeneration(combinaison, deprecatedtag);
@@ -524,7 +525,7 @@ public class ParserSwagger {
         String param = "";
         boolean noParam = true;
         //Retrieve of the param information
-        data = data.replaceAll("[*]", "").replace("\n", "").replace("\r", "").replaceAll("[\"]", "").replaceAll(",", "");
+        data = data.replaceAll("[*]", "").replace("\n", "").replace("\r", "").replaceAll("[\"]", "").replaceAll(",", "");//We delete the *,\n,\r for cleaning purpose.We clean the data from ther [, and "] because it will cause issue and also [,] is a character that will act as balise.
         String[] arrayData = data.split("@");
         List<String> database = new ArrayList<>();
         for (String tmp : arrayData) {
@@ -533,11 +534,12 @@ public class ParserSwagger {
                 noParam = false;
             }
         }
+        //Will add annotation Parameter depending of the case.
         if (!noParam) {//Case for at least one parameter in the method
             param = "    " + change.substring(0, change.indexOf("(")) + "(";
             int i = change.indexOf("(") + 1;
             change = change.substring(i, change.length());
-            if (change.contains(",")) {//Multiple parameter for the method
+            if (change.contains(",")) {//Multiple parameter for the method. We will split 
                 String[] methodArray = change.split(",");
                 for (int j = 0; j < methodArray.length; j++) {
                     String tmp = database.get(j).replace("param", "");
@@ -557,6 +559,7 @@ public class ParserSwagger {
         }
         return param;
     }    
+    //This is the same function as before but just for the case if @parameter are already present in the annotation
     private String paramRewriting(String change, String data) {
         String param = "";
         boolean noParam = true;
@@ -576,12 +579,12 @@ public class ParserSwagger {
             change = change.substring(i, change.length());
             if (change.contains(",")) {//Multiple parameter for the method
                 String[] methodArray = change.split(",");
-                for(i=0;i<methodArray.length;i++){
+                for(i=0;i<methodArray.length;i++){//This will clean the old @Parameter annotation
                     String tmp=methodArray[i].replaceAll(".+[\"].+[\"]","");
                     methodArray[i]=tmp;
                 }
                 for (int j = 0; j < methodArray.length; j++) {
-                    String tmp = database.get(j).replace("param", "");
+                    String tmp = database.get(j).replace("param", "");//If an error occur because of a out of bound exception. Check the number of param in the comment and in the function. Because is probably due to a missing @param
                     if (j < methodArray.length - 1) {
                         param = param + "@Parameter(description=\"" + tmp + "\"" + methodArray[j] + " , ";
                     } else {
