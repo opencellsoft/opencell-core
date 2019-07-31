@@ -17,8 +17,9 @@ public class ParserSwagger {
  
     public static void main(String[] args) throws Exception {
         String parentpath = System.getProperty("user.dir");
+        //parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest"
         System.out.println("Adding annotations to file:"+parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest");
-        String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest", "Rs.java");
+        String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest", "Rs.java");
       parsing.getAllInfo(allPathFiles);
     }
 
@@ -277,7 +278,7 @@ public class ParserSwagger {
                     } else {
                         if (!tagflag && !publicinterfaceflag) {
                             tagflag = true;
-                            str = str + "\n@Tag(name = \"" + className + "\", description = \"All command api for " + className + " :\")";
+                            str = str + "\n@Tag(name = \"" + className + "\", description = \"@%" + className + " :\")";
                         } else if (javadocstart && javadocend) {
                             combinaison = infoOfMethod[occuration] + returnTypeInfo[occuration];
                             str = str.substring(0, str.indexOf(")")) + ")\n" + swaggerGeneration(combinaison, deprecatedtag);
@@ -359,9 +360,9 @@ public class ParserSwagger {
                     } else if ((str.contains(tmp2) && declarationflag) || deletedextraline) {
                         if (str.contains(";")) {
                             if (declarationDoc.length == 1&&occuration==0) {
-                                str = parameterGeneration(declarationDoc[occuration], infoOfMethod[occuration]);
+                                str = paramRewriting(declarationDoc[occuration], infoOfMethod[occuration]);
                             } else {
-                                str = parameterGeneration(declarationDoc[occuration - 1], infoOfMethod[occuration - 1]);
+                                str = paramRewriting(declarationDoc[occuration - 1], infoOfMethod[occuration - 1]);
                             }
                             //System.out.println(indexDeclaration + "/" + declarationDoc.length);
                             if (indexDeclaration == declarationDoc.length - 1) {
@@ -376,7 +377,10 @@ public class ParserSwagger {
                         }
                     } else if (str.contains("description=")) {
                         str = "\t\t\tdescription=\"" + description + "\",";
-                    }
+                    }else if (str.contains("@Tag(name =")) {
+                            tagflag = true;
+                            str ="@Tag(name = \"" + className + "\", description = \"@%" + className + "\")";
+                        }
                     writer.println(str);
                 }
             }
@@ -452,7 +456,7 @@ public class ParserSwagger {
                     } else {
                         if (!tagflag && !publicinterfaceflag) {
                             tagflag = true;
-                            str = str + "\n@Tag(name = \"" + classNameTag + "\", description = \"All command api for " + classNameTag + " :\")";
+                            str = str + "\n@Tag(name = \"" + classNameTag + "\", description = \"@%" + classNameTag + " :\")";
                         } else if (javadocstart && javadocend) {
                             combinaison = infoOfMethod[indexjavadoc] + returnTypeInfo[indexreturntype];
                             str = str.substring(0, str.indexOf(")")) + ")\n" + swaggerGeneration(combinaison, deprecatedtag);
@@ -546,6 +550,48 @@ public class ParserSwagger {
             } else {//Only one parameter in the method
                 String tmp = database.get(0).replace("\n", "").replace("\r", "").replace("param", "");
                 param = param + "@Parameter(description=\"" + tmp + "\")" + change;
+            }
+            param = param + ";";
+        } else if (noParam) {//Case for no parameter method
+            param = "    " + change + ";";
+        }
+        return param;
+    }    
+    private String paramRewriting(String change, String data) {
+        String param = "";
+        boolean noParam = true;
+        //Retrieve of the param information
+        data = data.replaceAll("[*]", "").replace("\n", "").replace("\r", "").replaceAll("[\"]", "").replaceAll(",", "");
+        String[] arrayData = data.split("@");
+        List<String> database = new ArrayList<>();
+        for (String tmp : arrayData) {
+            if (tmp.contains("param")) {
+                database.add(tmp);
+                noParam = false;
+            }
+        }
+        if (!noParam) {//Case for at least one parameter in the method
+            param = "    " + change.substring(0, change.indexOf("(")) + "(";
+            int i = change.indexOf("(") + 1;
+            change = change.substring(i, change.length());
+            if (change.contains(",")) {//Multiple parameter for the method
+                String[] methodArray = change.split(",");
+                for(i=0;i<methodArray.length;i++){
+                    String tmp=methodArray[i].replaceAll(".+[\"].+[\"]","");
+                    methodArray[i]=tmp;
+                }
+                for (int j = 0; j < methodArray.length; j++) {
+                    String tmp = database.get(j).replace("param", "");
+                    if (j < methodArray.length - 1) {
+                        param = param + "@Parameter(description=\"" + tmp + "\"" + methodArray[j] + " , ";
+                    } else {
+                        param = param + "@Parameter(description=\"" + tmp + "\"" + methodArray[j];
+                    }
+                }
+            } else {//Only one parameter in the method
+                String tmp = database.get(0).replace("\n", "").replace("\r", "").replace("param", "");
+                change=change.replaceAll(".+[\"].+[\"]","");
+                param = param + "@Parameter(description=\"" + tmp + "\"" + change;
             }
             param = param + ";";
         } else if (noParam) {//Case for no parameter method
