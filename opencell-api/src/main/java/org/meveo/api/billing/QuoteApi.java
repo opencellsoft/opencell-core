@@ -190,9 +190,7 @@ public class QuoteApi extends BaseApi {
         if (productQuote.getBillingAccount() != null && !productQuote.getBillingAccount().isEmpty()) {
             String billingAccountId = productQuote.getBillingAccount().get(0).getId();
             if (!StringUtils.isEmpty(billingAccountId)) {
-                // quoteLevelUserAccount = userAccountService.findByCode(billingAccountId);
-                quoteLevelUserAccount = (UserAccount) userAccountService.getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", billingAccountId)
-                    .getSingleResult();
+                quoteLevelUserAccount = userAccountService.findByCode(billingAccountId);
                 if (quoteLevelUserAccount == null) {
                     throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
                 }
@@ -206,8 +204,7 @@ public class QuoteApi extends BaseApi {
                 String billingAccountId = productQuoteItem.getBillingAccount().get(0).getId();
                 if (!StringUtils.isEmpty(billingAccountId)) {
                     // itemLevelUserAccount = userAccountService.findByCode(billingAccountId);
-                    itemLevelUserAccount = (UserAccount) userAccountService.getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", billingAccountId)
-                        .getSingleResult();
+                    itemLevelUserAccount = userAccountService.findByCode(billingAccountId);
                     if (itemLevelUserAccount == null) {
                         throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
                     }
@@ -903,6 +900,10 @@ public class QuoteApi extends BaseApi {
     public void deleteQuote(String quoteId) throws EntityDoesNotExistsException, ActionForbiddenException, BusinessException {
 
         Quote quote = quoteService.findByCode(quoteId);
+        
+        if(quote == null) {
+            throw new EntityDoesNotExistsException(Quote.class, quoteId);
+        }
 
         if (quote.getStatus() == QuoteStatusEnum.IN_PROGRESS || quote.getStatus() == QuoteStatusEnum.PENDING) {
             quoteService.remove(quote);

@@ -46,6 +46,7 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ISearchable;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -66,7 +67,7 @@ import org.meveo.model.WorkflowedEntity;
 @DiscriminatorValue(value = "ACCT_UA")
 @Table(name = "billing_user_account")
 @NamedQueries({ @NamedQuery(name = "UserAccount.findByCode", query = "select u from  UserAccount u where u.code = :code and lower(u.accountType) = 'acct_ua'") })
-public class UserAccount extends AccountEntity implements IWFEntity, ICounterEntity {
+public class UserAccount extends AccountEntity implements IWFEntity, ICounterEntity, ISearchable {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) UserAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 

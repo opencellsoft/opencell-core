@@ -317,6 +317,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             for (Invoice invoice : invoices) {
                 invoiceNumbers.append(invoice.getInvoiceNumber());
                 invoiceNumbers.append(" ");
+                invoiceService.cancelInvoice(invoice);
             }
 
             messages.info(new BundleKey("messages", "generateInvoice.successful"), invoiceNumbers.toString());

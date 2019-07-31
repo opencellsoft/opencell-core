@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -47,7 +47,7 @@ import org.meveo.model.payments.CustomerAccount;
 
 /**
  * Customer
- * 
+ *
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
@@ -179,8 +179,8 @@ public class Customer extends AccountEntity implements IWFEntity {
     public void anonymize(String code) {
         super.anonymize(code);
         if (isNotEmpty(this.customerAccounts)) {
-			this.customerAccounts.forEach(ca -> ca.anonymize(code));
-		}
+            this.customerAccounts.forEach(ca -> ca.anonymize(code));
+        }
     }
 
 }

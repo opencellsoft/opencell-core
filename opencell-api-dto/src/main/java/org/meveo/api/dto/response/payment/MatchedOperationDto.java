@@ -45,10 +45,10 @@ public class MatchedOperationDto extends BaseEntityDto {
     private Long accountOperationId;
 
     /** Account operation type code. */
-    private String occCode;
+    private String code;
 
     /** Account operation type description. */
-    private String occDescription;
+    private String description;
 
     /** Account operation date. */
     private Date transactionDate;
@@ -91,8 +91,8 @@ public class MatchedOperationDto extends BaseEntityDto {
         AccountOperation ao = matchingAmount.getAccountOperation();
 
         accountOperationId = ao.getId();
-        occCode = ao.getCode();
-        occDescription = ao.getDescription();
+        code = ao.getCode();
+        description = ao.getDescription();
         transactionDate = ao.getTransactionDate();
         transactionCategory = ao.getTransactionCategory();
         dueDate = ao.getDueDate();
@@ -196,8 +196,8 @@ public class MatchedOperationDto extends BaseEntityDto {
      *
      * @return the occ code
      */
-    public String getOccCode() {
-        return occCode;
+    public String getCode() {
+        return code;
     }
 
     /**
@@ -205,8 +205,8 @@ public class MatchedOperationDto extends BaseEntityDto {
      *
      * @param occCode the new occ code
      */
-    public void setOccCode(String occCode) {
-        this.occCode = occCode;
+    public void setCode(String occCode) {
+        this.code = occCode;
     }
 
     /**
@@ -214,8 +214,8 @@ public class MatchedOperationDto extends BaseEntityDto {
      *
      * @return the occ description
      */
-    public String getOccDescription() {
-        return occDescription;
+    public String getDescription() {
+        return description;
     }
 
     /**
@@ -223,8 +223,8 @@ public class MatchedOperationDto extends BaseEntityDto {
      *
      * @param occDescription the new occ description
      */
-    public void setOccDescription(String occDescription) {
-        this.occDescription = occDescription;
+    public void setDescription(String occDescription) {
+        this.description = occDescription;
     }
 
     /**
@@ -338,7 +338,7 @@ public class MatchedOperationDto extends BaseEntityDto {
     @Override
     public String toString() {
         return "MatchedOperationDto [matchingId=" + matchingId + ", matchingType=" + matchingType + ", matchingDate=" + matchingDate + ", matchingAmount=" + matchingAmount
-                + ", accountOperationId=" + accountOperationId + ", occCode=" + occCode + ", occDescription=" + occDescription + ", transactionDate=" + transactionDate
+                + ", accountOperationId=" + accountOperationId + ", occCode=" + code + ", occDescription=" + description + ", transactionDate=" + transactionDate
                 + ", transactionCategory=" + transactionCategory + ", dueDate=" + dueDate + ", transactionAmount=" + transactionAmount + ", matchedTransactionAmount="
                 + matchedTransactionAmount + "]";
     }

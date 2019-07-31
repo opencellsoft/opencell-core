@@ -18,30 +18,36 @@
  */
 package org.meveo.model.generic.wf;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
+import org.meveo.model.filter.Filter;
+
+import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Generic Workflow for entity data processing
+ *
+ * @author Amine Ben Aicha
+ * @author Mounir Bahije
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ModuleItem
@@ -66,6 +72,11 @@ public class GenericWorkflow extends EnableBusinessEntity {
      */
     @Column(name = "target_cet_code", length = 255)
     private String targetCetCode;
+
+    /** The filter. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "filter_id")
+    private Filter filter;
 
     /**
      * A list of workflow instances
@@ -105,6 +116,14 @@ public class GenericWorkflow extends EnableBusinessEntity {
 
     public void setTargetEntityClass(String targetEntityClass) {
         this.targetEntityClass = targetEntityClass;
+    }
+
+    public Filter getFilter() {
+        return filter;
+    }
+
+    public void setFilter(Filter filter) {
+        this.filter = filter;
     }
 
     public List<WorkflowInstance> getWfInstances() {

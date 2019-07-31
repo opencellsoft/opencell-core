@@ -23,12 +23,12 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInterface;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
-
 
 /**
  * Asynchronous FlatFile processing.
@@ -54,9 +54,12 @@ public class FlatFileProcessingAsync {
     private JobExecutionService jobExecutionService;
 
     @Inject
+    private CurrentUserProvider currentUserProvider;
+
+    @Inject
     @CurrentUser
     protected MeveoUser currentUser;
-    
+
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
@@ -71,13 +74,17 @@ public class FlatFileProcessingAsync {
      * @param fileName file name
      * @param originFilename originFilename var name
      * @param errorAction action to do on error : continue, stop or rollback after an error
+     * @param lastCurrentUser
      * @return Future of FlatFileAsyncListResponse
      * @throws Exception Exception
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Future<FlatFileAsyncListResponse> launchAndForget(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName,
-            String fileName, String originFilename, String errorAction) throws Exception {
+            String fileName, String originFilename, String errorAction, MeveoUser lastCurrentUser) throws Exception {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
         long cpLines = 0;
         FlatFileAsyncListResponse flatFileAsyncListResponse = new FlatFileAsyncListResponse();
         while (fileParser.hasNext() && jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {

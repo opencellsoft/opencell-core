@@ -1,20 +1,27 @@
 package org.meveo.model.dunning;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.RecordedInvoice;
-
-import javax.persistence.*;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Dunning document
@@ -27,20 +34,25 @@ import java.util.List;
 public class DunningDocument extends BusinessEntity implements IWFEntity {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Customer account
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "customer_account_id")
     private CustomerAccount customerAccount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "billing_subscription_id")
     private Subscription subscription;
 
     /**
      * Unpaid invoices associated to this dunning document
      */
-    @OneToMany(mappedBy = "dunningDocument", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "dunningDocument", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH, orphanRemoval = true)
     @Where(clause = "transaction_type='I'")
     private List<RecordedInvoice> dueInvoices = new ArrayList<>();
 
@@ -48,7 +60,7 @@ public class DunningDocument extends BusinessEntity implements IWFEntity {
      * payments done withing the dunning process
      * associated with this dunning doc
      */
-    @OneToMany(mappedBy = "dunningDocument", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "dunningDocument", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH, orphanRemoval = true)
     @Where(clause = "transaction_type='P'")
     private List<Payment> payments = new ArrayList<>();
 
@@ -79,9 +91,18 @@ public class DunningDocument extends BusinessEntity implements IWFEntity {
     public List<Payment> getPayments() {
         return payments;
     }
-
+    
     public void setPayments(List<Payment> payments) {
         this.payments = payments;
+    }
+    
+    @Transient
+    public List<Payment> addPayment(Payment payment) {
+        if(payments == null) {
+            payments = new ArrayList<Payment>();
+        }
+        payments.add(payment);
+        return payments;
     }
     
     @Transient

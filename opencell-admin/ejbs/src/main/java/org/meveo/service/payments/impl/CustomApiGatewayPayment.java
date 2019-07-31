@@ -264,7 +264,15 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
-        return null;
+    	 Map<String, Object> scriptContext = new HashMap<String, Object>();
+         scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
+         scriptContext.put(PaymentScript.CONTEXT_HOSTED_CO, hostedCheckoutInput);
+        
+         paymentScriptInterface.getHostedCheckoutUrl(scriptContext);
+  
+         String hostedCheckoutUrl = (String) scriptContext.get(PaymentScript.RESULT_HOSTED_CO_URL);
+        
+         return hostedCheckoutUrl;
     }
 
     @Override

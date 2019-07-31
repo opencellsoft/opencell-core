@@ -3,7 +3,9 @@ package org.meveo.admin.job;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -16,7 +18,9 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.async.FlatFileAsyncListResponse;
 import org.meveo.admin.async.FlatFileAsyncUnitResponse;
 import org.meveo.admin.async.FlatFileProcessingAsync;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.admin.util.FlatFileValidator;
 import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.FileParserFlatworm;
 import org.meveo.commons.parsers.IFileParser;
@@ -26,8 +30,13 @@ import org.meveo.commons.utils.FileParsers;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.bi.FileStatusEnum;
+import org.meveo.model.bi.FlatFile;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.bi.impl.FlatFileService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
@@ -36,8 +45,8 @@ import org.slf4j.Logger;
  * The Class FlatFileProcessingJobBean.
  * 
  * @author anasseh
- * @lastModifiedVersion willBeSetLater
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.3.0
  */
 @Stateless
 public class FlatFileProcessingJobBean {
@@ -52,7 +61,17 @@ public class FlatFileProcessingJobBean {
 
     @Inject
     private FlatFileProcessingAsync flatFileProcessingAsync;
-    
+
+    @Inject
+    private FlatFileService flatFileService;
+
+    @Inject
+    private FlatFileValidator flatFileValidator;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
     /** The Constant DATETIME_FORMAT. */
     private static final String DATETIME_FORMAT = "dd_MM_yyyy-HHmmss";
 
@@ -94,13 +113,13 @@ public class FlatFileProcessingJobBean {
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, String inputDir, String outDir, String archDir, String rejDir, File file, String mappingConf, String scriptInstanceFlowCode, String recordVariableName,
-            Map<String, Object> context, String originFilename, String formatTransfo, String errorAction) {
+    public void execute(JobExecutionResultImpl result, String inputDir, String outDir, String archDir, String rejDir, File file, String mappingConf, String scriptInstanceFlowCode,
+            String recordVariableName, Map<String, Object> context, String originFilename, String formatTransfo, String errorAction) {
         log.debug("Running for inputDir={}, scriptInstanceFlowCode={},formatTransfo={}, errorAction={}", inputDir, scriptInstanceFlowCode, formatTransfo, errorAction);
 
         outputDir = outDir != null ? outDir : inputDir + File.separator + "output";
         rejectDir = rejDir != null ? rejDir : inputDir + File.separator + "reject";
-        archiveDir = archDir != null ? archDir :inputDir + File.separator + "archive";
+        archiveDir = archDir != null ? archDir : inputDir + File.separator + "archive";
 
         File f = new File(outputDir);
         if (!f.exists()) {
@@ -129,6 +148,7 @@ public class FlatFileProcessingJobBean {
             IFileParser fileParser = null;
             File currentFile = null;
             boolean isCsvFromExcel = false;
+            List<String> errors = new ArrayList<>();
             try {
                 log.info("InputFiles job {} in progress...", file.getAbsolutePath());
                 if ("Xlsx_to_Csv".equals(formatTransfo)) {
@@ -159,12 +179,16 @@ public class FlatFileProcessingJobBean {
                 fileParser.setDataName(recordVariableName);
                 fileParser.parsing();
 
+                MeveoUser lastCurrentUser = currentUser.unProxy();
+
                 Future<FlatFileAsyncListResponse> futures = flatFileProcessingAsync.launchAndForget(fileParser, result, script, recordVariableName, fileName, originFilename,
-                    errorAction);
+                    errorAction, lastCurrentUser);
                 for (FlatFileAsyncUnitResponse flatFileAsyncResponse : futures.get().getResponses()) {
                     cpLines++;
                     if (!flatFileAsyncResponse.isSuccess()) {
-                        result.registerError("file=" + fileName + ", line=" + flatFileAsyncResponse.getLineNumber() + ": " + flatFileAsyncResponse.getReason());
+                        String errorDescription = "file=" + fileName + ", line=" + flatFileAsyncResponse.getLineNumber() + ": " + flatFileAsyncResponse.getReason();
+                        errors.add(errorDescription);
+                        result.registerError(errorDescription);
                         rejectRecord(flatFileAsyncResponse.getLineRecord(), flatFileAsyncResponse.getReason());
                     } else {
                         outputRecord(flatFileAsyncResponse.getLineRecord());
@@ -176,7 +200,9 @@ public class FlatFileProcessingJobBean {
                     if (FlatFileProcessingJob.ROLLBBACK.equals(errorAction)) {
                         stateFile = "rollbacked";
                     }
-                    report += "\r\n file " + fileName + " is " + stateFile;
+                    String errorDescription = "\r\n file " + fileName + " is " + stateFile;
+                    report += errorDescription;
+                    errors.add(errorDescription);
                 }
 
                 log.info("InputFiles job {} done.", fileName);
@@ -185,10 +211,12 @@ public class FlatFileProcessingJobBean {
                 report += "\r\n " + e.getMessage();
                 log.error("Failed to process Record file {}", fileName, e);
                 result.registerError(e.getMessage());
+                errors.add(e.getMessage());
                 if (currentFile != null) {
                     moveFile(rejectDir, currentFile, fileName);
                 }
             } finally {
+                updateFlatFile(errors);
                 try {
                     if (fileParser != null) {
                         fileParser.close();
@@ -207,7 +235,7 @@ public class FlatFileProcessingJobBean {
                     if (currentFile != null) {
                         // Move current CSV file to save directory, if his origin from an Excel transformation, else CSV file was deleted.
                         if (isCsvFromExcel == false) {
-                            moveFile(archiveDir,currentFile,fileName);                            
+                            moveFile(archiveDir, currentFile, fileName);
                         } else {
                             currentFile.delete();
                         }
@@ -250,10 +278,10 @@ public class FlatFileProcessingJobBean {
      */
     private void moveFile(String dest, File file, String name) {
         String destName = name;
-        if((new File(dest + File.separator + name)).exists()) {
-            destName += "_COPY_"+DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT);
+        if ((new File(dest + File.separator + name)).exists()) {
+            destName += "_COPY_" + DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT);
         }
-        FileUtils.moveFile(dest, file, destName);        
+        FileUtils.moveFile(dest, file, destName);
     }
 
     /**
@@ -281,8 +309,8 @@ public class FlatFileProcessingJobBean {
     private void outputRecord(String lineRecord) throws FileNotFoundException {
         if (outputFileWriter == null) {
             File outputFile = new File(outputDir + File.separator + fileName + ".processed");
-            if(outputFile.exists()) {
-                outputFile = new File(outputDir + File.separator + fileName + "_COPY_"+DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT)+".processed");
+            if (outputFile.exists()) {
+                outputFile = new File(outputDir + File.separator + fileName + "_COPY_" + DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT) + ".processed");
             }
             outputFileWriter = new PrintWriter(outputFile);
             outputFileWriter.print(lineRecord);
@@ -301,8 +329,8 @@ public class FlatFileProcessingJobBean {
     private void rejectRecord(String lineRecord, String reason) {
         if (rejectFileWriter == null) {
             File rejectFile = new File(rejectDir + File.separator + fileName + ".rejected");
-            if(rejectFile.exists()) {
-                rejectFile = new File(rejectDir + File.separator + fileName + "_COPY_"+DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT)+".rejected");
+            if (rejectFile.exists()) {
+                rejectFile = new File(rejectDir + File.separator + fileName + "_COPY_" + DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT) + ".rejected");
             }
             try {
                 rejectFileWriter = new PrintWriter(rejectFile);
@@ -313,6 +341,36 @@ public class FlatFileProcessingJobBean {
         } else {
             rejectFileWriter.println("");
             rejectFileWriter.print(lineRecord + "=>" + reason);
+        }
+    }
+
+    /**
+     * update flat file
+     *
+     * @param errors processed flat file errors
+     */
+    private void updateFlatFile(List<String> errors) {
+        try {
+            String[] param = fileName.split("_");
+            String code = param.length > 0 ? param[0] : null;
+
+            FileStatusEnum status = FileStatusEnum.VALID;
+            String errorMessage = null;
+            if (errors != null && !errors.isEmpty()) {
+                status = FileStatusEnum.REJECTED;
+                int maxErrors = errors.size() > flatFileValidator.getBadLinesLimit() ? flatFileValidator.getBadLinesLimit() : errors.size();
+                errorMessage = String.join(",", errors.subList(0, maxErrors));
+            }
+            FlatFile flatFile = flatFileService.findByCode(code);
+            if (flatFile == null) {
+                flatFileService.create(fileName, null, errorMessage, status);
+            } else {
+                flatFile.setStatus(status);
+                flatFile.setErrorMessage(errorMessage);
+                flatFileService.update(flatFile);
+            }
+        } catch (BusinessException e) {
+            log.error("Failed to update flat file {}", fileName, e);
         }
     }
 
