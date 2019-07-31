@@ -21335,7 +21335,7 @@ public class Action1 extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>http://localhost:8080/opencell/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -21358,7 +21358,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="cfdc5ee4-56b3-4e32-80e9-fbc78d7f2f13" name="Contains 1">
               <con:configuration>
-                <token>The following parameters are required or contain invalid values: ${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MAP_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MATRIX_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_LIST_PI_REQUIRED.</token>
+                <token>The following parameters are required or contain invalid values: ${#Project#baseEntityPrefix}_STRING_LIST_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MAP_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MATRIX_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED.</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -27810,7 +27810,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="cfdc5ee4-56b3-4e32-80e9-fbc78d7f2f13" name="Contains 1">
               <con:configuration>
-                <token>&lt;message>The following parameters are required or contain invalid values: ${#Project#baseEntityPrefix}_EL_12, ${#Project#baseEntityPrefix}_EL_10, ${#Project#baseEntityPrefix}_EL_19, ${#Project#baseEntityPrefix}_EL_18, ${#Project#baseEntityPrefix}_EL_16, ${#Project#baseEntityPrefix}_EL_15, ${#Project#baseEntityPrefix}_EL_13, ${#Project#baseEntityPrefix}_EL_49-1, ${#Project#baseEntityPrefix}_EL_30-1, ${#Project#baseEntityPrefix}_EL_34, ${#Project#baseEntityPrefix}_EL_33, ${#Project#baseEntityPrefix}_EL_31, ${#Project#baseEntityPrefix}_EL_30, ${#Project#baseEntityPrefix}_EL_39, ${#Project#baseEntityPrefix}_EL_37, ${#Project#baseEntityPrefix}_EL_36, ${#Project#baseEntityPrefix}_EL_27-1, ${#Project#baseEntityPrefix}_EL_22, ${#Project#baseEntityPrefix}_EL_21, ${#Project#baseEntityPrefix}_EL_28, ${#Project#baseEntityPrefix}_EL_27, ${#Project#baseEntityPrefix}_EL_25, ${#Project#baseEntityPrefix}_EL_24, ${#Project#baseEntityPrefix}_EL_54-1, ${#Project#baseEntityPrefix}_EL_56, ${#Project#baseEntityPrefix}_EL_55, ${#Project#baseEntityPrefix}_EL_28-1, ${#Project#baseEntityPrefix}_EL_54, ${#Project#baseEntityPrefix}_EL_52, ${#Project#baseEntityPrefix}_EL_51, ${#Project#baseEntityPrefix}_EL_59, ${#Project#baseEntityPrefix}_EL_58, ${#Project#baseEntityPrefix}_EL_57, ${#Project#baseEntityPrefix}_EL_45, ${#Project#baseEntityPrefix}_EL_43, ${#Project#baseEntityPrefix}_EL_42, ${#Project#baseEntityPrefix}_EL_9, ${#Project#baseEntityPrefix}_EL_40, ${#Project#baseEntityPrefix}_EL_7, ${#Project#baseEntityPrefix}_EL_6, ${#Project#baseEntityPrefix}_EL_49, ${#Project#baseEntityPrefix}_EL_48, ${#Project#baseEntityPrefix}_EL_46, ${#Project#baseEntityPrefix}_EL_51-1, ${#Project#baseEntityPrefix}_EL_4, ${#Project#baseEntityPrefix}_EL_3, ${#Project#baseEntityPrefix}_EL_1, ${#Project#baseEntityPrefix}_EL_25-1, ${#Project#baseEntityPrefix}_EL_52-1.&lt;/message></token>
+                <token>&lt;message>The following parameters are required or contain invalid values: ${#Project#baseEntityPrefix}_EL_1, ${#Project#baseEntityPrefix}_EL_10, ${#Project#baseEntityPrefix}_EL_12, ${#Project#baseEntityPrefix}_EL_13, ${#Project#baseEntityPrefix}_EL_15, ${#Project#baseEntityPrefix}_EL_16, ${#Project#baseEntityPrefix}_EL_18, ${#Project#baseEntityPrefix}_EL_19, ${#Project#baseEntityPrefix}_EL_21, ${#Project#baseEntityPrefix}_EL_22, ${#Project#baseEntityPrefix}_EL_24, ${#Project#baseEntityPrefix}_EL_25, ${#Project#baseEntityPrefix}_EL_25-1, ${#Project#baseEntityPrefix}_EL_27, ${#Project#baseEntityPrefix}_EL_27-1, ${#Project#baseEntityPrefix}_EL_28, ${#Project#baseEntityPrefix}_EL_28-1, ${#Project#baseEntityPrefix}_EL_3, ${#Project#baseEntityPrefix}_EL_30, ${#Project#baseEntityPrefix}_EL_30-1, ${#Project#baseEntityPrefix}_EL_31, ${#Project#baseEntityPrefix}_EL_33, ${#Project#baseEntityPrefix}_EL_34, ${#Project#baseEntityPrefix}_EL_36, ${#Project#baseEntityPrefix}_EL_37, ${#Project#baseEntityPrefix}_EL_39, ${#Project#baseEntityPrefix}_EL_4, ${#Project#baseEntityPrefix}_EL_40, ${#Project#baseEntityPrefix}_EL_42, ${#Project#baseEntityPrefix}_EL_43, ${#Project#baseEntityPrefix}_EL_45, ${#Project#baseEntityPrefix}_EL_46, ${#Project#baseEntityPrefix}_EL_48, ${#Project#baseEntityPrefix}_EL_49, ${#Project#baseEntityPrefix}_EL_49-1, ${#Project#baseEntityPrefix}_EL_51, ${#Project#baseEntityPrefix}_EL_51-1, ${#Project#baseEntityPrefix}_EL_52, ${#Project#baseEntityPrefix}_EL_52-1, ${#Project#baseEntityPrefix}_EL_54, ${#Project#baseEntityPrefix}_EL_54-1, ${#Project#baseEntityPrefix}_EL_55, ${#Project#baseEntityPrefix}_EL_56, ${#Project#baseEntityPrefix}_EL_57, ${#Project#baseEntityPrefix}_EL_58, ${#Project#baseEntityPrefix}_EL_59, ${#Project#baseEntityPrefix}_EL_6, ${#Project#baseEntityPrefix}_EL_7, ${#Project#baseEntityPrefix}_EL_9.&lt;/message></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -34369,7 +34369,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>89</con:value>
+        <con:value>84</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -37001,7 +37001,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>129</con:value>
+        <con:value>124</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -38550,7 +38550,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>92</con:value>
+        <con:value>87</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39773,7 +39773,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>81</con:value>
+        <con:value>76</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
