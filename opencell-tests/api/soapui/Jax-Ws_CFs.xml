@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.5.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -34335,7 +34335,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>81</con:value>
+        <con:value>84</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -36967,7 +36967,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>121</con:value>
+        <con:value>124</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -38516,7 +38516,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>83</con:value>
+        <con:value>86</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39739,7 +39739,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>73</con:value>
+        <con:value>76</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
