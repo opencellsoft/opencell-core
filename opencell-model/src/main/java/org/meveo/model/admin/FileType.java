@@ -16,37 +16,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.service.admin.impl;
+package org.meveo.model.admin;
 
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.FileFormat;
-import org.meveo.service.base.BusinessService;
-import org.meveo.service.base.PersistenceService;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import java.util.List;
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
- * File format service
+ * File format entity
  *
  * @author Abdellatif BARI
- * @since 7.3.0
+ * @since 8.0.0
  */
+@Entity
+@Cacheable
+@ExportIdentifier("code")
+@Table(name = "adm_file_type")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "adm_file_type_seq"), })
+public class FileType extends BusinessEntity {
 
-@Stateless
-public class FileFormatService extends BusinessService<FileFormat> {
-
-    /**
-     * @return list of file format
-     * @see PersistenceService#list()
-     */
-    @SuppressWarnings("unchecked")
-    public List<FileFormat> list() {
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "e", null);
-        queryBuilder.addOrderCriterion("e.code", true);
-        Query query = queryBuilder.getQuery(getEntityManager());
-        return query.getResultList();
-    }
+    private static final long serialVersionUID = 2847700430225097511L;
 
 }

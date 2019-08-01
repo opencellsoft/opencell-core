@@ -127,10 +127,16 @@ public class FlatFileValidator {
         }
     }
 
-    private String getFileManagementDirectory(String subdirectory) {
+    /**
+     * Get absolute path
+     *
+     * @param path directory path
+     * @return absolute path
+     */
+    private String getDirectory(String path) {
         //StringBuilder reportDir = new StringBuilder(ParamBean.getInstance().getChrootDir(provider.getCode()));
         StringBuilder reportDir = new StringBuilder(ParamBean.getInstance().getChrootDir(""));
-        reportDir.append(File.separator).append(subdirectory);
+        reportDir.append(File.separator).append(path);
         return reportDir.toString();
     }
 
@@ -146,7 +152,7 @@ public class FlatFileValidator {
         String inputDirectory = newInputDirectory;
         if (StringUtils.isBlank(inputDirectory)) {
             if (fileFormat != null && !StringUtils.isBlank(fileFormat.getInputDirectory())) {
-                inputDirectory = getFileManagementDirectory(fileFormat.getInputDirectory());
+                inputDirectory = getDirectory(fileFormat.getInputDirectory());
             }
         }
         if (StringUtils.isBlank(inputDirectory)) {
@@ -166,7 +172,7 @@ public class FlatFileValidator {
         String rejectDirectory = null;
         if (StringUtils.isBlank(newInputDirectory)) {
             if (fileFormat != null && !StringUtils.isBlank(fileFormat.getRejectDirectory())) {
-                rejectDirectory = getFileManagementDirectory(fileFormat.getRejectDirectory());
+                rejectDirectory = getDirectory(fileFormat.getRejectDirectory());
             }
         }
         if (StringUtils.isBlank(rejectDirectory)) {
@@ -174,7 +180,8 @@ public class FlatFileValidator {
             if (rejectDirectory.endsWith(File.separator)) {
                 rejectDirectory = rejectDirectory.substring(0, rejectDirectory.lastIndexOf(File.separator));
             }
-            rejectDirectory = rejectDirectory.substring(0, rejectDirectory.lastIndexOf(File.separator)) + File.separator + "reject";
+            //rejectDirectory = rejectDirectory.substring(0, rejectDirectory.lastIndexOf(File.separator)) + File.separator + "reject";
+            rejectDirectory = rejectDirectory + File.separator + "reject";
         }
         return rejectDirectory;
     }
@@ -291,7 +298,8 @@ public class FlatFileValidator {
                 errors.append(e.getMessage());
             }
         } else { // Default validation (with extension).
-            if (!FilenameUtils.getExtension(fileName.toLowerCase()).equals(fileFormat.getFileType())) {
+            if (fileFormat.getFileTypes() != null && !fileFormat.getFileTypes().isEmpty() && !fileFormat.getFileTypes()
+                    .contains(FilenameUtils.getExtension(fileName.toLowerCase()))) {
                 log.info("The file type is invalid");
                 errors.append("The file type is invalid");
             }
@@ -317,7 +325,8 @@ public class FlatFileValidator {
         StringBuilder errors = validate(file, fileName, fileFormat, inputDirectory);
 
         //Log in database the input file.
-        FlatFile flatFile = flatFileService.create(fileName, fileFormat, errors.toString(), errors.length() > 0 ? FileStatusEnum.BAD_FORMED : FileStatusEnum.WELL_FORMED);
+        FlatFile flatFile = flatFileService
+                .create(fileName, fileFormat, errors.toString(), errors.length() > 0 ? FileStatusEnum.BAD_FORMED : FileStatusEnum.WELL_FORMED, null, null, null, null);
 
         //Move the file to the corresponding directory
         moveFile(file, flatFile, inputDirectory, rejectDirectory);
@@ -339,12 +348,12 @@ public class FlatFileValidator {
 
         if (!StringUtils.isBlank(fileFormatCode)) {
             FileFormat fileFormat = fileFormatService.findByCode(fileFormatCode);
-            String inputDirectory = getInputDirectory(fileFormat, newInputDirectory);
-            String rejectDirectory = getRejectDirectory(fileFormat, newInputDirectory);
             if (fileFormat == null) {
                 log.error("The file format " + fileFormatCode + " is not found");
                 throw new BusinessException("The file format " + fileFormatCode + " is not found");
             }
+            String inputDirectory = getInputDirectory(fileFormat, newInputDirectory);
+            String rejectDirectory = getRejectDirectory(fileFormat, newInputDirectory);
             validateAndLogFile(file, fileFormat, fileName, inputDirectory, rejectDirectory);
         }
     }

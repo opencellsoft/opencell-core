@@ -87,7 +87,7 @@ import org.primefaces.model.UploadedFile;
  * view, delete operations). It works with Manaty custom JSF components.
  *
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.3.0
+ * @lastModifiedVersion 8.0.0
  */
 @Named
 @ViewScoped
@@ -467,10 +467,11 @@ public class UserBean extends CustomFieldBean<User> {
 
         log.debug("upload file={},autoUnziped {}", fileName, autoUnzipped);
         // FIXME: use resource bundle
+        File tempDirectory = null;
         try {
             String folderPath = null;
             String  filePath = null;
-            File tempDirectory = null;
+
             if (fileFormat != null) {
                 folderPath = getFilePath() + File.separator + "temp" + DateUtils.formatDateWithPattern(new Date(), "dd_MM_yyyy-HHmmss");
                 tempDirectory = new File(folderPath);
@@ -518,6 +519,10 @@ public class UserBean extends CustomFieldBean<User> {
         } catch (Exception e) {
             log.error("Failed to upload a file {}", fileName, e);
             messages.error("Error while uploading " + fileName);
+        }finally {
+            if(tempDirectory != null && tempDirectory.isDirectory()){
+                tempDirectory.delete();
+            }
         }
     }
 
