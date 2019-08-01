@@ -38247,7 +38247,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <dueDate>2015-06-15</dueDate>\r
             <transactionDate>2015-06-15</transactionDate>\r
             <paymentMethod>CHECK</paymentMethod>
-            <isToMatching>true</isToMatching>\r
+            <isToMatching>false</isToMatching>\r
             <customFields>\r
                <customField code="${#Project#baseEntityPrefix}_AccountOperation_LONG_LIST_VC" valueDate="2016-10-10">\r
                   <listValue>\r
