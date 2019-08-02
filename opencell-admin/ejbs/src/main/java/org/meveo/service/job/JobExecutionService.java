@@ -96,7 +96,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
             boolean isPersistResult = false;
 
             if ((resultToPersist.getNbItemsCorrectlyProcessed() + resultToPersist.getNbItemsProcessedWithError() + resultToPersist.getNbItemsProcessedWithWarning()) > 0) {
-                log.info(job.getClass().getName() + resultToPersist.toString());
+                log.info(job.getClass().getName() + " " + resultToPersist.toString());
                 isPersistResult = true;
             } else {
                 log.info("{}/{}: No items were found to process", job.getClass().getName(), jobInstance.getCode());

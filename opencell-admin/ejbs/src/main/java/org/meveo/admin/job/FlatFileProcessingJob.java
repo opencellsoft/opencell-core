@@ -99,7 +99,7 @@ public class FlatFileProcessingJob extends Job {
             String scriptInstanceFlowCode = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_SCRIPTS_FLOW);
             String fileNameExtension = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_EXTENSION);
             String recordVariableName = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_RECORD_VARIABLE_NAME);
-            String originFilename = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ORIGIN_FILENAME);
+            String filenameVariableName = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ORIGIN_FILENAME);
             String formatTransfo = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FORMAT_TRANSFO);
             String errorAction = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ERROR_ACTION);
             Map<String, Object> initContext = new HashMap<String, Object>();
@@ -137,10 +137,33 @@ public class FlatFileProcessingJob extends Job {
             if (!f.exists()) {
                 f.mkdirs();
             }
+
+            outputDir = outputDir != null ? outputDir : inputDir + File.separator + "output";
+            rejectDir = rejectDir != null ? rejectDir : inputDir + File.separator + "reject";
+            archiveDir = archiveDir != null ? archiveDir : inputDir + File.separator + "archive";
+
+            f = new File(outputDir);
+            if (!f.exists()) {
+                log.debug("outputDir {} not exist", outputDir);
+                f.mkdirs();
+                log.debug("outputDir {} creation ok", outputDir);
+            }
+            f = new File(rejectDir);
+            if (!f.exists()) {
+                log.debug("rejectDir {} not exist", rejectDir);
+                f.mkdirs();
+                log.debug("rejectDir {} creation ok", rejectDir);
+            }
+            f = new File(archiveDir);
+            if (!f.exists()) {
+                log.debug("archiveDir {} not exist", archiveDir);
+                f.mkdirs();
+                log.debug("archiveDir {} creation ok", archiveDir);
+            }
+
             File[] files = FileUtils.listFilesByNameFilter(inputDir, fileExtensions, fileNameFilter);
             if (files == null || files.length == 0) {
-                String msg = String.format("there is no file in %s with extension %s", inputDir, fileExtensions);
-                log.debug(msg);
+                log.debug("There is no file in {} with extension {} to by processed by FlatFileProcessing {} job", inputDir, fileExtensions, result.getJobInstance().getCode());
                 return;
             }
             for (File file : files) {
@@ -148,7 +171,7 @@ public class FlatFileProcessingJob extends Job {
                     break;
                 }
                 flatFileProcessingJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext,
-                    originFilename, formatTransfo, errorAction, nbRuns, waitingMillis);
+                    filenameVariableName, formatTransfo, errorAction, nbRuns, waitingMillis);
             }
 
         } catch (Exception e) {

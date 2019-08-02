@@ -3,7 +3,6 @@ package org.meveo.admin.job;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -23,7 +22,6 @@ import org.meveo.commons.utils.ExcelToCsv;
 import org.meveo.commons.utils.FileParsers;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.script.ScriptInstanceService;
@@ -51,58 +49,36 @@ public class FlatFileProcessingJobBean {
     @Inject
     private FlatFileProcessing flatFileProcessing;
 
-    /** The Constant DATETIME_FORMAT. */
-    private static final String DATETIME_FORMAT = "dd_MM_yyyy-HHmmss";
-
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
 
     /**
-     * Execute.
+     * Process a single file
      *
-     * @param result job execution result
-     * @param inputDir the input dir
-     * @param file the file
-     * @param mappingConf the mapping configuration
-     * @param scriptInstanceFlowCode the script instance flow code
-     * @param recordVariableName the record variable name
-     * @param context the context
-     * @param originFilename the origin filename
-     * @param formatTransfo the format transform to
+     * @param result Job execution result
+     * @param inputDir Input directory
+     * @param outputDir Directory to store a successfully processed records
+     * @param archiveDir Directory to store a copy of a processed file
+     * @param rejectDir Directory to store a failed records
+     * @param file File to process
+     * @param mappingConf File record mapping configuration
+     * @param scriptInstanceFlowCode Script to invoke for each record
+     * @param recordVariableName Variable name in script for record
+     * @param context Processing parameters
+     * @param filenameVariableName Filename variable name as it will appear in the script context
+     * @param formatTransfo Format to transform to
      * @param errorAction action to do on error : continue, stop or rollback after an error
      * @param nbRuns Number of parallel executions
-     * @param waitingMills Number of milliseconds to wait between launching paralel processing threads
+     * @param waitingMills Number of milliseconds to wait between launching parallel processing threads
      */
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl result, String inputDir, String outDir, String archDir, String rejDir, File file, String mappingConf, String scriptInstanceFlowCode,
-            String recordVariableName, Map<String, Object> context, String originFilename, String formatTransfo, String errorAction, Long nbRuns, Long waitingMillis) {
+    public void execute(JobExecutionResultImpl result, String inputDir, String outputDir, String archiveDir, String rejectDir, File file, String mappingConf,
+            String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String filenameVariableName, String formatTransfo, String errorAction,
+            Long nbRuns, Long waitingMillis) {
 
-        log.debug("Running for inputDir={}, file={}, scriptInstanceFlowCode={},formatTransfo={}, errorAction={}", inputDir, file.getAbsolutePath(), scriptInstanceFlowCode,
-            formatTransfo, errorAction);
-
-        String outputDir = outDir != null ? outDir : inputDir + File.separator + "output";
-        String rejectDir = rejDir != null ? rejDir : inputDir + File.separator + "reject";
-        String archiveDir = archDir != null ? archDir : inputDir + File.separator + "archive";
-
-        File f = new File(outputDir);
-        if (!f.exists()) {
-            log.debug("outputDir {} not exist", outputDir);
-            f.mkdirs();
-            log.debug("outputDir {} creation ok", outputDir);
-        }
-        f = new File(rejectDir);
-        if (!f.exists()) {
-            log.debug("rejectDir {} not exist", rejectDir);
-            f.mkdirs();
-            log.debug("rejectDir {} creation ok", rejectDir);
-        }
-        f = new File(archiveDir);
-        if (!f.exists()) {
-            log.debug("saveDir {} not exist", archiveDir);
-            f.mkdirs();
-            log.debug("saveDir {} creation ok", archiveDir);
-        }
+        log.debug("Processing FlatFile in inputDir={}, file={}, scriptInstanceFlowCode={},formatTransfo={}, errorAction={}", inputDir, file.getAbsolutePath(),
+            scriptInstanceFlowCode, formatTransfo, errorAction);
 
         String fileName = file.getName();
         ScriptInterface script = null;
@@ -119,13 +95,13 @@ public class FlatFileProcessingJobBean {
                 isCsvFromExcel = true;
                 ExcelToCsv excelToCsv = new ExcelToCsv();
                 excelToCsv.convertExcelToCSV(file.getAbsolutePath(), file.getParent(), ";");
-                moveFile(archiveDir, file, fileName);
+                FileUtils.moveFileDontOverwrite(archiveDir, file, fileName);
                 file = new File(inputDir + File.separator + fileName.replaceAll(".xlsx", ".csv").replaceAll(".xls", ".csv"));
             }
             currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
             script = scriptInstanceService.getScriptInstance(scriptInstanceFlowCode);
             context.put("outputDir", outputDir);
-            context.put(originFilename, fileName);
+            context.put(filenameVariableName, fileName);
             script.init(context);
             FileParsers parserUsed = getParserType(mappingConf);
             if (parserUsed == FileParsers.FLATWORM) {
@@ -153,10 +129,10 @@ public class FlatFileProcessingJobBean {
             MeveoUser lastCurrentUser = currentUser.unProxy();
             for (long i = 0; i < nbRuns; i++) {
                 if (FlatFileProcessingJob.ROLLBACK.equals(errorAction)) {
-                    futures.add(flatFileProcessing.processFileAsyncInOneTx(fileParser, result, script, recordVariableName, fileName, originFilename, errorAction, rejectFileWriter,
-                        outputFileWriter, lastCurrentUser));
+                    futures.add(flatFileProcessing.processFileAsyncInOneTx(fileParser, result, script, recordVariableName, fileName, filenameVariableName, errorAction,
+                        rejectFileWriter, outputFileWriter, lastCurrentUser));
                 } else {
-                    futures.add(flatFileProcessing.processFileAsync(fileParser, result, script, recordVariableName, fileName, originFilename, errorAction, rejectFileWriter,
+                    futures.add(flatFileProcessing.processFileAsync(fileParser, result, script, recordVariableName, fileName, filenameVariableName, errorAction, rejectFileWriter,
                         outputFileWriter, lastCurrentUser));
                 }
                 if (waitingMillis > 0) {
@@ -191,14 +167,14 @@ public class FlatFileProcessingJobBean {
                 errors.add(errorDescription);
             }
 
-            log.info("InputFiles job {} done.", fileName);
+            log.info("Finished processing FlatFile {}", fileName);
 
         } catch (Exception e) {
-            log.error("Failed to process Record file {}", fileName, e);
+            log.error("Failed to process FlatFile file {}", fileName, e);
             result.addReport(e.getMessage());
             errors.add(e.getMessage());
             if (currentFile != null) {
-                moveFile(rejectDir, currentFile, fileName);
+                FileUtils.moveFileDontOverwrite(rejectDir, currentFile, fileName);
             }
 
         } finally {
@@ -221,13 +197,13 @@ public class FlatFileProcessingJobBean {
                 if (currentFile != null) {
                     // Move current CSV file to save directory, if his origin from an Excel transformation, else CSV file was deleted.
                     if (isCsvFromExcel == false) {
-                        moveFile(archiveDir, currentFile, fileName);
+                        FileUtils.moveFileDontOverwrite(archiveDir, currentFile, fileName);
                     } else {
                         currentFile.delete();
                     }
                 }
             } catch (Exception e) {
-                result.addReport("\r\n cannot move file to save directory " + fileName);
+                result.addReport("\r\n cannot move file to archive directory " + fileName);
             }
 
             try {
@@ -258,21 +234,6 @@ public class FlatFileProcessingJobBean {
                 log.error("Failed to close output file writer for file {}", fileName, e);
             }
         }
-    }
-
-    /**
-     * Move file.
-     *
-     * @param dest the destination
-     * @param file the file
-     * @param name the file name
-     */
-    private void moveFile(String dest, File file, String name) {
-        String destName = name;
-        if ((new File(dest + File.separator + name)).exists()) {
-            destName += "_COPY_" + DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT);
-        }
-        FileUtils.moveFile(dest, file, destName);
     }
 
     /**
