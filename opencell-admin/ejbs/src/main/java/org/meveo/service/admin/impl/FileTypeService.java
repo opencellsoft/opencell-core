@@ -19,7 +19,7 @@
 package org.meveo.service.admin.impl;
 
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.FileFormat;
+import org.meveo.model.admin.FileType;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 
@@ -31,18 +31,18 @@ import java.util.List;
  * File format service
  *
  * @author Abdellatif BARI
- * @since 7.3.0
+ * @since 8.0.0
  */
 
 @Stateless
-public class FileFormatService extends BusinessService<FileFormat> {
+public class FileTypeService extends BusinessService<FileType> {
 
     /**
-     * @return list of file format
+     * @return list of file type
      * @see PersistenceService#list()
      */
     @SuppressWarnings("unchecked")
-    public List<FileFormat> list() {
+    public List<FileType> list() {
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "e", null);
         queryBuilder.addOrderCriterion("e.code", true);
         Query query = queryBuilder.getQuery(getEntityManager());

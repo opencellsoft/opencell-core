@@ -1,5 +1,23 @@
 package org.meveo.apiv2.services;
 
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,33 +29,25 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.Country;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
+import org.meveo.model.shared.Name;
+import org.meveo.model.shared.Title;
 import org.meveo.service.base.PersistenceService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -51,23 +61,23 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GenericApiLoadServiceTest {
-    
+
     @Spy
     @InjectMocks
     private GenericApiLoadService sut;
-    
+
     @Mock
     private GenericRequestDto genericRequestDto;
-    
+
     @Mock
     private EntityManagerWrapper entityManagerWrapper;
-    
+
     @Mock
     private EntityManager entityManager;
-    
+
     @Mock
     private PersistenceService persistenceService;
-    
+
     @Before
     public void setUp() {
         when(entityManagerWrapper.getEntityManager()).thenReturn(entityManager);
@@ -75,12 +85,12 @@ public class GenericApiLoadServiceTest {
         doReturn(persistenceService).when(sut).getPersistenceService(any());
         when(persistenceService.list(any(PaginationConfiguration.class))).thenReturn(new ArrayList<>());
     }
-    
+
     @Test
     public void given_an_empty_model_name_when_load_model_then_should_throw_wrong_model_name_exception() {
         assertExpectingModelException("", "The entityName should not be null or empty");
     }
-    
+
     @Test
     public void given_null_id_when_load_model_then_should_throw_wrong_requested_model_id_exception() {
         try {
@@ -93,17 +103,17 @@ public class GenericApiLoadServiceTest {
             assertThat(ex.getMessage()).isEqualTo("The requested id should not be null");
         }
     }
-    
+
     @Test
     public void given_null_model_name_when_load_model_then_should_throw_wrong_model_name_exception() {
         assertExpectingModelException(null, "The entityName should not be null or empty");
     }
-    
+
     @Test
     public void given_an_unrecognizable_model_name_when_load_model_then_should_throw_wrong_model_name_exception() {
         assertExpectingModelException("flirtikit", "The requested entity does not exist");
     }
-    
+
     @Test
     public void given_null_dto_when_init_fields_then_should_return_empty_list() {
         //When
@@ -114,7 +124,7 @@ public class GenericApiLoadServiceTest {
         assertThat(captor.getValue()).isNotNull();
         assertThat(captor.getValue()).isEmpty();
     }
-    
+
     @Test
     public void given_non_null_dto_when_init_fields_then_should_return_empty_list() {
         //Given
@@ -128,7 +138,7 @@ public class GenericApiLoadServiceTest {
         assertThat(captor.getValue()).isNotNull();
         assertThat(captor.getValue()).isEmpty();
     }
-    
+
     @Test
     public void given_lower_case_model_name_when_load_model_then_should_return_correct_entity_class() {
         //Given
@@ -136,12 +146,12 @@ public class GenericApiLoadServiceTest {
         //When
         ArgumentCaptor<Class> captor = getModelNameCaptor(modelName);
         //Then
-        
+
         assertThat(captor.getValue()).isEqualTo(CustomerAccount.class);
         assertThat(captor.getValue().getAnnotation(Entity.class)).isNotNull();
-        
+
     }
-    
+
     @Test
     public void given_any_case_model_name_when_load_model_then_should_return_correct_entity_class() {
         //Given
@@ -151,9 +161,9 @@ public class GenericApiLoadServiceTest {
         //Then
         assertThat(captor.getValue()).isEqualTo(CustomerAccount.class);
         assertThat(captor.getValue().getAnnotation(Entity.class)).isNotNull();
-        
+
     }
-    
+
     @Test
     public void should_toJson_return_as_list_representation_of_ids_when_param_is_a_collection() {
         //Given
@@ -163,7 +173,7 @@ public class GenericApiLoadServiceTest {
         //Then
         assertThat(expected).isEqualTo("[0, 1, 2]");
     }
-    
+
     @Test
     public void should_toJson_return_the_id_of_requested_entity_when_param_is_an_instance_of_base_entity() {
         //Given
@@ -171,9 +181,9 @@ public class GenericApiLoadServiceTest {
         //When
         String expected = sut.toJson(param);
         //Then
-        assertThat(expected).isEqualTo("55");
+        assertThat(expected).isEqualTo("{\"code\":\"\",\"addressbook\":{\"code\":\"\"},\"ACCOUNT_TYPE\":\"ACCT_CUST\",\"accountType\":\"ACCT_CUST\",\"defaultLevel\":true,\"id\":55}");
     }
-    
+
     @Test
     public void should_toJson_return_the_to_string_when_param_is_string() {
         //Given
@@ -183,7 +193,7 @@ public class GenericApiLoadServiceTest {
         //Then
         assertThat(expected).isEqualTo("flirtikit");
     }
-    
+
     @Test
     public void should_toJson_return_the_string_representation_when_param_is_big_decimal() {
         //Given
@@ -193,7 +203,7 @@ public class GenericApiLoadServiceTest {
         //Then
         assertThat(expected).isEqualTo("12345.05");
     }
-    
+
     @Test
     public void should_toJson_return_the_string_representation_of_millis_when_param_is_date() {
         //Given
@@ -203,7 +213,7 @@ public class GenericApiLoadServiceTest {
         //Then
         assertThat(expected).isEqualTo(String.valueOf(param.getTime()));
     }
-    
+
     @Test
     public void should_toJson_return_the_string_representation_when_param_is_an_non_entity_business_object() {
         //Given
@@ -215,14 +225,14 @@ public class GenericApiLoadServiceTest {
         country.setDescription("Very beautyfull country");
         country.setCountryCode("xxx");
         param.setCountry(country);
-        
+
         //When
         String expected = sut.toJson(param);
         //Then
-        String expectedFormattedJson = "{\"address1\":\"address1\",\"zipCode\":\"75002\",\"city\":\"Paris\",\"country\":{\"historized\":false,\"notified\":false,\"auditableFields\":[],\"countryCode\":\"xxx\",\"description\":\"Very beautyfull country\"}}";
+        String expectedFormattedJson = "{\"country\":{\"countryCode\":\"xxx\"},\"zipCode\":\"75002\",\"city\":\"Paris\",\"address1\":\"address1\"}";
         assertThat(expected).isEqualTo(expectedFormattedJson);
     }
-    
+
     @Test
     public void given_empty_fields_list_get_all_non_static_field_values_then_get_all_object_fields() {
         //Given
@@ -234,7 +244,7 @@ public class GenericApiLoadServiceTest {
         assertThat(filteredFields).isNotEmpty();
         assertThat(filteredFields).hasSize(32);
     }
-    
+
     @Test
     public void given_unrecognized_fields_list_get_all_non_static_field_values_then_get_empty_list() {
         //Given
@@ -245,7 +255,7 @@ public class GenericApiLoadServiceTest {
         //Then
         assertThat(filteredFields).isEmpty();
     }
-    
+
     @Test
     public void given_rendom_fields_list_get_all_non_static_field_values_then_get_only_recognized_fields() {
         //Given
@@ -260,7 +270,7 @@ public class GenericApiLoadServiceTest {
         assertThat(filteredFields).hasSize(2);
         assertThat(filteredFields).containsSequence("addressbook", "customerCategory");
     }
-    
+
     @Test
     public void given_empty_fields_list_get_all_non_static_field_values_then_get_only_non_static_fields() {
         //Given
@@ -272,7 +282,7 @@ public class GenericApiLoadServiceTest {
         assertThat(filteredFields).doesNotContain("serialVersionUID");
         assertThat(filteredFields).doesNotContain("ACCOUNT_TYPE");
     }
-    
+
     @Test
     public void given_addressbook_field_when_get_all_non_static_field_values_then_should_return_a_map_containing_address_book_and_its_id() {
         //Given
@@ -286,9 +296,9 @@ public class GenericApiLoadServiceTest {
         //Then
         assertThat(filteredFieldsAndValues).hasSize(1);
         assertThat(filteredFieldsAndValues).containsKeys("addressbook");
-        assertThat(filteredFieldsAndValues.get("addressbook")).isEqualTo("5");
+        assertThat(filteredFieldsAndValues.get("addressbook")).isEqualTo("{\"code\":\"\",\"id\":5}");
     }
-    
+
     @Test
     public void given_null_value_field_when_extract_value_from_field_then_should_return_empty_string() throws Exception {
         //Given
@@ -301,7 +311,7 @@ public class GenericApiLoadServiceTest {
         assertThat(extractedValue).isInstanceOf(String.class);
         assertThat(extractedValue).isEqualTo("");
     }
-    
+
     @Test
     public void should_throw_entity_does_not_exists_exception_when_value_not_found() {
         when(entityManager.find(((Class<?>) any(Class.class)), anyLong())).thenReturn(null);
@@ -311,9 +321,9 @@ public class GenericApiLoadServiceTest {
             assertThat(ex).isInstanceOf(EntityDoesNotExistsException.class);
             assertThat(ex.getMessage()).isEqualTo("Customer with code=24 does not exists.");
         }
-        
+
     }
-    
+
     @Test
     public void given_null_entity_name_when_find_paginate_recprds_then_should_throw_meveo_exception() {
         //Given
@@ -321,7 +331,7 @@ public class GenericApiLoadServiceTest {
         GenericPagingAndFiltering searchConfig = new GenericPagingAndFiltering();
         assertFindPaginateRecords(entityName, searchConfig, EntityDoesNotExistsException.class, "The entityName should not be null or empty");
     }
-    
+
     @Test
     public void given_empty_entity_name_when_find_paginate_records_then_should_throw_meveo_exception() {
         //Given
@@ -329,7 +339,7 @@ public class GenericApiLoadServiceTest {
         GenericPagingAndFiltering searchConfig = new GenericPagingAndFiltering();
         assertFindPaginateRecords(entityName, searchConfig, EntityDoesNotExistsException.class, "The entityName should not be null or empty");
     }
-    
+
     @Test
     public void given_null_search_config_when_find_paginate_records_then_should_init() {
         //Given
@@ -340,7 +350,7 @@ public class GenericApiLoadServiceTest {
         verify(sut).buildGenericPaginatedResponse(captor.capture(), eq(Customer.class));
         assertThat(captor.getValue()).isNotNull();
     }
-    
+
     @Test
     public void should_transform_paging_and_filtering_to_pagination_configuration() {
         //Given
@@ -361,7 +371,7 @@ public class GenericApiLoadServiceTest {
         assertThat(paginationConfiguration.getSortField()).isEqualTo(sortBy);
         assertThat(paginationConfiguration.getOrdering().name()).isEqualTo(order.name());
     }
-    
+
     @Test
     public void should_return_valid_list_of_customers() {
         //Given
@@ -374,7 +384,82 @@ public class GenericApiLoadServiceTest {
         assertThat(response).isNotNull();
         assertThat(response.getData()).hasSize(5);
     }
-    
+
+    @Test
+    public void should_transform_user_by_giving_its_id_and_username() {
+        //Given
+        User user = new User();
+        user.setId(55L);
+        user.setUserName("flirtikit");
+        //When
+        String userJson = sut.transform(user);
+        //Then
+        assertThat(userJson).isEqualTo("{\"id\":55,\"userName\":\"flirtikit\"}");
+
+    }
+
+    @Test
+    public void should_transform_name_with_title() {
+        //Given
+        Name name = new Name();
+        name.setFirstName("Flirtikit");
+        name.setLastName("Bidlidez");
+        Title title = new Title();
+        title.setCode("codigo");
+        name.setTitle(title);
+        //When
+        String userJson = sut.transform(name);
+        //Then
+        assertThat(userJson).isEqualTo("{\"firstName\":\"Flirtikit\",\"lastName\":\"Bidlidez\",\"title\":{\"code\":\"codigo\"}}");
+
+    }
+
+    @Test
+    public void should_transform_entity_by_giving_its_id_and_export_identifier() {
+        //Given
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+        InvoiceSubCategory invoiceSubCategory = new InvoiceSubCategory();
+        invoiceSubCategory.setCode("invoiceCode");
+
+        Country country = new Country();
+        country.setCountryCode("Monaco");
+        TradingCountry tradingCountry = new TradingCountry();
+        tradingCountry.setCountry(country);
+
+        Tax tax = new Tax();
+        tax.setCode("T.V.A.");
+
+        invoiceSubcategoryCountry.setInvoiceSubCategory(invoiceSubCategory);
+        invoiceSubcategoryCountry.setTradingCountry(tradingCountry);
+        invoiceSubcategoryCountry.setTax(tax);
+        invoiceSubcategoryCountry.setStartValidityDate(getDefaultDate());
+        invoiceSubcategoryCountry.setEndValidityDate(getDefaultDate());
+
+        //When
+        String userJson = sut.transform(invoiceSubcategoryCountry);
+        //Then
+        assertThat(userJson).isEqualTo("{\"tax.code\":\"T.V.A.\",\"invoiceSubCategory\":{\"code\":\"invoiceCode\"},\"endValidityDate\":1546297200000,\"invoiceSubCategory.code\":\"invoiceCode\",\"tradingCountry\":{\"country.countryCode\":\"Monaco\"},\"tax\":{\"code\":\"T.V.A.\"},\"tradingCountry.country.countryCode\":\"Monaco\",\"priority\":0,\"startValidityDate\":1546297200000}");
+    }
+
+    @Test
+    public void should_transform_title_into_title_with_code() {
+        //Given
+        Title title = new Title();
+        title.setCode("MR.");
+        Name name = new Name();
+        name.setFirstName("aaa");
+        name.setLastName("bbb");
+        name.setTitle(title);
+        //When
+        String transform = sut.transform(name);
+        assertThat(transform).isEqualTo("{\"firstName\":\"aaa\",\"lastName\":\"bbb\",\"title\":{\"code\":\"MR.\"}}");
+
+    }
+
+    private Date getDefaultDate() {
+        return Date.from(LocalDate.of(2019, 01, 01).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
     private void assertFindPaginateRecords(String entityName, GenericPagingAndFiltering searchConfig, Class exception, String message) {
         try {
             //When
@@ -384,20 +469,20 @@ public class GenericApiLoadServiceTest {
             assertThat(ex.getMessage()).isEqualTo(message);
         }
     }
-    
+
     private List<Customer> buildCustomerList(int size) {
         return IntStream.range(0, size).mapToObj(this::buildCustomerMock).collect(Collectors.toList());
     }
-    
+
     private Customer buildCustomerMock(long id) {
         Customer customer = new Customer();
-       customer.setId(id);
+        customer.setId(id);
         AddressBook addressbook = new AddressBook();
         addressbook.setId(id);
         customer.setAddressbook(addressbook);
         return customer;
     }
-    
+
     private void assertExpectingModelException(String requestedModelName, String expected) {
         try {
             //When
@@ -408,14 +493,14 @@ public class GenericApiLoadServiceTest {
             assertThat(ex.getMessage()).isEqualTo(expected);
         }
     }
-    
+
     private ArgumentCaptor<Class> getModelNameCaptor(String modelName) {
         ArgumentCaptor<Class> captor = ArgumentCaptor.forClass(Class.class);
         sut.findByClassNameAndId(modelName, 54L, this.genericRequestDto);
         verify(sut).find(captor.capture(), eq(54l));
         return captor;
     }
-    
+
     private void configureFindMock() {
         when(entityManager.find(((Class<Object>) any(Class.class)), anyLong())).thenReturn(mock(BaseEntity.class));
     }

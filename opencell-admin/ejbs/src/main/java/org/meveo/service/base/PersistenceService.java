@@ -29,13 +29,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -56,7 +54,6 @@ import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
@@ -84,7 +81,6 @@ import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
@@ -104,7 +100,6 @@ import org.meveo.service.index.ElasticClient;
  *
  */
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
-    private static final String CANNOT_REMOVE_ENTITY_CUSTOM_TABLE_REFERENCE_ERROR_MESSAGE = "Cannot remove entity: CustomTable reference is present";
     protected Class<E> entityClass;
 
     /**
@@ -181,6 +176,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;
+
+    @Inject
+    private DeletionService deletionService;
 
     @Inject
     protected ParamBeanFactory paramBeanFactory;
@@ -362,7 +360,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public void remove(E entity) throws BusinessException {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
-        checkEntityDoesNotcontainReferenceToCustomTable(entity);
+        deletionService.checkEntityIsNotreferenced(entity);
         entity = retrieveIfNotManaged(entity);
         if (entity != null) {
             getEntityManager().remove(entity);
@@ -396,16 +394,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
     }
 
-    void checkEntityDoesNotcontainReferenceToCustomTable(E entity) {
-        if(entity instanceof ICustomFieldEntity) {
-            ICustomFieldEntity entityTockeck = (ICustomFieldEntity) entity;
-            Map<String, List<CustomFieldValue>> cfValues = Optional.ofNullable(entityTockeck.getCfValues()).map(CustomFieldValues::getValuesByCode).orElse(new HashMap<>());
-            boolean isCustomTable = !cfValues.isEmpty() && cfValues.entrySet().stream().flatMap(entry -> entry.getValue().stream().map(CustomFieldValue::getAllEntities).filter(l -> !l.isEmpty())).anyMatch(matchesCustomEntity());
-            if (isCustomTable) {
-                throw new MeveoApiException(CANNOT_REMOVE_ENTITY_CUSTOM_TABLE_REFERENCE_ERROR_MESSAGE);
-            }
-        }
-    }
 
     private Predicate<List<EntityReferenceWrapper>> matchesCustomEntity() {
         return e ->  e.stream().anyMatch(c -> {

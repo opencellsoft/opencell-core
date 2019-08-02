@@ -1,18 +1,12 @@
 package org.meveo.api.payment;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.DiscriminatorValue;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.account.TransferAccountOperationDto;
+import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
@@ -48,13 +42,21 @@ import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * The Class AccountOperationApi.
  *
  * @author Edward P. Legaspi
  * @author anasseh
  * @author melyoussoufi
- * @lastModifiedVersion 7.3.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  */
 @Stateless
 public class AccountOperationApi extends BaseApi {
@@ -109,28 +111,33 @@ public class AccountOperationApi extends BaseApi {
             throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment, W=writeOff.");
         }
 
-        if (aoSubclassObject instanceof OtherCreditAndCharge && postData.getOtherCreditAndCharge() != null) {
+        if (aoSubclassObject instanceof OtherCreditAndCharge) {
             // otherCreditAndCharge
             OtherCreditAndCharge otherCreditAndCharge = new OtherCreditAndCharge();
-            otherCreditAndCharge.setOperationDate(postData.getOtherCreditAndCharge().getOperationDate());
+            if (postData.getOtherCreditAndCharge() != null) {
+                otherCreditAndCharge.setOperationDate(postData.getOtherCreditAndCharge().getOperationDate());
+            }
             accountOperation = otherCreditAndCharge;
-        } else if (aoSubclassObject instanceof RejectedPayment && postData.getRejectedPayment() != null) {
+        } else if (aoSubclassObject instanceof RejectedPayment) {
             // rejectedPayment
             RejectedPayment rejectedPayment = new RejectedPayment();
 
-            rejectedPayment.setRejectedType(postData.getRejectedPayment().getRejectedType());
+            if (postData.getRejectedPayment() != null) {
+                rejectedPayment.setRejectedType(postData.getRejectedPayment().getRejectedType());
 
-            rejectedPayment.setBankLot(postData.getRejectedPayment().getBankLot());
-            rejectedPayment.setBankReference(postData.getRejectedPayment().getBankReference());
-            rejectedPayment.setRejectedDate(postData.getRejectedPayment().getRejectedDate());
-            rejectedPayment.setRejectedDescription(postData.getRejectedPayment().getRejectedDescription());
-            rejectedPayment.setRejectedCode(postData.getRejectedPayment().getRejectedCode());
-
+                rejectedPayment.setBankLot(postData.getRejectedPayment().getBankLot());
+                rejectedPayment.setBankReference(postData.getRejectedPayment().getBankReference());
+                rejectedPayment.setRejectedDate(postData.getRejectedPayment().getRejectedDate());
+                rejectedPayment.setRejectedDescription(postData.getRejectedPayment().getRejectedDescription());
+                rejectedPayment.setRejectedCode(postData.getRejectedPayment().getRejectedCode());
+            }
             accountOperation = rejectedPayment;
         } else if (aoSubclassObject instanceof WriteOff) {
             WriteOff writeOff = new WriteOff();
             transactionCategory = OperationCategoryEnum.CREDIT;
             accountOperation = writeOff;
+        } else {
+            throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment, W=writeOff.");
         }
 
         accountOperation.setDueDate(postData.getDueDate());
@@ -509,5 +516,37 @@ public class AccountOperationApi extends BaseApi {
         }
 
         return matchedOperationsDtos;
+    }
+
+    /**
+     * Transfer an account operation from a customer account to an other.
+     *
+     * @param transferAccountOperationDto the transfer account operation Dto
+     */
+    public void transferAccountOperation(TransferAccountOperationDto transferAccountOperationDto) {
+
+        if (StringUtils.isBlank(transferAccountOperationDto.getFromCustomerAccountCode())) {
+            missingParameters.add("fromCustomerAccountCode");
+        }
+        if (StringUtils.isBlank(transferAccountOperationDto.getAccountOperationId())) {
+            missingParameters.add("accountOperationId");
+        }
+        if (transferAccountOperationDto.getToCustomerAccounts() == null || transferAccountOperationDto.getToCustomerAccounts().isEmpty()) {
+            missingParameters.add("toCustomerAccounts");
+        } else {
+            for (int i = 0; i < transferAccountOperationDto.getToCustomerAccounts().size(); i++) {
+                TransferCustomerAccountDto transferCustomerAccountDto = transferAccountOperationDto.getToCustomerAccounts().get(i);
+                if (StringUtils.isBlank(transferCustomerAccountDto.getToCustomerAccountCode())) {
+                    missingParameters.add("customerAccounts[" + i + "].toCustomerAccountCode");
+                }
+                if (transferCustomerAccountDto.getAmount() == null || transferCustomerAccountDto.getAmount().compareTo(BigDecimal.ZERO) == 0) {
+                    missingParameters.add("customerAccounts[" + i + "].amount");
+                }
+            }
+        }
+
+        handleMissingParameters();
+
+        accountOperationService.transferAccountOperation(transferAccountOperationDto);
     }
 }

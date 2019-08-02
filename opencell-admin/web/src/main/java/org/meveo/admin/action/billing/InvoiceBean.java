@@ -489,6 +489,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public boolean isPdfInvoiceAlreadyGenerated() {
+
         if (!pdfGenerated.containsKey(entity.getId())) {
             pdfGenerated.put(entity.getId(), invoiceService.isInvoicePdfExist(entity));
         }
@@ -874,7 +875,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public LazyDataModelWSize<RatedTransaction> getRatedTransactions(InvoiceSubCategoryDTO invoiceSubCategoryDTO) {
         LazyDataModelWSize<RatedTransaction> lazyRatedTransactions = ratedTransactionsDM.get(invoiceSubCategoryDTO.getCode());
-        if (lazyRatedTransactions != null) {
+            if (lazyRatedTransactions != null) {
             return lazyRatedTransactions;
         }
 

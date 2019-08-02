@@ -64,6 +64,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.util.IOUtils;
+import org.hibernate.Hibernate;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VFSUtils;
 import org.jboss.vfs.VirtualFile;
@@ -2611,6 +2612,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Invoice invoice = findById(invoiceId);
         return ratedTransactionService.isPrepaidRatedTransactions(invoice.getRatedTransactions());
     }
+
+    List<RatedTransaction> getRatedTransactions(Invoice invoice){
+        return findById(invoice.getId()).getRatedTransactions();
+    }
+
+
 
     /**
      * Create an invoice from an InvoiceDto

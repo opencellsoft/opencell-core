@@ -166,11 +166,9 @@ public class CustomTableCreatorService implements Serializable {
             column.setConstraints(constraints);
         }
         setColumnType(cft, column);
-        if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST) {
-            
-            if (cft.getDefaultValue() != null) {
+
+        if (cft.getDefaultValue() != null) {
                 column.setDefaultValue(cft.getDefaultValue());
-            }
         }
 
         addColumnChange.addColumn(column);
@@ -199,8 +197,8 @@ public class CustomTableCreatorService implements Serializable {
     }
     
      void setColumnType(CustomFieldTemplate cft, AddColumnConfig column) {
-        column.setType(cft.getFieldType().getDataType()
-                .replaceAll("%length", cft.getMaxValueOrDefault(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING).toString()));
+        column.setType(cft.getFieldType().getDataType().replaceAll("%length", cft.getMaxValueOrDefault(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING).toString())
+                .replaceAll("default false", ""));
     }
     
     /**
