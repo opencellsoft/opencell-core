@@ -13108,10 +13108,8 @@ public class Action1 extends Script {
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="d0893b65-c072-4669-a2a3-131564d9edc8" name="XPath Match">
-              <con:configuration>
-                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  <auditable created="*" creator="opencell.admin"/>
+              <con:configuration><path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1"]</path><content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>STRING</fieldType>
   <accountLevel>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</accountLevel>
@@ -13120,21 +13118,16 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>true</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
   <hideOnNew>false</hideOnNew>
   <maxValue>50</maxValue>
-</field>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</field>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="26431a3f-ad67-455b-877f-30a910f89c9b" name="XPath Match 1">
-              <con:configuration>
-                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2" description="Entity field2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2"]</path><content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2" description="Entity field2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>LONG</fieldType>
@@ -13144,15 +13137,12 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
   <hideOnNew>false</hideOnNew>
-</field>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</field>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="3c406cc5-85a0-4e66-8c66-32f2f654ac7c">
               <con:configuration/>
@@ -13491,9 +13481,7 @@ public class Action1 extends Script {
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="7831900c-05a4-4f79-9ea1-9c861442853e" name="XPath Match">
-              <con:configuration>
-                <path>//field [@code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT3"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT3" description="Custom field 1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//field [@code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT3"]</path><content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT3" description="Custom field 1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>STRING</fieldType>
@@ -13503,21 +13491,16 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
   <hideOnNew>false</hideOnNew>
   <maxValue>50</maxValue>
-</field>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</field>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="6fb5521e-daf2-4717-8287-0f1f0e7e47e0" name="XPath Match 1">
-              <con:configuration>
-                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2" description="Custom field 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2"]</path><content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2" description="Custom field 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <fieldType>LONG</fieldType>
@@ -13527,15 +13510,12 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
   <hideOnNew>false</hideOnNew>
-</field>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</field>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="95f81137-eb15-4a92-ad98-abcb11256821" name="XPath Match 2">
               <con:configuration>
@@ -31022,9 +31002,7 @@ public class Action1 extends Script {
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="4e6928ba-4d13-45c7-964f-a88e37016e3f" name="XPath Match">
-              <con:configuration>
-                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path><content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <languageDescriptions>
@@ -31042,6 +31020,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>true</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -31049,16 +31028,10 @@ public class Action1 extends Script {
   <maxValue>50</maxValue>
   <guiPosition>tab:First tab|FRA=French tab|ENG=English tab;fieldGroup:Group one|FRA=French group|ENG=English group;field:1</guiPosition>
   <tags>page1 page4</tags>
-</field>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</field>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="6f0bf3cc-84d4-40cc-a3e0-09b8c207fb49" name="XPath Match 1">
-              <con:configuration>
-                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2" description="Entity field2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2"]</path><content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2" description="Entity field2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>LONG</fieldType>
@@ -31068,16 +31041,13 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
   <hideOnNew>false</hideOnNew>
   <tags>page2 page4</tags>
-</field>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</field>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="9426c99d-dc19-4f1c-9ee3-33e56c4d25fc" name="XPath Match 2">
               <con:configuration>
@@ -31133,9 +31103,7 @@ public class Action1 extends Script {
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="4e6928ba-4d13-45c7-964f-a88e37016e3f" name="XPath Match 4">
-              <con:configuration>
-                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Entity field3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3"]</path><content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Entity field3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>STRING</fieldType>
@@ -31145,6 +31113,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>MATRIX</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -31155,16 +31124,10 @@ public class Action1 extends Script {
     <matrixColumn columnUse="USE_KEY" position="2" code="MAT_2" label="Two" keyType="RON"/>
   </matrixColumns>
   <tags>page2 page4</tags>
-</field>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</field>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="4e6928ba-4d13-45c7-964f-a88e37016e3f" name="XPath Match 5">
-              <con:configuration>
-                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT4"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT4" description="Entity field4" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT4"]</path><content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT4" description="Entity field4" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>MULTI_VALUE</fieldType>
@@ -31173,6 +31136,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>MATRIX</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -31185,16 +31149,10 @@ public class Action1 extends Script {
     <matrixColumn columnUse="USE_VALUE" position="3" code="MAT_V_3" label="One" keyType="DOUBLE"/>
   </matrixColumns>
   <tags>page2 page4</tags>
-</field>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</field>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="4e6928ba-4d13-45c7-964f-a88e37016e3f" name="XPath Match 6">
-              <con:configuration>
-                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT5"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT5" description="Entity field5" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT5"]</path><content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT5" description="Entity field5" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>MULTI_VALUE</fieldType>
@@ -31203,6 +31161,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>MATRIX</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>true</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -31215,11 +31174,7 @@ public class Action1 extends Script {
     <matrixColumn columnUse="USE_VALUE" position="3" code="MAT_V_3" label="One" keyType="DOUBLE"/>
   </matrixColumns>
   <tags>page2 page4</tags>
-</field>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</field>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -31331,9 +31286,7 @@ public class Action1 extends Script {
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="f7ba7a79-ae82-4f71-a03c-63bd4a3ce291" name="XPath Match">
-              <con:configuration>
-                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path><content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <languageDescriptions>
@@ -31351,6 +31304,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>true</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -31358,16 +31312,10 @@ public class Action1 extends Script {
   <maxValue>50</maxValue>
   <guiPosition>tab:First tab|FRA=French tab|ENG=English tab;fieldGroup:Group one|FRA=French group|ENG=English group;field:1</guiPosition>
   <tags>page1 page4</tags>
-</field>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</field>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="ad553491-52d8-49a0-b5a7-01c4710caff6" name="XPath Match 1">
-              <con:configuration>
-                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6"]</path><content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>STRING</fieldType>
@@ -31377,16 +31325,13 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
   <hideOnNew>false</hideOnNew>
   <maxValue>50</maxValue>
-</field>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</field>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="c789fd9f-bbd8-4397-b577-b2f1f19aaefb" name="XPath Match 2">
               <con:configuration>
@@ -31561,9 +31506,7 @@ public class Action1 extends Script {
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="f7ba7a79-ae82-4f71-a03c-63bd4a3ce291" name="XPath Match">
-              <con:configuration>
-                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path><content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <languageDescriptions>
@@ -31581,6 +31524,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>true</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -31588,16 +31532,10 @@ public class Action1 extends Script {
   <maxValue>50</maxValue>
   <guiPosition>tab:First tab|FRA=French tab|ENG=English tab;fieldGroup:Group one|FRA=French group|ENG=English group;field:1</guiPosition>
   <tags>page1 page4</tags>
-</field>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</field>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="ad553491-52d8-49a0-b5a7-01c4710caff6" name="XPath Match 1">
-              <con:configuration>
-                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6-updated" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6"]</path><content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6-updated" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <fieldType>STRING</fieldType>
@@ -31607,16 +31545,13 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>true</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>true</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
   <hideOnNew>false</hideOnNew>
   <maxValue>50</maxValue>
-</field>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</field>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="c789fd9f-bbd8-4397-b577-b2f1f19aaefb" name="XPath Match 2">
               <con:configuration>
@@ -34335,7 +34270,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>84</con:value>
+        <con:value>87</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -36967,7 +36902,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>124</con:value>
+        <con:value>127</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -38516,7 +38451,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>86</con:value>
+        <con:value>89</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39739,7 +39674,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>76</con:value>
+        <con:value>79</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
