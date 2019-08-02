@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.admin.parse.csv.CDR;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
@@ -41,6 +42,7 @@ import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
+import org.meveo.service.medina.impl.CSVCDRParser;
 
 @Stateless
 public class QuoteService extends BusinessService<Quote> {
@@ -154,14 +156,15 @@ public class QuoteService extends BusinessService<Quote> {
                     // Process CDRS
                     if (quoteInvoiceInfo.getCdrs() != null && !quoteInvoiceInfo.getCdrs().isEmpty() && subscription != null) {
 
-                        cdrParsingService.initByApi(currentUser.getUserName(), "quote");
+                        CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), "quote");
 
                         List<EDR> edrs = new ArrayList<>();
 
                         // Parse CDRs to Edrs
                         try {
-                            for (String cdr : quoteInvoiceInfo.getCdrs()) {
-                                edrs.add(cdrParsingService.getEDRForVirtual(cdr, CDRParsingService.CDR_ORIGIN_API, subscription));
+                            for (String cdrLine : quoteInvoiceInfo.getCdrs()) {
+                                CDR cdr = cdrParser.parseCDR(cdrLine);
+                                edrs.add(cdrParsingService.getEDRForVirtual(cdr, subscription));
                             }
 
                         } catch (CDRParsingException e) {
