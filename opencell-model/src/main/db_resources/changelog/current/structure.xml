@@ -1267,7 +1267,7 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}ar_accounting_writing_seq values(1)</sql>
     </changeSet>
-   
+
     <changeSet id="#4337_20190710" author="MohammedELAZZOUZI">
     	<addColumn tableName="ar_account_operation">
         	<column name="invoice_id" type="bigint"></column>
@@ -1277,7 +1277,7 @@
     	<sql>
             UPDATE ${db.schema.adapted}ar_account_operation AO SET recorded_invoice_id=(SELECT id FROM ${db.schema.adapted}billing_invoice BI WHERE BI.invoice_number=AO.reference)
             WHERE AO.transaction_type='I'
-        </sql>   
+        </sql>
     </changeSet>
 
     <changeSet id="#4372_20190715" author="RedaDebbache">
@@ -1363,5 +1363,5 @@
             <column name="flat_file_job_code" type="varchar(255)" />
         </addColumn>
     </changeSet>
-    
+
 </databaseChangeLog>
