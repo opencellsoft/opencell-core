@@ -19,12 +19,11 @@
 package org.meveo.service.admin.impl;
 
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.FileFormat;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -36,30 +35,10 @@ import java.util.List;
  */
 
 @Stateless
-public class FileFormatService extends PersistenceService<FileFormat> {
+public class FileFormatService extends BusinessService<FileFormat> {
 
     /**
-     * Find the File format by code.
-     *
-     * @param code File format code.
-     * @return found File format
-     */
-    public FileFormat findByCode(String code) {
-        if (StringUtils.isBlank(code)) {
-            return null;
-        }
-        QueryBuilder qb = new QueryBuilder(FileFormat.class, "c");
-        qb.addCriterion("code", "=", code, false);
-
-        try {
-            return (FileFormat) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    /**
-     * @return list of faile format
+     * @return list of file format
      * @see PersistenceService#list()
      */
     @SuppressWarnings("unchecked")

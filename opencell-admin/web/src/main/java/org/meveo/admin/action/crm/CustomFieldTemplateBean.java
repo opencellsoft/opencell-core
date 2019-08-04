@@ -326,7 +326,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
                 	keyExist=true;
                 }
             }
-            
+
             if(valid && !(columnExist && keyExist)) {
             	FacesMessage msg = new FacesMessage(resourceMessages.getString("customFieldTemplate.matrixColumn.error.atLeastOneKeyValue"));
                 msg.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -334,7 +334,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
                 valid = false;
             }
         }
-        
+
 
         if (!valid) {
             fc.validationFailed();

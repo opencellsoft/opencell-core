@@ -1267,7 +1267,7 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}ar_accounting_writing_seq values(1)</sql>
     </changeSet>
-   
+
     <changeSet id="#4337_20190710" author="MohammedELAZZOUZI">
     	<addColumn tableName="ar_account_operation">
         	<column name="invoice_id" type="bigint"></column>
@@ -1277,7 +1277,7 @@
     	<sql>
             UPDATE ${db.schema.adapted}ar_account_operation AO SET recorded_invoice_id=(SELECT id FROM ${db.schema.adapted}billing_invoice BI WHERE BI.invoice_number=AO.reference)
             WHERE AO.transaction_type='I'
-        </sql>   
+        </sql>
     </changeSet>
 
     <changeSet id="#4372_20190715" author="RedaDebbache">
@@ -1291,5 +1291,77 @@
         	<column name="unique_constraint_name" type="varchar(100)" defaultValue="0"></column>
         </addColumn>
     </changeSet>
-    
+
+    <changeSet id="#4458_20190626_1" author="AbdellatifBARI">
+        <dropUniqueConstraint constraintName="uk_9fnf93rp352nkw2kpdbari5xp8" tableName="adm_file_format"/>
+        <dropColumn tableName="adm_file_format">
+            <column name="code"></column>
+        </dropColumn>
+        <dropColumn tableName="adm_file_format">
+            <column name="file_type"></column>
+        </dropColumn>
+
+        <addColumn tableName="adm_file_format">
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+        </addColumn>
+        <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari4xp9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_file_format" />
+    </changeSet>
+
+    <changeSet id="#4458_20190626_2" author="AbdellatifBARI">
+        <createTable tableName="adm_file_format_file_type">
+            <column name="file_format_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="file_type_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="file_format_id, file_type_id" constraintName="adm_file_format_file_type_pkey" tableName="adm_file_format_file_type" />
+        <addForeignKeyConstraint baseColumnNames="file_format_id" baseTableName="adm_file_format_file_type" constraintName="fk_4au8lqa3bc46gks4dmpbbari4h4l6" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_format" />
+    </changeSet>
+
+    <changeSet id="#4458_20190626_3" author="AbdellatifBARI" dbms="mysql">
+        <createTable tableName="adm_file_type_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_file_type_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}adm_file_type_seq values(1)</sql>
+        <sql>CREATE INDEX adm_file_type_code_index ON ${db.schema.adapted} adm_file_type(code)</sql>
+    </changeSet>
+
+    <changeSet id="#4458_20190626_4" author="AbdellatifBARI">
+        <createSequence sequenceName="adm_file_type_seq" startValue="1" />
+        <createTable tableName="adm_file_type">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_file_type_pkey" />
+            </column>
+
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari5yr8" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_file_type" />
+        <addForeignKeyConstraint baseColumnNames="file_type_id" baseTableName="adm_file_format_file_type" constraintName="fk_s1wxui3m4sv9x5mbyi8gpbari77hu" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_type" />
+    </changeSet>
+
+    <changeSet id="#4468_20190631_1" author="AbdellatifBARI">
+        <addColumn tableName="flat_file">
+            <column name="lines_in_success" type="int4" />
+            <column name="lines_in_warning" type="int4" />
+            <column name="lines_in_error" type="int4" />
+            <column name="processing_attempts" type="int4" />
+            <column name="flat_file_job_code" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
