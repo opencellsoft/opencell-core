@@ -34335,7 +34335,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
+<<<<<<< HEAD
+        <con:value>88</con:value>
+=======
         <con:value>84</con:value>
+>>>>>>> parent of fe2a3efc25... Re #4098 Fixe testeSuites for 8.X
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -36967,7 +36971,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
+<<<<<<< HEAD
+        <con:value>128</con:value>
+=======
         <con:value>124</con:value>
+>>>>>>> parent of fe2a3efc25... Re #4098 Fixe testeSuites for 8.X
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -38516,7 +38524,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
+<<<<<<< HEAD
+        <con:value>90</con:value>
+=======
         <con:value>86</con:value>
+>>>>>>> parent of fe2a3efc25... Re #4098 Fixe testeSuites for 8.X
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39739,7 +39751,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
+<<<<<<< HEAD
+        <con:value>80</con:value>
+=======
         <con:value>76</con:value>
+>>>>>>> parent of fe2a3efc25... Re #4098 Fixe testeSuites for 8.X
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
