@@ -33,7 +33,6 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.bi.FileStatusEnum;
 import org.meveo.model.bi.FlatFile;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -47,7 +46,7 @@ import org.slf4j.Logger;
  * 
  * @author anasseh
  * @author Abdellatif BARI
- * @lastModifiedVersion 8.0.0
+ * @lastModifiedVersion 7.3.0
  */
 @Stateless
 public class FlatFileProcessingJobBean {
@@ -149,7 +148,6 @@ public class FlatFileProcessingJobBean {
             IFileParser fileParser = null;
             File currentFile = null;
             boolean isCsvFromExcel = false;
-            List<String> success = new ArrayList<>();
             List<String> errors = new ArrayList<>();
             try {
                 log.info("InputFiles job {} in progress...", file.getAbsolutePath());
@@ -194,7 +192,6 @@ public class FlatFileProcessingJobBean {
                         rejectRecord(flatFileAsyncResponse.getLineRecord(), flatFileAsyncResponse.getReason());
                     } else {
                         outputRecord(flatFileAsyncResponse.getLineRecord());
-                        success.add("success line=" + flatFileAsyncResponse.getLineNumber());
                         result.registerSucces();
                     }
                 }
@@ -219,7 +216,7 @@ public class FlatFileProcessingJobBean {
                     moveFile(rejectDir, currentFile, fileName);
                 }
             } finally {
-                updateFlatFile(success, errors, result.getJobInstance());
+                updateFlatFile(errors);
                 try {
                     if (fileParser != null) {
                         fileParser.close();
@@ -350,11 +347,9 @@ public class FlatFileProcessingJobBean {
     /**
      * update flat file
      *
-     * @param success     success of processed flat file
-     * @param errors      errors of processed flat file
-     * @param jobInstance job instance
+     * @param errors processed flat file errors
      */
-    private void updateFlatFile(List<String> success, List<String> errors, JobInstance jobInstance) {
+    private void updateFlatFile(List<String> errors) {
         try {
             String[] param = fileName.split("_");
             String code = param.length > 0 ? param[0] : null;
@@ -367,15 +362,9 @@ public class FlatFileProcessingJobBean {
                 errorMessage = String.join(",", errors.subList(0, maxErrors));
             }
             FlatFile flatFile = flatFileService.findByCode(code);
-            Integer linesInSuccess = success != null ? success.size() : null;
-            Integer linesInError = errors != null ? errors.size() : null;
             if (flatFile == null) {
-                flatFileService.create(fileName, null, errorMessage, status, jobInstance.getCode(), 1, linesInSuccess, linesInError);
+                flatFileService.create(fileName, null, errorMessage, status);
             } else {
-                flatFile.setFlatFileJobCode(jobInstance.getCode());
-                flatFile.setProcessingAttempts(flatFile.getProcessingAttempts() != null ? flatFile.getProcessingAttempts() + 1 : 1);
-                flatFile.setLinesInSuccess(linesInSuccess);
-                flatFile.setLinesInError(linesInError);
                 flatFile.setStatus(status);
                 flatFile.setErrorMessage(errorMessage);
                 flatFileService.update(flatFile);

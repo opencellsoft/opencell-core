@@ -67,7 +67,6 @@ import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.view.LazyDataModelWSize;
@@ -117,9 +116,6 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     @Param
     private Long adjustedInvoiceIdParam;
 
-    @Inject
-    private ServiceSingleton serviceSingleton;
-    
     @Inject
     @Param
     private Boolean detailedParam;
@@ -715,7 +711,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             if (billingAccountId != 0) {
                 BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
                 entity.setBillingAccount(billingAccount);
-                entity = serviceSingleton.assignInvoiceNumber(entity);
+                invoiceService.assignInvoiceNumber(entity);
             }
 
             super.saveOrUpdate(false);
@@ -825,7 +821,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGeneratePdfBtnActive() {
-        if (invoiceService.isPrepaidReport(entity.getId())) {
+        if (invoiceService.isPrepaidReport(entity)) {
             return false;
         }
         String value = ParamBean.getInstance().getProperty("billing.activateGenaratePdfBtn", "true");
@@ -841,7 +837,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGenerateXmlBtnActive() {
-        if (invoiceService.isPrepaidReport(entity.getId())) {
+        if (invoiceService.isPrepaidReport(entity)) {
             return false;
         }
         String value = ParamBean.getInstance().getProperty("billing.activateGenarateXmlBtn", "true");
@@ -857,7 +853,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return true if the invoice is not a prepaid report
      */
     public boolean getSendByEmailBtnActive() {
-        if (invoiceService.isPrepaidReport(entity.getId())) {
+        if (invoiceService.isPrepaidReport(entity)) {
             return false;
         }
         return true;
@@ -904,7 +900,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return true if the invoice is not a prepaid report
      */
     public boolean getShowBtnNewIAAggregateds() {
-        if (invoiceService.isPrepaidReport(entity.getId())) {
+        if (invoiceService.isPrepaidReport(entity)) {
             return false;
         }
         return true;
@@ -916,7 +912,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return true if the invoice is not a prepaid report
      */
     public boolean getShowBtnNewIADetailed() {
-        if (invoiceService.isPrepaidReport(entity.getId())) {
+        if (invoiceService.isPrepaidReport(entity)) {
             return false;
         }
         return true;

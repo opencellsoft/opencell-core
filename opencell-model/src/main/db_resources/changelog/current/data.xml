@@ -1458,5 +1458,5 @@ public class ValidateBRScript extends Script {
             <column name="occ_category" value="CREDIT" />
         </insert>
     </changeSet>
-
+    
 </databaseChangeLog>

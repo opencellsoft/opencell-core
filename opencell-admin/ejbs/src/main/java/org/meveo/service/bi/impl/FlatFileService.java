@@ -36,17 +36,12 @@ import javax.ejb.Stateless;
 @Stateless
 public class FlatFileService extends BusinessService<FlatFile> {
 
-    public FlatFile create(String fileName, FileFormat fileFormat, String errorMessage, FileStatusEnum status, String flatFileJobCode, Integer processingAttempts,
-            Integer linesInSuccess, Integer linesInError) throws BusinessException {
+    public FlatFile create(String fileName, FileFormat fileFormat, String errorMessage, FileStatusEnum status) throws BusinessException {
         FlatFile flatFile = new FlatFile();
         flatFile.setFileName(fileName);
         flatFile.setFileFormat(fileFormat);
         flatFile.setErrorMessage(errorMessage);
         flatFile.setStatus(status);
-        flatFile.setLinesInSuccess(linesInSuccess);
-        flatFile.setLinesInError(linesInError);
-        flatFile.setProcessingAttempts(processingAttempts);
-        flatFile.setFlatFileJobCode(flatFileJobCode);
         create(flatFile);
         String code = (fileFormat != null ? fileFormat.getCode() : "CODE") + flatFile.getId();
         flatFile.setCode(code);
