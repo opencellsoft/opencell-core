@@ -42,10 +42,6 @@ public class CustomTableApiTest {
     @Mock
     private CustomEntityInstanceService customEntityInstanceService;
 
-    @Before
-    public void init() {
-        when(customEntityTemplateService.findByCodeOrDbTablename(anyString())).thenReturn(mock(CustomEntityTemplate.class));
-    }
 
     @Test
     public void should_convert_All_map_keys_to_lower_case() {
@@ -89,7 +85,6 @@ public class CustomTableApiTest {
     @Test
     public void should_not_replace_value_if_there_is_no_records_in_database() {
         //Given
-        when(customTableService.findRecordOfTableById(any(CustomFieldTemplate.class), anyLong())).thenReturn(new HashMap<>());
         CustomFieldTemplate customTableField = mock(CustomFieldTemplate.class);
         when(customTableField.getEntityClazz()).thenReturn("org.meveo.model.customEntities.CustomEntityTemplate - TABLE_2");
         Map<String, CustomFieldTemplate> reference = new HashMap<String, CustomFieldTemplate>() {{
@@ -105,9 +100,6 @@ public class CustomTableApiTest {
     @Test
     public void should_replace_value_if_all_is_ok() {
         //Given
-        when(customTableService.findRecordOfTableById(any(CustomFieldTemplate.class), anyLong())).thenReturn(new HashMap<String, Object>() {{
-            put("bidlidez", 23);
-        }});
         CustomFieldTemplate customTableField = mock(CustomFieldTemplate.class);
         when(customTableField.getEntityClazz()).thenReturn("org.meveo.model.customEntities.CustomEntityTemplate - TABLE_2");
         Map<String, CustomFieldTemplate> reference = new HashMap<String, CustomFieldTemplate>() {{
@@ -118,8 +110,28 @@ public class CustomTableApiTest {
         sut.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
         //Then
         assertThat(entry.getValue()).isNotNull();
-        assertThat(entry.getValue()).isNotEqualTo(55L);
-        assertThat(entry.getValue()).isInstanceOf(HashMap.class);
+    }
+
+    @Test
+    public void should_not_replace_value_if_entry_value_is_null() {
+        //Given
+        Map<String, CustomFieldTemplate> reference = new HashMap<>();
+        Map.Entry<String, Object> entry = new TestEntry("flirtikit", null);
+        //When
+        sut.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
+        //Then
+        assertThat(entry.getValue()).isNull();
+    }
+
+    @Test
+    public void should_not_replace_value_if_entry_value_is_not_a_number() {
+        //Given
+        Map<String, CustomFieldTemplate> reference = new HashMap<>();
+        Map.Entry<String, Object> entry = new TestEntry("flirtikit", "bidlidez");
+        //When
+        sut.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
+        //Then
+        assertThat(entry.getValue()).isEqualTo("bidlidez");
     }
 
     @Test

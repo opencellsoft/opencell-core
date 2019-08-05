@@ -168,9 +168,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    @Inject
-    private ServiceSingleton serviceSingleton;
-    
     /** transformer factory. */
     private TransformerFactory transfac = TransformerFactory.newInstance();
 
@@ -338,7 +335,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         boolean entreprise = appProvider.isEntreprise();
 
         if (!isInvoiceAdjustment && billingRun != null && BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus()) && invoiceNumber == null) {
-            invoice = serviceSingleton.assignInvoiceNumber(invoice);
+            invoiceService.assignInvoiceNumber(invoice);
         }
 
         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();

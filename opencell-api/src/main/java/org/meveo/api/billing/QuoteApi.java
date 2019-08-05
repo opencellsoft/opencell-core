@@ -900,10 +900,6 @@ public class QuoteApi extends BaseApi {
     public void deleteQuote(String quoteId) throws EntityDoesNotExistsException, ActionForbiddenException, BusinessException {
 
         Quote quote = quoteService.findByCode(quoteId);
-        
-        if(quote == null) {
-            throw new EntityDoesNotExistsException(Quote.class, quoteId);
-        }
 
         if (quote.getStatus() == QuoteStatusEnum.IN_PROGRESS || quote.getStatus() == QuoteStatusEnum.PENDING) {
             quoteService.remove(quote);

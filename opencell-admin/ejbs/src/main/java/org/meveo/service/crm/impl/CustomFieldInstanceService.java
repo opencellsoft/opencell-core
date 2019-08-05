@@ -121,8 +121,9 @@ public class CustomFieldInstanceService extends BaseService {
 
         if (classNameAndCode.startsWith(CustomEntityTemplate.class.getName())) {
             String cetCode = CustomFieldTemplate.retrieveCetCode(classNameAndCode);
-            query = getEntityManager().createQuery("select e from CustomEntityInstance e where cetCode=:cetCode and lower(e.code) like :code");
-            query.setParameter("cetCode", cetCode.toLowerCase());
+            query = getEntityManager().createQuery("select e from CustomEntityInstance e where e.cetCode=:cetCode or e.cetCode=:lowerCode and lower(e.code) like :code");
+            query.setParameter("cetCode", cetCode);
+            query.setParameter("lowerCode", cetCode.toLowerCase());
 
         } else if (clazz.isInstance(BusinessEntity.class)) {
             query = getEntityManager().createQuery("select e from " + classNameAndCode + " e where lower(e.code) like :code");

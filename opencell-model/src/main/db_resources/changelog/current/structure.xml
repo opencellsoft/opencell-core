@@ -239,18 +239,62 @@
         <addDefaultValue tableName="meveo_job_instance" columnName="exclude_inv_without_amount" defaultValueNumeric="0" />
         <sql>update ${db.schema.adapted}meveo_job_instance set exclude_inv_without_amount = 0 where exclude_inv_without_amount is null</sql>
     </changeSet>
-    
+
 
     <changeSet id="#4282_20190520" author="AndriusKarpavicius">
-       <addColumn tableName="billing_rated_transaction">
-           <column name="service_instance_id" type="bigInt"/>
-       </addColumn>
-       <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_service_instance" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
-       <sql>CREATE INDEX rt_subscription_index ON ${db.schema.adapted}billing_rated_transaction  (subscription_id, invoice_id, usage_date)</sql>
-       <sql>CREATE INDEX rt_ba_invoice_index ON ${db.schema.adapted}billing_rated_transaction  (billing_account__id, invoice_id, usage_date)</sql>
-       <sql>CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
-       <sql>CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
+        <addColumn tableName="billing_rated_transaction">
+            <column name="service_instance_id" type="bigInt"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_service_instance" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+        <sql>CREATE INDEX rt_subscription_index ON ${db.schema.adapted}billing_rated_transaction  (subscription_id, invoice_id, usage_date)</sql>
+        <sql>CREATE INDEX rt_ba_invoice_index ON ${db.schema.adapted}billing_rated_transaction  (billing_account__id, invoice_id, usage_date)</sql>
+        <sql>CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
+        <sql>CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
+    </changeSet>
+
+    <changeSet id="#39262_20190604" author="TonyAlejandro">
+        <addColumn tableName="billing_service_instance">
+            <column name="calendar_init_active_id" type="bigint" />
+            <column name="calendar_renew_for_id" type="bigint" />
+            <column name="renewal_term_type" type="varchar(20)" />
+        </addColumn>
+        <addColumn tableName="cat_service_template">
+            <column name="calendar_init_active_id" type="bigint" />
+            <column name="calendar_renew_for_id" type="bigint" />
+            <column name="renewal_term_type" type="varchar(20)" />
+        </addColumn>
+        <addColumn tableName="cat_offer_template">
+            <column name="calendar_init_active_id" type="bigint" />
+            <column name="calendar_renew_for_id" type="bigint" />
+            <column name="renewal_term_type" type="varchar(20)" />
+        </addColumn>
+        <addColumn tableName="billing_subscription">
+            <column name="calendar_init_active_id" type="bigint" />
+            <column name="calendar_renew_for_id" type="bigint" />
+            <column name="renewal_term_type" type="varchar(20)" />
+        </addColumn>
+        <addDefaultValue tableName="billing_service_instance" columnName="initial_term_type" defaultValue="RECURRING" />
+        <addDefaultValue tableName="cat_service_template" columnName="initial_term_type" defaultValue="RECURRING" />
+        <addDefaultValue tableName="cat_offer_template" columnName="initial_term_type" defaultValue="RECURRING" />
+        <addDefaultValue tableName="billing_subscription" columnName="initial_term_type" defaultValue="RECURRING" />
+        <addForeignKeyConstraint baseColumnNames="calendar_init_active_id" baseTableName="billing_service_instance" constraintName="fk_si_init_active" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_renew_for_id" baseTableName="billing_service_instance" constraintName="fk_si_renew_for" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_init_active_id" baseTableName="cat_service_template" constraintName="fk_st_init_active" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_renew_for_id" baseTableName="cat_service_template" constraintName="fk_st_renew_for" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_init_active_id" baseTableName="cat_offer_template" constraintName="fk_ot_init_active" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_renew_for_id" baseTableName="cat_offer_template" constraintName="fk_ot_renew_for" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_init_active_id" baseTableName="billing_subscription" constraintName="fk_bs_init_active" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_renew_for_id" baseTableName="billing_subscription" constraintName="fk_bs_renew_for" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+
     </changeSet>
 
     <changeSet id="#4282_20190524" author="AndriusKarpavicius">
@@ -1234,6 +1278,18 @@
             UPDATE ${db.schema.adapted}ar_account_operation AO SET recorded_invoice_id=(SELECT id FROM ${db.schema.adapted}billing_invoice BI WHERE BI.invoice_number=AO.reference)
             WHERE AO.transaction_type='I'
         </sql>   
+    </changeSet>
+
+    <changeSet id="#4372_20190715" author="RedaDebbache">
+    	<addColumn tableName="crm_custom_field_tmpl">
+        	<column name="unique_constraint" type="${type.boolean}" defaultValue="0"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#4372_20190723" author="RedaDebbache">
+    	<addColumn tableName="cust_cet">
+        	<column name="unique_constraint_name" type="varchar(100)" defaultValue="0"></column>
+        </addColumn>
     </changeSet>
     
 </databaseChangeLog>

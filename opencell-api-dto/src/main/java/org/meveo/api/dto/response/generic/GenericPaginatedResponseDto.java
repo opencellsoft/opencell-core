@@ -4,7 +4,7 @@ import java.util.List;
 
 public class GenericPaginatedResponseDto {
     private List<GenericResponseDto> data;
-    private Integer from;
+    private Integer from = 0;
     private Integer limit;
     private Long totalElements;
     
@@ -18,7 +18,7 @@ public class GenericPaginatedResponseDto {
     }
     
     public GenericPaginatedResponseDto withFrom(Integer from) {
-        this.from = from;
+        this.from = from == null ? 0 : from;
         return this;
     }
     

@@ -90,6 +90,8 @@ public class CustomTableService extends NativePersistenceService {
     @Inject
     private CustomEntityInstanceService customEntityInstanceService;
 
+    @Inject
+    private CustomEntityTemplateService customEntityTemplateService;
 
 
     @Override
@@ -133,7 +135,7 @@ public class CustomTableService extends NativePersistenceService {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void createInNewTx(String tableName, List<Map<String, Object>> values, boolean updateES) throws BusinessException {
+    public void createInNewTx(String tableName, String code , List<Map<String, Object>> values, boolean updateES) throws BusinessException {
 
         // Insert record to db, with ID returned, but flush to ES after the values are processed
         if (updateES) {
@@ -141,7 +143,7 @@ public class CustomTableService extends NativePersistenceService {
             create(tableName, values);
 
         } else {
-            super.create(tableName, values);
+            super.create(tableName, code, values);
         }
     }
 
@@ -206,13 +208,14 @@ public class CustomTableService extends NativePersistenceService {
     @Override
     public void remove(String tableName, Long id) throws BusinessException {
         super.remove(tableName, id);
-        customEntityInstanceService.remove(id);
+        customEntityInstanceService.remove(tableName, id);
         elasticClient.remove(CustomTableRecord.class, tableName, id, true);
     }
 
     @Override
     public void remove(String tableName, Set<Long> ids) throws BusinessException {
         super.remove(tableName, ids);
+        customEntityInstanceService.remove(tableName, ids);
         elasticClient.remove(CustomTableRecord.class, tableName, ids, true);
     }
 
@@ -405,7 +408,7 @@ public class CustomTableService extends NativePersistenceService {
                 if (importedLines >= 500) {
 
                     values = convertValues(values, fieldTypes, false);
-                    customTableService.createInNewTx(tableName, values, updateESImediately);
+                    customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), values, updateESImediately);
 
                     values.clear();
                     importedLines = 0;
@@ -424,7 +427,7 @@ public class CustomTableService extends NativePersistenceService {
 
             // Save to DB remaining records
             values = convertValues(values, fieldTypes, false);
-            customTableService.createInNewTx(tableName, values, updateESImediately);
+            customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), values, updateESImediately);
 
             // Re-populate ES index
             if (!updateESImediately) {
@@ -504,7 +507,7 @@ public class CustomTableService extends NativePersistenceService {
                 if (importedLines >= 1000) {
 
                     valuesPartial = convertValues(valuesPartial, fieldTypes, false);
-                    customTableService.createInNewTx(tableName, valuesPartial, updateESImediately);
+                    customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
 
                     valuesPartial.clear();
                     importedLines = 0;
@@ -518,7 +521,7 @@ public class CustomTableService extends NativePersistenceService {
 
             // Save to DB remaining records
             valuesPartial = convertValues(valuesPartial, fieldTypes, false);
-            customTableService.createInNewTx(tableName, valuesPartial, updateESImediately);
+            customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
 
             // Repopulate ES index
             if (!updateESImediately) {
@@ -891,6 +894,21 @@ public class CustomTableService extends NativePersistenceService {
         } catch (Exception ex) {
             return Collections.EMPTY_LIST;
         }
+    }
+    
+    public boolean containsRecordOfTableByColumn(String tableName, String columnName, Long id) {
+        QueryBuilder queryBuilder = getQuery(tableName, null);
+        queryBuilder.addCriterion(columnName, "=", id, true);
+        Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
+        return !query.list().isEmpty();
+    }
+    
+    public Object findFieldByIdAndTableName(Long id, String tableName, String fieldName) {
+        QueryBuilder queryBuilder = getQuery(tableName, null);
+        queryBuilder.addCriterion("id", "=", id, true);
+        Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
+        Map<String, Object> result = (Map<String, Object>) query.uniqueResult();
+		return result.get(fieldName);
     }
 
 }

@@ -87,7 +87,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     @Inject
     private CustomerAccountService customerAccountService;
-
+    
     @Inject
     private DiscountPlanService discountPlanService;
 
@@ -99,7 +99,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     private Date exceptionalLastTransactionDate = new Date();
 
     private CounterInstance selectedCounterInstance;
-
+    
     private DualListModel<DiscountPlan> discountPlanDM;
 
     /**
@@ -124,33 +124,33 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
 
         this.initNestedFields(entity);
-
-        if (discountPlanDM == null) {
-            List<DiscountPlan> sourceDS = null;
-            sourceDS = discountPlanService.list();
-            discountPlanDM = new DualListModel<>(sourceDS, new ArrayList<>());
-        }
+		
+		if (discountPlanDM == null) {
+			List<DiscountPlan> sourceDS = null;
+			sourceDS = discountPlanService.list();
+			discountPlanDM = new DualListModel<>(sourceDS, new ArrayList<>());
+		}
 
         return entity;
     }
 
     @ActionMethod
-    public String instantiateDiscountPlan() throws BusinessException {
-        if (entity.getDiscountPlan() != null) {
-            DiscountPlan dp = entity.getDiscountPlan();
-            entity = billingAccountService.instantiateDiscountPlan(entity, dp);
-            entity.setDiscountPlan(null);
-        }
-
-        return getEditViewName();
-    }
-
-    @ActionMethod
-    public String deleteDiscountPlanInstance(DiscountPlanInstance dpi) throws BusinessException {
+	public String instantiateDiscountPlan() throws BusinessException {
+		if (entity.getDiscountPlan() != null) {
+			DiscountPlan dp = entity.getDiscountPlan();
+			entity = billingAccountService.instantiateDiscountPlan(entity, dp);
+			entity.setDiscountPlan(null);
+		}
+		
+		return getEditViewName();
+	}
+	
+	@ActionMethod
+	public String deleteDiscountPlanInstance(DiscountPlanInstance dpi) throws BusinessException {
         billingAccountService.terminateDiscountPlan(entity, dpi);
-        return getEditViewName();
+		return getEditViewName();
 //		messages.warn(new BundleKey("messages", "message.discount.terminate.warning"));
-    }
+	}
 
     @Override
     @ActionMethod
@@ -175,11 +175,11 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         }
         return null;
     }
-
+    
     @Override
     public BillingAccount getEntity() {
         BillingAccount ba = super.getEntity();
-        this.initNestedFields(ba);
+       this.initNestedFields(ba);
         return ba;
     }
 
@@ -250,23 +250,14 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         log.info("generateInvoice billingAccountId:" + entity.getId());
         try {
             entity = billingAccountService.refreshOrRetrieve(entity);
-
-            GenerateInvoiceRequestDto generateInvoiceRequestDto = new GenerateInvoiceRequestDto();
-            generateInvoiceRequestDto.setGenerateXML(true);
-            generateInvoiceRequestDto.setGeneratePDF(true);
-            generateInvoiceRequestDto.setGenerateAO(true);
-            generateInvoiceRequestDto.setInvoicingDate(new Date());
-            generateInvoiceRequestDto.setFirstTransactionDate(null);
-            generateInvoiceRequestDto.setLastTransactionDate(new Date());
-            generateInvoiceRequestDto.setOrderNumber(null);
-            List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, null, false, null);
+            List<Invoice> invoices = invoiceService.generateInvoice(entity, new Date(), null, new Date(), null, null, false, true, true, true);
 
             StringBuilder invoiceNumbers = new StringBuilder();
-            for (Invoice invoice : invoices) {
+            for(Invoice invoice : invoices) {
                 invoiceNumbers.append(invoice.getInvoiceNumber());
                 invoiceNumbers.append(" ");
             }
-
+            
             messages.info(new BundleKey("messages", "generateInvoice.successful"), invoiceNumbers.toString());
 
         } catch (Exception e) {
@@ -306,9 +297,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             generateInvoiceRequestDto.setGeneratePDF(true);
             generateInvoiceRequestDto.setInvoicingDate(new Date());
             generateInvoiceRequestDto.setLastTransactionDate(new Date());
-            List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, null, true, null);
+            List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, null, true);
             for (Invoice invoice : invoices) {
-                invoiceService.produceFilesAndAO(false, true, false, invoice.getId(), true);
+                invoiceService.produceFilesAndAO(false, true, false, invoice, true);
                 String fileName = invoiceService.getFullPdfFilePath(invoice, false);
                 Faces.sendFile(new File(fileName), true);
             }
@@ -366,7 +357,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     /**
      * Listener of select changed event.
-     * 
      * @param event Value change event
      */
     public void selectChanged(ValueChangeEvent event) {
@@ -404,9 +394,8 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
                 invoicePrefix = "R_PART_";
             }
             entity.setInvoicePrefix(invoicePrefix + entity.getExternalRef2());
-        } else {
+        } else
             entity.setInvoicePrefix(null);
-        }
     }
 
     public void processValueChange(ValueChangeEvent value) {
@@ -437,7 +426,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             entity.setPrimaryContact(customerAccount.getPrimaryContact());
         }
     }
-
+    
     public void setCustomerAccountId(Long customerAccountId) {
         this.customerAccountId = customerAccountId;
     }
@@ -445,7 +434,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     public Long getCustomerAccountId() {
         return customerAccountId;
     }
-
+    
     @Override
     protected String getDefaultSort() {
         return "code";
@@ -492,11 +481,11 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         this.exceptionalLastTransactionDate = exceptionalLastTransactionDate;
     }
 
-    public DualListModel<DiscountPlan> getDiscountPlanDM() {
-        return discountPlanDM;
-    }
+	public DualListModel<DiscountPlan> getDiscountPlanDM() {
+		return discountPlanDM;
+	}
 
-    public void setDiscountPlanDM(DualListModel<DiscountPlan> discountPlanDM) {
-        this.discountPlanDM = discountPlanDM;
-    }
+	public void setDiscountPlanDM(DualListModel<DiscountPlan> discountPlanDM) {
+		this.discountPlanDM = discountPlanDM;
+	}
 }

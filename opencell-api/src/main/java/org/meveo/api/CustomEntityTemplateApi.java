@@ -103,7 +103,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
                 if (cftDto.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || (cftDto.getFieldType() != CustomFieldTypeEnum.DATE
                         && cftDto.getFieldType() != CustomFieldTypeEnum.DOUBLE && cftDto.getFieldType() != CustomFieldTypeEnum.LIST
                         && cftDto.getFieldType() != CustomFieldTypeEnum.LONG && cftDto.getFieldType() != CustomFieldTypeEnum.STRING
-                        && cftDto.getFieldType() != CustomFieldTypeEnum.BOOLEAN)
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.BOOLEAN && cftDto.getFieldType() != CustomFieldTypeEnum.ENTITY)
                         || (cftDto.isVersionable() != null && cftDto.isVersionable())) {
                     throw new InvalidParameterException("Custom table supports only unversioned and simple Date, Double, Long, Boolean, String and Select from list type fields");
                 }
@@ -169,7 +169,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
                 if (cftDto.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || (cftDto.getFieldType() != CustomFieldTypeEnum.DATE
                         && cftDto.getFieldType() != CustomFieldTypeEnum.DOUBLE && cftDto.getFieldType() != CustomFieldTypeEnum.LIST
                         && cftDto.getFieldType() != CustomFieldTypeEnum.LONG && cftDto.getFieldType() != CustomFieldTypeEnum.STRING
-                        && cftDto.getFieldType() != CustomFieldTypeEnum.BOOLEAN)
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.BOOLEAN && cftDto.getFieldType() != CustomFieldTypeEnum.ENTITY)
                         || (cftDto.isVersionable() != null && cftDto.isVersionable())) {
                     throw new InvalidParameterException("Custom table supports only unversioned and simple Date, Double, Long, Boolean, String and Select from list type fields");
                 }
@@ -344,7 +344,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
     }
 
     public List<BusinessEntityDto> listBusinessEntityForCFVByCode(String code, String wildcode)
-            throws MeveoApiException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+            throws MeveoApiException, ClassNotFoundException {
         List<BusinessEntityDto> result = new ArrayList<>();
 
         if (StringUtils.isBlank(code)) {

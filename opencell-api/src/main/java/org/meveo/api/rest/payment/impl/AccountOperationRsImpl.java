@@ -1,11 +1,8 @@
 package org.meveo.api.rest.payment.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.account.TransferAccountOperationDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
@@ -21,9 +18,15 @@ import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.AccountOperationRs;
 import org.meveo.model.payments.PaymentMethodEnum;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 /**
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs {
@@ -154,6 +157,19 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus transferAccountOperation(TransferAccountOperationDto transferAccountOperationDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            accountOperationApi.transferAccountOperation(transferAccountOperationDto);
+        } catch (Exception e) {
+            processException(e, result);
         }
 
         return result;

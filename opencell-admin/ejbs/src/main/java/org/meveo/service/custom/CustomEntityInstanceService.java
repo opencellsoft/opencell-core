@@ -3,9 +3,11 @@ package org.meveo.service.custom;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.customEntities.CustomEntityInstance;
@@ -87,5 +89,16 @@ public class CustomEntityInstanceService extends BusinessService<CustomEntityIns
         HashMap<String, Object> map = customEntityInstanceAsMap(c);
         map.put("cfValues", c.getCfValuesNullSafe());
         return map;
+    }
+
+    public void remove(String cetCode, Long id){
+        Query query = getEntityManager().createQuery("delete from CustomEntityInstance c where c.cetCode = :cetCode and c.code = :code");
+        query.setParameter("cetCode", cetCode);
+        query.setParameter("code", id.toString());
+        query.executeUpdate();
+    }
+
+    public void remove(String cetCode, Set<Long> ids){
+        ids.forEach(id -> remove(cetCode, id));
     }
 }
