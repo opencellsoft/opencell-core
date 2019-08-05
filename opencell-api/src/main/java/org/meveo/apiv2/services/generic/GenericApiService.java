@@ -1,4 +1,4 @@
-package org.meveo.apiv2.services;
+package org.meveo.apiv2.services.generic;
 
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -27,12 +27,12 @@ public abstract class GenericApiService {
         entitiesByName = ReflectionUtils.getClassesAnnotatedWith(Entity.class).stream().collect(Collectors.toMap(clazz -> clazz.getSimpleName().toLowerCase(), clazz -> clazz));
     }
     
-    BaseEntity find(Class entityClass, Long id) {
+    public BaseEntity find(Class entityClass, Long id) {
         return checkRecord((BaseEntity) entityManagerWrapper.getEntityManager().find(entityClass, id),
                 entityClass.getSimpleName(), id);
     }
     
-    PersistenceService getPersistenceService(Class entityClass) {
+    public PersistenceService getPersistenceService(Class entityClass) {
         return (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Service");
     }
     

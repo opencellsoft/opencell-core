@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,10 +16,10 @@ public class GenericRequestDtoTest {
         GenericRequestDto dto = new GenericRequestDto();
         dto.setFields(Arrays.asList("value", "", " ", null, "other value"));
         //When
-        List<String> formattedFields = dto.getFields();
+        Set<String> formattedFields = dto.getFields();
         //Then
         assertThat(formattedFields.size()).isEqualTo(2);
-        assertThat(formattedFields).isEqualTo(Arrays.asList("value", "other value"));
+        assertThat(formattedFields).containsExactlyInAnyOrder("value", "other value");
     }
 
    @Test
@@ -27,10 +28,10 @@ public class GenericRequestDtoTest {
         GenericRequestDto dto = new GenericRequestDto();
         dto.setFields(Arrays.asList("Value", "", " ", null, "Other value"));
         //When
-        List<String> formattedFields = dto.getFields();
+        Set<String> formattedFields = dto.getFields();
         //Then
         assertThat(formattedFields.size()).isEqualTo(2);
-        assertThat(formattedFields).isEqualTo(Arrays.asList("value", "other value"));
+        assertThat(formattedFields).containsExactlyInAnyOrder("value", "other value");
     }
 
     @Test
@@ -39,9 +40,9 @@ public class GenericRequestDtoTest {
         GenericRequestDto dto = new GenericRequestDto();
         dto.setFields(Arrays.asList("Value 1", "Value 2", "Value 3"));
         //When
-        List<String> formattedFields = dto.getFields();
+        Set<String> formattedFields = dto.getFields();
         //Then
         assertThat(formattedFields.size()).isEqualTo(3);
-        assertThat(formattedFields).isEqualTo(Arrays.asList("value 1", "value 2", "value 3"));
+        assertThat(formattedFields).containsExactlyInAnyOrder("value 1", "value 2", "value 3");
     }
 }

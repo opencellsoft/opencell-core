@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.meveo.api.dto.GenericPagingAndFiltering;
 import org.meveo.api.dto.generic.GenericRequestDto;
-import org.meveo.apiv2.common.LinkGenerator;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -15,7 +14,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Link;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -59,9 +57,12 @@ public interface GenericResource {
     Response update(@PathParam("entityName") String entityName, @ApiParam("The id here is the database primary key of the record to update") @PathParam("id") Long id,
             @ApiParam("dto the json representation of the object") String dto);
     
-    default Link buildLink(String... params){
-        return new LinkGenerator.SelfLinkGenerator(GenericResource.class)
-                .withGetAction().withPostAction()
-                .withDeleteAction().build(params);
-    }
+    @ApiOperation(value = "Update a resource by giving it's name and Id", notes = "specify the entity name, the record id, and as body, the list of the fields to update")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "resource succefully updated but not content exposed except the hypermedia"),
+            @ApiResponse(code = 400, message = "bad request when input not well formed")
+    })
+    @POST
+    @Path("/{entityName}")
+    Response create(@PathParam("entityName") String entityName, @ApiParam("dto the json representation of the object") String dto);
 }

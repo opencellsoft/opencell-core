@@ -1,7 +1,6 @@
-package org.meveo.apiv2.services;
+package org.meveo.apiv2.services.generic;
 
 import org.apache.commons.lang.reflect.FieldUtils;
-import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.service.base.PersistenceService;
@@ -66,7 +65,5 @@ public class GenericApiUpdateService extends GenericApiService {
             logger.error(String.format("Failed to update field %s", fieldName), e);
         }
     }
-    
-   
     
 }
