@@ -22,7 +22,7 @@ import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableService;
 
 public class DeletionService {
-    private static final String CANNOT_REMOVE_ENTITY_CUSTOM_TABLE_REFERENCE_ERROR_MESSAGE = "Cannot remove entity: CustomTable reference is present";
+    private static final String CANNOT_REMOVE_ENTITY_CUSTOM_TABLE_REFERENCE_ERROR_MESSAGE = "Cannot remove entity: reference to the entity exists";
     private static final String CUSTOM_ENTITY_PREFIX = "CE_";
     private static final String CUSTOM_ENTITY_CLASS_PREFIX = "org.meveo.model.customEntities.CustomEntityTemplate - %s";
     private static Map<String, Class> entitiesByName;
@@ -54,7 +54,6 @@ public class DeletionService {
 
     public void checkEntityIsNotreferenced(IEntity entity) {
         String entityClass = entity instanceof CustomEntityInstance ? String.format(CUSTOM_ENTITY_CLASS_PREFIX, ((CustomEntityInstance)entity).getCetCode()) : entity.getClass().getName();
-
         boolean isIncluded = isIncluded(entity, entityClass);
 
         if (isIncluded) {
