@@ -20,15 +20,21 @@ package org.meveo.model.admin;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -43,17 +49,9 @@ import java.util.Objects;
 @Table(name = "adm_file_format")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "adm_file_format_seq"), })
-public class FileFormat extends AuditableEntity {
+public class FileFormat extends BusinessEntity {
 
     private static final long serialVersionUID = 1932955932186440723L;
-
-    /**
-     * File code e.g. CDR for CDR File.
-     */
-    @Column(name = "code", length = 10, nullable = false, unique = true)
-    @Size(max = 10, min = 1)
-    @NotNull
-    private String code;
 
     /**
      * File name pattern with which we control the file name.
@@ -63,11 +61,13 @@ public class FileFormat extends AuditableEntity {
     private String fileNamePattern;
 
     /**
-     * File name.
+     * File type.
      */
-    @Column(name = "file_type", length = 255)
-    @Size(max = 255)
-    private String fileType;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "adm_file_format_file_type",
+            joinColumns = @JoinColumn(name = "file_format_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "file_type_id", referencedColumnName = "id"))
+    private List<FileType> fileTypes = new ArrayList<>();
 
     /**
      * Configuration template.
@@ -148,21 +148,21 @@ public class FileFormat extends AuditableEntity {
     }
 
     /**
-     * Gets the fileType
+     * Gets the fileTypes
      *
-     * @return the fileType
+     * @return the fileTypes
      */
-    public String getFileType() {
-        return fileType;
+    public List<FileType> getFileTypes() {
+        return fileTypes;
     }
 
     /**
-     * Sets the fileType.
+     * Sets the fileTypes.
      *
-     * @param fileType the new fileType
+     * @param fileTypes the new fileTypes
      */
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
+    public void setFileTypes(List<FileType> fileTypes) {
+        this.fileTypes = fileTypes;
     }
 
     /**
