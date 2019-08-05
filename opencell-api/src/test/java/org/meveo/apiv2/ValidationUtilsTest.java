@@ -1,7 +1,6 @@
 package org.meveo.apiv2;
 
 import org.junit.Test;
-import org.meveo.api.dto.response.generic.SimpleGenericValue;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -93,31 +92,7 @@ public class ValidationUtilsTest {
             assertThat(ex.getMessage()).isEqualTo("Unable to find records fo type Customer");
         }
     }
-    
-    @Test
-    public void should_perform_the_defined_operation_when_condition_succeed() {
-        //Given
-        SimpleGenericValue<String> value = new SimpleGenericValue<>();
-        Predicate<String> condition = s -> s.startsWith("flirtikit");
-        Consumer<String> operation = s -> value.setValue(s);
-        //When
-        ValidationUtils.performOperationOnCondition("flirtikit is life", condition, operation);
-        //Then
-        assertThat(value.getValue()).isNotEmpty();
-        assertThat(value.getValue()).isEqualTo("flirtikit is life");
-    }
-    
-    @Test
-    public void should_not_perform_the_defined_operation_when_condition_succeed() {
-        //Given
-        SimpleGenericValue<String> value = new SimpleGenericValue<>();
-        Predicate<String> condition = s -> s.startsWith("flirtikit");
-        Consumer<String> operation = s -> value.setValue(s);
-        //When
-        ValidationUtils.performOperationOnCondition("Bidlidez is life", condition, operation);
-        //Then
-        assertThat(value.getValue()).isNull();
-    }
+
     
     @Test
     public void should_return_record_when_is_valid() {

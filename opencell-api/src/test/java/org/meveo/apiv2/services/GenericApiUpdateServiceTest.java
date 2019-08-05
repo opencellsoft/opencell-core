@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.api.dto.generic.GenericRequestDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.apiv2.services.generic.GenericApiUpdateService;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.model.BaseEntity;
