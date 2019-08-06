@@ -50,7 +50,7 @@ public class GenericApiLoadService extends GenericApiService {
             searchConfig = new GenericPagingAndFiltering(null, null, null, 0,100,null,null);
         }
         List<String> fetchFields = Collections.EMPTY_LIST;
-        if(searchConfig.getNestedEntities()!=null){
+        if(searchConfig.getNestedEntities() != null && !searchConfig.getNestedEntities().isEmpty()){
             fetchFields= Arrays.asList(searchConfig.getNestedEntities().split(","));
         }
         return new PaginationConfiguration(searchConfig.getOffset(), searchConfig.getLimit(), searchConfig.getFilters(),
