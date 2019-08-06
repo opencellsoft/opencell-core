@@ -1,14 +1,21 @@
 package org.meveo.service.billing.impl;
 
+import java.io.Serializable;
+
 /**
  * The aggregation configuration of wallet operations during rating.
  * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 7.0
  */
-public class RatedTransactionsJobAggregationSetting {
+public class RatedTransactionsJobAggregationSetting implements Serializable {
 
 	/**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
 	 * Whether aggregation is enabled or not.
 	 */
 	private boolean enable = false;
