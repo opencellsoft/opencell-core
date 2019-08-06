@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -378,9 +379,11 @@ public class CustomTableService extends NativePersistenceService {
         });
 
         Map<String, Class> fieldTypes = new HashMap<>();
+        Map<String, Object> defaultValues = new HashMap<>();
         for (CustomFieldTemplate cft : fields) {
             fieldTypes.put(cft.getCode(), cft.getFieldType().getDataClass());
             fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
+            defaultValues.put(cft.getCode(), cft.getDefaultValueConverted());
         }
 
         String tableName = customEntityTemplate.getDbTablename();
@@ -407,7 +410,7 @@ public class CustomTableService extends NativePersistenceService {
                 // Save to DB every 500 records
                 if (importedLines >= 500) {
 
-                    values = convertValues(values, fieldTypes, false);
+                    values = convertValues(values, fieldTypes, false, defaultValues);
                     customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), values, updateESImediately);
 
                     values.clear();
@@ -426,7 +429,7 @@ public class CustomTableService extends NativePersistenceService {
             }
 
             // Save to DB remaining records
-            values = convertValues(values, fieldTypes, false);
+            values = convertValues(values, fieldTypes, false, defaultValues);
             customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), values, updateESImediately);
 
             // Re-populate ES index
@@ -478,9 +481,11 @@ public class CustomTableService extends NativePersistenceService {
         });
 
         Map<String, Class> fieldTypes = new HashMap<>();
+        Map<String, Object> defaultValues = new HashMap<>();
         for (CustomFieldTemplate cft : fields) {
             fieldTypes.put(cft.getCode(), cft.getFieldType().getDataClass());
             fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
+            defaultValues.put(cft.getCode(), cft.getDefaultValueConverted());
         }
 
         String tableName = customEntityTemplate.getDbTablename();
@@ -506,7 +511,7 @@ public class CustomTableService extends NativePersistenceService {
                 // Save to DB every 1000 records
                 if (importedLines >= 1000) {
 
-                    valuesPartial = convertValues(valuesPartial, fieldTypes, false);
+                    valuesPartial = convertValues(valuesPartial, fieldTypes, false, defaultValues);
                     customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
 
                     valuesPartial.clear();
@@ -520,7 +525,7 @@ public class CustomTableService extends NativePersistenceService {
             }
 
             // Save to DB remaining records
-            valuesPartial = convertValues(valuesPartial, fieldTypes, false);
+            valuesPartial = convertValues(valuesPartial, fieldTypes, false, defaultValues);
             customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
 
             // Repopulate ES index
@@ -740,12 +745,14 @@ public class CustomTableService extends NativePersistenceService {
         }
 
         Map<String, Class> fieldTypes = new HashMap<>();
+        Map<String, Object> defaultValues = new HashMap<>();
         for (CustomFieldTemplate cft : fields) {
             fieldTypes.put(cft.getCode(), cft.getFieldType().getDataClass());
             fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
+            defaultValues.put(cft.getCode(), cft.getDefaultValueConverted());
         }
 
-        return convertValues(values, fieldTypes, discardNull);
+        return convertValues(values, fieldTypes, discardNull, defaultValues);
 
     }
 
@@ -759,7 +766,8 @@ public class CustomTableService extends NativePersistenceService {
      * @throws ValidationException
      */
     @SuppressWarnings("rawtypes")
-    public List<Map<String, Object>> convertValues(List<Map<String, Object>> values, Map<String, Class> fields, boolean discardNull) throws ValidationException {
+    public List<Map<String, Object>> convertValues(List<Map<String, Object>> values, Map<String, Class> fields, boolean discardNull, Map<String, Object> defaultValues)
+            throws ValidationException {
 
         if (values == null) {
             return null;
@@ -769,7 +777,7 @@ public class CustomTableService extends NativePersistenceService {
         String[] datePatterns = new String[] { DateUtils.DATE_TIME_PATTERN, paramBean.getDateTimeFormat(), DateUtils.DATE_PATTERN, paramBean.getDateFormat() };
 
         for (Map<String, Object> value : values) {
-            convertedValues.add(convertValue(value, fields, discardNull, datePatterns));
+            convertedValues.add(convertValue(value, fields, discardNull, datePatterns, defaultValues));
         }
 
         return convertedValues;
@@ -795,12 +803,14 @@ public class CustomTableService extends NativePersistenceService {
         }
 
         Map<String, Class> fieldTypes = new HashMap<>();
+        Map<String, Object> defaultValues = new HashMap<>();
         for (CustomFieldTemplate cft : fields) {
             fieldTypes.put(cft.getCode(), cft.getFieldType().getDataClass());
             fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
+            defaultValues.put(cft.getCode(), cft.getDefaultValueConverted());
         }
 
-        return convertValue(values, fieldTypes, discardNull, datePatterns);
+        return convertValue(values, fieldTypes, discardNull, datePatterns, defaultValues);
     }
 
     /**
@@ -815,7 +825,8 @@ public class CustomTableService extends NativePersistenceService {
      * @throws ValidationException
      */
     @SuppressWarnings("rawtypes")
-    private Map<String, Object> convertValue(Map<String, Object> values, Map<String, Class> fields, boolean discardNull, String[] datePatterns) throws ValidationException {
+    private Map<String, Object> convertValue(Map<String, Object> values, Map<String, Class> fields, boolean discardNull, String[] datePatterns, Map<String, Object> defaultValues)
+            throws ValidationException {
 
         if (values == null) {
             return null;
@@ -837,8 +848,14 @@ public class CustomTableService extends NativePersistenceService {
                 if (key.equals(FIELD_ID)) {
                     continue; // Was handled before already
                 }
+
                 if (valueEntry.getValue() == null && !discardNull) {
-                    valuesConverted.put(key, null);
+                    // must check the default value
+                    valuesConverted.put(key, defaultValues.get(key));
+
+                } else if (FIELD_DISABLED.equals(key) && (BigDecimal) valueEntry.getValue() != BigDecimal.ZERO) {
+
+                    valuesConverted.put(key, 1);
 
                 } else if (valueEntry.getValue() != null) {
 
