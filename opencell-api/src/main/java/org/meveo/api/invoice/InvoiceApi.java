@@ -156,13 +156,6 @@ public class InvoiceApi extends BaseApi {
         log.debug("InvoiceDto:" + JsonUtils.toJson(invoiceDTO, true));
         validateInvoiceDto(invoiceDTO);
 
-        boolean isEnterprise = appProvider.isEntreprise();
-        int invoiceRounding = appProvider.getInvoiceRounding();
-        RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
-
-        Auditable auditable = new Auditable(currentUser);
-        Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
-
         BillingAccount billingAccount = billingAccountService.findByCode(invoiceDTO.getBillingAccountCode());
         if (billingAccount == null) {
             throw new EntityDoesNotExistsException(BillingAccount.class, invoiceDTO.getBillingAccountCode());
@@ -405,7 +398,9 @@ public class InvoiceApi extends BaseApi {
 
                 GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf, generateInvoiceRequestDto.isIncludeRatedTransactions());
                 invoicesDtos.add(generateInvoiceResultDto);
-
+                if (isDraft) {
+                    invoiceService.cancelInvoice(invoice);
+                }
             }
         }
 
