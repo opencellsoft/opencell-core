@@ -294,7 +294,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * @param accountOperationAction    the account operation action ('s' : source, 't' : transfer, 'c' cancelation)
      * @return the account operation reference
      */
-    private String getRefrence(Long accountOperationId, String accountOperationReference, String accountOperationAction) {
+    public String getRefrence(Long accountOperationId, String accountOperationReference, String accountOperationAction) {
         return !StringUtils.isBlank(accountOperationReference) ? accountOperationAction + "_" + accountOperationId + "_" + accountOperationReference : accountOperationReference;
     }
 
@@ -303,9 +303,10 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      *
      * @param accountOperation the account operation to transfer
      * @param amount           the amount to transfer
+     * @return the other credit and charge
      * @throws BusinessException business exception
      */
-    private void createFromAccountOperation(AccountOperation accountOperation, BigDecimal amount) throws BusinessException {
+    public OtherCreditAndCharge createFromAccountOperation(AccountOperation accountOperation, BigDecimal amount) throws BusinessException {
 
         ParamBean paramBean = paramBeanFactory.getInstance();
         String debitOccTemplateCode = null;
@@ -353,7 +354,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             log.error("Error on payment callback processing:", e);
             throw new BusinessException(e.getMessage(), e);
         }
-
+        return newAccountOperation;
     }
 
     /**
@@ -362,8 +363,9 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * @param accountOperation  the account operation to transfer
      * @param toCustomerAccount the destination customer account
      * @param amount            the amount to transfer
+     * @return the account operation.
      */
-    private void createToAccountOperation(AccountOperation accountOperation, CustomerAccount toCustomerAccount, BigDecimal amount) {
+    public AccountOperation createToAccountOperation(AccountOperation accountOperation, CustomerAccount toCustomerAccount, BigDecimal amount) {
 
         try {
             AccountOperation newAccountOperation = (AccountOperation) BeanUtils.cloneBean(accountOperation);
@@ -381,6 +383,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             create(newAccountOperation);
 
             newAccountOperation.setReference(getRefrence(newAccountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.t.name()));
+            return newAccountOperation;
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
             throw new BusinessException("Failed to create new account operation on the customer account " + toCustomerAccount.getCode(), e);
         }
@@ -455,6 +458,5 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             // Update the old account operation
             accountOperation.setReference(getRefrence(accountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.s.name()));
         }
-
     }
 }
