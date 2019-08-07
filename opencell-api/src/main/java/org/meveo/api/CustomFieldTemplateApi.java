@@ -341,6 +341,7 @@ public class CustomFieldTemplateApi extends BaseApi {
             cft.setCode(dto.getCode());
             cft.setFieldType(dto.getFieldType());
             cft.setStorageType(dto.getStorageType());
+            cft.setGuiPosition(dto.getGuiPosition());
             if (appliesTo == null) {
 
                 // Support for old API
@@ -464,6 +465,10 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
         if (dto.getRoundingMode() != null) {
             cft.setRoundingMode(dto.getRoundingMode());
+        }
+
+        if(dto.getUniqueConstraint() != null){
+            cft.setUniqueConstraint(dto.getUniqueConstraint());
         }
 
         return cft;

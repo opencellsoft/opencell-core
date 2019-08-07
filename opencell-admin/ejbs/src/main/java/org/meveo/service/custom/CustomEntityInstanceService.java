@@ -1,9 +1,13 @@
 package org.meveo.service.custom;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.customEntities.CustomEntityInstance;
@@ -65,10 +69,36 @@ public class CustomEntityInstanceService extends BusinessService<CustomEntityIns
         	qb.addBooleanCriterion("disabled", !active);
         }
         try {
-            return (List<CustomEntityInstance>) qb.getQuery(getEntityManager()).getSingleResult();
+            return (List<CustomEntityInstance>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {
             log.warn("No CustomEntityInstances by cetCode {} found", cetCode);
-            return null;
+            return Collections.emptyList();
         }
+    }
+
+    public HashMap<String, Object> customEntityInstanceAsMap(CustomEntityInstance c) {
+        return new HashMap<String, Object>() {{
+            put("id", c.getId());
+            put("code", c.getCode());
+            put("description", c.getDescription());
+
+        }};
+    }
+
+    public HashMap<String, Object> customEntityInstanceAsMapWithCfValues(CustomEntityInstance c) {
+        HashMap<String, Object> map = customEntityInstanceAsMap(c);
+        map.put("cfValues", c.getCfValuesNullSafe());
+        return map;
+    }
+
+    public void remove(String cetCode, Long id){
+        Query query = getEntityManager().createQuery("delete from CustomEntityInstance c where c.cetCode = :cetCode and c.code = :code");
+        query.setParameter("cetCode", cetCode);
+        query.setParameter("code", id.toString());
+        query.executeUpdate();
+    }
+
+    public void remove(String cetCode, Set<Long> ids){
+        ids.forEach(id -> remove(cetCode, id));
     }
 }

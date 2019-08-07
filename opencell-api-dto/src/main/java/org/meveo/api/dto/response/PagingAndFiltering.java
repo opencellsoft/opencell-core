@@ -123,6 +123,8 @@ public class PagingAndFiltering implements Serializable {
      * Total number of records. Note - filled on response only.
      */
     private Integer totalNumberOfRecords;
+
+    private int loadReferenceDepth;
     
     /**
      * The Enum SortOrder.
@@ -370,5 +372,13 @@ public class PagingAndFiltering implements Serializable {
         }
         
         filters.put(key, value);
+    }
+
+    public int getLoadReferenceDepth() {
+        return loadReferenceDepth;
+    }
+
+    public void setLoadReferenceDepth(int loadReferenceDepth) {
+        this.loadReferenceDepth = loadReferenceDepth;
     }
 }

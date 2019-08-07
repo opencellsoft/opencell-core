@@ -126,6 +126,16 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
     }
 
     /**
+     * Gets the default draft.
+     *
+     * @return the default draft
+     * @throws BusinessException the business exception
+     */
+    public InvoiceType getDefaultPrepaid() throws BusinessException {
+        return getDefaultType(getPrepaidCode());
+    }
+
+    /**
      * Gets the commercial code.
      *
      * @return the commercial code
@@ -159,6 +169,15 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
      */
     public String getDraftCode() {
         return paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT");
+    }
+
+    /**
+     * Gets the prepaid code.
+     *
+     * @return the prepaid code
+     */
+    public String getPrepaidCode() {
+        return paramBeanFactory.getInstance().getProperty("invoiceType.prepaid.code", "PREPAID");
     }
 
     /**

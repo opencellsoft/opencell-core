@@ -1,10 +1,10 @@
 package org.meveo.model.crm.custom;
 
-import org.apache.commons.lang3.StringUtils;
-import org.meveo.model.crm.EntityReferenceWrapper;
-
 import java.util.Date;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.model.crm.EntityReferenceWrapper;
 
 /**
  * @author Edward P. Legaspi
@@ -39,7 +39,7 @@ public enum CustomFieldTypeEnum {
     /**
      * A reference to an entity
      */
-    ENTITY(true, EntityReferenceWrapper.class, StringUtils.EMPTY),
+    ENTITY(true, EntityReferenceWrapper.class, "bigint"),
 
     /**
      * A long string value

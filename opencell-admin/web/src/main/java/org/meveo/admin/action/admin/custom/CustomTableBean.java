@@ -1,15 +1,42 @@
 package org.meveo.admin.action.admin.custom;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.api.dto.custom.CustomTableRecordDto;
+import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.NativePersistenceService;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableService;
 import org.meveo.service.custom.DataImportExportStatistics;
@@ -21,33 +48,19 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.UploadedFile;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Future;
-
 @Named
 @ViewScoped
 public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     private static final long serialVersionUID = -2748591950645172132L;
-
     @Inject
     private CustomTableService customTableService;
 
     @Inject
     private CustomEntityTemplateService customEntityTemplateService;
+
+    @Inject
+    private CustomEntityInstanceService customEntityInstanceService;
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
@@ -106,7 +119,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     /**
      * DataModel for primefaces lazy loading datatable component.
-     * 
+     *
      * @return LazyDataModel implementation.
      */
     public LazyDataModel<Map<String, Object>> getDataModel() {
@@ -115,7 +128,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     /**
      * DataModel for primefaces lazy loading datatable component.
-     * 
+     *
      * @param inputFilters Search criteria
      * @return LazyDataModel implementation.
      */
@@ -211,7 +224,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     /**
      * Add new values to a map of values, setting a default value if applicable
-     * 
+     *
      * @throws BusinessException General exception
      */
     @ActionMethod
@@ -227,7 +240,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     /**
      * Handle a file upload and import the file
-     * 
+     *
      * @param event File upload event
      * @throws BusinessException
      * @throws IOException
@@ -270,7 +283,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     /**
      * Construct a CSV file format (header) for file import
-     * 
+     *
      * @return CSV file field order
      */
     public String getCsvFileFormat() {
@@ -309,12 +322,9 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
             Object id = values.get(NativePersistenceService.FIELD_ID);
             if (id instanceof String) {
                 id = Long.parseLong((String) id);
-            } else if (id instanceof BigDecimal) {
-                id = ((BigDecimal) id).longValue();
-            } else if (id instanceof BigInteger) {
-                id = ((BigInteger) id).longValue();
+            } else if (id instanceof Number) {
+                id = ((Number) id).longValue();
             }
-
             ids.add((long) id);
 
         }
@@ -348,62 +358,71 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
         return importFuture;
     }
 
-    // Bellow is implementation when value changes are accumulated and saved in bulk
-    //
-    //
-    // private List<Map<String, Object>> dirtyValues = new ArrayList<>();
-    //
-    // private Set<Long> dirtyIds = new HashSet<>();
-    //
-    // /**
-    // * @param event the Value in Datatable edit event
-    // */
-    // @SuppressWarnings("unchecked")
-    // @ActionMethod
-    // public void onCellEdit(CellEditEvent event) {
-    // DataTable o = (DataTable) event.getSource();
-    // Map<String, Object> mapValue = (Map<String, Object>) o.getRowData();
-    // Long id = (Long) mapValue.get(NativePersistenceService.FIELD_ID);
-    // if (!dirtyIds.contains(id)) {
-    // dirtyIds.add(id);
-    // dirtyValues.add(mapValue);
-    // log.debug("Changed custom table value for ID {}", id);
-    // }
-    // }
-    //
-    // /**
-    // * Update custom table with new or modified values
-    // *
-    // * @throws BusinessException
-    // */
-    // @ActionMethod
-    // public void save() throws BusinessException {
-    //
-    // if (dirtyValues.isEmpty()) {
-    // return;
-    // }
-    // customTableService.createOrUpdate(customTableName, dirtyValues);
-    //
-    // dirtyValues = new ArrayList<>();
-    // dirtyIds = new HashSet<>();
-    // customTableBasedDataModel = null;
-    // messages.info(new BundleKey("messages", "customTable.valuesSaved"));
-    // }
-    //
-    // @ActionMethod
-    // public void reset() {
-    //
-    // dirtyValues = new ArrayList<>();
-    // dirtyIds = new HashSet<>();
-    // customTableBasedDataModel = null;
-    // messages.info(new BundleKey("messages", "customTable.valuesReset"));
-    // }
-    //
-    // /**
-    // * Add new values to a map of values, setting a default value if applicable
-    // */
-    // public void addValueToMap() {
-    // dirtyValues.add(newValues);
-    // newValues = new HashMap<>();
-    // }
+    public List<CustomTableRecordDto> entityTypeColumnDatas(CustomFieldTemplate field) {
+        CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(field.tableName());
+        if (relatedEntity != null && relatedEntity.isStoreAsTable()) {
+            return customTableService.selectAllRecordsOfATableAsRecord(field.tableName());
+        }
+        return getFromCustomEntity(field);
+    }
+
+    List<CustomTableRecordDto> getFromCustomEntity(CustomFieldTemplate field) {
+
+        return Optional.ofNullable(field.tableName())
+                .map(tableName -> customEntityInstanceService.listByCet(field.tableName()).stream().map(customEntityInstanceService::customEntityInstanceAsMap)
+                        .map(CustomTableRecordDto::new).collect(Collectors.toList())).orElse(loadFromBusinessEntity(field));
+    }
+
+    List<CustomTableRecordDto> loadFromBusinessEntity(CustomFieldTemplate field) {
+        try {
+            Class entityClass = Class.forName(field.getEntityClazz());
+            PersistenceService<BaseEntity> persistenceService = getPersistenceServiceByClass(entityClass);
+            return persistenceService.list().stream()
+                    .filter(Objects::nonNull)
+                    .map(this::mapToMap)
+                    .map(CustomTableRecordDto::new)
+                    .collect(Collectors.toList());
+        } catch (ClassNotFoundException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    HashMap<String, Object> mapToMap(Object entity) {
+        if (entity instanceof BusinessEntity) {
+            return convertBusinessEntity((BusinessEntity) entity);
+        }
+        return convertIdAndIdentifiers((BaseEntity) entity);
+    }
+
+    HashMap<String, Object> convertIdAndIdentifiers(BaseEntity baseEntity) {
+        HashMap<String, Object> convertedValues = new HashMap<>();
+        convertedValues.put("id", baseEntity.getId());
+        addExternalIdentifiers(baseEntity, convertedValues);
+        return convertedValues;
+    }
+
+    private void addExternalIdentifiers(BaseEntity baseEntity, HashMap<String, Object> convertedValues) {
+        if (baseEntity.getClass().isAnnotationPresent(ExportIdentifier.class)) {
+            Arrays.asList(baseEntity.getClass().getAnnotation(ExportIdentifier.class).value()).forEach(v -> {
+                try {
+                    convertedValues.put(v, ReflectionUtils.getPropertyValue(baseEntity, v));
+                } catch (IllegalAccessException ex) {
+                    ex.printStackTrace();
+                }
+            });
+        }
+    }
+
+    private HashMap<String, Object> convertBusinessEntity(BusinessEntity e) {
+        return new HashMap<String, Object>() {{
+            put("id", e.getId());
+            put("code", e.getCode());
+            put("description", e.getDescription());
+        }};
+    }
+
+    PersistenceService getPersistenceServiceByClass(Class entityClass) {
+        return (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Service");
+    }
+
 }

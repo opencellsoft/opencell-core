@@ -6,12 +6,14 @@ import java.util.Map;
 import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.descriptor.java.AbstractTypeDescriptor;
 import org.hibernate.type.descriptor.java.ImmutableMutabilityPlan;
+import org.meveo.commons.encryption.IEncryptable;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<CustomFieldValues> {
+public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<CustomFieldValues> implements IEncryptable {
 
     private static final long serialVersionUID = -5030465106663645694L;
 
@@ -26,13 +28,15 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
 
     @Override
     public String toString(CustomFieldValues value) {
-        // Logger log = LoggerFactory.getLogger(getClass());
-        // log.error("AKK Json converter to string");
 
-        if (value == null) {
+    	if (value == null) {
             return null;
         }
-
+        
+        if (TRUE_STR.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_CUSTOM_FIELDS_PROPERTY, FALSE_STR)) && value.isEncrypted()) {
+			return encrypt(((CustomFieldValues) value).asJson());
+		}
+        
         return ((CustomFieldValues) value).asJson();
 
     }
@@ -40,21 +44,18 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
     @Override
     public CustomFieldValues fromString(String string) {
 
-        if (string == null) {
+    	if (string == null) {
             return null;
         }
 
-        // Logger log = LoggerFactory.getLogger(getClass());
-        // log.error("AKK Json converter from string");
-
+        if (TRUE_STR.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_CUSTOM_FIELDS_PROPERTY, FALSE_STR))) {
+        	string = decrypt(string);
+		}
+        
         Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(string, new TypeReference<Map<String, List<CustomFieldValue>>>() {
         });
 
-        // if (cfValues == null || cfValues.isEmpty()) {
-        // return null;
-        // } else {
         return new CustomFieldValues(cfValues);
-        // }
     }
 
     @Override

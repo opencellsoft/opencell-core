@@ -18,23 +18,6 @@
  */
 package org.meveo.admin.action.billing;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -52,6 +35,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -78,6 +62,7 @@ import org.meveo.model.mediation.Access;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductChargeInstanceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
@@ -88,6 +73,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -97,6 +83,22 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
+import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
 /**
  * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
@@ -104,6 +106,7 @@ import org.primefaces.model.LazyDataModel;
  * @author Wassim Drira
  * @author Said Ramli
  * @author Abdellatif BARI
+ * @author Mounir BAHIJE
  * @lastModifiedVersion 7.0
  */
 @Named
@@ -167,6 +170,12 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @ViewBean
     private OfferTemplateBean offerTemplateBean;
 
+    @Inject
+    private CounterInstanceService counterInstanceService;
+
+    @Inject
+    private CalendarService calendarService;
+
     private ServiceInstance selectedServiceInstance;
 
     private ProductInstance productInstance;
@@ -192,8 +201,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private SubscriptionTerminationReason terminationReason;
 
     private ServiceInstance selectedTerminableService;
-
+    
     private LazyDataModel<OfferTemplate> activeOfferTemplateDataModel;
+
+    private CounterInstance selectedCounterInstance;
 
     /**
      * User Account Id passed as a parameter. Used when creating new subscription entry from user account definition window, so default uset Account will be set on newly created
@@ -246,6 +257,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             initServiceTemplates();
             initServiceInstances(entity.getServiceInstances());
             initTerminableServices(entity.getServiceInstances());
+            selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
+
         }
 
         return entity;
@@ -277,7 +290,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
             if (!allowServiceMultiInstantiation) {
                 for (ServiceInstance serviceInstance : serviceInstances) {
-                    if (serviceTemplate.getCode().equals(serviceInstance.getCode())) {
+                    if (serviceTemplate.getCode().equals(serviceInstance.getCode()) && !hasTerminatedStatus(serviceInstance.getStatus())) {
                         alreadyInstanciated = true;
                         break;
                     }
@@ -290,6 +303,16 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             }
         }
         log.debug("servicetemplates initialized with {} templates ", serviceTemplates.getSize());
+    }
+
+    /**
+     * Check either the service's status is TERMINATED, CLOSED, CANCELED
+     *
+     * @param status service's status
+     * @return true if service's status is TERMINATED, CLOSED, CANCELED
+     */
+    private boolean hasTerminatedStatus(InstanceStatusEnum status) {
+        return InstanceStatusEnum.TERMINATED.equals(status) || InstanceStatusEnum.CLOSED.equals(status) || InstanceStatusEnum.CANCELED.equals(status);
     }
 
     public BillingCycle getBillingCycle() {
@@ -313,6 +336,12 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         entity.setOffer(offerTemplateService.refreshOrRetrieve(entity.getOffer()));
         entity.setUserAccount(userAccountService.refreshOrRetrieve(entity.getUserAccount()));
+        SubscriptionRenewal subscriptionRenewal = entity.getSubscriptionRenewal();
+        org.meveo.model.catalog.Calendar calendarRenewFor = calendarService.refreshOrRetrieve(subscriptionRenewal.getCalendarRenewFor());
+        subscriptionRenewal.setCalendarRenewFor(calendarRenewFor);
+        org.meveo.model.catalog.Calendar calendarInitialyActiveFor = calendarService.refreshOrRetrieve(subscriptionRenewal.getCalendarInitialyActiveFor());
+        subscriptionRenewal.setCalendarInitialyActiveFor(calendarInitialyActiveFor);
+        entity.setSubscriptionRenewal(subscriptionRenewal);
 
         if (entity.getOffer().getValidity() != null && !entity.getOffer().getValidity().isCorrespondsToPeriod(entity.getSubscriptionDate())) {
 
@@ -543,6 +572,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         entity = subscriptionService.refreshOrRetrieve(entity);
 
         log.debug("Instantiating serviceTemplates {}", serviceTemplates.getSelectedItemsAsList());
+
+        OfferTemplate offerTemplate = ((Subscription) entity).getOffer();
+
+        subscriptionService.checkCompatibilityOfferServices(((Subscription) entity), serviceTemplates.getSelectedItemsAsList());
 
         for (ServiceTemplate serviceTemplate : serviceTemplates.getSelectedItemsAsList()) {
 
@@ -819,8 +852,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     public List<Access> getAccess() {
-        if (entity.getId() == null)
+        if (entity.getId() == null) {
             return null;
+        }
         return accessService.listBySubscription(entity);
     }
 
@@ -1046,6 +1080,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
      * Update subscribedTillDate field in subscription
      */
     public void updateSubscribedTillDate() {
+        SubscriptionRenewal subscriptionRenewal = entity.getSubscriptionRenewal();
+        org.meveo.model.catalog.Calendar calendarInitialyActiveFor = calendarService.refreshOrRetrieve(subscriptionRenewal.getCalendarInitialyActiveFor());
+        subscriptionRenewal.setCalendarInitialyActiveFor(calendarInitialyActiveFor);
+        entity.setSubscriptionRenewal(subscriptionRenewal);
         entity.updateSubscribedTillAndRenewalNotifyDates();
     }
 
@@ -1092,7 +1130,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public List<Seller> listSellers() {
 
         if (entity != null && entity.getOffer() != null) {
-            offerTemplateService.retrieveIfNotManaged(entity.getOffer());
+        	entity = subscriptionService.retrieveIfNotManaged(entity);
             if (entity.getOffer().getSellers().size() > 0) {
                 return entity.getOffer().getSellers();
             } else {
@@ -1135,8 +1173,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public BigDecimal getBalanceDue() throws BusinessException {
         if (entity.getId() == null) {
             return new BigDecimal(0);
-        } else
+        } else {
             return subscriptionService.subscriptionBalanceDue(entity, new Date());
+        }
     }
 
     /**
@@ -1251,5 +1290,20 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             activeOfferTemplateDataModel = offerTemplateBean.getLazyDataModel(filters, true);
         }
         return activeOfferTemplateDataModel;
+    }
+
+    public CounterInstance getSelectedCounterInstance() {
+        if (entity == null) {
+            initEntity();
+        }
+        return selectedCounterInstance;
+    }
+
+    public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
+        if (selectedCounterInstance != null) {
+            this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
+        } else {
+            this.selectedCounterInstance = null;
+        }
     }
 }

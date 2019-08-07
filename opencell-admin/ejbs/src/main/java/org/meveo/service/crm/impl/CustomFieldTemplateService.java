@@ -8,17 +8,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.SerializationUtils;
@@ -28,9 +38,11 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -52,15 +64,8 @@ import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableCreatorService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.EntityCustomizationUtils;
-import org.meveo.commons.utils.PersistenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 /**
  * @author Wassim Drira
@@ -107,7 +112,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
         } catch (CustomFieldException e) {
             // Its ok, handles cases when value that is part of CFT.AppliesTo calculation is not set yet on entity
-            return new HashMap<String, CustomFieldTemplate>();
+            return new HashMap<>();
         }
     }
 
@@ -242,8 +247,68 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         if (reaccumulateCFValues) {
 
             clusterEventPublisher.publishEvent(cft, CrudActionEnum.create);
-            cfValueAccumulator.cftCreated(cft);
+             cfValueAccumulator.cftCreated(cft);
         }
+        this.checkAndUpdateUniqueConstraint(cft);
+    }
+
+    void checkAndUpdateUniqueConstraint(CustomFieldTemplate cft) {
+        Optional.ofNullable(cft).filter(c -> StringUtils.isNotBlank(cft.getAppliesTo()))
+                .ifPresent(c -> updateUniqueConstraint(cft, c));
+    }
+
+    private void updateUniqueConstraint(CustomFieldTemplate cft, CustomFieldTemplate c) {
+        CustomEntityTemplate customEntityTemplate = customEntityTemplateService.findByCode(removePrefixeFromTableName(cft.getAppliesTo()));
+        Optional.ofNullable(customEntityTemplate).filter(CustomEntityTemplate::isStoreAsTable).ifPresent(cus -> defineColumnsAndReplaceUniqueConstraint(c, cus));
+    }
+
+     String removePrefixeFromTableName(String tableName) {
+        return tableName.startsWith("CE_") ? tableName.substring("CE_".length()) : tableName;
+    }
+
+    private void defineColumnsAndReplaceUniqueConstraint(CustomFieldTemplate cft, CustomEntityTemplate customEntityTemplate) {
+        tryToRemoveAlreadyPresentConstraint(customEntityTemplate);
+        Set<CustomFieldTemplate> allReferences = findByTableAndUnique(customEntityTemplate.getDbTablename());
+
+        if(cft.isUniqueConstraint()){
+            allReferences.add(cft);
+        }
+
+        udateConstraintKey(customEntityTemplate, allReferences);
+    }
+
+    public void updateUniqueConstraintOnRemoving(CustomFieldTemplate cft){
+        CustomEntityTemplate customEntityTemplate = customEntityTemplateService.findByCode(removePrefixeFromTableName(cft.getAppliesTo()));
+        Optional.ofNullable(customEntityTemplate).filter(CustomEntityTemplate::isStoreAsTable).ifPresent(cus -> {
+            Set<CustomFieldTemplate> allReferences = findByTableAndUnique(customEntityTemplate.getDbTablename());
+            udateConstraintKey(customEntityTemplate, allReferences);
+        });
+    }
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    private void udateConstraintKey(CustomEntityTemplate customEntityTemplate, Set<CustomFieldTemplate> allReferences) {
+        if(!allReferences.isEmpty()) {
+            String columnNames = allReferences.stream().map(CustomFieldTemplate::getCode).distinct().sorted().collect(Collectors.joining(","));
+            String constraintName = columnNames.replaceAll(",", "_");
+
+            getEntityManager().createNativeQuery(String.format("ALTER TABLE %s ADD CONSTRAINT %s UNIQUE (%s)", customEntityTemplate.getDbTablename(), constraintName, columnNames)).executeUpdate();
+
+            customEntityTemplate.setUniqueContraintName(constraintName);
+        }
+    }
+
+    private void tryToRemoveAlreadyPresentConstraint(CustomEntityTemplate cus) {
+        try {
+            if (StringUtils.isNotBlank(cus.getUniqueContraintName())) {
+                getEntityManager().createNativeQuery(String.format("ALTER TABLE %s DROP CONSTRAINT %s;", cus.getDbTablename(), cus.getUniqueContraintName())).executeUpdate();
+            }
+        }catch (Exception ex){
+            cus.setUniqueContraintName(null);
+        }
+    }
+
+    private Set<CustomFieldTemplate> findByTableAndUnique(String code) {
+        return new HashSet<>(getEntityManager().createNamedQuery("CustomFieldTemplate.getUniqueFromTable", CustomFieldTemplate.class).setParameter("appliesTo", ("CE_" + code).toLowerCase()).getResultList());
     }
 
     @Override
@@ -272,7 +337,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
         customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
         elasticClient.updateCFMapping(cftUpdated);
-
+        checkAndUpdateUniqueConstraint(cftUpdated);
         return cftUpdated;
     }
 
@@ -297,6 +362,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     @Override
     public CustomFieldTemplate enable(CustomFieldTemplate cft) throws BusinessException {
+        cft = refreshOrRetrieve(cft);
         cft = super.enable(cft);
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
         return cft;

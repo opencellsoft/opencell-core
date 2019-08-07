@@ -39,7 +39,9 @@ import org.meveo.service.base.PersistenceService;
  * OtherCreditAndCharge service implementation.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author melyoussoufi
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  */
 @Stateless
 public class OtherCreditAndChargeService extends
@@ -51,7 +53,7 @@ public class OtherCreditAndChargeService extends
 	@EJB
 	private CustomerAccountService customerAccountService;
 
-	public void addOCC(String codeOCCTemplate, String descToAppend,
+	public OtherCreditAndCharge addOCC(String codeOCCTemplate, String descToAppend,
 			CustomerAccount customerAccount, BigDecimal amount, Date dueDate
 			) throws BusinessException {
 		log.info(
@@ -91,13 +93,13 @@ public class OtherCreditAndChargeService extends
 
 		OtherCreditAndCharge otherCreditAndCharge = new OtherCreditAndCharge();
 		otherCreditAndCharge.setCustomerAccount(customerAccount);
-		otherCreditAndCharge.setOccCode(occTemplate.getCode());
+		otherCreditAndCharge.setCode(occTemplate.getCode());
 		if (descToAppend != null) {
-			otherCreditAndCharge.setOccDescription(occTemplate.getDescription()
+			otherCreditAndCharge.setDescription(occTemplate.getDescription()
 					+ " " + descToAppend);
 		} else {
 			otherCreditAndCharge
-					.setOccDescription(occTemplate.getDescription());
+					.setDescription(occTemplate.getDescription());
 		}
 		otherCreditAndCharge.setAccountingCode(occTemplate.getAccountingCode());
 		otherCreditAndCharge.setAccountCodeClientSide(occTemplate
@@ -121,6 +123,7 @@ public class OtherCreditAndChargeService extends
 		        new Object[] { codeOCCTemplate, customerAccount.getCode(),
 		                amount, dueDate });
 		}
+		return otherCreditAndCharge;
 	}
 
     /**

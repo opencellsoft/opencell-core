@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -209,6 +208,10 @@ public class BillingAccountDto extends AccountDto {
             setPhone(contactInfos.getPhone());
             setEmail(contactInfos.getEmail());
         }
+        
+        setMailingType(e.getMailingType() != null ? e.getMailingType().getLabel() : null);
+        setEmailTemplate(e.getEmailTemplate() != null ? e.getEmailTemplate().getCode() : null);
+        setCcedEmails(e.getCcedEmails());
 
         // Start compatibility with pre-4.6 versions
 

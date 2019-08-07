@@ -42,6 +42,8 @@ import org.meveo.service.base.PersistenceService;
  * 
  * @author Edward P. Legaspi
  * @author anasseh
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  */
 @Stateless
 public class RefundService extends PersistenceService<Refund> {
@@ -84,8 +86,8 @@ public class RefundService extends PersistenceService<Refund> {
         refund.setUnMatchingAmount(refund.getAmount());
         refund.setMatchingAmount(BigDecimal.ZERO);
         refund.setAccountingCode(occTemplate.getAccountingCode());
-        refund.setOccCode(occTemplate.getCode());
-        refund.setOccDescription(occTemplate.getDescription());
+        refund.setCode(occTemplate.getCode());
+        refund.setDescription(occTemplate.getDescription());
         refund.setType(doPaymentResponseDto.getPaymentBrand());
         refund.setTransactionCategory(occTemplate.getOccCategory());
         refund.setAccountCodeClientSide(doPaymentResponseDto.getCodeClientSide());

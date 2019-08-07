@@ -67,6 +67,7 @@ import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.view.LazyDataModelWSize;
@@ -74,13 +75,12 @@ import org.omnifaces.cdi.Param;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 /**
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
- * 
+ *
  * @author anasseh
  * @author Edward P. Legaspi
  * @author Khalid HORRI
@@ -117,6 +117,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     @Param
     private Long adjustedInvoiceIdParam;
 
+    @Inject
+    private ServiceSingleton serviceSingleton;
+    
     @Inject
     @Param
     private Boolean detailedParam;
@@ -227,10 +230,12 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return return true if BillingAccounts list is null or empty
      */
     private boolean isNullOrEmpty(Object billingAccounts) {
-        if (billingAccounts == null)
+        if (billingAccounts == null) {
             return true;
-        if (billingAccounts instanceof List && ((List) billingAccounts).isEmpty())
+        }
+        if (billingAccounts instanceof List && ((List) billingAccounts).isEmpty()) {
             return true;
+        }
         return false;
     }
 
@@ -484,6 +489,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public boolean isPdfInvoiceAlreadyGenerated() {
+
         if (!pdfGenerated.containsKey(entity.getId())) {
             pdfGenerated.put(entity.getId(), invoiceService.isInvoicePdfExist(entity));
         }
@@ -709,7 +715,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             if (billingAccountId != 0) {
                 BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
                 entity.setBillingAccount(billingAccount);
-                invoiceService.assignInvoiceNumber(entity);
+                entity = serviceSingleton.assignInvoiceNumber(entity);
             }
 
             super.saveOrUpdate(false);
@@ -819,6 +825,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGeneratePdfBtnActive() {
+        if (invoiceService.isPrepaidReport(entity.getId())) {
+            return false;
+        }
         String value = ParamBean.getInstance().getProperty("billing.activateGenaratePdfBtn", "true");
         if ("false".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
             return Boolean.valueOf(value);
@@ -832,9 +841,24 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGenerateXmlBtnActive() {
+        if (invoiceService.isPrepaidReport(entity.getId())) {
+            return false;
+        }
         String value = ParamBean.getInstance().getProperty("billing.activateGenarateXmlBtn", "true");
         if ("false".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
             return Boolean.valueOf(value);
+        }
+        return true;
+    }
+
+    /**
+     * Activate/deactivate Send by Email button
+     *
+     * @return true if the invoice is not a prepaid report
+     */
+    public boolean getSendByEmailBtnActive() {
+        if (invoiceService.isPrepaidReport(entity.getId())) {
+            return false;
         }
         return true;
     }
@@ -851,7 +875,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public LazyDataModelWSize<RatedTransaction> getRatedTransactions(InvoiceSubCategoryDTO invoiceSubCategoryDTO) {
         LazyDataModelWSize<RatedTransaction> lazyRatedTransactions = ratedTransactionsDM.get(invoiceSubCategoryDTO.getCode());
-        if (lazyRatedTransactions != null) {
+            if (lazyRatedTransactions != null) {
             return lazyRatedTransactions;
         }
 
@@ -872,5 +896,29 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         ratedTransactionsDM.put(invoiceSubCategoryDTO.getCode(), lazyDataModelWSize);
 
         return lazyDataModelWSize;
+    }
+
+    /**
+     * Activate/deactivate New aggregated invoice adjustment
+     *
+     * @return true if the invoice is not a prepaid report
+     */
+    public boolean getShowBtnNewIAAggregateds() {
+        if (invoiceService.isPrepaidReport(entity.getId())) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Activate/deactivate New detailed invoice adjustment
+     *
+     * @return true if the invoice is not a prepaid report
+     */
+    public boolean getShowBtnNewIADetailed() {
+        if (invoiceService.isPrepaidReport(entity.getId())) {
+            return false;
+        }
+        return true;
     }
 }

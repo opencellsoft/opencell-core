@@ -15,8 +15,8 @@
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.invoicing']}" disabled="true"/>
                 <p:menuitem outcome="invoices" value="#{messages['menu.invoices']}"/>
-                <p:menuitem value="#{messages['commons.new']} #{messages['invoice']}" disabled="true" rendered="#{invoiceBean.entity.transient}"/>
-                <p:menuitem value="#{messages['invoice']} - #{invoiceBean.entity.invoiceNumberOrTemporaryNumber}" disabled="true" rendered="#{!invoiceBean.entity.transient}"/>
+                <p:menuitem value="#{messages['commons.new']} #{messages['invoice']}" disabled="true" rendered="#{invoiceBean.getEntity().transient}"/>
+                <p:menuitem value="#{messages['invoice']} - #{invoiceBean.getEntity().invoiceNumberOrTemporaryNumber}" disabled="true" rendered="#{!invoiceBean.getEntity().transient}"/>
             </p:breadCrumb>
         </h:form>
 
@@ -24,7 +24,7 @@
 
         <p:panel>
 
-            <hftl:formPanel label="#{messages['invoice.panel']} #{invoiceBean.entity.invoiceType.description}" backingBean="#{invoiceBean}" showFormButtons="false"
+            <hftl:formPanel label="#{messages['invoice.panel']} #{invoiceBean.getEntity().invoiceType.description}" backingBean="#{invoiceBean}" showFormButtons="false"
                             formId="headerForm" edit="false">
                 <p:tabView id="tabView" activeIndex="#{invoiceBean.activeTab}">
                     <p:tab title="#{messages['customer.tab.information']}">
@@ -36,12 +36,12 @@
                                             <p:outputLabel for="billingAccountDetailLnk" style="width:60%;" value="#{messages['invoice.billingAccount']}"/>
                                             <h:panelGroup layout="block" styleClass="#{displayOneLine?'formFieldItem':'formFieldItem2Lines'} #{inputStyleClass}"
                                                           style="width:#{inputWidth}%;  #{inputStyle}">
-                                                <h:link id="billingAccountDetailLnk" value="#{invoiceBean.entity.billingAccount.code}" outcome="billingAccountDetailFromInvoice"
+                                                <h:link id="billingAccountDetailLnk" value="#{invoiceBean.getEntity().billingAccount.code}" outcome="billingAccountDetailFromInvoice"
                                                         styleClass="field-value" includeViewParams="true">
                                                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"></f:param>
-                                                    <f:param name="billingAccountId" value="#{invoiceBean.entity.billingAccount.id}"></f:param>
-                                                    <f:param name="customerAccountId" value="#{invoiceBean.entity.billingAccount.customerAccount.id}"></f:param>
-                                                    <f:param name="customerId" value="#{invoiceBean.entity.billingAccount.customerAccount.customer.id}"></f:param>
+                                                    <f:param name="billingAccountId" value="#{invoiceBean.getEntity().billingAccount.id}"></f:param>
+                                                    <f:param name="customerAccountId" value="#{invoiceBean.getEntity().billingAccount.customerAccount.id}"></f:param>
+                                                    <f:param name="customerId" value="#{invoiceBean.getEntity().billingAccount.customerAccount.customer.id}"></f:param>
                                                     <f:param name="mainTab" value="2"></f:param>
                                                     <f:param name="tab" value="0"></f:param>
                                                 </h:link>
@@ -59,6 +59,8 @@
                                         <hftl:formField label="#{messages['invoice.alias']}" field="alias"/>
                                         <hftl:formField label="#{messages['invoice.comment']}" field="comment" textArea="true"/>
                                         <hftl:formField label="#{messages['invoice.paymentMethod']}" field="paymentMethod" isMessage="true"/>
+                                        <hftl:formField label="#{messages['invoice.alreadySent']}" field="alreadySent" isMessage="true"/>
+                                        <hftl:formField label="#{messages['invoice.dontSend']}" field="dontSend" isMessage="true"/>
                                     </h:panelGroup>
                                 </p:fieldset>
                                 <h:panelGroup id="attachments">
@@ -67,7 +69,7 @@
                                         <p:panelGrid columns="1">
                                             <p:outputPanel rendered="#{invoiceBean.pdfInvoiceAlreadyGenerated}">
                                                 <h:commandLink action="#{invoiceBean.downloadPdfInvoice()}">
-                                                    <h:outputText value="#{invoiceBean.entity.pdfFilenameOnly}"/>
+                                                    <h:outputText value="#{invoiceBean.getEntity().pdfFilenameOnly}"/>
                                                 </h:commandLink>
                                                 <p:spacer width="10"/>
                                                 <p:commandButton icon="ui-icon-close" action="#{invoiceBean.deletePdfInvoice}"
@@ -75,7 +77,7 @@
                                             </p:outputPanel>
                                             <p:outputPanel rendered="#{invoiceBean.xmlInvoiceAlreadyGenerated}">
                                                 <h:commandLink action="#{invoiceBean.downloadXmlInvoice()}">
-                                                    <h:outputText value="#{invoiceBean.entity.xmlFilenameOnly}"/>
+                                                    <h:outputText value="#{invoiceBean.getEntity().xmlFilenameOnly}"/>
                                                 </h:commandLink>
                                                 <p:spacer width="10"/>
                                                 <p:commandButton icon="ui-icon-close" action="#{invoiceBean.deleteXmlInvoice}"
@@ -222,7 +224,7 @@
                             <hftl:formField label="#{messages['invoice.amountTax']}" field="amountTax" converter="bigDecimal4DigitsConverter"/>
                             <hftl:formField label="#{messages['invoice.amountWithTax']}" field="amountWithTax" converter="bigDecimal4DigitsConverter"/>
                             <hftl:decorateFormField fieldId="netTopayId" label="#{messages['invoice.netToPay']}">
-                                <h:outputText id="netTopayId" value="#{invoiceBean.entity.netToPay}" styleClass="field-value"/>
+                                <h:outputText id="netTopayId" value="#{invoiceBean.getEntity().netToPay}" styleClass="field-value"/>
                             </hftl:decorateFormField>
                         </p:fieldset>
                         <br/>
@@ -233,21 +235,21 @@
                             <p:commandButton rendered="#{invoiceBean.generateXmlBtnActive}" value="#{messages['invoice.generateXml']}" icon="ui-icon-refresh"
                                              disabled="#{invoiceBean.xmlInvoiceAlreadyGenerated}"
                                              action="#{invoiceBean.generateXmlInvoice}" update=":headerForm:messages :headerForm:tabView:attachments buttonGenerate"/>
-                            <p:commandButton value="#{messages['invoice.sendByEmail']}" icon="ui-icon-send"
+                            <p:commandButton rendered="#{invoiceBean.sendByEmailBtnActive}" value="#{messages['invoice.sendByEmail']}" icon="ui-icon-send"
                                              disabled="#{!invoiceBean.pdfInvoiceAlreadyGenerated}"
                                              action="#{invoiceBean.sendInvoiceByEmail}" update=":headerForm:messages"/>
                         </p:outputPanel>
 
                         <p:fieldset legend="#{messages['invoice.linkedInvoices']}">
 
-                            <p:dataTable var="entity" value="#{invoiceBean.entity.linkedInvoices}" paginator="true" rows="10"
+                            <p:dataTable var="entity" value="#{invoiceBean.getEntity().linkedInvoices}" paginator="true" rows="10"
                                          paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                          rowsPerPageTemplate="10,20" lazy="false" resizableColumns="true" styleClass="custom-grid" rowKey="#{entity.id}" reflow="true"
                                          paginatorPosition="both">
                                 <p:column headerText="#{messages['invoice.invoiceNumber']}">
                                     <h:link value="#{entity.invoiceNumber}" outcome="invoiceDetail">
                                         <f:param name="objectId" value="#{entity.id}"/>
-                                        <f:param name="adjustedInvoiceIdParam" value="#{invoiceBean.entity.id}"/>
+                                        <f:param name="adjustedInvoiceIdParam" value="#{invoiceBean.getEntity().id}"/>
                                         <f:param name="detailedParam" value="#{entity.detailedInvoice}"/>
                                         <f:param name="edit" value="false"/>
                                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
@@ -259,15 +261,15 @@
                         </p:fieldset>
 
                         <p:outputPanel styleClass="action-buttons" column="2" id="invoiceAdjustmentActionPanel"
-                                       rendered="#{not empty invoiceBean.entity.invoiceNumber}">
-                            <p:button id="btnNewIAAggregateds" value="#{messages['invoice.adjustment.action.new.aggregated']}" outcome="invoiceAggregatedDetail">
-                                <f:param name="linkedInvoiceIdParam" value="#{invoiceBean.entity.id}"/>
+                                       rendered="#{not empty invoiceBean.getEntity().invoiceNumber}">
+                            <p:button rendered="#{invoiceBean.showBtnNewIAAggregateds}" id="btnNewIAAggregateds" value="#{messages['invoice.adjustment.action.new.aggregated']}" outcome="invoiceAggregatedDetail">
+                                <f:param name="linkedInvoiceIdParam" value="#{invoiceBean.getEntity().id}"/>
                                 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
                                 <f:param name="edit" value="true"/>
                             </p:button>
 
-                            <p:button id="btnNewIADetailed" value="#{messages['invoice.adjustment.action.new.detailed']}" outcome="detailedInvoiceDetail">
-                                <f:param name="linkedInvoiceIdParam" value="#{invoiceBean.entity.id}"/>
+                            <p:button rendered="#{invoiceBean.showBtnNewIADetailed}" id="btnNewIADetailed" value="#{messages['invoice.adjustment.action.new.detailed']}" outcome="detailedInvoiceDetail">
+                                <f:param name="linkedInvoiceIdParam" value="#{invoiceBean.getEntity().id}"/>
                                 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
                                 <f:param name="edit" value="true"/>
                             </p:button>

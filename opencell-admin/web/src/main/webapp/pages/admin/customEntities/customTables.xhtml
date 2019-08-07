@@ -17,8 +17,6 @@
 
     <ui:define name="body">
 
-        <p:growl id="growl" showDetail="true" sticky="false" autoUpdate="true" />
-
         <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
 
         <h:form id="crumbmenuForm">
@@ -164,7 +162,7 @@
                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" paginator="true" rows="10"
                     rowsPerPageTemplate="10,15,20,50" resizableColumns="true" styleClass="custom-grid" reflow="true" editable="#{customTableBean.edit}" editMode="cell"
                     selection="#{customTableBean.selectedValues}" sortBy="id">
-                    <p:ajax event="cellEdit" listener="#{customTableBean.onCellEdit}" update=":growl" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />/>
+                    <p:ajax event="cellEdit" listener="#{customTableBean.onCellEdit}" update="@form" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />/>
                     <p:ajax event="cellEditCancel"  partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />/>
 
                     <p:column id="multiSelect" selectionMode="multiple" width="4%" exportable="false" toggleable="false" />
@@ -188,6 +186,10 @@
                                 <h:outputText id="#{entity[field.dbFieldname]}_out_boolean" value="#{entity[field.dbFieldname]}" styleClass="field-value"
                                     rendered="#{field.fieldType eq CustomFieldTypeEnum.BOOLEAN}">
                                     <f:converter converterId="javax.faces.Boolean" />
+                                </h:outputText>
+                                <h:outputText id="#{entity[field.dbFieldname]}_out_entity" value="#{entity[field.dbFieldname]}" styleClass="field-value"
+                                    rendered="#{field.fieldType eq CustomFieldTypeEnum.ENTITY}">
+                                    <f:converter converterId="javax.faces.Long" />
                                 </h:outputText>
                             </f:facet>
                             <f:facet name="input">
@@ -241,6 +243,7 @@
                                     <f:selectItem itemValue="#{false}" itemLabel="false" />
                                     <f:converter converterId="javax.faces.Boolean" />
                                 </p:selectOneMenu>
+
                             </f:facet>
                         </p:cellEditor>
                     </p:columns>
@@ -318,6 +321,14 @@
                                             <f:selectItems value="#{field.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
                                         </p:selectOneMenu>
                                     </c:if>
+                                    <c:if test="#{field.fieldType eq CustomFieldTypeEnum.ENTITY}">
+                                        <p:selectOneMenu id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}" required="#{field.valueRequired}">
+                                            <f:selectItem itemValue="#{null}" itemLabel="" />
+                                            <f:selectItems value="#{customTableBean.entityTypeColumnDatas(field)}" var="data" itemValue="#{data.id}"
+                                                           itemLabel="#{data.id} (#{data.display()})" />
+                                            <f:converter converterId="javax.faces.Long" />
+                                        </p:selectOneMenu>
+                                    </c:if>
                                 </c:forEach>
 
                                 <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields" update=":ctForm:ctSearchResults"
@@ -327,13 +338,6 @@
 
                             </hf:namingContainer>
                             <h:panelGroup styleClass="clearLeft" style="margin-top:20px" layout="block">
-                                <p:commandButton value="#{messages['customTable.import']}" onclick="PF('importDialog').show()" icon="fa fa-arrow-up" type="button" immediate="true" process="@this" />
-
-                                <p:commandButton action="#{customTableBean.exportData}" value="#{messages['customTable.export']}" icon="fa fa-arrow-down" immediate="true" process="@this"
-                                    update=":growl :exportSummary" rendered="#{customTableBean.exportFuture ==null or customTableBean.exportFuture.isDone()}">
-                                    <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['customTable.exportFile.confirmation']}" icon="ui-icon-alert" />
-                                </p:commandButton>
-
                                 <p:commandButton id="deleteMany" value="#{messages['commons.deleteMultiple']}" action="#{customTableBean.deleteMany()}" icon="ui-icon-trash"
                                     process=":ctForm:ctSearchResults" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])"
                                     update=":ctForm:ctSearchResults">
@@ -345,32 +349,6 @@
                 </p:dataTable>
             </h:form>
 
-            <p:dialog modal="true" closeOnEscape="true" widgetVar="importDialog" header="#{messages['customTable.importFile.header']}" draggable="false" closable="true" resizable="false"
-                width="1000px">
-
-                <hftl:decorateFormPanel formId="importForm">
-                    <ui:define name="fields">
-                        <hftl:decorateFormField fieldId="appendImportedData" label="#{messages['customTable.appendImportedData']}" componentWidth="50" displayOneLine="true" labelWidth="60">
-                            <p:selectBooleanCheckbox id="appendImportedData" value="#{customTableBean.appendImportedData}">
-                                <p:ajax event="change" process="@this" />
-                            </p:selectBooleanCheckbox>
-                        </hftl:decorateFormField>
-
-                        <hftl:decorateFormField fieldId="csvFileFormat" label="#{messages['customTable.csvFileFormat']}" componentWidth="100" newLine="true">
-                            <h:outputText id="csvFileFormat" value="#{customTableBean.csvFileFormat }" styleClass="field-value" />
-                        </hftl:decorateFormField>
-
-                        <hftl:decorateFormField label="" componentWidth="100" newLine="true">
-                            <p:fileUpload id="import_file" widgetVar="fileUploadWidget" fileUploadListener="#{customTableBean.handleFileUpload}" allowTypes="/(\.|\/)(csv)$/" auto="false"
-                                label="#{messages['customTable.importFile.selectFile']}" uploadLabel="#{messages['export.importFile.upload']}"
-                                fileLimitMessage="#{messages['customFieldTemplate.importFile.fileLimitMessage']}" multiple="false" update=":growl :importSummary @this"
-                                onstart="PF('importDialog').hide()" oncomplete="PF('fileUploadWidget').reset()"
-                                rendered="#{customTableBean.importFuture ==null or customTableBean.importFuture.isDone()}">
-                            </p:fileUpload>
-                        </hftl:decorateFormField>
-                    </ui:define>
-                </hftl:decorateFormPanel>
-            </p:dialog>
         </p:panel>
     </ui:define>
 

@@ -51,15 +51,17 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -102,7 +104,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
         @NamedQuery(name = "Invoice.nullifyInvoiceFileNames", query = "update Invoice inv set inv.pdfFilename = null , inv.xmlFilename = null where inv.billingRun = :billingRun"),
         @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId") })
-public class Invoice extends AuditableEntity implements ICustomFieldEntity {
+public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
 
@@ -287,7 +289,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
-    private String uuid = UUID.randomUUID().toString();
+    private String uuid;
 
     /**
      * Custom field values in JSON format
@@ -405,6 +407,17 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     private Boolean draft;
 
     /**
+     * Code
+     */
+    @Transient
+    private String code;
+    /**
+     * Description
+     */
+    @Transient
+    private String description;
+
+    /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
      */
     @PrePersist
@@ -412,6 +425,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     public void prePersistOrUpdate() {
         this.dueDate = DateUtils.truncateTime(this.dueDate);
         this.invoiceDate = DateUtils.truncateTime(this.invoiceDate);
+        setUUIDIfNull();
     }
 
     public List<RatedTransaction> getRatedTransactions() {
@@ -717,8 +731,18 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         this.orders = orders;
     }
 
+    /**
+     * setting uuid if null
+     */
+    public void setUUIDIfNull() {
+    	if (uuid == null) {
+    		uuid = UUID.randomUUID().toString();
+    	}
+    }
+    
     @Override
     public String getUuid() {
+    	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
         return uuid;
     }
 
@@ -961,6 +985,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
      * @return true if the invoice is draft, false else.
      */
     public Boolean isDraft() {
+        if (draft == null) {
+            return false;
+        }
         return draft;
     }
 
@@ -994,4 +1021,23 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         return String.format("%s[%s, invoiceNumber=%s, invoiceType=%s]", this.getClass().getSimpleName(), super.toString(), invoiceNumber, invoiceType);
     }
 
+    @Override
+    public String getCode() {
+        return invoiceNumber;
+    }
+
+    @Override
+    public void setCode(String code) {
+
+    }
+
+    @Override
+    public String getDescription() {
+        return alias;
+    }
+
+    @Override
+    public void setDescription(String description) {
+
+    }
 }

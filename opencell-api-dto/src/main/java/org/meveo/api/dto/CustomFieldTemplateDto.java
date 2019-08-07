@@ -70,6 +70,10 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
     @XmlElement
     protected Boolean valueRequired;
 
+    /** Is value is part of unique constraint. */
+    @XmlElement
+    protected Boolean uniqueConstraint;
+
     /** Is value versionable. */
     @XmlElement
     protected Boolean versionable;
@@ -245,6 +249,7 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
         if (cf.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && cf.getChildEntityFields() != null) {
             childEntityFieldsForSummary = Arrays.asList(cf.getChildEntityFieldsAsList());
         }
+        this.uniqueConstraint = cf.isUniqueConstraint();
 
     }
 
@@ -794,5 +799,13 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
      */
     public void setRoundingMode(RoundingModeEnum roundingMode) {
         this.roundingMode = roundingMode;
+    }
+
+    public Boolean getUniqueConstraint() {
+        return uniqueConstraint;
+    }
+
+    public void setUniqueConstraint(Boolean uniqueConstraint) {
+        this.uniqueConstraint = uniqueConstraint;
     }
 }

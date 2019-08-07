@@ -21,6 +21,7 @@ package org.meveo.service.payments.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -46,7 +47,9 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * MatchingCode service implementation.
- * 
+ *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  */
 @Stateless
 public class MatchingCodeService extends PersistenceService<MatchingCode> {
@@ -414,6 +417,31 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             return (MatchingCode) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
             return null;
+        }
+    }
+
+    /**
+     * unmatching operation account
+     *
+     * @param accountOperation the account operation to unmatch
+     * @throws BusinessException the business exception
+     */
+    public void unmatchingOperationAccount(AccountOperation accountOperation) throws BusinessException {
+        List<MatchingAmount> matchingAmounts = accountOperation.getMatchingAmounts();
+        if (matchingAmounts != null && !matchingAmounts.isEmpty()) {
+
+            List<Long> matchingCodesToUnmatch = new ArrayList<Long>();
+            Iterator<MatchingAmount> iterator = accountOperation.getMatchingAmounts().iterator();
+            while (iterator.hasNext()) {
+                MatchingAmount matchingAmount = iterator.next();
+                MatchingCode matchingCode = matchingAmount.getMatchingCode();
+                if (matchingCode != null) {
+                    matchingCodesToUnmatch.add(matchingCode.getId());
+                }
+            }
+            for (Long matchingCodeId : matchingCodesToUnmatch) {
+                unmatching(matchingCodeId);
+            }
         }
     }
 

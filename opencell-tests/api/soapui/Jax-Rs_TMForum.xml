@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="99e5aa84-c6f0-481f-ac30-865327111e19" activeEnvironment="Default" name="Meveo TMForum - API - wildfly" resourceRoot="" soapui-version="5.5.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="99e5aa84-c6f0-481f-ac30-865327111e19" activeEnvironment="Default" name="Meveo TMForum - API - wildfly" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
   <con:interface xsi:type="con:WsdlInterface" id="862741d9-1cba-4f44-8645-23cbf90521aa" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
@@ -48036,7 +48036,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>5dd5ebf9-0184-4b55-9c55-ed46885d4f16</con:value>
+              <con:value>7d27be27-2246-4647-a866-093cef1532b2</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -52112,7 +52112,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
-            <con:parameters><entry key="quoteId" value="45ea3fba-1b13-493e-b45e-804050894acc" xmlns="http://eviware.com/soapui/config"/></con:parameters>
+            <con:parameters><entry key="quoteId" value="1d5592cc-2972-42b8-be84-155a8710eef3" xmlns="http://eviware.com/soapui/config"/></con:parameters>
           </con:restRequest>
         </con:config>
       </con:testStep>
@@ -53256,7 +53256,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
-            <con:parameters><entry key="quoteId" value="2a748283-e0c0-458d-a1f0-abe658da1505" xmlns="http://eviware.com/soapui/config"/></con:parameters>
+            <con:parameters><entry key="quoteId" value="a807b29d-5782-4376-8f1f-b4a920785dd4" xmlns="http://eviware.com/soapui/config"/></con:parameters>
           </con:restRequest>
         </con:config>
       </con:testStep>
@@ -54302,7 +54302,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
-            <con:parameters><entry key="quoteId" value="b26d01a1-e52d-4da9-a632-467f6de98700" xmlns="http://eviware.com/soapui/config"/></con:parameters>
+            <con:parameters><entry key="quoteId" value="484723d1-8ed5-4507-9c9b-4df751cd087d" xmlns="http://eviware.com/soapui/config"/></con:parameters>
           </con:restRequest>
         </con:config>
       </con:testStep>
@@ -54402,9 +54402,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
-              <con:configuration>
-                <path>//renewalRule</path>
-                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//renewalRule</path><content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialTermType>RECURRING</initialTermType>
   <initialyActiveFor>2</initialyActiveFor>
   <initialyActiveForUnit>MONTH</initialyActiveForUnit>
   <autoRenew>true</autoRenew>
@@ -54413,11 +54412,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <renewFor>1</renewFor>
   <renewForUnit>MONTH</renewForUnit>
   <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
-</renewalRule>]]></content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</renewalRule>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
               <con:configuration>
@@ -54694,9 +54689,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
-              <con:configuration>
-                <path>//renewalRule</path>
-                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//renewalRule</path><content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialTermType>RECURRING</initialTermType>
   <initialyActiveFor>3</initialyActiveFor>
   <initialyActiveForUnit>MONTH</initialyActiveForUnit>
   <autoRenew>true</autoRenew>
@@ -54705,11 +54699,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <renewFor>2</renewFor>
   <renewForUnit>MONTH</renewForUnit>
   <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
-</renewalRule>]]></content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</renewalRule>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
               <con:configuration>
@@ -54898,9 +54888,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
-              <con:configuration>
-                <path>//renewalRule</path>
-                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//renewalRule</path><content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialTermType>RECURRING</initialTermType>
   <initialyActiveFor>3</initialyActiveFor>
   <initialyActiveForUnit>MONTH</initialyActiveForUnit>
   <autoRenew>true</autoRenew>
@@ -54909,11 +54898,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <renewFor>2</renewFor>
   <renewForUnit>MONTH</renewForUnit>
   <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
-</renewalRule>]]></content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</renewalRule>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
               <con:configuration><path>//subscribedTillDate</path><content>2016-08-25T00:00:00${#Project#timezone2}</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
@@ -55096,9 +55081,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
-              <con:configuration>
-                <path>//renewalRule</path>
-                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//renewalRule</path><content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialTermType>RECURRING</initialTermType>
   <initialyActiveFor>3</initialyActiveFor>
   <initialyActiveForUnit>MONTH</initialyActiveForUnit>
   <autoRenew>true</autoRenew>
@@ -55107,11 +55091,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <renewFor>2</renewFor>
   <renewForUnit>MONTH</renewForUnit>
   <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
-</renewalRule>]]></content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</renewalRule>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
               <con:configuration><path>//subscribedTillDate</path><content>2016-08-25T00:00:00${#Project#timezone2}</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
@@ -55299,9 +55279,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
-              <con:configuration>
-                <path>//renewalRule</path>
-                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//renewalRule</path><content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialTermType>RECURRING</initialTermType>
   <initialyActiveFor>3</initialyActiveFor>
   <initialyActiveForUnit>MONTH</initialyActiveForUnit>
   <autoRenew>true</autoRenew>
@@ -55310,11 +55289,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <renewFor>2</renewFor>
   <renewForUnit>MONTH</renewForUnit>
   <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
-</renewalRule>]]></content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</renewalRule>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
               <con:configuration><path>//subscribedTillDate</path><content>2016-10-25T00:00:00${#Project#timezone2}</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
@@ -55577,9 +55552,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
-              <con:configuration>
-                <path>//renewalRule</path>
-                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//renewalRule</path><content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialTermType>RECURRING</initialTermType>
   <initialyActiveFor>3</initialyActiveFor>
   <initialyActiveForUnit>MONTH</initialyActiveForUnit>
   <autoRenew>true</autoRenew>
@@ -55588,11 +55562,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <renewFor>2</renewFor>
   <renewForUnit>MONTH</renewForUnit>
   <extendAgreementPeriodToSubscribedTillDate>false</extendAgreementPeriodToSubscribedTillDate>
-</renewalRule>]]></content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</renewalRule>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
               <con:configuration><path>//subscribedTillDate</path><content>20*-*-25T00:00:00${#Project#timezone2}</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
@@ -55852,9 +55822,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
-              <con:configuration>
-                <path>//renewalRule</path>
-                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//renewalRule</path><content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialTermType>RECURRING</initialTermType>
   <initialyActiveFor>3</initialyActiveFor>
   <initialyActiveForUnit>MONTH</initialyActiveForUnit>
   <autoRenew>false</autoRenew>
@@ -55863,11 +55832,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <renewFor>2</renewFor>
   <renewForUnit>MONTH</renewForUnit>
   <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
-</renewalRule>]]></content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</renewalRule>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
               <con:configuration><path>//subscribedTillDate</path><content>20*-*-25T00:00:00${#Project#timezone2}</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
@@ -56071,9 +56036,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
-              <con:configuration>
-                <path>//renewalRule</path>
-                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//renewalRule</path><content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialTermType>RECURRING</initialTermType>
   <initialyActiveFor>3</initialyActiveFor>
   <initialyActiveForUnit>MONTH</initialyActiveForUnit>
   <autoRenew>false</autoRenew>
@@ -56082,11 +56046,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <renewFor>2</renewFor>
   <renewForUnit>MONTH</renewForUnit>
   <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
-</renewalRule>]]></content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</renewalRule>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
               <con:configuration><path>//subscribedTillDate</path><content>20*-*-25T00:00:00${#Project#timezone2}</content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
@@ -56726,9 +56686,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
             <con:assertion type="XPath Match" id="dfddc1af-b35b-4f05-8b76-1c564db807ab" name="XPath Match">
-              <con:configuration>
-                <path>//subscription/renewalRule</path>
-                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//subscription/renewalRule</path><content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialTermType>RECURRING</initialTermType>
   <initialyActiveFor>2</initialyActiveFor>
   <initialyActiveForUnit>MONTH</initialyActiveForUnit>
   <autoRenew>true</autoRenew>
@@ -56737,11 +56696,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <renewFor>1</renewFor>
   <renewForUnit>MONTH</renewForUnit>
   <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
-</renewalRule>]]></content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+</renewalRule>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -56775,23 +56730,18 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
             <con:assertion type="XPath Match" id="dfddc1af-b35b-4f05-8b76-1c564db807ab" name="XPath Match">
-              <con:configuration>
-                <path>//subscription/renewalRule</path>
-                <content><![CDATA[<renewalRule>
-               <initialyActiveFor>5</initialyActiveFor>
-               <initialyActiveForUnit>MONTH</initialyActiveForUnit>
-               <autoRenew>false</autoRenew>
-               <daysNotifyRenewal>10</daysNotifyRenewal>
-               <endOfTermAction>TERMINATE</endOfTermAction>
-               <terminationReasonCode>TERM_REASON_1</terminationReasonCode>
-               <renewFor>20</renewFor>
-               <renewForUnit>DAY</renewForUnit>
-               <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
-            </renewalRule>]]></content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+              <con:configuration><path>//subscription/renewalRule</path><content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialTermType>RECURRING</initialTermType>
+  <initialyActiveFor>5</initialyActiveFor>
+  <initialyActiveForUnit>MONTH</initialyActiveForUnit>
+  <autoRenew>false</autoRenew>
+  <daysNotifyRenewal>10</daysNotifyRenewal>
+  <endOfTermAction>TERMINATE</endOfTermAction>
+  <terminationReasonCode>TERM_REASON_1</terminationReasonCode>
+  <renewFor>20</renewFor>
+  <renewForUnit>DAY</renewForUnit>
+  <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
+</renewalRule>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -56865,23 +56815,18 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
             <con:assertion type="XPath Match" id="dfddc1af-b35b-4f05-8b76-1c564db807ab" name="XPath Match">
-              <con:configuration>
-                <path>//subscription/renewalRule</path>
-                <content><![CDATA[<renewalRule>
-               <initialyActiveFor>5</initialyActiveFor>
-               <initialyActiveForUnit>MONTH</initialyActiveForUnit>
-               <autoRenew>false</autoRenew>
-               <daysNotifyRenewal>10</daysNotifyRenewal>
-               <endOfTermAction>TERMINATE</endOfTermAction>
-               <terminationReasonCode>TERM_REASON_1</terminationReasonCode>
-               <renewFor>20</renewFor>
-               <renewForUnit>DAY</renewForUnit>
-               <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
-            </renewalRule>]]></content>
-                <allowWildcards>false</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+              <con:configuration><path>//subscription/renewalRule</path><content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialTermType>RECURRING</initialTermType>
+  <initialyActiveFor>5</initialyActiveFor>
+  <initialyActiveForUnit>MONTH</initialyActiveForUnit>
+  <autoRenew>false</autoRenew>
+  <daysNotifyRenewal>10</daysNotifyRenewal>
+  <endOfTermAction>TERMINATE</endOfTermAction>
+  <terminationReasonCode>TERM_REASON_1</terminationReasonCode>
+  <renewFor>20</renewFor>
+  <renewForUnit>DAY</renewForUnit>
+  <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
+</renewalRule>]]></content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -56898,7 +56843,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>35</con:value>
+        <con:value>39</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -57650,9 +57595,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="ff041be2-3305-4416-a7c3-98361cfd604a" name="XPath Match 1">
-              <con:configuration>
-                <path>//ratedTransaction[code="${#Project#baseEntityPrefix}_OST"]</path>
-                <content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//ratedTransaction[code="${#Project#baseEntityPrefix}_OST"]</path><content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <usageDate>2016-02-01T00:00:00*</usageDate>
   <unitAmountWithoutTax>5.000000000000</unitAmountWithoutTax>
   <unitAmountWithTax>5.250000000000</unitAmountWithTax>
@@ -57668,16 +57611,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <doNotTriggerInvoicing>false</doNotTriggerInvoicing>
   <taxCode>TAX_05</taxCode>
   <taxPercent>5.000000000000</taxPercent>
-</ratedTransaction>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+  <sellerCode>SELLER_FR</sellerCode>
+  <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
+</ratedTransaction>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="b898cc33-aec0-467c-b6ea-b08aec9987e4" name="XPath Match 2">
-              <con:configuration>
-                <path>//ratedTransaction[code="${#Project#baseEntityPrefix}_REC1"]</path>
-                <content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//ratedTransaction[code="${#Project#baseEntityPrefix}_REC1"]</path><content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <usageDate>2016-02-01T00:00:00*</usageDate>
   <unitAmountWithoutTax>10.000000000000</unitAmountWithoutTax>
   <unitAmountWithTax>10.500000000000</unitAmountWithTax>
@@ -57695,11 +57634,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <endDate>2016-03-01T00:00:00*</endDate>
   <taxCode>TAX_05</taxCode>
   <taxPercent>5.000000000000</taxPercent>
-</ratedTransaction>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+<sellerCode>SELLER_FR</sellerCode>
+  <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
+</ratedTransaction>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
@@ -57813,7 +57750,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <targetCode>2e45d452-e2e4-4af0-90e8-6c3112ac3911</targetCode>
+            <targetCode>5186aee0-814a-4029-b5d9-fe2527146636</targetCode>
             <targetType>ORDER</targetType>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
@@ -57967,7 +57904,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>993a30bb-9fe2-42ff-b65e-a3264669a47d</targetCode>
+            <targetCode>f4846ccf-127a-413f-98be-6f99a1fd1ead</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -58182,7 +58119,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>863c77c9-686a-46db-a3d9-daa6c6890ecb</targetCode>
+            <targetCode>2e1d5922-2538-42b1-977e-c139613d79b9</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -58386,7 +58323,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>938756ca-e53c-46c5-88e3-b29b0905fe3d</targetCode>
+            <targetCode>43902cef-ec08-41a6-9370-7be53675978d</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -58474,9 +58411,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:configuration><path>count(//ratedTransaction)</path><content>4</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="5552ef98-8051-4b55-a267-971866332726" name="XPath Match 1">
-              <con:configuration>
-                <path>//ratedTransaction[code="TM_BASE2_OST"]</path>
-                <content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration><path>//ratedTransaction[code="TM_BASE2_OST"]</path><content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <usageDate>2016-02-29T00:00:00*</usageDate>
   <unitAmountWithoutTax>5.000000000000</unitAmountWithoutTax>
   <unitAmountWithTax>5.250000000000</unitAmountWithTax>
@@ -58492,11 +58427,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <doNotTriggerInvoicing>false</doNotTriggerInvoicing>
   <taxCode>TAX_05</taxCode>
   <taxPercent>5.000000000000</taxPercent>
-</ratedTransaction>]]></content>
-                <allowWildcards>true</allowWildcards>
-                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                <ignoreComments>false</ignoreComments>
-              </con:configuration>
+<sellerCode>SELLER_FR</sellerCode>
+  <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
+</ratedTransaction>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
@@ -58632,6 +58565,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                                  <endDate>2016-04-01T00:00:00*</endDate>
                                  <taxCode>TAX_05</taxCode>
                                  <taxPercent>5.000000000000</taxPercent>
+                                  <sellerCode>SELLER_FR</sellerCode>
+                                 <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
                               </ratedTransaction>
 ]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
             </con:assertion>
@@ -58655,11 +58590,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>86</con:value>
+        <con:value>90</con:value>
       </con:property>
       <con:property>
         <con:name>orderNrThatCreatedSubscription</con:name>
-        <con:value>5c639ae5-37c0-4fd4-bbef-e21aea993f94</con:value>
+        <con:value>6d6ddafb-4f97-4718-b8f6-5b1c7bd7f26c</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -59393,7 +59328,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>92e9e6e8-98e4-4955-a42e-36c69bb3f80e</con:value>
+              <con:value>d0a729c6-e140-4d90-a1b1-9327d2391434</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -59696,15 +59631,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>orderId1</con:name>
-        <con:value>e96c4a80-aa33-4810-95ef-a0cef9f7948a</con:value>
+        <con:value>be5c2c4a-27ef-47f2-8e5f-0d04643f8226</con:value>
       </con:property>
       <con:property>
         <con:name>orderId2</con:name>
-        <con:value>a705b605-796a-4902-a01e-e2177a1898a4</con:value>
+        <con:value>3238f513-c38b-4218-96db-7d7cc2815272</con:value>
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>65</con:value>
+        <con:value>69</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

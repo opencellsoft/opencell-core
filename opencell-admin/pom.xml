@@ -4,14 +4,15 @@
         <artifactId>opencell</artifactId>
         <groupId>com.opencellsoft</groupId>
         <relativePath>../pom.xml</relativePath>
-        <version>8.0.0-SNAPSHOT</version>
+        <version>9.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>opencell-admin</artifactId>
     <packaging>pom</packaging>
     <name>Opencell Admin Web Application</name>
-
+    
     <modules>
         <module>ejbs</module>
         <module>web</module>
     </modules>
 </project>
+

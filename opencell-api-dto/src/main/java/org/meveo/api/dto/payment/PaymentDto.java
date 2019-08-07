@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -78,8 +79,12 @@ public class PaymentDto extends BaseEntityDto {
     /** The transaction date. */
     private Date transactionDate;
     
-    /** The list OCC referencefor matching. */
+    /** The list OCC reference for matching. */
+    @Deprecated
     private List<String> listOCCReferenceforMatching;
+    
+    /** The list AO ids for matching. */
+    private List<Long> listAoIdsForMatching;
     
     /** The is to matching. */
     private boolean isToMatching;
@@ -95,6 +100,28 @@ public class PaymentDto extends BaseEntityDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+    /**
+     * Instantiates a new payment dto.
+     */
+    public PaymentDto() {
+    }
+    
+    /**
+     * Instantiates a new payment dto.
+     * 
+     * @param payment Payment
+     */
+    public PaymentDto(Payment payment) {
+        this.setReference(payment.getReference());
+        this.setAmount(payment.getAmount());
+        this.setDueDate(payment.getDueDate());
+        this.setTransactionDate(payment.getTransactionDate());
+        this.setDescription(payment.getDescription());
+        this.setPaymentMethod(payment.getPaymentMethod());
+        this.setType(payment.getType());
+    }
+
 
     /**
      * Gets the custom fields.
@@ -419,6 +446,24 @@ public class PaymentDto extends BaseEntityDto {
     public void setComment(String comment) {
         this.comment = comment;
     }
+    
+    /**
+     * Gets the list of AO ids for matching.
+     *
+     * @return listOCCReferenceforMatching the list of AO ids for matching.
+     */
+	public List<Long> getListAoIdsForMatching() {
+		return listAoIdsForMatching;
+	}
+
+    /**
+     * Sets the list of AO ids for matching.
+     *
+     * @param listOCCReferenceforMatching the new list of AO ids for matching.
+     */
+	public void setListAoIdsForMatching(List<Long> listAoIdsForMatching) {
+		this.listAoIdsForMatching = listAoIdsForMatching;
+	}
 
     @Override
     public String toString() {
@@ -427,5 +472,4 @@ public class PaymentDto extends BaseEntityDto {
                 + bankCollectionDate + ", dueDate=" + dueDate + ", transactionDate=" + transactionDate + ", listOCCReferenceforMatching=" + listOCCReferenceforMatching
                 + ", isToMatching=" + isToMatching + ", paymentOrder=" + paymentOrder + ", fees=" + fees + ", comment=" + comment + ", customFields=" + customFields + "]";
     }
-
 }

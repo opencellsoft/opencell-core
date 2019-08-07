@@ -1,5 +1,14 @@
 package org.meveo.api.rest.account;
 
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.account.CreditCategoryDto;
+import org.meveo.api.dto.account.CustomerAccountDto;
+import org.meveo.api.dto.account.TransferCustomerAccountDto;
+import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
+import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
+import org.meveo.api.rest.IBaseRs;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -12,21 +21,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.account.CreditCategoryDto;
-import org.meveo.api.dto.account.CustomerAccountDto;
-import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
-import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
-import org.meveo.api.rest.IBaseRs;
-import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-
 /**
  * Web service for managing customer account.
  * 
  * @author R.AITYAAZZA
  * @author anasseh
- * 
- * @lastModifiedVersion willBeSetHere
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  */
 @Path("/account/customerAccount")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -56,16 +57,17 @@ public interface CustomerAccountRs extends IBaseRs {
 
     /**
      * Search for a customer account with a given code.
-     * 
-     * @param customerAccountCode The customer account's code
-     * @param calculateBalances  true if needs  to calculate balances
-     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     *
+     * @param customerAccountCode   The customer account's code
+     * @param calculateBalances     true if needs  to calculate balances
+     * @param inheritCF             Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @param withAccountOperations true if needs to get account operations
      * @return customer account
      */
     @GET
     @Path("/")
     GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") Boolean calculateBalances,
-            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF, @QueryParam("withAccountOperations") Boolean withAccountOperations);
 
     /**
      * Remove customerAccount with a given code.
@@ -116,4 +118,14 @@ public interface CustomerAccountRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(CustomerAccountDto postData);
+
+    /**
+     * Transfer an amount from one customer to another.
+     *
+     * @param transferCustomerAccountDto the transfer Customer Account Dto
+     * @return Request processing status
+     */
+    @POST
+    @Path("/transferAccount")
+    ActionStatus transferAccount(TransferCustomerAccountDto transferCustomerAccountDto);
 }

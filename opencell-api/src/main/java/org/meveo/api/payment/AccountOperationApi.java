@@ -1,17 +1,12 @@
 package org.meveo.api.payment;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.account.TransferAccountOperationDto;
+import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
@@ -25,6 +20,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -33,10 +29,12 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.RejectedPayment;
+import org.meveo.model.payments.WriteOff;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -44,13 +42,21 @@ import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * The Class AccountOperationApi.
  *
  * @author Edward P. Legaspi
  * @author anasseh
- * 
- * @lastModifiedVersion 5.0
+ * @author melyoussoufi
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  */
 @Stateless
 public class AccountOperationApi extends BaseApi {
@@ -92,40 +98,52 @@ public class AccountOperationApi extends BaseApi {
             missingParameters.add("Type");
             handleMissingParameters();
         }
+
+        Object aoSubclassObject = ReflectionUtils.getSubclassObjectByDiscriminatorValue(AccountOperation.class, postData.getType());
         AccountOperation accountOperation = null;
         CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount());
+        OperationCategoryEnum transactionCategory = postData.getTransactionCategory();
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
         }
 
-        if ("OCC".equals(postData.getType()) && postData.getOtherCreditAndCharge() != null) {
+        if (aoSubclassObject == null) {
+            throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment, W=writeOff.");
+        }
+
+        if (aoSubclassObject instanceof OtherCreditAndCharge) {
             // otherCreditAndCharge
             OtherCreditAndCharge otherCreditAndCharge = new OtherCreditAndCharge();
-            otherCreditAndCharge.setOperationDate(postData.getOtherCreditAndCharge().getOperationDate());
+            if (postData.getOtherCreditAndCharge() != null) {
+                otherCreditAndCharge.setOperationDate(postData.getOtherCreditAndCharge().getOperationDate());
+            }
             accountOperation = otherCreditAndCharge;
-        } else if ("R".equals(postData.getType()) && postData.getRejectedPayment() != null) {
+        } else if (aoSubclassObject instanceof RejectedPayment) {
             // rejectedPayment
             RejectedPayment rejectedPayment = new RejectedPayment();
 
-            rejectedPayment.setRejectedType(postData.getRejectedPayment().getRejectedType());
+            if (postData.getRejectedPayment() != null) {
+                rejectedPayment.setRejectedType(postData.getRejectedPayment().getRejectedType());
 
-            rejectedPayment.setBankLot(postData.getRejectedPayment().getBankLot());
-            rejectedPayment.setBankReference(postData.getRejectedPayment().getBankReference());
-            rejectedPayment.setRejectedDate(postData.getRejectedPayment().getRejectedDate());
-            rejectedPayment.setRejectedDescription(postData.getRejectedPayment().getRejectedDescription());
-            rejectedPayment.setRejectedCode(postData.getRejectedPayment().getRejectedCode());
-
+                rejectedPayment.setBankLot(postData.getRejectedPayment().getBankLot());
+                rejectedPayment.setBankReference(postData.getRejectedPayment().getBankReference());
+                rejectedPayment.setRejectedDate(postData.getRejectedPayment().getRejectedDate());
+                rejectedPayment.setRejectedDescription(postData.getRejectedPayment().getRejectedDescription());
+                rejectedPayment.setRejectedCode(postData.getRejectedPayment().getRejectedCode());
+            }
             accountOperation = rejectedPayment;
-        }
-
-        if (accountOperation == null) {
-            throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment.");
+        } else if (aoSubclassObject instanceof WriteOff) {
+            WriteOff writeOff = new WriteOff();
+            transactionCategory = OperationCategoryEnum.CREDIT;
+            accountOperation = writeOff;
+        } else {
+            throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment, W=writeOff.");
         }
 
         accountOperation.setDueDate(postData.getDueDate());
         accountOperation.setType(postData.getType());
         accountOperation.setTransactionDate(postData.getTransactionDate());
-        accountOperation.setTransactionCategory(postData.getTransactionCategory());
+        accountOperation.setTransactionCategory(transactionCategory);
         accountOperation.setReference(postData.getReference());
         if (!StringUtils.isBlank(postData.getAccountingCode())) {
             AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
@@ -156,8 +174,8 @@ public class AccountOperationApi extends BaseApi {
 
         accountOperation.setMatchingStatus(postData.getMatchingStatus());
 
-        accountOperation.setOccCode(postData.getOccCode());
-        accountOperation.setOccDescription(postData.getOccDescription());
+        accountOperation.setCode(postData.getCode());
+        accountOperation.setDescription(postData.getDescription());
         if (!StringUtils.isBlank(postData.getPaymentMethod())) {
             accountOperation.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
         }
@@ -498,5 +516,37 @@ public class AccountOperationApi extends BaseApi {
         }
 
         return matchedOperationsDtos;
+    }
+
+    /**
+     * Transfer an account operation from a customer account to an other.
+     *
+     * @param transferAccountOperationDto the transfer account operation Dto
+     */
+    public void transferAccountOperation(TransferAccountOperationDto transferAccountOperationDto) {
+
+        if (StringUtils.isBlank(transferAccountOperationDto.getFromCustomerAccountCode())) {
+            missingParameters.add("fromCustomerAccountCode");
+        }
+        if (StringUtils.isBlank(transferAccountOperationDto.getAccountOperationId())) {
+            missingParameters.add("accountOperationId");
+        }
+        if (transferAccountOperationDto.getToCustomerAccounts() == null || transferAccountOperationDto.getToCustomerAccounts().isEmpty()) {
+            missingParameters.add("toCustomerAccounts");
+        } else {
+            for (int i = 0; i < transferAccountOperationDto.getToCustomerAccounts().size(); i++) {
+                TransferCustomerAccountDto transferCustomerAccountDto = transferAccountOperationDto.getToCustomerAccounts().get(i);
+                if (StringUtils.isBlank(transferCustomerAccountDto.getToCustomerAccountCode())) {
+                    missingParameters.add("customerAccounts[" + i + "].toCustomerAccountCode");
+                }
+                if (transferCustomerAccountDto.getAmount() == null || transferCustomerAccountDto.getAmount().compareTo(BigDecimal.ZERO) == 0) {
+                    missingParameters.add("customerAccounts[" + i + "].amount");
+                }
+            }
+        }
+
+        handleMissingParameters();
+
+        accountOperationService.transferAccountOperation(transferAccountOperationDto);
     }
 }

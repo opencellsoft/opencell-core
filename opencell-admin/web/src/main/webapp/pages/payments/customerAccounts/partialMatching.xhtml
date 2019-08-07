@@ -10,8 +10,8 @@
 
             <hftl:dataList backingBean="#{accountOperationListBean}" dataModel="#{accountOperationListBean.getPartialMatchingOps()}" edit="false" checkMany="false">
                 <hftl:column label="#{messages['accountOperation.type']}" field="accountOperation.type" />
-                <hftl:column label="#{messages['accountOperation.occCode']}" field="accountOperation.occCode" />
-                <hftl:column label="#{messages['accountOperation.occDescription']}" field="accountOperation.occDescription" />
+                <hftl:column label="#{messages['accountOperation.occCode']}" field="accountOperation.code" />
+                <hftl:column label="#{messages['accountOperation.occDescription']}" field="accountOperation.description" />
                 <hftl:column label="#{messages['accountOperation.transactionDate']}" field="accountOperation.transactionDate" />
                 <hftl:column label="#{messages['accountOperation.dueDate']}" field="accountOperation.dueDate" />
                 <p:column headerText="#{messages['accountOperation.debit']}">
