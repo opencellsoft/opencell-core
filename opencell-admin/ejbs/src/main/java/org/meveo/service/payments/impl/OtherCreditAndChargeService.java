@@ -40,7 +40,8 @@ import org.meveo.service.base.PersistenceService;
  * 
  * @author Edward P. Legaspi
  * @author melyoussoufi
- * @lastModifiedVersion 7.3.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  */
 @Stateless
 public class OtherCreditAndChargeService extends
@@ -52,7 +53,7 @@ public class OtherCreditAndChargeService extends
 	@EJB
 	private CustomerAccountService customerAccountService;
 
-	public void addOCC(String codeOCCTemplate, String descToAppend,
+	public OtherCreditAndCharge addOCC(String codeOCCTemplate, String descToAppend,
 			CustomerAccount customerAccount, BigDecimal amount, Date dueDate
 			) throws BusinessException {
 		log.info(
@@ -122,6 +123,7 @@ public class OtherCreditAndChargeService extends
 		        new Object[] { codeOCCTemplate, customerAccount.getCode(),
 		                amount, dueDate });
 		}
+		return otherCreditAndCharge;
 	}
 
     /**

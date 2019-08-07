@@ -17,8 +17,6 @@
 
     <ui:define name="body">
 
-        <p:growl id="growl" showDetail="true" sticky="false" autoUpdate="true" />
-
         <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
 
         <h:form id="crumbmenuForm">
@@ -164,7 +162,7 @@
                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" paginator="true" rows="10"
                     rowsPerPageTemplate="10,15,20,50" resizableColumns="true" styleClass="custom-grid" reflow="true" editable="#{customTableBean.edit}" editMode="cell"
                     selection="#{customTableBean.selectedValues}" sortBy="id">
-                    <p:ajax event="cellEdit" listener="#{customTableBean.onCellEdit}" update=":growl" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />/>
+                    <p:ajax event="cellEdit" listener="#{customTableBean.onCellEdit}" update="@form" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />/>
                     <p:ajax event="cellEditCancel"  partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />/>
 
                     <p:column id="multiSelect" selectionMode="multiple" width="4%" exportable="false" toggleable="false" />
