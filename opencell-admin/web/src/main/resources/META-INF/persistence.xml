@@ -18,6 +18,7 @@
             <property name="hibernate.cache.use_minimal_puts" value="true" />
             <property name="hibernate.cache.default_cache_concurrency_strategy" value="read-write" />
             <property name="hibernate.generate_statistics" value="false" />
+            <property name="hibernate.enable_lazy_load_no_trans" value="true" />
             <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
             <property name="hibernate.ejb.event.flush" value="org.meveo.jpa.event.FlushEventListener" /> <!-- Needed for ES -->
         </properties>
@@ -42,6 +43,7 @@
             <property name="hibernate.cache.region.factory_class" value="org.jboss.as.jpa.hibernate5.infinispan.SharedInfinispanRegionFactory" />
             <property name="hibernate.generate_statistics" value="false" />
             <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
+            <property name="hibernate.enable_lazy_load_no_trans" value="true" />
             <property name="hibernate.ejb.event.flush" value="org.meveo.jpa.event.FlushEventListener" /> <!-- Needed for ES -->
         </properties>
     </persistence-unit>
