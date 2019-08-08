@@ -96,7 +96,9 @@ public class ScriptingJobBean extends BaseJobBean {
 			result.registerError("Error in " + scriptCode + " finalize :" + e.getMessage());
 		}
 	}
-
+	
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	private String runScript(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context) {
 		ScriptInterface script = null;
 		try {
