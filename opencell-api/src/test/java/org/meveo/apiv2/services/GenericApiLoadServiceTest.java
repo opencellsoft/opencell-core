@@ -1,17 +1,8 @@
 package org.meveo.apiv2.services;
 
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -23,25 +14,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.GenericPagingAndFiltering;
-import org.meveo.api.dto.generic.GenericRequestDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.apiv2.services.generic.GenericApiLoadService;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.admin.User;
-import org.meveo.model.billing.Country;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.shared.Address;
-import org.meveo.model.shared.Name;
-import org.meveo.model.shared.Title;
 import org.meveo.service.base.PersistenceService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -65,9 +45,6 @@ public class GenericApiLoadServiceTest {
     @Spy
     @InjectMocks
     private GenericApiLoadService sut;
-
-    @Mock
-    private GenericRequestDto genericRequestDto;
 
     @Mock
     private EntityManagerWrapper entityManagerWrapper;
@@ -95,7 +72,7 @@ public class GenericApiLoadServiceTest {
     public void given_null_id_when_load_model_then_should_throw_wrong_requested_model_id_exception() {
         try {
             //When
-            sut.findByClassNameAndId(sut.getEntityClass("Tax"), null, null);
+            sut.findByClassNameAndId("Tax", null, null);
             //Then
         } catch (Exception ex) {
             //Expected
@@ -274,7 +251,7 @@ public class GenericApiLoadServiceTest {
         GenericPagingAndFiltering genericPagingAndFiltering = new GenericPagingAndFiltering("fulltest", new HashMap<>(), "addressbook", 0, 3, "id", SortOrder.DESCENDING);
         when(persistenceService.list(any(PaginationConfiguration.class))).thenReturn(customers);
         //When
-        String response = sut.findPaginatedRecords(sut.getEntityClass("customer"), genericPagingAndFiltering);
+        String response = sut.findPaginatedRecords("customer", genericPagingAndFiltering);
         //Then
         assertThat(response).isNotNull();
         assertThat(response).hasSize(5);
@@ -283,7 +260,7 @@ public class GenericApiLoadServiceTest {
     private void assertFindPaginateRecords(String entityName, GenericPagingAndFiltering searchConfig, Class exception, String message) {
         try {
             //When
-            sut.findPaginatedRecords(sut.getEntityClass(entityName), searchConfig);
+            sut.findPaginatedRecords(entityName, searchConfig);
         } catch (Exception ex) {
             assertThat(ex).isInstanceOf(exception);
             assertThat(ex.getMessage()).isEqualTo(message);
@@ -306,7 +283,7 @@ public class GenericApiLoadServiceTest {
     private void assertExpectingModelException(String requestedModelName, String expected) {
         try {
             //When
-            sut.findByClassNameAndId(sut.getEntityClass(requestedModelName), 54l, null);
+            sut.findByClassNameAndId(requestedModelName, 54l, null);
         } catch (Exception ex) {
             //Expected
             assertThat(ex).isInstanceOf(MeveoApiException.class);
@@ -316,7 +293,7 @@ public class GenericApiLoadServiceTest {
 
     private ArgumentCaptor<Class> getModelNameCaptor(String modelName) {
         ArgumentCaptor<Class> captor = ArgumentCaptor.forClass(Class.class);
-        sut.findByClassNameAndId(sut.getEntityClass(modelName), 54L, null);
+        sut.findByClassNameAndId(modelName, 54L, null);
         verify(sut).find(captor.capture(), eq(54l));
         return captor;
     }
