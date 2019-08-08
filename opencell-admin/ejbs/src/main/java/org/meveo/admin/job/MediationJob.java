@@ -47,7 +47,7 @@ public class MediationJob extends Job {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
-
+        Boolean oneFilePerJob = (Boolean) this.getParamOrCFValue(jobInstance, "oneFilePerJob", Boolean.FALSE);
         try {
 
             ParamBean parambean = paramBeanFactory.getInstance();
@@ -96,7 +96,19 @@ public class MediationJob extends Job {
                 if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
+
+                String fileName = file.getName();
                 mediationJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, jobInstance.getParametres(), nbRuns, waitingMillis);
+
+                result.addReport("Processed file: " + fileName);
+                if (oneFilePerJob) {
+                    break;
+                }
+            }
+
+            // Process one file at a time
+            if (oneFilePerJob && files.length > 1) {
+                result.setDone(false);
             }
 
         } catch (Exception e) {
@@ -122,6 +134,7 @@ public class MediationJob extends Job {
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         nbRuns.setDefaultValue("-1");
         nbRuns.setValueRequired(false);
+        nbRuns.setGuiPosition("tab:Configuration:0;field:0");
         result.put("nbRuns", nbRuns);
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
@@ -132,19 +145,19 @@ public class MediationJob extends Job {
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
         waitingMillis.setDefaultValue("0");
         waitingMillis.setValueRequired(false);
+        waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
         result.put("waitingMillis", waitingMillis);
 
-        CustomFieldTemplate scriptJob = new CustomFieldTemplate();
-        scriptJob.setCode("scriptJob");
-        scriptJob.setAppliesTo("JobInstance_MediationJob");
-        scriptJob.setActive(true);
-        scriptJob.setAllowEdit(true);
-        scriptJob.setMaxValue(Long.MAX_VALUE);
-        scriptJob.setDescription(resourceMessages.getString("jobExecution.scriptJob"));
-        scriptJob.setFieldType(CustomFieldTypeEnum.STRING);
-        scriptJob.setValueRequired(false);
-        scriptJob.setDefaultValue("");
-        result.put("scriptJob", scriptJob);
+        CustomFieldTemplate oneFilePerJob = new CustomFieldTemplate();
+        oneFilePerJob.setCode("oneFilePerJob");
+        oneFilePerJob.setAppliesTo("JobInstance_MediationJob");
+        oneFilePerJob.setActive(true);
+        oneFilePerJob.setDescription(resourceMessages.getString("jobExecution.oneFilePerJob"));
+        oneFilePerJob.setFieldType(CustomFieldTypeEnum.BOOLEAN);
+        oneFilePerJob.setDefaultValue("false");
+        oneFilePerJob.setValueRequired(false);
+        oneFilePerJob.setGuiPosition("tab:Configuration:0;field:2");
+        result.put("oneFilePerJob", oneFilePerJob);
 
         return result;
     }

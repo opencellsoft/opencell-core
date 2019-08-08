@@ -1289,4 +1289,10 @@
         <sql>update ${db.schema.adapted}crm_custom_field_tmpl_val set listvalues='Rollback', listvalues_key='ROLLBACK' where listvalues_key='ROLLBBACK'</sql>    
     </changeSet> 
 
+	<changeSet id="#4472_20190807" author="AndriusKarpavicius">
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_MediationJob'</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob')</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_mcols where cft_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob')</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob'</sql>           
+    </changeSet> 
 </databaseChangeLog>

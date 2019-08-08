@@ -109,6 +109,7 @@ public class FlatFileProcessingJob extends Job {
                 nbRuns = (long) Runtime.getRuntime().availableProcessors();
             }
             Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+            Boolean oneFilePerJob = (Boolean) this.getParamOrCFValue(jobInstance, "oneFilePerJob", Boolean.FALSE);
 
             if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES) != null) {
                 initContext = (Map<String, Object>) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES);
@@ -170,8 +171,20 @@ public class FlatFileProcessingJob extends Job {
                 if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
+
+                String fileName = file.getName();
                 flatFileProcessingJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext,
                     filenameVariableName, formatTransfo, errorAction, nbRuns, waitingMillis);
+
+                result.addReport("Processed file: " + fileName);
+                if (oneFilePerJob) {
+                    break;
+                }
+            }
+
+            // Process one file at a time
+            if (oneFilePerJob && files.length > 1) {
+                result.setDone(false);
             }
 
         } catch (Exception e) {
@@ -198,6 +211,7 @@ public class FlatFileProcessingJob extends Job {
         inputDirectoryCF.setDefaultValue(null);
         inputDirectoryCF.setValueRequired(true);
         inputDirectoryCF.setMaxValue(256L);
+        inputDirectoryCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:0");
         result.put(FLAT_FILE_PROCESSING_JOB_INPUT_DIR, inputDirectoryCF);
 
         CustomFieldTemplate archiveDirectoryCF = new CustomFieldTemplate();
@@ -209,6 +223,7 @@ public class FlatFileProcessingJob extends Job {
         archiveDirectoryCF.setDefaultValue(null);
         archiveDirectoryCF.setValueRequired(false);
         archiveDirectoryCF.setMaxValue(256L);
+        archiveDirectoryCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:1");
         result.put(FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR, archiveDirectoryCF);
 
         CustomFieldTemplate rejectDirectoryCF = new CustomFieldTemplate();
@@ -220,6 +235,7 @@ public class FlatFileProcessingJob extends Job {
         rejectDirectoryCF.setDefaultValue(null);
         rejectDirectoryCF.setValueRequired(false);
         rejectDirectoryCF.setMaxValue(256L);
+        rejectDirectoryCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:2");
         result.put(FLAT_FILE_PROCESSING_JOB_REJECT_DIR, rejectDirectoryCF);
 
         CustomFieldTemplate outputDirectoryCF = new CustomFieldTemplate();
@@ -231,6 +247,7 @@ public class FlatFileProcessingJob extends Job {
         outputDirectoryCF.setDefaultValue(null);
         outputDirectoryCF.setValueRequired(false);
         outputDirectoryCF.setMaxValue(256L);
+        outputDirectoryCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:3");
         result.put(FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR, outputDirectoryCF);
 
         CustomFieldTemplate fileNameKeyCF = new CustomFieldTemplate();
@@ -242,6 +259,7 @@ public class FlatFileProcessingJob extends Job {
         fileNameKeyCF.setDefaultValue(null);
         fileNameKeyCF.setValueRequired(false);
         fileNameKeyCF.setMaxValue(256L);
+        fileNameKeyCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:4");
         result.put(FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER, fileNameKeyCF);
 
         CustomFieldTemplate fileNameExtensionCF = new CustomFieldTemplate();
@@ -253,6 +271,7 @@ public class FlatFileProcessingJob extends Job {
         fileNameExtensionCF.setDefaultValue("csv");
         fileNameExtensionCF.setValueRequired(true);
         fileNameExtensionCF.setMaxValue(256L);
+        fileNameExtensionCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:5");
         result.put(FLAT_FILE_PROCESSING_JOB_FILE_NAME_EXTENSION, fileNameExtensionCF);
 
         CustomFieldTemplate mappingConf = new CustomFieldTemplate();
@@ -263,6 +282,7 @@ public class FlatFileProcessingJob extends Job {
         mappingConf.setFieldType(CustomFieldTypeEnum.TEXT_AREA);
         mappingConf.setDefaultValue(EMPTY_STRING);
         mappingConf.setValueRequired(true);
+        mappingConf.setGuiPosition("tab:Configuration:0;fieldGroup:Record configuration:2;field:0");
         result.put(FLAT_FILE_PROCESSING_JOB_MAPPING_CONF, mappingConf);
 
         CustomFieldTemplate scriptFlowCF = new CustomFieldTemplate();
@@ -274,6 +294,7 @@ public class FlatFileProcessingJob extends Job {
         scriptFlowCF.setDefaultValue(null);
         scriptFlowCF.setValueRequired(true);
         scriptFlowCF.setMaxValue(256L);
+        scriptFlowCF.setGuiPosition("tab:Configuration:0;fieldGroup:Data processing configuration:3;field:0");
         result.put(FLAT_FILE_PROCESSING_JOB_SCRIPTS_FLOW, scriptFlowCF);
 
         CustomFieldTemplate variablesCF = new CustomFieldTemplate();
@@ -286,6 +307,7 @@ public class FlatFileProcessingJob extends Job {
         variablesCF.setValueRequired(false);
         variablesCF.setMaxValue(256L);
         variablesCF.setMapKeyType(CustomFieldMapKeyEnum.STRING);
+        variablesCF.setGuiPosition("tab:Configuration:0;fieldGroup:Data processing configuration:3;field:1");
         result.put(FLAT_FILE_PROCESSING_JOB_VARIABLES, variablesCF);
 
         CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
@@ -297,6 +319,7 @@ public class FlatFileProcessingJob extends Job {
         recordVariableName.setFieldType(CustomFieldTypeEnum.STRING);
         recordVariableName.setValueRequired(true);
         recordVariableName.setMaxValue(50L);
+        recordVariableName.setGuiPosition("tab:Configuration:0;fieldGroup:Data processing configuration:3;field:2");
         result.put(FLAT_FILE_PROCESSING_JOB_RECORD_VARIABLE_NAME, recordVariableName);
 
         CustomFieldTemplate originFilename = new CustomFieldTemplate();
@@ -308,6 +331,7 @@ public class FlatFileProcessingJob extends Job {
         originFilename.setFieldType(CustomFieldTypeEnum.STRING);
         originFilename.setValueRequired(false);
         originFilename.setMaxValue(256L);
+        originFilename.setGuiPosition("tab:Configuration:0;fieldGroup:Data processing configuration:3;field:3");
         result.put(FLAT_FILE_PROCESSING_JOB_ORIGIN_FILENAME, originFilename);
 
         CustomFieldTemplate formatTransfo = new CustomFieldTemplate();
@@ -322,6 +346,7 @@ public class FlatFileProcessingJob extends Job {
         listValues.put("None", "Aucune");
         listValues.put("Xlsx_to_Csv", "Excel cvs");
         formatTransfo.setListValues(listValues);
+        formatTransfo.setGuiPosition("tab:Configuration:0;fieldGroup:Data processing configuration:3;field:4");
         result.put(FLAT_FILE_PROCESSING_JOB_FORMAT_TRANSFO, formatTransfo);
 
         CustomFieldTemplate errorAction = new CustomFieldTemplate();
@@ -337,6 +362,7 @@ public class FlatFileProcessingJob extends Job {
         listValuesErrorAction.put(FlatFileProcessingJob.STOP, "Stop");
         listValuesErrorAction.put(FlatFileProcessingJob.ROLLBACK, "Rollback");
         errorAction.setListValues(listValuesErrorAction);
+        errorAction.setGuiPosition("tab:Configuration:0;fieldGroup:Data processing configuration:3;field:5");
         result.put(FLAT_FILE_PROCESSING_JOB_ERROR_ACTION, errorAction);
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
@@ -347,6 +373,7 @@ public class FlatFileProcessingJob extends Job {
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         nbRuns.setDefaultValue("1");
         nbRuns.setValueRequired(false);
+        nbRuns.setGuiPosition("tab:Configuration:0;fieldGroup:Execution configuration:0;field:0");
         result.put("nbRuns", nbRuns);
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
@@ -357,7 +384,19 @@ public class FlatFileProcessingJob extends Job {
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
         waitingMillis.setDefaultValue("0");
         waitingMillis.setValueRequired(false);
+        waitingMillis.setGuiPosition("tab:Configuration:0;fieldGroup:Execution configuration:0;field:1");
         result.put("waitingMillis", waitingMillis);
+
+        CustomFieldTemplate oneFilePerJob = new CustomFieldTemplate();
+        oneFilePerJob.setCode("oneFilePerJob");
+        oneFilePerJob.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
+        oneFilePerJob.setActive(true);
+        oneFilePerJob.setDescription(resourceMessages.getString("jobExecution.oneFilePerJob"));
+        oneFilePerJob.setFieldType(CustomFieldTypeEnum.BOOLEAN);
+        oneFilePerJob.setDefaultValue("false");
+        oneFilePerJob.setValueRequired(false);
+        oneFilePerJob.setGuiPosition("tab:Configuration:0;fieldGroup:Execution configuration:0;field:2");
+        result.put("oneFilePerJob", oneFilePerJob);
 
         return result;
     }

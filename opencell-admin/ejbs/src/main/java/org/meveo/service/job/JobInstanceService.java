@@ -46,8 +46,6 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.util.EntityCustomizationUtils;
@@ -220,11 +218,11 @@ public class JobInstanceService extends BusinessService<JobInstance> {
                 Timer timer = jobTimers.get(new CacheKeyLong(providerCode, jobInstance.getId()));
                 timer.cancel();
             } catch (Exception ex) {
-                log.info("cannot cancel timer " + ex);
+                log.error("cannot cancel timer " + ex);
             }
             jobTimers.remove(new CacheKeyLong(providerCode, jobInstance.getId()));
         } else {
-            log.info("jobInstance timer not found, cannot remove it");
+            log.warn("jobInstance timer not found, cannot remove it");
         }
         super.remove(jobInstance);
 
