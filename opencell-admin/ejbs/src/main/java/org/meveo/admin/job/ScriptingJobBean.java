@@ -97,10 +97,11 @@ public class ScriptingJobBean extends BaseJobBean {
 		}
 	}
 
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	private String runScript(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context) {
 		ScriptInterface script = null;
 		try {
-
 			script = scriptInstanceService.getScriptInstance(scriptCode);
 			context.put(Script.CONTEXT_CURRENT_USER, currentUser);
 			context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
@@ -122,7 +123,6 @@ public class ScriptingJobBean extends BaseJobBean {
 			if (context.containsKey(Script.JOB_RESULT_REPORT)) {
 				result.setReport(context.get(Script.JOB_RESULT_REPORT) + "");
 			}
-
 		} catch (Exception e) {
 			result.registerError("Error in " + scriptCode + " execution :" + e.getMessage());
 		}
