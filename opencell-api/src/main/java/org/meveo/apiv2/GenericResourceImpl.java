@@ -1,55 +1,57 @@
 package org.meveo.apiv2;
 
 import org.meveo.api.dto.GenericPagingAndFiltering;
-import org.meveo.api.dto.generic.GenericRequestDto;
 import org.meveo.apiv2.common.LinkGenerator;
-import org.meveo.apiv2.generic.ImmutableGenericPaginatedResource;
-import org.meveo.apiv2.services.generic.GenericApiCreateService;
 import org.meveo.apiv2.services.generic.GenericApiLoadService;
-import org.meveo.apiv2.services.generic.GenericApiUpdateService;
-import org.meveo.apiv2.services.generic.JsonGenericApiMapper.JsonGenericMapper;
-import org.meveo.model.BaseEntity;
+import org.meveo.apiv2.services.generic.GenericApiAlteringService;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.Response;
 import java.util.Collections;
-import java.util.Map;
 
 public class GenericResourceImpl implements GenericResource {
     @Inject
     private GenericApiLoadService loadService;
     
     @Inject
-    private GenericApiUpdateService updateService;
-    
-    @Inject
-    private GenericApiCreateService createService;
+    private GenericApiAlteringService genericApiAlteringService;
 
     @Override
     public Response getAll(String entityName, GenericPagingAndFiltering searchConfig) {
-        Class entityClass = loadService.getEntityClass(entityName);
-        return Response.ok().entity(loadService.findPaginatedRecords(entityClass, searchConfig))
+        return Response.ok().entity(loadService.findPaginatedRecords(entityName, searchConfig))
                 .links(buildPaginatedResourceLink(entityName)).build();
     }
     
     @Override
-    public Response get(String entityName, Long id, GenericRequestDto requestDto) {
-        Class entityClass = loadService.getEntityClass(entityName);
-        return Response.ok().entity(loadService.findByClassNameAndId(entityClass, id, requestDto))
-                .links(buildSingleResourceLink(entityName, id)).build();
+    public Response get(String entityName, Long id, GenericPagingAndFiltering searchConfig) {
+        return loadService.findByClassNameAndId(entityName, id, searchConfig)
+                .map(deletedEntity -> Response.ok().entity(deletedEntity).links(buildSingleResourceLink(entityName, id)).build())
+                .orElseThrow(NotFoundException::new);
     }
     
     @Override
     public Response update(String entityName, Long id, String dto) {
-        updateService.update(entityName, id, dto);
-        return Response.ok().links(buildSingleResourceLink(entityName, id)).build();
+        return genericApiAlteringService.update(entityName, id, dto)
+                .map(deletedEntity -> Response.ok().entity(deletedEntity).links(buildSingleResourceLink(entityName, id)).build())
+                .orElseThrow(NotFoundException::new);
     }
     
     @Override
     public Response create(String entityName, String dto) {
-        Long entityId = createService.create(entityName, dto);
-        return Response.ok().links(buildSingleResourceLink(entityName, entityId)).build();
+        Long entityId = genericApiAlteringService.create(entityName, dto);
+        return Response.ok().entity(Collections.singletonMap("id", entityId))
+                .links(buildSingleResourceLink(entityName, entityId))
+                .build();
+    }
+
+    @Override
+    public Response delete(String entityName, Long id) {
+        return genericApiAlteringService.delete(entityName, id)
+                .map(deletedEntity -> Response.ok().entity(deletedEntity)
+                        .links(buildSingleResourceLink(entityName, id)).build())
+                .orElseThrow(NotFoundException::new);
     }
 
     private Link buildPaginatedResourceLink(String entityName) {
