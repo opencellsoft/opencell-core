@@ -739,11 +739,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (discountValue == null || amount == null) {
             return BigDecimal.ZERO;
         }
-        if (discountValue.compareTo(BigDecimal.ZERO) < 0 && amount.compareTo(BigDecimal.ZERO) < 0 && discountValue.compareTo(amount) < 0) {
-            discountValue = HUNDRED;
-        }
-        if (discountValue.compareTo(BigDecimal.ZERO) > 0 && amount.compareTo(BigDecimal.ZERO) > 0 && discountValue.compareTo(amount) > 0) {
+        if (discountValue.compareTo(BigDecimal.ZERO) < 0 && amount.compareTo(BigDecimal.ZERO) < 0 && discountValue.compareTo(HUNDRED.negate()) < 0) {
             discountValue = HUNDRED.negate();
+        }
+        if (discountValue.compareTo(BigDecimal.ZERO) > 0 && amount.compareTo(BigDecimal.ZERO) > 0 && discountValue.compareTo(HUNDRED) > 0) {
+            discountValue = HUNDRED;
         }
         return discountValue;
     }
