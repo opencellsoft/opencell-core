@@ -99,4 +99,12 @@ public class NumberUtils {
             
         return RoundingMode.HALF_UP;        
     }
+
+    public static long parseLongDefault(String value, long defaultValue) {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return  defaultValue;
+        }
+    }
 }
