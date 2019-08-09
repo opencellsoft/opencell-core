@@ -34,13 +34,20 @@ import java.io.IOException;
          @Override
          public void serialize(HibernateProxy value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
              LazyInitializer hibernateLazyInitializer = value.getHibernateLazyInitializer();
-             final Object unProxyDependency = PersistenceUtils.initializeAndUnproxy(value);
-             if (hibernateLazyInitializer != null){
+             final Object unProxyDependency;
+             try {
+                 unProxyDependency = PersistenceUtils.initializeAndUnproxy(value);
                  gen.writeStartObject();
                  gen.writeObjectField("id", hibernateLazyInitializer.getIdentifier());
-                 if (unProxyDependency instanceof BusinessEntity){
-                     gen.writeStringField("code", ((BusinessEntity)unProxyDependency).getCode());
+                 if (hibernateLazyInitializer != null){
+                     if (unProxyDependency instanceof BusinessEntity){
+                         gen.writeStringField("code", ((BusinessEntity)unProxyDependency).getCode());
+                     }
                  }
+                 gen.writeEndObject();
+             }catch (Exception e){
+                 gen.writeStartObject();
+                 gen.writeObjectField("id", hibernateLazyInitializer.getIdentifier());
                  gen.writeEndObject();
              }
          }

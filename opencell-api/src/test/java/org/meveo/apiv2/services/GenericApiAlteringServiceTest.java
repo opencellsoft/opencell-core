@@ -3,9 +3,8 @@ package org.meveo.apiv2.services;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.meveo.api.dto.generic.GenericRequestDto;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.apiv2.services.generic.GenericApiUpdateService;
+import org.meveo.apiv2.services.generic.GenericApiAlteringService;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.model.BaseEntity;
@@ -37,13 +36,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GenericApiUpdateServiceTest {
+public class GenericApiAlteringServiceTest {
     @Spy
     @InjectMocks
-    private GenericApiUpdateService sut;
-    
-    @Mock
-    private GenericRequestDto genericRequestDto;
+    private GenericApiAlteringService sut;
     
     @Mock
     private EntityManagerWrapper entityManagerWrapper;

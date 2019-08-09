@@ -561,7 +561,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 // Add tax aggregate or update its amounts
                 BigDecimal amountCumulativeForTaxAbsoluteValue = (isPrepaid) ? amountCumulativeForTax.abs() : amountCumulativeForTax;
 
-                if (calculateTaxOnSubCategoryLevel && !BigDecimal.ZERO.equals(amountCumulativeForTaxAbsoluteValue)) {
+                if (calculateTaxOnSubCategoryLevel) {
 
                     TaxInvoiceAgregate taxAggregate = taxAggregates.get(scAggregate.getTax().getCode());
                     if (taxAggregate == null) {
@@ -671,29 +671,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 || (discountPlanItem.getInvoiceSubCategory() != null && discountPlanItem.getInvoiceSubCategory().getId().equals(scAggregate.getInvoiceSubCategory().getId()))
                 || (discountPlanItem.getInvoiceCategory() != null && discountPlanItem.getInvoiceSubCategory() == null
                         && discountPlanItem.getInvoiceCategory().getId().equals(scAggregate.getInvoiceSubCategory().getInvoiceCategory().getId()))) {
-            BigDecimal discountValue = discountPlanItem.getDiscountValue();
 
-            final String dpValueEL = discountPlanItem.getDiscountValueEL();
-            if (isNotBlank(dpValueEL)) {
-                final BigDecimal evalDiscountValue = evaluateDiscountPercentExpression(dpValueEL, scAggregate.getUserAccount(), scAggregate.getWallet(), invoice, amount);
-                log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(), discountValue, amount);
-                if (discountValue != null) {
-                    discountValue = evalDiscountValue;
-                }
-            }
+            BigDecimal discountValue = getDiscountValue(invoice, scAggregate, amount, discountPlanItem);
 
             BigDecimal discountAmount = null;
 
             if (discountValue != null) {
                 if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-                    discountAmount = amount.multiply(discountValue.divide(HUNDRED)).negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
-
+                    discountAmount = amount.multiply(discountValue.divide(HUNDRED)).setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
                 } else {
                     discountAmount = discountValue.negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
                 }
             }
+            if (discountAmount != null && amount.compareTo(BigDecimal.ZERO) > 0) {
+                discountAmount = discountAmount.negate();
+            }
 
-            if (discountAmount != null && discountAmount.compareTo(BigDecimal.ZERO) < 0) {
+            if (discountAmount != null && discountAmount.abs().negate().compareTo(BigDecimal.ZERO) < 0) {
                 discountAggregate = new SubCategoryInvoiceAgregate(scAggregate.getInvoiceSubCategory(), billingAccount, scAggregate.getUserAccount(), scAggregate.getWallet(),
                     scAggregate.getTax(), scAggregate.getTaxPercent(), invoice, null);
 
@@ -720,6 +714,38 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
         }
         return null;
+    }
+
+    /**
+     * get Discount value
+     *
+     * @param invoice
+     * @param scAggregate
+     * @param amount
+     * @param discountPlanItem
+     * @return
+     */
+    private BigDecimal getDiscountValue(Invoice invoice, SubCategoryInvoiceAgregate scAggregate, BigDecimal amount, DiscountPlanItem discountPlanItem) {
+        BigDecimal discountValue = discountPlanItem.getDiscountValue();
+
+        final String dpValueEL = discountPlanItem.getDiscountValueEL();
+        if (isNotBlank(dpValueEL)) {
+            final BigDecimal evalDiscountValue = evaluateDiscountPercentExpression(dpValueEL, scAggregate.getUserAccount(), scAggregate.getWallet(), invoice, amount);
+            log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(), discountValue, amount);
+            if (discountValue != null) {
+                discountValue = evalDiscountValue;
+            }
+        }
+        if (discountValue == null || amount == null) {
+            return BigDecimal.ZERO;
+        }
+        if (discountValue.compareTo(BigDecimal.ZERO) < 0 && amount.compareTo(BigDecimal.ZERO) < 0 && discountValue.compareTo(HUNDRED.negate()) < 0) {
+            discountValue = HUNDRED.negate();
+        }
+        if (discountValue.compareTo(BigDecimal.ZERO) > 0 && amount.compareTo(BigDecimal.ZERO) > 0 && discountValue.compareTo(HUNDRED) > 0) {
+            discountValue = HUNDRED;
+        }
+        return discountValue;
     }
 
     private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, List<DiscountPlanInstance> discountPlanInstances, Invoice invoice,

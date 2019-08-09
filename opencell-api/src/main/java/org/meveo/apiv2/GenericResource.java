@@ -1,16 +1,17 @@
 package org.meveo.apiv2;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.api.dto.GenericPagingAndFiltering;
-import org.meveo.api.dto.generic.GenericRequestDto;
+import org.meveo.apiv2.models.ApiException;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -20,49 +21,71 @@ import javax.ws.rs.core.Response;
 @Path("/generic")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api("Retrieve some of the properties of your model with the entity name, record id and the requested fields"
-        + "this is not an alternative to GrahQl, just a tool to simplify some objects retrieval."
-        + "for example: if the wanted fields are {code, description} and the requested entity is instance of customer having 2 as id,"
-        + "then you should call /admin/generic/Customer/2 and add {fields = [code, description]} in the request body")
 public interface GenericResource {
-    @GET
+    @POST
     @Path("/all/{entityName}")
-    @ApiOperation(value = "Generic single endpoint to retrieve paginated records of an entity", notes = "specify the entity name, and as body, the configuration of the research."
-            + " also you can define the offset and the limit, you can order by a field and define the sort type"
-            + " see PagingAndFiltering doc for more details. ")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "paginated results succefully retrieved with hypermedia links"),
-            @ApiResponse(code = 400, message = "bad request when entityName not well formed or entity unrecognized")
+    @Operation(summary = "Generic single endpoint to retrieve paginated records of an entity",
+            tags = { "Generic" },
+            description ="specify the entity name, and as body, the configuration of the research."
+                    + " also you can define the offset and the limit, you can order by a field and define the sort type"
+                    + " see PagingAndFiltering doc for more details. ",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "paginated results successfully retrieved with hypermedia links"),
+                    @ApiResponse(responseCode = "400", description = "bad request when entityName not well formed or entity unrecognized")
     })
-    Response getAll(@PathParam("entityName") String entityName,
-            @ApiParam("requestDto carries the wanted fields ex: {genericFields = [code, description]}") GenericPagingAndFiltering searchConfig);
+    Response getAll(@Parameter(description ="the entity name", required = true) @PathParam("entityName") String entityName,
+            @Parameter(description = "requestDto carries the wanted fields ex: {genericFields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig);
 
-    @GET
-    @Path("/{entityName}/{id}")
-    @ApiOperation(value = "Generic single endpoint to retrieve resources by ID", notes = "specify the entity name, the record id, and as body, the list of the wanted fields")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "field succefully retrieved with hypermedia links"),
-            @ApiResponse(code = 400, message = "bad request when input not well formed")
-    })
-    Response get(@PathParam("entityName") String entityName, @ApiParam("The id here is the database primary key of the wanted record") @PathParam("id") Long id,
-           @ApiParam("requestDto carries the wanted fields ex: {fields = [code, description]}") GenericRequestDto requestDto);
-    
-    @ApiOperation(value = "Update a resource by giving it's name and Id", notes = "specify the entity name, the record id, and as body, the list of the fields to update")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "resource succefully updated but not content exposed except the hypermedia"),
-            @ApiResponse(code = 400, message = "bad request when input not well formed")
-    })
     @POST
     @Path("/{entityName}/{id}")
-    Response update(@PathParam("entityName") String entityName, @ApiParam("The id here is the database primary key of the record to update") @PathParam("id") Long id,
-            @ApiParam("dto the json representation of the object") String dto);
-    
-    @ApiOperation(value = "Update a resource by giving it's name and Id", notes = "specify the entity name, the record id, and as body, the list of the fields to update")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "resource succefully updated but not content exposed except the hypermedia"),
-            @ApiResponse(code = 400, message = "bad request when input not well formed")
+    @Operation(summary = "Generic single endpoint to retrieve resources by ID",
+            tags = { "Generic" },
+            description ="specify the entity name, the record id, and as body, the list of the wanted fields",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "paginated results successfully retrieved with hypermedia links"),
+                    @ApiResponse(responseCode = "404", description = "baseEntityObject not found", content = @Content(schema = @Schema(implementation = ApiException.class))),
+                    @ApiResponse(responseCode = "400", description = "bad request when entityName not well formed or entity unrecognized")
+    })
+    Response get(@Parameter(description ="the entity name", required = true) @PathParam("entityName") String entityName,
+            @Parameter(description ="The id here is the database primary key of the wanted record", required = true) @PathParam("id") Long id,
+            @Parameter(description ="requestDto carries the wanted fields ex: {fields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig);
+
+    @Operation(summary = "Update a resource by giving it's name and Id",
+            tags = { "Generic" },
+            description ="specify the entity name, the record id, and as body, the list of the fields to update",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "resource successfully updated but not content exposed except the hypermedia"),
+                    @ApiResponse(responseCode = "404", description = "baseEntityObject not found", content = @Content(schema = @Schema(implementation = ApiException.class))),
+                    @ApiResponse(responseCode = "400", description = "bad request when input not well formed")
+    })
+    @PUT
+    @Path("/{entityName}/{id}")
+    Response update(@Parameter(description ="the entity name", required = true) @PathParam("entityName") String entityName,
+            @Parameter(description ="The id here is the database primary key of the record to update", required = true) @PathParam("id") Long id,
+            @Parameter(description ="dto the json representation of the object", required = true) String dto);
+
+    @Operation(summary = "Create a resource by giving it's name and Id",
+            tags = { "Generic" },
+            description ="specify the entity name, the record id, and as body, the list of the fields to create",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "resource successfully updated but not content exposed except the hypermedia"),
+                    @ApiResponse(responseCode = "400", description = "bad request when input not well formed")
     })
     @POST
     @Path("/{entityName}")
-    Response create(@PathParam("entityName") String entityName, @ApiParam("dto the json representation of the object") String dto);
+    Response create(@Parameter(description ="the entity name", required = true) @PathParam("entityName") String entityName,
+            @Parameter(description ="dto the json representation of the object", required = true) String dto);
+
+    @Operation(summary = "Delete a resource by giving it's name and Id",
+            tags = { "Generic" },
+            description ="specify the entity name, the record id, and as body, the list of the fields to delete",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "resource successfully updated but not content exposed except the hypermedia"),
+                    @ApiResponse(responseCode = "404", description = "baseEntityObject not found", content = @Content(schema = @Schema(implementation = ApiException.class))),
+                    @ApiResponse(responseCode = "400", description = "bad request when input not well formed")
+    })
+    @DELETE
+    @Path("/{entityName}/{id}")
+    Response delete(@Parameter(description ="the entity name", required = true) @PathParam("entityName") String entityName,
+            @Parameter(description ="The id here is the database primary key of the record to delete", required = true) @PathParam("id") Long id);
 }

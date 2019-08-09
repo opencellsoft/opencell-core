@@ -432,7 +432,8 @@ public class CustomerAccountApi extends AccountEntityApi {
             if (accountOperations != null && !accountOperations.isEmpty()) {
                 List<AccountOperationDto> accountOperationsDto = new ArrayList<>();
                 for (AccountOperation accountOperation : accountOperations) {
-                    accountOperationsDto.add(new AccountOperationDto(accountOperation));
+                    AccountOperationDto accountOperationDto = new AccountOperationDto(accountOperation, entityToDtoConverter.getCustomFieldsDTO(accountOperation, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+                    accountOperationsDto.add(accountOperationDto);
                 }
                 customerAccountDto.setAccountOperations(accountOperationsDto);
             }
