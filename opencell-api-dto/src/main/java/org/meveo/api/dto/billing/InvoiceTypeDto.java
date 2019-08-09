@@ -62,6 +62,9 @@ public class InvoiceTypeDto extends BusinessEntityDto {
 
     /** The matching auto. */
     private boolean matchingAuto = false;
+    
+    /** Used to decide if AccountOperations will be created or not , during AO_Job execution */
+    private Boolean invoiceAccountable;
 
     /** The billing template name. */
     private String billingTemplateName;
@@ -378,6 +381,14 @@ public class InvoiceTypeDto extends BusinessEntityDto {
      */
     public void setCustomInvoiceXmlScriptInstanceCode(String customInvoiceXmlScriptInstanceCode) {
         this.customInvoiceXmlScriptInstanceCode = customInvoiceXmlScriptInstanceCode;
+    }
+    
+    public Boolean isInvoiceAccountable() {
+        return invoiceAccountable;
+    }
+
+    public void setInvoiceAccountable(Boolean invoiceAccountable) {
+        this.invoiceAccountable = invoiceAccountable;
     }
 
     @Override
