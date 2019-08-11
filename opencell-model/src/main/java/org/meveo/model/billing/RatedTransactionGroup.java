@@ -34,6 +34,11 @@ public class RatedTransactionGroup implements Serializable {
     private InvoiceType invoiceType;
 
     /**
+     * Are these prepaid transactions
+     */
+    private boolean prepaid;
+
+    /**
      * Rated transactions
      */
     private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
@@ -49,12 +54,14 @@ public class RatedTransactionGroup implements Serializable {
      * @param seller Seller
      * @param billingCycle Billing cycle
      * @param invoiceType Invoice type
+     * @param prepaid Is this for prepaid transactions
      */
-    public RatedTransactionGroup(BillingAccount billingAccount, Seller seller, BillingCycle billingCycle, InvoiceType invoiceType) {
+    public RatedTransactionGroup(BillingAccount billingAccount, Seller seller, BillingCycle billingCycle, InvoiceType invoiceType, boolean prepaid) {
         this.billingAccount = billingAccount;
         this.seller = seller;
         this.billingCycle = billingCycle;
         this.invoiceType = invoiceType;
+        this.prepaid = prepaid;
     }
 
     /**
@@ -125,5 +132,12 @@ public class RatedTransactionGroup implements Serializable {
      */
     public void setInvoiceType(InvoiceType invoiceType) {
         this.invoiceType = invoiceType;
+    }
+
+    /**
+     * @return Are these prepaid transactions
+     */
+    public boolean isPrepaid() {
+        return prepaid;
     }
 }

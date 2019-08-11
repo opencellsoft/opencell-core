@@ -392,6 +392,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
+    /**
+     * Is this a prepaid invoice
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "prepaid", nullable = false)
+    @NotNull
+    protected boolean prepaid;
+
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
 
@@ -739,14 +747,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      * setting uuid if null
      */
     public void setUUIDIfNull() {
-    	if (uuid == null) {
-    		uuid = UUID.randomUUID().toString();
-    	}
+        if (uuid == null) {
+            uuid = UUID.randomUUID().toString();
+        }
     }
-    
+
     @Override
     public String getUuid() {
-    	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
+        setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
         return uuid;
     }
 
@@ -1044,6 +1052,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void setDescription(String description) {
 
     }
+
     /**
      * @return Orders (numbers) referenced from Rated transactions
      */
@@ -1056,5 +1065,19 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     public void setOrderNumbers(Set<String> orderNumbers) {
         this.orderNumbers = orderNumbers;
+    }
+
+    /**
+     * @return Is this a prepaid invoice report
+     */
+    public boolean isPrepaid() {
+        return prepaid;
+    }
+
+    /**
+     * @param prepaid Is this a prepaid invoice report
+     */
+    public void setPrepaid(boolean prepaid) {
+        this.prepaid = prepaid;
     }
 }

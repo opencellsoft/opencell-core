@@ -1304,4 +1304,12 @@
         <addNotNullConstraint tableName="adm_notification" columnName="run_async" columnDataType="${type.boolean}"/>
     </changeSet>
     
+    <changeSet id="#4326_20190811" author="AndriusKarpavicius"> 
+    	<addColumn tableName="billing_invoice">
+    		<column name="prepaid" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+    	</addColumn>
+    </changeSet>
+    
 </databaseChangeLog>

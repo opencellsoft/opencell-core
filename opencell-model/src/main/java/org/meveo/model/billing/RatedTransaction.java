@@ -152,6 +152,8 @@ import org.meveo.model.rating.EDR;
 
         @NamedQuery(name = "RatedTransaction.massDeleteForUpdate", query = "DELETE from RatedTransaction  r where r.id in :ids"),
 
+        @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfo", query = "UPDATE RatedTransaction rt set rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, rt.invoiceAgregateF=:invoiceAgregateF, rt.billingRun=:billingRun, invoice=:invoice where rt.id in :ids"),
+        
         @NamedQuery(name = "RatedTransaction.listOpenBetweenTwoDates", query = "SELECT r FROM RatedTransaction r join fetch r.priceplan join fetch r.tax join fetch r.billingAccount join fetch r.seller where "
                 + " r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
                 + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.usageDate desc "),
@@ -443,6 +445,12 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
      */
     @Transient
     private boolean taxOverriden;
+
+    /**
+     * Was tax recalculated (changed) during invoicing
+     */
+    @Transient
+    private boolean taxRecalculated;
 
     public RatedTransaction() {
         super();
@@ -1051,6 +1059,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     }
 
     /**
+     * @return Is this a prepaid transaction
+     */
+    public boolean isPrepaid() {
+        return wallet != null && wallet.isPrepaid();
+    }
+
+    /**
      * @return Was tax explicitly overridden during rating and should not be recalculated at invoice time
      */
     public boolean isTaxOverriden() {
@@ -1062,5 +1077,19 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
      */
     public void setTaxOverriden(boolean taxOverriden) {
         this.taxOverriden = taxOverriden;
+    }
+
+    /**
+     * @return Was tax recalculated (changed) during invoicing
+     */
+    public boolean isTaxRecalculated() {
+        return taxRecalculated;
+    }
+
+    /**
+     * @param taxRecalculated Was tax recalculated (changed) during invoicing
+     */
+    public void setTaxRecalculated(boolean taxRecalculated) {
+        this.taxRecalculated = taxRecalculated;
     }
 }

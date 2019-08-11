@@ -370,7 +370,7 @@ public class InvoiceApi extends BaseApi {
         List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft, customFieldEntity.getCfValues());
         if (invoices != null) {
             for (Invoice invoice : invoices) {
-                if (isDraft && invoiceService.isPrepaidReport(invoice)) {
+                if (isDraft && invoice.isPrepaid()) {
                     invoiceService.cancelInvoice(invoice);
                     continue;
                 }
@@ -463,7 +463,7 @@ public class InvoiceApi extends BaseApi {
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
         }
-        if (invoiceService.isPrepaidReport(invoice)) {
+        if (invoice.isPrepaid()) {
             throw new BusinessException("Invoice PDF is disabled for prepaid invoice: " + invoice.getInvoiceNumber());
         }
         if (!invoiceService.isInvoicePdfExist(invoice)) {
@@ -697,7 +697,7 @@ public class InvoiceApi extends BaseApi {
      */
     private void setInvoicePdf(Invoice invoice, boolean includePdf, InvoiceDto invoiceDto) {
 
-        if (invoiceService.isPrepaidReport(invoice)) {
+        if (invoice.isPrepaid()) {
             invoiceDto.setPdfFilename(null);
             return;
         }
@@ -832,11 +832,11 @@ public class InvoiceApi extends BaseApi {
         }
         handleMissingParameters();
         Invoice invoice = invoiceService.findById(invoiceDto.getInvoiceId());
-        if (invoiceService.isPrepaidReport(invoice)) {
-            return false;
-        }
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceDto.getInvoiceId());
+        }
+        if (invoice.isPrepaid()) {
+            return false;
         }
         if (MailingTypeEnum.AUTO.equals(mailingType) && invoice.isDontSend()) {
             return false;
