@@ -148,14 +148,12 @@ public abstract class BaseApi {
     }
 
     protected void handleMissingParameters(BaseEntityDto dto) throws MeveoApiException {
-        try {
+        if (dto instanceof BusinessEntityDto) {
             BusinessEntityDto bdto = (BusinessEntityDto) dto;
             boolean allowEntityCodeUpdate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "true"));
             if (!allowEntityCodeUpdate && !StringUtils.isBlank(bdto.getUpdatedCode()) && !currentUser.hasRole(SUPER_ADMIN_MANAGEMENT)) {
                 throw new org.meveo.api.exception.AccessDeniedException("Super administrator permission is required to update entity code");
             }
-        } catch (ClassCastException e) {
-            log.info("allow entity code update rule not applied : Not business Dto");
         }
         handleMissingParameters();
     }
@@ -202,8 +200,8 @@ public abstract class BaseApi {
      * 
      * @throws MeveoApiException meveo api exception.
      */
-    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
-        populateCustomFields(customFieldsDto, entity, isNewEntity, true);
+    protected ICustomFieldEntity populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
+        return populateCustomFields(customFieldsDto, entity, isNewEntity, true);
     }
 
     /**
@@ -216,7 +214,7 @@ public abstract class BaseApi {
      * @param checkCustomField Should a check be made if CF field is required
      * @throws MeveoApiException meveo api exception.
      */
-    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, boolean checkCustomField) throws MeveoApiException {
+    protected ICustomFieldEntity populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, boolean checkCustomField) throws MeveoApiException {
 
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
 
@@ -227,7 +225,7 @@ public abstract class BaseApi {
             customFieldDtos = new ArrayList<CustomFieldDto>();
         }
 
-        populateCustomFields(customFieldTemplates, customFieldDtos, entity, isNewEntity, checkCustomField);
+        return populateCustomFields(customFieldTemplates, customFieldDtos, entity, isNewEntity, checkCustomField);
     }
 
     /**
@@ -244,7 +242,7 @@ public abstract class BaseApi {
      * @throws MeveoApiException
      */
     @SuppressWarnings("unchecked")
-    private void populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, boolean isNewEntity,
+    private ICustomFieldEntity populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, boolean isNewEntity,
             boolean checkCustomFields) throws MeveoApiException {
 
         // check if any templates are applicable
@@ -260,7 +258,7 @@ public abstract class BaseApi {
                 // throw new MissingParameterException("No Custom field
                 // templates were found to match provided custom field values");
             } else {
-                return;
+                return entity;
             }
         }
 
@@ -404,6 +402,7 @@ public abstract class BaseApi {
         }
 
         handleMissingParameters();
+        return entity;
     }
 
     protected void validateAndConvertCustomFields(List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity) throws MeveoApiException {
