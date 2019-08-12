@@ -236,4 +236,11 @@ public class WalletInstance extends BusinessEntity {
         }
         return (other.getCode().equals(this.code));
     }
+
+    /**
+     * @return Is this a prepaid wallet instance
+     */
+    public boolean isPrepaid() {
+        return walletTemplate != null;
+    }
 }

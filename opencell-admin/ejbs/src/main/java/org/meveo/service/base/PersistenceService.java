@@ -666,8 +666,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             log.trace("Entity {}/{} will be refreshed) ..", getEntityClass().getSimpleName(), entity.getId());
             getEntityManager().refresh(entity);
             return entity;
-        } else {
+        } else if (entity.getId() != null) {
             return findById((Long) entity.getId());
+        } else {
+            return entity;
         }
     }
 

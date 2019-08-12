@@ -19,75 +19,56 @@
 package org.meveo.service.medina.impl;
 
 import java.io.File;
-import java.util.Map;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.meveo.admin.parse.csv.CDR;
 
 /**
  * This Interface must be implemented to parse CDR and create EDR from it The implementation must be a Named class, i.e. a class annotated with the javax.ejb.Nammed annotation.
+ * 
  * @lastModifiedVersion willBeSetLater
  * 
  */
 public interface CSVCDRParser {
 
     /**
-     *
-     */
-    static final String CDR_FILE = "cdrFile";
-    /**
+     * Initialize CDR parser to read from a file
+     * 
      * @param CDRFile cdr file.
+     * @throws FileNotFoundException
      */
-    void init(File CDRFile);
+    void init(File CDRFile) throws FileNotFoundException;
 
     /**
+     * Get next record. A synchronized method to read from a file
      * 
-     * @return a unique identifier from the batch
+     * @return CDR record
+     * @throws IOException Failure to read a file
      */
-    Map<String, String> getOriginBatch();
+    CDR getNextRecord() throws IOException;
 
     /**
-     * Verify that the format of the CDR is correct and modify it if needed. The implementation should save locally the CDR as call to other methods do not contain reference to the
-     * CDR
+     * Close CDR record reader when it was initialized from a file
      * 
-     * @param line : the input CDR
-     * @param origin Origin, source of CDR
-     * @return the modified CDR
-     * @throws InvalidFormatException invalid format exception.
+     * @throws IOException IO exception
      */
-    CDR getCDR(String line, String origin) throws InvalidFormatException;
+    void close() throws IOException;
 
     /**
-     * Build and return a unique identifier from the CDR in order. to avoid importing twice the same CDR in MEVEO
+     * Initialize CDR parser from API
      * 
-     * @param cdr : CDR returned by the getCDR method
-     * @param origin origin.
-     * @return CDR's unique key
-     */
-    String getOriginRecord(CDR cdr, String origin);
-
-    /**
-     * Return in the form of an AccessDAO object the user id and sercice id that will allow to lookup the ACCESS.
-     * 
-     * @param cdr : CDR returned by the getCDR method
-     * @return the Access userId
-     * @throws InvalidAccessException invalid access exception.
-     */
-    String getAccessUserId(CDR cdr) throws InvalidAccessException;
-
-    /**
-     * Construct a csv record for the rejected CDR with given rejection reason.
-     * 
-     * @param cdr cdr
-     * @param reason reason
-     * @return cdr line
-     */
-    String getCDRLine(CDR cdr, String reason);
-
-    /**
      * @param username user name
-     * @param ip Ip address.
-     * 
+     * @param ip Ip address
      */
     void initByApi(String username, String ip);
+
+    /**
+     * Convert text line/record into a CDR object. Parsing exceptions are available in CDR.rejectReason
+     * 
+     * @param line Text line/record
+     * @return CDR object
+     */
+    CDR parseCDR(String line);
 
 }

@@ -34,10 +34,10 @@ import org.meveo.model.catalog.RoundingModeEnum;
  */
 public class NumberUtils {
 
-    private static final BigDecimal HUNDRED = new BigDecimal("100");
+    public static final BigDecimal HUNDRED = new BigDecimal("100");
 
     public static final Integer DEFAULT_NUMBER_DIGITS_DECIMAL_UI = 2;
-    
+
     public static final Integer DEFAULT_NUMBER_DIGITS_DECIMAL = 12;
 
     public static BigDecimal round(BigDecimal what, int howmuch, RoundingModeEnum roundingModeEnum) {
@@ -115,6 +115,7 @@ public class NumberUtils {
     }
 
     /**
+     * Get BigDecimal as a string
      * @param bigDecimal
      * @return A null-safe Plain String value of the bigDecimal
      */
@@ -123,7 +124,8 @@ public class NumberUtils {
     }
 
     /**
-     * Compute derived amounts amountWithoutTax/amountWithTax/amountTax
+     * Compute derived amounts amountWithoutTax/amountWithTax/amountTax. If taxPercent is null, or ZERO returned amountWithoutTax and amountWithTax values will be the same (which
+     * one, depending on isEnterprise value)
      * 
      * @param amountWithoutTax Amount without tax
      * @param amountWithTax Amount with tax

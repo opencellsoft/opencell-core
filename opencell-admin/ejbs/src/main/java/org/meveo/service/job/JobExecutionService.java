@@ -53,7 +53,12 @@ import org.meveo.service.base.PersistenceService;
 public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
 
     /**
-     * Check if job is still running (or is stopped) every 50 records being processed (per thread). Value to be used in jobs that run slower.
+     * Check if job is still running (or is stopped) every 25 records being processed (per thread). Value to be used in jobs that run slow.
+     */
+    public static int CHECK_IS_JOB_RUNNING_EVERY_NR_SLOW = 25;
+
+    /**
+     * Check if job is still running (or is stopped) every 50 records being processed (per thread). Value to be in jobs that run slower.
      */
     public static int CHECK_IS_JOB_RUNNING_EVERY_NR = 50;
 
@@ -91,7 +96,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
             boolean isPersistResult = false;
 
             if ((resultToPersist.getNbItemsCorrectlyProcessed() + resultToPersist.getNbItemsProcessedWithError() + resultToPersist.getNbItemsProcessedWithWarning()) > 0) {
-                log.info(job.getClass().getName() + resultToPersist.toString());
+                log.info(job.getClass().getName() + " " + resultToPersist.toString());
                 isPersistResult = true;
             } else {
                 log.info("{}/{}: No items were found to process", job.getClass().getName(), jobInstance.getCode());
