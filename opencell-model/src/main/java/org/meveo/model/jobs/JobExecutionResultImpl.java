@@ -287,7 +287,7 @@ public class JobExecutionResultImpl extends BaseEntity {
      * 
      * @param nbItemsToProcess Number to increment by
      */
-    public void addNbItemsToProcess(long nbItemsToProcess) {
+    public synchronized void addNbItemsToProcess(long nbItemsToProcess) {
         this.nbItemsToProcess += nbItemsToProcess;
     }
 
@@ -311,7 +311,7 @@ public class JobExecutionResultImpl extends BaseEntity {
      * 
      * @param incrementBy Number to increment by
      */
-    public void addNbItemsCorrectlyProcessed(long incrementBy) {
+    public synchronized void addNbItemsCorrectlyProcessed(long incrementBy) {
         this.nbItemsCorrectlyProcessed += incrementBy;
     }
 
@@ -334,7 +334,7 @@ public class JobExecutionResultImpl extends BaseEntity {
      * 
      * @param incrementBy Number to increment by
      */
-    public void addNbItemsProcessedWithWarning(long incrementBy) {
+    public synchronized void addNbItemsProcessedWithWarning(long incrementBy) {
         this.nbItemsProcessedWithWarning += incrementBy;
     }
 
@@ -357,8 +357,17 @@ public class JobExecutionResultImpl extends BaseEntity {
      * 
      * @param incrementBy Number to increment by
      */
-    public void addNbItemsProcessedWithError(long incrementBy) {
+    public synchronized void addNbItemsProcessedWithError(long incrementBy) {
         this.nbItemsProcessedWithError += incrementBy;
+    }
+
+    /**
+     * Get a total number of items processed.
+     * 
+     * @return A sum of items processed correctly, with error and with warning.
+     */
+    public long getNbItemsProcessed() {
+        return nbItemsCorrectlyProcessed + nbItemsProcessedWithError + nbItemsProcessedWithWarning;
     }
 
     /**
@@ -415,10 +424,10 @@ public class JobExecutionResultImpl extends BaseEntity {
      * @param messageToAppend A message to append
      */
 
-    public void addReport(String messageToAppend) {
-		if (jobInstance.isVerboseReport() && !StringUtils.isBlank(messageToAppend)) {
-			this.report = (this.report == null ? "" : (this.report + " \n ")) + messageToAppend;
-		}
+    public synchronized void addReport(String messageToAppend) {
+        if (jobInstance.isVerboseReport() && !StringUtils.isBlank(messageToAppend)) {
+            this.report = (this.report == null ? "" : (this.report + " \n ")) + messageToAppend;
+        }
     }
 
     /**

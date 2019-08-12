@@ -32,6 +32,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -60,7 +61,8 @@ import org.meveo.model.ObservableEntity;
 @NamedQueries({
         @NamedQuery(name = "Tax.getNbTaxesNotAssociated", query = "select count(*) from Tax t where t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)"),
         @NamedQuery(name = "Tax.getTaxesNotAssociated", query = "from Tax t where t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)"),
-        @NamedQuery(name = "Tax.getZeroTax", query = "from Tax t where t.percent=0 ") })
+        @NamedQuery(name = "Tax.getZeroTax", query = "from Tax t where t.percent=0 "), 
+        @NamedQuery(name = "Tax.getTaxByPercent", query = "from Tax t where t.percent=:percent ") })
 public class Tax extends BusinessCFEntity {
     private static final long serialVersionUID = 1L;
 
@@ -75,6 +77,7 @@ public class Tax extends BusinessCFEntity {
      * Tax percent
      */
     @Column(name = "tax_percentage", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @NotNull
     private BigDecimal percent;
 
     /**
