@@ -18,28 +18,16 @@
  */
 package org.meveo.model.rating;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Bean for EDR data.
@@ -49,7 +37,10 @@ import org.meveo.model.billing.Subscription;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "rating_edr_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_',case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status= org.meveo.model.rating.EDRStatusEnum.OPEN ORDER BY e.eventDate DESC") })
+        @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_',case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status= org.meveo.model.rating.EDRStatusEnum.OPEN ORDER BY e.eventDate DESC"),
+        @NamedQuery(name = "EDR.getOpenEdrBetweenTwoDate", query = "SELECT e from EDR e join fetch e.subscription where e.status = org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate order by e.eventDate desc"),
+        @NamedQuery(name = "EDR.updateWalletOperationForSafeDeletion", query = "update WalletOperation wo set wo.edr=NULL where wo.edr in (select e FROM EDR e where e.status <> org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
+        @NamedQuery(name = "EDR.deleteNotOpenEdrBetweenTwoDate", query = "delete from EDR e  where e.status <> org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate") })
 public class EDR extends BaseEntity {
 
     private static final long serialVersionUID = 1278336655583933747L;

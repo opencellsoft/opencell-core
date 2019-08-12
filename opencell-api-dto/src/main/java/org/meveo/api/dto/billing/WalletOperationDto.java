@@ -1,17 +1,16 @@
 package org.meveo.api.dto.billing;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import org.meveo.api.dto.BaseDto;
+import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.BaseDto;
-import org.meveo.model.billing.OperationTypeEnum;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationStatusEnum;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * The Class WalletOperationDto.
@@ -124,6 +123,11 @@ public class WalletOperationDto extends BaseDto {
     private BigDecimal rawAmountWithTax;
 
     /**
+     * Wallet Id
+     */
+    private Long walletId;
+
+    /**
      * Instantiates a new wallet operation dto.
      */
     public WalletOperationDto() {
@@ -139,6 +143,10 @@ public class WalletOperationDto extends BaseDto {
         code = walletOperation.getCode();
         description = walletOperation.getDescription();
         seller = walletOperation.getSeller().getCode();
+
+        if (walletOperation.getWallet() != null) {
+            walletId = walletOperation.getWallet().getId();
+        }
 
         if (walletOperation.getWallet() != null && walletOperation.getWallet().getWalletTemplate() != null) {
             walletTemplate = walletOperation.getWallet().getWalletTemplate().getCode();
@@ -171,6 +179,7 @@ public class WalletOperationDto extends BaseDto {
         chargeInstanceId = walletOperation.getChargeInstance().getId();
         rawAmountWithoutTax = walletOperation.getRawAmountWithoutTax();
         rawAmountWithTax = walletOperation.getRawAmountWithTax();
+        code = walletOperation.getCode();
     }
 
     /**
@@ -748,7 +757,22 @@ public class WalletOperationDto extends BaseDto {
     public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
         this.rawAmountWithTax = rawAmountWithTax;
     }
-    
+
+    /**
+     *
+     * @return wallet id
+     */
+    public Long getWalletId() {
+        return walletId;
+    }
+    /**
+     *
+     * @param walletId wallet id
+     */
+    public void setWalletId(Long walletId) {
+        this.walletId = walletId;
+    }
+
     @Override
     public String toString() {
         return "WalletOperationDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate="

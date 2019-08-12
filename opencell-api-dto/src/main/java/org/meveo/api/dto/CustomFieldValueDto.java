@@ -1,17 +1,16 @@
 package org.meveo.api.dto;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Represents a single CF simple value inside a more complex CF value (list,
@@ -31,7 +30,8 @@ public class CustomFieldValueDto implements Serializable {
 			@XmlElement(name = "doubleValue", type = Double.class), @XmlElement(name = "longValue", type = Long.class),
 			@XmlElement(name = "stringValue", type = String.class),
 			@XmlElement(name = "entityReferenceValue", type = EntityReferenceDto.class),
-			@XmlElement(name = "childEntityValue", type = CustomEntityInstanceDto.class) })
+			@XmlElement(name = "childEntityValue", type = CustomEntityInstanceDto.class),
+			@XmlElement(name = "booleanValue", type = Boolean.class) })
 	protected Object value;
 
 	
