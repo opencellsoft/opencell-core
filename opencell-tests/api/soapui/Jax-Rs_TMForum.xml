@@ -28671,6 +28671,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="2fa31fe9-3815-45f0-b88a-d90d6e345ec8"/>
+            <con:assertion type="Simple Contains" id="48bba908-ac19-4174-84f5-e4d1de8d9adb" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -28896,6 +28903,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="2fa31fe9-3815-45f0-b88a-d90d6e345ec8"/>
+            <con:assertion type="Simple Contains" id="c6bdc4b3-56f8-4aae-95c6-d03aa97729ab" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -29205,6 +29219,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="2fa31fe9-3815-45f0-b88a-d90d6e345ec8"/>
+            <con:assertion type="Simple Contains" id="79fee41e-f63c-4498-a046-de906146ca99" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -31422,7 +31443,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="ff041be2-3305-4416-a7c3-98361cfd604a" name="XPath Match 1">
-              <con:configuration><path>//ratedTransaction[code="${#Project#baseEntityPrefix}_OST"]</path><content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration>
+                <path>//ratedTransaction[code="${#Project#baseEntityPrefix}_OST"]</path>
+                <content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <usageDate>2016-02-01T00:00:00*</usageDate>
   <unitAmountWithoutTax>5.000000000000</unitAmountWithoutTax>
   <unitAmountWithTax>5.250000000000</unitAmountWithTax>
@@ -31440,10 +31463,16 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <taxPercent>5.000000000000</taxPercent>
   <sellerCode>SELLER_FR</sellerCode>
   <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
-</ratedTransaction>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+</ratedTransaction>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="b898cc33-aec0-467c-b6ea-b08aec9987e4" name="XPath Match 2">
-              <con:configuration><path>//ratedTransaction[code="${#Project#baseEntityPrefix}_REC1"]</path><content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration>
+                <path>//ratedTransaction[code="${#Project#baseEntityPrefix}_REC1"]</path>
+                <content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <usageDate>2016-02-01T00:00:00*</usageDate>
   <unitAmountWithoutTax>10.000000000000</unitAmountWithoutTax>
   <unitAmountWithTax>10.500000000000</unitAmountWithTax>
@@ -31463,7 +31492,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <taxPercent>5.000000000000</taxPercent>
 <sellerCode>SELLER_FR</sellerCode>
   <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
-</ratedTransaction>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+</ratedTransaction>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
@@ -32252,7 +32285,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="5552ef98-8051-4b55-a267-971866332726" name="XPath Match 1">
-              <con:configuration><path>//ratedTransaction[code="TM_BASE2_OST"]</path><content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <con:configuration>
+                <path>//ratedTransaction[code="TM_BASE2_OST"]</path>
+                <content><![CDATA[<ratedTransaction xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <usageDate>2016-02-29T00:00:00*</usageDate>
   <unitAmountWithoutTax>5.000000000000</unitAmountWithoutTax>
   <unitAmountWithTax>5.250000000000</unitAmountWithTax>
@@ -32270,7 +32305,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <taxPercent>5.000000000000</taxPercent>
 <sellerCode>SELLER_FR</sellerCode>
   <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
-</ratedTransaction>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+</ratedTransaction>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
@@ -32410,8 +32449,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                                  <taxPercent>5.000000000000</taxPercent>
                                   <sellerCode>SELLER_FR</sellerCode>
                                  <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
-                              </ratedTransaction>
-]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+                              </ratedTransaction>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
