@@ -195,6 +195,14 @@ public abstract class InvoiceAgregate extends AuditableEntity {
         this.itemNumber = itemNumber;
     }
 
+    public void addItemNumber(Integer numberToAdd) {
+        if (itemNumber == null) {
+            itemNumber = numberToAdd;
+        } else {
+            itemNumber = itemNumber.intValue() + numberToAdd.intValue();
+        }
+    }
+
     public String getDescription() {
         return description;
     }

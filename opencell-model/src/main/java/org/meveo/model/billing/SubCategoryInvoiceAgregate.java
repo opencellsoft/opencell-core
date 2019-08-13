@@ -132,11 +132,8 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @Transient
     private BigDecimal oldAmountWithTax;
 
-    /**
-     * Tax was recalculated for this invoice subCategory aggregate
-     */
     @Transient
-    private boolean taxRecalculated;
+    private List<RatedTransaction> ratedtransactionsToAssociate = new ArrayList<>();
 
     /**
      * Instantiates a new sub category invoice aggregate.
@@ -153,19 +150,20 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      * @param userAccount User account
      * @param wallet Wallet instance
      * @param tax Tax applied
-     * @param taxPercent Tax percent applied
      * @param invoice Invoice
      * @param accountingCode Accounting code
      */
     public SubCategoryInvoiceAgregate(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, WalletInstance wallet, Tax tax,
-            BigDecimal taxPercent, Invoice invoice, AccountingCode accountingCode) {
+            Invoice invoice, AccountingCode accountingCode) {
         super();
         this.invoiceSubCategory = invoiceSubCategory;
         this.billingAccount = billingAccount;
         this.userAccount = userAccount;
         this.wallet = wallet;
         this.tax = tax;
-        this.taxPercent = taxPercent;
+        if (tax != null) {
+            this.taxPercent = tax.getPercent();
+        }
         this.invoice = invoice;
         if (invoice != null) {
             this.billingRun = invoice.getBillingRun();
@@ -258,7 +256,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
             this.itemNumber = 0;
         }
         this.itemNumber++;
-        this.ratedtransactions.add(ratedTransaction);
+        this.ratedtransactionsToAssociate.add(ratedTransaction);
     }
 
     /**
@@ -568,16 +566,20 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     }
 
     /**
-     * @return Tax was recalculated for this invoice subCategory aggregate
+     * A transient method.
+     * 
+     * @return A list of rated transactions to associate with an invoice subcategory aggregate.
      */
-    public boolean isTaxRecalculated() {
-        return taxRecalculated;
+    public List<RatedTransaction> getRatedtransactionsToAssociate() {
+        return ratedtransactionsToAssociate;
     }
 
     /**
-     * @param taxRecalculated Tax was recalculated for this invoice subCategory aggregate
+     * A transient method.
+     * 
+     * @param ratedtransactionsToAssociate A list of rated transactions to associate with an invoice subcategory aggregate
      */
-    public void setTaxRecalculated(boolean taxRecalculated) {
-        this.taxRecalculated = taxRecalculated;
+    public void setRatedtransactionsToAssociate(List<RatedTransaction> ratedtransactionsToAssociate) {
+        this.ratedtransactionsToAssociate = ratedtransactionsToAssociate;
     }
 }

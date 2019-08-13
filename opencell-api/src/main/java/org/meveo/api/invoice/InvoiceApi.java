@@ -1,24 +1,19 @@
 package org.meveo.api.invoice;
 
-import static org.meveo.commons.utils.NumberUtils.round;
-
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
@@ -30,50 +25,37 @@ import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.response.InvoicesDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.filter.FilteredListApi;
 import org.meveo.commons.utils.JsonUtils;
-import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.Auditable;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceModeEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.PaymentMethod;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
-import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.order.OrderService;
@@ -100,9 +82,6 @@ public class InvoiceApi extends BaseApi {
     private BillingAccountService billingAccountService;
 
     @Inject
-    private UserAccountService userAccountService;
-
-    @Inject
     private SubscriptionService subscriptionService;
 
     @Inject
@@ -116,12 +95,6 @@ public class InvoiceApi extends BaseApi {
 
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
-
-    @Inject
-    private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
-
-    @Inject
-    private RatedTransactionService ratedTransactionService;
 
     @Inject
     private InvoiceService invoiceService;
@@ -141,6 +114,9 @@ public class InvoiceApi extends BaseApi {
     @Inject
     @MeveoParamBean
     private ParamBean paramBean;
+
+    @Inject
+    protected ResourceBundle resourceMessages;
 
     /**
      * Create an invoice based on the DTO object data and current user
@@ -195,7 +171,6 @@ public class InvoiceApi extends BaseApi {
             response.setPdfFilename(invoice.getPdfFilename());
         }
 
-
         if (invoice.isDraft()) {
             invoiceService.cancelInvoice(invoice);
         }
@@ -215,7 +190,6 @@ public class InvoiceApi extends BaseApi {
         invoiceDTO.setReturnPdf(Boolean.TRUE);
         invoiceDTO.setReturnXml(Boolean.TRUE);
     }
-
 
     private Seller getSeller(InvoiceDto invoiceDTO, BillingAccount billingAccount) throws EntityDoesNotExistsException {
         Seller seller = null;
@@ -381,30 +355,37 @@ public class InvoiceApi extends BaseApi {
         boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
 
         List<GenerateInvoiceResultDto> invoicesDtos = new ArrayList<>();
-        List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft);
-        if (invoices != null) {
-            for (Invoice invoice : invoices) {
-                if (isDraft && invoiceService.isPrepaidReport(invoice.getId())) {
-                    invoiceService.cancelInvoice(invoice);
-                    continue;
-                }
-                invoice = invoiceService.retrieveIfNotManaged(invoice);
+        ICustomFieldEntity customFieldEntity = new Invoice();
+        customFieldEntity = this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), customFieldEntity, false);
+        List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft, customFieldEntity.getCfValues());
 
-                // TODO AKK need to extract custom fields and use them inside the generateInvoice()
-                // this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
+        // For backward compatibility with API
+        if (invoices == null || invoices.isEmpty()) {
+            throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
+        }
+        for (Invoice invoice : invoices) {
+            if (isDraft && invoice.isPrepaid()) {
+                invoiceService.cancelInvoice(invoice);
+                continue;
+            }
+            invoice = invoiceService.retrieveIfNotManaged(invoice);
 
-                GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf, generateInvoiceRequestDto.isIncludeRatedTransactions());
-                invoicesDtos.add(generateInvoiceResultDto);
-                if (isDraft) {
-                    invoiceService.cancelInvoice(invoice);
-                }
+            // TODO AKK need to extract custom fields and use them inside the generateInvoice()
+            // this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
+
+            GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf,
+                generateInvoiceRequestDto.isIncludeRatedTransactions());
+            invoicesDtos.add(generateInvoiceResultDto);
+            if (isDraft) {
+                invoiceService.cancelInvoice(invoice);
             }
         }
 
         return invoicesDtos;
     }
 
-    public GenerateInvoiceResultDto createGenerateInvoiceResultDto(Invoice invoice, boolean includeXml, boolean includePdf, Boolean includeRatedTransactions) throws BusinessException {
+    public GenerateInvoiceResultDto createGenerateInvoiceResultDto(Invoice invoice, boolean includeXml, boolean includePdf, Boolean includeRatedTransactions)
+            throws BusinessException {
         GenerateInvoiceResultDto dto = new GenerateInvoiceResultDto(invoice, includeRatedTransactions);
 
         if (invoiceService.isInvoicePdfExist(invoice)) {
@@ -477,7 +458,7 @@ public class InvoiceApi extends BaseApi {
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
         }
-        if (invoiceService.isPrepaidReport(invoice.getId())) {
+        if (invoice.isPrepaid()) {
             throw new BusinessException("Invoice PDF is disabled for prepaid invoice: " + invoice.getInvoiceNumber());
         }
         if (!invoiceService.isInvoicePdfExist(invoice)) {
@@ -711,7 +692,7 @@ public class InvoiceApi extends BaseApi {
      */
     private void setInvoicePdf(Invoice invoice, boolean includePdf, InvoiceDto invoiceDto) {
 
-        if (invoiceService.isPrepaidReport(invoice.getId())) {
+        if (invoice.isPrepaid()) {
             invoiceDto.setPdfFilename(null);
             return;
         }
@@ -846,11 +827,11 @@ public class InvoiceApi extends BaseApi {
         }
         handleMissingParameters();
         Invoice invoice = invoiceService.findById(invoiceDto.getInvoiceId());
-        if (invoiceService.isPrepaidReport(invoice.getId())) {
-            return false;
-        }
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceDto.getInvoiceId());
+        }
+        if (invoice.isPrepaid()) {
+            return false;
         }
         if (MailingTypeEnum.AUTO.equals(mailingType) && invoice.isDontSend()) {
             return false;

@@ -47,7 +47,7 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
     /**
      * check if the field has been modified
      *
-     * @param currentState  the current state of the field
+     * @param currentState the current state of the field
      * @param previousState the previous state of the field
      * @return boolean, true if the field is changed.
      */
@@ -77,9 +77,9 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
     /**
      * Mark and add the changed field to changed fields collection.
      *
-     * @param baseEntity    the current auditable entity
-     * @param field         the field to check
-     * @param currentState  the current state of all fields of current auditable entity
+     * @param baseEntity the current auditable entity
+     * @param field the field to check
+     * @param currentState the current state of all fields of current auditable entity
      * @param previousState the previous state of all fields of current auditable entity
      * @param propertyNames the names of all fields in the current auditable entity
      */
@@ -88,12 +88,12 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
         AuditableEntity entity = (AuditableEntity) baseEntity;
         String fieldName = field.getName();
 
-        //loop over the fields of dirty entity
+        // loop over the fields of dirty entity
         for (int i = 0; i < propertyNames.length; ++i) {
             if (propertyNames[i].equals(fieldName)) {
                 if (isChanged(currentState[i], previousState[i])) {
-                    AuditableFieldHistory auditableFieldHistory = new AuditableFieldHistory(field.getName(), previousState[i], currentState[i], field.getAnnotation(AuditTarget.class).type(),
-                            field.getAnnotation(AuditTarget.class).history(), field.getAnnotation(AuditTarget.class).notif());
+                    AuditableFieldHistory auditableFieldHistory = new AuditableFieldHistory(field.getName(), previousState[i], currentState[i],
+                        field.getAnnotation(AuditTarget.class).type(), field.getAnnotation(AuditTarget.class).history(), field.getAnnotation(AuditTarget.class).notif());
                     Set<AuditableFieldHistory> auditableFields = entity.getAuditableFields();
                     if (auditableFields == null || auditableFields.isEmpty() || !auditableFields.contains(auditableFieldHistory)) {
                         if (auditableFields == null) {
@@ -164,6 +164,7 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
                     for (AuditableFieldHistory field : auditableFields) {
                         if (field.isNotfiable() && !field.isNotified()) {
                             entities.add(entity);
+                            break;
                         }
                     }
                 }
@@ -198,15 +199,15 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
     /**
      * Mark and collect the changed fields
      *
-     * @param entity        the changed entity
-     * @param fields        the fields of changed entity
-     * @param currentState  the current state of entity fields
+     * @param entity the changed entity
+     * @param fields the fields of changed entity
+     * @param currentState the current state of entity fields
      * @param previousState the previous state of entity fields
      * @param propertyNames the names of the entity fields
      */
     public void setChangedFields(BaseEntity entity, List<Field> fields, Object[] currentState, Object[] previousState, String[] propertyNames) {
         for (Field field : fields) {
-            //collect all auditable fields that are modified
+            // collect all auditable fields that are modified
             setChangedField((BaseEntity) entity, field, currentState, previousState, propertyNames);
         }
     }
@@ -248,7 +249,7 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
      * @return auditable fields list
      */
     public List<AuditableField> list(BaseEntity entity) {
-        Map<String, Object> filters = new HashMap();
+        Map<String, Object> filters = new HashMap<>();
         filters.put("entityClass", ReflectionUtils.getCleanClassName(entity.getClass().getName()));
         filters.put("entityId", entity.getId());
         PaginationConfiguration config = new PaginationConfiguration(filters);
