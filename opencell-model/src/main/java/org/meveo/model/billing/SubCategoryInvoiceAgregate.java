@@ -72,7 +72,8 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
 
-    @OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY)
+    //@OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY)
+    @Transient
     private List<RatedTransaction> ratedtransactions = new ArrayList<>();
 
     /** The discount plan code. */

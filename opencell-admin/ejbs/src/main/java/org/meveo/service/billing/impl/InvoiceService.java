@@ -68,7 +68,6 @@ import org.apache.poi.util.IOUtils;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VFSUtils;
 import org.jboss.vfs.VirtualFile;
-import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
@@ -109,6 +108,7 @@ import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionGroup;
+import org.meveo.model.billing.RatedTransactionProcessingStatus;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
@@ -886,21 +886,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
             for (Object[] aggregateAndRtIds : rtMassUpdates) {
                 SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRtIds[0];
                 List<Long> rtIds = (List<Long>) aggregateAndRtIds[1];
-                SubListCreator<Long> subListCreator = new SubListCreator<Long>(10000, rtIds);
-                while (subListCreator.isHasNext()) {
-                    List<Long> subList = subListCreator.getNextWorkSet();
-                    em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
-                        .setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("ids", subList).executeUpdate();
+                for (Long rtId : rtIds) {
+                    RatedTransactionProcessingStatus processingStatus = new RatedTransactionProcessingStatus(rtId, billingRun, invoice, subCategoryAggregate,
+                        RatedTransactionStatusEnum.BILLED);
+                    em.persist(processingStatus);
                 }
             }
+
             for (Object[] aggregateAndRts : rtUpdates) {
                 SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRts[0];
                 List<RatedTransaction> rts = (List<RatedTransaction>) aggregateAndRts[1];
                 for (RatedTransaction rt : rts) {
-                    rt.setBillingRun(billingRun);
-                    rt.setInvoice(invoice);
-                    rt.setStatus(RatedTransactionStatusEnum.BILLED);
-                    rt.setInvoiceAgregateF(subCategoryAggregate);
+                    RatedTransactionProcessingStatus processingStatus = new RatedTransactionProcessingStatus(rt.getId(), billingRun, invoice, subCategoryAggregate,
+                        RatedTransactionStatusEnum.BILLED);
+                    rt.setProcessingStatus(processingStatus);
                     em.merge(rt);
                 }
             }

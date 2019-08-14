@@ -189,7 +189,8 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * Rated transactions included in this billing run
      */
-    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    //@OneToMany(mappedBy = "billingRun", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Transient
     private Set<RatedTransaction> ratedTransactions = new HashSet<RatedTransaction>();
 
     /**

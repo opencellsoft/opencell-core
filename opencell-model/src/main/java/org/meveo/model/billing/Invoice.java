@@ -250,7 +250,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * Rated transactions that were included in invoice
      */
-    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
+    //@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
+    @Transient
     private List<RatedTransaction> ratedTransactions = new ArrayList<>();
 
     /**
