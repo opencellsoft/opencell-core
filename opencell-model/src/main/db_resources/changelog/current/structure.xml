@@ -309,16 +309,6 @@
         <sql>CREATE INDEX rt_order_index ON billing_rated_transaction (order_number, status, usage_date) where order_number is not null</sql>
     </changeSet>
 
-    <changeSet id="#4282_20190520-vacuum" author="AndriusKarpavicius" dbms="postgresql">
-       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_vacuum_scale_factor = 0.0);</sql>
-       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_vacuum_threshold = 5000);</sql>
-       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_analyze_scale_factor = 0.0);</sql>
-       <sql>ALTER TABLE ${db.schema.adapted}billing_rated_transaction SET (autovacuum_analyze_threshold = 5000);</sql>
-       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_vacuum_scale_factor = 0.0);</sql>
-       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_vacuum_threshold = 5000);</sql>
-       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_analyze_scale_factor = 0.0);</sql>
-       <sql>ALTER TABLE ${db.schema.adapted}billing_wallet_operation SET (autovacuum_analyze_threshold = 5000);</sql>
-    </changeSet>
 
 <!-- Takes many hours on 30M RT
     <changeSet id="#4282_20190520-P" author="AndriusKarpavicius" dbms="postgresql">
@@ -352,7 +342,33 @@
                 set si.minimum_amount_el_sp = st.minimum_amount_el_sp, siminimum_label_el_sp = st.minimum_label_el_sp where si.minimum_amount_el_sp is not null
         </sql>
     </changeSet>
-
+    
+    <changeSet id="#4326_20190530-P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}billing_wallet_operation set tax_id = t.id from ${db.schema.adapted}billing_tax t where
+               tax_percent = t.tax_percentage and tax_id is null and tax_percent is not null
+        </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction set tax_id = t.id from ${db.schema.adapted}billing_tax t where
+               tax_percent = t.tax_percentage and tax_id is null and tax_percent is not null
+        </sql>        
+    </changeSet>
+    
+    <changeSet id="#4326_20190530-M" author="AndriusKarpavicius" dbms="mysql">
+       <sql>update ${db.schema.adapted}billing_wallet_operation wo join ${db.schema.adapted}billing_tax t on wo.tax_percent = t.tax_percentage set wo.tax_id = t.id  where
+               wo.tax_id is null and wo.tax_percent is not null
+        </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction rt join ${db.schema.adapted}billing_tax t on rt.tax_percent = t.tax_percentage set rt.tax_id = t.id  where
+               rt.tax_id is null and rt.tax_percent is not null
+        </sql> 
+    </changeSet>
+    
+    <changeSet id="#4326_20190530" author="AndriusKarpavicius">
+        <addNotNullConstraint tableName="billing_tax" columnName="tax_percentage" columnDataType="numeric(23, 12)"/>
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="tax_id" columnDataType="bigInt"/>
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="tax_percent" columnDataType="numeric(23, 12)"/>
+        <addNotNullConstraint tableName="billing_rated_transaction" columnName="tax_id" columnDataType="bigInt"/>
+        <addNotNullConstraint tableName="billing_rated_transaction" columnName="tax_percent" columnDataType="numeric(23, 12)"/>    
+    </changeSet>
+    
     <changeSet id="#4278_20190520_partitions" author="mohamed.el.youssoufi" dbms="postgresql">
     
     	<createProcedure><![CDATA[
@@ -395,7 +411,7 @@
         
                     EXECUTE query;
         
-                    partition_date := partition_date + interval '1 day';
+                    --partition_date := partition_date + interval '1 day';
         
                     RAISE NOTICE 'partition created : %', table_name || '_' || to_char(partition_date,'YYYY_MM_DD');
     
@@ -504,13 +520,16 @@
         </createProcedure>
     
 		<createProcedure><![CDATA[
-			CREATE OR REPLACE FUNCTION switch_billing_rated_transaction_to_partition(schema_owner text, schema_name text, frequency text) RETURNS void AS $$
+			CREATE OR REPLACE FUNCTION switch_billing_rated_transaction_to_partition(schema_owner text, schema_name text, frequency text, from_date date, to_date date) RETURNS void AS $$
 			
 			-- Function to replace billing_rated_transaction table with a partitioned table. Preserves existing data.
-			-- Param1 : schema_name => name of the schema where table is located.
-			-- Param2 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in a table
+	        -- Param1 : schema_owner => name of the owner of the schema where table is located.
+	        -- Param2 : schema_name => name of the schema where table is located.
+	        -- Param3 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in a table
+            -- Param4 : span of partitions - start date. DOES NOT filter the existing data. If not provided will use min and max usage_date field value as partition span start and end range.
+            -- Param5 : span of partitions - end date. DOES NOT filter the existing data.
 			
-			DECLARE
+            DECLARE
 			  _min_date date;
 			  _max_date date;
 			  _seq_value bigint;
@@ -518,8 +537,15 @@
 			
 			BEGIN
 			
-			-- Find values for partition creation and sequence recreation
-			execute 'select min(usage_date), max(usage_date) from ' || schema_name || '.billing_rated_transaction ' into _min_date, _max_date;
+			-- Find values for partition creation and sequence recreation                       
+            
+            IF from_date IS NULL THEN
+                execute 'select min(usage_date), max(usage_date) from ' || schema_name || '.billing_rated_transaction ' into _min_date, _max_date;
+            ELSE 
+                _min_date := from_date;
+                _max_date := CASE WHEN to_date IS NULL THEN now() ELSE to_date END;                
+            END IF;
+            
 			execute 'select nextval(''' || schema_name || '.billing_rated_transaction_seq'')' into _seq_value;
 			
 			RAISE NOTICE 'min date is % max date is %', _min_date, _max_date;
@@ -595,8 +621,8 @@
 						  subscription_id bigint,
 						  seller_id bigint NOT NULL,
 						  charge_instance_id bigint,
-						  tax_id bigint,
-						  tax_percent numeric(23,12),
+						  tax_id bigint NOT NULL,
+						  tax_percent numeric(23,12) NOT NULL,
 						  user_account_id bigint,
 						  offer_id bigint,
                           service_instance_id bigint,
@@ -700,11 +726,14 @@
         </createProcedure>
         
         <createProcedure><![CDATA[
-			CREATE OR REPLACE FUNCTION switch_billing_wallet_operation_to_partition(schema_owner text, schema_name text, frequency text) RETURNS void AS $$
+			CREATE OR REPLACE FUNCTION switch_billing_wallet_operation_to_partition(schema_owner text, schema_name text, frequency text, from_date date, to_date date) RETURNS void AS $$
 			
 			-- Function to replace billing_wallet_operation table with a partitioned table. Preserves existing data.
-			-- Param1 : schema_name => name of the schema where table is located.
-			-- Param2 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in a table
+            -- Param1 : schema_owner => name of the owner of the schema where table is located.
+	        -- Param2 : schema_name => name of the schema where table is located.
+	        -- Param3 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in a table
+            -- Param4 : span of partitions - start date. DOES NOT filter the existing data. If not provided will use min and max operation_date field value as partition span start and end range.
+            -- Param5 : span of partitions - end date. DOES NOT filter the existing data.
 			
 			DECLARE
 			  _min_date date;
@@ -715,8 +744,14 @@
 			BEGIN
 			
 			-- Find values for partition creation and sequence recreation
-			execute 'select min(operation_date), max(operation_date) from ' || schema_name || '.billing_wallet_operation ' into _min_date, _max_date;
-			execute 'select nextval(''' || schema_name || '.billing_wallet_operation_seq'')' into _seq_value;
+            IF from_date IS NULL THEN
+    			execute 'select min(operation_date), max(operation_date) from ' || schema_name || '.billing_wallet_operation ' into _min_date, _max_date;
+            ELSE 
+                _min_date := from_date;
+                _max_date := CASE WHEN to_date IS NULL THEN now() ELSE to_date END;                
+            END IF;
+	
+    		execute 'select nextval(''' || schema_name || '.billing_wallet_operation_seq'')' into _seq_value;
 			
 			RAISE NOTICE 'min date is % max date is %', _min_date, _max_date;
 
@@ -774,7 +809,7 @@
 			  start_date timestamp without time zone,
 			  status character varying(255),
 			  subscription_date timestamp without time zone,
-			  tax_percent numeric(23,12),
+			  tax_percent numeric(23,12) NOT NULL,
 			  credit_debit_flag character varying(255),
 			  unit_amount_tax numeric(23,12),
 			  unit_amount_with_tax numeric(23,12),
@@ -801,7 +836,7 @@
 			  raw_amount_with_tax numeric(23,12),
 			  invoice_sub_category_id bigint,
 			  subscription_id bigint,
-			  tax_id bigint,
+			  tax_id bigint NOT NULL,
 			  rated_transaction_id bigint,
 			  service_instance_id bigint,
 			  offer_id bigint,
@@ -902,11 +937,14 @@
         </createProcedure>
         
         <createProcedure><![CDATA[
-			CREATE OR REPLACE FUNCTION switch_rating_edr_to_partition(schema_owner text, schema_name text, frequency text) RETURNS void AS $$
+			CREATE OR REPLACE FUNCTION switch_rating_edr_to_partition(schema_owner text, schema_name text, frequency text, from_date date, to_date date) RETURNS void AS $$
 			
 			-- Function to replace rating_edr table with a partitioned table. Preserves existing data.
-			-- Param1 : schema_name => name of the schema where table is located.
-			-- Param2 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in a table
+			-- Param1 : schema_owner => name of the owner of the schema where table is located.
+            -- Param2 : schema_name => name of the schema where table is located.
+	        -- Param3 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in a table
+            -- Param4 : span of partitions - start date. DOES NOT filter the existing data. If not provided will use min and max event_date field value as partition span start and end range.
+            -- Param5 : span of partitions - end date. DOES NOT filter the existing data.
 			
 			DECLARE
 			  _min_date date;
@@ -917,7 +955,13 @@
 			BEGIN
 			
 			-- Find values for partition creation and sequence recreation
-			execute 'select min(event_date), max(event_date) from ' || schema_name || '.rating_edr ' into _min_date, _max_date;
+            IF from_date IS NULL THEN
+	            execute 'select min(event_date), max(event_date) from ' || schema_name || '.rating_edr ' into _min_date, _max_date;
+            ELSE 
+                _min_date := from_date;
+                _max_date := CASE WHEN to_date IS NULL THEN now() ELSE to_date END;                
+            END IF;
+
 			execute 'select nextval(''' || schema_name || '.rating_edr_seq'')' into _seq_value;
 			
 			RAISE NOTICE 'min date is % max date is %', _min_date, _max_date;
@@ -1267,7 +1311,7 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}ar_accounting_writing_seq values(1)</sql>
     </changeSet>
-   
+
     <changeSet id="#4337_20190710" author="MohammedELAZZOUZI">
     	<addColumn tableName="ar_account_operation">
         	<column name="invoice_id" type="bigint"></column>
@@ -1362,6 +1406,38 @@
             <column name="processing_attempts" type="int4" />
             <column name="flat_file_job_code" type="varchar(255)" />
         </addColumn>
+    </changeSet>
+    
+    <changeSet id="#4326_20190709" author="AndriusKarpavicius" failOnError="false"> 
+        <dropForeignKeyConstraint baseTableName="billing_wallet_operation" constraintName="fk_wallet_operation_rated_transaction"/>
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_rated_transaction"/>
+    </changeSet>
+
+    <changeSet id="#4457_20190728" author="AndriusKarpavicius">
+        <sql>update ${db.schema.adapted}crm_custom_field_tmpl_val set listvalues='Rollback', listvalues_key='ROLLBACK' where listvalues_key='ROLLBBACK'</sql>    
+    </changeSet> 
+
+	<changeSet id="#4472_20190807" author="AndriusKarpavicius">
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_MediationJob'</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob')</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_mcols where cft_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob')</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob'</sql>           
+    </changeSet> 
+    <changeSet id="#4392_20190625" author="AndriusKarpavicius">
+        <sql>update ${db.schema.adapted}meveo_script_instance set reuse=0 where reuse is null</sql>
+        <sql>update ${db.schema.adapted}meveo_script_instance set is_error=0 where is_error is null</sql>
+        <sql>update ${db.schema.adapted}adm_notification set run_async=0 where run_async is null</sql>
+        <addNotNullConstraint tableName="meveo_script_instance" columnName="reuse" columnDataType="${type.boolean}"/>
+        <addNotNullConstraint tableName="meveo_script_instance" columnName="is_error" columnDataType="${type.boolean}"/>
+        <addNotNullConstraint tableName="adm_notification" columnName="run_async" columnDataType="${type.boolean}"/>
+    </changeSet>
+    
+    <changeSet id="#4326_20190811" author="AndriusKarpavicius"> 
+    	<addColumn tableName="billing_invoice">
+    		<column name="prepaid" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+    	</addColumn>
     </changeSet>
     
 </databaseChangeLog>

@@ -148,14 +148,12 @@ public abstract class BaseApi {
     }
 
     protected void handleMissingParameters(BaseEntityDto dto) throws MeveoApiException {
-        try {
+        if (dto instanceof BusinessEntityDto) {
             BusinessEntityDto bdto = (BusinessEntityDto) dto;
             boolean allowEntityCodeUpdate = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("service.allowEntityCodeUpdate", "true"));
             if (!allowEntityCodeUpdate && !StringUtils.isBlank(bdto.getUpdatedCode()) && !currentUser.hasRole(SUPER_ADMIN_MANAGEMENT)) {
                 throw new org.meveo.api.exception.AccessDeniedException("Super administrator permission is required to update entity code");
             }
-        } catch (ClassCastException e) {
-            log.info("allow entity code update rule not applied : Not business Dto");
         }
         handleMissingParameters();
     }

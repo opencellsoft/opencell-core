@@ -1,5 +1,16 @@
 package org.meveo.api.billing;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
@@ -107,16 +118,6 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Edward P. Legaspi
@@ -2150,7 +2151,7 @@ public class SubscriptionApi extends BaseApi {
 
         SubscriptionRenewal subscriptionRenewal = null;
         if (postData.getRenewalRule() == null) {
-            subscriptionRenewal = subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), null, false);
+            subscriptionRenewal = subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal().copy(), null, false);
         } else {
             subscriptionRenewal = subscriptionRenewalFromDto(null, postData.getRenewalRule(), false);
         }

@@ -89,7 +89,8 @@ import java.util.HashMap;
         @Parameter(name = "sequence_name", value = "billing_service_instance_seq"), })
 @NamedQueries({
         @NamedQuery(name = "ServiceInstance.getExpired", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
-        @NamedQuery(name = "ServiceInstance.getToNotifyExpiration", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)") })
+        @NamedQuery(name = "ServiceInstance.getToNotifyExpiration", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
+        @NamedQuery(name = "ServiceInstance.getMimimumRTUsed", query = "select s.minimumAmountEl from ServiceInstance s where s.minimumAmountEl is not null") })
 public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICounterEntity {
 
     /** The Constant serialVersionUID. */
@@ -207,7 +208,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @Column(name = "minimum_label_el_sp", length = 2000)
     @Size(max = 2000)
     private String minimumLabelElSpark;
-    
+
     /** The order histories. */
     @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderHistory> orderHistories;
@@ -270,7 +271,6 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
     @MapKey(name = "code")
     Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
-
 
     /**
      * PK of OrderItem.id.
@@ -592,7 +592,9 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
         this.rateUntilDate = rateUntilDate;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.model.BusinessEntity#equals(java.lang.Object)
      */
     @Override
@@ -614,7 +616,9 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
         return false;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.model.BusinessCFEntity#getParentCFEntities()
      */
     @Override
@@ -1006,7 +1010,6 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
         this.psInstances = psInstances;
     }
 
-
     /**
      * Gets the payment day in month PS.
      *
@@ -1015,7 +1018,6 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     public Integer getPaymentDayInMonthPS() {
         return paymentDayInMonthPS;
     }
-
 
     /**
      * Sets the payment day in month PS.
@@ -1043,8 +1045,10 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     public void setInitialServiceRenewal(String initialServiceRenewal) {
         this.initialServiceRenewal = initialServiceRenewal;
     }
+
     /**
      * Gets counters
+     * 
      * @return a map of counters
      */
     public Map<String, CounterInstance> getCounters() {
@@ -1053,6 +1057,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 
     /**
      * Sets counters
+     * 
      * @param counters a map of counters
      */
     public void setCounters(Map<String, CounterInstance> counters) {
