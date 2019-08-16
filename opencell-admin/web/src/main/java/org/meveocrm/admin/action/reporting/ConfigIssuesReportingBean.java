@@ -88,6 +88,19 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
 
     private List<Entry<String, String>> jaspers;
 
+    private Integer nbrTaxesNotAssociated;
+    private Integer nbrLanguageNotAssociated;
+    private Integer nbrInvCatNotAssociated;
+    private Integer nbrInvSubCatNotAssociated;
+    private Integer nbrServiceWithNotOffer;
+    private Integer nbrUsagesChrgNotAssociated;
+    private Integer nbrCounterWithNotService;
+    private Integer nbrRecurringChrgNotAssociated;
+    private Integer nbrTerminationChrgNotAssociated;
+    private Integer nbrSubscriptionChrgNotAssociated;
+    private Integer nbrScriptInstanceWithError;
+    private Integer nbrJasperNotFound;
+
     List<Tax> taxesNotAssociatedList = new ArrayList<Tax>();
     List<UsageChargeTemplate> usagesWithNotPricePlList = new ArrayList<UsageChargeTemplate>();
     List<RecurringChargeTemplate> recurringWithNotPricePlanList = new ArrayList<RecurringChargeTemplate>();
@@ -102,25 +115,10 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     List<OneShotChargeTemplate> terminationNotAssociatedList = new ArrayList<OneShotChargeTemplate>();
     List<OneShotChargeTemplate> subNotAssociatedList = new ArrayList<OneShotChargeTemplate>();
     List<ScriptInstance> scriptInstanceWithErrorList = new ArrayList<ScriptInstance>();
-    Map<String, String> jasperFilesList = new HashMap<String, String>();
 
-    public int getNbrUsagesWithNotPricePlan() {
-        return usageChargeTemplateService.getNbrUsagesChrgWithNotPricePlan();
-    }
+    private ConfigIssuesReportingDTO walletReportConfig;
 
-    public int getNbrRecurringWithNotPricePlan() {
-        return recurringChargeTemplateService.getNbrRecurringChrgWithNotPricePlan();
-    }
-
-    public int getNbrOneShotWithNotPricePlan() {
-        return oneShotChargeTemplateService.getNbrOneShotWithNotPricePlan();
-    }
-
-    public void constructChargesWithNotPricePlan(TabChangeEvent event) {
-        usagesWithNotPricePlList = usageChargeTemplateService.getUsagesChrgWithNotPricePlan();
-        recurringWithNotPricePlanList = recurringChargeTemplateService.getRecurringChrgWithNotPricePlan();
-        oneShotChrgWithNotPricePlanList = oneShotChargeTemplateService.getOneShotChrgWithNotPricePlan();
-    }
+    private ConfigIssuesReportingDTO edrReportConfig;
 
     public void constructTaxesNotAssociated(TabChangeEvent event) {
         taxesNotAssociatedList = taxService.getTaxesNotAssociated();
@@ -165,35 +163,64 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     public void constructScriptInstancesWithError(TabChangeEvent event) {
         scriptInstanceWithErrorList = scriptInstanceService.getScriptInstancesWithError();
     }
-    
-    ConfigIssuesReportingDTO reportConfigDto;
-	public void constructWalletOperation(TabChangeEvent event) {
-    	 reportConfigDto = new ConfigIssuesReportingDTO();
-    	 List<Object[]> WOStatus= walletOperationService.getNbrWalletsOperationByStatus();
-    	 for (Object[] s: WOStatus) {
-    		 reportConfigDto.setNbrWalletOpOpen(((Long)(s[0].equals(WalletOperationStatusEnum.OPEN)? s[1]: reportConfigDto.getNbrWalletOpOpen().longValue())).intValue());
-             reportConfigDto.setNbrWalletOpRerated(((Long)(s[0].equals(WalletOperationStatusEnum.RERATED)? s[1]: reportConfigDto.getNbrWalletOpRerated().longValue())).intValue());
-             reportConfigDto.setNbrWalletOpReserved(((Long)(s[0].equals(WalletOperationStatusEnum.RESERVED)? s[1]: reportConfigDto.getNbrWalletOpReserved().longValue())).intValue());
-             reportConfigDto.setNbrWalletOpCancled(((Long)(s[0].equals(WalletOperationStatusEnum.CANCELED) ? s[1]: reportConfigDto.getNbrWalletOpCancled().longValue())).intValue());
-             reportConfigDto.setNbrWalletOpTorerate(((Long)(s[0].equals(WalletOperationStatusEnum.TO_RERATE)? s[1]: reportConfigDto.getNbrWalletOpTorerate().longValue())).intValue());
-             reportConfigDto.setNbrWalletOpTreated(((Long)(s[0].equals(WalletOperationStatusEnum.TREATED)? s[1]: reportConfigDto.getNbrWalletOpTreated().longValue())).intValue());
-             reportConfigDto.setNbrWalletOpScheduled(((Long)(s[0].equals(WalletOperationStatusEnum.SCHEDULED)? s[1]: reportConfigDto.getNbrWalletOpScheduled().longValue())).intValue());
-             
-    	 }
-	}
-    public void constructEdr(TabChangeEvent event) { 
-    	 reportConfigDto = new ConfigIssuesReportingDTO();
-    	 List<Object[]>  EdrStatus= walletOperationService.getNbrEdrByStatus();
-    	 for (Object[] e: EdrStatus) {
-    		 reportConfigDto.setNbrEdrOpen(((Long)(e[0].equals(EDRStatusEnum.OPEN)? e[1]: reportConfigDto.getNbrEdrOpen().longValue())).intValue());
-	         reportConfigDto.setNbrEdrRated(((Long)(e[0].equals(EDRStatusEnum.RATED)? e[1]: reportConfigDto.getNbrEdrRated().longValue())).intValue());
-	         reportConfigDto.setNbrEdrRejected(((Long)(e[0].equals(EDRStatusEnum.REJECTED)? e[1]: reportConfigDto.getNbrEdrRejected().longValue())).intValue());
-	         reportConfigDto.setNbrEdrMediating(((Long)(e[0].equals(EDRStatusEnum.MEDIATING)? e[1]: reportConfigDto.getNbrEdrMediating().longValue())).intValue());
-	         reportConfigDto.setNbrEdrAggregated(((Long)(e[0].equals(EDRStatusEnum.AGGREGATED)? e[1]: reportConfigDto.getNbrEdrAggregated().longValue())).intValue());
-    		 
-    	}
+
+    public void constructWalletOperation(TabChangeEvent event) {
+
+        if (walletReportConfig == null) {
+            walletReportConfig = new ConfigIssuesReportingDTO();
+            List<Object[]> WOStatus = walletOperationService.getNbrWalletsOperationByStatus();
+            for (Object[] s : WOStatus) {
+                if (s[0].equals(WalletOperationStatusEnum.OPEN)) {
+                    walletReportConfig.setNbrWalletOpOpen(((Long) s[1]).intValue());
+                }
+                if (s[0].equals(WalletOperationStatusEnum.RERATED)) {
+                    walletReportConfig.setNbrWalletOpRerated(((Long) s[1]).intValue());
+                }
+                if (s[0].equals(WalletOperationStatusEnum.RESERVED)) {
+                    walletReportConfig.setNbrWalletOpReserved(((Long) s[1]).intValue());
+                }
+                if (s[0].equals(WalletOperationStatusEnum.CANCELED)) {
+                    walletReportConfig.setNbrWalletOpCancled(((Long) s[1]).intValue());
+                }
+                if (s[0].equals(WalletOperationStatusEnum.TO_RERATE)) {
+                    walletReportConfig.setNbrWalletOpTorerate(((Long) s[1]).intValue());
+                }
+                if (s[0].equals(WalletOperationStatusEnum.TREATED)) {
+                    walletReportConfig.setNbrWalletOpTreated(((Long) s[1]).intValue());
+                }
+                if (s[0].equals(WalletOperationStatusEnum.SCHEDULED)) {
+                    walletReportConfig.setNbrWalletOpScheduled(((Long) s[1]).intValue());
+                }
+            }
+        }
     }
-    
+
+    public void constructEdr(TabChangeEvent event) {
+
+        if (edrReportConfig == null) {
+
+            edrReportConfig = new ConfigIssuesReportingDTO();
+
+            List<Object[]> EdrStatus = walletOperationService.getNbrEdrByStatus();
+            for (Object[] s : EdrStatus) {
+                if (s[0].equals(EDRStatusEnum.OPEN)) {
+                    edrReportConfig.setNbrEdrOpen(((Long) s[1]).intValue());
+                }
+                if (s[0].equals(EDRStatusEnum.RATED)) {
+                    edrReportConfig.setNbrEdrRated(((Long) s[1]).intValue());
+                }
+                if (s[0].equals(EDRStatusEnum.REJECTED)) {
+                    edrReportConfig.setNbrEdrRejected(((Long) s[1]).intValue());
+                }
+                if (s[0].equals(EDRStatusEnum.MEDIATING)) {
+                    edrReportConfig.setNbrEdrMediating(((Long) s[1]).intValue());
+                }
+                if (s[0].equals(EDRStatusEnum.AGGREGATED)) {
+                    edrReportConfig.setNbrEdrAggregated(((Long) s[1]).intValue());
+                }
+            }
+        }
+    }
 
     private Map<String, String> getJasperFiles() throws IOException {
         Map<String, String> jasperFiles = new HashMap<String, String>();
@@ -228,67 +255,109 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
         return jasperFiles;
     }
 
-    public void getJasperFilesNotFound(TabChangeEvent event) throws IOException {
-        jasperFilesList = getJasperFiles();
-        if (jasperFilesList != null && jasperFilesList.size() > 0) {
-            jaspers = new ArrayList<>(jasperFilesList.entrySet());
+    public Integer getNbrJasperNotFound() {
+
+        if (nbrJasperNotFound == null) {
+            try {
+                Map<String, String> jasperFilesList = getJasperFiles();
+
+                if (jasperFilesList != null && jasperFilesList.size() > 0) {
+                    jaspers = new ArrayList<>(jasperFilesList.entrySet());
+                }
+                nbrJasperNotFound = jasperFilesList.size();
+            } catch (IOException e) {
+                nbrJasperNotFound = -1;
+            }
         }
-        reportConfigDto = new ConfigIssuesReportingDTO();
-        reportConfigDto.setNbrJasperDir(jasperFilesList.size());
-       
-    }
-
-
-    public Integer getNbrChargesWithNotPricePlan() {
-        return getNbrUsagesWithNotPricePlan() + getNbrRecurringWithNotPricePlan() + getNbrOneShotWithNotPricePlan();
+        return nbrJasperNotFound;
     }
 
     public Integer getNbTaxesNotAssociated() {
-        return taxService.getNbTaxesNotAssociated();
+
+        if (nbrTaxesNotAssociated == null) {
+            nbrTaxesNotAssociated = taxService.getNbTaxesNotAssociated();
+        }
+        return nbrTaxesNotAssociated;
     }
 
     public Integer getNbLanguageNotAssociated() {
-        return tradingLanguageService.getNbLanguageNotAssociated();
+
+        if (nbrLanguageNotAssociated == null) {
+            nbrLanguageNotAssociated = tradingLanguageService.getNbLanguageNotAssociated();
+        }
+        return nbrLanguageNotAssociated;
     }
 
     public Integer getNbInvCatNotAssociated() {
-        return invoiceCategoryService.getNbInvCatNotAssociated();
+
+        if (nbrInvCatNotAssociated == null) {
+            nbrInvCatNotAssociated = invoiceCategoryService.getNbInvCatNotAssociated();
+        }
+        return nbrInvCatNotAssociated;
     }
 
     public Integer getNbInvSubCatNotAssociated() {
-        return invoiceSubCategoryService.getNbInvSubCatNotAssociated();
+        if (nbrInvSubCatNotAssociated == null) {
+            nbrInvSubCatNotAssociated = invoiceSubCategoryService.getNbInvSubCatNotAssociated();
+        }
+        return nbrInvSubCatNotAssociated;
     }
 
     public Integer getNbServiceWithNotOffer() {
-        return serviceTemplateService.getNbServiceWithNotOffer();
+        if (nbrServiceWithNotOffer == null) {
+            nbrServiceWithNotOffer = serviceTemplateService.getNbServiceWithNotOffer();
+        }
+        return nbrServiceWithNotOffer;
     }
 
     public Integer getNbrUsagesChrgNotAssociated() {
-        return usageChargeTemplateService.getNbrUsagesChrgNotAssociated();
+        if (nbrUsagesChrgNotAssociated == null) {
+            nbrUsagesChrgNotAssociated = usageChargeTemplateService.getNbrUsagesChrgNotAssociated();
+        }
+        return nbrUsagesChrgNotAssociated;
     }
 
     public Integer getNbrCounterWithNotService() {
-        return counterTemplateService.getNbrCounterWithNotService();
+        if (nbrCounterWithNotService == null) {
+            nbrCounterWithNotService = counterTemplateService.getNbrCounterWithNotService();
+        }
+        return nbrCounterWithNotService;
     }
 
     public Integer getNbrRecurringChrgNotAssociated() {
-        return recurringChargeTemplateService.getNbrRecurringChrgNotAssociated();
+        if (nbrRecurringChrgNotAssociated == null) {
+            nbrRecurringChrgNotAssociated = recurringChargeTemplateService.getNbrRecurringChrgNotAssociated();
+        }
+        return nbrRecurringChrgNotAssociated;
     }
 
     public Integer getNbrTerminationChrgNotAssociated() {
-        return oneShotChargeTemplateService.getNbrTerminationChrgNotAssociated();
+        if (nbrTerminationChrgNotAssociated == null) {
+            nbrTerminationChrgNotAssociated = oneShotChargeTemplateService.getNbrTerminationChrgNotAssociated();
+        }
+        return nbrTerminationChrgNotAssociated;
     }
 
     public Integer getNbrSubscriptionChrgNotAssociated() {
-        return oneShotChargeTemplateService.getNbrSubscriptionChrgNotAssociated();
+        if (nbrSubscriptionChrgNotAssociated == null) {
+            nbrSubscriptionChrgNotAssociated = oneShotChargeTemplateService.getNbrSubscriptionChrgNotAssociated();
+        }
+        return nbrSubscriptionChrgNotAssociated;
     }
 
-    public long getNbrScriptInstanceWithError() {
-        return scriptInstanceService.countScriptInstancesWithError();
+    public Integer getNbrScriptInstanceWithError() {
+        if (nbrScriptInstanceWithError == null) {
+            nbrScriptInstanceWithError = new Long(scriptInstanceService.countScriptInstancesWithError()).intValue();
+        }
+        return nbrScriptInstanceWithError;
     }
 
-    public ConfigIssuesReportingDTO getReportConfigDto() {
-        return reportConfigDto;
+    public ConfigIssuesReportingDTO getWalletReportConfig() {
+        return walletReportConfig;
+    }
+
+    public ConfigIssuesReportingDTO getEdrReportConfig() {
+        return edrReportConfig;
     }
 
     public List<Tax> getTaxesNotAssociatedList() {
@@ -364,9 +433,9 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     public void setJaspers(List<Entry<String, String>> jaspers) {
         this.jaspers = jaspers;
     }
-    
+
     public Integer getNbrJasperDir() throws IOException {
-    	return getJasperFiles().size();
+        return getJasperFiles().size();
     }
 
 }

@@ -27,7 +27,8 @@
         sortBy and sortOrder - a default field to sort by and a default sort order
         rowsPerPage - possible paging sizes separated by a comma
         showFullTextSearch - shall a "global search" filter be visible in the header
-        styleClass = custom style for the datalist
+        styleClass - custom style for the datalist
+        paginatorAlwaysVisible - should pagination controlls be visible even if only one page is present 
         paginatorPosition - allows to specify if the paginator appears on the table's top, bottom or both
         prePaginatorControls - allows to set custom controls that appear just before the paginator.  To set it up correctly, enter a facet name e.g.
         		<hftl:dataList prePaginatorControls="{CustomControls}">
@@ -125,12 +126,16 @@
     <c:if test="${empty paginatorPosition}">
         <c:set var="paginatorPosition" value="both" />
     </c:if>
+    
+    <c:if test="${empty paginatorAlwaysVisible}">
+        <c:set var="paginatorAlwaysVisible" value="true" />
+    </c:if>
 
     <p:panel id="#{resultsId}_panel" width="100">
 
         <h:form id="#{formId}" prependId="false" onkeypress="if (event.keyCode == 13) {return false;}">
             <p:dataTable id="datatable_#{resultsId}" var="entity" scrollable="#{scrollable}" value="#{dataModel}" paginator="true" rows="10" editable="#{editable}" editMode="#{editMode}"
-                widgetVar="cellEntity_#{resultsId}" selection="#{backingBean.selectedEntities}" sortBy="#{'sortBy'}" sortField="#{sortBy}" sortOrder="#{sortOrder}"
+                widgetVar="cellEntity_#{resultsId}" selection="#{backingBean.selectedEntities}" sortBy="#{'sortBy'}" sortField="#{sortBy}" sortOrder="#{sortOrder}" paginatorAlwaysVisible="#{paginatorAlwaysVisible}"
                 paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                 rowsPerPageTemplate="#{rowsPerPage}" lazy="true" resizableColumns="true" styleClass="custom-grid #{styleClass}" rowKey="#{entity.id}" first="#{backingBean.dataTableFirstAttribute}"
                 reflow="true" paginatorPosition="#{paginatorPosition}">
