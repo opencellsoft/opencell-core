@@ -10,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -61,7 +62,9 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -135,6 +138,7 @@ import org.meveo.service.order.OrderService;
  * @lastModifiedVersion 7.0
  */
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class SubscriptionApi extends BaseApi {
 
     /**
@@ -1105,14 +1109,14 @@ public class SubscriptionApi extends BaseApi {
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException meveo api exception
      */
-    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    @FilterResults(propertyToFilter = "subscriptions.subscription", itemPropertiesToFilter = { @FilterProperty(property = "seller", entityClass = Seller.class),
-			@FilterProperty(property = "userAccount", entityClass = Customer.class)})
     public SubscriptionsListResponseDto list(Boolean mergedCF, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
         boolean merge = mergedCF != null && mergedCF;
         return list(pagingAndFiltering, CustomFieldInheritanceEnum.getInheritCF(true, merge));
     }
 
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "subscriptions.subscription", itemPropertiesToFilter = { @FilterProperty(property = "seller", entityClass = Seller.class),
+			@FilterProperty(property = "userAccount", entityClass = Customer.class)})
     public SubscriptionsListResponseDto list(PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 
         String sortBy = DEFAULT_SORT_ORDER_ID;
@@ -1166,7 +1170,7 @@ public class SubscriptionApi extends BaseApi {
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException meveo api exception
      */
-    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
     @FilterResults( itemPropertiesToFilter = { @FilterProperty(property = "seller", entityClass = Seller.class),
 			@FilterProperty(property = "userAccount", entityClass = Customer.class)})
     public SubscriptionDto findSubscription(String subscriptionCode, boolean mergedCF, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
