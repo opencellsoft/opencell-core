@@ -8,7 +8,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.beanutils.ConvertUtils;
-import org.meveo.admin.job.BaseJobBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.crm.Provider;
@@ -21,7 +20,7 @@ import org.meveo.service.script.ScriptInterface;
 import org.meveo.util.ApplicationProvider;
 
 @Stateless
-public class ScriptingAsync extends BaseJobBean {
+public class ScriptingAsync {
 
 	@Inject
 	protected ScriptInstanceService scriptInstanceService;
@@ -33,12 +32,12 @@ public class ScriptingAsync extends BaseJobBean {
 	@Inject
 	@ApplicationProvider
 	protected Provider appProvider;
-	
+
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public String runScript(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context) {
 		ScriptInterface script = null;
-		
+
 		try {
 			script = scriptInstanceService.getScriptInstance(scriptCode);
 			context.put(Script.CONTEXT_CURRENT_USER, currentUser);
