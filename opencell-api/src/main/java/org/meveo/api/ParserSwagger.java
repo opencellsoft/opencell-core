@@ -20,7 +20,7 @@ public class ParserSwagger {
        // This should be use for local: parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest"
        // This should be use for jenkins server: parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest"
         System.out.println("Adding annotations to file:"+parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest");
-        String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest", "Rs.java");
+        String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest", "Rs.java");
       parsing.getAllInfo(allPathFiles);
     }
 
@@ -80,16 +80,12 @@ public class ParserSwagger {
                 listAllFiles(file, returnListFilesPath);
             } else {
                 try {
-                    readFileNames(file, returnListFilesPath);
+                    returnListFilesPath.add(file.getCanonicalPath());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
-    }
-
-    private void readFileNames(File file, List<String> returnListFilesPath) throws IOException {
-        returnListFilesPath.add(file.getCanonicalPath());
     }
 
     //Retrieve the Files with a given String sequence
@@ -160,7 +156,7 @@ public class ParserSwagger {
         String[] declarationInfo = declarationDoc.toArray(new String[declarationDoc.size()]);
         return declarationInfo;
     }
-
+    //Activate the process of swagger implementation
     private static String swaggerGeneration(String info, boolean deprecatedtag) {
         String[] infoData = info.split("\\*{1}");
         for (String data : infoData) {
@@ -196,11 +192,10 @@ public class ParserSwagger {
         description = description.replace("\n", "").replace("\r", "").replaceAll("(\")", "").replaceAll("[\\*]", "");
         summary = summary.replace("\n", "").replace("\r", "").replaceAll("(\")", "").replaceAll("[\\*]", "");
         returnValue = returnValue.replace("\n", "").replace("\r", "").replaceAll("(\")", "");
-        String deprecated;
-        if (typeValue.contains("<String>")) {
+        String deprecated; 
+        if (typeValue.contains("<String>")) {//In one of the file <String> is inside the typeValue which will cause an error in the swagger
             typeValue = typeValue.replaceAll("(<String>)", "");
         }
-
         if (deprecatedtag) {
             deprecated = "\n\t\t\tdeprecated=true,";
         } else {
@@ -256,6 +251,7 @@ public class ParserSwagger {
             System.out.println(className);
             //The case if the annotation are not present in the file
             while ((str = lnr.readLine()) != null && !annotationHere) {
+                //This line for retrieving the return value for the next return and threfore find it when it arrive
                 String tmp2 = "    " + returnTypeInfo[indexDeclaration].replaceAll("\\*", "").replaceAll(".class", "").replaceAll("@type", "").replaceAll(" ", "").replace("\n", "").replace("\r", "");
                 if (str.contains("/*")) {
                     javadocstart = true;
@@ -269,7 +265,7 @@ public class ParserSwagger {
                     publicinterfaceflag = true;
                 } else if (str.contains("@Path(")) {//Generation for the Swagger @operation
                     String tmp = str.replaceAll("[ ]{3,}", "");
-                    if (tmp.split(" ").length > 1) {
+                    if (tmp.split(" ").length > 1) {//this Block is here in case of @Path ActionStatus XXXXX() are on the same line
                         String[] tmpArray = tmp.split(" ");
                         if (javadocstart && javadocend) {
                             combinaison = infoOfMethod[occuration] + returnTypeInfo[occuration];
@@ -277,7 +273,7 @@ public class ParserSwagger {
                             occuration++;
                         }
                     } else {
-                        if (!tagflag && !publicinterfaceflag) {
+                        if (!tagflag && !publicinterfaceflag) {// This means is the first aparition of Path() Which for the tag
                             tagflag = true;
                             str = str + "\n@Tag(name = \"" + className + "\", description = \"@%" + className + "\")";
                         } else if (javadocstart && javadocend) {
@@ -301,7 +297,7 @@ public class ParserSwagger {
                             "import io.swagger.v3.oas.annotations.responses.ApiResponse;\n" +
                             "import io.swagger.v3.oas.annotations.tags.Tag;\n" +
                             "import io.swagger.v3.oas.annotations.Hidden;\n";
-                } else if ((str.contains(tmp2) && declarationflag) || deletedextraline) {//@Parameter generation in function
+                } else if ((str.contains(tmp2) && declarationflag) || deletedextraline) {//@Parameter generation in function (WE check either the tmp2 contains the good returntype or if we are already in the process of parameter generation)
                     if (str.contains(";") && deletedextraline) {
                         str = parameterGeneration(declarationDoc[occuration - 1], infoOfMethod[occuration - 1]);
                         if (indexDeclaration == declarationDoc.length - 1) {
@@ -310,7 +306,7 @@ public class ParserSwagger {
                             indexDeclaration++;
                         }
                         deletedextraline = false;
-                    } else if (str.contains(";")) {
+                    } else if (str.contains(";")) {//the line already have ;
                         str = parameterGeneration(declarationDoc[occuration - 1], infoOfMethod[occuration - 1]);
                         if (indexDeclaration == declarationDoc.length - 1) {
                             declarationflag = false;
@@ -318,7 +314,7 @@ public class ParserSwagger {
                             indexDeclaration++;
                         }
                         deletedextraline = false;
-                    } else {
+                    } else {//the function is on two line or more so we just delete line until we reach a ;
                         str = "";
                         deletedextraline = true;
                     }

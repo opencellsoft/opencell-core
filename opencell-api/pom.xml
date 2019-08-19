@@ -412,13 +412,7 @@
 		            <artifactId>javaparser-symbol-solver-core</artifactId>
 		            <version>3.14.5</version>
 		        </dependency>
-                    <dependency>
-                        <groupId>com.github.javaparser</groupId>
-                        <artifactId>javaparser-symbol-solver-core</artifactId>
-                        <version>3.14.5</version>
-                    </dependency>
             </dependencies>
-
             <build>
                 <plugins>
                     <plugin>
@@ -518,6 +512,7 @@
                                 </swaggerConfig>
                                 <resourcePackages>
                                     <resourcePackage>org.meveo.api.rest</resourcePackage>
+                                    <resourcePackage>org.meveo.apiv2</resourcePackage>
                                 </resourcePackages>
                                 <outputDirectory>${project.build.directory}/doc/swagger</outputDirectory>
                                 <outputFilename>swagger</outputFilename>
