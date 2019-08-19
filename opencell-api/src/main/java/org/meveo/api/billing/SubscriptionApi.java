@@ -967,8 +967,7 @@ public class SubscriptionApi extends BaseApi {
      */
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "subscription", itemPropertiesToFilter = { @FilterProperty(property = "seller", entityClass = Seller.class),
-			@FilterProperty(property = "customer", entityClass = Customer.class),
-			@FilterProperty(property = "sellerFromHierarchy", entityClass = Seller.class) })
+			@FilterProperty(property = "userAccount", entityClass = Customer.class)})
     public SubscriptionsDto listByUserAccount(String userAccountCode, boolean mergedCF, String sortBy, SortOrder sortOrder) throws MeveoApiException {
 
         if (StringUtils.isBlank(userAccountCode)) {
@@ -1009,8 +1008,7 @@ public class SubscriptionApi extends BaseApi {
     
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "subscriptions.subscription", itemPropertiesToFilter = { @FilterProperty(property = "seller", entityClass = Seller.class),
-			@FilterProperty(property = "customer", entityClass = Customer.class),
-			@FilterProperty(property = "sellerFromHierarchy", entityClass = Seller.class) })
+			@FilterProperty(property = "userAccount", entityClass = Customer.class)})
     public SubscriptionsListResponseDto list(PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 
         String sortBy = DEFAULT_SORT_ORDER_ID;
@@ -1065,9 +1063,8 @@ public class SubscriptionApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      */
 	@SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
-	@FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "seller", entityClass = Seller.class),
-			@FilterProperty(property = "customer", entityClass = Customer.class),
-			@FilterProperty(property = "sellerFromHierarchy", entityClass = Seller.class) })
+	@FilterResults( itemPropertiesToFilter = { @FilterProperty(property = "seller", entityClass = Seller.class),
+			@FilterProperty(property = "userAccount", entityClass = Customer.class)})
     public SubscriptionDto findSubscription(String subscriptionCode, boolean mergedCF, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
         SubscriptionDto result = new SubscriptionDto();
 
