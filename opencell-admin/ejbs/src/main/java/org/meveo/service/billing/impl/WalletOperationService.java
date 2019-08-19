@@ -16,40 +16,23 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.InsufficientBalanceException;
+import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.cache.WalletCacheContainerProvider;
-import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -65,6 +48,7 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.LevelEnum;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
@@ -73,11 +57,31 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.TaxService;
 import org.slf4j.Logger;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Service class for WalletOperation entity
@@ -114,8 +118,26 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     @Inject
     private WalletService walletService;
 
+    @Inject
+    private SellerService sellerService;
+
+    @Inject
+    private OfferTemplateService offerTemplateService;
+
+    @Inject
+    private TaxService taxService;
+
+    @Inject
+    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
+
+    @Inject
+    private CurrencyService currencyService;
+
+    @Inject
+    private WalletTemplateService walletTemplateService;
+
     public BigDecimal getRatedAmount(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
-            Date endDate, boolean amountWithTax) {
+                                     Date endDate, boolean amountWithTax) {
 
         BigDecimal result = BigDecimal.ZERO;
         LevelEnum level = LevelEnum.PROVIDER;
@@ -201,7 +223,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      */
 
     public WalletOperation rateOneShotApplication(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits,
-            Date applicationDate, boolean isVirtual, String orderNumberOverride) throws BusinessException {
+                                                  Date applicationDate, boolean isVirtual, String orderNumberOverride) throws BusinessException {
 
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
         if (chargeTemplate == null) {
@@ -1371,7 +1393,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
     @SuppressWarnings("unchecked")
     public List<WalletOperation> findWalletOperation(WalletOperationStatusEnum status, WalletTemplate walletTemplate, WalletInstance walletInstance, UserAccount userAccount,
-            List<String> fetchFields, int maxResult) {
+                                                     List<String> fetchFields, int maxResult) {
         try {
             QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w", fetchFields);
 
@@ -1436,4 +1458,86 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             return null;
         }
     }
+
+    /**
+     * Return a list of open Wallet operation between two date.
+     * @param firstTransactionDate first operation date
+     * @param lastTransactionDate last operation date
+     * @return a list of Wallet Operation
+     */
+    public List<WalletOperation> getOpenWalletOperationBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate){
+        return getEntityManager().createNamedQuery("WalletOperation.listOpenWObetweenTwoDates", WalletOperation.class).setParameter("firstTransactionDate",firstTransactionDate)
+                .setParameter("lastTransactionDate",lastTransactionDate)
+                .getResultList();
+    }
+    /**
+     * Remove all not open Wallet operation between two date
+     * @param firstTransactionDate first operation date
+     * @param lastTransactionDate last operation date
+     * @return the number of deleted entities
+     */
+    public long purge(Date firstTransactionDate, Date lastTransactionDate) {
+        getEntityManager().createNamedQuery("WalletOperation.prepareToSafeDeleteNotOpenWObetweenTwoDates").setParameter("firstTransactionDate",firstTransactionDate)
+                .setParameter("lastTransactionDate",lastTransactionDate)
+                .executeUpdate();
+        return getEntityManager().createNamedQuery("WalletOperation.deleteNotOpenWObetweenTwoDates").setParameter("firstTransactionDate",firstTransactionDate)
+                .setParameter("lastTransactionDate",lastTransactionDate)
+                .executeUpdate();
+    }
+
+    /**
+     * Import wallet operations.
+     * @param walletOperations Wallet Operations DTO list
+     * @throws BusinessException
+     */
+    public void importWalletOperation(List<WalletOperationDto> walletOperations) throws BusinessException {
+        for (WalletOperationDto dto : walletOperations) {
+            WalletOperation wo = new WalletOperation();
+            if (dto.getSeller() != null) {
+                Seller seller = sellerService.findByCode(dto.getSeller());
+                wo.setSeller(seller);
+            }
+            if (dto.getWalletId() != null) {
+                WalletInstance wallet = walletService.findById(dto.getWalletId());
+                wo.setWallet(wallet);
+            }
+            if (dto.getCurrency() != null) {
+                Currency currency = currencyService.findByCode(dto.getCurrency());
+                wo.setCurrency(currency);
+            }
+            if (dto.getOfferCode() != null) {
+                OfferTemplate offer = offerTemplateService.findByCode(dto.getOfferCode());
+                wo.setOfferTemplate(offer);
+            }
+            if (dto.getChargeInstance() != null) {
+                ChargeInstance chargeInstance = (ChargeInstance) chargeInstanceService.findByCode(dto.getChargeInstance());
+                wo.setChargeInstance(chargeInstance);
+            }
+            wo.setCode(dto.getCode());
+            wo.setType(dto.getType());
+            wo.setStatus(dto.getStatus());
+            wo.setRatingUnitDescription(dto.getRatingUnitDescription());
+            wo.setTaxPercent(dto.getTaxPercent());
+            wo.setUnitAmountWithoutTax(dto.getUnitAmountWithoutTax());
+            wo.setUnitAmountWithTax(dto.getUnitAmountWithTax());
+            wo.setUnitAmountTax(dto.getUnitAmountTax());
+            wo.setQuantity(dto.getQuantity());
+            wo.setAmountWithoutTax(dto.getAmountWithoutTax());
+            wo.setAmountWithTax(dto.getAmountWithTax());
+            wo.setAmountTax(dto.getAmountTax());
+            wo.setParameter1(dto.getParameter1());
+            wo.setParameter2(dto.getParameter2());
+            wo.setParameter3(dto.getParameter3());
+            wo.setParameterExtra(dto.getParameterExtra());
+            wo.setStartDate(dto.getStartDate());
+            wo.setEndDate(dto.getEndDate());
+            wo.setOperationDate(dto.getOperationDate());
+            wo.setSubscriptionDate(dto.getSubscriptionDate());
+            wo.setRawAmountWithoutTax(dto.getRawAmountWithoutTax());
+            wo.setRawAmountWithTax(dto.getRawAmountWithTax());
+            create(wo);
+        }
+    }
+
+
 }

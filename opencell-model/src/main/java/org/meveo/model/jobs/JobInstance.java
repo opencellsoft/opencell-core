@@ -18,24 +18,6 @@
  */
 package org.meveo.model.jobs;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -43,6 +25,13 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Entity
 @ModuleItem
@@ -99,6 +88,10 @@ public class JobInstance extends BusinessCFEntity {
      */
     @Transient
     private String providerCode;
+
+    /** The run time values. */
+    @Transient
+    private Map<String, Object> runTimeValues;
 
     /**
      * @return the jobTemplate
@@ -241,6 +234,34 @@ public class JobInstance extends BusinessCFEntity {
 
     public void setProviderCode(String providerCode) {
         this.providerCode = providerCode;
+    }
+
+    /**
+     * @param runTimeValues the runTimeValues to set
+     */
+    public void setRunTimeValues(Map<String, Object> runTimeValues) {
+        this.runTimeValues = runTimeValues;
+    }
+
+    /**
+     * @return the runTimeValues
+     */
+    public Map<String, Object> getRunTimeValues() {
+        return runTimeValues;
+    }
+
+
+    /**
+     * Gets the runtime value.
+     *
+     * @param key the key
+     * @return the runtime value
+     */
+    public Object getParamValue(String key) {
+        if (this.runTimeValues == null) {
+            return null;
+        }
+        return this.runTimeValues.get(key);
     }
 
 }

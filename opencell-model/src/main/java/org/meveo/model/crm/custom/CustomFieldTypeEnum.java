@@ -1,55 +1,62 @@
 package org.meveo.model.crm.custom;
 
+import org.apache.commons.lang.StringUtils;
+import org.meveo.model.crm.EntityReferenceWrapper;
+
 import java.util.Date;
 import java.util.Map;
-
-import org.meveo.model.crm.EntityReferenceWrapper;
 
 public enum CustomFieldTypeEnum {
     /**
      * String value
      */
-    STRING(false, String.class),
+    STRING(false, String.class, "varchar(%length)"),
 
     /**
      * Date value
      */
-    DATE(false, Date.class),
+    DATE(false, Date.class, "datetime"),
 
     /**
      * Long value
      */
-    LONG(false, Long.class),
+    LONG(false, Long.class, "bigInt"),
 
     /**
      * Double value
      */
-    DOUBLE(false, Double.class),
+    DOUBLE(false, Double.class, "numeric(23, 12)"),
 
     /**
      * String value picked from a list of values
      */
-    LIST(false, String.class),
+    LIST(false, String.class, "varchar(%length)"),
 
     /**
      * A reference to an entity
      */
-    ENTITY(true, EntityReferenceWrapper.class),
+    ENTITY(true, EntityReferenceWrapper.class, "bigint"),
 
     /**
      * A long string value
      */
-    TEXT_AREA(false, String.class),
+    TEXT_AREA(false, String.class, StringUtils.EMPTY),
 
     /**
      * An embedded entity data
      */
-    CHILD_ENTITY(true, EntityReferenceWrapper.class),
+    CHILD_ENTITY(true, EntityReferenceWrapper.class, StringUtils.EMPTY),
 
     /**
      * Multi value (map) type value
      */
-    MULTI_VALUE(true, Map.class);
+    MULTI_VALUE(true, Map.class, StringUtils.EMPTY),
+
+    /**
+     * A boolean value
+     */
+    BOOLEAN(false, Boolean.class, "boolean default false");
+
 
     /**
      * Is value stored in a serialized form in DB
@@ -62,9 +69,12 @@ public enum CustomFieldTypeEnum {
     @SuppressWarnings("rawtypes")
     private Class dataClass;
 
-    CustomFieldTypeEnum(boolean storedSerialized, @SuppressWarnings("rawtypes") Class dataClass) {
+    private String dataType;
+
+    CustomFieldTypeEnum(boolean storedSerialized, @SuppressWarnings("rawtypes") Class dataClass, String dataType) {
         this.storedSerialized = storedSerialized;
         this.dataClass = dataClass;
+        this.dataType = dataType;
     }
 
     public String getLabel() {
@@ -78,5 +88,9 @@ public enum CustomFieldTypeEnum {
     @SuppressWarnings("rawtypes")
     public Class getDataClass() {
         return dataClass;
+    }
+
+    public String getDataType() {
+        return dataType;
     }
 }
