@@ -9,12 +9,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessesDto;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.crm.Customer;
 
 /**
  * The Class SubscriptionDto.
@@ -134,7 +138,13 @@ public class SubscriptionDto extends BusinessEntityDto {
      */
     private String ratingGroup;
 
-    /**
+    @XmlTransient
+    private String sellerFromHierarchy;
+    
+    @XmlTransient
+    private String customer;
+
+	/**
      * Instantiates a new subscription dto.
      */
     public SubscriptionDto() {
@@ -153,9 +163,20 @@ public class SubscriptionDto extends BusinessEntityDto {
         setStatusDate(e.getStatusDate());
         setOrderNumber(e.getOrderNumber());
 
-        if (e.getUserAccount() != null) {
-            setUserAccount(e.getUserAccount().getCode());
-        }
+        UserAccount userAccountBO = e.getUserAccount();
+		if (userAccountBO != null) {
+			setUserAccount(userAccountBO.getCode());
+			
+			if (userAccountBO.getBillingAccount() != null && userAccountBO.getBillingAccount().getCustomerAccount() != null
+					&& userAccountBO.getBillingAccount().getCustomerAccount().getCustomer() != null) {
+				Customer customerBO = userAccountBO.getBillingAccount().getCustomerAccount().getCustomer();
+				setCustomer(customerBO.getCode());
+				Seller sellerBO = customerBO.getSeller();
+				if(sellerBO!=null) {
+					setSellerFromHierarchy(sellerBO.getCode());
+				}
+			}
+		}
 
         if (e.getOffer() != null) {
             setOfferTemplate(e.getOffer().getCode());
@@ -624,4 +645,21 @@ public class SubscriptionDto extends BusinessEntityDto {
 	public void setRatingGroup(String ratingGroup) {
 		this.ratingGroup = ratingGroup;
 	}
+    
+    public String getSellerFromHierarchy() {
+		return sellerFromHierarchy;
+	}
+
+	public void setSellerFromHierarchy(String sellerFromHierarchy) {
+		this.sellerFromHierarchy = sellerFromHierarchy;
+	}
+
+	public String getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(String customer) {
+		this.customer = customer;
+	}
+
 }
