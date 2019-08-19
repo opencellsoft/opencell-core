@@ -124,6 +124,12 @@ public class NativePersistenceService extends BaseService {
             query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
 
             Map<String, Object> values = (Map<String, Object>) query.uniqueResult();
+            for (String key : values.keySet()) {
+                if (values.get(key) instanceof java.sql.Timestamp) {
+                    java.sql.Timestamp date = (java.sql.Timestamp) values.get(key);
+                    values.put(key, new Date(date.getTime()));
+                }
+            }
 
             return values;
 
