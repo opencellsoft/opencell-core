@@ -20,7 +20,7 @@ public class ParserSwagger {
        // This should be use for local: parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest"
        // This should be use for jenkins server: parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest"
         System.out.println("Adding annotations to file:"+parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest");
-        String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest", "Rs.java");
+        String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest", "Rs.java");
       parsing.getAllInfo(allPathFiles);
     }
 
