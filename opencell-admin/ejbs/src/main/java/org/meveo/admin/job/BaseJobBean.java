@@ -3,6 +3,8 @@ package org.meveo.admin.job;
 import javax.inject.Inject;
 
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
@@ -12,6 +14,10 @@ public abstract class BaseJobBean {
 
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     /**
      * Gets the parameter CF value if found, otherwise return CF value from job definition

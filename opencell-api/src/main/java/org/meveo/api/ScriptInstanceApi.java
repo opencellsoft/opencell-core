@@ -65,7 +65,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
         scriptInstanceService.create(scriptInstance);
 
-        if (scriptInstance != null && scriptInstance.isError() != null && scriptInstance.isError().booleanValue()) {
+        if (scriptInstance != null && scriptInstance.isError()) {
             for (ScriptInstanceError error : scriptInstance.getScriptErrors()) {
                 ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
                 result.add(errorDto);
@@ -76,7 +76,6 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
     @Override
     public ScriptInstance create(ScriptInstanceDto scriptInstanceDto) throws MeveoApiException, BusinessException {
-        List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndUpdateCode(scriptInstanceDto);
 
         if (scriptInstanceService.findByCode(scriptInstanceDto.getCode()) != null) {
@@ -104,7 +103,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
         ScriptInstance scriptInstance = update(scriptInstanceDto);
 
-        if (scriptInstance.isError().booleanValue()) {
+        if (scriptInstance.isError()) {
             for (ScriptInstanceError error : scriptInstance.getScriptErrors()) {
                 ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
                 result.add(errorDto);
@@ -116,7 +115,6 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
     @Override
     public ScriptInstance update(ScriptInstanceDto scriptInstanceDto) throws MeveoApiException, BusinessException {
 
-        List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndUpdateCode(scriptInstanceDto);
 
         ScriptInstance scriptInstance = scriptInstanceService.findByCode(scriptInstanceDto.getCode());
@@ -190,7 +188,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
         ScriptInstance scriptInstance = createOrUpdate(scriptInstanceDto);
 
-        if (scriptInstance.isError().booleanValue()) {
+        if (scriptInstance.isError()) {
             for (ScriptInstanceError error : scriptInstance.getScriptErrors()) {
                 ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
                 result.add(errorDto);

@@ -65,7 +65,7 @@ public class EntityCustomActionApi extends BaseApi {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         ScriptInstance scriptInstance = action.getScript();
-        if (scriptInstance.isError() != null && scriptInstance.isError().booleanValue()) {
+        if (scriptInstance.isError()) {
             for (ScriptInstanceError error : scriptInstance.getScriptErrors()) {
                 ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
                 result.add(errorDto);
@@ -90,7 +90,7 @@ public class EntityCustomActionApi extends BaseApi {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         ScriptInstance scriptInstance = action.getScript();
-        if (scriptInstance.isError() != null && scriptInstance.isError().booleanValue()) {
+        if (scriptInstance.isError()) {
             for (ScriptInstanceError error : scriptInstance.getScriptErrors()) {
                 ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
                 result.add(errorDto);

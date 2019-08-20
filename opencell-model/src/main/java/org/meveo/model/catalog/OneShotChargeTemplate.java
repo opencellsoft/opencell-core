@@ -39,24 +39,19 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "cat_one_shot_charge_templ")
 @NamedQueries({
-        @NamedQuery(name = "oneShotChargeTemplate.getNbrOneShotWithNotPricePlan", query = "select count (*) from OneShotChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-
-        @NamedQuery(name = "oneShotChargeTemplate.getOneShotWithNotPricePlan", query = "from OneShotChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)"),
-
-        @NamedQuery(name = "oneShotChargeTemplate.getNbrSubscriptionChrgNotAssociated", query = "select count (*) from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateSubscription serv) "
-                + "OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
+        @NamedQuery(name = "oneShotChargeTemplate.getNbrSubscriptionChrgNotAssociated", query = "select count (*) from  OneShotChargeTemplate o where (o.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateSubscription serv) "
+                + "OR o.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
                 + " and  oneShotChargeTemplateType=:oneShotChargeTemplateType", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
 
-        @NamedQuery(name = "oneShotChargeTemplate.getSubscriptionChrgNotAssociated", query = "from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateSubscription serv) "
-                + " OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))" + " and  oneShotChargeTemplateType=:oneShotChargeTemplateType"),
+        @NamedQuery(name = "oneShotChargeTemplate.getSubscriptionChrgNotAssociated", query = "from  OneShotChargeTemplate o where (o.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateSubscription serv) "
+                + " OR o.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) and  oneShotChargeTemplateType=:oneShotChargeTemplateType"),
 
-        @NamedQuery(name = "oneShotChargeTemplate.getNbrTerminationChrgNotAssociated", query = "select count (*) from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateTermination serv) "
-                + " OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
+        @NamedQuery(name = "oneShotChargeTemplate.getNbrTerminationChrgNotAssociated", query = "select count (*) from  OneShotChargeTemplate o where (o.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateTermination serv) "
+                + " OR o.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
                 + " and  oneShotChargeTemplateType=:oneShotChargeTemplateType ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
 
-        @NamedQuery(name = "oneShotChargeTemplate.getTerminationChrgNotAssociated", query = "from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateTermination serv) "
-                + " OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))" + " and  oneShotChargeTemplateType=:oneShotChargeTemplateType") })
+        @NamedQuery(name = "oneShotChargeTemplate.getTerminationChrgNotAssociated", query = "from  OneShotChargeTemplate o where (o.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateTermination serv) "
+                + " OR o.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) and  oneShotChargeTemplateType=:oneShotChargeTemplateType") })
 public class OneShotChargeTemplate extends ChargeTemplate {
 
     @Transient

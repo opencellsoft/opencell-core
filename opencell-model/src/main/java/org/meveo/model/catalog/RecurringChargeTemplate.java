@@ -27,6 +27,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
@@ -42,15 +43,12 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "cat_recurring_charge_templ")
 @NamedQueries({
-        @NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgWithNotPricePlan", query = "select count (*) from RecurringChargeTemplate r where r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
+        @NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgNotAssociated", query = "select count(*) from RecurringChargeTemplate r where (r.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateRecurring serv) "
+                + " OR r.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null))", hints = {
+                        @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
 
-        @NamedQuery(name = "recurringChargeTemplate.getRecurringChrgWithNotPricePlan", query = "from RecurringChargeTemplate r where r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
-
-        @NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgNotAssociated", query = "select count(*) from RecurringChargeTemplate r where (r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv) "
-                + " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))   "),
-
-        @NamedQuery(name = "recurringChargeTemplate.getRecurringChrgNotAssociated", query = "from RecurringChargeTemplate r where (r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv) "
-                + " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))  ") })
+        @NamedQuery(name = "recurringChargeTemplate.getRecurringChrgNotAssociated", query = "from RecurringChargeTemplate r where (r.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateRecurring serv) "
+                + " OR r.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null))  ") })
 public class RecurringChargeTemplate extends ChargeTemplate {
 
     /** The Constant CHARGE_TYPE. */

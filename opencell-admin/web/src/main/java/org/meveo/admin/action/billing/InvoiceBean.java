@@ -119,7 +119,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     @Inject
     private ServiceSingleton serviceSingleton;
-    
+
     @Inject
     @Param
     private Boolean detailedParam;
@@ -229,6 +229,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @param billingAccounts a billing accounts list
      * @return return true if BillingAccounts list is null or empty
      */
+    @SuppressWarnings("rawtypes")
     private boolean isNullOrEmpty(Object billingAccounts) {
         if (billingAccounts == null) {
             return true;
@@ -498,12 +499,11 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public boolean isPdfInvoiceAlreadyGenerated(Long invoiceId) {
 
-        Invoice invoice = invoiceService.findById(invoiceId);
-        if (!pdfGenerated.containsKey(invoice.getId())) {
-            pdfGenerated.put(invoice.getId(), invoiceService.isInvoicePdfExist(invoice));
+        if (!pdfGenerated.containsKey(invoiceId)) {
+            Invoice invoice = invoiceService.findById(invoiceId);
+            pdfGenerated.put(invoiceId, invoiceService.isInvoicePdfExist(invoice));
         }
-
-        return pdfGenerated.get(invoice.getId());
+        return pdfGenerated.get(invoiceId);
     }
 
     public void excludeBillingAccounts(BillingRun billingrun) {
@@ -720,7 +720,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             super.saveOrUpdate(false);
         }
         if (isDetailed()) {
-            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, new Date());
+            invoiceService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, new Date());
             entity = invoiceService.update(entity);
 
         } else {
@@ -824,7 +824,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGeneratePdfBtnActive() {
-        if (invoiceService.isPrepaidReport(entity.getId())) {
+        if (entity.isPrepaid()) {
             return false;
         }
         String value = ParamBean.getInstance().getProperty("billing.activateGenaratePdfBtn", "true");
@@ -840,7 +840,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGenerateXmlBtnActive() {
-        if (invoiceService.isPrepaidReport(entity.getId())) {
+        if (entity.isPrepaid()) {
             return false;
         }
         String value = ParamBean.getInstance().getProperty("billing.activateGenarateXmlBtn", "true");
@@ -856,10 +856,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return true if the invoice is not a prepaid report
      */
     public boolean getSendByEmailBtnActive() {
-        if (invoiceService.isPrepaidReport(entity.getId())) {
-            return false;
-        }
-        return true;
+        return !entity.isPrepaid();
     }
 
     public void sendInvoiceByEmail() throws BusinessException {
@@ -903,10 +900,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return true if the invoice is not a prepaid report
      */
     public boolean getShowBtnNewIAAggregateds() {
-        if (invoiceService.isPrepaidReport(entity.getId())) {
-            return false;
-        }
-        return true;
+        return !entity.isPrepaid();
     }
 
     /**
@@ -915,9 +909,6 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return true if the invoice is not a prepaid report
      */
     public boolean getShowBtnNewIADetailed() {
-        if (invoiceService.isPrepaidReport(entity.getId())) {
-            return false;
-        }
-        return true;
+        return !entity.isPrepaid();
     }
 }

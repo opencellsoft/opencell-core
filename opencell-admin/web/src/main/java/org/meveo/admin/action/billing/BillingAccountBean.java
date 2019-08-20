@@ -295,6 +295,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     /**
      * Generates and returns a proforma invoice
+     * 
      * @return
      */
     public String generateProformaInvoice() {
@@ -334,6 +335,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     /**
      * indicates if response has already been committed
+     * 
      * @return
      */
     private boolean isCommitted() {
@@ -341,7 +343,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
         return response.isCommitted();
     }
-    
+
     /**
      * Item selector getter. Item selector keeps a state of multiselect checkboxes.
      * 

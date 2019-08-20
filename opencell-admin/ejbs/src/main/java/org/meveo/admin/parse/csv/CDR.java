@@ -9,6 +9,7 @@ import org.meveo.model.NotifiableEntity;
 
 /**
  * A CDR record
+ * 
  * @lastModifiedVersion willBeSetLater
  * 
  * @author Andrius Karpavicius
@@ -46,6 +47,11 @@ public class CDR implements Serializable {
     private String originRecord;
 
     private String line;
+
+    /**
+     * When line is rejected, exception of reject
+     */
+    private Exception rejectReason = null;
 
     /**
      * @return Event date
@@ -410,6 +416,14 @@ public class CDR implements Serializable {
      */
     public void setLine(String line) {
         this.line = line;
+    }
+
+    public Exception getRejectReason() {
+        return rejectReason;
+    }
+
+    public void setRejectReason(Exception rejectReason) {
+        this.rejectReason = rejectReason;
     }
 
     @Override
