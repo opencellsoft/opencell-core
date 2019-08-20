@@ -631,7 +631,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (terminationReason == null) {
             throw new ValidationException("Termination reason not provided", "subscription.error.noTerminationReason");
 
-        } else if (DateUtils.setDateToEndOfDay(terminationDate).before(DateUtils.setDateToEndOfDay(serviceInstance.getSubscription().getSubscriptionDate()))) {
+        } else if (DateUtils.setDateToEndOfDay(terminationDate).before(serviceInstance.getSubscription().getSubscriptionDate())) {
             throw new ValidationException("Termination date can not be before the subscription date", "subscription.error.terminationDateBeforeSubscriptionDate");
 
             // Handle cases when subscription has various services and subscription is terminated before service's subscription date
