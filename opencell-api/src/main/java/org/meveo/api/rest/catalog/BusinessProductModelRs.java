@@ -32,8 +32,8 @@ public interface BusinessProductModelRs extends IBaseRs {
      * @param postData The business product model's data
      * @return Request processing status
      */
-    @Path("/")
     @POST
+    @Path("/")
     ActionStatus create(BusinessProductModelDto postData);
 
     /**
@@ -42,8 +42,8 @@ public interface BusinessProductModelRs extends IBaseRs {
      * @param postData The business product model's data
      * @return Request processing status
      */
-    @Path("/")
     @PUT
+    @Path("/")
     ActionStatus update(BusinessProductModelDto postData);
 
     /**
@@ -52,8 +52,8 @@ public interface BusinessProductModelRs extends IBaseRs {
      * @param businessProductModelCode The business product model's code
      * @return A business product model
      */
-    @Path("/")
     @GET
+    @Path("/")
     GetBusinessProductModelResponseDto find(@QueryParam("businessProductModelCode") String businessProductModelCode);
 
 
@@ -63,8 +63,8 @@ public interface BusinessProductModelRs extends IBaseRs {
      * @param businessProductModelCode The business product model's code
      * @return Request processing status
      */
-    @Path("/{businessProductModelCode}")
     @DELETE
+    @Path("/{businessProductModelCode}")
     ActionStatus remove(@PathParam("businessProductModelCode") String businessProductModelCode);
 
     /**
@@ -73,8 +73,8 @@ public interface BusinessProductModelRs extends IBaseRs {
      * @param postData The business product model's data
      * @return Request processing status
      */
-    @Path("/createOrUpdate")
     @POST
+    @Path("/createOrUpdate")
     ActionStatus createOrUpdate(BusinessProductModelDto postData);
 
     /**

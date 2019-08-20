@@ -79,8 +79,8 @@ public interface MeasurableQuantityRs extends IBaseRs {
      * @param code Measurable quantity's code
      * @return action status.
      */
-    @Path("/{code}")
     @DELETE
+    @Path("/{code}")
     ActionStatus remove(@PathParam("code") String code);
 
     /**
@@ -88,8 +88,8 @@ public interface MeasurableQuantityRs extends IBaseRs {
      * 
      * @return A list of measurable quantities
      */
-    @Path("/list")
     @GET
+    @Path("/list")
     GetListMeasurableQuantityResponse list();
 
     /**

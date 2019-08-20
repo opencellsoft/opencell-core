@@ -64,8 +64,8 @@ public interface PaymentRs extends IBaseRs {
      * @return payment action status
      */
     @POST
-    @Path("/create")
     @Deprecated
+    @Path("/create")
     public PaymentActionStatus create(PaymentDto postData);
 
     /**
