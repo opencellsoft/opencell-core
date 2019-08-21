@@ -157,6 +157,7 @@ public class SepaDirectDebitAsync {
 
 		if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.AO) {
 			for (AccountOperation ao : listAoToPay) {
+				ao = accountOperationService.refreshOrRetrieve(ao);
 				String errorMsg = getMissingField(ao, ddRequestLOT, appProvider);
 				Name caName = ao.getCustomerAccount().getName();
 				String caFullName = this.getCaFullName(caName);
@@ -214,23 +215,6 @@ public class SepaDirectDebitAsync {
 		return new AsyncResult<DDRequestLOT>(ddRequestLOT);
 	}
 
-	/**
-	 * Launch and forget generation file.
-	 *
-	 * @param ddRequestBuilderInterface the dd request builder interface
-	 * @param ddRequestLOT              the dd request LOT
-	 * @param provider                  the provider
-	 * @return the future
-	 * @throws BusinessException the business exception
-	 */
-	@Asynchronous
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Future<String> launchAndForgetGenerationFile(DDRequestBuilderInterface ddRequestBuilderInterface, DDRequestLOT ddRequestLOT, Provider provider)
-			throws BusinessException {
-
-		ddRequestBuilderInterface.generateDDRequestLotFile(ddRequestLOTService.retrieveIfNotManaged(ddRequestLOT), provider);
-		return new AsyncResult<String>("OK");
-	}
 
 	/**
 	 * Gets the ca full name.

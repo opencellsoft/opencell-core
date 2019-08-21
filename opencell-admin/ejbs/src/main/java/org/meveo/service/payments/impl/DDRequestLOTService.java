@@ -113,11 +113,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void generateDDRquestLotFile(DDRequestLOT ddRequestLOT, final DDRequestBuilderInterface ddRequestBuilderInterface, Provider appProvider)
 			throws BusinessEntityException, Exception {
-
-		Future<String> futureisNow = sepaDirectDebitAsync.launchAndForgetGenerationFile(ddRequestBuilderInterface, ddRequestLOT, appProvider);
-		futureisNow.get();
-		ddRequestLOT.setFileName(ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider));
-
+		ddRequestLOT = refreshOrRetrieve(ddRequestLOT);
+		ddRequestLOT.setFileName(ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider));	
+		ddRequestBuilderInterface.generateDDRequestLotFile(ddRequestLOT, appProvider);
 		ddRequestLOT.setSendDate(new Date());
 		update(ddRequestLOT);
 

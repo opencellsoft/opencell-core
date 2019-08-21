@@ -21,7 +21,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
@@ -159,8 +158,6 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 				result.registerWarning(msg);
 				return;
 			}
-			
-			
 
             for (DDRequestLotOp ddrequestLotOp : ddrequestOps) {
                 if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
@@ -174,7 +171,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
                     if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
                         List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface.findListAoToPay(ddrequestLotOp), jobInstance, ddrequestLotOp);
                         DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder, result);
-                        if (ddRequestLOT != null) {
+                        if (ddRequestLOT != null) {                        	
                             dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider);
 							result.addReport(ddRequestLOT.getRejectedCause());
 							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, nbRuns, waitingMillis, result);
@@ -197,8 +194,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
                         this.createNewDdrequestLotOp(ddrequestLotOp);
                     }
                 } catch (Exception e) {
-                    log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
-            		log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
+                    log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);            		
 					if (BooleanUtils.isTrue(ddrequestLotOp.getRecurrent())) {
 						this.createNewDdrequestLotOp(ddrequestLotOp);
 					}
@@ -251,6 +247,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
         try {
             ScriptInstance scriptInstance = ddrequestLotOp.getScriptInstance();
             if (scriptInstance != null) {
+            	 scriptInstance = scriptInstanceService.retrieveIfNotManaged(scriptInstance);
                 final String scriptCode = scriptInstance.getCode();
                 if (scriptCode != null) {
                     log.debug(" looking for ScriptInstance with code :  [{}] ", scriptCode);
