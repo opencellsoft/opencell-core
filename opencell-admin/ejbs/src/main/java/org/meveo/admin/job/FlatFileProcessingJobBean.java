@@ -21,6 +21,7 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ExcelToCsv;
 import org.meveo.commons.utils.FileParsers;
 import org.meveo.commons.utils.FileUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -33,7 +34,7 @@ import org.slf4j.Logger;
  * 
  * @author anasseh
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.3.0
+ * @lastModifiedVersion 8.0.0
  */
 @Stateless
 public class FlatFileProcessingJobBean {
@@ -90,6 +91,9 @@ public class FlatFileProcessingJobBean {
         File rejectFile = null;
         PrintWriter rejectFileWriter = null;
         PrintWriter outputFileWriter = null;
+        String fileCurrentName = null;
+        String rejectedfileName = fileName + ".rejected";
+        String processedfileName = fileName + ".processed";
         try {
             if ("Xlsx_to_Csv".equals(formatTransfo)) {
                 isCsvFromExcel = true;
@@ -118,10 +122,10 @@ public class FlatFileProcessingJobBean {
             fileParser.setDataName(recordVariableName);
             fileParser.parsing();
 
-            rejectFile = new File(rejectDir + File.separator + fileName + ".rejected");
+            rejectFile = new File(rejectDir + File.separator + rejectedfileName);
             rejectFileWriter = new PrintWriter(rejectFile);
 
-            File outputFile = new File(outputDir + File.separator + fileName + ".processed");
+            File outputFile = new File(outputDir + File.separator + processedfileName);
             outputFileWriter = new PrintWriter(outputFile);
 
             // Launch parallel processing of a file
@@ -174,11 +178,14 @@ public class FlatFileProcessingJobBean {
             result.addReport(e.getMessage());
             errors.add(e.getMessage());
             if (currentFile != null) {
-                FileUtils.moveFileDontOverwrite(rejectDir, currentFile, fileName);
+                fileCurrentName = FileUtils.moveFileDontOverwrite(rejectDir, currentFile, fileName);
             }
 
         } finally {
-            flatFileProcessing.updateFlatFile(fileName, errors, result.getNbItemsCorrectlyProcessed(), result.getNbItemsProcessedWithError(), result.getJobInstance().getCode());
+            if (StringUtils.isBlank(fileCurrentName)) {
+                fileCurrentName = !errors.isEmpty() ? rejectedfileName : processedfileName;
+            }
+            flatFileProcessing.updateFlatFile(fileName, fileCurrentName, errors, result.getNbItemsCorrectlyProcessed(), result.getNbItemsProcessedWithError(), result.getJobInstance().getCode());
             try {
                 if (fileParser != null) {
                     fileParser.close();
