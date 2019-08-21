@@ -12,15 +12,13 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.async.UsageRatingAsync;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.event.qualifier.Rejected;
-import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.rating.EDR;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.EdrService;
@@ -52,7 +50,6 @@ public class UsageRatingJobBean extends BaseJobBean {
     protected MeveoUser currentUser;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running with parameter={}", jobInstance.getParametres());
@@ -72,15 +69,18 @@ public class UsageRatingJobBean extends BaseJobBean {
             } catch (Exception e) {
                 log.warn("Cant get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
             }
-            List<Long> ids = edrService.getEDRidsToRate(rateUntilDate, ratingGroup, PROCESS_NR_IN_JOB_RUN);
-            result.setNbItemsToProcess(ids.size());
+            
+            List<EDR> edrs = edrService.getEDRsToRate(rateUntilDate, ratingGroup, PROCESS_NR_IN_JOB_RUN);
+            
+            result.setNbItemsToProcess(edrs.size());
+            
             List<Future<String>> futures = new ArrayList<>();
-            SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
-            log.debug("edr to rate={}, block to run={} in {} threads", ids.size(), subListCreator.getBlocToRun(), nbRuns);
+            SubListCreator<EDR> subListCreator = new SubListCreator(edrs, nbRuns.intValue());
+            log.debug("Will rate {} EDRS in {} threads", edrs.size(), nbRuns);
 
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                futures.add(usageRatingAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
+                futures.add(usageRatingAsync.launchAndForget((List<EDR>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
 
                 if (subListCreator.isHasNext()) {
                     try {
@@ -107,8 +107,8 @@ public class UsageRatingJobBean extends BaseJobBean {
             }
 
             // Check if there are any more EDRS to process and mark job as completed if there are none
-            ids = edrService.getEDRidsToRate(rateUntilDate, ratingGroup, 1);
-            result.setDone(ids.isEmpty());
+            edrs = edrService.getEDRsToRate(rateUntilDate, ratingGroup, 1);
+            result.setDone(edrs.isEmpty());
 
         } catch (Exception e) {
             log.error("Failed to run usage rating job", e);

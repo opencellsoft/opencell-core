@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.enterprise.inject.Produces;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
@@ -48,7 +47,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.ProductInstance;
-import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
@@ -329,12 +327,6 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		}		 
 		return walletOperations.get(walletCode);
    }
-
-    @Produces
-    @Named("getRatedTransactionsInvoiced")
-    public List<RatedTransaction> getRatedTransactionsInvoiced() {
-        return ratedTransactionService.getRatedTransactionsInvoiced(entity);
-    }
 
     public void populateAccounts(BillingAccount billingAccount) {
         entity.setBillingAccount(billingAccount);

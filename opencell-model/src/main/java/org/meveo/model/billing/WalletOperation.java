@@ -78,6 +78,9 @@ import org.meveo.model.rating.EDR;
                 + " WHERE o.ratedTransaction.processingStatus.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED" + " AND o.id IN :walletIdList"),
         @NamedQuery(name = "WalletOperation.listByRatedTransactionId", query = "SELECT o FROM WalletOperation o WHERE o.ratedTransaction.id=:ratedTransactionId"),
 
+        @NamedQuery(name = "WalletOperation.listByBRId", query = "SELECT o FROM WalletOperation o WHERE o.ratedTransaction.id in (select s.id from RatedTransactionProcessingStatus s where s.billingRun.id=:brId)"),
+
+        
         @NamedQuery(name = "WalletOperation.listToInvoice", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
                 + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
         @NamedQuery(name = "WalletOperation.listToInvoiceByUA", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "

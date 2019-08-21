@@ -148,9 +148,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     private BillingAccountService billingAccountService;
 
     @Inject
-    private TradingLanguageService tradingLanguageService;
-
-    @Inject
     private CounterPeriodService counterPeriodService;
 
     @Inject
@@ -318,7 +315,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = null;
 
         if (!isVirtual) {
-            ratedTransactions = ratedTransactionService.getRatedTransactionsForXmlInvoice(invoice);
+            ratedTransactions = ratedTransactionService.getRatedTransactionsByInvoice(invoice, appProvider.isDisplayFreeTransacInInvoice());
             subCategoryInvoiceAgregates = invoiceService.listByInvoice(invoice);
         }
 
@@ -1509,10 +1506,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                         WalletInstance wallet = subCatInvoiceAgregate.getWallet();
     
                         if (isVirtual) {
-                            ratedTransactions = invoice.getRatedTransactionsForCategory(wallet, invoiceSubCat);
-                        } /*
-                         * else { transactions = ratedTransactionService.getRatedTransactionsForXmlInvoice( wallet, invoice, invoiceSubCat); }
-                         */
+                            ratedTransactions = subCatInvoiceAgregate.getRatedtransactionsToAssociate();
+                        }
     
                         String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
     
@@ -1695,8 +1690,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                 edrInfo.setAttribute("originRecord", edr.getOriginRecord() != null ? edr.getOriginRecord() : "");
                                 edrInfo.setAttribute("originBatch", edr.getOriginBatch() != null ? edr.getOriginBatch() : "");
                                 edrInfo.setAttribute("quantity", edr.getQuantity() != null ? edr.getQuantity().toPlainString() : "");
-                                edrInfo.setAttribute("status", String.valueOf(edr.getStatus()) != null ? String.valueOf(edr.getStatus()) : "");
-                                edrInfo.setAttribute("rejectReason", edr.getRejectReason() != null ? edr.getRejectReason() : "");
                                 edrInfo.setAttribute("subscription", edr.getSubscription() != null ? edr.getSubscription().getDescription() : "");
                                 edrInfo.setAttribute("eventDate", DateUtils.formatDateWithPattern(edr.getEventDate(), invoiceDateTimeFormat));
                                 edrInfo.setAttribute("accessCode", edr.getAccessCode() != null ? edr.getAccessCode() : "");

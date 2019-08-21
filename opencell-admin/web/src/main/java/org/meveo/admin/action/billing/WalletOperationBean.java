@@ -154,19 +154,8 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 	
 	private LazyDataModel<WalletOperation> filterDataModelByBillingRun(boolean forceReload) {
 		if (filters.containsKey("billingRun")) {
-			List<Long> walletOperationIds = new ArrayList<Long>();
 			BillingRun br = (BillingRun) filters.get("billingRun");
-			List<RatedTransaction> listRated = ratedTransactionService.getRatedTransactionsByBillingRun(br);
-
-			if (CollectionUtils.isNotEmpty(listRated)) {
-				for (RatedTransaction rated : listRated) {
-					walletOperationIds.addAll(
-							rated.getWalletOperations().stream().map(o -> o.getId()).collect(Collectors.toList()));
-				}
-				filters.put("inList id", walletOperationIds);
-			} else {
-				return null;
-			}
+			filters.put("ratedTransaction.processingStatus.billingRun", br);			
 			filters.remove("billingRun");
 		}
 		return super.getLazyDataModel(filters, forceReload);

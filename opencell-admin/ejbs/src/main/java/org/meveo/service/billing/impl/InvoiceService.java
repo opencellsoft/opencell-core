@@ -992,7 +992,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         appendInvoiceAgregates(billingAccount, billingAccount, invoice, ratedTransactions, false);
-        invoice.setRatedTransactions(ratedTransactions);
         invoice.setTemporaryInvoiceNumber(UUID.randomUUID().toString());
 
         return invoice;
@@ -2012,16 +2011,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Delete min RT.
-     *
-     * @param invoice invoice to delete
-     * @throws BusinessException business exception
-     */
-    public void deleteMinRT(Invoice invoice) throws BusinessException {
-        getEntityManager().createNamedQuery("RatedTransaction.deleteMinRT").setParameter("invoice", invoice).executeUpdate();
-    }
-
-    /**
      * Cancel invoice.
      *
      * @param invoice invoice to cancel
@@ -2032,8 +2021,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new BusinessException("Can't cancel an invoice that present in AR");
         }
 
-        deleteMinRT(invoice);
-        getEntityManager().createNamedQuery("RatedTransaction.deleteInvoice").setParameter("invoice", invoice).executeUpdate();
+        ratedTransactionService.deleteMinRTs(invoice);
+        ratedTransactionService.uninvoiceRTs(invoice);
 
         super.remove(invoice);
 
@@ -2747,11 +2736,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.getOrderNumbers().add(ratedTransaction.getOrderNumber());
             }
 
-            ratedTransaction.setBillingRun(billingRun);
-            ratedTransaction.setInvoice(invoice);
-            ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
-            ratedTransaction.setInvoiceAgregateF(scAggregate);
-
             if (taxWasRecalculated) {
                 ratedTransaction.setTax(scAggregate.getTax());
                 ratedTransaction.setTaxPercent(scAggregate.getTaxPercent());
@@ -3317,7 +3301,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(),
                             ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null);
 
-                        meveoRatedTransaction.setInvoice(invoice);
+                        meveoRatedTransaction.getProcessingStatus().setInvoice(invoice);
                         meveoRatedTransaction.setWallet(userAccount.getWallet());
                         // #3355 : setting params 1,2,3
                         if (isDetailledInvoiceMode) {
@@ -3334,14 +3318,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
                 }
                 if (invoiceDTO.getInvoiceType().equals(invoiceTypeService.getCommercialCode())) {
-                    List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory);
+
+                    EntityManager em = getEntityManager();
+                    List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory, null, null);
                     for (RatedTransaction ratedTransaction : openedRT) {
                         subCatAmountWithoutTax = subCatAmountWithoutTax.add(ratedTransaction.getAmountWithoutTax());
                         subCatAmountTax = subCatAmountTax.add(ratedTransaction.getAmountTax());
                         subCatAmountWithTax = subCatAmountWithTax.add(ratedTransaction.getAmountWithTax());
-                        ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
-                        ratedTransaction.setInvoice(invoice);
-                        ratedTransactionService.update(ratedTransaction);
+                        RatedTransactionProcessingStatus rtStatus = new RatedTransactionProcessingStatus(ratedTransaction.getId(), null, invoice, null,
+                            RatedTransactionStatusEnum.BILLED);
+                        em.persist(rtStatus);
                     }
                 }
 
@@ -3467,5 +3453,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice = serviceSingleton.assignInvoiceNumber(invoice);
         }
         return invoice;
+    }
+
+    /**
+     * Delete invoices associated to a billing run
+     * 
+     * @param billingRun Billing run
+     */
+    public void deleteInvoices(BillingRun billingRun) {
+        getEntityManager().createNamedQuery("Invoice.deleteByBR").setParameter("billingRun", billingRun).executeUpdate();
     }
 }

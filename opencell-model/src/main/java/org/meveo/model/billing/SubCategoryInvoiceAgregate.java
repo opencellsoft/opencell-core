@@ -31,7 +31,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -71,10 +70,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
-
-    //@OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY)
-    @Transient
-    private List<RatedTransaction> ratedtransactions = new ArrayList<>();
 
     /** The discount plan code. */
     @Column(name = "discount_plan_code", length = 50)
@@ -229,22 +224,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         if (categoryInvoiceAgregate != null && categoryInvoiceAgregate.getSubCategoryInvoiceAgregates() != null) {
             categoryInvoiceAgregate.getSubCategoryInvoiceAgregates().add(this);
         }
-    }
-
-    /**
-     * @return Associated Rated transactions
-     */
-    public List<RatedTransaction> getRatedtransactions() {
-        return ratedtransactions;
-    }
-
-    /**
-     * Associated Rated transactions
-     *
-     * @param ratedtransactions Associated Rated transactions
-     */
-    public void setRatedtransactions(List<RatedTransaction> ratedtransactions) {
-        this.ratedtransactions = ratedtransactions;
     }
 
     /**

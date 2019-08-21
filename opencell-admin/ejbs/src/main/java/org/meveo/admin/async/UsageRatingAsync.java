@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.UnitUsageRatingJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.rating.EDR;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
@@ -38,39 +39,31 @@ public class UsageRatingAsync {
     private CurrentUserProvider currentUserProvider;
 
     /**
-	 * Rate usage charges for a list of EDRs. One EDR at a time in a separate
-	 * transaction.
+     * Rate usage charges for a list of EDRs. One EDR at a time in a separate transaction.
      * 
-	 * @param ids
-	 *            A list of EDR ids
-	 * @param result
-	 *            Job execution result
-	 * @param lastCurrentUser
-	 *            Current user. In case of multitenancy, when user authentication is
-	 *            forced as result of a fired trigger (scheduled jobs, other timed
-	 *            event expirations), current user might be lost, thus there is a
-	 *            need to reestablish.
+     * @param edrs A list of EDRs
+     * @param result Job execution result
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
      * @return Future String
-	 * @throws BusinessException
-	 *             BusinessException
+     * @throws BusinessException BusinessException
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, MeveoUser lastCurrentUser)
-			throws BusinessException {
+    public Future<String> launchAndForget(List<EDR> edrs, JobExecutionResultImpl result, MeveoUser lastCurrentUser) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         int i = 0;
-        for (Long id : ids) {
+        for (EDR edr : edrs) {
             i++;
             if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR_FAST == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                 break;
             }
             try {
-                unitUsageRatingJobBean.execute(result, id);
+                unitUsageRatingJobBean.execute(result, edr);
 
             } catch (BusinessException be) {
-                unitUsageRatingJobBean.registerFailedEdr(result, id, be);
+                unitUsageRatingJobBean.registerFailedEdr(result, edr.getId(), be);
             }
         }
         return new AsyncResult<String>("OK");

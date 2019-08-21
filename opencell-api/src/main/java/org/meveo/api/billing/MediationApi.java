@@ -32,7 +32,6 @@ import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.rating.EDR;
-import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -217,8 +216,8 @@ public class MediationApi extends BaseApi {
                 edrService.create(edr);
                 try {
                     Reservation reservation = usageRatingService.reserveUsageWithinTransaction(edr);
-                    if (edr.getStatus() == EDRStatusEnum.REJECTED) {
-                        throw new MeveoApiException(edr.getRejectReason());
+                    if (edr.getRatingRejectionReason() != null) {
+                        throw new MeveoApiException(edr.getRatingRejectionReason());
                     }
                     result.setReservationId(reservation.getId());
                     // schedule cancellation at expiry
@@ -292,23 +291,27 @@ public class MediationApi extends BaseApi {
     }
 
     private List<WalletOperation> rateUsage(EDR edr, ChargeCDRDto chargeCDRDto) throws MeveoApiException {
+
+        List<WalletOperation> walletOperations = null;
         try {
-            List<WalletOperation> walletOperations = usageRatingService.rateUsageWithinTransaction(edr, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(),
-                chargeCDRDto.getMaxDepth(), 0);
-            if (edr.getStatus() == EDRStatusEnum.REJECTED) {
-                log.error("edr rejected={}", edr.getRejectReason());
-                throw new MeveoApiException(edr.getRejectReason());
-            }
-            return walletOperations;
+            walletOperations = usageRatingService.rateUsageWithinTransaction(edr, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(), chargeCDRDto.getMaxDepth(), 0);
+
         } catch (BusinessException e) {
             if (e instanceof InsufficientBalanceException) {
-                log.error("edr rejected={}", edr.getRejectReason());
+                log.error("edr rejected={}", e.getMessage());
                 throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
             } else {
                 log.error("Exception rating edr={}", e);
                 throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
             }
         }
+
+        if (edr.getRatingRejectionReason() != null) {
+            log.error("edr rejected={}", edr.getRatingRejectionReason());
+            throw new MeveoApiException(edr.getRatingRejectionReason());
+        }
+
+        return walletOperations;
     }
 
     /**

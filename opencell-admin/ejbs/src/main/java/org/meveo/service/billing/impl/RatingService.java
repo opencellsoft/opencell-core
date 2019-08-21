@@ -41,6 +41,9 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionProcessingStatus;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -66,14 +69,12 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.rating.EDR;
-import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
-import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -117,9 +118,6 @@ public class RatingService extends BusinessService<WalletOperation> {
 
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
-
-    @Inject
-    private ProductOfferingService productOfferingService;
 
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
@@ -409,7 +407,6 @@ public class RatingService extends BusinessService<WalletOperation> {
                     newEdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), walletOperation, ua));
                     newEdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua));
                     newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua)));
-                    newEdr.setStatus(EDRStatusEnum.OPEN);
                     Subscription sub = null;
 
                     if (StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
@@ -505,7 +502,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     || (pricePlan.getAmountWithTax() == null && !appProvider.isEntreprise())) {
                 throw new NoPricePlanException("No price plan matched (" + (pricePlan == null) + ") or does not contain amounts for charge code " + bareWalletOperation.getCode());
             }
-            log.debug("Found ratePrice {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
+            log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
             if (appProvider.isEntreprise()) {
                 unitPriceWithoutTax = pricePlan.getAmountWithoutTax();
                 if (pricePlan.getAmountWithoutTaxEL() != null) {
@@ -851,7 +848,21 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         WalletOperation operationToRerate = getEntityManager().find(WalletOperation.class, operationToRerateId);
         try {
-            ratedTransactionService.reratedByWalletOperationId(operationToRerate.getId());
+
+            // Change related Rated transaction status to Rerated
+            RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
+            RatedTransactionProcessingStatus rtStatus = ratedTransaction.getProcessingStatus();
+            if (rtStatus != null) {
+                if (rtStatus.getStatus() == RatedTransactionStatusEnum.BILLED) {
+                    throw new UnrolledbackBusinessException(
+                        "Can not rerate an already billed Wallet Operation. Wallet Operation " + operationToRerateId + " corresponds to rated transaction " + ratedTransaction.getId());
+                } else if (rtStatus.getStatus() != RatedTransactionStatusEnum.CANCELED && rtStatus.getStatus() != RatedTransactionStatusEnum.RERATED) {
+                    rtStatus.setStatus(RatedTransactionStatusEnum.RERATED);
+                }
+            } else {
+                rtStatus = new RatedTransactionProcessingStatus(ratedTransaction, RatedTransactionStatusEnum.RERATED);
+                getEntityManager().persist(rtStatus);
+            }
             WalletOperation operation = operationToRerate.getUnratedClone();
             operationToRerate.setReratedWalletOperation(operation);
             operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);

@@ -28,7 +28,6 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
-import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.EdrService;
 
@@ -212,8 +211,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
         edr.setDecimalParam3(cdr.getDecimalParam3() != null ? cdr.getDecimalParam3().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
         edr.setDecimalParam4(cdr.getDecimalParam4() != null ? cdr.getDecimalParam4().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
         edr.setDecimalParam5(cdr.getDecimalParam5() != null ? cdr.getDecimalParam5().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
-        edr.setQuantity(cdr.getQuantity().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
-        edr.setStatus(EDRStatusEnum.OPEN);
+        edr.setQuantity(cdr.getQuantity().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));       
         edr.setExtraParameter(cdr.getExtraParam());
 
         if (accessPoint != null) {

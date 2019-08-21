@@ -73,9 +73,10 @@ public class QuoteService extends BusinessService<Quote> {
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
-    
+
     /**
      * Create a simulated invoice for quote.
+     * 
      * @param quoteInvoiceInfos map of quote invoice info
      * @return list of invoice
      * @throws BusinessException business exception
@@ -93,7 +94,7 @@ public class QuoteService extends BusinessService<Quote> {
      * @throws BusinessException business exception
      */
     @SuppressWarnings("unused")
-    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos, boolean generatePdf) throws BusinessException {        
+    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos, boolean generatePdf) throws BusinessException {
         log.info("Creating simulated invoice for {}", quoteInvoiceInfos);
 
         List<Invoice> invoices = new ArrayList<>();
@@ -133,7 +134,7 @@ public class QuoteService extends BusinessService<Quote> {
                         for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
                             WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, subscriptionCharge,
                                 serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
-                            if(wo != null) {
+                            if (wo != null) {
                                 walletOperations.add(wo);
                             }
                         }
@@ -143,7 +144,7 @@ public class QuoteService extends BusinessService<Quote> {
                             for (OneShotChargeInstance terminationCharge : serviceInstance.getTerminationChargeInstances()) {
                                 WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, terminationCharge,
                                     serviceInstance.getTerminationDate(), serviceInstance.getQuantity());
-                                if(wo != null) {
+                                if (wo != null) {
                                     walletOperations.add(wo);
                                 }
                             }
@@ -182,16 +183,16 @@ public class QuoteService extends BusinessService<Quote> {
                         for (EDR edr : edrs) {
                             log.debug("edr={}", edr);
                             try {
-                                List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateUsageDontChangeTransaction(edr, true);
+                                List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr, true);
                                 if (edr.getStatus() == EDRStatusEnum.REJECTED) {
-                                    log.error("edr rejected={}", edr.getRejectReason());
-                                    throw new BusinessException(edr.getRejectReason());
+                                    log.error("edr rejected={}", edr.getRatingRejectionReason());
+                                    throw new BusinessException(edr.getRatingRejectionReason());
                                 }
                                 walletOperations.addAll(walletOperationsFromEdr);
 
                             } catch (BusinessException e) {
                                 if (e instanceof InsufficientBalanceException) {
-                                    log.error("edr rejected={}", edr.getRejectReason());
+                                    log.error("edr rejected={}", e.getMessage());
                                 } else {
                                     log.error("Exception rating edr={}", e);
                                 }
@@ -200,21 +201,20 @@ public class QuoteService extends BusinessService<Quote> {
                         }
                     }
                 }
-            }            
+            }
             // Create rated transactions from wallet operations
             for (WalletOperation walletOperation : walletOperations) {
                 ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true));
             }
             Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote());
             File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
-            
-            if(generatePdf) {
+
+            if (generatePdf) {
                 invoiceService.produceInvoicePdfNoUpdate(invoice);
             }
-            
+
             // Clean up data (left only the methods that remove FK data that would fail to persist in case of virtual operations)
             // invoice.setBillingAccount(null);
-            invoice.setRatedTransactions(null);
             for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
                 log.debug("Invoice aggregate class {}", invoiceAgregate.getClass().getName());
                 // invoiceAgregate.setBillingAccount(null);
@@ -234,7 +234,7 @@ public class QuoteService extends BusinessService<Quote> {
                     // ((SubCategoryInvoiceAgregate)invoiceAgregate).setSubCategoryTaxes(null);
                     // ((SubCategoryInvoiceAgregate)invoiceAgregate).setCategoryInvoiceAgregate(null);
                     ((SubCategoryInvoiceAgregate) invoiceAgregate).setWallet(null);
-                    ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactions(null);
+                    ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactionsToAssociate(null);
                 }
             }
             invoiceService.create(invoice);

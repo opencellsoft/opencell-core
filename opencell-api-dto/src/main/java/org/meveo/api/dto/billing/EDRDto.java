@@ -1,23 +1,15 @@
 package org.meveo.api.dto.billing;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.billing.OperationTypeEnum;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationStatusEnum;
-import org.meveo.model.rating.EDR;
-import org.meveo.model.rating.EDRStatusEnum;
+import java.math.BigDecimal;
+import java.util.Date;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
-import java.util.Date;
+
+import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRStatusEnum;
 
 /**
  * The Class WalletOperationDto.
@@ -29,6 +21,8 @@ import java.util.Date;
 @XmlRootElement(name = "WalletOperation")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EDRDto extends BusinessEntityDto {
+
+    private static final long serialVersionUID = -2901068085522589740L;
 
     /**
      * Matched subscription
@@ -153,7 +147,7 @@ public class EDRDto extends BusinessEntityDto {
     /**
      * Processing status
      */
-    private String status;
+    private EDRStatusEnum status;
 
     /**
      * Rejection reason
@@ -214,7 +208,7 @@ public class EDRDto extends BusinessEntityDto {
         this.decimalParam3 = e.getDecimalParam3();
         this.decimalParam4 = e.getDecimalParam4();
         this.decimalParam5 = e.getDecimalParam5();
-        this.status = (e.getStatus() != null) ? e.getStatus().getLabel() : null;
+        this.status = e.getStatus();
         this.rejectReason = e.getRejectReason();
         this.created = e.getCreated();
         this.lastUpdate = e.getLastUpdate();
@@ -414,11 +408,11 @@ public class EDRDto extends BusinessEntityDto {
         this.decimalParam5 = decimalParam5;
     }
 
-    public String getStatus() {
+    public EDRStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(EDRStatusEnum status) {
         this.status = status;
     }
 

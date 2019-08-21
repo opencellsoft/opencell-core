@@ -21,18 +21,19 @@ package org.meveo.model.rating;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -52,11 +53,17 @@ import org.meveo.model.billing.Subscription;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "rating_edr_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_',case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status= org.meveo.model.rating.EDRStatusEnum.OPEN ORDER BY e.eventDate DESC"),
-        @NamedQuery(name = "EDR.countNbrEdrByStatus", query = "select status, count(*) from EDR group by status"),
-        @NamedQuery(name = "EDR.getOpenEdrBetweenTwoDate", query = "SELECT e from EDR e join fetch e.subscription where e.status = org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate order by e.eventDate desc"),
-        @NamedQuery(name = "EDR.updateWalletOperationForSafeDeletion", query = "update WalletOperation wo set wo.edr=NULL where wo.edr in (select e FROM EDR e where e.status <> org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
-        @NamedQuery(name = "EDR.deleteNotOpenEdrBetweenTwoDate", query = "delete from EDR e  where e.status <> org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate")})
+        @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_',case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e left join e.processingStatus s where s is null ORDER BY e.eventDate DESC"),
+
+        @NamedQuery(name = "EDR.countNbrEdrByStatus", query = "select s.status, count(e.id) from EDR e left join e.processingStatus s group by s.status"),
+
+        @NamedQuery(name = "EDR.getOpenEdrBetweenTwoDate", query = "SELECT e from EDR e join fetch e.subscription left join e.processingStatus s where s is null AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate order by e.eventDate desc"),
+
+        @NamedQuery(name = "EDR.updateWalletOperationForSafeDeletion", query = "update WalletOperation wo set wo.edr=NULL where wo.edr in (select e FROM EDR e where e.processingStatus.status is not null AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
+        @NamedQuery(name = "EDR.updateRatedTransactionForSafeDeletion", query = "update RatedTransaction rt set rt.edr=NULL where rt.edr in (select e FROM EDR e where e.processingStatus.status is not null AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
+        @NamedQuery(name = "EDR.deleteNotOpenEdrBetweenTwoDate", query = "delete from EDR e where e.processingStatus.status is not null AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate"),
+
+        @NamedQuery(name = "EDR.reopenByIds", query = "Delete from EDRProcessingStatus s where s.status=org.meveo.model.billing.RatedTransactionStatusEnum.REJECTED and s.id in :ids") })
 
 public class EDR extends BaseEntity {
 
@@ -225,20 +232,6 @@ public class EDR extends BaseEntity {
     private BigDecimal decimalParam5;
 
     /**
-     * Processing status
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private EDRStatusEnum status;
-
-    /**
-     * Rejection reason
-     */
-    @Column(name = "reject_reason", columnDefinition = "text")
-    @Size(max = 255)
-    private String rejectReason;
-
-    /**
      * Record creation timestamp
      */
     @Temporal(TemporalType.TIMESTAMP)
@@ -271,6 +264,21 @@ public class EDR extends BaseEntity {
      */
     @Column(name = "EXTRA_PARAMETER", columnDefinition = "TEXT")
     private String extraParameter;
+
+    /**
+     * EDR processing status
+     */
+    @OneToOne(mappedBy = "edr", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private EDRProcessingStatus processingStatus;
+
+    @Transient
+    private String ratingRejectionReason;
+
+    /**
+     * Tracks quantity left to rate. Initialized with quantity field value on the first call.
+     */
+    @Transient
+    private BigDecimal quantityLeftToRate;
 
     public Subscription getSubscription() {
         return subscription;
@@ -342,22 +350,6 @@ public class EDR extends BaseEntity {
 
     public void setParameter4(String parameter4) {
         this.parameter4 = parameter4;
-    }
-
-    public EDRStatusEnum getStatus() {
-        return status;
-    }
-
-    public void setStatus(EDRStatusEnum status) {
-        this.status = status;
-    }
-
-    public String getRejectReason() {
-        return rejectReason;
-    }
-
-    public void setRejectReason(String rejectReason) {
-        this.rejectReason = rejectReason;
     }
 
     public Date getCreated() {
@@ -520,6 +512,62 @@ public class EDR extends BaseEntity {
         this.extraParameter = extraParameter;
     }
 
+    /**
+     * @return EDR processing status
+     */
+    public EDRProcessingStatus getProcessingStatus() {
+        return processingStatus;
+    }
+
+    /**
+     * @param processingStatus EDR processing status
+     */
+    public void setProcessingStatus(EDRProcessingStatus processingStatus) {
+        this.processingStatus = processingStatus;
+    }
+
+    /**
+     * Get status
+     * 
+     * @return Status
+     */
+    public EDRStatusEnum getStatus() {
+
+        if (processingStatus != null) {
+            return processingStatus.getStatus();
+        } else {
+            return EDRStatusEnum.OPEN;
+        }
+    }
+
+    /**
+     * Get rejection reason from the processing status
+     * 
+     * @return Rejection reason
+     */
+    public String getRejectReason() {
+
+        if (processingStatus != null) {
+            return processingStatus.getRejectReason();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param ratingRejectionReason Rejection reason why EDR was rejected during rating. A transient value. A persisted value is available in procesingStatus.rejectionReason.
+     */
+    public void setRatingRejectionReason(String ratingRejectionReason) {
+        this.ratingRejectionReason = ratingRejectionReason;
+    }
+
+    /**
+     * @return Rejection reason why EDR was rejected during rating. A transient value. A persisted value is available in procesingStatus.rejectionReason.
+     */
+    public String getRatingRejectionReason() {
+        return ratingRejectionReason;
+    }
+
     @Override
     public String toString() {
         return "EDR [id=" + id + ", subscription=" + (subscription != null ? subscription.getId() : null) + ", originBatch=" + originBatch + ", originRecord=" + originRecord
@@ -528,8 +576,7 @@ public class EDR extends BaseEntity {
                 + parameter8 + ", parameter9=" + parameter9 + ", dateParam1=" + dateParam1 + ", dateParam2=" + dateParam2 + ", dateParam3=" + dateParam3 + ", dateParam4="
                 + dateParam4 + ", dateParam5=" + dateParam5 + ", decimalParam1=" + decimalParam1 + ", dateParam2=" + dateParam2 + ", decimalParam3=" + decimalParam3
                 + ", dateParam4=" + dateParam4 + ", decimalParam5=" + decimalParam5 + ", extraParameter=" + extraParameter + ", headerEDR="
-                + ((headerEDR == null) ? "null" : headerEDR.getId()) + ", status=" + status + ", rejectReason=" + rejectReason + ", created=" + created + ", lastUpdate="
-                + lastUpdate + "]";
+                + ((headerEDR == null) ? "null" : headerEDR.getId()) + ", created=" + created + ", lastUpdate=" + lastUpdate + "]";
     }
 
     @Override
@@ -552,4 +599,25 @@ public class EDR extends BaseEntity {
         return this.toString().equals(other.toString());
     }
 
+    /**
+     * @return Quantity left to rate. Initialized with quantity field value on the first call.
+     */
+    public BigDecimal getQuantityLeftToRate() {
+
+        if (quantityLeftToRate == null) {
+            quantityLeftToRate = quantity == null ? BigDecimal.ZERO : quantity;
+        }
+        return quantityLeftToRate;
+    }
+
+    /**
+     * Deduce quantity left to rate
+     * 
+     * @param quantityToDeduce Amount to deduce by
+     * @return A new quantity left to rate value
+     */
+    public BigDecimal deduceQuantityLeftToRate(BigDecimal quantityToDeduce) {
+        quantityLeftToRate = getQuantityLeftToRate().subtract(quantityToDeduce);
+        return quantityLeftToRate;
+    }
 }

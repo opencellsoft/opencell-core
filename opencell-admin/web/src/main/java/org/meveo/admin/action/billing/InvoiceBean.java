@@ -319,7 +319,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         headerCat.setCode("min_amount");
 
         LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = new LinkedHashMap<String, InvoiceSubCategoryDTO>();
-        for (RatedTransaction ratedTransaction : entity.getRatedTransactions()) {
+
+        List<RatedTransaction> ratedTransactions = ratedTransactionService.getRatedTransactionsByInvoice(entity, true);
+        for (RatedTransaction ratedTransaction : ratedTransactions) {
             if (ratedTransaction.getWallet() == null) {
                 InvoiceSubCategoryDTO headerSubCat = null;
                 if (headerSubCategories.containsKey(ratedTransaction.getCode())) {

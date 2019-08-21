@@ -67,15 +67,14 @@ import org.meveo.model.rating.EDR;
  */
 @Entity
 @ObservableEntity
-@Table(name = "billing_rated_transaction2")
+@Table(name = "billing_rated_transaction")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_rated_transaction_seq"), })
 @NamedQueries({
         @NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and processingStatus is not null order by usageDate desc "),
 
         @NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumber", query = "SELECT r FROM RatedTransaction r left join fetch r.processingStatus s where "
-                + " s is null AND r.orderNumber=:orderNumber "
-                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.billingAccount.id "),
+                + " s is null AND r.orderNumber=:orderNumber " + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.billingAccount.id "),
         @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscription", query = "SELECT r FROM RatedTransaction r left join fetch r.processingStatus s where r.subscription.id=:subscriptionId"
                 + " AND s is null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
         @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccount", query = "SELECT r FROM RatedTransaction r left join fetch  r.processingStatus s where r.billingAccount.id=:billingAccountId "
@@ -129,11 +128,14 @@ import org.meveo.model.rating.EDR;
                 + " WHERE s is null  AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " and r.billingAccount=:billingAccount GROUP BY r.invoiceSubCategory.id, r.seller.id"),
 
-        @NamedQuery(name = "RatedTransaction.setStatusToCanceled", query = "UPDATE RatedTransactionProcessingStatus r SET r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED WHERE id IN (SELECT o.ratedTransaction.id FROM WalletOperation o WHERE o.id IN :notBilledWalletIdList)"),
+        @NamedQuery(name = "RatedTransaction.cancelByWOIds", query = "UPDATE RatedTransactionProcessingStatus r SET r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.statusDate = :now WHERE id IN (SELECT o.ratedTransaction.id FROM WalletOperation o WHERE o.id IN :notBilledWalletIdList)"),
         @NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", query = "select r.ratedTransaction from RatedTransactionProcessingStatus r where r.invoice=:invoice and r.ratedTransaction.invoiceSubCategory=:invoiceSubCategory "),
-        @NamedQuery(name = "RatedTransaction.deleteInvoice", query = "Delete RatedTransactionProcessingStatus r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice=:invoice"),
 
-        @NamedQuery(name = "RatedTransaction.deleteMinRT", query = "DELETE from RatedTransaction r  WHERE r.processingStatus.invoice=:invoice AND r.wallet IS null"),
+        @NamedQuery(name = "RatedTransaction.unInvoiceByInvoice", query = "Delete from RatedTransactionProcessingStatus r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice=:invoice"),
+        @NamedQuery(name = "RatedTransaction.unInvoiceByBR", query = "Delete from RatedTransactionProcessingStatus r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.billingRun=:billingRun"),
+
+        @NamedQuery(name = "RatedTransaction.deleteMinRTByInvoice", query = "DELETE from RatedTransaction r  WHERE r.processingStatus.invoice=:invoice AND r.wallet IS null"),
+        @NamedQuery(name = "RatedTransaction.deleteMinRTByBR", query = "DELETE from RatedTransaction r  WHERE r.processingStatus.billingRun=:billingRun AND r.wallet IS null"),
 
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByBA", query = "SELECT count(*) FROM RatedTransaction r left join r.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) "
                 + " AND r.billingAccount=:billingAccount"),
@@ -141,16 +143,17 @@ import org.meveo.model.rating.EDR;
                 + " AND r.wallet.userAccount=:userAccount"),
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByCA", query = "SELECT count(*) FROM RatedTransaction r left join r.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) "
                 + " AND r.billingAccount.customerAccount=:customerAccount"),
-        @NamedQuery(name = "RatedTransaction.setStatusToCanceledByRsCodes", query = "UPDATE RatedTransactionProcessingStatus  r set  r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED"
-                + " where  r.id IN :rsToCancelCodes "),
+        @NamedQuery(name = "RatedTransaction.cancelByRTIds", query = "UPDATE RatedTransactionProcessingStatus r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.statusDate = :now where r.id IN :rsIds "),
         @NamedQuery(name = "RatedTransaction.findByWalletOperationId", query = "SELECT o.ratedTransaction FROM WalletOperation o WHERE o.id=:walletOperationId"),
-
-        @NamedQuery(name = "RatedTransaction.massDeleteForUpdate", query = "DELETE from RatedTransaction  r where r.id in :ids"),
 
         @NamedQuery(name = "RatedTransaction.listOpenBetweenTwoDates", query = "SELECT r FROM RatedTransaction r join fetch r.priceplan join fetch r.tax join fetch r.billingAccount join fetch r.seller left join r.processingStatus s where "
                 + " s is null " + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.usageDate desc "),
         @NamedQuery(name = "RatedTransaction.deleteNotOpenBetweenTwoDates", query = "delete FROM RatedTransaction r where "
-                + " r.processingStatus.status is not null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate ") })
+                + " r.processingStatus.status is not null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
+
+        @NamedQuery(name = "RatedTransaction.listByInvoice", query = "SELECT r FROM RatedTransaction r join r.processingStatus s where s.invoice=:invoice order by r.usageDate"),
+        @NamedQuery(name = "RatedTransaction.listByInvoiceNotFree", query = "SELECT r FROM RatedTransaction r join r.processingStatus s where s.invoice=:invoice and r.amountWithoutTax<>0 order by r.usageDate"),        
+        @NamedQuery(name = "RatedTransaction.listByInvoiceSubCategoryAggr", query = "SELECT r FROM RatedTransaction r join r.processingStatus s where s.invoiceAgregateF=:invoiceAgregateF order by r.usageDate") })
 public class RatedTransaction extends BaseEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;
@@ -184,12 +187,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @JoinColumn(name = "seller_id", nullable = false)
     @NotNull
     private Seller seller;
-
-    /**
-     * Billing run that invoiced this Rated transaction
-     */
-    @Transient
-    private BillingRun billingRun;
 
     /**
      * Operation date
@@ -275,40 +272,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     private BigDecimal amountTax;
 
     /**
-     * Invoice that invoiced this Rated transaction
-     */
-    @Transient
-    private Invoice invoice;
-
-    /**
      * Rated transaction processing status
      */
     @OneToOne(mappedBy = "ratedTransaction", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private RatedTransactionProcessingStatus processingStatus;
-
-    /**
-     * Subcategory invoice aggregate that Rated transaction was invoiced under
-     */
-    @Transient
-    private SubCategoryInvoiceAgregate invoiceAgregateF;
-
-    /**
-     * Category invoice aggregate that Rated transaction was invoiced under
-     */
-    @Transient
-    private CategoryInvoiceAgregate invoiceAgregateR;
-
-    /**
-     * Tax invoice aggregate that Rated transaction was invoiced under
-     */
-    @Transient
-    private TaxInvoiceAgregate invoiceAgregateT;
-
-    /**
-     * Status
-     */
-    @Transient
-    private RatedTransactionStatusEnum status;
 
     /**
      * Do not trigger invoicing
@@ -448,46 +415,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         super();
     }
 
-    public RatedTransaction(RatedTransaction ratedTransaction) {
-        this.setWallet(ratedTransaction.getWallet());
-        this.setBillingAccount(ratedTransaction.getBillingAccount());
-        this.setUserAccount(ratedTransaction.getUserAccount());
-        this.setChargeInstance(ratedTransaction.getChargeInstance());
-        this.setUsageDate(ratedTransaction.getUsageDate());
-        this.setInvoiceSubCategory(ratedTransaction.getInvoiceSubCategory());
-        this.setCode(ratedTransaction.getCode());
-        this.setDescription(ratedTransaction.getDescription());
-        this.setUnityDescription(ratedTransaction.getUnityDescription());
-        this.setUnitAmountWithoutTax(ratedTransaction.getUnitAmountWithoutTax());
-        this.setUnitAmountWithTax(ratedTransaction.getUnitAmountWithTax());
-        this.setUnitAmountTax(ratedTransaction.getUnitAmountTax());
-        this.setQuantity(ratedTransaction.getQuantity());
-        this.setAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
-        this.setAmountWithTax(ratedTransaction.getAmountWithTax());
-        this.setAmountTax(ratedTransaction.getAmountTax());
-        this.setInvoice(ratedTransaction.getInvoice());
-        this.setStatus(ratedTransaction.getStatus());
-        this.setDoNotTriggerInvoicing(ratedTransaction.isDoNotTriggerInvoicing());
-        this.setParameter1(ratedTransaction.getParameter1());
-        this.setParameter2(ratedTransaction.getParameter2());
-        this.setParameter3(ratedTransaction.getParameter3());
-        this.setParameterExtra(ratedTransaction.getParameterExtra());
-        this.setOrderNumber(ratedTransaction.getOrderNumber());
-        this.setPriceplan(ratedTransaction.getPriceplan());
-        this.setEdr(ratedTransaction.getEdr());
-        this.setOfferTemplate(ratedTransaction.getOfferTemplate());
-        this.setRatingUnitDescription(ratedTransaction.getRatingUnitDescription());
-        this.setStartDate(ratedTransaction.getStartDate());
-        this.setEndDate(ratedTransaction.getEndDate());
-        this.setSubscription(ratedTransaction.getSubscription());
-        this.setSeller(ratedTransaction.getSeller());
-        this.setTax(ratedTransaction.getTax());
-        this.setTaxPercent(ratedTransaction.getTaxPercent());
-        this.setServiceInstance(ratedTransaction.getServiceInstance());
-        this.setBillingRun(ratedTransaction.getBillingRun());
-        this.setInvoiceAgregateF(ratedTransaction.getInvoiceAgregateF());
-    }
-
     public RatedTransaction(Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity,
             BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet, BillingAccount billingAccount,
             UserAccount userAccount, InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String parameterExtra, String orderNumber,
@@ -506,7 +433,9 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.amountWithoutTax = amountWithoutTax;
         this.amountWithTax = amountWithTax;
         this.amountTax = amountTax;
-        this.status = status;
+        if (status != null && status != RatedTransactionStatusEnum.OPEN) {
+            this.processingStatus = new RatedTransactionProcessingStatus(this, status);
+        }
         this.wallet = wallet;
         this.billingAccount = billingAccount;
         this.userAccount = userAccount;
@@ -545,7 +474,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.amountWithoutTax = walletOperation.getAmountWithoutTax();
         this.amountWithTax = walletOperation.getAmountWithTax();
         this.amountTax = walletOperation.getAmountTax();
-        this.status = RatedTransactionStatusEnum.OPEN;
         this.wallet = walletOperation.getWallet();
         this.userAccount = walletOperation.getWallet().getUserAccount();
         this.billingAccount = userAccount.getBillingAccount();
@@ -582,14 +510,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
     public void setWallet(WalletInstance wallet) {
         this.wallet = wallet;
-    }
-
-    public BillingRun getBillingRun() {
-        return billingRun;
-    }
-
-    public void setBillingRun(BillingRun billingRun) {
-        this.billingRun = billingRun;
     }
 
     public Date getUsageDate() {
@@ -664,44 +584,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.amountTax = amountTax;
     }
 
-    public Invoice getInvoice() {
-        return invoice;
-    }
-
-    public void setInvoice(Invoice invoice) {
-        this.invoice = invoice;
-    }
-
-    public SubCategoryInvoiceAgregate getInvoiceAgregateF() {
-        return invoiceAgregateF;
-    }
-
-    public void setInvoiceAgregateF(SubCategoryInvoiceAgregate invoiceAgregateF) {
-        this.invoiceAgregateF = invoiceAgregateF;
-    }
-
-    public CategoryInvoiceAgregate getInvoiceAgregateR() {
-        return invoiceAgregateR;
-    }
-
-    public void setInvoiceAgregateR(CategoryInvoiceAgregate invoiceAgregateR) {
-        this.invoiceAgregateR = invoiceAgregateR;
-    }
-
-    public TaxInvoiceAgregate getInvoiceAgregateT() {
-        return invoiceAgregateT;
-    }
-
-    public void setInvoiceAgregateT(TaxInvoiceAgregate invoiceAgregateT) {
-        this.invoiceAgregateT = invoiceAgregateT;
-    }
-
     public RatedTransactionStatusEnum getStatus() {
-        return status;
-    }
 
-    public void setStatus(RatedTransactionStatusEnum status) {
-        this.status = status;
+        if (processingStatus != null) {
+            return processingStatus.getStatus();
+        } else {
+            return RatedTransactionStatusEnum.OPEN;
+        }
     }
 
     public boolean isDoNotTriggerInvoicing() {

@@ -1,64 +1,37 @@
 package org.meveo.admin.job;
 
-import org.meveo.admin.async.PaymentAsync;
-import org.meveo.admin.async.SubListCreator;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.xml.bind.JAXBException;
+
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.billing.EDRDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.jaxb.customer.CustomFields;
 import org.meveo.model.jaxb.mediation.EDRs;
 import org.meveo.model.jaxb.mediation.RatedTransactions;
 import org.meveo.model.jaxb.mediation.WalletOperations;
-import org.meveo.model.jaxb.subscription.Accesses;
-import org.meveo.model.jaxb.subscription.Services;
-import org.meveo.model.jaxb.subscription.Status;
-import org.meveo.model.jaxb.subscription.Subscription;
-import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.payments.OperationCategoryEnum;
-import org.meveo.model.payments.PaymentGateway;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.rating.EDR;
-import org.meveo.model.shared.DateUtils;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletService;
 import org.meveo.service.job.JobExecutionService;
-import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.PaymentGatewayService;
-import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInterface;
-import org.meveo.service.script.payment.AccountOperationFilterScript;
-import org.meveo.service.script.payment.DateRangeScript;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.xml.bind.JAXBException;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * The Class ExportMediationEntityJob bean to export EDR, WO and RTx as XML file.
@@ -92,9 +65,6 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     @Inject
     private WalletService walletService;
 
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running with parameter={}", jobInstance.getParametres());
@@ -167,7 +137,8 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
      * @return
      * @throws JAXBException
      */
-    private JobExecutionResultImpl exportWalletOperation(JobExecutionResultImpl result, ParamBean param, File dir, Date firstTransactionDate, Date lastTransactionDate) throws JAXBException {
+    private JobExecutionResultImpl exportWalletOperation(JobExecutionResultImpl result, ParamBean param, File dir, Date firstTransactionDate, Date lastTransactionDate)
+            throws JAXBException {
         String timestamp = sdf.format(new Date());
         List<WalletOperation> walletOperations = walletOperationService.getOpenWalletOperationBetweenTwoDates(firstTransactionDate, lastTransactionDate);
         WalletOperations walletOperationDtos = walletOperationsToDto(walletOperations, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance().getId());
@@ -189,11 +160,12 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
      * @return
      * @throws JAXBException
      */
-    private JobExecutionResultImpl exportRatedTransaction(JobExecutionResultImpl result, ParamBean param, File dir, Date firstTransactionDate, Date lastTransactionDate) throws JAXBException {
+    private JobExecutionResultImpl exportRatedTransaction(JobExecutionResultImpl result, ParamBean param, File dir, Date firstTransactionDate, Date lastTransactionDate)
+            throws JAXBException {
         String timestamp = sdf.format(new Date());
         List<RatedTransaction> ratedTransactions = ratedTransactionService.getOpenRatedTransactionBetweenTwoDates(firstTransactionDate, lastTransactionDate);
         RatedTransactions ratedTransactionDtos = ratedTransactionToDto(ratedTransactions, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"),
-                result.getJobInstance().getId());
+            result.getJobInstance().getId());
         int nbItems = ratedTransactionDtos.getRatedTransactions() != null ? ratedTransactionDtos.getRatedTransactions().size() : 0;
         result.setNbItemsToProcess(nbItems);
         JAXBUtils.marshaller(ratedTransactionDtos, new File(dir + File.separator + "RTx_" + timestamp + ".xml"));
@@ -252,6 +224,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
 
     /**
      * Convert a list of rated transaction to RatedTransactionDto.
+     * 
      * @param ratedTransactions
      * @param dateFormat
      * @param jobInstanceId

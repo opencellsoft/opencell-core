@@ -15,6 +15,7 @@ import org.meveo.event.qualifier.Rejected;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRProcessingStatus;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.UsageRatingService;
@@ -43,51 +44,52 @@ public class UnitUsageRatingJobBean {
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, Long edrId) throws BusinessException {
+    public void execute(JobExecutionResultImpl result, EDR edr) throws BusinessException {
 
-        log.debug("Processing EDR {}", edrId);
+        log.debug("Processing EDR {}", edr.getId());
 
         try {
-            EDR edr = edrService.findById(edrId);
-            if (edr == null) {
-                return;
-            }
+
             usageRatingService.ratePostpaidUsage(edr);
 
-            if (edr.getStatus() == EDRStatusEnum.RATED) {
-                edr = edrService.updateNoCheck(edr);
+            if (edr.getRatingRejectionReason() == null) {
                 result.registerSucces();
             } else {
-                throw new BusinessException(edr.getRejectReason());
+                throw new BusinessException(edr.getRatingRejectionReason());
             }
         } catch (BusinessException e) {
             if (!(e instanceof InsufficientBalanceException)) {
-                log.error("Failed to unit usage rate for {}", edrId, e);
+                log.error("Failed to unit usage rate for {}", edr.getId(), e);
             }
             throw e;
         }
     }
 
+    /**
+     * Mark EDR as rejected along with a rejection reason and fire a rejected EDR event
+     * 
+     * @param result Job execution result
+     * @param edrId EDR identifier
+     * @param e
+     * @throws BusinessException
+     */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void registerFailedEdr(JobExecutionResultImpl result, Long edrId, Exception e) throws BusinessException {
+
+        String rejectReason = StringUtils.truncate(e.getMessage(), 255, true);
+        EDRProcessingStatus edrStatus = new EDRProcessingStatus(edrId, EDRStatusEnum.REJECTED, rejectReason);
+        edrService.getEntityManager().persist(edrStatus);
+
         EDR edr = edrService.findById(edrId);
-        edr.setStatus(EDRStatusEnum.REJECTED);
-        edr.setRejectReason(StringUtils.truncate(e.getMessage(), 255, true));
+
         rejectededEdrProducer.fire(edr);
-        result.registerError();
-		String aLine = "EdrId : " + edr.getId() + " RejectReason : "
-				+ (e != null ? e.getMessage() : edr.getRejectReason()) + "\n";
-		aLine += "eventDate:" + edr.getEventDate() + "\n";
-		aLine += "originBatch:" + edr.getOriginBatch() + "\n";
-		aLine += "originRecord:" + edr.getOriginRecord() + "\n";
-		aLine += "quantity:" + edr.getQuantity() + "\n";
-		aLine += "subscription:" + edr.getSubscription().getCode() + "\n";
-		aLine += "access:" + edr.getAccessCode() + "\n";
-		aLine += "parameter1:" + edr.getParameter1() + "\n";
-		aLine += "parameter2:" + edr.getParameter2() + "\n";
-		aLine += "parameter3:" + edr.getParameter3() + "\n";
-		aLine += "parameter4:" + edr.getParameter4() + "\n";
-		result.addReport(aLine);
-	}
+
+        // Adding as a line, so
+        StringBuilder aLine = new StringBuilder("Edr Id : ").append(edr.getId()).append(" RejectReason : ").append(rejectReason).append(" eventDate:").append(edr.getEventDate())
+            .append("originBatch:").append(edr.getOriginBatch()).append("originRecord:").append(edr.getOriginRecord()).append("quantity:").append(edr.getQuantity())
+            .append("subscription:").append(edr.getSubscription().getCode()).append("access:").append(edr.getAccessCode()).append("parameter1:").append(edr.getParameter1())
+            .append("parameter2:").append(edr.getParameter2()).append("parameter3:").append(edr.getParameter3()).append("parameter4:").append(edr.getParameter4());
+        result.registerError(aLine.toString());
+    }
 }
