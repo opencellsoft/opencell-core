@@ -441,7 +441,7 @@
                     <plugin>
                           <groupId>io.openapitools.swagger</groupId>
                           <artifactId>swagger-maven-plugin</artifactId>
-                          <version>2.0.3</version>
+                          <version>2.1.0</version>
                           
                           <dependencies>    
                                 <dependency>
@@ -498,7 +498,6 @@
                                   <info>
                                     <title>Swagger of Opencellsoft Api</title>
                                     <version>${project.version}</version>
-                                    <description>@#Introduction</description>
                                     <contact>
                                       <email>contact@opencellsoft.fr</email>
                                       <name>OpenCellSoft</name>
@@ -508,7 +507,8 @@
                                       <url>https://opencellsoft.com/</url>
                                       <name>Opencellsoft</name>
                                     </license>
-                                  </info>                       
+                                  </info>
+                                  <descriptionFile>src/test/resources/description.md</descriptionFile>                       
                                 </swaggerConfig>
                                 <resourcePackages>
                                     <resourcePackage>org.meveo.api.rest</resourcePackage>

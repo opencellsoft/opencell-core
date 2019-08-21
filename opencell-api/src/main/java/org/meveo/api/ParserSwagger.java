@@ -21,43 +21,9 @@ public class ParserSwagger {
        // This should be use for jenkins server: parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest"
         System.out.println("Adding annotations to file:"+parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest");
         String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"opencell-api"+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest", "Rs.java");
-      parsing.getAllInfo(allPathFiles);
+        parsing.processCreation(allPathFiles);
     }
 
-    //Get the javadoc for the collector
-    private static class JavaDocCollector extends VoidVisitorAdapter<List<String>> {
-        @Override
-        public void visit(JavadocComment md, List<String> collector) {
-            super.visit(md, collector);
-            String element = md.getContent();
-            element = element.replaceAll("[ ]{5,}", "");
-            if (element.contains("@author") || element.contains("Web service for managing")) {
-            } else {
-                collector.add(element);
-            }
-        }
-    }
-
-    //Get the return type
-    private static class ReturnTypeCollector extends VoidVisitorAdapter<List<String>> {
-        @Override
-        public void visit(MethodDeclaration md, List<String> collector) {
-            super.visit(md, collector);
-            String typeReturn = "* @type " + md.getType().asString() + ".class";
-            String fusion = typeReturn + "\n";
-            collector.add(fusion);
-        }
-    }
-
-    //Get the return type and the declaration
-    private static class DeclarationTypeCollector extends VoidVisitorAdapter<List<String>> {
-        @Override
-        public void visit(MethodDeclaration md, List<String> collector) {
-            super.visit(md, collector);
-            String name = (md.getDeclarationAsString());
-            collector.add(name);
-        }
-    }
 
     //Search All files that we have to add for annotation
     private String[] pathRetriever(String folderPath, String code) {
@@ -100,14 +66,15 @@ public class ParserSwagger {
         }
         return returnListFilesClean;
     }
+
     //Get the info of javadoc.In all files
-    private void getAllInfo(String[] allPathFiles) throws Exception {
+    private void processCreation(String[] allPathFiles) throws Exception {
         boolean missingComment;
         List<String> missingCommentList = new ArrayList<String>();
         for (String path : allPathFiles) {
             //System.out.println(path);
             File FILE_PATH = new File(path);
-            missingComment = checkLength(FILE_PATH);
+            missingComment = checkLength(FILE_PATH);//This is the process that determine if the ressource are missing element
             if (!missingComment) {
                 fileReader(FILE_PATH, path, FILE_PATH.getName());
             } else if (missingComment) {
@@ -129,6 +96,7 @@ public class ParserSwagger {
         }
         return true;
     }
+
     //Use of javaparser for retrieving the JavaDocCollector
     private String[] javaDocCollector(File FILE_PATH) throws FileNotFoundException {
         CompilationUnit cu = StaticJavaParser.parse(FILE_PATH);
@@ -138,6 +106,7 @@ public class ParserSwagger {
         String[] javadoc = javaDocNames.toArray(new String[javaDocNames.size()]);
         return javadoc;
     }
+
     //Use of javaparser for retrieving the  ReturnTypeCollector
     private String[] returnTypeDoc(File FILE_PATH) throws FileNotFoundException {
         CompilationUnit cu = StaticJavaParser.parse(FILE_PATH);
@@ -147,6 +116,7 @@ public class ParserSwagger {
         String[] returnInfo = returnNames.toArray(new String[returnNames.size()]);
         return returnInfo;
     }
+
     //Use of javaparser for retrieving the DeclarationTypeCollector
     private String[] declarationDoc(File FILE_PATH) throws FileNotFoundException {
         CompilationUnit cu = StaticJavaParser.parse(FILE_PATH);
@@ -156,8 +126,44 @@ public class ParserSwagger {
         String[] declarationInfo = declarationDoc.toArray(new String[declarationDoc.size()]);
         return declarationInfo;
     }
+
+    //Get the javadoc for the collector
+    private static class JavaDocCollector extends VoidVisitorAdapter<List<String>> {
+        @Override
+        public void visit(JavadocComment md, List<String> collector) {
+            super.visit(md, collector);
+            String element = md.getContent();
+            element = element.replaceAll("[ ]{5,}", "");
+            if (element.contains("@author") || element.contains("Web service for managing")) {
+            } else {
+                collector.add(element);
+            }
+        }
+    }
+
+    //Get the return type
+    private static class ReturnTypeCollector extends VoidVisitorAdapter<List<String>> {
+        @Override
+        public void visit(MethodDeclaration md, List<String> collector) {
+            super.visit(md, collector);
+            String typeReturn = "* @type " + md.getType().asString() + ".class";
+            String fusion = typeReturn + "\n";
+            collector.add(fusion);
+        }
+    }
+
+    //Get the return type and the declaration
+    private static class DeclarationTypeCollector extends VoidVisitorAdapter<List<String>> {
+        @Override
+        public void visit(MethodDeclaration md, List<String> collector) {
+            super.visit(md, collector);
+            String name = (md.getDeclarationAsString());
+            collector.add(name);
+        }
+    }
+
     //Activate the process of swagger implementation
-    private static String swaggerGeneration(String info, boolean deprecatedtag) {
+    private static String swaggerGeneration(String info, String urlEnd, boolean deprecatedtag, boolean typeProcessFlag) {
         String[] infoData = info.split("\\*{1}");
         for (String data : infoData) {
             if (data.length() > 8) {
@@ -165,12 +171,12 @@ public class ParserSwagger {
             }
         }
         infoData = info.split("[@]{1}");
-        info = operationGeneration(infoData, deprecatedtag);
+        info = operationGeneration(infoData, urlEnd, deprecatedtag, typeProcessFlag);
         return info;
     }
 
     //Will retrieve information for their specific location
-    private static String operationGeneration(String[] info, boolean deprecatedtag) {
+    private static String operationGeneration(String[] info, String urlEnd, boolean deprecatedtag, boolean typeProcessFlag) {
         String operation;
         String summary = info[0];
         String description = info[0];
@@ -183,16 +189,16 @@ public class ParserSwagger {
                 summary = info[0].substring(0, 150);
             }
         }
-        operation = operationString(description, summary, returnValue, typeValue, deprecatedtag);
+        operation = operationString(description, summary, returnValue, typeValue, urlEnd, deprecatedtag, typeProcessFlag);
         return operation;
     }
 
     //Will create the String for operation for the specific method with a given entry
-    private static String operationString(String description, String summary, String returnValue, String typeValue, boolean deprecatedtag) {
+    private static String operationString(String description, String summary, String returnValue, String typeValue, String urlEnd, boolean deprecatedtag, boolean typeProcessFlag) {
         description = description.replace("\n", "").replace("\r", "").replaceAll("(\")", "").replaceAll("[\\*]", "");
         summary = summary.replace("\n", "").replace("\r", "").replaceAll("(\")", "").replaceAll("[\\*]", "");
         returnValue = returnValue.replace("\n", "").replace("\r", "").replaceAll("(\")", "");
-        String deprecated; 
+        String deprecated;
         if (typeValue.contains("<String>")) {//In one of the file <String> is inside the typeValue which will cause an error in the swagger
             typeValue = typeValue.replaceAll("(<String>)", "");
         }
@@ -201,11 +207,16 @@ public class ParserSwagger {
         } else {
             deprecated = "";
         }
+        if(typeProcessFlag){
+            urlEnd="\n\t\t\toperationId=\""+urlEnd+"\",";
+        }
+        else{urlEnd="";
+        System.out.println("ERROR");}
         String operationString = "\t@Operation(\n\t\t\tsummary=\"" +
                 summary +
                 "\",\n\t\t\tdescription=\"" +
                 description +
-                "\"," + deprecated + "\n\t\t\tresponses= {\n" +
+                "\"," + deprecated+urlEnd + "\n\t\t\tresponses= {\n" +
                 "\t\t\t\t@ApiResponse(description=\"" +
                 returnValue +
                 "\",\n" +
@@ -219,12 +230,13 @@ public class ParserSwagger {
                 "\t)";
         return operationString;
     }
+
     //Separate data of the comment block and return it.
     private static String[] separationData(String info) {
         String[] infoData = info.split("\\*{1}");
         for (String data : infoData) {
             if (data.length() > 8) {
-                data=data.replace("*","");
+                data = data.replace("*", "");
                 info = info + data + "";
             }
         }
@@ -241,8 +253,8 @@ public class ParserSwagger {
         String[] declarationDoc = declarationDoc(FILE_PATH);
         FileReader fr = null;
         BufferedReader lnr = null;
-        String str, combinaison = "";
-        boolean annotationHere = false, swaggerAnnotationImport = false, deletedextraline = false, declarationflag = true, deprecatedtag = false, tagflag = false, importApparition = false, javadocstart = false, javadocend = false, publicinterfaceflag = false;
+        String str, combinaison = "", urlEndString = "", typeProcess = "";
+        boolean annotationHere = false, typeProcessFlag = false, swaggerAnnotationImport = false, deletedextraline = false, declarationflag = true, deprecatedtag = false, tagflag = false, importApparition = false, javadocstart = false, javadocend = false, publicinterfaceflag = false;
         int occuration = 0, indexDeclaration = 0;
         className = className.replaceAll("Rs.java", "");
         try {
@@ -255,6 +267,8 @@ public class ParserSwagger {
                 String tmp2 = "    " + returnTypeInfo[indexDeclaration].replaceAll("\\*", "").replaceAll(".class", "").replaceAll("@type", "").replaceAll(" ", "").replace("\n", "").replace("\r", "");
                 if (str.contains("/*")) {
                     javadocstart = true;
+                    typeProcess="";
+                    typeProcessFlag = false;
                 } else if (str.contains("import io.swagger.v3.oas.annotations")) {
                     annotationHere = true;
                 } else if (str.contains("*/")) {
@@ -263,28 +277,35 @@ public class ParserSwagger {
                     deprecatedtag = true;
                 } else if (str.contains("public interface ")) {
                     publicinterfaceflag = true;
-                } else if (str.contains("@Path(")) {//Generation for the Swagger @operation
+                } else if (str.contains("@GET") || str.contains("@PATCH") || str.contains("@PUT") || str.contains("@DELETE") || str.contains("@POST")) {
+                    typeProcess = str;
+                    typeProcessFlag = true;
+                }
+                else if (str.contains("@Path(")) {//Generation for the Swagger @operation
+
                     String tmp = str.replaceAll("[ ]{3,}", "");
-                    if (tmp.split(" ").length > 1) {//this Block is here in case of @Path ActionStatus XXXXX() are on the same line
-                        String[] tmpArray = tmp.split(" ");
-                        if (javadocstart && javadocend) {
-                            combinaison = infoOfMethod[occuration] + returnTypeInfo[occuration];
-                            str = pathIssueSolver(tmpArray, swaggerGeneration(combinaison, deprecatedtag));
-                            occuration++;
-                        }
-                    } else {
-                        if (!tagflag && !publicinterfaceflag) {// This means is the first aparition of Path() Which for the tag
-                            tagflag = true;
-                            str = str + "\n@Tag(name = \"" + className + "\", description = \"@%" + className + "\")";
-                        } else if (javadocstart && javadocend) {
-                            combinaison = infoOfMethod[occuration] + returnTypeInfo[occuration];
-                            str = str.substring(0, str.indexOf(")")) + ")\n" + swaggerGeneration(combinaison, deprecatedtag);
-                            occuration++;
-                        }
-                        javadocend = false;
-                        javadocstart = false;
-                        deprecatedtag = false;
+
+                    if (!tagflag && !publicinterfaceflag) {// This means is the first apparition of Path() Which for the tag
+                        tagflag = true;
+                        str = str + "\n@Tag(name = \"" + className + "\", description = \"@%" + className + "\")";
                     }
+                    else if (javadocstart && javadocend) {
+                        urlEndString = tmp;
+                        urlEndString = autoCompleteUrl(urlEndString, typeProcess, className);
+                        combinaison = infoOfMethod[occuration] + returnTypeInfo[occuration];
+                        if (tmp.split(" ").length > 1) {//this Block is here in case of @Path ActionStatus XXXXX() are on the same line
+                            String[] tmpArray = tmp.split(" ");
+                            System.out.println("BAD INDENDATION");
+                            str = pathIssueSolver(tmpArray, swaggerGeneration(combinaison, urlEndString, deprecatedtag, typeProcessFlag));
+                        }
+                        else {
+                            str = str.substring(0, str.indexOf(")")) + ")\n" + swaggerGeneration(combinaison, urlEndString, deprecatedtag, typeProcessFlag);
+                        }
+                        occuration++;
+                    }
+                    javadocend = false;
+                    javadocstart = false;
+                    deprecatedtag = false;
                 } else if (str.contains("import ") && !swaggerAnnotationImport) {
                     importApparition = true;
                 } else if (importApparition && !swaggerAnnotationImport) {//Import libraries
@@ -327,12 +348,12 @@ public class ParserSwagger {
                 String summary = "default", description = "default", returnValue = "default", typeValue = "default";
                 while ((str = lnr.readLine()) != null) {
                     String tmp2 = "    " + returnTypeInfo[indexDeclaration].replaceAll("\\*", "").replaceAll(".class", "").replaceAll("@type", "").replaceAll(" ", "").replace("\n", "").replace("\r", "");
-                    if (occuration < returnTypeInfo.length  && str.contains("@Operation")) {//When meating the @Operation will save the data for the next line
+                    if (occuration < returnTypeInfo.length && str.contains("@Operation")) {//When meating the @Operation will save the data for the next line
                         combinaison = infoOfMethod[occuration] + returnTypeInfo[occuration];
                         String[] info = separationData(combinaison);
                         description = info[0];
                         returnValue = info[info.length - 2].replaceAll("return", "");
-                        typeValue = info[info.length - 1].replaceAll("type", "").replace("\n","");
+                        typeValue = info[info.length - 1].replaceAll("type", "").replace("\n", "");
                         description = description.replace("\n", "").replace("\r", "").replaceAll("(\")", "").replaceAll("[\\*]", "");
                         summary = description;
                         returnValue = returnValue.replace("\n", "").replace("\r", "").replaceAll("(\")", "");
@@ -356,7 +377,7 @@ public class ParserSwagger {
                         str = "\t\t\t\t\t\t\t\t\t\t\timplementation=" + typeValue;
                     } else if ((str.contains(tmp2) && declarationflag) || deletedextraline) {
                         if (str.contains(";")) {
-                            if (declarationDoc.length == 1&&occuration==0) {
+                            if (declarationDoc.length == 1 && occuration == 0) {
                                 str = paramRewriting(declarationDoc[occuration], infoOfMethod[occuration]);
                             } else {
                                 str = paramRewriting(declarationDoc[occuration - 1], infoOfMethod[occuration - 1]);
@@ -374,10 +395,10 @@ public class ParserSwagger {
                         }
                     } else if (str.contains("description=")) {
                         str = "\t\t\tdescription=\"" + description + "\",";
-                    }else if (str.contains("@Tag(name =")) {
-                            tagflag = true;
-                            str ="@Tag(name = \"" + className + "\", description = \"@%" + className + "\")";
-                        }
+                    } else if (str.contains("@Tag(name =")) {
+                        tagflag = true;
+                        str = "@Tag(name = \"" + className + "\", description = \"@%" + className + "\")";
+                    }
                     writer.println(str);
                 }
             }
@@ -395,6 +416,28 @@ public class ParserSwagger {
 
     }
 
+    private String autoCompleteUrl(String urlEndString, String typeProcess, String className) {
+        urlEndString = urlEndString.replace("@Path(\"", "").replaceAll("\"", "").replace(")", "").replaceAll("/", "_").replaceAll("[}]", "").replaceAll("[{]", "").replaceAll("[ ]{3,}", "").replaceAll("\t", "");
+        typeProcess = typeProcess.replaceAll("[ ]{3,}", "").replace("@", "").replaceAll("\t", "");
+        if (urlEndString.length() == 1) {
+            if (typeProcess.contains("GET")) {
+                urlEndString = urlEndString + "search";
+            } else if (typeProcess.contains("POST")) {
+                urlEndString = urlEndString + "create";
+            } else if (typeProcess.contains("PUT")) {
+                urlEndString = urlEndString + "update";
+            } else if (typeProcess.contains("DELETE")) {
+                urlEndString = urlEndString + "delete";
+            } else if (typeProcess.contains("PATCH")) {
+                urlEndString = urlEndString + "patch";
+            } else {
+                urlEndString = urlEndString + "default";
+            }
+        }
+        urlEndString = typeProcess + "_" + className + urlEndString;
+        return urlEndString;
+    }
+
     //Parse and replace the line by other information. This is for the case of missing comment in file, thus it will only add basic information. And in case of SwaggerAnnotation already here it will just copy the file
     private void defaultReaderGeneration(String filePath, String classNameTag) throws IOException {
         String filePathTemp = filePath.replaceAll("Rs.java", "Rs.txt");
@@ -405,9 +448,9 @@ public class ParserSwagger {
         String[] declarationDoc = declarationDoc(FILE_PATH);
         FileReader fr = null;
         BufferedReader lnr = null;
-        String str, combinaison;
+        String str, combinaison, typeProcess = "", urlEndString = "";
         int indexjavadoc = 0, indexreturntype = 0, indexDeclaration = 0;
-        boolean annotationHere = false, swaggerAnnotationImport = false, deletedextraline = false, declarationflag = true, deprecatedtag = false, tagflag = false, importApparition = false, javadocstart = false, javadocend = false, publicinterfaceflag = false;
+        boolean annotationHere = false, typeProcessFlag = false, swaggerAnnotationImport = false, deletedextraline = false, declarationflag = true, deprecatedtag = false, tagflag = false, importApparition = false, javadocstart = false, javadocend = false, publicinterfaceflag = false;
         classNameTag = classNameTag.replaceAll("Rs.java", "");
         try {
             fr = new FileReader(filePath);
@@ -440,11 +483,11 @@ public class ParserSwagger {
                         String[] tmpArray = tmp.split(" ");
                         if (javadocstart && javadocend) {
                             combinaison = infoOfMethod[indexjavadoc] + returnTypeInfo[indexreturntype];
-                            str = pathIssueSolver(tmpArray, swaggerGeneration(combinaison, deprecatedtag));
+                            str = pathIssueSolver(tmpArray, swaggerGeneration(combinaison, urlEndString, deprecatedtag, typeProcessFlag));
                             indexjavadoc++;
                             indexreturntype++;
                         } else {
-                            str = pathIssueSolver(tmpArray, operationString(str, str, returnTypeInfo[indexreturntype], returnTypeInfo[indexreturntype].replaceAll("\\* @type ", ""), deprecatedtag));
+                            str = pathIssueSolver(tmpArray, operationString(str, str, returnTypeInfo[indexreturntype], returnTypeInfo[indexreturntype].replaceAll("\\* @type ", ""), urlEndString, deprecatedtag, typeProcessFlag));
                             indexreturntype++;
                         }
                         javadocend = false;
@@ -456,11 +499,11 @@ public class ParserSwagger {
                             str = str + "\n@Tag(name = \"" + classNameTag + "\", description = \"@%" + classNameTag + "\")";
                         } else if (javadocstart && javadocend) {
                             combinaison = infoOfMethod[indexjavadoc] + returnTypeInfo[indexreturntype];
-                            str = str.substring(0, str.indexOf(")")) + ")\n" + swaggerGeneration(combinaison, deprecatedtag);
+                            str = str.substring(0, str.indexOf(")")) + ")\n" + swaggerGeneration(combinaison, urlEndString, deprecatedtag, typeProcessFlag);
                             indexjavadoc++;
                             indexreturntype++;
                         } else {
-                            str = str + "\n" + operationString(str, str, returnTypeInfo[indexreturntype].replaceAll(".class", " data."), returnTypeInfo[indexreturntype].replaceAll("\\* @type ", ""), deprecatedtag);
+                            str = str + "\n" + operationString(str, str, returnTypeInfo[indexreturntype].replaceAll(".class", " data."), returnTypeInfo[indexreturntype].replaceAll("\\* @type ", ""), urlEndString, deprecatedtag, typeProcessFlag);
                             indexreturntype++;
                         }
                         javadocend = false;
@@ -511,7 +554,6 @@ public class ParserSwagger {
                 goodpath = "   " + goodpath;
             }
             goodpath = goodpath + " " + dataArray[i];
-
         }
         return goodpath;
     }
@@ -535,7 +577,7 @@ public class ParserSwagger {
             param = "    " + change.substring(0, change.indexOf("(")) + "(";
             int i = change.indexOf("(") + 1;
             change = change.substring(i, change.length());
-            if (change.contains(",")) {//Multiple parameter for the method. We will split 
+            if (change.contains(",")) {//Multiple parameter for the method. We will split
                 String[] methodArray = change.split(",");
                 for (int j = 0; j < methodArray.length; j++) {
                     String tmp = database.get(j).replace("param", "");
@@ -554,7 +596,8 @@ public class ParserSwagger {
             param = "    " + change + ";";
         }
         return param;
-    }    
+    }
+
     //This is the same function as before but just for the case if @parameter are already present in the annotation
     private String paramRewriting(String change, String data) {
         String param = "";
@@ -575,9 +618,9 @@ public class ParserSwagger {
             change = change.substring(i, change.length());
             if (change.contains(",")) {//Multiple parameter for the method
                 String[] methodArray = change.split(",");
-                for(i=0;i<methodArray.length;i++){//This will clean the old @Parameter annotation
-                    String tmp=methodArray[i].replaceAll(".+[\"].+[\"]","");
-                    methodArray[i]=tmp;
+                for (i = 0; i < methodArray.length; i++) {//This will clean the old @Parameter annotation
+                    String tmp = methodArray[i].replaceAll(".+[\"].+[\"]", "");
+                    methodArray[i] = tmp;
                 }
                 for (int j = 0; j < methodArray.length; j++) {
                     String tmp = database.get(j).replace("param", "");//If an error occur because of a out of bound exception. Check the number of param in the comment and in the function. Because is probably due to a missing @param
@@ -589,7 +632,7 @@ public class ParserSwagger {
                 }
             } else {//Only one parameter in the method
                 String tmp = database.get(0).replace("\n", "").replace("\r", "").replace("param", "");
-                change=change.replaceAll(".+[\"].+[\"]","");
+                change = change.replaceAll(".+[\"].+[\"]", "");
                 param = param + "@Parameter(description=\"" + tmp + "\"" + change;
             }
             param = param + ";";
@@ -598,4 +641,5 @@ public class ParserSwagger {
         }
         return param;
     }
+
 }
