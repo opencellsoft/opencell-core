@@ -54,8 +54,8 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Donatas Remeika
  * @author Edward P. Legaspi
- * 
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  */
 public final class FileUtils {
 
@@ -133,13 +133,15 @@ public final class FileUtils {
      * @param dest the destination
      * @param file the file
      * @param name the file name
+     * @return the file name
      */
-    public static void moveFileDontOverwrite(String dest, File file, String name) {
+    public static String moveFileDontOverwrite(String dest, File file, String name) {
         String destName = name;
         if ((new File(dest + File.separator + name)).exists()) {
             destName += "_COPY_" + DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT);
         }
         moveFile(dest, file, destName);
+        return destName;
     }
 
     /**

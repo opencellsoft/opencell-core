@@ -1,16 +1,5 @@
 package org.meveo.admin.util;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.io.FilenameUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.parsers.FileParserBeanio;
@@ -27,6 +16,16 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.bi.impl.FlatFileService;
 import org.slf4j.Logger;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Flat file validator
@@ -114,11 +113,13 @@ public class FlatFileValidator {
      * @param file        the file
      * @param flatFile    the flat file
      * @param destination the destination
+     * @return the file current name.
      */
-    private void moveFile(File file, FlatFile flatFile, String destination) {
+    private String moveFile(File file, FlatFile flatFile, String destination) {
+        String destName = null;
         if (file != null && flatFile != null && !StringUtils.isBlank(destination)) {
-            String destName = flatFile.getFileName();
-            if ((new File(destination + File.separator + flatFile.getFileName())).exists()) {
+            destName = flatFile.getFileOriginalName();
+            if ((new File(destination + File.separator + flatFile.getFileOriginalName())).exists()) {
                 destName += "_COPY_" + DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT);
             }
             if (!StringUtils.isBlank(flatFile.getCode())) {
@@ -126,6 +127,7 @@ public class FlatFileValidator {
             }
             FileUtils.moveFile(destination, file, destName);
         }
+        return destName;
     }
 
     /**
@@ -194,21 +196,23 @@ public class FlatFileValidator {
      * @param flatFile        the flat file
      * @param inputDirectory  the input directory
      * @param rejectDirectory the reject directory
+     * @return the file current name
      */
-    private void moveFile(File file, FlatFile flatFile, String inputDirectory, String rejectDirectory) {
-
+    private String moveFile(File file, FlatFile flatFile, String inputDirectory, String rejectDirectory) {
+        String fileCurrentName = null;
         if (file != null && flatFile != null && !StringUtils.isBlank(inputDirectory)) {
             if (flatFile.getStatus() == FileStatusEnum.BAD_FORMED) {
-                log.info("the file {} is bad formed", flatFile.getFileName());
-                moveFile(file, flatFile, rejectDirectory);
+                log.info("the file {} is bad formed", flatFile.getFileOriginalName());
+                fileCurrentName = moveFile(file, flatFile, rejectDirectory);
             } else {
-                log.info("the file {} is well formed", flatFile.getFileName());
+                log.info("the file {} is well formed", flatFile.getFileOriginalName());
                 if (!new File(inputDirectory).exists()) {
                     new File(inputDirectory).mkdirs();
                 }
-                moveFile(file, flatFile, inputDirectory);
+                fileCurrentName = moveFile(file, flatFile, inputDirectory);
             }
         }
+        return fileCurrentName;
     }
 
     /**
@@ -225,7 +229,7 @@ public class FlatFileValidator {
             int badLinesLimit = getBadLinesLimit();
 
             long linesCounter = 0;
-                RecordContext recordContext = null;
+            RecordContext recordContext = null;
             while (true) {
                 linesCounter++;
                 try {
@@ -330,10 +334,13 @@ public class FlatFileValidator {
 
         //Log in database the input file.
         FlatFile flatFile = flatFileService
-                .create(fileName, fileFormat, errors.toString(), errors.length() > 0 ? FileStatusEnum.BAD_FORMED : FileStatusEnum.WELL_FORMED, null, null, null, null);
+                .create(fileName, fileName, fileFormat, errors.toString(), errors.length() > 0 ? FileStatusEnum.BAD_FORMED : FileStatusEnum.WELL_FORMED, null, null, null, null);
 
         //Move the file to the corresponding directory
-        moveFile(file, flatFile, inputDirectory, rejectDirectory);
+        String fileCurrentName = moveFile(file, flatFile, inputDirectory, rejectDirectory);
+
+        flatFile.setFileCurrentName(fileCurrentName);
+        flatFileService.update(flatFile);
 
         return flatFile;
     }
