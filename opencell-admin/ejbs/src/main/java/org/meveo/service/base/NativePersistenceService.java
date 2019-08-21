@@ -117,7 +117,6 @@ public class NativePersistenceService extends BaseService {
     public Map<String, Object> findById(String tableName, Long id) {
 
         try {
-
             Session session = getEntityManager().unwrap(Session.class);
             SQLQuery query = session.createSQLQuery("select * from " + tableName + " e where id=:id");
             query.setParameter("id", id);
@@ -132,7 +131,6 @@ public class NativePersistenceService extends BaseService {
             }
 
             return values;
-
         } catch (Exception e) {
             log.error("Failed to retrieve values from table by id {}/{} sql {}", tableName, id, e);
             throw e;
