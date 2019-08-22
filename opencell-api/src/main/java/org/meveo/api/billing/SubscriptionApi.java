@@ -1008,7 +1008,7 @@ public class SubscriptionApi extends BaseApi {
     
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "subscriptions.subscription", itemPropertiesToFilter = { @FilterProperty(property = "seller", entityClass = Seller.class),
-			@FilterProperty(property = "userAccount", entityClass = Customer.class)})
+			@FilterProperty(property = "customerCode", entityClass = Customer.class)})
     public SubscriptionsListResponseDto list(PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 
         String sortBy = DEFAULT_SORT_ORDER_ID;
