@@ -1,12 +1,12 @@
 package org.meveo.api.rest.custom.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.List;
 
 import javax.ws.rs.core.Link;
 
 import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class UnitaryCustomTableRsImplTest {
     private UnitaryCustomTableRsImpl sut = new UnitaryCustomTableRsImpl();
