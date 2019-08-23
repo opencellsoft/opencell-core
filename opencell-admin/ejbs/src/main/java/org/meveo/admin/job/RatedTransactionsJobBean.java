@@ -48,10 +48,6 @@ public class RatedTransactionsJobBean extends BaseJobBean {
     @Inject
     private RatedTransactionAsync ratedTransactionAsync;
 
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
-
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {

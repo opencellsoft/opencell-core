@@ -29,8 +29,6 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.bytebuddy.implementation.bytecode.Throw;
-
 /**
  * Provides custom functions for Meveo application. The following functions are provided:
  * <ul>
@@ -1771,6 +1769,5 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCFValueFromCT(String tableName, String fieldName, Long id) {
     	return getCustomTableService().findFieldByIdAndTableName(id, tableName, fieldName);
     }
-    
     
 }

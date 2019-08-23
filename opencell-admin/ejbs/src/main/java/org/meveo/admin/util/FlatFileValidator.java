@@ -1,5 +1,16 @@
 package org.meveo.admin.util;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.apache.commons.io.FilenameUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.parsers.FileParserBeanio;
@@ -16,16 +27,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.bi.impl.FlatFileService;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * Flat file validator
@@ -224,17 +225,20 @@ public class FlatFileValidator {
             int badLinesLimit = getBadLinesLimit();
 
             long linesCounter = 0;
-            while (fileParser.hasNext()) {
                 RecordContext recordContext = null;
+            while (true) {
                 linesCounter++;
                 try {
                     recordContext = fileParser.getNextRecord();
+                    if (recordContext == null) {
+                        break;
+                    }
                     log.trace("record line content:{}", recordContext.getLineContent());
                     if (recordContext.getRecord() == null) {
-                        throw new Exception(recordContext.getReason());
+                        throw recordContext.getRejectReason();
                     }
                 } catch (Throwable e) {
-                    String erreur = (recordContext == null || recordContext.getReason() == null) ? e.getMessage() : recordContext.getReason();
+                    String erreur = (recordContext == null || recordContext.getRejectReason() == null) ? e.getMessage() : recordContext.getRejectReason().getMessage();
                     log.warn("record on error :" + erreur);
                     errors.add("line=" + linesCounter + ": " + erreur);
                     if (errors.size() >= badLinesLimit) {

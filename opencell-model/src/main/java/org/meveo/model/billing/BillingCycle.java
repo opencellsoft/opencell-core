@@ -46,6 +46,7 @@ import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * Billing cycle
+ * 
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
@@ -161,7 +162,7 @@ public class BillingCycle extends BusinessCFEntity {
     private BillingEntityTypeEnum type;
 
     /**
-     * Script to run
+     * Script to group rated transactions by invoice type or other parameters. Script accepts a RatedTransaction list as an input.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
@@ -365,10 +366,16 @@ public class BillingCycle extends BusinessCFEntity {
         this.type = type;
     }
 
+    /**
+     * @return Script to group rated transactions by invoice type or other parameters. Script accepts a RatedTransaction list as an input.
+     */
     public ScriptInstance getScriptInstance() {
         return scriptInstance;
     }
 
+    /**
+     * @param scriptInstance Script to group rated transactions by invoice type or other parameters. Script accepts a RatedTransaction list as an input.
+     */
     public void setScriptInstance(ScriptInstance scriptInstance) {
         this.scriptInstance = scriptInstance;
     }

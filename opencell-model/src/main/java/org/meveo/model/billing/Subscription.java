@@ -102,9 +102,10 @@ import org.meveo.model.shared.DateUtils;
 @NamedQueries({
         @NamedQuery(name = "Subscription.getExpired", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
-        @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate") })
-
-public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity, IDiscountable,ICounterEntity {
+        @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate"),
+        @NamedQuery(name = "Subscription.listByBillingRun", query = "select s from Subscription s where s.billingRun.id=:billingRunId order by s.id"),
+        @NamedQuery(name = "Subscription.getMimimumRTUsed", query = "select s.minimumAmountEl from Subscription s where s.minimumAmountEl is not null") })
+public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -376,7 +377,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     @Column(name = "initial_renewal", columnDefinition = "text")
     private String initialSubscriptionRenewal;
-    
+
     /**
      * This method is called implicitly by hibernate, used to enable
 	 * encryption for custom fields of this entity
@@ -1000,8 +1001,10 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     public void setInitialSubscriptionRenewal(String initialSubscriptionRenewal) {
         this.initialSubscriptionRenewal = initialSubscriptionRenewal;
     }
+
     /**
      * Gets counters
+     * 
      * @return a map of counters
      */
     public Map<String, CounterInstance> getCounters() {
@@ -1010,6 +1013,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
 
     /**
      * Sets counters
+     * 
      * @param counters a map of counters
      */
     public void setCounters(Map<String, CounterInstance> counters) {
