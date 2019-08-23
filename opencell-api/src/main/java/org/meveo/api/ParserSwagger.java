@@ -28,11 +28,11 @@ public class ParserSwagger {
     //Search All files that we have to add for annotation
     private String[] pathRetriever(String folderPath, String code) {
         List<String> returnListFilesPath = new ArrayList<>();
-        List<String> cleanFilesPath;
+        List<String> orderFilesPath;
         File folder = new File(folderPath);
         parsing.listAllFiles(folder, returnListFilesPath);
-        cleanFilesPath = parsing.cleanFilesPath(returnListFilesPath, code);
-        String[] finalPathFiles = cleanFilesPath.toArray(new String[cleanFilesPath.size()]);
+        orderFilesPath = parsing.orderFilesPath(returnListFilesPath, code);
+        String[] finalPathFiles = orderFilesPath.toArray(new String[orderFilesPath.size()]);
         return finalPathFiles;
 
     }
@@ -54,8 +54,8 @@ public class ParserSwagger {
         }
     }
 
-    //Retrieve the Files with a given String sequence
-    private List<String> cleanFilesPath(List<String> listFilesPath, String code) {
+    //Keep the Files with a given String sequence
+    private List<String> orderFilesPath(List<String> listFilesPath, String code) {
         List<String> returnListFilesClean = new ArrayList<>();
         String[] allPathFiles = listFilesPath.toArray(new String[listFilesPath.size()]);
         for (int i = 0; i < allPathFiles.length; i++) {
@@ -78,7 +78,7 @@ public class ParserSwagger {
             if (!missingComment) {
                 fileReader(FILE_PATH, path, FILE_PATH.getName());
             } else if (missingComment) {
-                defaultReaderGeneration(path, FILE_PATH.getName());
+                //defaultReaderGeneration(path, FILE_PATH.getName());
                 String fileIndex = FILE_PATH.toString();
                 missingCommentList.add(fileIndex);
             }
@@ -178,10 +178,10 @@ public class ParserSwagger {
     //Will retrieve information for their specific location
     private static String operationGeneration(String[] info, String urlEnd, boolean deprecatedtag, boolean typeProcessFlag) {
         String operation;
-        String summary = info[0];
-        String description = info[0];
-        String returnValue = info[info.length - 2].replaceAll("return", "");
-        String typeValue = info[info.length - 1].replaceAll("type", "");
+        String summary = info[0];//Resume of the Api
+        String description = info[0];//Description of the API
+        String returnValue = info[info.length - 2].replaceAll("return", "");//Description of the return 
+        String typeValue = info[info.length - 1].replaceAll("type", "");//Return type 
         if (info[0].length() > 150) {
             if (info[0].contains(".")) {
                 summary = info[0].substring(0, info[0].indexOf("."));
@@ -280,8 +280,7 @@ public class ParserSwagger {
                 } else if (str.contains("@GET") || str.contains("@PATCH") || str.contains("@PUT") || str.contains("@DELETE") || str.contains("@POST")) {
                     typeProcess = str;
                     typeProcessFlag = true;
-                }
-                else if (str.contains("@Path(")) {//Generation for the Swagger @operation
+                }else if (str.contains("@Path(")) {//Generation for the Swagger @operation
 
                     String tmp = str.replaceAll("[ ]{3,}", "");
 
@@ -295,7 +294,6 @@ public class ParserSwagger {
                         combinaison = infoOfMethod[occuration] + returnTypeInfo[occuration];
                         if (tmp.split(" ").length > 1) {//this Block is here in case of @Path ActionStatus XXXXX() are on the same line
                             String[] tmpArray = tmp.split(" ");
-                            System.out.println("BAD INDENDATION");
                             str = pathIssueSolver(tmpArray, swaggerGeneration(combinaison, urlEndString, deprecatedtag, typeProcessFlag));
                         }
                         else {
@@ -306,9 +304,7 @@ public class ParserSwagger {
                     javadocend = false;
                     javadocstart = false;
                     deprecatedtag = false;
-                } else if (str.contains("import ") && !swaggerAnnotationImport) {
-                    importApparition = true;
-                } else if (importApparition && !swaggerAnnotationImport) {//Import libraries
+                } else if (str.contains("import ")&& !swaggerAnnotationImport) {//Import libraries
                     swaggerAnnotationImport = true;
                     str = "import io.swagger.v3.oas.annotations.Operation;\n" +
                             "import io.swagger.v3.oas.annotations.Parameter;\n" +
@@ -317,7 +313,7 @@ public class ParserSwagger {
                             "import io.swagger.v3.oas.annotations.parameters.RequestBody;\n" +
                             "import io.swagger.v3.oas.annotations.responses.ApiResponse;\n" +
                             "import io.swagger.v3.oas.annotations.tags.Tag;\n" +
-                            "import io.swagger.v3.oas.annotations.Hidden;\n";
+                            "import io.swagger.v3.oas.annotations.Hidden;\n\n"+str;
                 } else if ((str.contains(tmp2) && declarationflag) || deletedextraline) {//@Parameter generation in function (WE check either the tmp2 contains the good returntype or if we are already in the process of parameter generation)
                     if (str.contains(";") && deletedextraline) {
                         str = parameterGeneration(declarationDoc[occuration - 1], infoOfMethod[occuration - 1]);
@@ -342,6 +338,9 @@ public class ParserSwagger {
                 }
                 writer.println(str);
             }
+
+            /****************/
+
             //The case if the annotation are already present in the file
             if (annotationHere) {
                 writer.println(str);
@@ -369,6 +368,7 @@ public class ParserSwagger {
                         }
                         occuration++;
                     }
+
                     if (str.contains("summary=")) {
                         str = "\t\t\tsummary=\"" + summary + "\",";
                     } else if (str.contains("@ApiResponse(description=")) {
@@ -398,6 +398,14 @@ public class ParserSwagger {
                     } else if (str.contains("@Tag(name =")) {
                         tagflag = true;
                         str = "@Tag(name = \"" + className + "\", description = \"@%" + className + "\")";
+                    }else if (str.contains("operationId=")) {
+                        str = "\t\t\toperationId=\"" + urlEndString + "\",";
+                    }else if (str.contains("@GET") || str.contains("@PATCH") || str.contains("@PUT") || str.contains("@DELETE") || str.contains("@POST")) {
+                        typeProcess = str;
+                        typeProcessFlag = true;
+                    }else if(str.contains("@Path(")&&typeProcessFlag){
+                        urlEndString = str.replaceAll("[ ]{3,}", "");
+                        urlEndString = autoCompleteUrl(urlEndString, typeProcess, className);
                     }
                     writer.println(str);
                 }
@@ -437,7 +445,7 @@ public class ParserSwagger {
         urlEndString = typeProcess + "_" + className + urlEndString;
         return urlEndString;
     }
-
+    /*
     //Parse and replace the line by other information. This is for the case of missing comment in file, thus it will only add basic information. And in case of SwaggerAnnotation already here it will just copy the file
     private void defaultReaderGeneration(String filePath, String classNameTag) throws IOException {
         String filePathTemp = filePath.replaceAll("Rs.java", "Rs.txt");
@@ -460,7 +468,7 @@ public class ParserSwagger {
                     javadocstart = true;
                 } else if (str.contains("import io.swagger.v3.oas.annotations")) {
                     annotationHere = true;
-                } else if (str.contains("*/")) {
+                } else if (str.contains("*//*")) {
                     javadocend = true;
                 } else if (str.length() < 4 && javadocend && javadocstart) {
                     javadocend = false;
@@ -542,7 +550,7 @@ public class ParserSwagger {
             //System.out.println("");
         }
         new File(filePathTemp).renameTo(realName);
-    }
+    }*/
 
     //resolve the case of Path and function on the same line
     private static String pathIssueSolver(String[] dataArray, String dataOperation) {
