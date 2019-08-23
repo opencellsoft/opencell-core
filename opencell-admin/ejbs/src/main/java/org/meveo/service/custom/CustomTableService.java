@@ -644,9 +644,8 @@ public class CustomTableService extends NativePersistenceService {
      * @throws BusinessException General exception
      */
     public Object getValue(String cetCodeOrTablename, String fieldToReturn, Map<String, Object> queryValues) throws BusinessException {
-
+        removeEmptyKeys(queryValues);
         Map<String, Object> values = new HashMap<>(queryValues);
-
         List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.DESC }, new String[] { fieldToReturn });
 
         if (results == null || results.isEmpty()) {
@@ -654,6 +653,10 @@ public class CustomTableService extends NativePersistenceService {
         } else {
             return results.get(0).get(fieldToReturn);
         }
+    }
+
+     void removeEmptyKeys(Map<String, Object> queryValues) {
+        queryValues.entrySet().removeIf(e -> e.getKey().isEmpty());
     }
 
     /**

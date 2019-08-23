@@ -1,5 +1,6 @@
 package org.meveo.service.custom;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,22 @@ public class CustomTableServiceTest {
         assertThat(convertedData).hasSize(3);
         CustomTableRecordDto customTableRecordDto = convertedData.get(0);
         assertThat(customTableRecordDto.getId()).isNotNull();
+    }
+
+    @Test
+    public void should_remove_empty_keys() {
+        //Given
+        Map<String, Object> queryValues = new HashMap<String, Object>(){{
+            put("", 23);
+            put("flirtikit", true);
+            put("bidlidez", LocalDate.now());
+        }};
+        //When
+        sut.removeEmptyKeys(queryValues);
+        //Then
+        assertThat(queryValues.size()).isEqualTo(2);
+        assertThat(queryValues).containsKeys("flirtikit", "bidlidez");
+        assertThat(queryValues).doesNotContainKeys("");
     }
 
     private List<Map<String, Object>> buildListMap(int size) {
