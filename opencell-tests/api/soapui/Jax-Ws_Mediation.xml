@@ -8158,11 +8158,11 @@ public class Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_C
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>opencell.url2</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>
@@ -8186,11 +8186,11 @@ public class Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_C
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>-03:00</con:value>
+      <con:value>Z</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>-03:00</con:value>
+      <con:value>Z</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>
