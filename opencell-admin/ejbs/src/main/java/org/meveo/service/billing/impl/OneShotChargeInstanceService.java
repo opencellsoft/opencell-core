@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingWalletTypeEnum;
@@ -143,7 +144,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     // apply a oneShotCharge on the postpaid wallet
     public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargetemplate, String walletCode, Date effetDate,
             BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String orderNumber,
-            boolean applyCharge) throws BusinessException {
+            boolean applyCharge) throws BusinessException, RatingException {
 
         return oneShotChargeApplication(subscription, chargetemplate, walletCode, effetDate, amoutWithoutTax, amoutWithoutTx2, quantity, criteria1, criteria2, criteria3, null,
             orderNumber, true);
@@ -151,7 +152,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
     public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargeTemplate, String walletCode, Date effetDate,
             BigDecimal amoutWithoutTax, BigDecimal amoutWithTax, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description, String orderNumber,
-            boolean applyCharge) throws BusinessException {
+            boolean applyCharge) throws BusinessException, RatingException {
 
         if (quantity == null) {
             quantity = BigDecimal.ONE;
@@ -199,7 +200,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     }
 
     public void oneShotChargeApplication(Subscription subscription, OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity,
-            String orderNumberOverride) throws BusinessException {
+            String orderNumberOverride) throws BusinessException, RatingException {
         OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(oneShotChargeInstance.getCode());
         if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeTemplate.getFilterExpression())) {
             log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", oneShotChargeInstance.getCode());
@@ -218,9 +219,10 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @param effectiveDate Recurring charge application start
      * @return Wallet operations
      * @throws BusinessException business exception.
+     * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
     public WalletOperation oneShotChargeApplicationVirtual(Subscription subscription, OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity)
-            throws BusinessException {
+            throws BusinessException, RatingException {
 
         log.debug("Apply one shot charge on Virtual operation. User account {}, offer {}, charge {}, quantity {}", oneShotChargeInstance.getUserAccount().getCode(),
             subscription.getOffer().getCode(), oneShotChargeInstance.getChargeTemplate().getCode(), quantity);
@@ -254,7 +256,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void matchPrepaidWallet(WalletInstance wallet, String matchingChargeCode) throws BusinessException {
+    public void matchPrepaidWallet(WalletInstance wallet, String matchingChargeCode) throws BusinessException, RatingException {
         // get the id of the last OPEN walletOperation
         Long maxWalletId = getEntityManager().createNamedQuery("WalletOperation.getMaxOpenId", Long.class).setParameter("wallet", wallet).getSingleResult();
         BigDecimal balanceNoTax = getEntityManager().createNamedQuery("WalletOperation.getBalanceNoTaxUntilId", BigDecimal.class).setParameter("wallet", wallet)

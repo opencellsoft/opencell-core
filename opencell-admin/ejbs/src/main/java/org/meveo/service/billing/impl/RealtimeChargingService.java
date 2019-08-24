@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -154,8 +155,18 @@ public class RealtimeChargingService {
         op.setStatus(WalletOperationStatusEnum.OPEN);
         op.setSeller(seller);
 
-        chargeApplicationRatingService.rateBareWalletOperation(op, null, null, buyersCountry.getId(), currency);
+        try {
+            chargeApplicationRatingService.rateBareWalletOperation(op, null, null, buyersCountry.getId(), currency);
 
+        } catch (RatingException e) {
+            log.trace("Failed to rate a wallet operation {}: {}", op, e.getRejectionReason());
+            throw e; // e.getBusinessException();
+
+        } catch (BusinessException e) {
+            log.error("Failed to rate a wallet operation {}: {}", op, e.getMessage(), e);
+            throw e;
+        }
+        
         return priceWithoutTax ? op.getAmountWithoutTax() : op.getAmountWithTax();
     }
 
@@ -180,10 +191,21 @@ public class RealtimeChargingService {
             ba.getTradingCountry(), ba.getCustomerAccount().getTradingCurrency(), chargeTemplate);
 
         Date nextApplicationDate = walletOperationService.initChargeDateAndGetNextChargeDate(chargeInstance);
-        WalletOperation op = walletOperationService.applyFirstRecurringCharge(chargeInstance, nextApplicationDate, true);
+        WalletOperation op;
+        try {
+            op = walletOperationService.applyFirstRecurringCharge(chargeInstance, nextApplicationDate, true);
+
+        } catch (RatingException e) {
+            log.trace("Failed to rate a recurring charge {}: {}", chargeInstance, e.getRejectionReason());
+            throw e; // e.getBusinessException();
+
+        } catch (BusinessException e) {
+            log.error("Failed to rate a recurring charge {}: {}", chargeInstance, e.getMessage(), e);
+            throw e;
+        }
 
         BigDecimal firstRecurringPrice = BigDecimal.ZERO;
-        if(op != null) {
+        if (op != null) {
             firstRecurringPrice = priceWithoutTax ? op.getAmountWithoutTax() : op.getAmountWithTax();
         }
         return firstRecurringPrice;

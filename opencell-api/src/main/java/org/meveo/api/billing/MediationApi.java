@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.parse.csv.CDR;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -226,15 +227,20 @@ public class MediationApi extends BaseApi {
                     timerConfig.setInfo(objs);
                     Timer timer = timerService.createSingleActionTimer(appProvider.getPrepaidReservationExpirationDelayinMillisec(), timerConfig);
                     timers.put(reservation.getId(), timer);
-                } catch (BusinessException e) {
-                    log.error("Exception rating edr={}", e);
-                    if ("INSUFFICIENT_BALANCE".equals(e.getMessage())) {
-                        throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
-                    } else {
-                        throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
-                    }
 
+                } catch (InsufficientBalanceException e) {
+                    log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+                    throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
+
+                } catch (RatingException e) {
+                    log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+                    throw new MeveoApiException(MeveoApiErrorCodeEnum.RATING_REJECT, e.getMessage());
+
+                } catch (BusinessException e) {
+                    log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
+                    throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
                 }
+
             }
         } catch (CDRParsingException e) {
             log.error("Error parsing cdr={}", e.getRejectionCause());
@@ -296,19 +302,17 @@ public class MediationApi extends BaseApi {
         try {
             walletOperations = usageRatingService.rateUsageWithinTransaction(edr, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(), chargeCDRDto.getMaxDepth(), 0);
 
-        } catch (BusinessException e) {
-            if (e instanceof InsufficientBalanceException) {
-                log.error("edr rejected={}", e.getMessage());
-                throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
-            } else {
-                log.error("Exception rating edr={}", e);
-                throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
-            }
-        }
+        } catch (InsufficientBalanceException e) {
+            log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
 
-        if (edr.getRatingRejectionReason() != null) {
-            log.error("edr rejected={}", edr.getRatingRejectionReason());
-            throw new MeveoApiException(edr.getRatingRejectionReason());
+        } catch (RatingException e) {
+            log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.RATING_REJECT, e.getMessage());
+
+        } catch (BusinessException e) {
+            log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
         }
 
         return walletOperations;

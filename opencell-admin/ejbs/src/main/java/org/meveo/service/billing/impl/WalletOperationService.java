@@ -21,7 +21,6 @@ import static org.meveo.commons.utils.NumberUtils.round;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +38,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.InsufficientBalanceException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
@@ -69,13 +69,10 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
-import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.Customer;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
@@ -140,95 +137,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     @Inject
     private CurrencyService currencyService;
 
-    public BigDecimal getRatedAmount(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
-            Date endDate, boolean amountWithTax) {
-
-        BigDecimal result = BigDecimal.ZERO;
-        LevelEnum level = LevelEnum.PROVIDER;
-
-        if (userAccount != null) {
-            level = LevelEnum.USER_ACCOUNT;
-        } else if (billingAccount != null) {
-            level = LevelEnum.BILLING_ACCOUNT;
-        } else if (customerAccount != null) {
-            level = LevelEnum.CUSTOMER_ACCOUNT;
-        } else if (customer != null) {
-            level = LevelEnum.CUSTOMER;
-        } else if (seller != null) {
-            level = LevelEnum.SELLER;
-        }
-
-        try {
-            String strQuery = "select SUM(r." + (amountWithTax ? "amountWithTax" : "amountWithoutTax") + ") from " + WalletOperation.class.getSimpleName() + " r "
-                    + "WHERE r.operationDate>=:startDate AND r.operationDate<:endDate " + "AND (r.status=:open OR r.status=:treated) ";
-            switch (level) {
-            case BILLING_ACCOUNT:
-                strQuery += "AND r.wallet.userAccount.billingAccount=:billingAccount ";
-                break;
-            case CUSTOMER:
-                strQuery += "AND r.wallet.userAccount.billingAccount.customerAccount.customer=:customer ";
-                break;
-            case CUSTOMER_ACCOUNT:
-                strQuery += "AND r.wallet.userAccount.billingAccount.customerAccount=:customerAccount ";
-                break;
-            case PROVIDER:
-                break;
-            case SELLER:
-                strQuery += "AND r.wallet.userAccount.billingAccount.customerAccount.customer.seller=:seller ";
-                break;
-            case USER_ACCOUNT:
-                strQuery += "AND r.wallet.userAccount=:userAccount ";
-                break;
-            default:
-                break;
-            }
-
-            Query query = getEntityManager().createQuery(strQuery);
-            query.setParameter("startDate", startDate);
-            query.setParameter("endDate", endDate);
-            query.setParameter("open", WalletOperationStatusEnum.OPEN);
-            query.setParameter("treated", WalletOperationStatusEnum.TREATED);
-
-            switch (level) {
-            case BILLING_ACCOUNT:
-                query.setParameter("billingAccount", billingAccount);
-                break;
-            case CUSTOMER:
-                query.setParameter("customer", customer);
-                break;
-            case CUSTOMER_ACCOUNT:
-                query.setParameter("customerAccount", customerAccount);
-                break;
-            case PROVIDER:
-                break;
-            case SELLER:
-                query.setParameter("seller", seller);
-                break;
-            case USER_ACCOUNT:
-                query.setParameter("userAccount", userAccount);
-                break;
-            default:
-                break;
-            }
-
-            result = (BigDecimal) query.getSingleResult();
-        } catch (Exception e) {
-            log.error("failed to get Rated Amount", e);
-        }
-
-        if (result == null) {
-            result = BigDecimal.ZERO;
-        }
-        return result;
-    }
-
     /*
      * public WalletOperation rateOneShotApplication(Subscription subscription, OneShotChargeInstance chargeInstance, Integer quantity, Date applicationDate) throws
      * BusinessException { return rateOneShotApplication(getEntityManager(), subscription, chargeInstance, quantity, applicationDate); }
      */
 
     public WalletOperation rateOneShotApplication(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits,
-            Date applicationDate, boolean isVirtual, String orderNumberOverride) throws BusinessException {
+            Date applicationDate, boolean isVirtual, String orderNumberOverride) throws BusinessException, RatingException {
 
         Tax tax = invoiceSubCategoryCountryService.determineTax(chargeInstance, applicationDate);
 
@@ -243,7 +158,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     }
 
     public WalletOperation oneShotWalletOperation(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits,
-            Date applicationDate, boolean isVirtual, String orderNumberOverride) throws BusinessException {
+            Date applicationDate, boolean isVirtual, String orderNumberOverride) throws BusinessException, RatingException {
 
         if (chargeInstance == null) {
             throw new IncorrectChargeInstanceException("charge instance is null");
@@ -294,7 +209,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         return walletOperation;
     }
 
-    public WalletOperation rateProductApplication(ProductChargeInstance chargeInstance, boolean isVirtual) throws BusinessException {
+    public WalletOperation rateProductApplication(ProductChargeInstance chargeInstance, boolean isVirtual) throws BusinessException, RatingException {
 
         Tax tax = invoiceSubCategoryCountryService.determineTax(chargeInstance, chargeInstance.getChargeDate());
 
@@ -415,8 +330,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * @param preRateOnly Pre-rate only
      * @return Created wallet operation
      * @throws BusinessException Business exception
+     * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    private WalletOperation applyFirstRecurringChargeInstance(RecurringChargeInstance chargeInstance, Date nextChargeDate, boolean preRateOnly) throws BusinessException {
+    private WalletOperation applyFirstRecurringChargeInstance(RecurringChargeInstance chargeInstance, Date nextChargeDate, boolean preRateOnly)
+            throws BusinessException, RatingException {
 
         WalletOperation result = null;
 
@@ -500,8 +417,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * 
      * @param chargeInstance Recurring charge instance
      * @throws BusinessException Business exception
+     * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public void initializeAndApplyFirstRecuringCharge(RecurringChargeInstance chargeInstance) throws BusinessException {
+    public void initializeAndApplyFirstRecuringCharge(RecurringChargeInstance chargeInstance) throws BusinessException, RatingException {
 
         if (chargeInstance == null) {
             throw new IncorrectChargeInstanceException("charge instance is null");
@@ -545,8 +463,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * 
      * @param chargeInstance Recurring charge instance
      * @throws BusinessException Business exception
+     * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public void applyReimbursment(RecurringChargeInstance chargeInstance, String orderNumber) throws BusinessException {
+    public void applyReimbursment(RecurringChargeInstance chargeInstance, String orderNumber) throws BusinessException, RatingException {
         if (chargeInstance == null) {
             throw new IncorrectChargeInstanceException("charge instance is null");
         }
@@ -660,9 +579,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * @param forSchedule true/false
      * @return List of created wallet operations
      * @throws BusinessException business exception.
+     * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
     public List<WalletOperation> applyReccuringCharge(RecurringChargeInstance chargeInstance, boolean reimbursement, RecurringChargeTemplate recurringChargeTemplate,
-            boolean forSchedule) throws BusinessException {
+            boolean forSchedule) throws BusinessException, RatingException {
 
         ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
 
@@ -749,8 +669,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * @param toDate Recurring charge application end
      * @return Wallet operations
      * @throws BusinessException business exception.
+     * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public List<WalletOperation> applyReccuringChargeVirtual(RecurringChargeInstance chargeInstance, Date fromDate, Date toDate) throws BusinessException {
+    public List<WalletOperation> applyReccuringChargeVirtual(RecurringChargeInstance chargeInstance, Date fromDate, Date toDate) throws BusinessException, RatingException {
 
         List<WalletOperation> walletOperations = new ArrayList<>();
 
@@ -810,9 +731,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * @param recurringChargeTemplate Recurring charge template
      * @return List of created wallet operations
      * @throws BusinessException Business exception
+     * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
     public List<WalletOperation> applyNotAppliedinAdvanceReccuringCharge(RecurringChargeInstance chargeInstance, boolean reimbursement,
-            RecurringChargeTemplate recurringChargeTemplate) throws BusinessException {
+            RecurringChargeTemplate recurringChargeTemplate) throws BusinessException, RatingException {
 
         Calendar cal = recurringChargeTemplate.getCalendar();
         if (!StringUtils.isBlank(recurringChargeTemplate.getCalendarCodeEl())) {
@@ -920,14 +842,16 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     }
 
     /**
-     * Apply missing recuring charges from the last charge date to the end agreement date
+     * Apply missing recurring charges from the last charge date to the end agreement date
      * 
      * @param chargeInstance charge Instance
      * @param recurringChargeTemplate recurringCharge Template
      * @param endAgreementDate end agreement date
      * @throws BusinessException Business exception
+     * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate, Date endAgreementDate) throws BusinessException {
+    public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate, Date endAgreementDate)
+            throws BusinessException, RatingException {
 
         // we apply the charge at its nextChargeDate if applied in advance, else at chargeDate
         Date applyChargeFromDate = chargeInstance.getNextChargeDate();
@@ -1017,69 +941,23 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<WalletOperation> findByStatus(WalletOperationStatusEnum status) {
-
-        List<WalletOperation> walletOperations = null;
-        try {
-            log.debug("start of find {} by status (status={})) ..", "WalletOperation", status);
-            QueryBuilder qb = new QueryBuilder(WalletOperation.class, "c");
-            qb.addCriterion("c.status", "=", status, true);
-
-            walletOperations = qb.getQuery(getEntityManager()).getResultList();
-            log.debug("end of find {} by status (status={}). Result size found={}.",
-                new Object[] { "WalletOperation", status, walletOperations != null ? walletOperations.size() : 0 });
-
-        } catch (Exception e) {
-            log.error("findByStatus error={} ", e);
-        }
-        return walletOperations;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<WalletOperation> listToInvoice(Date invoicingDate) {
-        List<WalletOperation> walletOperations = null;
-        try {
-            walletOperations = getEntityManager().createNamedQuery("WalletOperation.listToInvoice").setParameter("invoicingDate", invoicingDate).getResultList();
-        } catch (Exception e) {
-            log.error("listToInvoice error ", e);
-        }
-        return walletOperations;
-    }
-
-    @SuppressWarnings("unchecked")
     public List<WalletOperation> listToInvoiceByUserAccount(Date invoicingDate, UserAccount userAccount) {
-        List<WalletOperation> walletOperations = null;
-        try {
-            walletOperations = getEntityManager().createNamedQuery("WalletOperation.listToInvoiceByUA").setParameter("invoicingDate", invoicingDate)
-                .setParameter("userAccount", userAccount).getResultList();
-        } catch (Exception e) {
-            log.error("listToInvoiceByUserAccount error ", e);
-        }
-        return walletOperations;
+        return getEntityManager().createNamedQuery("WalletOperation.listToInvoiceByUA").setParameter("invoicingDate", invoicingDate).setParameter("userAccount", userAccount)
+            .getResultList();
     }
 
     @SuppressWarnings("unchecked")
     public List<WalletOperation> listToInvoiceBySubscription(Date invoicingDate, Subscription subscription) {
-        List<WalletOperation> walletOperations = null;
-        try {
-            walletOperations = getEntityManager().createNamedQuery("WalletOperation.listToInvoiceBySubscription").setParameter("invoicingDate", invoicingDate)
-                .setParameter("subscription", subscription).getResultList();
-        } catch (Exception e) {
-            log.error("listToInvoiceBySubscription error ", e);
-        }
-        return walletOperations;
+
+        return getEntityManager().createNamedQuery("WalletOperation.listToInvoiceBySubscription").setParameter("invoicingDate", invoicingDate)
+            .setParameter("subscription", subscription).getResultList();
     }
 
     @SuppressWarnings("unchecked")
     public List<WalletOperation> listToInvoiceByOrder(Date invoicingDate, Order order) {
-        List<WalletOperation> walletOperations = null;
-        try {
-            walletOperations = getEntityManager().createNamedQuery("WalletOperation.listToInvoiceByOrderNumber").setParameter("invoicingDate", invoicingDate)
-                .setParameter("orderNumber", order.getOrderNumber()).getResultList();
-        } catch (Exception e) {
-            log.error("listToInvoiceByOrder error ", e);
-        }
-        return walletOperations;
+
+        return getEntityManager().createNamedQuery("WalletOperation.listToInvoiceByOrderNumber").setParameter("invoicingDate", invoicingDate)
+            .setParameter("orderNumber", order.getOrderNumber()).getResultList();
     }
 
     /**
@@ -1096,19 +974,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         return ids;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<WalletOperation> listByChargeInstance(ChargeInstance chargeInstance) {
-        QueryBuilder qb = new QueryBuilder(WalletOperation.class, "c");
-        qb.addCriterionEntity("chargeInstance", chargeInstance);
-
-        try {
-            return (List<WalletOperation>) qb.getQuery(getEntityManager()).getResultList();
-        } catch (NoResultException e) {
-            log.warn("failed to get walletOperation list by ChargeInstance", e);
-            return null;
-        }
-    }
-
     public WalletOperation findByUserAccountAndCode(String code, UserAccount userAccount) {
         QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w");
         qb.addCriterionEntity("wallet.userAccount", userAccount);
@@ -1123,25 +988,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public List<WalletOperation> findByUserAccountAndWalletCode(String walletCode, UserAccount userAccount, Boolean orderAscending) {
-
-        QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w", Arrays.asList("chargeInstance"));
-
-        qb.addCriterionEntity("w.wallet.userAccount", userAccount);
-        qb.addCriterion("w.wallet.code", "=", walletCode, true);
-        if (orderAscending != null) {
-            qb.addOrderCriterionAsIs("w.operationDate", orderAscending);
-        }
-
-        try {
-            return (List<WalletOperation>) qb.getQuery(getEntityManager()).getResultList();
-        } catch (NoResultException e) {
-            log.warn("failed to find by user account and wallet", e);
-            return null;
-        }
-    }
-
     /**
      * Charge wallet operation on prepaid wallets
      * 
@@ -1149,8 +995,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * @param op Wallet operation
      * @return A list of wallet operations containing a single original wallet operation or multiple wallet operations if had to be split among various wallets
      * @throws BusinessException General business exception
+     * @throws InsufficientBalanceException Balance is insufficient in the wallet
      */
-    private List<WalletOperation> chargeOnPrepaidWallets(ChargeInstance chargeInstance, WalletOperation op) throws BusinessException {
+    private List<WalletOperation> chargeOnPrepaidWallets(ChargeInstance chargeInstance, WalletOperation op) throws BusinessException, InsufficientBalanceException {
 
         Integer rounding = appProvider.getRounding();
         RoundingModeEnum roundingMode = appProvider.getRoundingMode();
@@ -1254,7 +1101,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
         // Not possible to deduct all WO amount, so throw an Insufficient balance error
         if (remainingAmountToCharge.compareTo(BigDecimal.ZERO) > 0) {
-            throw new InsufficientBalanceException();
+            throw new InsufficientBalanceException("Insuficient balance when charging " + op.getAmountWithTax() + " for wallet operation " + op.getId());
         }
 
         // All charge was over one wallet
@@ -1297,7 +1144,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         return result;
     }
 
-    public List<WalletOperation> chargeWalletOperation(WalletOperation op) throws BusinessException {
+    public List<WalletOperation> chargeWalletOperation(WalletOperation op) throws BusinessException, InsufficientBalanceException {
 
         List<WalletOperation> result = new ArrayList<>();
         ChargeInstance chargeInstance = op.getChargeInstance();
@@ -1364,42 +1211,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     public List<Long> listToRerate() {
         return (List<Long>) getEntityManager().createQuery("SELECT o.id FROM WalletOperation o " + "WHERE o.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE ")
             .getResultList();
-    }
-
-    public Long getNbrWalletOperationByStatus(WalletOperationStatusEnum status) {
-        QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w");
-        qb.addCriterionEnum("w.status", status);
-
-        log.debug("totalCount: queryString={}", qb);
-        return ((Long) qb.getCountQuery(getEntityManager()).getSingleResult());
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<WalletOperation> findWalletOperation(WalletOperationStatusEnum status, WalletTemplate walletTemplate, WalletInstance walletInstance, UserAccount userAccount,
-            List<String> fetchFields, int maxResult) {
-        try {
-            QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w", fetchFields);
-
-            if (status != null) {
-                qb.addCriterionEnum("w.status", status);
-            }
-            if (walletTemplate != null) {
-                qb.addCriterionEntity("w.wallet.walletTemplate", walletTemplate);
-            } else {
-                qb.addCriterionEntity("w.wallet", walletInstance);
-            }
-            if (userAccount != null) {
-                qb.addCriterionEntity("w.wallet.userAccount", userAccount);
-            }
-
-            return (List<WalletOperation>) qb.getQuery(getEntityManager()).setMaxResults(maxResult).getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    public List<WalletOperation> openWalletOperationsBySubCat(WalletInstance walletInstance, InvoiceSubCategory invoiceSubCategory) {
-        return openWalletOperationsBySubCat(walletInstance, invoiceSubCategory, null, null);
     }
 
     @SuppressWarnings("unchecked")
@@ -1477,8 +1288,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * @param preRateOnly Pre-rate only
      * @return Created wallet operation
      * @throws BusinessException the business exception
+     * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public WalletOperation applyFirstRecurringCharge(RecurringChargeInstance recurringChargeInstance, Date nextChargeDate, boolean preRateOnly) throws BusinessException {
+    public WalletOperation applyFirstRecurringCharge(RecurringChargeInstance recurringChargeInstance, Date nextChargeDate, boolean preRateOnly)
+            throws BusinessException, RatingException {
         WalletOperation result = null;
         CounterInstance counterInstance = recurringChargeInstance.getCounter();
         if (counterInstance != null) {
@@ -1554,7 +1367,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     }
 
     public List<WalletOperation> listByRatedTransactionId(Long ratedTransactionId) {
-        return getEntityManager().createNamedQuery("WalletOperation.listByRatedTransactionId").setParameter("ratedTransactionId", ratedTransactionId).getResultList();
+        return getEntityManager().createNamedQuery("WalletOperation.listByRatedTransactionId", WalletOperation.class).setParameter("ratedTransactionId", ratedTransactionId)
+            .getResultList();
     }
 
     /**

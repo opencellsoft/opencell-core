@@ -22,6 +22,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.PriceELErrorException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.RatingScriptExecutionErrorException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.admin.parse.csv.CDR;
@@ -229,21 +230,18 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param userAccount user account
      * @return wallet operation
      * @throws BusinessException business exception
+     * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
     @SuppressWarnings("deprecation")
     public WalletOperation prerateChargeApplication(ChargeTemplate chargeTemplate, Date subscriptionDate, OfferTemplate offerTemplate, ChargeInstance chargeInstance,
             ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity,
             BigDecimal quantityInChargeUnits, TradingCurrency tCurrency, Long countryId, String languageCode, Tax tax, BigDecimal discountPercent, Date nextApplicationDate,
             InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber, Date startdate, Date endDate,
-            ChargeApplicationModeEnum mode, UserAccount userAccount) throws BusinessException {
+            ChargeApplicationModeEnum mode, UserAccount userAccount) throws BusinessException, RatingException {
 
         WalletOperation walletOperation = new WalletOperation();
         Auditable auditable = new Auditable(currentUser);
         walletOperation.setAuditable(auditable);
-
-        // TODO do this in the right place (one time by userAccount)
-        BillingAccount billingAccount = userAccount.getBillingAccount();
-        boolean isExonerated = billingAccountService.isExonerated(billingAccount);
 
         if (chargeTemplate.getChargeType().equals(RecurringChargeTemplate.CHARGE_TYPE)) {
             walletOperation.setSubscriptionDate(subscriptionDate);
@@ -282,7 +280,10 @@ public class RatingService extends BusinessService<WalletOperation> {
         }
 
         walletOperation.setCode(chargeTemplate.getCode());
-        if (isExonerated) {
+
+        BillingAccount billingAccount = userAccount.getBillingAccount();
+
+        if (billingAccountService.isExonerated(billingAccount)) {
             walletOperation.setTaxPercent(BigDecimal.ZERO);
         } else {
             walletOperation.setTax(tax);
@@ -352,11 +353,12 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param isVirtual true/false
      * @return wallet operation
      * @throws BusinessException business exception
+     * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
     public WalletOperation rateChargeApplication(ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax,
             BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, TradingCurrency tCurrency, Long countryId, Tax tax, BigDecimal discountPercent,
             Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber, Date startdate, Date endDate,
-            ChargeApplicationModeEnum mode, boolean forSchedule, boolean isVirtual) throws BusinessException {
+            ChargeApplicationModeEnum mode, boolean forSchedule, boolean isVirtual) throws BusinessException, RatingException {
         Date subscriptionDate = null;
 
         if (chargeInstance instanceof RecurringChargeInstance) {
@@ -457,16 +459,14 @@ public class RatingService extends BusinessService<WalletOperation> {
                     String url = "api/rest/billing/mediation/chargeCdr";
                     Response response = meveoInstanceService.callTextServiceMeveoInstance(url, meveoInstance, cdr.toCsv());
                     ActionStatus actionStatus = response.readEntity(ActionStatus.class);
-                    log.debug("response {}", actionStatus);
+                    log.trace("Triggered remote EDR response {}", actionStatus);
 
                     if (actionStatus != null && ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
-                        log.error("RemoteCharging with status={}", actionStatus.getErrorCode());
                         throw new ChargingEdrOnRemoteInstanceErrorException(
-                            "Error charging Edr on remote instance code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
+                            "Error charging EDR. Error code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
 
                     } else if (actionStatus == null) {
-                        log.error("RemoteCharging: No response code from API.");
-                        throw new ChargingEdrOnRemoteInstanceErrorException("Error charging Edr. No response code from API.");
+                        throw new ChargingEdrOnRemoteInstanceErrorException("Error charging EDR. No response code from API.");
                     }
                 }
             }
@@ -484,9 +484,10 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param countryId country id
      * @param tcurrency trading currency
      * @throws BusinessException business exception
+     * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
     public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax, Long countryId, TradingCurrency tcurrency)
-            throws BusinessException {
+            throws BusinessException, RatingException {
 
         PricePlanMatrix pricePlan = null;
 
@@ -498,9 +499,11 @@ public class RatingService extends BusinessService<WalletOperation> {
             }
 
             pricePlan = ratePrice(chargePricePlans, bareWalletOperation, countryId, tcurrency);
-            if (pricePlan == null || (pricePlan.getAmountWithoutTax() == null && appProvider.isEntreprise())
-                    || (pricePlan.getAmountWithTax() == null && !appProvider.isEntreprise())) {
-                throw new NoPricePlanException("No price plan matched (" + (pricePlan == null) + ") or does not contain amounts for charge code " + bareWalletOperation.getCode());
+            if (pricePlan == null) {
+                throw new NoPricePlanException("No price plan matched for charge code " + bareWalletOperation.getCode());
+
+            } else if ((pricePlan.getAmountWithoutTax() == null && appProvider.isEntreprise()) || (pricePlan.getAmountWithTax() == null && !appProvider.isEntreprise())) {
+                throw new NoPricePlanException("Price plan " + pricePlan.getId() + " does not contain amounts for charge " + bareWalletOperation.getCode());
             }
             log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
             if (appProvider.isEntreprise()) {
@@ -509,7 +512,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     unitPriceWithoutTax = evaluateAmountExpression(pricePlan.getAmountWithoutTaxEL(), pricePlan, bareWalletOperation,
                         bareWalletOperation.getChargeInstance().getUserAccount(), unitPriceWithoutTax);
                     if (unitPriceWithoutTax == null) {
-                        throw new PriceELErrorException("Can't find unitPriceWithoutTax from PP :" + pricePlan.getAmountWithoutTaxEL());
+                        throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithoutTaxEL());
                     }
                 }
 
@@ -519,7 +522,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     unitPriceWithTax = evaluateAmountExpression(pricePlan.getAmountWithTaxEL(), pricePlan, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),
                         unitPriceWithoutTax);
                     if (unitPriceWithTax == null) {
-                        throw new PriceELErrorException("Can't find unitPriceWithoutTax from PP :" + pricePlan.getAmountWithTaxEL());
+                        throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithTaxEL());
                     }
                 }
             }
@@ -577,7 +580,7 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         } else if (bareWalletOperation.getOfferTemplate() != null) {
             productOffering = bareWalletOperation.getOfferTemplate();
-        } 
+        }
 
         if (productOffering != null && productOffering.getGlobalRatingScriptInstance() != null) {
             log.debug("start to execute script instance for productOffering {}", productOffering);
@@ -692,24 +695,26 @@ public class RatingService extends BusinessService<WalletOperation> {
         // log.info("ratePrice rate " + bareOperation);
         for (PricePlanMatrix pricePlan : listPricePlan) {
 
+            log.trace("Try to verify price plan {} for WO {}", pricePlan.getId(), bareOperation.getCode());
+            
             Seller seller = pricePlan.getSeller();
             boolean sellerAreEqual = seller == null || seller.getId().equals(bareOperation.getSeller().getId());
             if (!sellerAreEqual) {
-                log.debug("The seller of the customer {} is not the same as pricePlan seller {}", bareOperation.getSeller().getId(), seller.getId());
+                log.trace("The seller of the customer {} is not the same as pricePlan seller {}", bareOperation.getSeller().getId(), seller.getId());
                 continue;
             }
 
             TradingCountry tradingCountry = pricePlan.getTradingCountry();
             boolean countryAreEqual = tradingCountry == null || tradingCountry.getId().equals(countryId);
             if (!countryAreEqual) {
-                log.debug("The countryId={} of the billing account is not the same as pricePlan with countryId={}", countryId, tradingCountry.getId());
+                log.trace("The countryId={} of the billing account is not the same as pricePlan with countryId={}", countryId, tradingCountry.getId());
                 continue;
             }
 
             TradingCurrency tradingCurrency = pricePlan.getTradingCurrency();
             boolean currencyAreEqual = tradingCurrency == null || (tcurrency != null && tcurrency.getId().equals(tradingCurrency.getId()));
             if (!currencyAreEqual) {
-                log.debug("The currency of the customer account {} is not the same as pricePlan currency {}", (tcurrency != null ? tcurrency.getCurrencyCode() : "null"),
+                log.trace("The currency of the customer account {} is not the same as pricePlan currency {}", (tcurrency != null ? tcurrency.getCurrencyCode() : "null"),
                     tradingCurrency.getId());
                 continue;
             }
@@ -720,7 +725,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     || ((startSubscriptionDate == null || subscriptionDate.after(startSubscriptionDate) || subscriptionDate.equals(startSubscriptionDate))
                             && (endSubscriptionDate == null || subscriptionDate.before(endSubscriptionDate)));
             if (!subscriptionDateInPricePlanPeriod) {
-                log.debug("The subscription date {} is not in the priceplan subscription range {} - {}", subscriptionDate, startSubscriptionDate, endSubscriptionDate);
+                log.trace("The subscription date {} is not in the priceplan subscription range {} - {}", subscriptionDate, startSubscriptionDate, endSubscriptionDate);
                 continue;
             }
 
@@ -735,14 +740,14 @@ public class RatingService extends BusinessService<WalletOperation> {
             boolean subscriptionMinAgeOK = pricePlan.getMinSubscriptionAgeInMonth() == null || subscriptionAge >= pricePlan.getMinSubscriptionAgeInMonth();
             // log.info("subscriptionMinAgeOK(" + pricePlan.getMinSubscriptionAgeInMonth() + ")=" +subscriptionMinAgeOK);
             if (!subscriptionMinAgeOK) {
-                log.debug("The subscription age={} is less than the priceplan subscription age min={}", subscriptionAge, pricePlan.getMinSubscriptionAgeInMonth());
+                log.trace("The subscription age={} is less than the priceplan subscription age min={}", subscriptionAge, pricePlan.getMinSubscriptionAgeInMonth());
                 continue;
             }
             Long maxSubscriptionAgeInMonth = pricePlan.getMaxSubscriptionAgeInMonth();
             boolean subscriptionMaxAgeOK = maxSubscriptionAgeInMonth == null || maxSubscriptionAgeInMonth == 0 || subscriptionAge < maxSubscriptionAgeInMonth;
             // log.debug("subscriptionMaxAgeOK(" + maxSubscriptionAgeInMonth + ")=" + subscriptionMaxAgeOK);
             if (!subscriptionMaxAgeOK) {
-                log.debug("The subscription age {} is greater than the priceplan subscription age max {}", subscriptionAge, maxSubscriptionAgeInMonth);
+                log.trace("The subscription age {} is greater than the priceplan subscription age max {}", subscriptionAge, maxSubscriptionAgeInMonth);
                 continue;
             }
 
@@ -752,7 +757,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     && (endRatingDate == null || operationDate.before(endRatingDate));
             // log.debug("applicationDateInPricePlanPeriod(" + startRatingDate + " - " + endRatingDate + ")=" + applicationDateInPricePlanPeriod);
             if (!applicationDateInPricePlanPeriod) {
-                log.debug("The application date {} is not in the priceplan application range {} - {}", operationDate, startRatingDate, endRatingDate);
+                log.trace("The application date {} is not in the priceplan application range {} - {}", operationDate, startRatingDate, endRatingDate);
                 continue;
             }
 
@@ -760,7 +765,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             boolean criteria1SameInPricePlan = criteria1Value == null || criteria1Value.equals(bareOperation.getParameter1());
             // log.info("criteria1SameInPricePlan(" + pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
             if (!criteria1SameInPricePlan) {
-                log.debug("The operation param1 {} is not compatible with price plan criteria 1: {}", bareOperation.getParameter1(), criteria1Value);
+                log.trace("The operation param1 {} is not compatible with price plan criteria 1: {}", bareOperation.getParameter1(), criteria1Value);
                 continue;
             }
             String criteria2Value = pricePlan.getCriteria2Value();
@@ -768,20 +773,20 @@ public class RatingService extends BusinessService<WalletOperation> {
             boolean criteria2SameInPricePlan = criteria2Value == null || criteria2Value.equals(parameter2);
             // log.info("criteria2SameInPricePlan(" + pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
             if (!criteria2SameInPricePlan) {
-                log.debug("The operation param2 {} is not compatible with price plan criteria 2: {}", parameter2, criteria2Value);
+                log.trace("The operation param2 {} is not compatible with price plan criteria 2: {}", parameter2, criteria2Value);
                 continue;
             }
             String criteria3Value = pricePlan.getCriteria3Value();
             boolean criteria3SameInPricePlan = criteria3Value == null || criteria3Value.equals(bareOperation.getParameter3());
             // log.info("criteria3SameInPricePlan(" + pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
             if (!criteria3SameInPricePlan) {
-                log.debug("The operation param3 {} is not compatible with price plan criteria 3: {}", bareOperation.getParameter3(), criteria3Value);
+                log.trace("The operation param3 {} is not compatible with price plan criteria 3: {}", bareOperation.getParameter3(), criteria3Value);
                 continue;
             }
             if (!StringUtils.isBlank(pricePlan.getCriteriaEL())) {
                 UserAccount ua = bareOperation.getWallet().getUserAccount();
                 if (!matchExpression(pricePlan.getCriteriaEL(), bareOperation, ua, pricePlan)) {
-                    log.debug("The operation is not compatible with price plan criteria EL: {}", pricePlan.getCriteriaEL());
+                    log.trace("The operation is not compatible with price plan criteria EL: {}", pricePlan.getCriteriaEL());
                     continue;
                 }
             }
@@ -790,14 +795,14 @@ public class RatingService extends BusinessService<WalletOperation> {
             if (ppOfferTemplate != null) {
                 boolean offerCodeSameInPricePlan = true;
 
-                if(bareOperation.getOfferTemplate() != null){
+                if (bareOperation.getOfferTemplate() != null) {
                     offerCodeSameInPricePlan = bareOperation.getOfferTemplate().getId().equals(ppOfferTemplate.getId());
                 } else if (bareOperation.getOfferCode() != null) {
-                	offerCodeSameInPricePlan = ppOfferTemplate.getCode().equals(bareOperation.getOfferCode());
-                } 
+                    offerCodeSameInPricePlan = ppOfferTemplate.getCode().equals(bareOperation.getOfferCode());
+                }
 
                 if (!offerCodeSameInPricePlan) {
-                    log.debug("The operation offerCode {} is not compatible with price plan offerCode: {}",
+                    log.trace("The operation offerCode {} is not compatible with price plan offerCode: {}",
                         bareOperation.getOfferTemplate() != null ? bareOperation.getOfferTemplate() : bareOperation.getOfferCode(), ppOfferTemplate);
                     continue;
                 }
@@ -808,7 +813,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             BigDecimal quantity = bareOperation.getQuantity();
             boolean quantityMaxOk = maxQuantity == null || maxQuantity.compareTo(quantity) > 0;
             if (!quantityMaxOk) {
-                log.debug("The quantity " + quantity + " is strictly greater than " + maxQuantity);
+                log.trace("The quantity " + quantity + " is strictly greater than " + maxQuantity);
                 continue;
             }
             // log.debug("quantityMaxOkInPricePlan");
@@ -816,7 +821,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             BigDecimal minQuantity = pricePlan.getMinQuantity();
             boolean quantityMinOk = minQuantity == null || minQuantity.compareTo(quantity) <= 0;
             if (!quantityMinOk) {
-                log.debug("The quantity " + quantity + " is less than " + minQuantity);
+                log.trace("The quantity " + quantity + " is less than " + minQuantity);
                 continue;
             }
             // log.debug("quantityMinOkInPricePlan");
@@ -828,7 +833,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                 bareOperation.setPriceplan(pricePlan);
                 return pricePlan;
             } else if (validityCalendar != null) {
-                log.debug("The operation date " + operationDate + " does not match pricePlan validity calendar " + validityCalendar.getCode() + "period range ");
+                log.trace("The operation date " + operationDate + " does not match pricePlan validity calendar " + validityCalendar.getCode() + "period range ");
             }
 
         }
@@ -841,10 +846,11 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param operationToRerateId wallet operation to be rerated
      * @param useSamePricePlan true if same price plan will be used
      * @throws BusinessException business exception
+     * @throws RatingException Operation rerating failure due to lack of funds, data validation, inconsistency or other rating related failure
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void reRate(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException {
+    public void reRate(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException, RatingException {
 
         WalletOperation operationToRerate = getEntityManager().find(WalletOperation.class, operationToRerateId);
         try {
@@ -854,8 +860,8 @@ public class RatingService extends BusinessService<WalletOperation> {
             RatedTransactionProcessingStatus rtStatus = ratedTransaction.getProcessingStatus();
             if (rtStatus != null) {
                 if (rtStatus.getStatus() == RatedTransactionStatusEnum.BILLED) {
-                    throw new UnrolledbackBusinessException(
-                        "Can not rerate an already billed Wallet Operation. Wallet Operation " + operationToRerateId + " corresponds to rated transaction " + ratedTransaction.getId());
+                    throw new UnrolledbackBusinessException("Can not rerate an already billed Wallet Operation. Wallet Operation " + operationToRerateId
+                            + " corresponds to rated transaction " + ratedTransaction.getId());
                 } else if (rtStatus.getStatus() != RatedTransactionStatusEnum.CANCELED && rtStatus.getStatus() != RatedTransactionStatusEnum.RERATED) {
                     rtStatus.setStatus(RatedTransactionStatusEnum.RERATED);
                 }
@@ -1123,7 +1129,7 @@ public class RatingService extends BusinessService<WalletOperation> {
         return userMap;
     }
 
-    private void executeRatingScript(WalletOperation bareWalletOperation, ScriptInstance scriptInstance) throws BusinessException {
+    private void executeRatingScript(WalletOperation bareWalletOperation, ScriptInstance scriptInstance) throws RatingScriptExecutionErrorException {
 
         String scriptInstanceCode = scriptInstance.getCode();
         try {
@@ -1131,7 +1137,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             scriptInstanceService.executeCached(bareWalletOperation, scriptInstanceCode, null);
 
         } catch (BusinessException e) {
-            throw new RatingScriptExecutionErrorException("failed when run script " + scriptInstanceCode + ", info " + e.getMessage(), e);
+            throw new RatingScriptExecutionErrorException("Failed when run script " + scriptInstanceCode + ", info " + e.getMessage(), e);
         }
     }
 }
