@@ -414,7 +414,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     @SuppressWarnings("unchecked")
     public List<RatedTransaction> openRTbySubCat(WalletInstance walletInstance, InvoiceSubCategory invoiceSubCategory, Date from, Date to) {
-        QueryBuilder qb = new QueryBuilder("select from RatedTransaction rt left join rt.processingStatus s", "rt");
+        QueryBuilder qb = new QueryBuilder("select rt from RatedTransaction rt left join fetch rt.processingStatus s", "rt");
         if (invoiceSubCategory != null) {
             qb.addCriterionEntity("rt.invoiceSubCategory", invoiceSubCategory);
         }

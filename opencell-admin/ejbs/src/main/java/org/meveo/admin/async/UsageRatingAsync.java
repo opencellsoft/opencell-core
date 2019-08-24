@@ -14,11 +14,11 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.UnitUsageRatingJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.rating.EDR;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.job.JobExecutionService;
 
 /**
@@ -30,7 +30,7 @@ import org.meveo.service.job.JobExecutionService;
 public class UsageRatingAsync {
 
     @Inject
-    private UnitUsageRatingJobBean unitUsageRatingJobBean;
+    private UsageRatingService usageRatingService;
 
     @Inject
     private JobExecutionService jobExecutionService;
@@ -60,10 +60,18 @@ public class UsageRatingAsync {
                 break;
             }
             try {
-                unitUsageRatingJobBean.execute(result, edr);
+                usageRatingService.ratePostpaidUsage(edr);
+                result.registerSucces();
 
-            } catch (BusinessException be) {
-                unitUsageRatingJobBean.registerFailedEdr(result, edr.getId(), be);
+            } catch (Exception e) {
+
+                String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage(), 255, true);
+                StringBuilder aLine = new StringBuilder("Edr Id : ").append(edr.getId()).append(" RejectReason : ").append(rejectReason).append(" eventDate:")
+                    .append(edr.getEventDate()).append("originBatch:").append(edr.getOriginBatch()).append("originRecord:").append(edr.getOriginRecord()).append("quantity:")
+                    .append(edr.getQuantity()).append("subscription:").append(edr.getSubscription().getId()).append("access:").append(edr.getAccessCode()).append("parameter1:")
+                    .append(edr.getParameter1()).append("parameter2:").append(edr.getParameter2()).append("parameter3:").append(edr.getParameter3()).append("parameter4:")
+                    .append(edr.getParameter4());
+                result.registerError(aLine.toString());
             }
         }
         return new AsyncResult<String>("OK");

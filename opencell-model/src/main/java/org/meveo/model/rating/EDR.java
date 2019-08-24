@@ -57,7 +57,7 @@ import org.meveo.model.billing.Subscription;
 
         @NamedQuery(name = "EDR.countNbrEdrByStatus", query = "select s.status, count(e.id) from EDR e left join e.processingStatus s group by s.status"),
 
-        @NamedQuery(name = "EDR.getOpenEdrBetweenTwoDate", query = "SELECT e from EDR e join fetch e.subscription left join e.processingStatus s where s is null AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate order by e.eventDate desc"),
+        @NamedQuery(name = "EDR.getOpenEdrBetweenTwoDate", query = "SELECT e from EDR e join fetch e.subscription left join fetch e.processingStatus s where s is null AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate order by e.eventDate desc"),
 
         @NamedQuery(name = "EDR.updateWalletOperationForSafeDeletion", query = "update WalletOperation wo set wo.edr=NULL where wo.edr in (select e FROM EDR e where e.processingStatus.status is not null AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
         @NamedQuery(name = "EDR.updateRatedTransactionForSafeDeletion", query = "update RatedTransaction rt set rt.edr=NULL where rt.edr in (select e FROM EDR e where e.processingStatus.status is not null AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),

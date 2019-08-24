@@ -1321,7 +1321,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
 
         BillingAccount billingAccount = billingAccountService.findById(invoice.getBillingAccount().getId());
-        boolean exoneratedFromTaxes = billingAccountService.isExonerated(billingAccount);
         BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
 
         Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
@@ -1399,7 +1398,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.setAmountWithTax(invoice.getAmountWithoutTax().add(invoice.getAmountTax() == null ? BigDecimal.ZERO : invoice.getAmountTax()));
         }
 
-        if (!entreprise && biggestSubCat != null && !exoneratedFromTaxes) {
+        if (!entreprise && biggestSubCat != null && !billingAccountService.isExonerated(billingAccount)) {
             BigDecimal delta = nonEnterprisePriceWithTax.subtract(invoice.getAmountWithTax());
             log.debug("delta={}-{}={}", nonEnterprisePriceWithTax, invoice.getAmountWithTax(), delta);
 
@@ -3236,6 +3235,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         Invoice invoice = this.initInvoice(invoiceDTO, billingAccount, invoiceType, seller);
 
+        EntityManager em = getEntityManager();
+
         for (CategoryInvoiceAgregateDto catInvAgrDto : invoiceDTO.getCategoryInvoiceAgregates()) {
 
             UserAccount userAccount = null;
@@ -3275,6 +3276,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 Tax tax = invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, seller, billingAccount, invoiceDTO.getInvoiceDate(), false);
 
+                SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
+                invoiceAgregateSubcat.setCategoryInvoiceAgregate(invoiceAgregateCat);
+                invoiceAgregateSubcat.setInvoiceSubCategory(invoiceSubCategory);
+                invoiceAgregateSubcat.setInvoice(invoice);
+                invoiceAgregateSubcat.setDescription(subCatInvAgrDTO.getDescription());
+                invoiceAgregateSubcat.setBillingRun(null);
+                if (userAccount != null) {
+                    invoiceAgregateSubcat.setWallet(userAccount.getWallet());
+                    invoiceAgregateSubcat.setUserAccount(userAccount);
+                }
+                invoiceAgregateSubcat.setAccountingCode(invoiceSubCategory.getAccountingCode());
+                invoiceAgregateSubcat.setAuditable(auditable);
+                invoiceAgregateSubcat.setTaxPercent(tax.getPercent());
+                invoiceAgregateSubcat.setTax(tax);
+                invoice.addInvoiceAggregate(invoiceAgregateSubcat);
+
                 boolean isDetailledInvoiceMode = InvoiceModeEnum.DETAILLED.name().equals(invoiceDTO.getInvoiceMode().name());
                 if (subCatInvAgrDTO.getRatedTransactions() != null) {
                     for (RatedTransactionDto ratedTransactionDto : subCatInvAgrDTO.getRatedTransactions()) {
@@ -3301,7 +3318,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(),
                             ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null);
 
-                        meveoRatedTransaction.getProcessingStatus().setInvoice(invoice);
                         meveoRatedTransaction.setWallet(userAccount.getWallet());
                         // #3355 : setting params 1,2,3
                         if (isDetailledInvoiceMode) {
@@ -3311,50 +3327,39 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
 
                         ratedTransactionService.create(meveoRatedTransaction);
+                        RatedTransactionProcessingStatus rtProcessingStatus = new RatedTransactionProcessingStatus(meveoRatedTransaction.getId(), null, invoice,
+                            invoiceAgregateSubcat, RatedTransactionStatusEnum.BILLED);
+                        em.persist(rtProcessingStatus);
 
                         subCatAmountWithoutTax = subCatAmountWithoutTax.add(amountWithoutTax);
                         subCatAmountTax = subCatAmountTax.add(amountTax);
                         subCatAmountWithTax = subCatAmountWithTax.add(amountWithTax);
                     }
                 }
+                
+                // Include existing Open rated transactions for a given user account and invoice sub category
                 if (invoiceDTO.getInvoiceType().equals(invoiceTypeService.getCommercialCode())) {
 
-                    EntityManager em = getEntityManager();
                     List<RatedTransaction> openedRT = ratedTransactionService.openRTbySubCat(userAccount.getWallet(), invoiceSubCategory, null, null);
                     for (RatedTransaction ratedTransaction : openedRT) {
                         subCatAmountWithoutTax = subCatAmountWithoutTax.add(ratedTransaction.getAmountWithoutTax());
                         subCatAmountTax = subCatAmountTax.add(ratedTransaction.getAmountTax());
                         subCatAmountWithTax = subCatAmountWithTax.add(ratedTransaction.getAmountWithTax());
-                        RatedTransactionProcessingStatus rtStatus = new RatedTransactionProcessingStatus(ratedTransaction.getId(), null, invoice, null,
+                        RatedTransactionProcessingStatus rtStatus = new RatedTransactionProcessingStatus(ratedTransaction.getId(), null, invoice, invoiceAgregateSubcat,
                             RatedTransactionStatusEnum.BILLED);
                         em.persist(rtStatus);
                     }
                 }
 
-                SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
-                invoiceAgregateSubcat.setCategoryInvoiceAgregate(invoiceAgregateCat);
-                invoiceAgregateSubcat.setInvoiceSubCategory(invoiceSubCategory);
-                invoiceAgregateSubcat.setInvoice(invoice);
-                invoiceAgregateSubcat.setDescription(subCatInvAgrDTO.getDescription());
-                invoiceAgregateSubcat.setBillingRun(null);
-                if (userAccount != null) {
-                    invoiceAgregateSubcat.setWallet(userAccount.getWallet());
-                    invoiceAgregateSubcat.setUserAccount(userAccount);
-                }
-                invoiceAgregateSubcat.setAccountingCode(invoiceSubCategory.getAccountingCode());
-                invoiceAgregateSubcat.setAuditable(auditable);
-                invoiceAgregateSubcat.setQuantity(BigDecimal.ONE);
-                invoiceAgregateSubcat.setTaxPercent(tax.getPercent());
-                invoiceAgregateSubcat.setTax(tax);
-
+             // TODO Why the size does not take into account the existing open RTs that were added for a commercial invoice
                 if (isDetailledInvoiceMode) {
-                    invoiceAgregateSubcat.setItemNumber(subCatInvAgrDTO.getRatedTransactions().size());
+                    invoiceAgregateSubcat.setItemNumber(subCatInvAgrDTO.getRatedTransactions().size());   
                     invoiceAgregateSubcat.setAmountWithoutTax(subCatAmountWithoutTax);
                     invoiceAgregateSubcat.setAmountTax(subCatAmountTax);
                     invoiceAgregateSubcat.setAmountWithTax(subCatAmountWithTax);
 
                 } else {
-                    // we add subCatAmountWithoutTax, in the case if there any opened RT to includ
+                    // we add subCatAmountWithoutTax, in the case if there any opened RT to include
                     BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(invoiceAgregateSubcat.getAmountWithoutTax(), invoiceAgregateSubcat.getAmountWithTax(),
                         tax.getPercent(), isEnterprise, invoiceRounding, invoiceRoundingMode.getRoundingMode());
 
@@ -3362,7 +3367,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     invoiceAgregateSubcat.setAmountWithTax(amounts[1]);
                     invoiceAgregateSubcat.setAmountTax(amounts[2]);
                 }
-                invoice.addInvoiceAggregate(invoiceAgregateSubcat);
 
                 TaxInvoiceAgregate invoiceAgregateTax = null;
 

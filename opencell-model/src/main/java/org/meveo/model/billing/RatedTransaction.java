@@ -71,13 +71,13 @@ import org.meveo.model.rating.EDR;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_rated_transaction_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and processingStatus is not null order by usageDate desc "),
+        @NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r left join fetch r.processingStatus s where r.wallet=:wallet and r.processingStatus is not null order by usageDate desc "),
 
         @NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumber", query = "SELECT r FROM RatedTransaction r left join fetch r.processingStatus s where "
                 + " s is null AND r.orderNumber=:orderNumber " + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.billingAccount.id "),
         @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscription", query = "SELECT r FROM RatedTransaction r left join fetch r.processingStatus s where r.subscription.id=:subscriptionId"
                 + " AND s is null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
-        @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccount", query = "SELECT r FROM RatedTransaction r left join fetch  r.processingStatus s where r.billingAccount.id=:billingAccountId "
+        @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccount", query = "SELECT r FROM RatedTransaction r left join fetch r.processingStatus s where r.billingAccount.id=:billingAccountId "
                 + " AND s is null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
 
         @NamedQuery(name = "RatedTransaction.listOrdersBySubscription", query = "SELECT distinct r.orderNumber FROM RatedTransaction r left join r.processingStatus s where r.subscription=:subscription"
@@ -134,8 +134,8 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.unInvoiceByInvoice", query = "Delete from RatedTransactionProcessingStatus r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice=:invoice"),
         @NamedQuery(name = "RatedTransaction.unInvoiceByBR", query = "Delete from RatedTransactionProcessingStatus r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.billingRun=:billingRun"),
 
-        @NamedQuery(name = "RatedTransaction.deleteMinRTByInvoice", query = "DELETE from RatedTransaction r  WHERE r.processingStatus.invoice=:invoice AND r.wallet IS null"),
-        @NamedQuery(name = "RatedTransaction.deleteMinRTByBR", query = "DELETE from RatedTransaction r  WHERE r.processingStatus.billingRun=:billingRun AND r.wallet IS null"),
+        @NamedQuery(name = "RatedTransaction.deleteMinRTByInvoice", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.id in (select s.id from RatedTransactionProcessingStatus s where s.invoice=:invoice)"),
+        @NamedQuery(name = "RatedTransaction.deleteMinRTByBR", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.id in (select s.id from RatedTransactionProcessingStatus s where s.billingRun=:billingRun)"),
 
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByBA", query = "SELECT count(*) FROM RatedTransaction r left join r.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) "
                 + " AND r.billingAccount=:billingAccount"),
@@ -151,9 +151,9 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.deleteNotOpenBetweenTwoDates", query = "delete FROM RatedTransaction r where "
                 + " r.processingStatus.status is not null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
 
-        @NamedQuery(name = "RatedTransaction.listByInvoice", query = "SELECT r FROM RatedTransaction r join r.processingStatus s where s.invoice=:invoice order by r.usageDate"),
-        @NamedQuery(name = "RatedTransaction.listByInvoiceNotFree", query = "SELECT r FROM RatedTransaction r join r.processingStatus s where s.invoice=:invoice and r.amountWithoutTax<>0 order by r.usageDate"),        
-        @NamedQuery(name = "RatedTransaction.listByInvoiceSubCategoryAggr", query = "SELECT r FROM RatedTransaction r join r.processingStatus s where s.invoiceAgregateF=:invoiceAgregateF order by r.usageDate") })
+        @NamedQuery(name = "RatedTransaction.listByInvoice", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where s.invoice=:invoice order by r.usageDate"),
+        @NamedQuery(name = "RatedTransaction.listByInvoiceNotFree", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where s.invoice=:invoice and r.amountWithoutTax<>0 order by r.usageDate"),        
+        @NamedQuery(name = "RatedTransaction.listByInvoiceSubCategoryAggr", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where s.invoiceAgregateF=:invoiceAgregateF order by r.usageDate") })
 public class RatedTransaction extends BaseEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;
@@ -433,9 +433,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.amountWithoutTax = amountWithoutTax;
         this.amountWithTax = amountWithTax;
         this.amountTax = amountTax;
-        if (status != null && status != RatedTransactionStatusEnum.OPEN) {
-            this.processingStatus = new RatedTransactionProcessingStatus(this, status);
-        }
+        // Can not set processingStatus field if RT is not saved yet, as RatedTransactionProcessingStatus.id field wont be set 
+//        if (status != null && status != RatedTransactionStatusEnum.OPEN) {
+//            this.processingStatus = new RatedTransactionProcessingStatus(this, status);
+//        }
         this.wallet = wallet;
         this.billingAccount = billingAccount;
         this.userAccount = userAccount;
