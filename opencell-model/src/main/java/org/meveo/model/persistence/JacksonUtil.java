@@ -7,7 +7,9 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -20,8 +22,11 @@ public class JacksonUtil {
         om.setVisibility(om.getVisibilityChecker().withIsGetterVisibility(Visibility.NONE));
         om.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
         om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
+        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         om.setSerializationInclusion(Include.NON_NULL);
         OBJECT_MAPPER = om;
+
     }
 
     public static ObjectMapper OBJECT_MAPPER;

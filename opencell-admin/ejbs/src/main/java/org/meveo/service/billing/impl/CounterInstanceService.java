@@ -48,7 +48,6 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.ICounterEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
@@ -320,12 +319,12 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         cal.setInitDate(initDate);
         Date startDate = cal.previousCalendarDate(chargeDate);
         if (startDate == null) {
-            log.info("cannot create counter for the date {} (not in calendar)", chargeDate);
+            log.warn("cannot create counter for the date {} (not in calendar)", chargeDate);
             return null;
         }
         Date endDate = cal.nextCalendarDate(startDate);
         BigDecimal initialValue = counterTemplate.getCeiling();
-        log.info("create counter period from {} to {}", startDate, endDate);
+        log.debug("create counter period from {} to {}", startDate, endDate);
         if (!StringUtils.isBlank(counterTemplate.getCeilingExpressionEl()) && chargeInstance != null) {
             initialValue = evaluateCeilingElExpression(counterTemplate.getCeilingExpressionEl(), chargeInstance, serviceInstance,
                 chargeInstance.getSubscription());

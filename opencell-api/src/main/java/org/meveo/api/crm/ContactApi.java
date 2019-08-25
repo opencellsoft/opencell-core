@@ -323,7 +323,7 @@ public class ContactApi extends AccountEntityApi {
 
 	@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
 	@FilterResults(propertyToFilter = "contacts.contact", itemPropertiesToFilter = {
-			@FilterProperty(property = "code", entityClass = Contact.class) })
+			@FilterProperty(property = "code", entityClass = Contact.class) }, totalRecords = "contacts.totalNumberOfRecords")
 	public ContactsResponseDto list(ContactDto postData, PagingAndFiltering pagingAndFiltering)
 			throws MeveoApiException {
 		return list(postData, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
@@ -331,7 +331,7 @@ public class ContactApi extends AccountEntityApi {
 
 	@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
 	@FilterResults(propertyToFilter = "contacts.contact", itemPropertiesToFilter = {
-			@FilterProperty(property = "code", entityClass = Contact.class) })
+			@FilterProperty(property = "code", entityClass = Contact.class) }, totalRecords = "contacts.totalNumberOfRecords")
 	public ContactsResponseDto list(ContactDto postData, PagingAndFiltering pagingAndFiltering,
 			CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 

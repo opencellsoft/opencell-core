@@ -117,16 +117,20 @@ public class NativePersistenceService extends BaseService {
     public Map<String, Object> findById(String tableName, Long id) {
 
         try {
-
             Session session = getEntityManager().unwrap(Session.class);
             SQLQuery query = session.createSQLQuery("select * from " + tableName + " e where id=:id");
             query.setParameter("id", id);
             query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
 
             Map<String, Object> values = (Map<String, Object>) query.uniqueResult();
+            for (String key : values.keySet()) {
+                if (values.get(key) instanceof java.sql.Timestamp) {
+                    java.sql.Timestamp date = (java.sql.Timestamp) values.get(key);
+                    values.put(key, new Date(date.getTime()));
+                }
+            }
 
             return values;
-
         } catch (Exception e) {
             log.error("Failed to retrieve values from table by id {}/{} sql {}", tableName, id, e);
             throw e;
