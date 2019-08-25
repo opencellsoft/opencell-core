@@ -39591,20 +39591,6 @@ public class ForgotPassword extends ModuleScript{
                </entry>
             </scriptParams>
          </notification>	
-			<emailNotif code="ForgotPasswordEmailNotif">
-				<classNameFilter>org.meveo.model.admin.User</classNameFilter>
-				<eventTypeFilter>UPDATED</eventTypeFilter>
-				<emailFrom>bot@opencellsoft.com</emailFrom> 
-				<subject>Password reset</subject>
-				<emailToEl>#{event.email}</emailToEl>
-				<elFilter>#{event.newPassword ne null}</elFilter>
-				<body>Bonjour,
-				Text modifiable
-				user name  :  #{event.userName}
-				password   :  #{event.newPassword}
-				access url :  http://i.meveo.info/meveo/frontend/DEMO/index.html
-				</body>
-				</emailNotif>          
             </moduleItems>
          </module>
       </ws:createOrUpdate>
@@ -39778,6 +39764,44 @@ public class CreateAccess extends ModuleScript {
     </con:testCase>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create Selfcare BAM" searchProperties="true" id="a71c38ad-867c-4dab-849b-03b0d0791d4d">
       <con:settings/>
+      <con:testStep type="request" name="Remove BAM" id="83cd9856-1313-4b1a-94e3-bc2ed209cb87">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ModuleWsSoapBinding</con:interface>
+          <con:operation>uninstallModule</con:operation>
+          <con:request name="Remove BAM" id="ae71f5ba-1494-4691-99b6-9c8c742f05b9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/ModuleWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:delete>
+         <code>Client</code>
+      </ws:delete>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="a6b29958-f25b-4ddb-8432-0ef3f0f03ea4"/>
+            <con:assertion type="Simple Contains" id="8f727087-147b-467d-8b41-1193cde90b2b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="BAM Script" id="ddf31545-e576-4147-8dd8-0ed28a4f4c73">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -39852,7 +39876,7 @@ public class RegisterHierarchy extends org.meveo.service.script.Script {
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create BAM" id="29e60ec9-03ff-4290-a7cc-55f81e77626f" disabled="true">
+      <con:testStep type="request" name="Create BAM" id="29e60ec9-03ff-4290-a7cc-55f81e77626f">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -39869,19 +39893,8 @@ public class RegisterHierarchy extends org.meveo.service.script.Script {
       <ws:createBusinessAccountModel>
          
          <businessAccountModelDto code="Client" license="GPL" description="Individual customer">
+         	<hierarchyType>C_UA</hierarchyType>
           <moduleItems>
-			<emailNotif code="AccountCreationNotif">
-				<classNameFilter>org.meveo.model.admin.User</classNameFilter>
-				<eventTypeFilter>CREATED</eventTypeFilter>
-				<emailFrom>bot@opencellsoft.com</emailFrom> 
-				<subject>Account creation confirmation</subject>
-				<emailToEl>#{event.email}</emailToEl>
-				<body>Hello,
-                Your login has been created:
-                user name :  #{event.userName}
-                access url : http://integration.i.opencellsoft.com/opencell/frontend/DEMO/cc/index.html
-				</body> 
-			</emailNotif>
          <notification code="SelfcareRegistration">
             <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>
             <eventTypeFilter>INBOUND_REQ</eventTypeFilter>
@@ -40062,7 +40075,7 @@ public class SelfcareAccountScript extends AccountScript {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:installModule>
-         <module code="Client">   
+         <module code="Client" description="Individual customer" license="GPL">   
          </module>
       </ws:installModule>
    </soapenv:Body>
@@ -40243,20 +40256,6 @@ public class ForgotPassword extends ModuleScript{
                </entry>
             </scriptParams>
          </notification>
-			<emailNotif code="ForgotPasswordEmailNotif">
-				<classNameFilter>org.meveo.model.admin.User</classNameFilter>
-				<eventTypeFilter>UPDATED</eventTypeFilter>
-				<emailFrom>bot@opencellsoft.com</emailFrom>
-				<subject>Password reset</subject>
-				<emailToEl>#{event.email}</emailToEl>
-				<elFilter>#{event.newPassword ne null}</elFilter>
-				<body>Bonjour,
-				Text modifiable
-				user name  :  #{event.userName}
-				password   :  #{event.newPassword}
-				access url :  http://i.meveo.info/meveo/frontend/DEMO/index.html
-				</body>
-				</emailNotif>
             </moduleItems>
          </module>
       </ws:createOrUpdate>
@@ -40812,20 +40811,6 @@ public class ForgotPassword extends ModuleScript{
                </entry>
             </scriptParams>
          </notification>
-			<emailNotif code="ForgotPasswordEmailNotif">
-				<classNameFilter>org.meveo.model.admin.User</classNameFilter>
-				<eventTypeFilter>UPDATED</eventTypeFilter>
-				<emailFrom>bot@opencellsoft.com</emailFrom>
-				<subject>Password reset</subject>
-				<emailToEl>#{event.email}</emailToEl>
-				<elFilter>#{event.newPassword ne null}</elFilter>
-				<body>Bonjour,
-				Text modifiable
-				user name  :  #{event.userName}
-				password   :  #{event.newPassword}
-				access url :  http://i.meveo.info/meveo/frontend/DEMO/index.html
-				</body>
-				</emailNotif>
             </moduleItems>
          </module>
       </ws:createOrUpdate>
@@ -41179,20 +41164,6 @@ public class ForgotPassword extends ModuleScript{
                </entry>
             </scriptParams>
          </notification>
-			<emailNotif code="ForgotPasswordEmailNotif">
-				<classNameFilter>org.meveo.model.admin.User</classNameFilter>
-				<eventTypeFilter>UPDATED</eventTypeFilter>
-				<emailFrom>bot@opencellsoft.com</emailFrom>
-				<subject>Password reset</subject>
-				<emailToEl>#{event.email}</emailToEl>
-				<elFilter>#{event.newPassword ne null}</elFilter>
-				<body>Bonjour,
-				Text modifiable
-				user name  :  #{event.userName}
-				password   :  #{event.newPassword}
-				access url :  http://i.meveo.info/meveo/frontend/DEMO/index.html
-				</body>
-				</emailNotif>
             </moduleItems>
          </module>
       </ws:createOrUpdate>
@@ -41571,7 +41542,7 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Body>\r
       <ws:createOrUpdateCRMAccountHierarchy>\r
          <crmAccountHierarchy>\r
-            <crmAccountType>C_UA</crmAccountType>\r
+            <crmAccountType>Client</crmAccountType>\r
             <crmParentCode>${#Project#templateCode}_PARTNER</crmParentCode>\r
             <code>${#TestSuite#CUST}</code>\r
             <description>${#TestSuite#firstname} ${#TestSuite#lastname}</description>\r
@@ -41926,7 +41897,7 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Body>\r
       <ws:createOrUpdateCRMAccountHierarchy>\r
          <crmAccountHierarchy>\r
-            <crmAccountType>C_UA</crmAccountType>\r
+            <crmAccountType>Client</crmAccountType>\r
             <crmParentCode>${#Project#templateCode}</crmParentCode>\r
             <code>${#TestSuite#CUST}</code>\r
             <description>${#TestSuite#firstname} ${#TestSuite#lastname}</description>\r
@@ -42431,7 +42402,7 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Body>\r
       <ws:createOrUpdateCRMAccountHierarchy>\r
          <crmAccountHierarchy>\r
-            <crmAccountType>C_UA</crmAccountType>\r
+            <crmAccountType>Client</crmAccountType>\r
             <crmParentCode>${#Project#templateCode}</crmParentCode>\r
             <code>${#TestSuite#CUST}</code>\r
             <description>${#TestSuite#firstname} ${#TestSuite#lastname}</description>\r
@@ -43122,7 +43093,7 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Body>\r
       <ws:createOrUpdateCRMAccountHierarchy>\r
          <crmAccountHierarchy>\r
-            <crmAccountType>C_UA</crmAccountType>\r
+            <crmAccountType>Client</crmAccountType>\r
             <crmParentCode>${#Project#templateCode}</crmParentCode>\r
             <code>${#TestSuite#CUST}</code>\r
             <description>${#TestSuite#firstname} ${#TestSuite#lastname}</description>\r
@@ -44602,7 +44573,7 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Body>\r
       <ws:createOrUpdateCRMAccountHierarchy>\r
          <crmAccountHierarchy>\r
-            <crmAccountType>C_UA</crmAccountType>\r
+            <crmAccountType>Client</crmAccountType>\r
             <crmParentCode>${#Project#templateCode}</crmParentCode>\r
             <code>${#TestSuite#CUST}</code>\r
             <description>${#TestSuite#firstname} ${#TestSuite#lastname}</description>\r
@@ -46395,7 +46366,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Body>\r
       <ws:createOrUpdateCRMAccountHierarchy>\r
          <crmAccountHierarchy>\r
-            <crmAccountType>C_UA</crmAccountType>\r
+            <crmAccountType>Client</crmAccountType>\r
             <crmParentCode>${#Project#templateCode}</crmParentCode>\r
             <code>${#TestSuite#CUST}</code>\r
             <description>${#TestSuite#firstname} ${#TestSuite#lastname}</description>\r
@@ -50141,7 +50112,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Body>\r
       <ws:createOrUpdateCRMAccountHierarchy>\r
          <crmAccountHierarchy>\r
-            <crmAccountType>C_UA</crmAccountType>\r
+            <crmAccountType>Client</crmAccountType>\r
             <crmParentCode>${#Project#templateCode}</crmParentCode>\r
             <code>${#Project#SCUsername}</code>\r
             <description>${#Project#SCFirstname} ${#Project#SCLastname}</description>\r
@@ -61687,7 +61658,7 @@ rkJggg==
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://localhost:8080/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>provider</con:name>
