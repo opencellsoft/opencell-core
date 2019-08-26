@@ -2309,4 +2309,11 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="#4480_210819" author="SaidRamli">
+      <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="billing_invoice"
+                               constraintName="fk_invoice_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
+                               referencedColumnNames="id" referencedTableName="ar_payment_token" />
+  
+    </changeSet>
+
 </databaseChangeLog>
