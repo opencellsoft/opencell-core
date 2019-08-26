@@ -3370,7 +3370,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 } else {
                     // we add subCatAmountWithoutTax, in the case if there any opened RT to includ
-                    BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(invoiceAgregateSubcat.getAmountWithoutTax(), invoiceAgregateSubcat.getAmountWithTax(),
+                    BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(subCatInvAgrDTO.getAmountWithoutTax(), subCatInvAgrDTO.getAmountWithTax(),
                         tax.getPercent(), isEnterprise, invoiceRounding, invoiceRoundingMode.getRoundingMode());
 
                     invoiceAgregateSubcat.setAmountWithoutTax(amounts[0]);
