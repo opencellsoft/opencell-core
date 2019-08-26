@@ -1312,12 +1312,6 @@
     	</addColumn>
     </changeSet>
     
-    <changeSet id="#4434_21082018" author="anasseh">
-        <addColumn tableName="ar_ddrequest_item">
-            <column name="rejected_file_name" type="varchar(1000)" />
-        </addColumn>
-    </changeSet>
-
     <changeSet id="#4480_210819" author="SaidRamli">
         <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="billing_invoice"
                                  constraintName="fk_invoice_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
