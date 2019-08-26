@@ -119,10 +119,6 @@ public class SubscriptionDto extends BusinessEntityDto {
     /** The seller. */
     private String seller;
     
-    /** The customer code. */
-    private String customerCode;
-    
-    
     /** The auto end of engagement. */
     private Boolean autoEndOfEngagement;
     
@@ -153,7 +149,6 @@ public class SubscriptionDto extends BusinessEntityDto {
         UserAccount userAccountBO = e.getUserAccount();
 		if (userAccountBO != null) {
 			setUserAccount(userAccountBO.getCode());
-			setCustomerCode(userAccountBO.getBillingAccount().getCustomerAccount().getCustomer().getCode());
 		}
 
         if (e.getOffer() != null) {
@@ -657,24 +652,6 @@ public class SubscriptionDto extends BusinessEntityDto {
 	 */
 	public void setRatingGroup(String ratingGroup) {
 		this.ratingGroup = ratingGroup;
-	}
-
-	/**
-	 * Gets the customer code.
-	 *
-	 * @return the customer code
-	 */
-	public String getCustomerCode() {
-		return customerCode;
-	}
-
-	/**
-	 * Sets the customer code.
-	 *
-	 * @param customerCode the new customer code
-	 */
-	public void setCustomerCode(String customerCode) {
-		this.customerCode = customerCode;
 	}
 
 }
