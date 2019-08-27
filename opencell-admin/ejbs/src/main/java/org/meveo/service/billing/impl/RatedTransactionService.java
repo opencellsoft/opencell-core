@@ -1584,6 +1584,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return A list of rated transactions
      */
     public List<RatedTransaction> getRatedTransactionsByInvoice(Invoice invoice, boolean includeFree) {
+        if (invoice.getId() == null) {
+            return new ArrayList<>();
+        }
+
         if (includeFree) {
             return getEntityManager().createNamedQuery("RatedTransaction.listByInvoice", RatedTransaction.class).setParameter("invoice", invoice).getResultList();
         } else {
@@ -1598,6 +1602,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return A list of rated transactions
      */
     public List<RatedTransaction> getRatedTransactionsByInvoiceAggr(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
+
+        if (subCategoryInvoiceAgregate.getId() == null) {
+            return new ArrayList<>();
+        }
+
         return getEntityManager().createNamedQuery("RatedTransaction.listByInvoiceSubCategoryAggr", RatedTransaction.class)
             .setParameter("invoiceAgregateF", subCategoryInvoiceAgregate).getResultList();
     }
