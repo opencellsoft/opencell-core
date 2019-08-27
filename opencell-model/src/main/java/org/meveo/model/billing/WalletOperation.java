@@ -79,7 +79,7 @@ import org.meveo.model.rating.EDR;
 
         @NamedQuery(name = "WalletOperation.listByBRId", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s.ratedTransaction.id in (select rs.id from RatedTransactionProcessingStatus rs where rs.billingRun.id=:brId)"),
 
-        @NamedQuery(name = "WalletOperation.listToInvoice", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate )"),
+        @NamedQuery(name = "WalletOperation.listToRateIds", query = "SELECT o.id FROM WalletOperation o left join o.processingStatus s WHERE s is null and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate )"),
         @NamedQuery(name = "WalletOperation.listToInvoiceByUA", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.wallet.userAccount=:userAccount"),
         @NamedQuery(name = "WalletOperation.listToInvoiceBySubscription", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.subscription=:subscription"),
         @NamedQuery(name = "WalletOperation.listToInvoiceByOrderNumber", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.orderNumber=:orderNumber"),

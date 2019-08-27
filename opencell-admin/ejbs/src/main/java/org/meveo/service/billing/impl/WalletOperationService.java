@@ -968,9 +968,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * @param nbToRetrieve Number of items to retrieve for processing
      * @return A list of Wallet operation ids
      */
-    public List<WalletOperation> listToInvoice(Date invoicingDate, int nbToRetrieve) {
-        return getEntityManager().createNamedQuery("WalletOperation.listToInvoice", WalletOperation.class).setParameter("invoicingDate", invoicingDate).setMaxResults(nbToRetrieve)
-            .setHint("org.hibernate.readOnly", true).getResultList();
+    public List<Long> listToRate(Date invoicingDate, int nbToRetrieve) {
+        return getEntityManager().createNamedQuery("WalletOperation.listToRateIds", Long.class).setParameter("invoicingDate", invoicingDate).setMaxResults(nbToRetrieve)
+            .getResultList();
     }
 
     public WalletOperation findByUserAccountAndCode(String code, UserAccount userAccount) {

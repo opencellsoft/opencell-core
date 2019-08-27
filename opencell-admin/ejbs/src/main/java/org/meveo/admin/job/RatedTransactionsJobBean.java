@@ -17,7 +17,6 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.MeveoUser;
@@ -89,15 +88,15 @@ public class RatedTransactionsJobBean extends BaseJobBean {
     }
 
     private void executeWithoutAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis) throws Exception {
-        List<WalletOperation> walletOperations = walletOperationService.listToInvoice(new Date(), PROCESS_NR_IN_JOB_RUN);
+        List<Long> walletOperations = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
         log.info("WalletOperations to convert into rateTransactions={}", walletOperations.size());
         result.setNbItemsToProcess(walletOperations.size());
 
-        SubListCreator<WalletOperation> subListCreator = new SubListCreator<>(walletOperations, nbRuns.intValue());
+        SubListCreator<Long> subListCreator = new SubListCreator<>(walletOperations, nbRuns.intValue());
         List<Future<String>> futures = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
-            futures.add(ratedTransactionAsync.launchAndForget((List<WalletOperation>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
+            futures.add(ratedTransactionAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
             try {
                 Thread.sleep(waitingMillis.longValue());
 
@@ -123,7 +122,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         }
 
         // Check if there are any more Wallet Operations to process and mark job as completed if there are none
-        walletOperations = walletOperationService.listToInvoice(new Date(), PROCESS_NR_IN_JOB_RUN);
+        walletOperations = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
         result.setDone(walletOperations.isEmpty());
     }
 

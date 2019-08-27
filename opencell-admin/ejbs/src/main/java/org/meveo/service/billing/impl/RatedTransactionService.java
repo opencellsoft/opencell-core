@@ -130,12 +130,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
 
-    @Inject
-    private WalletService walletService;
-
-    @Inject
-    private GenericChargeInstanceService genericChargeInstanceService;
-
     /**
      * Check if Billing account has any not yet billed Rated transactions
      * 
@@ -205,31 +199,33 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public RatedTransaction createRatedTransaction(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
 
-        WalletInstance wallet = walletService.retrieveIfNotManaged(walletOperation.getWallet());
+//        WalletInstance wallet = walletService.retrieveIfNotManaged(walletOperation.getWallet());
+//
+//        ChargeInstance chargeInstance = null;
+//
+//        String inputUnitDescription = walletOperation.getInputUnitDescription();
+//        if (inputUnitDescription == null) {
+//            chargeInstance = genericChargeInstanceService.retrieveIfNotManaged(walletOperation.getChargeInstance());
+//            inputUnitDescription = chargeInstance.getChargeTemplate().getInputUnitDescription();
+//        }
+//        String ratingUnitDescription = walletOperation.getRatingUnitDescription();
+//        if (ratingUnitDescription == null) {
+//            if (chargeInstance == null) {
+//                chargeInstance = genericChargeInstanceService.retrieveIfNotManaged(walletOperation.getChargeInstance());
+//            }
+//            ratingUnitDescription = chargeInstance.getChargeTemplate().getRatingUnitDescription();
+//        }
+//
+//        RatedTransaction ratedTransaction = new RatedTransaction(walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(),
+//            walletOperation.getUnitAmountWithTax(), walletOperation.getUnitAmountTax(), walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(),
+//            walletOperation.getAmountWithTax(), walletOperation.getAmountTax(), RatedTransactionStatusEnum.OPEN, wallet, wallet.getUserAccount().getBillingAccount(),
+//            wallet.getUserAccount(), walletOperation.getInvoiceSubCategory(), walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(),
+//            walletOperation.getParameterExtra(), walletOperation.getOrderNumber(), walletOperation.getSubscription(), inputUnitDescription, ratingUnitDescription,
+//            walletOperation.getPriceplan(), walletOperation.getOfferTemplate(), walletOperation.getEdr(), walletOperation.getCode(), walletOperation.getDescription(),
+//            walletOperation.getStartDate(), walletOperation.getEndDate(), walletOperation.getSeller(), walletOperation.getTax(), walletOperation.getTaxPercent(),
+//            walletOperation.getServiceInstance());
 
-        ChargeInstance chargeInstance = null;
-
-        String inputUnitDescription = walletOperation.getInputUnitDescription();
-        if (inputUnitDescription == null) {
-            chargeInstance = genericChargeInstanceService.retrieveIfNotManaged(walletOperation.getChargeInstance());
-            inputUnitDescription = chargeInstance.getChargeTemplate().getInputUnitDescription();
-        }
-        String ratingUnitDescription = walletOperation.getRatingUnitDescription();
-        if (ratingUnitDescription == null) {
-            if (chargeInstance == null) {
-                chargeInstance = genericChargeInstanceService.retrieveIfNotManaged(walletOperation.getChargeInstance());
-            }
-            ratingUnitDescription = chargeInstance.getChargeTemplate().getRatingUnitDescription();
-        }
-
-        RatedTransaction ratedTransaction = new RatedTransaction(walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(),
-            walletOperation.getUnitAmountWithTax(), walletOperation.getUnitAmountTax(), walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(),
-            walletOperation.getAmountWithTax(), walletOperation.getAmountTax(), RatedTransactionStatusEnum.OPEN, wallet, wallet.getUserAccount().getBillingAccount(),
-            wallet.getUserAccount(), walletOperation.getInvoiceSubCategory(), walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(),
-            walletOperation.getParameterExtra(), walletOperation.getOrderNumber(), walletOperation.getSubscription(), inputUnitDescription, ratingUnitDescription,
-            walletOperation.getPriceplan(), walletOperation.getOfferTemplate(), walletOperation.getEdr(), walletOperation.getCode(), walletOperation.getDescription(),
-            walletOperation.getStartDate(), walletOperation.getEndDate(), walletOperation.getSeller(), walletOperation.getTax(), walletOperation.getTaxPercent(),
-            walletOperation.getServiceInstance());
+        RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
 
         if (!isVirtual) {
             create(ratedTransaction);
