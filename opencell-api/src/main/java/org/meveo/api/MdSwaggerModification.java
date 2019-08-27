@@ -7,7 +7,7 @@ public class MdSwaggerModification {
 
     public static void main(String[] args) throws Exception {
         String parentpath = System.getProperty("user.dir");
-        //parentpath=parentpath+File.separator+"opencell-api";
+        parentpath=parentpath+File.separator+"opencell-api";
         FileReader fr = null, md = null;
         BufferedReader lnr = null;
         String filePath = parentpath+File.separator+"target"+File.separator+"doc"+File.separator+"swagger"+File.separator+"swagger.yaml";
@@ -48,48 +48,47 @@ public class MdSwaggerModification {
         FileReader md = null;
         BufferedReader lnr = null;
         String filePath = parentpath+File.separator+"src"+File.separator+"test"+File.separator+"resources" +File.separator+"md" +File.separator+ nameFile + ".md";
-        //System.out.println(filePath);
-        String line = "", str = "";
+        String returnline = "", str = "";
         try {
             md = new FileReader(filePath);
             lnr = new BufferedReader(md);
             while ((str = lnr.readLine()) != null) {
-                    line = line + "      " + str + "  \n";
+                    returnline = returnline + "      " + str + "  \n";
             }
             lnr.close();
 
         } catch (FileNotFoundException e1) {
             //e1.printStackTrace();
             System.out.println("File Not Found for "+nameFile);
-            line="    @%"+nameFile;
+            returnline="    @%"+nameFile;
 
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        return line;
+        return returnline;
     }
     public static String mdLineReturn(String nameFile,String parentpath) throws IOException {
         FileReader md = null;
         BufferedReader lnr = null;
         String filePath = parentpath+File.separator+"src"+File.separator+"test"+File.separator+"resources" +File.separator+"md" +File.separator+ nameFile + ".md";
-        String line = "", str = "";
+        String returnline = "", str = "";
         try {
             md = new FileReader(filePath);
             lnr = new BufferedReader(md);
             while ((str = lnr.readLine()) != null) {
-                        line = line + "    " + str + "  \n";
+                        returnline = returnline + "    " + str + "  \n";
             }
             lnr.close();
 
         } catch (FileNotFoundException e1) {
             //e1.printStackTrace();
             System.out.println("File not Found for "+nameFile);
-            line="    @%"+nameFile;
+            returnline="    @%"+nameFile;
 
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        return line;
+        return returnline;
     }
 }
 
