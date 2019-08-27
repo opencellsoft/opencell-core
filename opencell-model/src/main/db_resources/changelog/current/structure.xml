@@ -1395,6 +1395,31 @@
         
     </changeSet>
     
-    
+    <changeSet id="#4511_20190826" author="AndriusKarpavicius">
+        
+        <dropIndex tableName="billing_wallet_operation" indexName="billing_wallet_operation_status"/>
+        
+        <createTable tableName="billing_wallet_operation_status">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_wallet_operation_status_pkey" />
+            </column>
+            <column name="status" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="rated_transaction_id" type="bigint" />
+            <column name="status_date" type="datetime" />
+        </createTable> 
+        
+        <sql>insert into ${db.schema.adapted}billing_wallet_operation_status (id,status, rated_transaction_id, status_date)
+            select id, status, rated_transaction_id, updated from ${db.schema.adapted}billing_wallet_operation where status&lt;&gt;'OPEN'
+        </sql>    
+        
+        <dropColumn tableName="billing_wallet_operation" columnName="status" />
+        <dropColumn tableName="billing_wallet_operation" columnName="rated_transaction_id" />
+        
+        <addForeignKeyConstraint baseColumnNames="rated_transaction_id" baseTableName="billing_wallet_operation_status" constraintName="fk_billing_wo_rt" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_rated_transaction" />
+                
+    </changeSet>    
     
 </databaseChangeLog>

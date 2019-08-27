@@ -31,6 +31,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -66,6 +67,7 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationProcessingStatus;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -644,11 +646,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
             walletOperation.setSubscriptionDate(serviceInstance.getSubscriptionDate());
 
+            List<WalletOperation> operations = chargeWalletOperation(walletOperation);
+
             if (forSchedule) {
-                walletOperation.setStatus(WalletOperationStatusEnum.SCHEDULED);
+                WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(walletOperation, null, WalletOperationStatusEnum.SCHEDULED);
+                getEntityManager().persist(woProcessingStatus);
             }
 
-            List<WalletOperation> operations = chargeWalletOperation(walletOperation);
             walletOperations.addAll(operations);
 
             // create(chargeApplication);
@@ -940,24 +944,21 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         chargeInstance.setChargeDate(applyChargeOnDate);
     }
 
-    @SuppressWarnings("unchecked")
     public List<WalletOperation> listToInvoiceByUserAccount(Date invoicingDate, UserAccount userAccount) {
-        return getEntityManager().createNamedQuery("WalletOperation.listToInvoiceByUA").setParameter("invoicingDate", invoicingDate).setParameter("userAccount", userAccount)
-            .getResultList();
+        return getEntityManager().createNamedQuery("WalletOperation.listToInvoiceByUA", WalletOperation.class).setParameter("invoicingDate", invoicingDate)
+            .setParameter("userAccount", userAccount).setHint("org.hibernate.readOnly", true).getResultList();
     }
 
-    @SuppressWarnings("unchecked")
     public List<WalletOperation> listToInvoiceBySubscription(Date invoicingDate, Subscription subscription) {
 
-        return getEntityManager().createNamedQuery("WalletOperation.listToInvoiceBySubscription").setParameter("invoicingDate", invoicingDate)
-            .setParameter("subscription", subscription).getResultList();
+        return getEntityManager().createNamedQuery("WalletOperation.listToInvoiceBySubscription", WalletOperation.class).setParameter("invoicingDate", invoicingDate)
+            .setParameter("subscription", subscription).setHint("org.hibernate.readOnly", true).getResultList();
     }
 
-    @SuppressWarnings("unchecked")
     public List<WalletOperation> listToInvoiceByOrder(Date invoicingDate, Order order) {
 
-        return getEntityManager().createNamedQuery("WalletOperation.listToInvoiceByOrderNumber").setParameter("invoicingDate", invoicingDate)
-            .setParameter("orderNumber", order.getOrderNumber()).getResultList();
+        return getEntityManager().createNamedQuery("WalletOperation.listToInvoiceByOrderNumber", WalletOperation.class).setParameter("invoicingDate", invoicingDate)
+            .setParameter("orderNumber", order.getOrderNumber()).setHint("org.hibernate.readOnly", true).getResultList();
     }
 
     /**
@@ -967,23 +968,17 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * @param nbToRetrieve Number of items to retrieve for processing
      * @return A list of Wallet operation ids
      */
-    @SuppressWarnings("unchecked")
-    public List<Long> listToInvoiceIds(Date invoicingDate, int nbToRetrieve) {
-        List<Long> ids = getEntityManager().createNamedQuery("WalletOperation.listToInvoiceIds").setParameter("invoicingDate", invoicingDate).setMaxResults(nbToRetrieve)
-            .getResultList();
-        return ids;
+    public List<WalletOperation> listToInvoice(Date invoicingDate, int nbToRetrieve) {
+        return getEntityManager().createNamedQuery("WalletOperation.listToInvoice", WalletOperation.class).setParameter("invoicingDate", invoicingDate).setMaxResults(nbToRetrieve)
+            .setHint("org.hibernate.readOnly", true).getResultList();
     }
 
     public WalletOperation findByUserAccountAndCode(String code, UserAccount userAccount) {
-        QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w");
-        qb.addCriterionEntity("wallet.userAccount", userAccount);
-
-        qb.addCriterion("code", "=", code, true);
 
         try {
-            return (WalletOperation) qb.getQuery(getEntityManager()).getSingleResult();
+            return getEntityManager().createNamedQuery("WalletOperation.findByUAAndCode", WalletOperation.class).setParameter("userAccount", userAccount).setParameter("code", code)
+                .getSingleResult();
         } catch (NoResultException e) {
-            log.warn("failed to find walletOperation by user account and code", e);
             return null;
         }
     }
@@ -1188,16 +1183,18 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public int updateToRerate(List<Long> walletIdList) {
         int walletsOpToRerate = 0;
-        List<Long> ratedTransactionsBilled = (List<Long>) getEntityManager().createNamedQuery("WalletOperation.getRatedTransactionsBilled")
-            .setParameter("walletIdList", walletIdList).getResultList();
-        walletIdList.removeAll(ratedTransactionsBilled);
+
+        // Ignore Rated transactions that were billed already
+        // TODO AKK check if RT table can be excluded and join is made directly between WOstatus and RTstatus tables
+        List<Long> walletOperationsBilled = (List<Long>) getEntityManager().createNamedQuery("WalletOperation.getWalletOperationsBilled").setParameter("walletIdList", walletIdList)
+            .getResultList();
+        walletIdList.removeAll(walletOperationsBilled);
 
         if (!walletIdList.isEmpty()) {
-            // set all rt.wos to open and ratedTx.id=null
-            getEntityManager().createNamedQuery("WalletOperation.setStatusToOpen").setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
 
-            // set selected wo to rerate
-            walletsOpToRerate = getEntityManager().createNamedQuery("WalletOperation.setStatusToRerate").setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
+            // set selected wo to rerate and ratedTx.id=null
+            walletsOpToRerate = getEntityManager().createNamedQuery("WalletOperation.setStatusToRerate").setParameter("now", new Date())
+                .setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
 
             // cancelled selected rts
             getEntityManager().createNamedQuery("RatedTransaction.cancelByWOIds").setParameter("now", new Date()).setParameter("notBilledWalletIdList", walletIdList)
@@ -1207,20 +1204,18 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         return walletsOpToRerate;
     }
 
-    @SuppressWarnings("unchecked")
     public List<Long> listToRerate() {
-        return (List<Long>) getEntityManager().createQuery("SELECT o.id FROM WalletOperation o " + "WHERE o.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE ")
-            .getResultList();
+        return (List<Long>) getEntityManager().createNamedQuery("WalletOperation.listToRerate", Long.class).getResultList();
     }
 
     @SuppressWarnings("unchecked")
     public List<WalletOperation> openWalletOperationsBySubCat(WalletInstance walletInstance, InvoiceSubCategory invoiceSubCategory, Date from, Date to) {
-        QueryBuilder qb = new QueryBuilder(WalletOperation.class, "op", null);
+        QueryBuilder qb = new QueryBuilder("Select o from WalletOperation o left join fetch o.processingStatus s", "op");
         if (invoiceSubCategory != null) {
             qb.addCriterionEntity("op.chargeInstance.chargeTemplate.invoiceSubCategory", invoiceSubCategory);
         }
         qb.addCriterionEntity("op.wallet", walletInstance);
-        qb.addCriterionEnum("op.status", WalletOperationStatusEnum.OPEN);
+        qb.addSql(" s is null");
         if (from != null) {
             qb.addCriterion("operationDate", ">=", from, false);
         }
@@ -1358,7 +1353,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
     public void updateAggregatedWalletOperations(Date invoicingDate) {
         // batch update
-        String strQuery = "UPDATE " + WalletOperation.class.getSimpleName() + " o SET status='" + WalletOperationStatusEnum.TREATED + "'" //
+        String strQuery = "UPDATE WalletOperation o SET o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
                 + " WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate) AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN";
         Query query = getEntityManager().createQuery(strQuery);
         query.setParameter("invoicingDate", invoicingDate);
@@ -1392,8 +1387,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      */
     public long purge(Date firstTransactionDate, Date lastTransactionDate) {
 
-        getEntityManager().createNamedQuery("WalletOperation.prepareToSafeDeleteNotOpenWObetweenTwoDates").setParameter("firstTransactionDate", firstTransactionDate)
-            .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
         return getEntityManager().createNamedQuery("WalletOperation.deleteNotOpenWObetweenTwoDates").setParameter("firstTransactionDate", firstTransactionDate)
             .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
     }
@@ -1405,6 +1398,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * @throws BusinessException
      */
     public void importWalletOperation(List<WalletOperationDto> walletOperations) throws BusinessException {
+
+        EntityManager em = getEntityManager();
+
         for (WalletOperationDto dto : walletOperations) {
             WalletOperation wo = new WalletOperation();
             if (dto.getSeller() != null) {
@@ -1434,7 +1430,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             }
             wo.setCode(dto.getCode());
             wo.setType(dto.getType());
-            wo.setStatus(dto.getStatus());
             wo.setRatingUnitDescription(dto.getRatingUnitDescription());
             wo.setTaxPercent(dto.getTaxPercent());
             wo.setUnitAmountWithoutTax(dto.getUnitAmountWithoutTax());
@@ -1455,6 +1450,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             wo.setRawAmountWithoutTax(dto.getRawAmountWithoutTax());
             wo.setRawAmountWithTax(dto.getRawAmountWithTax());
             create(wo);
+
+            if (dto.getStatus() != WalletOperationStatusEnum.OPEN) {
+                WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(wo, null, dto.getStatus());
+                em.persist(woProcessingStatus);
+            }
         }
     }
 
@@ -1469,8 +1469,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             .getResultList();
 
         for (WalletOperation walletOperation : walletOperations) {
-            walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE);
-            update(walletOperation);
+            walletOperation.getProcessingStatus().changeStatus(WalletOperationStatusEnum.TO_RERATE);
         }
     }
 }

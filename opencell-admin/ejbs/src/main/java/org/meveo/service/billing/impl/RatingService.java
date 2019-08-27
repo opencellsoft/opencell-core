@@ -76,6 +76,7 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -125,6 +126,9 @@ public class RatingService extends BusinessService<WalletOperation> {
 
     @Inject
     private TriggeredEdrScriptService triggeredEdrScriptService;
+
+    @Inject
+    private TaxService taxService;
 
     /**
      * @param level level enum
@@ -284,6 +288,7 @@ public class RatingService extends BusinessService<WalletOperation> {
         BillingAccount billingAccount = userAccount.getBillingAccount();
 
         if (billingAccountService.isExonerated(billingAccount)) {
+            walletOperation.setTax(taxService.getZeroTax());
             walletOperation.setTaxPercent(BigDecimal.ZERO);
         } else {
             walletOperation.setTax(tax);
@@ -300,7 +305,6 @@ public class RatingService extends BusinessService<WalletOperation> {
         } else {
             walletOperation.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());
         }
-        walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
         if (chargeInstance != null) {
             walletOperation.setSeller(chargeInstance.getSeller());
         } else {
@@ -696,7 +700,7 @@ public class RatingService extends BusinessService<WalletOperation> {
         for (PricePlanMatrix pricePlan : listPricePlan) {
 
             log.trace("Try to verify price plan {} for WO {}", pricePlan.getId(), bareOperation.getCode());
-            
+
             Seller seller = pricePlan.getSeller();
             boolean sellerAreEqual = seller == null || seller.getId().equals(bareOperation.getSeller().getId());
             if (!sellerAreEqual) {
@@ -871,7 +875,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             }
             WalletOperation operation = operationToRerate.getUnratedClone();
             operationToRerate.setReratedWalletOperation(operation);
-            operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);
+            operationToRerate.getProcessingStatus().setStatus(WalletOperationStatusEnum.RERATED);
             PricePlanMatrix priceplan = operation.getPriceplan();
             WalletInstance wallet = operation.getWallet();
             UserAccount userAccount = wallet.getUserAccount();
@@ -922,9 +926,10 @@ public class RatingService extends BusinessService<WalletOperation> {
             create(operation);
             updateNoCheck(operationToRerate);
             log.debug("updated wallet operation");
+        
         } catch (UnrolledbackBusinessException e) {
             log.error("Failed to reRate", e.getMessage());
-            operationToRerate.setStatus(WalletOperationStatusEnum.TREATED);
+            operationToRerate.getProcessingStatus().setStatus(WalletOperationStatusEnum.TREATED);
             operationToRerate.setReratedWalletOperation(null);
         }
 

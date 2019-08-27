@@ -15,6 +15,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.job.UnitRatedTransactionsJobBean;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -42,7 +43,7 @@ public class RatedTransactionAsync {
     /**
      * Rate wallet operations, one operation at a time in a separate transaction.
      * 
-     * @param ids A list of wallet operation ids.
+     * @param walletOperations A list of wallet operations to rate
      * @param result Job execution result
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
@@ -50,16 +51,16 @@ public class RatedTransactionAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
+    public Future<String> launchAndForget(List<WalletOperation> walletOperations, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         int i = 0;
-        for (Long walletOperationId : ids) {
+        for (WalletOperation walletOperation : walletOperations) {
             i++;
             if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR_FAST == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
-            unitRatedTransactionsJobBean.execute(result, walletOperationId);
+            unitRatedTransactionsJobBean.execute(result, walletOperation);
         }
         return new AsyncResult<>("OK");
     }

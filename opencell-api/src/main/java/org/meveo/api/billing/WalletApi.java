@@ -36,6 +36,8 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationProcessingStatus;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
@@ -517,7 +519,6 @@ public class WalletApi extends BaseApi {
         walletOperation.setWallet(walletInstance);
         walletOperation.setChargeInstance(chargeInstance);
         walletOperation.setType(postData.getType());
-        walletOperation.setStatus(postData.getStatus());
         walletOperation.setCounter(null);
         walletOperation.setRatingUnitDescription(postData.getRatingUnitDescription());
         walletOperation.setTax(tax);
@@ -560,6 +561,11 @@ public class WalletApi extends BaseApi {
         }
 
         walletOperationService.create(walletOperation);
+
+        if (postData.getStatus() != WalletOperationStatusEnum.OPEN) {
+            WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(walletOperation, null, postData.getStatus());
+            walletOperationService.getEntityManager().persist(woProcessingStatus);
+        }
         return walletOperation;
 
     }

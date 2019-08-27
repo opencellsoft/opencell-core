@@ -168,6 +168,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @Inject
     private ServiceSingleton serviceSingleton;
     
+    @Inject
+    private WalletOperationService walletOperationService;
+    
     /** transformer factory. */
     private TransformerFactory transfac = TransformerFactory.newInstance();
 
@@ -1547,7 +1550,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                             Date periodEndDate = null;
                             code = ratedTransaction.getCode();
                             description = ratedTransaction.getDescription();
-                            Set<WalletOperation> walletOperations = ratedTransaction.getWalletOperations();
+                            List<WalletOperation> walletOperations = walletOperationService.listByRatedTransactionId(ratedTransaction.getId());
 
                             if (walletOperations != null && !walletOperations.isEmpty()) {
 

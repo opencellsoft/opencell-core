@@ -27,6 +27,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -40,6 +41,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationProcessingStatus;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -85,8 +87,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             QueryBuilder qb = new QueryBuilder(OneShotChargeInstance.class, "c");
             qb.addCriterion("c.id", "=", oneShotChargeId, true);
             oneShotChargeInstance = (OneShotChargeInstance) qb.getQuery(getEntityManager()).getSingleResult();
-            log.debug("end of find {} by id (id={}, Result found={}.",
-                    new Object[] { "OneShotChargeInstance", oneShotChargeId, oneShotChargeInstance != null });
+            log.debug("end of find {} by id (id={}, Result found={}.", new Object[] { "OneShotChargeInstance", oneShotChargeId, oneShotChargeInstance != null });
         } catch (NoResultException nre) {
             log.debug("findById : aucune charge ponctuelle n'a ete trouvee");
         } catch (Exception e) {
@@ -246,67 +247,95 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
     public void terminateOneShotChargeInstance(OneShotChargeInstance oneShotChargeInstance) throws BusinessException {
         List<WalletOperation> walletOperations = oneShotChargeInstance.getWalletOperations();
-        for(WalletOperation walletOperation : walletOperations) {
-            walletOperation.setStatus(WalletOperationStatusEnum.CANCELED);
+
+        EntityManager em = getEntityManager();
+        for (WalletOperation wo : walletOperations) {
+            if (wo.getStatus() == WalletOperationStatusEnum.OPEN) {
+                WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(wo, null, WalletOperationStatusEnum.CANCELED);
+                em.persist(woProcessingStatus);
+            } else {
+                wo.getProcessingStatus().changeStatus(WalletOperationStatusEnum.CANCELED);
+            }
         }
         oneShotChargeInstance.setStatus(InstanceStatusEnum.CANCELED);
         update(oneShotChargeInstance);
     }
 
-
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void matchPrepaidWallet(WalletInstance wallet, String matchingChargeCode) throws BusinessException, RatingException {
-        // get the id of the last OPEN walletOperation
-        Long maxWalletId = getEntityManager().createNamedQuery("WalletOperation.getMaxOpenId", Long.class).setParameter("wallet", wallet).getSingleResult();
-        BigDecimal balanceNoTax = getEntityManager().createNamedQuery("WalletOperation.getBalanceNoTaxUntilId", BigDecimal.class).setParameter("wallet", wallet)
-            .setParameter("maxId", maxWalletId).getSingleResult();
-        BigDecimal balanceWithTax = getEntityManager().createNamedQuery("WalletOperation.getBalanceWithTaxUntilId", BigDecimal.class).setParameter("wallet", wallet)
-            .setParameter("maxId", maxWalletId).getSingleResult();
-        Subscription subscription = null;
-        if (balanceNoTax == null) {
-            return;
-        }
-        for (Subscription sub : wallet.getUserAccount().getSubscriptions()) {
-            if (sub.isActive()) {
-                subscription = sub;
-                break;
-            }
-        }
-        if (subscription == null) {
-            throw new BusinessException("NO_ACTIVE_SUBSCRIPTION");
-        }
+
         OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(matchingChargeCode);
         if (oneShotChargeTemplate == null) {
             throw new BusinessException("Charge template " + matchingChargeCode + " not found");
         }
-        log.debug("create matching charge instance with amountWithoutTax {}, amountWithTax {}", balanceNoTax, balanceWithTax);
-        OneShotChargeInstance matchingCharge = oneShotChargeApplication(subscription, (OneShotChargeTemplate) oneShotChargeTemplate, wallet.getCode(), new Date(), balanceNoTax,
-            balanceWithTax, BigDecimal.ONE, null, null, null, null, false);
+
+        List<WalletOperation> wos = getEntityManager().createNamedQuery("WalletOperation.getOpenByWallet", WalletOperation.class).setParameter("wallet", wallet)
+            .setHint("org.hibernate.readOnly", true).getResultList();
+
+        if (wos.isEmpty()) {
+            return;
+        }
+
+        log.info("Prepaid matching - setting to TREATED {} wallet operations on wallet {} and creating matching and compensating charges and wallet operations", wos.size(),
+            wallet.getId());
+
+        BigDecimal balanceNoTax = BigDecimal.ZERO;
+        BigDecimal balanceWithTax = BigDecimal.ZERO;
+
+        EntityManager em = getEntityManager();
+
+        Subscription firstActiveSubscription = null;
+        for (WalletOperation wo : wos) {
+            if (firstActiveSubscription == null && wo.getSubscription() != null && wo.getSubscription().isActive()) {
+                firstActiveSubscription = wo.getSubscription();
+            }
+
+            // Here the amounts must be summed up negated
+            balanceNoTax = balanceNoTax.subtract(wo.getAmountWithoutTax());
+            balanceWithTax = balanceWithTax.subtract(wo.getAmountWithTax());
+
+            WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(wo, null, WalletOperationStatusEnum.TREATED);
+            walletOperationService.getEntityManager().persist(woProcessingStatus);
+
+        }
+        if (firstActiveSubscription == null) {
+            for (Subscription sub : wallet.getUserAccount().getSubscriptions()) {
+                if (sub.isActive()) {
+                    firstActiveSubscription = sub;
+                    break;
+                }
+            }
+            if (firstActiveSubscription == null) {
+                throw new BusinessException("NO_ACTIVE_SUBSCRIPTION");
+            }
+        }
+
+        log.debug("Create matching and compensating charge {} instances with amountWithoutTax {}, amountWithTax {}", matchingChargeCode, balanceNoTax, balanceWithTax);
+        OneShotChargeInstance matchingCharge = oneShotChargeApplication(firstActiveSubscription, (OneShotChargeTemplate) oneShotChargeTemplate, wallet.getCode(), new Date(),
+            balanceNoTax, balanceWithTax, BigDecimal.ONE, null, null, null, null, false);
         if (matchingCharge == null) {
             throw new BusinessException("Cannot find or create matching charge instance for code " + matchingChargeCode);
         }
-        log.debug("matchingCharge amount withoutTax {}", matchingCharge.getAmountWithoutTax());
-        BigDecimal inputQuantity = BigDecimal.ONE;
-
-        WalletOperation op = walletOperationService.oneShotWalletOperation(subscription, matchingCharge, inputQuantity, null, new Date(), false, subscription.getOrderNumber());
-        op.setStatus(WalletOperationStatusEnum.TREATED);
-        OneShotChargeInstance compensationCharge = oneShotChargeApplication(subscription, (OneShotChargeTemplate) oneShotChargeTemplate, wallet.getCode(), new Date(),
+        OneShotChargeInstance compensationCharge = oneShotChargeApplication(firstActiveSubscription, (OneShotChargeTemplate) oneShotChargeTemplate, wallet.getCode(), new Date(),
             balanceNoTax.negate(), balanceWithTax.negate(), BigDecimal.ONE, null, null, null, null, false);
         if (compensationCharge == null) {
             throw new BusinessException("Cannot find or create compensating charge instance for code " + matchingChargeCode);
         }
-        int updatedOps = getEntityManager().createNamedQuery("WalletOperation.setTreatedStatusUntilId").setParameter("wallet", wallet).setParameter("maxId", maxWalletId)
-            .executeUpdate();
-        log.debug("set to TREATED {} wallet ops on wallet {}", updatedOps, wallet.getId());
-        walletOperationService.oneShotWalletOperation(subscription, compensationCharge, inputQuantity, null, new Date(), false, null);
+        BigDecimal inputQuantity = BigDecimal.ONE;
+
+        WalletOperation op = walletOperationService.oneShotWalletOperation(firstActiveSubscription, matchingCharge, inputQuantity, null, new Date(), false,
+            firstActiveSubscription.getOrderNumber());
+        WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(op, null, WalletOperationStatusEnum.TREATED);
+        em.persist(woProcessingStatus);
+
+        walletOperationService.oneShotWalletOperation(firstActiveSubscription, compensationCharge, inputQuantity, null, new Date(), false, null);
+        
         // we check that balance is unchanged
-        //
         BigDecimal cacheBalance = walletService.getWalletBalance(wallet.getId());
         if (cacheBalance.compareTo(balanceWithTax) != 0) {
-            log.error("balances in prepaid matching process do not match cache={}, compensated={}", cacheBalance, balanceWithTax);
+            log.error("Balances after prepaid matching process do not match. Balance in cache={}, balance expected={}", cacheBalance, balanceWithTax);
             throw new BusinessException("MATCHING_ERROR");
         }
     }
-
 }

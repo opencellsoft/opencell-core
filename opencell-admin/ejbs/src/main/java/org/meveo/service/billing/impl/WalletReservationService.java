@@ -227,7 +227,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
         try {
             StringBuilder strQuery = new StringBuilder();
-            strQuery.append("select new org.meveo.model.billing.Amounts(SUM(r.amountWithoutTax), SUM(r.amountWithTax)) from WalletOperation r " + "WHERE 1=1 ");
+            strQuery.append("select new org.meveo.model.billing.Amounts(SUM(r.amountWithoutTax), SUM(r.amountWithTax)) from WalletOperation r left join r.processingStatus s WHERE 1=1 ");
 
             if (startDate != null) {
                 strQuery.append(" AND r.operationDate>=:startDate ");
@@ -236,11 +236,11 @@ public class WalletReservationService extends PersistenceService<WalletReservati
                 strQuery.append(" AND r.operationDate<:endDate ");
             }
             if (mode == BalanceTypeEnum.CURRENT) {
-                strQuery.append(" AND (r.status='OPEN' OR r.status='RESERVED' OR r.status='TREATED') ");
+                strQuery.append(" AND (s is null OR s.status='RESERVED' OR s.status='TREATED') ");
             } else if (mode == BalanceTypeEnum.RESERVED) {
-                strQuery.append(" AND r.status='RESERVED' ");
+                strQuery.append(" AND s.status='RESERVED' ");
             } else if (mode == BalanceTypeEnum.OPEN) {
-                strQuery.append(" AND (r.status='OPEN' OR r.status='TREATED')  ");
+                strQuery.append(" AND (s is null OR s.status='TREATED')  ");
             }
             if (walletId != null) {
                 strQuery.append(" AND r.wallet.id=:walletId ");
@@ -264,7 +264,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
             case PROVIDER:
                 break;
             case SELLER:
-                strQuery.append(" AND r.wallet.userAccount.billingAccount.customerAccount.customer.seller=:seller ");
+                strQuery.append(" AND r.seller=:seller ");
                 break;
             case USER_ACCOUNT:
                 strQuery.append(" AND r.wallet.userAccount=:userAccount ");

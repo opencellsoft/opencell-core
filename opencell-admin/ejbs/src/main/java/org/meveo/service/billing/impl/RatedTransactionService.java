@@ -63,6 +63,7 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationProcessingStatus;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.filter.Filter;
@@ -129,6 +130,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
 
+    @Inject
+    private WalletService walletService;
+
+    @Inject
+    private GenericChargeInstanceService genericChargeInstanceService;
+
     /**
      * Check if Billing account has any not yet billed Rated transactions
      * 
@@ -150,24 +157,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Check if Order has any not yet billed Rated transactions
-     * 
-     * @param billingAccount billing account
-     * @param orderNumber order number.
-     * @param firstTransactionDate firstTransactionDate.
-     * @param lastTransactionDate lastTransactionDate.
-     * @return true/false
-     */
-    public Boolean isOrderBillable(String orderNumber, Date firstTransactionDate, Date lastTransactionDate) {
-        long count = 0;
-        TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedOpenByOrder", Long.class);
-        count = q.setParameter("orderNumber", orderNumber).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
-            .getSingleResult();
-        log.debug("isOrderBillable ,orderNumber={}) : {}", orderNumber, count);
-        return count > 0 ? true : false;
-    }
-
-    /**
      * @param invoice invoice
      * @param invoiceSubCategory sub category invoice
      * @return list of rated transaction
@@ -178,16 +167,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         return getEntityManager().createNamedQuery("RatedTransaction.getListByInvoiceAndSubCategory", RatedTransaction.class).setParameter("invoice", invoice)
             .setParameter("invoiceSubCategory", invoiceSubCategory).getResultList();
-    }
-
-    /**
-     * @param walletOperationId wallet operation i
-     * @throws BusinessException business exception
-     */
-    public void createRatedTransaction(Long walletOperationId) throws BusinessException {
-        WalletOperation walletOperation = walletOperationService.findById(walletOperationId);
-
-        createRatedTransaction(walletOperation, false);
     }
 
     /**
@@ -225,16 +204,43 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @throws BusinessException business exception
      */
     public RatedTransaction createRatedTransaction(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
-        RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
+
+        WalletInstance wallet = walletService.retrieveIfNotManaged(walletOperation.getWallet());
+
+        ChargeInstance chargeInstance = null;
+
+        String inputUnitDescription = walletOperation.getInputUnitDescription();
+        if (inputUnitDescription == null) {
+            chargeInstance = genericChargeInstanceService.retrieveIfNotManaged(walletOperation.getChargeInstance());
+            inputUnitDescription = chargeInstance.getChargeTemplate().getInputUnitDescription();
+        }
+        String ratingUnitDescription = walletOperation.getRatingUnitDescription();
+        if (ratingUnitDescription == null) {
+            if (chargeInstance == null) {
+                chargeInstance = genericChargeInstanceService.retrieveIfNotManaged(walletOperation.getChargeInstance());
+            }
+            ratingUnitDescription = chargeInstance.getChargeTemplate().getRatingUnitDescription();
+        }
+
+        RatedTransaction ratedTransaction = new RatedTransaction(walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(),
+            walletOperation.getUnitAmountWithTax(), walletOperation.getUnitAmountTax(), walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(),
+            walletOperation.getAmountWithTax(), walletOperation.getAmountTax(), RatedTransactionStatusEnum.OPEN, wallet, wallet.getUserAccount().getBillingAccount(),
+            wallet.getUserAccount(), walletOperation.getInvoiceSubCategory(), walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(),
+            walletOperation.getParameterExtra(), walletOperation.getOrderNumber(), walletOperation.getSubscription(), inputUnitDescription, ratingUnitDescription,
+            walletOperation.getPriceplan(), walletOperation.getOfferTemplate(), walletOperation.getEdr(), walletOperation.getCode(), walletOperation.getDescription(),
+            walletOperation.getStartDate(), walletOperation.getEndDate(), walletOperation.getSeller(), walletOperation.getTax(), walletOperation.getTaxPercent(),
+            walletOperation.getServiceInstance());
 
         if (!isVirtual) {
             create(ratedTransaction);
         }
-        walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
-        walletOperation.setRatedTransaction(ratedTransaction);
 
-        if (!isVirtual) {
-            walletOperationService.updateNoCheck(walletOperation);
+        WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(walletOperation, ratedTransaction, WalletOperationStatusEnum.TREATED);
+
+        if (isVirtual) {
+            walletOperation.setProcessingStatus(woProcessingStatus);
+        } else {
+            getEntityManager().persist(woProcessingStatus);
         }
 
         return ratedTransaction;
@@ -395,8 +401,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             Query query = getEntityManager().createQuery(strQuery);
             query.setParameter("invoicingDate", invoicingDate);
             List<WalletOperation> walletOps = (List<WalletOperation>) query.getResultList();
+
+            EntityManager em = getEntityManager();
+
             for (WalletOperation tempWo : walletOps) {
-                tempWo.setRatedTransaction(ratedTransaction);
+                WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(tempWo, ratedTransaction, WalletOperationStatusEnum.TREATED);
+                em.persist(woProcessingStatus);
             }
         }
 

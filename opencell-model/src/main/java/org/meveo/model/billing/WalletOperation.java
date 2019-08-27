@@ -73,58 +73,39 @@ import org.meveo.model.rating.EDR;
 @DiscriminatorColumn(name = "operation_type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")
 @NamedQueries({
-        @NamedQuery(name = "WalletOperation.listRatedTransactionByWalletOperationId", query = "SELECT o.ratedTransaction FROM WalletOperation o where o.id=:walletOperationId"),
-        @NamedQuery(name = "WalletOperation.getRatedTransactionsBilled", query = "SELECT o.id FROM WalletOperation o "
-                + " WHERE o.ratedTransaction.processingStatus.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED" + " AND o.id IN :walletIdList"),
-        @NamedQuery(name = "WalletOperation.listByRatedTransactionId", query = "SELECT o FROM WalletOperation o WHERE o.ratedTransaction.id=:ratedTransactionId"),
+        @NamedQuery(name = "WalletOperation.getWalletOperationsBilled", query = "SELECT ws.id FROM WalletOperationProcessingStatus ws join ws.ratedTransaction rt join rt.processingStatus rs "
+                + " WHERE rs.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND ws.id IN :walletIdList"),
+        @NamedQuery(name = "WalletOperation.listByRatedTransactionId", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s.ratedTransaction.id=:ratedTransactionId"),
 
-        @NamedQuery(name = "WalletOperation.listByBRId", query = "SELECT o FROM WalletOperation o WHERE o.ratedTransaction.id in (select s.id from RatedTransactionProcessingStatus s where s.billingRun.id=:brId)"),
+        @NamedQuery(name = "WalletOperation.listByBRId", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s.ratedTransaction.id in (select rs.id from RatedTransactionProcessingStatus rs where rs.billingRun.id=:brId)"),
 
+        @NamedQuery(name = "WalletOperation.listToInvoice", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate )"),
+        @NamedQuery(name = "WalletOperation.listToInvoiceByUA", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.wallet.userAccount=:userAccount"),
+        @NamedQuery(name = "WalletOperation.listToInvoiceBySubscription", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.subscription=:subscription"),
+        @NamedQuery(name = "WalletOperation.listToInvoiceByOrderNumber", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.orderNumber=:orderNumber"),
+
+        @NamedQuery(name = "WalletOperation.listToRerate", query = "SELECT s.id FROM WalletOperationProcessingStatus s WHERE s.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE"),
         
-        @NamedQuery(name = "WalletOperation.listToInvoice", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
-                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
-        @NamedQuery(name = "WalletOperation.listToInvoiceByUA", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
-                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.wallet.userAccount=:userAccount"),
-        @NamedQuery(name = "WalletOperation.listToInvoiceBySubscription", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
-                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.subscription=:subscription"),
-        @NamedQuery(name = "WalletOperation.listToInvoiceByOrderNumber", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
-                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.orderNumber=:orderNumber"),
-        @NamedQuery(name = "WalletOperation.listToInvoiceIds", query = "SELECT o.id FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
-                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
-        @NamedQuery(name = "WalletOperation.getBalancesForWalletInstance", query = "SELECT sum(case when o.status in ('OPEN','TREATED') then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o WHERE o.wallet.id=:walletId and o.status in ('OPEN','RESERVED','TREATED')"),
-        @NamedQuery(name = "WalletOperation.getBalancesForCache", query = "SELECT o.wallet.id, sum(case when o.status in ('OPEN','TREATED') then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o WHERE o.status in ('OPEN','RESERVED','TREATED') and o.wallet.walletTemplate.walletType='PREPAID' group by o.wallet.id"),
-        @NamedQuery(name = "WalletOperation.getMaxOpenId", query = "SELECT max(o.id) FROM WalletOperation o WHERE o.wallet=:wallet and "
-                + "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
-        @NamedQuery(name = "WalletOperation.getBalanceNoTaxUntilId", query = "SELECT sum(o.amountWithoutTax)*-1 FROM WalletOperation o WHERE o.wallet=:wallet and "
-                + "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.id<=:maxId"),
-        @NamedQuery(name = "WalletOperation.getBalanceWithTaxUntilId", query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet=:wallet and "
-                + "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.id<=:maxId"),
-        @NamedQuery(name = "WalletOperation.setTreatedStatusUntilId", query = "UPDATE WalletOperation o SET o.status= org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
-                + " WHERE o.wallet=:wallet and " + "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.id<=:maxId"),
-        @NamedQuery(name = "WalletOperation.setStatusToRerate", query = "update WalletOperation w set w.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE"
-                + " where (w.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN OR w.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED)"
-                + " and w.id IN :notBilledWalletIdList"),
-        @NamedQuery(name = "WalletOperation.getRatedTransactionIds", query = "SELECT ratedTransaction.id FROM WalletOperation WHERE id IN :notBilledWalletIdList"),
-        @NamedQuery(name = "WalletOperation.setStatusToOpen", query = "UPDATE WalletOperation o1 SET o1.ratedTransaction=NULL, o1.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
-                + " WHERE o1.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED"
-                + " AND o1.ratedTransaction.id IN (SELECT o2.ratedTransaction.id FROM WalletOperation o2 WHERE o2.id IN :notBilledWalletIdList)"),
-        @NamedQuery(name = "WalletOperation.listByChargeInstance", query = "SELECT o FROM WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "),
-        @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
-                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"),
-        @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
-                + " AND o.wallet.userAccount.billingAccount=:billingAccount"),
-        @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
-                + " AND o.wallet.userAccount=:userAccount"),
-        @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
-                + " AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount"),
-        @NamedQuery(name = "WalletOperation.countNbrWalletsOperationByStatus", query = "select status, count(*) from WalletOperation group by status"),
-        @NamedQuery(name = "WalletOperation.listOpenWObetweenTwoDates", query = "SELECT o FROM WalletOperation o join fetch o.seller join fetch o.tax "
-                + "join fetch o.offerTemplate join fetch o.currency join fetch o.wallet join fetch o.chargeInstance WHERE o.status = org.meveo.model.billing.WalletOperationStatusEnum.OPEN AND  "
-                + ":firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate order by o.operationDate desc"),
-        @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.OPEN AND  "
-                + ":firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate"),
-        @NamedQuery(name = "WalletOperation.prepareToSafeDeleteNotOpenWObetweenTwoDates", query = "UPDATE WalletOperation o  SET o.edr = NULL, o.ratedTransaction=NULL WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.OPEN AND  "
-                + ":firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate")})
+        @NamedQuery(name = "WalletOperation.getBalancesForWalletInstance", query = "SELECT sum(case when (s is null or s.status in ('OPEN','TREATED')) then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o left join o.processingStatus s WHERE o.wallet.id=:walletId and (s is null or s.status in ('RESERVED','TREATED'))"),
+        @NamedQuery(name = "WalletOperation.getBalancesForCache", query = "SELECT o.wallet.id, sum(case when (s is null or s.status in ('OPEN','TREATED')) then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o left join o.processingStatus s WHERE (s is null or s.status in ('RESERVED','TREATED')) and o.wallet.walletTemplate.walletType='PREPAID' group by o.wallet.id"),
+
+        @NamedQuery(name = "WalletOperation.getOpenByWallet", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null and o.wallet=:wallet"),
+
+        @NamedQuery(name = "WalletOperation.setStatusToRerate", query = "UPDATE WalletOperationProcessingStatus s SET s.ratedTransaction=NULL, s.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE, s.statusDate = :now "
+                + " WHERE s.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED AND s.ratedTransaction.id IN (SELECT s1.ratedTransaction.id FROM WalletOperationProcessingStatus s1 WHERE s1.id IN :notBilledWalletIdList)"),
+
+        @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE o.chargeInstance=:chargeInstance AND o.id in (select s.id from WalletOperationProcessingStatus s where s.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED)"),
+
+        @NamedQuery(name = "WalletOperation.findByUAAndCode", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE o.wallet.userAccount=:userAccount and o.code=:code"),
+        
+        @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o left join o.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED) AND o.wallet.userAccount.billingAccount=:billingAccount"),
+        @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o left join o.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED) AND o.wallet.userAccount=:userAccount"),
+        @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o left join o.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED) AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount"),
+
+        @NamedQuery(name = "WalletOperation.countNbrWalletsOperationByStatus", query = "select s.status, count(o.id) from WalletOperation o left join o.processingStatus s group by s.status"),
+
+        @NamedQuery(name = "WalletOperation.listOpenWObetweenTwoDates", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate order by o.operationDate desc"),
+        @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.processingStatus is not null AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate") })
 public class WalletOperation extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -301,13 +282,6 @@ public class WalletOperation extends BusinessEntity {
     protected String offerCode;
 
     /**
-     * Status
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private WalletOperationStatusEnum status;
-
-    /**
      * Seller associated to operation
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -391,10 +365,6 @@ public class WalletOperation extends BusinessEntity {
     @JoinColumn(name = "subscription_id")
     protected Subscription subscription;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rated_transaction_id")
-    protected RatedTransaction ratedTransaction;
-
     /**
      * Service instance that Wallet operation is applied to
      */
@@ -409,17 +379,17 @@ public class WalletOperation extends BusinessEntity {
     private BillingAccount billingAccount;
 
     /**
-     * Billing run
-     */
-    @Transient
-    private BillingRun billingRun;
-
-    /**
      * Offer template
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
+
+    /**
+     * Wallet operation processing status
+     */
+    @OneToOne(mappedBy = "walletOperation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private WalletOperationProcessingStatus processingStatus;
 
     public WalletInstance getWallet() {
         return wallet;
@@ -639,11 +609,12 @@ public class WalletOperation extends BusinessEntity {
     }
 
     public WalletOperationStatusEnum getStatus() {
-        return status;
-    }
 
-    public void setStatus(WalletOperationStatusEnum status) {
-        this.status = status;
+        if (processingStatus != null) {
+            return processingStatus.getStatus();
+        } else {
+            return WalletOperationStatusEnum.OPEN;
+        }
     }
 
     public Date getSubscriptionDate() {
@@ -731,7 +702,6 @@ public class WalletOperation extends BusinessEntity {
         result.setQuantity(quantity);
         result.setSeller(seller);
         result.setStartDate(startDate);
-        result.setStatus(WalletOperationStatusEnum.OPEN);
         result.setSubscriptionDate(subscriptionDate);
         result.setTax(tax);
         result.setTaxPercent(taxPercent);
@@ -768,14 +738,6 @@ public class WalletOperation extends BusinessEntity {
 
     public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
         this.invoiceSubCategory = invoiceSubCategory;
-    }
-
-    public BillingRun getBillingRun() {
-        return billingRun;
-    }
-
-    public void setBillingRun(BillingRun billingRun) {
-        this.billingRun = billingRun;
     }
 
     public OfferTemplate getOfferTemplate() {
@@ -819,19 +781,6 @@ public class WalletOperation extends BusinessEntity {
 
     public void setOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber;
-    }
-
-    @Override
-    public String toString() {
-        return "WalletOperation [wallet=" + wallet + ", operationDate=" + operationDate + ", invoicingDate=" + invoicingDate + ", type=" + type + ", chargeInstance="
-                + chargeInstance + ", currency=" + currency + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", unitAmountWithTax="
-                + unitAmountWithTax + ", unitAmountTax=" + unitAmountTax + ", quantity=" + quantity + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax
-                + ", amountTax=" + amountTax + ", counter=" + counter + ", aggregatedServiceInstance=" + aggregatedServiceInstance + ", parameter1=" + parameter1 + ", parameter2="
-                + parameter2 + ", parameter3=" + parameter3 + ", startDate=" + startDate + ", endDate=" + endDate + ", subscriptionDate=" + subscriptionDate + ", offerCode="
-                + offerCode + ", status=" + status + ", seller=" + seller + ", priceplan=" + priceplan + ", reratedWalletOperation=" + reratedWalletOperation
-                + ", inputUnitDescription=" + inputUnitDescription + ", ratingUnitDescription=" + ratingUnitDescription + ", inputQuantity=" + inputQuantity + ", billingAccount="
-                + billingAccount + ", invoiceSubCategory=" + invoiceSubCategory + ", billingRun=" + billingRun + ", offerTemplate=" + offerTemplate + ", orderNumber=" + orderNumber
-                + "]";
     }
 
     public BigDecimal getRawAmountWithoutTax() {
@@ -880,11 +829,12 @@ public class WalletOperation extends BusinessEntity {
     }
 
     public RatedTransaction getRatedTransaction() {
-        return ratedTransaction;
-    }
 
-    public void setRatedTransaction(RatedTransaction ratedTransaction) {
-        this.ratedTransaction = ratedTransaction;
+        if (processingStatus != null) {
+            return processingStatus.getRatedTransaction();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -899,5 +849,19 @@ public class WalletOperation extends BusinessEntity {
      */
     public void setServiceInstance(ServiceInstance serviceInstance) {
         this.serviceInstance = serviceInstance;
+    }
+
+    /**
+     * @return Wallet operation processing status
+     */
+    public WalletOperationProcessingStatus getProcessingStatus() {
+        return processingStatus;
+    }
+
+    /**
+     * @param processingStatus Wallet operation processing status
+     */
+    public void setProcessingStatus(WalletOperationProcessingStatus processingStatus) {
+        this.processingStatus = processingStatus;
     }
 }

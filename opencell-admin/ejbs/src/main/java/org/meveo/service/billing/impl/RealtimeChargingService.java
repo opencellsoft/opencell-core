@@ -152,7 +152,6 @@ public class RealtimeChargingService {
         op.setEndDate(null);
         op.setOfferCode(offerTemplate != null ? offerTemplate.getCode() : null);
         op.setOfferTemplate(offerTemplate);
-        op.setStatus(WalletOperationStatusEnum.OPEN);
         op.setSeller(seller);
 
         try {

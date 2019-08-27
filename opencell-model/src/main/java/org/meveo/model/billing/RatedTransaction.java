@@ -21,7 +21,6 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,7 +30,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -87,11 +85,6 @@ import org.meveo.model.rating.EDR;
                 + " AND s is null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " AND r.seller=:seller and r.orderNumber is not null and r.id<=:lastId"),
 
-        @NamedQuery(name = "RatedTransaction.countNotInvoicedOpenByOrder", query = "SELECT count(r) FROM RatedTransaction r left join r.processingStatus s where "
-                + " s is null AND r.orderNumber=:orderNumber " + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
-        @NamedQuery(name = "RatedTransaction.countNotInvoicedOpenByBA", query = "SELECT count(r) FROM RatedTransaction r left join r.processingStatus s WHERE r.billingAccount=:billingAccount"
-                + " AND s is null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
-
         @NamedQuery(name = "RatedTransaction.sumInvoiceableByServiceWithMinAmountBySubscription", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.serviceInstance.id FROM RatedTransaction r left join r.processingStatus s "
                 + " WHERE s is null  AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " and r.subscription=:subscription and r.serviceInstance.minimumAmountEl is not null GROUP BY r.invoiceSubCategory.id, r.serviceInstance.id"),
@@ -128,7 +121,7 @@ import org.meveo.model.rating.EDR;
                 + " WHERE s is null  AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " and r.billingAccount=:billingAccount GROUP BY r.invoiceSubCategory.id, r.seller.id"),
 
-        @NamedQuery(name = "RatedTransaction.cancelByWOIds", query = "UPDATE RatedTransactionProcessingStatus r SET r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.statusDate = :now WHERE id IN (SELECT o.ratedTransaction.id FROM WalletOperation o WHERE o.id IN :notBilledWalletIdList)"),
+        @NamedQuery(name = "RatedTransaction.cancelByWOIds", query = "UPDATE RatedTransactionProcessingStatus r SET r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.statusDate = :now WHERE id IN (SELECT ws.ratedTransaction.id FROM WalletOperationProcessingStatus ws WHERE ws.id IN :notBilledWalletIdList)"),
         @NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", query = "select r.ratedTransaction from RatedTransactionProcessingStatus r where r.invoice=:invoice and r.ratedTransaction.invoiceSubCategory=:invoiceSubCategory "),
 
         @NamedQuery(name = "RatedTransaction.unInvoiceByInvoice", query = "Delete from RatedTransactionProcessingStatus r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice=:invoice"),
@@ -137,22 +130,21 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.deleteMinRTByInvoice", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.id in (select s.id from RatedTransactionProcessingStatus s where s.invoice=:invoice)"),
         @NamedQuery(name = "RatedTransaction.deleteMinRTByBR", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.id in (select s.id from RatedTransactionProcessingStatus s where s.billingRun=:billingRun)"),
 
-        @NamedQuery(name = "RatedTransaction.countNotInvoicedByBA", query = "SELECT count(*) FROM RatedTransaction r left join r.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) "
-                + " AND r.billingAccount=:billingAccount"),
-        @NamedQuery(name = "RatedTransaction.countNotInvoicedByUA", query = "SELECT count(*) FROM RatedTransaction r left join r.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) "
-                + " AND r.wallet.userAccount=:userAccount"),
-        @NamedQuery(name = "RatedTransaction.countNotInvoicedByCA", query = "SELECT count(*) FROM RatedTransaction r left join r.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) "
-                + " AND r.billingAccount.customerAccount=:customerAccount"),
-        @NamedQuery(name = "RatedTransaction.cancelByRTIds", query = "UPDATE RatedTransactionProcessingStatus r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.statusDate = :now where r.id IN :rsIds "),
-        @NamedQuery(name = "RatedTransaction.findByWalletOperationId", query = "SELECT o.ratedTransaction FROM WalletOperation o WHERE o.id=:walletOperationId"),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedOpenByBA", query = "SELECT count(r) FROM RatedTransaction r left join r.processingStatus s WHERE r.billingAccount=:billingAccount"
+                + " AND s is null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
 
-        @NamedQuery(name = "RatedTransaction.listOpenBetweenTwoDates", query = "SELECT r FROM RatedTransaction r join fetch r.priceplan join fetch r.tax join fetch r.billingAccount join fetch r.seller left join r.processingStatus s where "
-                + " s is null " + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.usageDate desc "),
-        @NamedQuery(name = "RatedTransaction.deleteNotOpenBetweenTwoDates", query = "delete FROM RatedTransaction r where "
-                + " r.processingStatus.status is not null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedByBA", query = "SELECT count(*) FROM RatedTransaction r left join r.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) AND r.billingAccount=:billingAccount"),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedByUA", query = "SELECT count(*) FROM RatedTransaction r left join r.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) AND r.wallet.userAccount=:userAccount"),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedByCA", query = "SELECT count(*) FROM RatedTransaction r left join r.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) AND r.billingAccount.customerAccount=:customerAccount"),
+
+        @NamedQuery(name = "RatedTransaction.cancelByRTIds", query = "UPDATE RatedTransactionProcessingStatus r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.statusDate = :now where r.id IN :rsIds "),
+        @NamedQuery(name = "RatedTransaction.findByWalletOperationId", query = "SELECT s.ratedTransaction FROM WalletOperationProcessingStatus s WHERE s.id=:walletOperationId"),
+
+        @NamedQuery(name = "RatedTransaction.listOpenBetweenTwoDates", query = "SELECT r FROM RatedTransaction r left join r.processingStatus s where s is null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.usageDate desc "),
+        @NamedQuery(name = "RatedTransaction.deleteNotOpenBetweenTwoDates", query = "delete FROM RatedTransaction r where r.processingStatus.status is not null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
 
         @NamedQuery(name = "RatedTransaction.listByInvoice", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where s.invoice=:invoice order by r.usageDate"),
-        @NamedQuery(name = "RatedTransaction.listByInvoiceNotFree", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where s.invoice=:invoice and r.amountWithoutTax<>0 order by r.usageDate"),        
+        @NamedQuery(name = "RatedTransaction.listByInvoiceNotFree", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where s.invoice=:invoice and r.amountWithoutTax<>0 order by r.usageDate"),
         @NamedQuery(name = "RatedTransaction.listByInvoiceSubCategoryAggr", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where s.invoiceAgregateF=:invoiceAgregateF order by r.usageDate") })
 public class RatedTransaction extends BaseEntity implements ISearchable {
 
@@ -382,9 +374,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @NotNull
     private BigDecimal taxPercent;
 
-    @OneToMany(mappedBy = "ratedTransaction", fetch = FetchType.LAZY)
-    public Set<WalletOperation> walletOperations;
-
     /**
      * Offer template
      */
@@ -433,7 +422,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.amountWithoutTax = amountWithoutTax;
         this.amountWithTax = amountWithTax;
         this.amountTax = amountTax;
-        // Can not set processingStatus field if RT is not saved yet, as RatedTransactionProcessingStatus.id field wont be set 
+        // Can not set processingStatus field if RT is not saved yet, as RatedTransactionProcessingStatus.id field wont be set
 //        if (status != null && status != RatedTransactionStatusEnum.OPEN) {
 //            this.processingStatus = new RatedTransactionProcessingStatus(this, status);
 //        }
@@ -863,32 +852,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
      */
     public void setTaxPercent(BigDecimal taxPercent) {
         this.taxPercent = taxPercent;
-    }
-
-    public Set<WalletOperation> getWalletOperations() {
-        return walletOperations;
-    }
-
-    public void setWalletOperations(Set<WalletOperation> walletOperations) {
-        this.walletOperations = walletOperations;
-    }
-
-    /**
-     * This will be use for backward compatibility back when a WalletOperation is mapped to a RatedTransaction.
-     *
-     * @return first id of the WalletOperation
-     */
-    @Deprecated
-    public Long getWalletOperationId() {
-        if (getWalletOperations() != null && !getWalletOperations().isEmpty() && getWalletOperations().iterator().hasNext()) {
-            WalletOperation walletOperation = getWalletOperations().iterator().next();
-            if (walletOperation != null) {
-                return walletOperation.getId();
-            }
-            return null;
-        }
-
-        return null;
     }
 
     public void resetAmounts() {

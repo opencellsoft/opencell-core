@@ -51,6 +51,7 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationProcessingStatus;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
@@ -60,7 +61,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
-import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletReservationService;
@@ -93,9 +93,6 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
     @Inject
     private UserAccountService userAccountService;
-
-    @Inject
-    private RatedTransactionService ratedTransactionService;
 
     @Inject
     private BillingAccountService billingAccountService;
@@ -381,12 +378,14 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         reloadOperation.setWallet(entity.getWalletInstance(selectedWalletCode));
         reloadOperation.setDescription("reload");
         reloadOperation.setSeller(entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
-        reloadOperation.setStatus(WalletOperationStatusEnum.TREATED);
         reloadOperation.setType(OperationTypeEnum.CREDIT);
     }
 
     public void reload() throws BusinessException {
         walletOperationService.create(reloadOperation);
+        
+        WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(reloadOperation, null, WalletOperationStatusEnum.TREATED);
+        walletOperationService.getEntityManager().persist(woProcessingStatus);
         reloadOperation = null;
     }
 

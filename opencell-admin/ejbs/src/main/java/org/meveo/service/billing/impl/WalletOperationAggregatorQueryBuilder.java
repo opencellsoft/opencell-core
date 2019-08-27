@@ -1,7 +1,5 @@
 package org.meveo.service.billing.impl;
 
-import org.meveo.model.billing.WalletOperation;
-
 /**
  * Generates the query use to group wallet operations with the given
  * {@link RatedTransactionsJobAggregationSetting}.
@@ -138,8 +136,8 @@ public class WalletOperationAggregatorQueryBuilder {
 				+ ", " + getParameter2Field() //
 				+ ", " + getParameter3Field() //
 				+ ", " + getParameterExtraField() //
-				+ ")" + " FROM " + WalletOperation.class.getSimpleName() + " o" //
-				+ " WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate) AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" //
+				+ ")" + " FROM WalletOperation o left join fetch o.processingStatus s " //
+				+ " WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate) AND s is null " //
 				+ " GROUP BY o.seller.id, o.tax, o.invoiceSubCategory, " + groupBy;
 	}
 

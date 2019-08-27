@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -50,6 +51,7 @@ import org.meveo.model.catalog.WalletTemplate;
  */
 @Entity
 @ObservableEntity
+@Cacheable
 @ExportIdentifier({ "code", "userAccount.code" })
 @Table(name = "billing_wallet", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "user_account_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

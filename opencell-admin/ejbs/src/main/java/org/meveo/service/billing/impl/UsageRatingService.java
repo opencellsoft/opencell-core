@@ -47,6 +47,7 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationProcessingStatus;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -262,7 +263,6 @@ public class UsageRatingService implements Serializable {
         walletOperation.setStartDate(null);
         walletOperation.setEndDate(null);
         walletOperation.setCurrency(currency.getCurrency());
-        walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
 
         walletOperation.setCounter(chargeInstance.getCounter());
         // walletOperation.setOfferCode(subscription.getOffer().getCode()); Offer code is set in walletOperation.setOfferTemplate()
@@ -443,6 +443,9 @@ public class UsageRatingService implements Serializable {
     private List<EDR> triggerEDRs(ChargeTemplate chargeTemplate, WalletOperation walletOperation, EDR edr, boolean isVirtual)
             throws BusinessException, ChargingEdrOnRemoteInstanceErrorException {
         List<EDR> triggredEDRs = new ArrayList<>();
+
+        EntityManager em = getEntityManager();
+
         for (TriggeredEDRTemplate triggeredEDRTemplate : chargeTemplate.getEdrTemplates()) {
             if (triggeredEDRTemplate.getConditionEl() == null || "".equals(triggeredEDRTemplate.getConditionEl())
                     || evaluateBooleanExpression(triggeredEDRTemplate.getConditionEl(), edr, walletOperation)) {
@@ -471,7 +474,7 @@ public class UsageRatingService implements Serializable {
                     newEdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), edr, walletOperation));
                     newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), edr, walletOperation)));
 
-                    Subscription sub = edr.getSubscription();
+                    Subscription sub = null;
 
                     if (!StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
                         String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), edr, walletOperation);
@@ -480,6 +483,8 @@ public class UsageRatingService implements Serializable {
                             throw new SubscriptionNotFoundException("could not find subscription for code =" + subCode + " (EL=" + triggeredEDRTemplate.getSubscriptionEl()
                                     + ") in triggered EDR with code " + triggeredEDRTemplate.getCode());
                         }
+                    } else {
+                        sub = em.getReference(Subscription.class, edr.getSubscription().getId());
                     }
                     newEdr.setSubscription(sub);
 
@@ -517,7 +522,6 @@ public class UsageRatingService implements Serializable {
                     } else if (actionStatus == null) {
                         throw new ChargingEdrOnRemoteInstanceErrorException("Error charging Edr. No response code from API.");
                     }
-
                 }
             }
         }
@@ -568,11 +572,13 @@ public class UsageRatingService implements Serializable {
         rateEDRwithMatchingCharge(walletOperation, edr, quantityToCharge, usageChargeInstance, false);
 
         walletOperation.setReservation(reservation);
-        walletOperation.setStatus(WalletOperationStatusEnum.RESERVED);
         reservation.setAmountWithoutTax(reservation.getAmountWithoutTax().add(walletOperation.getAmountWithoutTax()));
         reservation.setAmountWithTax(reservation.getAmountWithoutTax().add(walletOperation.getAmountWithTax()));
 
         walletOperationService.chargeWalletOperation(walletOperation);
+
+        WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(walletOperation, null, WalletOperationStatusEnum.RESERVED);
+        getEntityManager().persist(woProcessingStatus);
 
         return stopEDRRating;
     }
