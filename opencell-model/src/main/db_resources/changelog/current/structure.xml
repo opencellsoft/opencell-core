@@ -1456,6 +1456,5 @@
                                  constraintName="fk_invoice_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="ar_payment_token" />
 
-    </changeSet>
-    
+    </changeSet>  
 </databaseChangeLog>

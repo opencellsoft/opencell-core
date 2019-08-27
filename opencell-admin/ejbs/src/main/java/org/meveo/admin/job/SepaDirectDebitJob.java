@@ -47,6 +47,27 @@ public class SepaDirectDebitJob extends Job {
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();        
+       
+        CustomFieldTemplate nbRuns = new CustomFieldTemplate();
+        nbRuns.setCode("SepaJob_nbRuns");
+        nbRuns.setAppliesTo(APPLIES_TO_NAME);
+        nbRuns.setActive(true);
+        nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
+        nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
+        nbRuns.setValueRequired(false);
+        nbRuns.setDefaultValue("1");
+        result.put("nbRuns", nbRuns);
+
+        CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
+        waitingMillis.setCode("SepaJob_waitingMillis");
+        waitingMillis.setAppliesTo(APPLIES_TO_NAME);
+        waitingMillis.setActive(true);
+        waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
+        waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
+        waitingMillis.setValueRequired(false);
+        waitingMillis.setDefaultValue("0");
+        result.put("waitingMillis", waitingMillis);
+        
         CustomFieldTemplate payentGatewayCF = new CustomFieldTemplate();
         payentGatewayCF.setCode("SepaJob_ddRequestBuilder");
         payentGatewayCF.setAppliesTo(APPLIES_TO_NAME);
