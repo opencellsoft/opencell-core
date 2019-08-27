@@ -19,6 +19,7 @@
 package org.meveo.admin.action.billing;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.inject.Produces;
@@ -36,10 +37,8 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
 
 /**
- * Standard backing bean for {@link RatedTransaction} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link RatedTransaction} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 7.0
@@ -48,82 +47,90 @@ import org.meveo.service.billing.impl.WalletOperationService;
 @ViewScoped
 public class RatedTransactionBean extends BaseBean<RatedTransaction> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link RatedTransaction} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private RatedTransactionService ratedTransactionService;
-	
-	@Inject
-	private WalletOperationService walletOperationService;
+    /**
+     * Injected @{link RatedTransaction} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private RatedTransactionService ratedTransactionService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public RatedTransactionBean() {
-		super(RatedTransaction.class);
-	}
+    @Inject
+    private WalletOperationService walletOperationService;
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * @return rated transaction
-	 */
-	@Produces
-	@Named("ratedTransaction")
-	public RatedTransaction init() {
-		return initEntity();
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public RatedTransactionBean() {
+        super(RatedTransaction.class);
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<RatedTransaction> getPersistenceService() {
-		return ratedTransactionService;
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @return rated transaction
+     */
+    @Produces
+    @Named("ratedTransaction")
+    public RatedTransaction init() {
+        return initEntity();
+    }
 
-	public String getWalletOperationCode(Long walletOperationId){
-		if(walletOperationId == null){
-			return null;
-		}
-		try{
-			WalletOperation walletOperation = walletOperationService.findById(walletOperationId);
-		    return walletOperation!=null?walletOperation.getCode():null;
-		}catch(Exception e){
-			log.error("failed to get wallet operation",e);
-			return null;
-		}
-	}
-	
-	public List<String> getWalletOperationCodes(Long ratedTransactionId){
-		if(ratedTransactionId == null){
-			return null;
-		}
-		
-		List<String> result = new ArrayList<>();
-		List<WalletOperation> wos = walletOperationService.listByRatedTransactionId(ratedTransactionId);
-		if (wos != null && !wos.isEmpty()) {
-			wos.stream().forEach(e -> result.add(e.getCode()));
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * #1661 [GUI](#349) ratedTransactionDetail ; make all fields on readOnly if status == BILLED;
-	 * @author mhammam
-	 * @return true if RatedTransaction STATUS equal BILLED
-	 */
-	public boolean isBilled(){
-		RatedTransaction entity = getEntity();
-		if(entity != null && entity.getStatus()==RatedTransactionStatusEnum.BILLED){
-			return true;
-		}
-		return false;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<RatedTransaction> getPersistenceService() {
+        return ratedTransactionService;
+    }
+
+    public String getWalletOperationCode(Long walletOperationId) {
+        if (walletOperationId == null) {
+            return null;
+        }
+        try {
+            WalletOperation walletOperation = walletOperationService.findById(walletOperationId);
+            return walletOperation != null ? walletOperation.getCode() : null;
+        } catch (Exception e) {
+            log.error("failed to get wallet operation", e);
+            return null;
+        }
+    }
+
+    public List<String> getWalletOperationCodes(Long ratedTransactionId) {
+        if (ratedTransactionId == null) {
+            return null;
+        }
+
+        List<String> result = new ArrayList<>();
+        List<WalletOperation> wos = walletOperationService.listByRatedTransactionId(ratedTransactionId);
+        if (wos != null && !wos.isEmpty()) {
+            wos.stream().forEach(e -> result.add(e.getCode()));
+        }
+
+        return result;
+    }
+
+    /**
+     * #1661 [GUI](#349) ratedTransactionDetail ; make all fields on readOnly if status == BILLED;
+     * 
+     * @author mhammam
+     * @return true if RatedTransaction STATUS equal BILLED
+     */
+    public boolean isBilled() {
+        if (entity != null && entity.getStatus() == RatedTransactionStatusEnum.BILLED) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("processingStatus");
+    }
+
+    @Override
+    protected List<String> getListFieldsToFetch() {
+        return Arrays.asList("processingStatus");
+    }
 }
