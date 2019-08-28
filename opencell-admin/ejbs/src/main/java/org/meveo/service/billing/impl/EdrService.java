@@ -54,14 +54,40 @@ public class EdrService extends PersistenceService<EDR> {
     @Inject
     private SubscriptionService subscriptionService;
 
-    static boolean useInMemoryDeduplication = true;
+    /**
+     * Ways to check for EDR duplicates
+     */
+    public enum DeduplicateEDRTypeEnum {
+        /**
+         * Do not check for EDR duplicates
+         */
+        NONE,
+
+        /**
+         * Use cache to deduplicate EDRs
+         */
+        MEMORY,
+
+        /**
+         * Use database to deduplicate EDRS
+         */
+        DB;
+    }
+
+    static boolean deduplicateEdrs = false;
+    static boolean useInMemoryDeduplication = false;
     static boolean inMemoryDeduplicationPrepopulated = false;
 
     @PostConstruct
     private void init() {
         ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
-        useInMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
-        inMemoryDeduplicationPrepopulated = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "false").equals("true");
+
+        String deduplicateType = paramBean.getProperty("mediation.deduplicate", EdrService.DeduplicateEDRTypeEnum.MEMORY.name());
+        deduplicateEdrs = !EdrService.DeduplicateEDRTypeEnum.NONE.name().equalsIgnoreCase(deduplicateType);
+        if (deduplicateEdrs) {
+            useInMemoryDeduplication = EdrService.DeduplicateEDRTypeEnum.MEMORY.name().equalsIgnoreCase(deduplicateType);
+            inMemoryDeduplicationPrepopulated = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "true").equals("true");
+        }
     }
 
     /**
@@ -129,6 +155,9 @@ public class EdrService extends PersistenceService<EDR> {
      * @return true/false
      */
     public boolean isDuplicateFound(String originBatch, String originRecord) {
+        if (!deduplicateEdrs) {
+            return false;
+        }
         Boolean isDuplicate = null;
         if (useInMemoryDeduplication) {
             isDuplicate = cdrEdrProcessingCacheContainerProvider.getEdrDuplicationStatus(originBatch, originRecord);
@@ -148,7 +177,7 @@ public class EdrService extends PersistenceService<EDR> {
     @Override
     public void create(EDR edr) throws BusinessException {
         super.create(edr);
-        if (useInMemoryDeduplication) {
+        if (deduplicateEdrs && useInMemoryDeduplication) {
             cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(edr.getOriginBatch(), edr.getOriginRecord());
         }
     }
