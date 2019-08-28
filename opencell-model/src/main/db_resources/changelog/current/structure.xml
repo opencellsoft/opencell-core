@@ -1446,11 +1446,5 @@
                                  referencedColumnNames="id" referencedTableName="ar_payment_token" />
 
     </changeSet>
-    
-    <changeSet id="#4434_21082018" author="anasseh">
-        <addColumn tableName="ar_ddrequest_item">
-            <column name="rejected_file_name" type="varchar(1000)" />
-        </addColumn>
-    </changeSet>
-    
+  
 </databaseChangeLog>
