@@ -31,32 +31,86 @@ import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * The Class CsvBuilder.
+ *
+ * @author anasseh
+ */
 public class CsvBuilder {
 
+	/** The log. */
 	private Logger log = LoggerFactory.getLogger(CsvBuilder.class);
 
-	/** Creates a new instance of CsvBuilder */
-	private final static String BREAK_LINE = "\r\n";
+	/** The Constant BREAK_LINE_DOS. */
+	public final static String BREAK_LINE_DOS = "\r\n";
+	
+	/** The Constant BREAK_LINE_UNIX. */
+	public final static String BREAK_LINE_UNIX = "\n";
+	
+	/** The delimiter. */
 	private String DELIMITER = ";";
+	
+	/** The use quotes. */
 	private boolean useQuotes = true;
+	
+	/** The break line char. */
+	private String breakLineChar = BREAK_LINE_DOS;
 
+	/** The sb. */
 	private StringBuffer sb = new StringBuffer();
+	
+	/** The first element. */
 	private boolean firstElement = true;
 
+	/**
+	 * Instantiates a new csv builder.
+	 */
 	public CsvBuilder() {
 	}
 
+	/**
+	 * Instantiates a new csv builder.
+	 *
+	 * @param sep the sep
+	 * @param useQuotes the use quotes
+	 */
 	public CsvBuilder(String sep, boolean useQuotes) {
-		DELIMITER = sep;
+		this.DELIMITER = sep;
 		this.useQuotes = useQuotes;
 	}
 
+	/**
+	 * Instantiates a new csv builder.
+	 *
+	 * @param sep the sep
+	 * @param useQuotes the use quotes
+	 * @param breakLineChar the break line char
+	 */
+	public CsvBuilder(String sep, boolean useQuotes, String breakLineChar) {
+		this.DELIMITER = sep;
+		this.useQuotes = useQuotes;
+		this.breakLineChar = breakLineChar;
+	}
+
+	/**
+	 * Append values.
+	 *
+	 * @param values the values
+	 * @return the csv builder
+	 */
 	public CsvBuilder appendValues(String[] values) {
 		for (String value : values)
 			appendValue(value);
 		return this;
 	}
 
+	/**
+	 * Append value.
+	 *
+	 * @param value the value
+	 * @return the csv builder
+	 */
 	public CsvBuilder appendValue(String value) {
 		if (!firstElement)
 			sb.append(DELIMITER);
@@ -73,16 +127,27 @@ public class CsvBuilder {
 		return this;
 	}
 
+	/**
+	 * Start new line.
+	 *
+	 * @return the csv builder
+	 */
 	public CsvBuilder startNewLine() {
-		sb.append(BREAK_LINE);
+		sb.append(breakLineChar);
 		firstElement = true;
 		return this;
 	}
+
 
 	public String toString() {
 		return sb.toString();
 	}
 
+	/**
+	 * To file.
+	 *
+	 * @param absolutFfilename the absolut ffilename
+	 */
 	public void toFile(String absolutFfilename) {
 		FileWriter fw = null;
 		try {
@@ -94,73 +159,78 @@ public class CsvBuilder {
 			fw.write(sb.toString());
 			fw.close();
 		} catch (Exception e) {
-			log.error("error on toFile",e);
+			log.error("error on toFile", e);
 		} finally {
 			if (fw != null) {
 				try {
 					fw.close();
 				} catch (IOException e) {
-					log.error("exception on toFile",e);;
+					log.error("exception on toFile", e);
+					;
 				}
 			}
 		}
 	}
-	
-	
-    /**
-     * @param content content to be written to the file
-     * @param filename name of file to write the content
-     * @throws IOException input/output exception.
-     */
-    public void writeFile(byte[] content, String filename) throws IOException {
-        File file = new File(filename);
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-        try (FileOutputStream fop = new FileOutputStream(file, true)) {
-            fop.write(content);
-            fop.flush();
-        } catch (IOException ex) {
-            throw ex;
-        }
 
-    }
-	
-	
-	 public void download(InputStream inputStream, String fileName) {
-			log.info("start to download...");
-			if(inputStream!=null){
-				try {
-					
-					javax.faces.context.FacesContext context = javax.faces.context.FacesContext
-							.getCurrentInstance();
-					HttpServletResponse res = (HttpServletResponse) context.getExternalContext()
-							.getResponse();
-					res.setContentType("application/force-download");
-					res.addHeader("Content-disposition", "attachment;filename=\"" + fileName
-							+ "\""); 
-					
-					OutputStream out = res.getOutputStream();
-
-					IOUtils.copy(inputStream, out);
-		            out.flush();
-					out.close();
-					context.responseComplete();
-					log.info("download over!");
-				} catch (Exception e) {
-					log.error("Error:"+e.getMessage()+", when dowload file: "+fileName);
-				}
-				log.info("downloaded successfully!");
-			}
-
+	/**
+	 * Write file.
+	 *
+	 * @param content  content to be written to the file
+	 * @param filename name of file to write the content
+	 * @throws IOException input/output exception.
+	 */
+	public void writeFile(byte[] content, String filename) throws IOException {
+		File file = new File(filename);
+		if (!file.exists()) {
+			file.createNewFile();
 		}
-	
+		try (FileOutputStream fop = new FileOutputStream(file, true)) {
+			fop.write(content);
+			fop.flush();
+		} catch (IOException ex) {
+			throw ex;
+		}
 
+	}
+
+	/**
+	 * Download.
+	 *
+	 * @param inputStream the input stream
+	 * @param fileName the file name
+	 */
+	public void download(InputStream inputStream, String fileName) {
+		log.info("start to download...");
+		if (inputStream != null) {
+			try {
+
+				javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
+				HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
+				res.setContentType("application/force-download");
+				res.addHeader("Content-disposition", "attachment;filename=\"" + fileName + "\"");
+
+				OutputStream out = res.getOutputStream();
+
+				IOUtils.copy(inputStream, out);
+				out.flush();
+				out.close();
+				context.responseComplete();
+				log.info("download over!");
+			} catch (Exception e) {
+				log.error("Error:" + e.getMessage() + ", when dowload file: " + fileName);
+			}
+			log.info("downloaded successfully!");
+		}
+
+	}
+
+	/**
+	 * Checks if is empty.
+	 *
+	 * @return true, if is empty
+	 */
 	public boolean isEmpty() {
 		return sb.length() == 0;
 	}
-	
-	
-	
-	
+
 }
