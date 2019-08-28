@@ -113,7 +113,7 @@ public class DDRequestItem extends AuditableEntity {
     @Column(name = "rejected_file_name", length = 1000)
     @Size(max = 1000)    
     private String rejectedFileName;
-    
+
 
     public DDRequestItem() {
 
@@ -267,12 +267,8 @@ public class DDRequestItem extends AuditableEntity {
         this.automatedRefund = refund;
     }
 
-    @Transient
-    public boolean hasError() {
-        return !(errorMsg == null || errorMsg.trim().length() == 0);
-    }
-
-	public String getRejectedFileName() {
+    
+    public String getRejectedFileName() {
 		return rejectedFileName;
 	}
 
@@ -280,5 +276,9 @@ public class DDRequestItem extends AuditableEntity {
 		this.rejectedFileName = rejectedFileName;
 	}
 
+	@Transient
+    public boolean hasError() {
+        return !(errorMsg == null || errorMsg.trim().length() == 0);
+    }	
 
 }
