@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,6 +33,9 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.databind.MappingIterator;
@@ -44,6 +48,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.ColumnType;
 
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.search.sort.SortOrder;
@@ -58,6 +63,7 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
@@ -923,12 +929,117 @@ public class CustomTableService extends NativePersistenceService {
         return !query.list().isEmpty();
     }
     
-    public Object findFieldByIdAndTableName(Long id, String tableName, String fieldName) {
-        QueryBuilder queryBuilder = getQuery(tableName, null);
-        queryBuilder.addCriterion("id", "=", id, true);
-        Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
-        Map<String, Object> result = (Map<String, Object>) query.uniqueResult();
-		return result.get(fieldName);
-    }
+    
+	/**
+	 * @param referenceWrapper
+	 * @param fieldToReturn
+	 * @return
+	 */
+	public Object findFieldFromEntity(EntityReferenceWrapper referenceWrapper, String fieldToReturn) {
+			Map<String, Object> lineFromEntity = findLineFromEntity(referenceWrapper);
+			return getField(lineFromEntity,referenceWrapper, fieldToReturn);
+	}
+
+	/**
+	 * @param referenceWrapper
+	 * @return
+	 */
+	public Map<String, Object> findLineFromEntity(EntityReferenceWrapper referenceWrapper) {
+		String classname = referenceWrapper.getClassname();
+		if (classname.equals(CustomEntityInstance.class.getName())) {
+			return findLineByTableCodeAndCode(referenceWrapper.getClassnameCode(), referenceWrapper.getCode());
+		} else {
+			return findLineByTableNameAndCode(getTableName(classname), referenceWrapper.getCode());
+		}
+	}
+
+	/**
+	 * @param tableCode
+	 * @param code
+	 * @return
+	 */
+	public Map<String, Object> findLineByTableCodeAndCode(String tableCode, String code) {
+		CustomEntityTemplate cet = customEntityTemplateService.findByCode(tableCode);
+		if (cet.isStoreAsTable()) {
+			return findLineByTableNameAndId(cet.getDbTablename(), Long.parseLong(code));
+		} else {
+			return findLineByCetCodeAndCode(getTableName(CustomEntityInstance.class.getName()), tableCode, code);
+		}
+	}
+
+	/**
+	 * @param tableName
+	 * @param cetCode
+	 * @param code
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> findLineByCetCodeAndCode(String tableName,String cetCode, String code) {
+		QueryBuilder queryBuilder = getQuery(tableName, null);
+		queryBuilder.addCriterion("code", "=", code, true);
+		queryBuilder.addCriterion("cet_code", "=", cetCode, true);
+		Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
+		Map<String, Object> result = (Map<String, Object>) query.uniqueResult();
+		return result;
+	}
+
+	/**
+	 * @param tableName
+	 * @param code
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> findLineByTableNameAndCode(String tableName, String code) {
+		QueryBuilder queryBuilder = getQuery(tableName, null);
+		queryBuilder.addCriterion("code", "=", code, true);
+		Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
+		Map<String, Object> result = (Map<String, Object>) query.uniqueResult();
+		return result;
+	}
+
+	/**
+	 * @param tableName
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> findLineByTableNameAndId(String tableName, Long id) {
+		QueryBuilder queryBuilder = getQuery(tableName, null);
+		queryBuilder.addCriterion("id", "=", id, true);
+		Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
+		Map<String, Object> result = (Map<String, Object>) query.uniqueResult();
+		return result;
+	}
+	
+	private Object getField(Map<String, Object> lineFromEntity, EntityReferenceWrapper referenceWrapper, String fieldToReturn) {
+		try {
+			Class<?> c = Class.forName(referenceWrapper.getClassname());
+			Field field = FieldUtils.getField(c, fieldToReturn, true);
+			JoinColumn join = field.getAnnotation(JoinColumn.class);
+			if (join != null) {
+				return getEntityManager().find(field.getType(), ((Number) lineFromEntity.get(join.name())).longValue());
+			}
+			Column column = field.getAnnotation(Column.class);
+			if (column != null) {
+				return lineFromEntity.get(column.name());
+			}
+		} catch (ClassNotFoundException e) {
+			log.error("class in the ClassRefWrapper " + referenceWrapper + " not found ", e);
+		}
+		return lineFromEntity.get(fieldToReturn);
+	}
+
+	private String getTableName(String className) {
+		String tableName = null;
+		try {
+			Class<?> clazz = Class.forName(className);
+			Table tableAnnotation = clazz.getAnnotation(Table.class);
+			tableName = tableAnnotation != null ? tableAnnotation.name()
+					: className.substring(className.lastIndexOf(".") + 1);
+		} catch (ClassNotFoundException e) {
+			log.error("class " + className + " not found ", e);
+		}
+		return tableName;
+	}
 
 }
