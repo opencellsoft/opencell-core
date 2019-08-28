@@ -23,7 +23,7 @@ public class MdSwaggerModification {
                     tmp = mdLineReturn(tmp2[1],parentpath);
                     str=str.substring(0,str.indexOf(":"))+":"+ " |\n"+tmp+"\n  " +
                             "x-logo:\n" +
-                            "    url: https://opencellsoft.com/img/logo-opencell.svg\n" +
+                            "    url: https://opencellsoft.com/img/logo-opencell-red.png\n" +
                             "    href: https://opencellsoft.com/\n" +
                             "    altText: \"Opencell Logo\"";
                 }/*This is for the introduction balise it have some a different type of identation compare to the other one*/
