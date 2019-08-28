@@ -50,17 +50,18 @@
                                         <!-- 						<hftl:formField label="#{messages['invoice.billingAccount']}" -->
                                         <!-- 							field="billingAccount" valueLabelField="code" popup="false" -->
                                         <!-- 							popupId="searchBillingAccountPopup" showResetButton="true" /> -->
-
-                                        <hftl:formField label="#{messages['invoice.invoiceNumber']}" field="invoiceNumber" validateUnique="true"/>
+										<hftl:decorateFormField label="#{messages['invoice.invoiceNumber']}">
+											<h:outputText value="#{invoiceBean.entity.invoiceNumberOrTemporaryNumber}" styleClass="field-value" />
+										</hftl:decorateFormField>
                                         <hftl:formField label="#{messages['invoice.invoiceDate']}" field="invoiceDate"/>
-
-                                        <hftl:formField label="#{messages['invoice.dueDate']}" field="dueDate"/>
+                                        <hftl:formField label="#{messages['invoice.dueDate']}" field="dueDate" />
                                         <hftl:formField label="#{messages['invoice.iban']}" field="iban"/>
                                         <hftl:formField label="#{messages['invoice.alias']}" field="alias"/>
                                         <hftl:formField label="#{messages['invoice.comment']}" field="comment" textArea="true"/>
                                         <hftl:formField label="#{messages['invoice.paymentMethod']}" field="paymentMethod" isMessage="true"/>
                                         <hftl:formField label="#{messages['invoice.alreadySent']}" field="alreadySent" isMessage="true"/>
                                         <hftl:formField label="#{messages['invoice.dontSend']}" field="dontSend" isMessage="true"/>
+                                        <hftl:formField label="#{messages['billingRun.panel']}" field="billingRun" />
                                     </h:panelGroup>
                                 </p:fieldset>
                                 <h:panelGroup id="attachments">
@@ -163,9 +164,6 @@
 																	    #{wo}#{not loop.last ? ', ' : ''}
 																	</ui:repeat>
 																</p:column>
-																<p:column headerText="#{messages['billingRun.panel']}">
-																	<h:outputText value="#{rated.processingStatus.billingRun.id}" />
-																</p:column>
 																<p:column headerText="#{messages['pricePlan.panel']}">
 																	<h:outputText value="#{rated.priceplan.code}" />
 																</p:column>
@@ -203,9 +201,9 @@
 																<p:column headerText="#{messages['order.number']}">
 																	<h:outputText value="#{rated.orderNumber}" />
 																</p:column>
-																<p:column headerText="#{messages['ratedTransaction.status']}">
-																	<h:outputText value="#{rated.status}" />
-																</p:column>
+<!-- 																<p:column headerText="#{messages['ratedTransaction.status']}"> -->
+<!-- 																	<h:outputText value="#{rated.processingStatus.status}" /> -->
+<!-- 																</p:column> -->
 															</p:dataTable>
 
 													</p:tab>
