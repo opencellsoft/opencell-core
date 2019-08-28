@@ -18,6 +18,19 @@
  */
 package org.meveo.service.billing.impl;
 
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
@@ -32,6 +45,8 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Renewal;
@@ -42,7 +57,9 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -56,19 +73,6 @@ import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.offer.OfferModelScriptService;
 import org.primefaces.model.SortOrder;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 /**
  * @author Edward P. Legaspi
@@ -98,10 +102,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
 
-
     @Inject
     private AuditableFieldService auditableFieldService;
-
 
     @MeveoAudit
     @Override
@@ -113,8 +115,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         super.create(subscription);
 
-        //Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
-        auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "", String.valueOf(subscription.getStatus()));
+        // Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
+        auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "",
+            String.valueOf(subscription.getStatus()));
 
         // execute subscription script
         OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
@@ -272,7 +275,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if (terminationReason == null) {
             throw new ValidationException("Termination reason not provided", "subscription.error.noTerminationReason");
 
-        } else if (DateUtils.setDateToEndOfDay(terminationDate).before(DateUtils.setDateToEndOfDay(subscription.getSubscriptionDate()))) {
+        } else if (terminationDate.before(subscription.getSubscriptionDate())) {
             throw new ValidationException("Termination date can not be before the subscription date", "subscription.error.terminationDateBeforeSubscriptionDate");
         }
 
@@ -286,7 +289,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
     }
 
-    private Subscription terminateSubscriptionWithFutureDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason) throws BusinessException {
+    private Subscription terminateSubscriptionWithFutureDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason)
+            throws BusinessException {
 
         SubscriptionRenewal subscriptionRenewal = subscription.getSubscriptionRenewal();
         subscriptionRenewal.setTerminationReason(PersistenceUtils.initializeAndUnproxy(subscriptionRenewal.getTerminationReason()));
@@ -299,15 +303,15 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscriptionRenewal.setAutoRenew(false);
         subscriptionRenewal.setEndOfTermAction(SubscriptionRenewal.EndOfTermActionEnum.TERMINATE);
 
-		subscription = update(subscription);
-		
-		return subscription;
-	}
+        subscription = update(subscription);
+
+        return subscription;
+    }
 
     @MeveoAudit
     private Subscription terminateSubscriptionWithPastDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber,
             Long orderItemId, OrderItemActionEnum orderItemAction) throws BusinessException {
-	    
+
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
             if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus()) || InstanceStatusEnum.SUSPENDED.equals(serviceInstance.getStatus())) {
@@ -370,6 +374,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * Get a list of subscription ids that are about to expire or have expired already
+     * 
      * @return A list of subscription ids
      */
     public List<Long> getSubscriptionsToRenewOrNotify() {
@@ -379,6 +384,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * Get a list of subscription ids that are about to expire or have expired already
+     * 
      * @param untillDate the subscription till date
      * @return A list of subscription ids
      */
@@ -404,38 +410,39 @@ public class SubscriptionService extends BusinessService<Subscription> {
             return null;
         }
     }
-    
-	public void activateInstantiatedService(Subscription sub) throws BusinessException {
-    	// using a new ArrayList (cloning the original one) to avoid ConcurrentModificationException
-	    for (ServiceInstance si : new ArrayList<>(emptyIfNull(sub.getServiceInstances()))) {
-	        if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
+
+    public void activateInstantiatedService(Subscription sub) throws BusinessException {
+        // using a new ArrayList (cloning the original one) to avoid ConcurrentModificationException
+        for (ServiceInstance si : new ArrayList<>(emptyIfNull(sub.getServiceInstances()))) {
+            if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
                 serviceInstanceService.serviceActivation(si, null, null);
             }
-	    }
-	}
- 
+        }
+    }
+
     /**
      * Return all subscriptions with status not equal to CREATED or ACTIVE and now - initialAgreement date &gt; n years.
+     * 
      * @param nYear age of the subscription
      * @return Filtered list of subscriptions
      */
     @SuppressWarnings("unchecked")
-	public List<Subscription> listInactiveSubscriptions(int nYear) {
-    	QueryBuilder qb = new QueryBuilder(Subscription.class, "e");
-    	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
-    	
-    	qb.addCriterionDateRangeToTruncatedToDay("subscriptionDate", higherBound);
-    	qb.addCriterionEnum("status", SubscriptionStatusEnum.CREATED, "<>");
-    	qb.addCriterionEnum("status", SubscriptionStatusEnum.ACTIVE, "<>");
-    	
-    	return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
+    public List<Subscription> listInactiveSubscriptions(int nYear) {
+        QueryBuilder qb = new QueryBuilder(Subscription.class, "e");
+        Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+
+        qb.addCriterionDateRangeToTruncatedToDay("subscriptionDate", higherBound);
+        qb.addCriterionEnum("status", SubscriptionStatusEnum.CREATED, "<>");
+        qb.addCriterionEnum("status", SubscriptionStatusEnum.ACTIVE, "<>");
+
+        return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
     }
 
-	public void bulkDelete(List<Subscription> inactiveSubscriptions) throws BusinessException {
-		for (Subscription e : inactiveSubscriptions) {
-			remove(e);
-		}
-	}
+    public void bulkDelete(List<Subscription> inactiveSubscriptions) throws BusinessException {
+        for (Subscription e : inactiveSubscriptions) {
+            remove(e);
+        }
+    }
 
     public void cancelSubscriptionRenewal(Subscription entity) throws BusinessException {
         entity.setSubscribedTillDate(null);
@@ -444,7 +451,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         entity.setSubscriptionRenewal(new SubscriptionRenewal());
     }
 
-	/**
+    /**
      * Subscription balance due.
      *
      * @param subscription the Subscription
@@ -568,13 +575,14 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     /**
-    * Returns all subscriptions to the given offer by code
-    *
-    * @param offerCode code of the Offer to search
-    * @param sortBy sort criteria
-    * @param sortOrder sort order
-    * @return list of Subscription
-    */
+     * Returns all subscriptions to the given offer by code
+     *
+     * @param offerCode code of the Offer to search
+     * @param sortBy sort criteria
+     * @param sortOrder sort order
+     * @return list of Subscription
+     */
+    @SuppressWarnings("unchecked")
     public List<Subscription> listByOffer(String offerCode, String sortBy, SortOrder sortOrder) {
         QueryBuilder qb = new QueryBuilder(Subscription.class, "c");
         qb.addCriterionEntity("offer.code", offerCode);
@@ -594,20 +602,20 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     public Subscription instantiateDiscountPlan(Subscription entity, DiscountPlan dp) throws BusinessException {
-        if(!entity.getOffer().getAllowedDiscountPlans().contains(dp)){
-            throw new BusinessException("DiscountPlan " + dp .getCode() +" is not allowed in this offer.");
+        if (!entity.getOffer().getAllowedDiscountPlans().contains(dp)) {
+            throw new BusinessException("DiscountPlan " + dp.getCode() + " is not allowed in this offer.");
         }
         BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
-        for(DiscountPlanInstance discountPlanInstance : billingAccount.getDiscountPlanInstances()){
-            if(dp.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {
-                throw new BusinessException("DiscountPlan " + dp.getCode() + " is already instantiated in Billing Account "+ billingAccount.getCode() +".");
+        for (DiscountPlanInstance discountPlanInstance : billingAccount.getDiscountPlanInstances()) {
+            if (dp.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {
+                throw new BusinessException("DiscountPlan " + dp.getCode() + " is already instantiated in Billing Account " + billingAccount.getCode() + ".");
             }
         }
         return (Subscription) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null);
     }
 
     public void terminateDiscountPlan(Subscription entity, DiscountPlanInstance dpi) throws BusinessException {
-        discountPlanInstanceService.terminateDiscountPlan(entity,dpi);
+        discountPlanInstanceService.terminateDiscountPlan(entity, dpi);
     }
 
     /**
@@ -618,10 +626,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
      */
     public boolean willBeTerminatedInFuture(Subscription subscription) {
         SubscriptionRenewal subscriptionRenewal = subscription != null ? subscription.getSubscriptionRenewal() : null;
-        return (subscription != null && (subscription.getStatus() == SubscriptionStatusEnum.CREATED || subscription.getStatus() == SubscriptionStatusEnum.ACTIVE) &&
-                subscription.getSubscribedTillDate() != null && subscription.getSubscribedTillDate().compareTo(new Date()) > 0 &&
-                subscriptionRenewal != null && !subscriptionRenewal.isAutoRenew() && subscriptionRenewal.getTerminationReason() != null &&
-                subscriptionRenewal.getEndOfTermAction() == SubscriptionRenewal.EndOfTermActionEnum.TERMINATE);
+        return (subscription != null && (subscription.getStatus() == SubscriptionStatusEnum.CREATED || subscription.getStatus() == SubscriptionStatusEnum.ACTIVE)
+                && subscription.getSubscribedTillDate() != null && subscription.getSubscribedTillDate().compareTo(new Date()) > 0 && subscriptionRenewal != null
+                && !subscriptionRenewal.isAutoRenew() && subscriptionRenewal.getTerminationReason() != null
+                && subscriptionRenewal.getEndOfTermAction() == SubscriptionRenewal.EndOfTermActionEnum.TERMINATE);
     }
 
     /**
@@ -639,13 +647,128 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
             Renewal renewal = JacksonUtil.fromString(initialRenewal, Renewal.class);
             subscriptionRenewal = renewal.getValue();
-            subscriptionRenewal.setTerminationReason(subscriptionRenewal.getTerminationReason() != null && subscriptionRenewal.getTerminationReason().getId() != null ?
-                    subscriptionRenewal.getTerminationReason() : null);
+            subscriptionRenewal.setTerminationReason(
+                subscriptionRenewal.getTerminationReason() != null && subscriptionRenewal.getTerminationReason().getId() != null ? subscriptionRenewal.getTerminationReason()
+                        : null);
             subscribedTillDate = renewal.getSubscribedTillDate();
 
         }
         subscription.setSubscriptionRenewal(subscriptionRenewal);
         subscription.setSubscribedTillDate(subscribedTillDate);
         update(subscription);
+    }
+
+    /**
+     * check compatibility of services before instantiation
+     *
+     * @param subscription
+     * @param selectedItemsAsList
+     * @throws BusinessException
+     */
+    public void checkCompatibilityOfferServices(Subscription subscription, List<ServiceTemplate> selectedItemsAsList) throws BusinessException {
+
+        if (subscription == null) {
+            throw new BusinessException("subscription is Null in checkCompatibilityOfferServices ");
+        }
+        List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
+        OfferTemplate offerTemplate = subscription.getOffer();
+
+        // loop in selected Available services for subscription
+        for (ServiceTemplate serviceTemplate : selectedItemsAsList) {
+            OfferServiceTemplate offerServiceTemplate = getOfferServiceTemplate(serviceTemplate.getCode(), offerTemplate);
+            if (offerServiceTemplate == null) {
+                throw new BusinessException("No offerServiceTemplate corresponds to " + serviceTemplate.getCode());
+            }
+
+            // list of incompatible services of an element of current Available services selected
+            List<ServiceTemplate> serviceTemplateIncompatibles = offerServiceTemplate.getIncompatibleServices();
+
+            // check if other selected Available services are part of incompatible services
+            for (ServiceTemplate serviceTemplateOther : selectedItemsAsList) {
+                if (!serviceTemplateOther.getCode().equals(serviceTemplate.getCode())) {
+                    for (ServiceTemplate serviceTemplateIncompatible : serviceTemplateIncompatibles) {
+                        if (serviceTemplateOther.getCode().equals(serviceTemplateIncompatible.getCode())) {
+                            throw new BusinessException("Services Incompatibility between " + serviceTemplateIncompatible.getCode() + " and " + serviceTemplate.getCode());
+                        }
+                    }
+                }
+            }
+
+            // check if subscribed service's are part of incompatible services of selected available services
+            for (ServiceInstance subscribedService : serviceInstances) {
+                for (ServiceTemplate serviceTemplateIncompatible : serviceTemplateIncompatibles) {
+                    if (subscribedService.getCode().equals(serviceTemplateIncompatible.getCode())) {
+                        throw new BusinessException("Services Incompatibility between " + serviceTemplateIncompatible.getCode() + " and " + serviceTemplate.getCode());
+                    }
+                }
+            }
+        }
+
+        // check if selected available services are part of incompatible services of subscribed service's
+        for (ServiceInstance subscribedService : serviceInstances) {
+            OfferServiceTemplate offerServiceTemplateSubscribedService = getOfferServiceTemplate(subscribedService.getCode(), offerTemplate);
+            // list of incompatible services of an element of current subscribed service's
+            List<ServiceTemplate> serviceTemplateSubscribedServiceIncompatibles = offerServiceTemplateSubscribedService.getIncompatibleServices();
+
+            for (ServiceTemplate serviceTemplateSelectedItem : selectedItemsAsList) {
+                for (ServiceTemplate serviceTemplateSubscribedServiceIncompatible : serviceTemplateSubscribedServiceIncompatibles) {
+                    if (serviceTemplateSelectedItem.getCode().equals(serviceTemplateSubscribedServiceIncompatible.getCode())) {
+                        throw new BusinessException("Services Incompatibility between " + serviceTemplateSelectedItem.getCode() + " and " + subscribedService.getCode());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Get OfferServiceTemplate which corresponds to serviceCode and offerTemplate
+     * 
+     * @param serviceCode
+     * @param offerTemplate
+     * @return offerServiceTemplate
+     */
+    public OfferServiceTemplate getOfferServiceTemplate(String serviceCode, OfferTemplate offerTemplate) {
+        OfferServiceTemplate offerServiceTemplateResult = null;
+        List<OfferServiceTemplate> offerServiceTemplates = offerTemplate.getOfferServiceTemplates();
+        for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
+            List<ServiceTemplate> serviceTemplates = offerServiceTemplate.getIncompatibleServices();
+            if (serviceCode.equals(offerServiceTemplate.getServiceTemplate().getCode())) {
+                offerServiceTemplateResult = offerServiceTemplate;
+            }
+        }
+        return offerServiceTemplateResult;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Subscription> findSubscriptions(BillingCycle billingCycle, Date startdate, Date endDate) {
+        try {
+            QueryBuilder qb = new QueryBuilder(Subscription.class, "s", null);
+            qb.addCriterionEntity("s.billingCycle.id", billingCycle.getId());
+
+            if (startdate != null) {
+                qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
+            }
+
+            if (endDate != null) {
+                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false);
+            }
+            qb.addOrderCriterionAsIs("id", true);
+
+            return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (Exception ex) {
+            log.error("failed to find subscriptions", ex);
+        }
+
+        return null;
+    }
+
+    /**
+     * List subscriptions that are associated with a given billing run
+     * 
+     * @param billingRun Billing run
+     * @return A list of Subscriptions
+     */
+    public List<Subscription> findSubscriptions(BillingRun billingRun) {
+        return getEntityManager().createNamedQuery("Subscription.listByBillingRun", Subscription.class).setParameter("billingRunId", billingRun.getId()).getResultList();
     }
 }

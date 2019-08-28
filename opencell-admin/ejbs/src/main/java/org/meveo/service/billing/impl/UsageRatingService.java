@@ -41,6 +41,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRRejectReasonEnum;
 import org.meveo.model.rating.EDRStatusEnum;
+import org.meveo.model.rating.RatedEDRResult;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -281,8 +282,6 @@ public class UsageRatingService implements Serializable {
      */
     private BigDecimal deduceCounter(EDR edr, UsageChargeInstance usageChargeInstance, Reservation reservation, boolean isVirtual) throws BusinessException {
 
-        log.info("Deduce counter for counter instance {} ", isVirtual ? usageChargeInstance.getCounter().getCode() : usageChargeInstance.getCounter().getId());
-
         CounterPeriod counterPeriod = null;
         BigDecimal deducedQuantityInEDRUnit = BigDecimal.ZERO;
 
@@ -307,7 +306,9 @@ public class UsageRatingService implements Serializable {
         }
 
         BigDecimal quantityToDeduce = chargeTemplate.getInChargeUnit(edr.getQuantity());
-        log.debug("value to deduce {} * {} = {} from current value {}", edr.getQuantity(), chargeTemplate.getUnitMultiplicator(), quantityToDeduce, counterPeriod.getValue());
+        log.debug("Deduce counter instance {} current value {} by  {} * {} = {} ",
+            isVirtual ? usageChargeInstance.getCounter().getCode() : usageChargeInstance.getCounter().getId(), counterPeriod.getValue(), edr.getQuantity(),
+            chargeTemplate.getUnitMultiplicator(), quantityToDeduce);
 
         synchronized (this) {// cachedCounterPeriod) { TODO how to ensure one at a time update?
             counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterPeriod, quantityToDeduce, isVirtual);
@@ -332,7 +333,7 @@ public class UsageRatingService implements Serializable {
             }
         }
 
-        log.debug("in original EDR units, we deduced {}", deducedQuantityInEDRUnit);
+        log.debug("In original EDR units, we deduced EDR {} by {}", edr.getId(), deducedQuantityInEDRUnit);
 
         // Fire notifications if counter value matches trigger value and counter value is tracked
         if (counterValueChangeInfo != null && counterPeriod.getNotificationLevels() != null) {
@@ -371,12 +372,14 @@ public class UsageRatingService implements Serializable {
      * @param edr EDR to rate
      * @param usageChargeInstance Charge instance to apply
      * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
-     * 
-     * @return returns true if the charge has been fully rated (either because it has no counter or because the counter can be fully decremented with the EDR content)
+     *
+     * @return returns an RatedEDRResult object, the RatedEDRResult.eDRfullyRated is true if the charge has been fully rated (either because it has no counter or because the counter can be fully decremented with the EDR content)
      * @throws BusinessException Business exception
      */
-    private boolean rateEDRonChargeAndCounters(WalletOperation walletOperation, EDR edr, UsageChargeInstance usageChargeInstance, boolean isVirtual) throws BusinessException {
-        boolean stopEDRRating_fullyRated = false;
+    private RatedEDRResult rateEDRonChargeAndCounters(WalletOperation walletOperation, EDR edr, UsageChargeInstance usageChargeInstance, boolean isVirtual)
+            throws BusinessException {
+        //boolean stopEDRRating_fullyRated = false;
+        RatedEDRResult ratedEDRResult = new RatedEDRResult();
         BigDecimal deducedQuantity = null;
 
         if (usageChargeInstance.getCounter() != null) {
@@ -384,16 +387,16 @@ public class UsageRatingService implements Serializable {
             // If decremented partially or none - proceed with another charge
             deducedQuantity = deduceCounter(edr, usageChargeInstance, null, isVirtual);
             if (edr.getQuantity().compareTo(deducedQuantity) == 0) {
-                stopEDRRating_fullyRated = true;
+                ratedEDRResult.setEDRfullyRated(true);
             }
 
             if (deducedQuantity != null && deducedQuantity.compareTo(BigDecimal.ZERO) == 0) {
                 // we continue the rating to have a WO that its needed in pricePlan.script
-                log.warn("deduceQuantity is BigDecimal.ZERO, will continue rating");
-                return stopEDRRating_fullyRated;
+                log.debug("deduceQuantity is BigDecimal.ZERO, will continue rating");
+                return ratedEDRResult;
             }
         } else {
-            stopEDRRating_fullyRated = true;
+            ratedEDRResult.setEDRfullyRated(true);
         }
 
         BigDecimal quantityToCharge = null;
@@ -411,10 +414,6 @@ public class UsageRatingService implements Serializable {
             walletOperationService.chargeWalletOperation(walletOperation);
         }
 
-        // handle associated edr creation unless it is a Virtual operation
-        if (isVirtual) {
-            return stopEDRRating_fullyRated;
-        }
 
         UsageChargeTemplate chargeTemplate = null;
         if (usageChargeInstance.getChargeTemplate() instanceof UsageChargeTemplate) {
@@ -424,9 +423,9 @@ public class UsageRatingService implements Serializable {
             chargeTemplate = emWrapper.getEntityManager().find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplate().getId());
         }
 
-        triggerEDR(chargeTemplate, walletOperation, edr);
-
-        return stopEDRRating_fullyRated;
+        List<EDR> triggeredEdrs = triggerEDRs(chargeTemplate, walletOperation, edr, isVirtual);
+        ratedEDRResult.setTriggerdEDRs(triggeredEdrs);
+        return ratedEDRResult;
     }
 
     /**
@@ -434,9 +433,12 @@ public class UsageRatingService implements Serializable {
      * @param chargeTemplate template charge
      * @param walletOperation the wallet operation
      * @param edr the event record
+     * @param isVirtual  do not persist EDR if isVirtual  = true
+     * @return an EDR
      * @throws BusinessException business exception
      */
-    private void triggerEDR(ChargeTemplate chargeTemplate, WalletOperation walletOperation, EDR edr) throws BusinessException {
+    private List<EDR> triggerEDRs(ChargeTemplate chargeTemplate, WalletOperation walletOperation, EDR edr, boolean isVirtual) throws BusinessException {
+        List<EDR> triggredEDRs = new ArrayList<>();
         for (TriggeredEDRTemplate triggeredEDRTemplate : chargeTemplate.getEdrTemplates()) {
             if (triggeredEDRTemplate.getConditionEl() == null || "".equals(triggeredEDRTemplate.getConditionEl())
                     || evaluateBooleanExpression(triggeredEDRTemplate.getConditionEl(), edr, walletOperation)) {
@@ -451,6 +453,8 @@ public class UsageRatingService implements Serializable {
                     meveoInstance = meveoInstanceService.findByCode(opencellInstanceCode);
                 }
 
+                log.debug("Will trigger EDR {}", triggeredEDRTemplate.getCode());
+                
                 if (meveoInstance == null) {
                     EDR newEdr = new EDR();
                     newEdr.setCreated(new Date());
@@ -474,14 +478,15 @@ public class UsageRatingService implements Serializable {
                         }
                     }
                     newEdr.setSubscription(sub);
-                    log.info("trigger EDR from code {}", triggeredEDRTemplate.getCode());
+                    
 
                     if (triggeredEDRTemplate.getTriggeredEdrScript() != null) {
                         newEdr = triggeredEdrScriptService.updateEdr(triggeredEDRTemplate.getTriggeredEdrScript().getCode(), newEdr, walletOperation);
                     }
-
-                    edrService.create(newEdr);
-
+                    if (!isVirtual) {
+                        edrService.create(newEdr);
+                    }
+                    triggredEDRs.add(newEdr);
                 } else {
                     if (StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
                         throw new BusinessException("TriggeredEDRTemplate.subscriptionEl must not be null and must point to an existing Access.");
@@ -500,7 +505,7 @@ public class UsageRatingService implements Serializable {
                     String url = "api/rest/billing/mediation/chargeCdr";
                     Response response = meveoInstanceService.callTextServiceMeveoInstance(url, meveoInstance, cdr.toCsv());
                     ActionStatus actionStatus = response.readEntity(ActionStatus.class);
-                    log.debug("response {}", actionStatus);
+                    log.debug("Triggered remote EDR response {}", actionStatus);
 
                     if (actionStatus != null && ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
                         log.error("RemoteCharging with status={}", actionStatus.getErrorCode());
@@ -511,9 +516,11 @@ public class UsageRatingService implements Serializable {
                         log.error("RemoteCharging: No response code from API.");
                         throw new ChargingEdrOnRemoteInstanceErrorException("Error charging Edr. No response code from API.");
                     }
+
                 }
             }
         }
+        return triggredEDRs;
     }
 
     /**
@@ -542,7 +549,7 @@ public class UsageRatingService implements Serializable {
         }
 
         if (deducedQuantity != null && deducedQuantity.compareTo(BigDecimal.ZERO) == 0) {
-            log.warn("deduceQuantity is null");
+            log.debug("deduceQuantity is null");
             return stopEDRRating;
         }
 
@@ -577,11 +584,11 @@ public class UsageRatingService implements Serializable {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void ratePostpaidUsage(EDR edr) throws BusinessException {
-        rateUsageWithinTransaction(edr, false);
+        rateUsageWithinTransaction(edr, false, false, 0, 0);
     }
 
     public List<WalletOperation> rateUsageDontChangeTransaction(EDR edr, boolean isVirtual) throws BusinessException {
-        return rateUsageWithinTransaction(edr, isVirtual);
+        return rateUsageWithinTransaction(edr, isVirtual, false, 0, 0);
     }
 
     /**
@@ -589,48 +596,46 @@ public class UsageRatingService implements Serializable {
      * 
      * @param edr EDR
      * @param isVirtual Is this a virtual operation and no real counters or wallets should be affected (applies to quotes)
+     * @param rateTriggeredEdr check whether the rating for triggered EDR is enabled or not.
+     * @param maxDeep the max deeping in triggering EDR
+     * @param startDeepRating the counter for deeping
      * @return A list of wallet operations corresponding to rated EDR
      * @throws BusinessException business exception.
      */
     @TransactionAttribute(TransactionAttributeType.MANDATORY)
-    public List<WalletOperation> rateUsageWithinTransaction(EDR edr, boolean isVirtual) throws BusinessException {
+    public List<WalletOperation> rateUsageWithinTransaction(EDR edr, boolean isVirtual, boolean rateTriggeredEdr, int maxDeep, int startDeepRating) throws BusinessException {
 
         log.info("Rating EDR={}", edr);
+        List<WalletOperation> walletOperations = new ArrayList<>();
 
         if (edr.getQuantity() == null) {
             edr.setStatus(EDRStatusEnum.REJECTED);
             edr.setRejectReason(EDRRejectReasonEnum.QUANTITY_IS_NULL.getCode());
-            return null;
+            return walletOperations;
         }
 
         if (edr.getSubscription() == null) {
             edr.setStatus(EDRStatusEnum.REJECTED);
             edr.setRejectReason(EDRRejectReasonEnum.SUBSCRIPTION_IS_NULL.getCode());
-            return null;
+            return walletOperations;
         }
 
         edr.setLastUpdate(new Date());
 
-        boolean edrIsRated_fullyRated = false;
-
+        RatedEDRResult ratedEDRResult = new RatedEDRResult();
         BigDecimal originalQuantity = edr.getQuantity();
-        List<WalletOperation> walletOperations = new ArrayList<>();
+
 
         try {
             List<UsageChargeInstance> usageChargeInstances = null;
 
-            if (!isVirtual) {
-                // Charges should be already ordered by priority and id (why id??)
+            // Charges should be already ordered by priority and id (why id??)
                 usageChargeInstances = usageChargeInstanceService.getActiveUsageChargeInstancesBySubscriptionId(edr.getSubscription().getId());
                 if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
                     edr.setStatus(EDRStatusEnum.REJECTED);
                     edr.setRejectReason(EDRRejectReasonEnum.SUBSCRIPTION_HAS_NO_CHARGE.getCode());
-                    return null;
+                    return walletOperations;
                 }
-
-            } else {
-                // TODO still need to obtain charges as subscription is virtual
-            }
 
             boolean foundPricePlan = true;
 
@@ -653,9 +658,12 @@ public class UsageRatingService implements Serializable {
                 log.debug("Found matching charge instance: id={}", usageChargeInstance.getId());
 
                 WalletOperation walletOperation = new WalletOperation();
-                edrIsRated_fullyRated = rateEDRonChargeAndCounters(walletOperation, edr, usageChargeInstance, isVirtual);
+                ratedEDRResult = rateEDRonChargeAndCounters(walletOperation, edr, usageChargeInstance, isVirtual);
                 walletOperations.add(walletOperation);
-                if (edrIsRated_fullyRated) {
+
+                walletOperations.addAll(rateTriggeredEDRs(isVirtual, rateTriggeredEdr, maxDeep, startDeepRating, ratedEDRResult.getTriggerdEDRs()));
+
+                if (ratedEDRResult.isEDRfullyRated()) {
                     boolean triggerNextCharge = false;
                     UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
 
@@ -671,13 +679,13 @@ public class UsageRatingService implements Serializable {
                 }
             }
 
-            if (edrIsRated_fullyRated) {
+            if (ratedEDRResult.isEDRfullyRated()) {
                 edr.setStatus(EDRStatusEnum.RATED);
 
             } else {
                 edr.setStatus(EDRStatusEnum.REJECTED);
                 edr.setRejectReason(!foundPricePlan ? EDRRejectReasonEnum.NO_PRICEPLAN.getCode() : EDRRejectReasonEnum.NO_MATCHING_CHARGE.getCode());
-                return null;
+                return walletOperations;
             }
             
         } catch (BusinessException e) {
@@ -710,7 +718,7 @@ public class UsageRatingService implements Serializable {
             }
             rejectReason += e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage();
 
-            log.error("failed to rate usage Within Transaction", e);
+            log.error("failed to rate EDR {} usage Within Transaction", edr, e);
 
             edr.setStatus(EDRStatusEnum.REJECTED);
             edr.setRejectReason(rejectReason);
@@ -720,6 +728,27 @@ public class UsageRatingService implements Serializable {
             edr.setQuantity(originalQuantity);
         }
         return walletOperations;
+    }
+
+    /**
+     * Rate Triggered EDR.
+     *
+     * @param isVirtual        rate EDR virtually (no persisting in DB)
+     * @param rateTriggeredEdr check whether the rating for triggered EDR is enabled or not.
+     * @param maxDeep          the max deeping in triggering EDR
+     * @param startDeepRating  the counter for deeping
+     * @param edr              triggered EDR
+     * @return a list of WalletOperation
+     * @throws BusinessException
+     */
+    private List<WalletOperation> rateTriggeredEDRs(boolean isVirtual, boolean rateTriggeredEdr, int maxDeep, int startDeepRating, List<EDR> triggeredEDRs) throws BusinessException {
+        List<WalletOperation> triggeredWOs = new ArrayList<>();
+        if (rateTriggeredEdr && startDeepRating < maxDeep) {
+            for(EDR edr :triggeredEDRs) {
+                triggeredWOs.addAll(rateUsageWithinTransaction(edr, isVirtual, true, maxDeep, startDeepRating + 1));
+            }
+        }
+        return triggeredWOs;
     }
 
     /**

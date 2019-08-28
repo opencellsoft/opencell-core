@@ -9,14 +9,18 @@ import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -54,6 +58,9 @@ public class InvoicingAsync {
     @Inject
     private CurrentUserProvider currentUserProvider;
 
+    @EJB
+    private InvoicingAsync invoicingNewTransaction;
+
     /**
      * Update billing account total amounts async. One billing account at a time in a separate transaction.
      *
@@ -71,6 +78,7 @@ public class InvoicingAsync {
             throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
         List<IBillableEntity> billableEntities = new ArrayList<IBillableEntity>();
         int i = 0;
         for (IBillableEntity entity : entities) {
@@ -83,38 +91,38 @@ public class InvoicingAsync {
                 billableEntities.add(billableEntity);
             }
         }
-        log.info("WorkSet billable entities {}", billableEntities.size());
         return new AsyncResult<List<IBillableEntity>>(billableEntities);
     }
 
     /**
-     * Creates the agregates and invoice async. One entity at a time in a separate transaction.
+     * Creates the aggregates and invoice async. One entity at a time in a separate transaction.
      *
      * @param entities the entity objects
      * @param billingRun the billing run
      * @param jobInstanceId the job instance id
+     * @param instantiateMinRts Should rated transactions to reach minimum invoicing amount be checked and instantiated
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
      * @return the future
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> createAgregatesAndInvoiceAsync(List<? extends IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, MeveoUser lastCurrentUser) {
+    public Future<String> createAgregatesAndInvoiceAsync(List<? extends IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, boolean instantiateMinRts,
+            MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        int i = 0;
-        for (IBillableEntity entity : entities) {
-            i++;
-            if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+        for (IBillableEntity entityToInvoice : entities) {
+            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
-                invoiceService.createAgregatesAndInvoice(entity, billingRun, null, null, null, null, entity.getMinRatedTransactions(), false, false);
-            } catch (Exception e) {
-                log.error("Error for entity {}/{}", entity.getClass().getSimpleName(), entity.getId(), e);
+                invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun, null, null, null, null, instantiateMinRts, false);
+            } catch (Exception e1) {
+                log.error("Failed to create invoices for entity {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
             }
         }
+
         return new AsyncResult<String>("OK");
     }
 

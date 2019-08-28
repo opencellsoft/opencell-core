@@ -16,16 +16,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.commons.parsers;
+package org.meveo.model.payments;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
-public class RecordRejectedException extends Exception {
+@Entity
+@DiscriminatorValue(value = "W")
+public class WriteOff extends AccountOperation {
 
-	public RecordRejectedException(String message) {
-		super(message);
-	}
-
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
 
 }

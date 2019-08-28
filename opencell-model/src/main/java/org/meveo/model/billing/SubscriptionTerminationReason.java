@@ -31,6 +31,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ISearchable;
 
 /**
  * Subscription termination rule
@@ -47,7 +48,7 @@ import org.meveo.model.ExportIdentifier;
         @Parameter(name = "sequence_name", value = "billing_sub_term_reason_seq"), })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties({ "auditable", "previousCode", "appendGeneratedCode" })
-public class SubscriptionTerminationReason extends BusinessEntity {
+public class SubscriptionTerminationReason extends BusinessEntity implements ISearchable {
 
     private static final long serialVersionUID = 8579279870178217508L;
 

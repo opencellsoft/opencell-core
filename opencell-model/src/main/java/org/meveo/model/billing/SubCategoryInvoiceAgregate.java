@@ -132,6 +132,9 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @Transient
     private BigDecimal oldAmountWithTax;
 
+    @Transient
+    private List<RatedTransaction> ratedtransactionsToAssociate = new ArrayList<>();
+
     /**
      * Instantiates a new sub category invoice aggregate.
      */
@@ -147,19 +150,20 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      * @param userAccount User account
      * @param wallet Wallet instance
      * @param tax Tax applied
-     * @param taxPercent Tax percent applied
      * @param invoice Invoice
      * @param accountingCode Accounting code
      */
     public SubCategoryInvoiceAgregate(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, WalletInstance wallet, Tax tax,
-            BigDecimal taxPercent, Invoice invoice, AccountingCode accountingCode) {
+            Invoice invoice, AccountingCode accountingCode) {
         super();
         this.invoiceSubCategory = invoiceSubCategory;
         this.billingAccount = billingAccount;
         this.userAccount = userAccount;
         this.wallet = wallet;
         this.tax = tax;
-        this.taxPercent = taxPercent;
+        if (tax != null) {
+            this.taxPercent = tax.getPercent();
+        }
         this.invoice = invoice;
         if (invoice != null) {
             this.billingRun = invoice.getBillingRun();
@@ -252,8 +256,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
             this.itemNumber = 0;
         }
         this.itemNumber++;
-        this.ratedtransactions.add(ratedTransaction);
-        ratedTransaction.setInvoiceAgregateF(this);
+        this.ratedtransactionsToAssociate.add(ratedTransaction);
     }
 
     /**
@@ -557,8 +560,26 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
         this.discountPlanItem = discountPlanItem;
     }
-    
+
     public BigDecimal getIsEnterpriseAmount(boolean isEnterprise) {
-		return isEnterprise ? getAmountWithoutTax() : getAmountWithTax();
-	}
+        return isEnterprise ? getAmountWithoutTax() : getAmountWithTax();
+    }
+
+    /**
+     * A transient method.
+     * 
+     * @return A list of rated transactions to associate with an invoice subcategory aggregate.
+     */
+    public List<RatedTransaction> getRatedtransactionsToAssociate() {
+        return ratedtransactionsToAssociate;
+    }
+
+    /**
+     * A transient method.
+     * 
+     * @param ratedtransactionsToAssociate A list of rated transactions to associate with an invoice subcategory aggregate
+     */
+    public void setRatedtransactionsToAssociate(List<RatedTransaction> ratedtransactionsToAssociate) {
+        this.ratedtransactionsToAssociate = ratedtransactionsToAssociate;
+    }
 }

@@ -10,8 +10,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.faces.view.ViewScoped;
@@ -24,9 +27,12 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.custom.CustomTableRecordDto;
+import org.meveo.commons.utils.EjbUtils;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.NativePersistenceService;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
@@ -315,12 +321,9 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
             Object id = values.get(NativePersistenceService.FIELD_ID);
             if (id instanceof String) {
                 id = Long.parseLong((String) id);
-            } else if (id instanceof BigDecimal) {
-                id = ((BigDecimal) id).longValue();
-            } else if (id instanceof BigInteger) {
-                id = ((BigInteger) id).longValue();
+            } else if (id instanceof Number) {
+                id = ((Number) id).longValue();
             }
-
             ids.add((long) id);
 
         }
@@ -356,19 +359,39 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
     public List<CustomTableRecordDto> entityTypeColumnDatas(CustomFieldTemplate field) {
         CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(field.tableName());
-        if (relatedEntity.isStoreAsTable()) {
+        if (relatedEntity != null && relatedEntity.isStoreAsTable()) {
             return customTableService.selectAllRecordsOfATableAsRecord(field.tableName());
         }
         return getFromCustomEntity(field);
     }
 
-     List<CustomTableRecordDto> getFromCustomEntity(CustomFieldTemplate field) {
-        return customEntityInstanceService.listByCet(field.tableName()).stream()
-                .map(customEntityInstanceService::customEntityInstanceAsMap)
-                .map(CustomTableRecordDto::new)
-                .collect(Collectors.toList());
+    List<CustomTableRecordDto> getFromCustomEntity(CustomFieldTemplate field) {
+
+        return Optional.ofNullable(field.tableName())
+                .map(tableName -> customEntityInstanceService.listByCet(field.tableName()).stream().map(customEntityInstanceService::customEntityInstanceAsMap)
+                        .map(CustomTableRecordDto::new).collect(Collectors.toList())).orElse(loadFromBusinessEntity(field));
     }
 
+    List<CustomTableRecordDto> loadFromBusinessEntity(CustomFieldTemplate field) {
+        try {
+            Class entityClass = Class.forName(field.getEntityClazz());
+            PersistenceService<BusinessEntity> persistenceService = getPersistenceServiceByClass(entityClass);
+            return persistenceService.list().stream().filter(Objects::nonNull).map(mapToMap()).map(CustomTableRecordDto::new).collect(Collectors.toList());
+        } catch (ClassNotFoundException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
 
+    Function<BusinessEntity, HashMap<String, Object>> mapToMap() {
+        return e -> new HashMap<String, Object>() {{
+            put("id", e.getId());
+            put("code", e.getCode());
+            put("description", e.getDescription());
+        }};
+    }
+
+    PersistenceService getPersistenceServiceByClass(Class entityClass) {
+        return (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Service");
+    }
 
 }

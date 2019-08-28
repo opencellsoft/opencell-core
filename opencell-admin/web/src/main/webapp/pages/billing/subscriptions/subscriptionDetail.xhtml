@@ -531,7 +531,7 @@
                                             <h:outputText id="balanceEx_text" rendered="#{true or !subscriptionBean.edit}" value="#{subscriptionBean.getBalanceExigibleWithoutLitigation()}"
                                                 style="font-weight:bold;" converter="bigDecimalConverter" />
                                         </hftl:decorateFormField>
-                                 	
+
 										<hftl:formField id="billingCycleSelectId" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
                             				popupId="billingCyclePopup" />
                             				
@@ -873,6 +873,13 @@
 													</p:panel>
 												</h:form>
 											</p:tab>
+					<p:tab id="counterPeriodTab"
+						   title="#{messages['counterPeriod.title']}"
+						   rendered="#{not empty subscriptionBean.entity.id}">
+						<p:outputPanel id="counterPeriodTabPanel">
+							<ui:include src="counterPeriodTab.xhtml" />
+						</p:outputPanel>
+					</p:tab>
 				</p:tabView>
 			</h:panelGroup>
         </h:panelGroup>
@@ -909,7 +916,7 @@
 			<p:outputPanel id="usageChgPanel">
                 <hftl:formPanel edit="#{subscriptionBean.usageChargeInstance.status == 'INACTIVE'}" backingBean="#{subscriptionBean}" columns="1" entity="#{subscriptionBean.usageChargeInstance}"
                     formId="usageChgForm1" showFormButtons="false" ajaxSubmit="true" rendered="#{subscriptionBean.usageChargeInstance!=null}">
-                    <hftl:formField id="USchargeTemplateSelectId" label="#{messages['businessEntity.code']}" field="chargeTemplate" valueLabelField="code" edit="false" />
+                    <hftl:formField id="USchargeTemplateSelectId" label="#{messages['businessEntity.code']}" field="code" edit="false" />
                     <hftl:formField label="#{messages['commons.status']}" field="status" edit="false" />
                     <hftl:formField label="#{messages['businessEntity.description']}" field="description" edit="false" />
                     <hftl:formField label="#{messages['chargeInstance.prepaidWallets']}" field="prepaidWalletInstances" listType="pickUpList" valueLabelField="descriptionAndCode" edit="false" rendered="#{subscriptionBean.usageChargeInstance.prepaid}" componentWidth="50" /> 
@@ -1088,24 +1095,24 @@
 				  header="#{messages['discountPlan.instantiation']}"
 				  widgetVar="dlg_instantiateDiscountPlanDialog" modal="true" appendTo="@(body)" closeOnEscape="true"
 				  width="600">
-			<p:tabView>
-				<p:tab title="#{messages['commons.information']}">
-					<hftl:formPanel  formId="formDPI" edit="true" backingBean="#{subscriptionBean}" entity="#{subscriptionBean.entity.discountPlan}" styleClass="formPanel" showFormButtons="false">
-						<hftl:formField label="#{messages['discountPlanItem.startDate']}" field="startDate" />
-						<hftl:formField label="#{messages['discountPlanItem.endDate']}" field="endDate" />
-						<hftl:formField label="#{messages['discountPlanItem.defaultDuration']}" field="defaultDuration" />
-						<hftl:formField label="#{messages['discountPlanItem.durationUnit']}" field="durationUnit" />
-						<p:panel styleClass="action-buttons">
-							<p:commandButton action="#{subscriptionBean.instantiateDiscountPlan()}"
-											 value="#{messages['button.instanciateButton']}" update=":#{p:component('discountPanel')}"
-											 oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_instantiateDiscountPlanDialog').hide()">
-							</p:commandButton>
-							<p:commandButton immediate="true" onclick="PF('dlg_instantiateDiscountPlanDialog').hide()" type="button" value="#{messages['management.close']}" />
-						</p:panel>
-					</hftl:formPanel>
-				</p:tab>
-				<hftl:customFields prefix="dpInstance" backingBean="#{discountPlanInstanceBean}" messagesId="formDPI:messages" />
-			</p:tabView>
+			<hftl:formPanel  formId="formDPI" edit="true" backingBean="#{subscriptionBean}" entity="#{subscriptionBean.entity.discountPlan}" styleClass="formPanel" showFormButtons="false">
+				<p:tabView>
+					<p:tab title="#{messages['commons.information']}">
+							<hftl:formField label="#{messages['discountPlanItem.startDate']}" field="startDate" />
+							<hftl:formField label="#{messages['discountPlanItem.endDate']}" field="endDate" />
+							<hftl:formField label="#{messages['discountPlanItem.defaultDuration']}" field="defaultDuration" />
+							<hftl:formField label="#{messages['discountPlanItem.durationUnit']}" field="durationUnit" />
+							<p:panel styleClass="action-buttons">
+								<p:commandButton action="#{subscriptionBean.instantiateDiscountPlan()}"
+												 value="#{messages['button.instanciateButton']}" update=":#{p:component('discountPanel')}"
+												 oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_instantiateDiscountPlanDialog').hide()">
+								</p:commandButton>
+								<p:commandButton immediate="true" onclick="PF('dlg_instantiateDiscountPlanDialog').hide()" type="button" value="#{messages['management.close']}" />
+							</p:panel>
+					</p:tab>
+					<hftl:customFields prefix="dpInstance" backingBean="#{discountPlanInstanceBean}" messagesId=":formDPI:messages" />
+				</p:tabView>
+			</hftl:formPanel>
 		</p:dialog>
 	</ui:define>
 </ui:composition>

@@ -228,7 +228,7 @@
 
                                                 
                                                 
-                                    <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" required="false"
+                                    <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" valueLabelField2="descriptionNotNull" required="false"
                                         listBean="#{titleBean}" listenerUpdate=":parentTab:formId:childTab:userNamePanel" styleClass="clearLeft"/>
 
                                     <h:panelGroup id="userNamePanel" layout="block">
@@ -545,9 +545,9 @@
 			header="#{messages['discountPlan.instantiation']}"
 			widgetVar="dlg_instantiateDiscountPlanDialog" modal="true" appendTo="@(body)" closeOnEscape="true"
 			width="600">
+          <hftl:formPanel  formId="formDPI" edit="true" backingBean="#{billingAccountBean}" entity="#{billingAccountBean.entity.discountPlan}" styleClass="formPanel" showFormButtons="false">
 			<p:tabView>
 				<p:tab title="#{messages['commons.information']}">
-		            <hftl:formPanel  formId="formDPI" edit="true" backingBean="#{billingAccountBean}" entity="#{billingAccountBean.entity.discountPlan}" styleClass="formPanel" showFormButtons="false">
 						<hftl:formField label="#{messages['discountPlanItem.startDate']}" field="startDate" />
 						<hftl:formField label="#{messages['discountPlanItem.endDate']}" field="endDate" />
 						<hftl:formField label="#{messages['discountPlanItem.defaultDuration']}" field="defaultDuration" />
@@ -559,10 +559,10 @@
 							</p:commandButton>
 							<p:commandButton immediate="true" onclick="PF('dlg_instantiateDiscountPlanDialog').hide()" type="button" value="#{messages['management.close']}" />
 						</p:panel>
-					</hftl:formPanel>
 				</p:tab>
-				<hftl:customFields prefix="dpInstance" backingBean="#{discountPlanInstanceBean}" messagesId="formDPI:messages" />
+				<hftl:customFields prefix="dpInstance" backingBean="#{discountPlanInstanceBean}" messagesId=":formDPI:messages" />
 			</p:tabView>
+		  </hftl:formPanel>
 		</p:dialog>
 	</ui:define>
 </ui:composition>

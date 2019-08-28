@@ -65,7 +65,8 @@ import org.meveo.service.base.PersistenceService;
  * @author Edward P. Legaspi
  * @author anasseh
  * @author Said Ramli
- * @lastModifiedVersion 5.3
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  */
 @Stateless
 public class PaymentService extends PersistenceService<Payment> {
@@ -452,8 +453,8 @@ public class PaymentService extends PersistenceService<Payment> {
         payment.setUnMatchingAmount(payment.getAmount());
         payment.setMatchingAmount(BigDecimal.ZERO);
         payment.setAccountingCode(occTemplate.getAccountingCode());
-        payment.setOccCode(occTemplate.getCode());
-        payment.setOccDescription(occTemplate.getDescription());
+        payment.setCode(occTemplate.getCode());
+        payment.setDescription(occTemplate.getDescription());
         payment.setType(doPaymentResponseDto.getPaymentBrand());
         payment.setTransactionCategory(occTemplate.getOccCategory());
         payment.setAccountCodeClientSide(doPaymentResponseDto.getCodeClientSide());
@@ -573,8 +574,8 @@ public class PaymentService extends PersistenceService<Payment> {
                 rejectedPayment.setReference("r_" + paymentId);
                 rejectedPayment.setCustomerAccount(ca);
                 rejectedPayment.setAccountingCode(occTemplate.getAccountingCode());
-                rejectedPayment.setOccCode(occTemplate.getCode());
-                rejectedPayment.setOccDescription(occTemplate.getDescription());
+                rejectedPayment.setCode(occTemplate.getCode());
+                rejectedPayment.setDescription(occTemplate.getDescription());
                 rejectedPayment.setTransactionCategory(occTemplate.getOccCategory());
                 rejectedPayment.setAccountCodeClientSide(accountOperation.getAccountCodeClientSide());
                 rejectedPayment.setPaymentMethod(accountOperation.getPaymentMethod());
@@ -629,7 +630,7 @@ public class PaymentService extends PersistenceService<Payment> {
         List<MatchingAmount> matchingAmounts = paymentOrRefund.getMatchingAmounts();
         log.trace("matchingAmounts:" + matchingAmounts);
         for (MatchingAmount ma : paymentOrRefund.getMatchingAmounts().get(0).getMatchingCode().getMatchingAmounts()) {
-            log.trace("ma.getAccountOperation() id:{} , occ code:{}", ma.getAccountOperation().toString(), ma.getAccountOperation().getOccCode());
+            log.trace("ma.getAccountOperation() id:{} , occ code:{}", ma.getAccountOperation().toString(), ma.getAccountOperation().getCode());
             if (!(ma.getAccountOperation() instanceof Payment) && !(ma.getAccountOperation() instanceof Refund) && !(ma.getAccountOperation() instanceof RejectedPayment) ) {
                 listAoThatSupposedPaid.add(ma.getAccountOperation());
             }
