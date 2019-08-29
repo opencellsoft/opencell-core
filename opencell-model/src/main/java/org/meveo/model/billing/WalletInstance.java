@@ -73,7 +73,7 @@ public class WalletInstance extends BusinessEntity {
     /**
      * User account wallet is associated to
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
