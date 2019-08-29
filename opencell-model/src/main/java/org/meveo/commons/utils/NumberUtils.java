@@ -161,4 +161,12 @@ public class NumberUtils {
 
         return new BigDecimal[] { amountWithoutTax, amountWithTax, amountTax };
     }
+
+    public static long parseLongDefault(String value, long defaultValue) {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return  defaultValue;
+        }
+    }
 }
