@@ -18,7 +18,7 @@ public class ParserSwagger {
     public static void main(String[] args) throws Exception {
         String parentpath = System.getProperty("user.dir");
         //Be careful of the parentpath the next line mus be present if you work on jenkins. Otherwise if you are working locally the next line should be in comment 
-        //parentpath=parentpath+File.separator+"opencell-api";
+        parentpath=parentpath+File.separator+"opencell-api";
         System.out.println("Adding annotations to file:"+parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest");
         String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest", "Rs.java");
         parsing.processCreation(allPathFiles);

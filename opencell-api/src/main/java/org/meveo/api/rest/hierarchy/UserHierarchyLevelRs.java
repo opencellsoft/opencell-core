@@ -92,7 +92,7 @@ public interface UserHierarchyLevelRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    public sUserHierarchyLevelsDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
+    public UserHierarchyLevelsDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
