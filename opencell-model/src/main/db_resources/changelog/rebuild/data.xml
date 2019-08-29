@@ -11307,8 +11307,9 @@ public class PaymentCallBackScript extends Script {
 }
         ');]]></sql>
 
-        <sql><![CDATA[INSERT INTO ${db.schema.adapted}ar_payment_gateway VALUES (-10, 0, 0, now(), NULL, 'customGatewayDemo', 'A customGateway for Demo', 'CUSTOM', 'CARD', NULL, NULL, -10, NULL, NULL,
-          '3bb099a3-e72d-49ea-9d96-908e74569e02', 'opencell.admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);]]></sql>
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}ar_payment_gateway (id, version, disabled, created, updated, code, description, type, payment_method, card_type,
+        implementation_class_name, script_instance_id, trading_currency_id, application_el, uuid, creator) VALUES (-10, 0, 0, now(), NULL, 'customGatewayDemo', 'A customGateway for Demo', 'CUSTOM', 'CARD', NULL, NULL, -10, NULL, NULL,
+          '3bb099a3-e72d-49ea-9d96-908e74569e02', 'opencell.admin');]]></sql>
 
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}adm_notification VALUES (-10, 0, 0, now(), NULL, 'PaymentCallBack', NULL, 'org.meveo.model.notification.InboundRequest', 
           '#{event.pathInfo.startsWith("/DEMO/custom_payment-callback?")}', 'INBOUND_REQ', 'opencell.admin', NULL, NULL, NULL, -11, 0);]]></sql>
@@ -11316,10 +11317,10 @@ public class PaymentCallBackScript extends Script {
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}adm_notification_params VALUES (-10, '#{event.getParameters()}', 'params');]]></sql>
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_job_instance VALUES (-16, 6, 0, now(), now(), 'PaymentCard_Job', NULL, 'ACCOUNT_RECEIVABLES',
  'PaymentJob', NULL, 'opencell.admin', 'opencell.admin', NULL, NULL, '2c72550b-4e79-4dab-a8bd-df8499abd25b', NULL, 1, '{"PaymentJob_creditOrDebit":[{"string":"Credit"}],"waitingMillis":[{"long":0}],
- "PaymentJob_matchingAO":[{"string":"YES"}],"PaymentJob_cardOrDD":[{"string":"CARD"}],"PaymentJob_createAO":[{"string":"YES"}],"nbRuns":[{"long":1}],"PaymentJob_AOorCA":[{"string":"CA"}]}', NULL);]]></sql>
+ "PaymentJob_matchingAO":[{"string":"YES"}],"PaymentJob_cardOrDD":[{"string":"CARD"}],"PaymentJob_createAO":[{"string":"YES"}],"nbRuns":[{"long":1}],"PaymentJob_AOorCA":[{"string":"CA"}]}', NULL, 0, 1);]]></sql>
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_job_instance VALUES (-17, 3, 0, now(), now(), 'RefundCard_Job', NULL, 'ACCOUNT_RECEIVABLES', 'PaymentJob',
  NULL, 'opencell.admin', 'opencell.admin', NULL, NULL, 'a4bb9554-85f3-4c0a-8f62-438fec7bdac2', NULL, 1, '{"PaymentJob_creditOrDebit":[{"string":"Debit"}],"waitingMillis":[{"long":0}],
- "PaymentJob_matchingAO":[{"string":"YES"}],"PaymentJob_cardOrDD":[{"string":"CARD"}],"PaymentJob_createAO":[{"string":"YES"}],"nbRuns":[{"long":1}],"PaymentJob_AOorCA":[{"string":"CA"}]}', NULL);]]></sql>
+ "PaymentJob_matchingAO":[{"string":"YES"}],"PaymentJob_cardOrDD":[{"string":"CARD"}],"PaymentJob_createAO":[{"string":"YES"}],"nbRuns":[{"long":1}],"PaymentJob_AOorCA":[{"string":"CA"}]}', NULL, 0, 1);]]></sql>
 
         <sql><![CDATA[ UPDATE ${db.schema.adapted}ar_payment_gateway set application_el ='#{"is already setup" eq "OK"}' where code <> 'customGatewayDemo';]]></sql>
 

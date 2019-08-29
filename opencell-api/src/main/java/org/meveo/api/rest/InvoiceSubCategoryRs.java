@@ -32,8 +32,8 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
      * @param postData invoice sub category to be created
      * @return action status.
      */
-    @Path("/")
     @POST
+    @Path("/")
     ActionStatus create(InvoiceSubCategoryDto postData);
 
     /**
@@ -42,8 +42,8 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
      * @param postData invoice sub category to be created
      * @return action status
      */
-    @Path("/")
     @PUT
+    @Path("/")
     ActionStatus update(InvoiceSubCategoryDto postData);
 
     /**
@@ -52,8 +52,8 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
      * @param postData invoice sub category
      * @return action status
      */
-    @Path("/createOrUpdate")
     @POST
+    @Path("/createOrUpdate")
     ActionStatus createOrUpdate(InvoiceSubCategoryDto postData);
 
     /**
@@ -62,8 +62,8 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
      * @param invoiceSubCategoryCode invoice sub category code
      * @return invoice sub category
      */
-    @Path("/")
     @GET
+    @Path("/")
     GetInvoiceSubCategoryResponse find(@QueryParam("invoiceSubCategoryCode") String invoiceSubCategoryCode);
 
     /**
@@ -72,8 +72,8 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
      * @param invoiceSubCategoryCode invoice sub category
      * @return action status
      */
-    @Path("/{invoiceSubCategoryCode}")
     @DELETE
+    @Path("/{invoiceSubCategoryCode}")
     ActionStatus remove(@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode);
 
 }

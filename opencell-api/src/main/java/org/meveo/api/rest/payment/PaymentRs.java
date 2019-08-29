@@ -64,8 +64,8 @@ public interface PaymentRs extends IBaseRs {
      * @return payment action status
      */
     @POST
-    @Path("/create")
     @Deprecated
+    @Path("/create")
     public PaymentActionStatus create(PaymentDto postData);
 
     /**
@@ -505,6 +505,7 @@ public interface PaymentRs extends IBaseRs {
     ActionStatus disableDDRequestBuilder(@PathParam("code") String code);
 
     /**
+     * Get the Hosted Checkout URL for payment.
      *
      * @param customerAccountCode the customerAccount Code
      * @param returnUrl the return Url
