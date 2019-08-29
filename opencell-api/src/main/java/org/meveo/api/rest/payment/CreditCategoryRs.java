@@ -26,26 +26,62 @@ import org.meveo.api.rest.IBaseRs;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface CreditCategoryRs extends IBaseRs {
 
+    /**
+     * Create a new credit category 
+     *
+     * @param postData The credit payment category data 
+     * @return Request processing status
+     */
 	@POST
 	@Path("/")
 	ActionStatus create(CreditCategoryDto postData);
 
+    /**
+     * Update a credit category payment 
+     *
+     * @param postData The credit payment category data 
+     * @return Request processing status
+     */
 	@PUT
 	@Path("/")
 	ActionStatus update(CreditCategoryDto postData);
 
+    /**
+     * Create or update a credit category payment 
+     *
+     * @param postData The credit payment category data 
+     * @return Request processing status
+     */
 	@POST
 	@Path("/createOrUpdate")
 	ActionStatus createOrUpdate(CreditCategoryDto postData);
 
+    /**
+     * Get a credit category payment with a credit category code
+     *
+     * @param creditCategoryCode The creditCategory code 
+     * @return Credit Category Response data
+     */
 	@GET
 	@Path("/")
 	CreditCategoryResponseDto find(@QueryParam("creditCategoryCode") String creditCategoryCode);
 
+    /**
+     * Retrieve the list of credit category paiement 
+     *
+     * @param postData The contact data 
+     * @return List of Credit Categories
+     */
 	@GET
 	@Path("/list")
 	CreditCategoriesResponseDto list();
 
+    /**
+     * Delete a credit category with his given code 
+     *
+     * @param creditCategoryCode The creditCategory code 
+     * @return Request processing status
+     */
 	@DELETE
 	@Path("/{creditCategoryCode}")
 	ActionStatus remove(@PathParam("creditCategoryCode") String creditCategoryCode);
