@@ -68,6 +68,8 @@ public interface CurrencyRs extends IBaseRs {
     ActionStatus update(CurrencyDto postData);
 
     /**
+     * Create or Update tradingCurrency base on currency code. If the currency code does not exists, a currency record is created
+     *
      * @param postData currency to be created or updated
      * @return action status
      */
