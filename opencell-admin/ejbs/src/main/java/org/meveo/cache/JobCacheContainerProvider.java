@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 
 import javax.annotation.Resource;
@@ -16,8 +17,12 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
+import org.infinispan.commons.CacheException;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ThreadUtils;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -36,6 +41,9 @@ import org.slf4j.Logger;
 public class JobCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = -4730906690144309131L;
+
+    public static final String CACHE_RETRY_DELAY = "runningJobsCache.retry.delay";
+    public static final String CACHE_RETRY_TIMES = "runningJobsCache.retry.times";
 
     @Inject
     protected Logger log;
@@ -170,16 +178,72 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         CacheKeyLong cacheKey = new CacheKeyLong(currentProvider, jobInstanceId);
 
-        List<String> nodes = null;
+        // if the param is not found in properties file then a default value will be set , and if it's not a valid number then also default value will be returned
+        long delay = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_DELAY, "5"), 5);
+        long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"), 3);
 
-        synchronized (JobCacheContainerProvider.class) {
-            nodes = runningJobsCache.compute(cacheKey, remappingFunction);
-        }
+        List<String> nodes = this.computeCacheWithRetry(cacheKey ,remappingFunction, delay, times);
 
         log.trace("Job {} of provider {} marked as running in job cache. Job is currently running on {} nodes. Previous job running status is {}", jobInstanceId, currentProvider,
             nodes, isRunning[0]);
         return isRunning[0];
 
+    }
+
+    /**
+     * Update the cache , and in case of CacheException , retry based on times and delay params.
+     *
+     * @param cacheKey
+     * @param remappingFunction
+     * @param delay
+     * @param times
+     * @return list of nodes
+     */
+    private List<String> computeCacheWithRetry(CacheKeyLong cacheKey, BiFunction<? super CacheKeyLong, ? super List<String>, ? extends List<String>> remappingFunction, long delay,
+            final long times) {
+
+        try {
+            return runningJobsCache.compute(cacheKey, remappingFunction);
+        } catch (CacheException e) {
+            log.error(" computeCacheWithRetry -> CacheException for [cacheKey = {}]", cacheKey, e);
+
+            if (times > 0) {
+                log.debug(" computeCacheWithRetry : Retry with delay = {} and times = {} ", delay, times);
+                // waiting for the delay :
+                ThreadUtils.sleepSafe(TimeUnit.SECONDS, delay);
+                // then retry :
+                return this.computeCacheWithRetry(cacheKey, remappingFunction, delay, times - 1);
+            } else {
+                throw e; // If all reties are failing, then throw the CacheException
+            }
+        }
+    }
+
+    /**
+     * Put item in the cache , and in case of CacheException , retry based on times and delay params
+     *
+     * @param cacheKey
+     * @param delay
+     * @param times
+     */
+    private void putInCacheWithRetry(CacheKeyLong cacheKey, long delay,final long times) {
+
+        try {
+            // Use flags to not return previous value
+            runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, new ArrayList<>());
+        } catch (CacheException e) {
+            log.error(" putInCacheWithRetry -> CacheException for [cacheKey = {}]", cacheKey, e);
+
+            if (times > 0) {
+                log.debug(" putInCacheWithRetry : Retry with delay = {} and times = {} ", delay, times);
+                // waiting for the delay :
+                ThreadUtils.sleepSafe(TimeUnit.SECONDS, delay);
+                // then retry :
+                this.putInCacheWithRetry(cacheKey, delay, times - 1);
+            } else {
+                throw e; // If all reties are failing, then throw the CacheException
+            }
+        }
     }
 
     /**
@@ -209,7 +273,11 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             }
         };
 
-        List<String> nodes = runningJobsCache.compute(new CacheKeyLong(currentProvider, jobInstanceId), remappingFunction);
+        // if the param is not found in properties file then a default value will be set , and if it's not a valid number then also default value will be returned
+        long delay = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_DELAY, "5"), 5);
+        long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"), 3);
+
+        List<String> nodes = this.computeCacheWithRetry(new CacheKeyLong(currentProvider, jobInstanceId) ,remappingFunction, delay, times);
 
         log.trace("Job {}  of Provider {} marked as NOT running in job cache. Job is currently running on {} nodes.", jobInstanceId, currentProvider, nodes);
     }
@@ -221,8 +289,12 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     public void resetJobRunningStatus(Long jobInstanceId) {
         String currentProvider = currentUser.getProviderCode();
-        // Use flags to not return previous value
-        runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(new CacheKeyLong(currentProvider, jobInstanceId), new ArrayList<>());
+
+        // if the param is not found in properties file then a default value will be set , and if it's not a valid number then also default value will be returned
+        long delay = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_DELAY, "5"),5);
+        long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"),3);
+
+        this.putInCacheWithRetry(new CacheKeyLong(currentProvider, jobInstanceId), delay, times);
         log.trace("Job {} of Provider {} marked as not running in job cache", jobInstanceId, currentProvider);
     }
 
@@ -253,7 +325,11 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         };
 
-        runningJobsCache.compute(new CacheKeyLong(currentUser.getProviderCode(), jobInstanceId), remappingFunction);
+        // if the param is not found in properties file then a default value will be set , and if it's not a valid number then also default value will be returned
+        long delay = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_DELAY, "5"),5);
+        long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"),3);
+
+        this.computeCacheWithRetry(new CacheKeyLong(currentUser.getProviderCode(), jobInstanceId), remappingFunction,delay ,times);
     }
 
     /**
@@ -263,7 +339,37 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     public void removeJobInstance(Long jobInstanceId) {
         String currentProvider = currentUser.getProviderCode();
-        runningJobsCache.remove(new CacheKeyLong(currentProvider, jobInstanceId));
+
+        // if the param is not found in properties file then a default value will be set , and if it's not a valid number then also default value will be returned
+        long delay = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_DELAY, "5"),5);
+        long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"),3);
+
+        this.removeFromCacheWithRetry(new CacheKeyLong(currentProvider, jobInstanceId), delay, times);
+    }
+
+    /**
+     * * Remove item from the cache , and in case of CacheException , retry based on times and delay params.
+     * @param cacheKey
+     * @param delay
+     * @param times
+     */
+    private void removeFromCacheWithRetry(CacheKeyLong cacheKey, long delay,final long times) {
+
+        try { // adding Flag.IGNORE_RETURN_VALUES to enhence the update perfs since we dont need a return value
+            runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(cacheKey);
+        } catch (CacheException e) {
+            log.error(" removeFromCacheWithRetry -> CacheException for [cacheKey = {}]", cacheKey, e);
+
+            if (times > 0) {
+                log.debug(" removeFromCacheWithRetry : Retry with delay = {} and times = {} ", delay, times);
+                // waiting for the delay :
+                ThreadUtils.sleepSafe(TimeUnit.SECONDS, delay);
+                // then retry :
+                this.removeFromCacheWithRetry(cacheKey, delay, times - 1);
+            } else {
+                throw e; // If all reties are failing, then throw the CacheException
+            }
+        }
     }
 
     /**
@@ -295,16 +401,14 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             }
         }
 
+        // if the param is not found in properties file then a default value will be set , and if it's not a valid number then also default value will be returned
+        long delay = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_DELAY, "5"), 5);
+        long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"), 3);
+
         for (CacheKeyLong elem : itemsToBeRemoved) {
             log.debug("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
-            runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(elem);
+            this.removeFromCacheWithRetry(elem, delay, times);
         }
     }
 
-    // /**
-    // * Clear all the data from cache
-    // */
-    // private void clearAll() {
-    // runningJobsCache.clear();
-    // }
 }
