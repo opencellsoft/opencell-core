@@ -10,7 +10,6 @@ import java.util.List;
 @Value.Immutable
 @Value.Style(jdkOnly=true)
 @JsonDeserialize(as = ImmutableSubscription.class)
-@XmlType(name="productInstance", propOrder = { "id", "code", "userAccount", "subscriptionDate", "endAgreementDate", "seller", "offerTemplate" })
 public interface Subscription extends Resource {
     @Nullable
     String getCode();
