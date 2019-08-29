@@ -32,7 +32,7 @@ public interface BillingCycleRs extends IBaseRs {
      */
     @POST
     @Path("/")
-    ActionStatus create(BillingCycleDto postData);
+    public ActionStatus create(BillingCycleDto postData);
 
     /**
      * Update an existing billing cycle.
@@ -42,7 +42,7 @@ public interface BillingCycleRs extends IBaseRs {
      */
     @PUT
     @Path("/")
-    ActionStatus update(BillingCycleDto postData);
+    public ActionStatus update(BillingCycleDto postData);
 
     /**
      * Search for billing cycle with a given code.
@@ -52,7 +52,7 @@ public interface BillingCycleRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    GetBillingCycleResponse find(@QueryParam("billingCycleCode") String billingCycleCode);
+    public GetBillingCycleResponse find(@QueryParam("billingCycleCode") String billingCycleCode);
 
     /**
      * Remove an existing billing cycle with a given code.
@@ -62,7 +62,7 @@ public interface BillingCycleRs extends IBaseRs {
      */
     @DELETE
     @Path("/{billingCycleCode}")
-    ActionStatus remove(@PathParam("billingCycleCode") String billingCycleCode);
+    public ActionStatus remove(@PathParam("billingCycleCode") String billingCycleCode);
 
     /**
      * Create new or update an existing billing cycle with a given code
@@ -72,6 +72,6 @@ public interface BillingCycleRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
-    ActionStatus createOrUpdate(BillingCycleDto postData);
+    public ActionStatus createOrUpdate(BillingCycleDto postData);
 
 }

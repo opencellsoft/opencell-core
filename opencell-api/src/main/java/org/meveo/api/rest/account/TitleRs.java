@@ -70,7 +70,7 @@ public interface TitleRs extends IBaseRs {
      */
     @DELETE
     @Path("/{titleCode}")
-    ActionStatus remove(@PathParam("titleCode") String titleCode);
+    public ActionStatus remove(@PathParam("titleCode") String titleCode);
 
     /**
      * Create new or update an existing title

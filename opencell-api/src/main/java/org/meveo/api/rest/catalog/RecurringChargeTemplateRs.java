@@ -35,7 +35,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/")
-     ActionStatus create(RecurringChargeTemplateDto postData);
+    public ActionStatus create(RecurringChargeTemplateDto postData);
 
     /**
      * Find a recurring charge template with a given code.
@@ -45,7 +45,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/")
-     GetRecurringChargeTemplateResponseDto find(@QueryParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
+    public GetRecurringChargeTemplateResponseDto find(@QueryParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
     /**
      * Update an existing recurring charge template.
@@ -55,7 +55,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
      */
     @PUT
     @Path("/")
-     ActionStatus update(RecurringChargeTemplateDto postData);
+    public ActionStatus update(RecurringChargeTemplateDto postData);
 
     /**
      * Remove an existing recurring charge template with a given code.
@@ -65,7 +65,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
      */
     @DELETE
     @Path("/{recurringChargeTemplateCode}")
-     ActionStatus remove(@PathParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
+    public ActionStatus remove(@PathParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
     /**
      * Create new or update an existing recurring charge template
@@ -75,7 +75,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
-     ActionStatus createOrUpdate(RecurringChargeTemplateDto postData);
+    public ActionStatus createOrUpdate(RecurringChargeTemplateDto postData);
 
     /**
      * Enable a Recurring charge template with a given code

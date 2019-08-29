@@ -125,7 +125,7 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-     SubscriptionsListResponseDto listGet(@Deprecated @QueryParam("userAccountCode") String userAccountCode, @QueryParam("mergedCF") Boolean mergedCF,
+    public SubscriptionsListResponseDto listGet(@Deprecated @QueryParam("userAccountCode") String userAccountCode, @QueryParam("mergedCF") Boolean mergedCF,
             @QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
@@ -138,7 +138,7 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/list")
-     SubscriptionsListResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+    public SubscriptionsListResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
      * Deprecated in v.4.7.2 Use /list instead.
@@ -337,7 +337,7 @@ public interface SubscriptionRs extends IBaseRs {
      * Activate a given Subscription for a customer.
      *
      * @param postData the post data
-     * @return Request processing status
+     * @return the raw result holding the Subscription EndAgreementDate in its response.
      */
     @POST
     @Path("/activateForCustomer")

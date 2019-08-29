@@ -93,7 +93,7 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/list47")
-    CustomersResponseDto list47(@Deprecated CustomerDto postData, @QueryParam("firstRow") @Deprecated Integer firstRow,
+    public CustomersResponseDto list47(@Deprecated CustomerDto postData, @QueryParam("firstRow") @Deprecated Integer firstRow,
             @QueryParam("numberOfRows") @Deprecated Integer numberOfRows, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("c.code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -111,7 +111,7 @@ public interface CustomerRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    CustomersResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
+    public CustomersResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
@@ -123,7 +123,7 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/list")
-    CustomersResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+    public CustomersResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
      * Create a new customer brand

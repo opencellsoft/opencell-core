@@ -33,7 +33,7 @@ public interface ImportExportRs extends IBaseRs {
     @POST
     @Path("/importData")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    ImportExportResponseDto importData(MultipartFormDataInput input);
+    public ImportExportResponseDto importData(MultipartFormDataInput input);
 
     /**
      * Check for execution results for a given execution identifier
@@ -43,5 +43,5 @@ public interface ImportExportRs extends IBaseRs {
      */
     @GET
     @Path("/checkImportDataResult")
-    ImportExportResponseDto checkImportDataResult(@QueryParam("executionId") String executionId);
+    public ImportExportResponseDto checkImportDataResult(@QueryParam("executionId") String executionId);
 }

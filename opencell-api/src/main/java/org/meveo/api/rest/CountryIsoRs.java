@@ -68,7 +68,7 @@ public interface CountryIsoRs extends IBaseRs {
     ActionStatus update(CountryIsoDto countryIsoDto);
 
     /**
-     * Creates or modofy a tradingCountry base from the supplied country code.
+     * Creates or modify a tradingCountry base from the supplied country code.
      * @param countryIsoDto country iso
      * @return action status
      */

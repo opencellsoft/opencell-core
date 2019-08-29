@@ -83,7 +83,7 @@ public interface BusinessServiceModelRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    MeveoModuleDtosResponse list();
+    public MeveoModuleDtosResponse list();
 
     /**
      * Install business offer model module
@@ -93,5 +93,5 @@ public interface BusinessServiceModelRs extends IBaseRs {
      */
     @PUT
     @Path("/install")
-     ActionStatus install(BusinessServiceModelDto moduleDto);
+    public ActionStatus install(BusinessServiceModelDto moduleDto);
 }

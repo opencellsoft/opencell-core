@@ -39,7 +39,7 @@ public interface FilteredListRs extends IBaseRs {
      */
     @POST
     @Path("/listByFilter")
-    Response listByFilter(FilterDto filter, @QueryParam("from") Integer from, @QueryParam("size") Integer size);
+    public Response listByFilter(FilterDto filter, @QueryParam("from") Integer from, @QueryParam("size") Integer size);
 
     /**
      * Execute a search in Elastic Search on all fields (_all field)
@@ -54,7 +54,7 @@ public interface FilteredListRs extends IBaseRs {
      */
     @GET
     @Path("/search")
-    Response search(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("query") String query, @QueryParam("from") Integer from,
+    public Response search(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("query") String query, @QueryParam("from") Integer from,
             @QueryParam("size") Integer size, @QueryParam("sortField") String sortField, @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
@@ -70,7 +70,7 @@ public interface FilteredListRs extends IBaseRs {
      */
     @GET
     @Path("/searchByField")
-    Response searchByField(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("from") Integer from, @QueryParam("size") Integer size,
+    public Response searchByField(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("from") Integer from, @QueryParam("size") Integer size,
             @QueryParam("sortField") String sortField, @QueryParam("sortOrder") SortOrder sortOrder, @Context UriInfo info);
 
     /**
@@ -80,7 +80,7 @@ public interface FilteredListRs extends IBaseRs {
      */
     @GET
     @Path("/reindex")
-    Response reindex();
+    public Response reindex();
 
     /**
      * Execute a search in Elastic Search on all fields (_all field) and all entity types
@@ -99,6 +99,6 @@ public interface FilteredListRs extends IBaseRs {
     @GET
     @Deprecated
     @Path("/fullSearch")
-    Response fullSearch(@QueryParam("query") String query, @QueryParam("category") String category, @QueryParam("from") Integer from, @QueryParam("size") Integer size,
+    public Response fullSearch(@QueryParam("query") String query, @QueryParam("category") String category, @QueryParam("from") Integer from, @QueryParam("size") Integer size,
             @QueryParam("sortField") String sortField, @QueryParam("sortOrder") SortOrder sortOrder);
 }

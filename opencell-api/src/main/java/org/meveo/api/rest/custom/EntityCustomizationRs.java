@@ -43,7 +43,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @POST
     @Path("/entity/")
-     ActionStatus createEntityTemplate(CustomEntityTemplateDto dto);
+    public ActionStatus createEntityTemplate(CustomEntityTemplateDto dto);
 
     /**
      * Update custom entity template definition
@@ -53,7 +53,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @PUT
     @Path("/entity/")
-     ActionStatus updateEntityTemplate(CustomEntityTemplateDto dto);
+    public ActionStatus updateEntityTemplate(CustomEntityTemplateDto dto);
 
     /**
      * Remove custom entity template definition given its code
@@ -63,7 +63,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @DELETE
     @Path("/entity/{customEntityTemplateCode}")
-     ActionStatus removeEntityTemplate(@PathParam("customEntityTemplateCode") String customEntityTemplateCode);
+    public ActionStatus removeEntityTemplate(@PathParam("customEntityTemplateCode") String customEntityTemplateCode);
 
     /**
      * Get custom entity template definition including its fields and applicable actions
@@ -73,7 +73,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @GET
     @Path("/entity/{customEntityTemplateCode}")
-     CustomEntityTemplateResponseDto findEntityTemplate(@PathParam("customEntityTemplateCode") String customEntityTemplateCode);
+    public CustomEntityTemplateResponseDto findEntityTemplate(@PathParam("customEntityTemplateCode") String customEntityTemplateCode);
 
     /**
      * List custom entity templates.
@@ -83,7 +83,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @GET
     @Path("/entity/list")
-     CustomEntityTemplatesResponseDto listEntityTemplates(@QueryParam("customEntityTemplateCode") String customEntityTemplateCode);
+    public CustomEntityTemplatesResponseDto listEntityTemplates(@QueryParam("customEntityTemplateCode") String customEntityTemplateCode);
 
     /**
      * Define new or update existing custom entity template definition
@@ -93,7 +93,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @POST
     @Path("/entity/createOrUpdate")
-     ActionStatus createOrUpdateEntityTemplate(CustomEntityTemplateDto dto);
+    public ActionStatus createOrUpdateEntityTemplate(CustomEntityTemplateDto dto);
 
     /**
      * To be sure the compatibility of above method we will create a new one. Define new or update existing custom entity template definition
@@ -103,7 +103,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @POST
     @Path("/cet/createOrUpdate")
-     ActionStatus createOrUpdateCustumizedEntityTemplate(CustomEntityTemplateDto dto);
+    public ActionStatus createOrUpdateCustumizedEntityTemplate(CustomEntityTemplateDto dto);
 
     /**
      * Enable a Custom entity template with a given code
@@ -133,7 +133,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @PUT
     @Path("/customize/")
-     ActionStatus customizeEntity(EntityCustomizationDto dto);
+    public ActionStatus customizeEntity(EntityCustomizationDto dto);
 
     /**
      * Get customizations made on a standard Meveo entity given its class
@@ -143,7 +143,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @GET
     @Path("/customize/{customizedEntityClass}")
-     EntityCustomizationResponseDto findEntityCustomizations(@PathParam("customizedEntityClass") String customizedEntityClass);
+    public EntityCustomizationResponseDto findEntityCustomizations(@PathParam("customizedEntityClass") String customizedEntityClass);
 
     /**
      * Define a new custom field
@@ -153,7 +153,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @POST
     @Path("/field/")
-     ActionStatus createField(CustomFieldTemplateDto postData);
+    public ActionStatus createField(CustomFieldTemplateDto postData);
 
     /**
      * Update existing custom field definition
@@ -163,7 +163,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @PUT
     @Path("/field/")
-     ActionStatus updateField(CustomFieldTemplateDto postData);
+    public ActionStatus updateField(CustomFieldTemplateDto postData);
 
     /**
      * Remove custom field definition given its code and entity it applies to
@@ -174,7 +174,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @DELETE
     @Path("/field/{customFieldTemplateCode}/{appliesTo}")
-     ActionStatus removeField(@PathParam("customFieldTemplateCode") String customFieldTemplateCode, @PathParam("appliesTo") String appliesTo);
+    public ActionStatus removeField(@PathParam("customFieldTemplateCode") String customFieldTemplateCode, @PathParam("appliesTo") String appliesTo);
 
     /**
      * Get custom field definition
@@ -185,7 +185,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @GET
     @Path("/field/")
-     GetCustomFieldTemplateReponseDto findField(@QueryParam("customFieldTemplateCode") String customFieldTemplateCode, @QueryParam("appliesTo") String appliesTo);
+    public GetCustomFieldTemplateReponseDto findField(@QueryParam("customFieldTemplateCode") String customFieldTemplateCode, @QueryParam("appliesTo") String appliesTo);
 
     /**
      * Define new or update existing custom field definition
@@ -195,7 +195,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @POST
     @Path("/field/createOrUpdate")
-     ActionStatus createOrUpdateField(CustomFieldTemplateDto postData);
+    public ActionStatus createOrUpdateField(CustomFieldTemplateDto postData);
 
     /**
      * Enable a Custom field template with a given code
@@ -227,7 +227,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @POST
     @Path("/action/")
-     ActionStatus createAction(EntityCustomActionDto postData);
+    public ActionStatus createAction(EntityCustomActionDto postData);
 
     /**
      * Update existing entity action definition
@@ -237,7 +237,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @PUT
     @Path("/action/")
-     ActionStatus updateAction(EntityCustomActionDto dto);
+    public ActionStatus updateAction(EntityCustomActionDto dto);
 
     /**
      * Remove entity action definition given its code and entity it applies to
@@ -248,7 +248,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @DELETE
     @Path("/action/{actionCode}/{appliesTo}")
-     ActionStatus removeAction(@PathParam("actionCode") String actionCode, @PathParam("appliesTo") String appliesTo);
+    public ActionStatus removeAction(@PathParam("actionCode") String actionCode, @PathParam("appliesTo") String appliesTo);
 
     /**
      * Get entity action definition
@@ -259,7 +259,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @GET
     @Path("/action/")
-     EntityCustomActionResponseDto findAction(@QueryParam("actionCode") String actionCode, @QueryParam("appliesTo") String appliesTo);
+    public EntityCustomActionResponseDto findAction(@QueryParam("actionCode") String actionCode, @QueryParam("appliesTo") String appliesTo);
 
     /**
      * Define new or update existing entity action definition
@@ -269,7 +269,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @POST
     @Path("/action/createOrUpdate")
-     ActionStatus createOrUpdateAction(EntityCustomActionDto dto);
+    public ActionStatus createOrUpdateAction(EntityCustomActionDto dto);
 
     /**
      * Enable a Entity action with a given code
@@ -314,7 +314,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      */
     @GET
     @Path("/entity/listELFiltered")
-     EntityCustomizationResponseDto listELFiltered(@QueryParam("appliesTo") String appliesTo, @QueryParam("entityCode") String entityCode);
+    public EntityCustomizationResponseDto listELFiltered(@QueryParam("appliesTo") String appliesTo, @QueryParam("entityCode") String entityCode);
 
     /**
      * Execute and action of a given entity

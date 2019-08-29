@@ -140,7 +140,7 @@ public interface ProviderRs extends IBaseRs {
      */
     @POST
     @Path("/createTenant")
-    ActionStatus createTenant(ProviderDto postData);
+    public ActionStatus createTenant(ProviderDto postData);
 
     /**
      * List tenants
@@ -149,7 +149,7 @@ public interface ProviderRs extends IBaseRs {
      */
     @GET
     @Path("/listTenants")
-    ProvidersDto listTenants();
+    public ProvidersDto listTenants();
 
     /**
      * Remove a tenant
@@ -159,5 +159,5 @@ public interface ProviderRs extends IBaseRs {
      */
     @DELETE
     @Path("/{providerCode}")
-    ActionStatus removeTenant(@PathParam("providerCode") String providerCode);
+    public ActionStatus removeTenant(@PathParam("providerCode") String providerCode);
 }

@@ -35,7 +35,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/")
-     ActionStatus create(UsageChargeTemplateDto postData);
+    public ActionStatus create(UsageChargeTemplateDto postData);
 
     /**
      * Update usage charge template.
@@ -45,7 +45,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
      */
     @PUT
     @Path("/")
-     ActionStatus update(UsageChargeTemplateDto postData);
+    public ActionStatus update(UsageChargeTemplateDto postData);
 
     /**
      * Find an existing usage charge template with a given code.
@@ -55,7 +55,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/")
-     GetUsageChargeTemplateResponseDto find(@QueryParam("usageChargeTemplateCode") String usageChargeTemplateCode);
+    public GetUsageChargeTemplateResponseDto find(@QueryParam("usageChargeTemplateCode") String usageChargeTemplateCode);
 
     /**
      * Remove usage charge template with a given code.
@@ -65,7 +65,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
      */
     @DELETE
     @Path("/{usageChargeTemplateCode}")
-     ActionStatus remove(@PathParam("usageChargeTemplateCode") String usageChargeTemplateCode);
+    public ActionStatus remove(@PathParam("usageChargeTemplateCode") String usageChargeTemplateCode);
 
     /**
      * Create new or update an existing charge template with a given code.
@@ -75,7 +75,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
-     ActionStatus createOrUpdate(UsageChargeTemplateDto postData);
+    public ActionStatus createOrUpdate(UsageChargeTemplateDto postData);
 
     /**
      * Enable a Usage charge template with a given code
