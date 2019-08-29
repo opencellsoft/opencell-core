@@ -1472,5 +1472,11 @@
                                  constraintName="fk_invoice_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="ar_payment_token" />
 
-    </changeSet>  
+    </changeSet>
+    <changeSet id="#4538_20190829" author="AbdellatifBARI">
+        <addColumn tableName="flat_file">
+            <column name="current_directory" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

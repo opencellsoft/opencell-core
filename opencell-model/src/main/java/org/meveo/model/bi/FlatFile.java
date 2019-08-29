@@ -55,13 +55,19 @@ public class FlatFile extends BusinessEntity {
     @Size(max = 255)
     private String fileOriginalName;
 
-
     /**
      * File current name.
      */
     @Column(name = "file_current_name", length = 255)
     @Size(max = 255)
     private String fileCurrentName;
+
+    /**
+     * Current directory.
+     */
+    @Column(name = "current_directory", length = 255)
+    @Size(max = 255)
+    private String currentDirectory;
 
     /**
      * File status
@@ -148,6 +154,24 @@ public class FlatFile extends BusinessEntity {
      */
     public void setFileCurrentName(String fileCurrentName) {
         this.fileCurrentName = fileCurrentName;
+    }
+
+    /**
+     * Gets the currentDirectory
+     *
+     * @return the currentDirectory
+     */
+    public String getCurrentDirectory() {
+        return currentDirectory;
+    }
+
+    /**
+     * Sets the currentDirectory.
+     *
+     * @param currentDirectory the new currentDirectory
+     */
+    public void setCurrentDirectory(String currentDirectory) {
+        this.currentDirectory = currentDirectory;
     }
 
     /**
