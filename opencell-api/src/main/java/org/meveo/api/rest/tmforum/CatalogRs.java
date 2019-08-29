@@ -59,6 +59,8 @@ public interface CatalogRs extends IBaseRs {
     /**
      * Get a list of product offerings optionally filtering by some criteria
      * 
+     * @param validFrom valid From option criteria date
+     * @param validTo valid To option criteria date
      * @param info Http request context
      * @return A list of product offerings matching search criteria
      */
