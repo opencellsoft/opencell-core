@@ -1219,7 +1219,7 @@
         <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari6yr9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="flat_file" />
         <addForeignKeyConstraint baseColumnNames="file_format_id" baseTableName="flat_file" constraintName="fk_d4iavkklx1qg1ani36bari5o5i" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_format" />
-        <sql>CREATE INDEX flat_file_code_index ON ${db.schema.adapted}flat_file(code)</sql>
+        <sql dbms="mysql">CREATE INDEX flat_file_code_index ON ${db.schema.adapted}flat_file(code)</sql>
     </changeSet>
     <changeSet id="#4371_20190620_5" author="AbdellatifBARI" dbms="postgresql">
         <sql>CREATE INDEX flat_file_code_index ON ${db.schema.adapted}flat_file(lower(code))</sql>
