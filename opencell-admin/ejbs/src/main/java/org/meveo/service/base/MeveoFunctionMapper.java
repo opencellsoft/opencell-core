@@ -20,6 +20,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -232,7 +233,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getCTValuesForDate", MeveoFunctionMapper.class.getMethod("getCTValues", String.class, Date.class, String.class, Object.class, String.class,
                 Object.class, String.class, Object.class, String.class, Object.class, String.class, Object.class));
             
-            addFunction("mv", "getCFValueForCT", MeveoFunctionMapper.class.getMethod("getCFValueForCT", ICustomFieldEntity.class, String.class, String.class));
+            addFunction("mv", "getCFRefValue", MeveoFunctionMapper.class.getMethod("getCFRefValue", ICustomFieldEntity.class, String.class, String.class));
             
             //adding all Math methods with 'math' as prefix
 			for (Method method : Math.class.getMethods()) {
@@ -1759,29 +1760,35 @@ public class MeveoFunctionMapper extends FunctionMapper {
         return getCustomTableService().getValues(customTableCode, null, date, queryValues);
     }
     
-    public static Object getCFValueForCT(ICustomFieldEntity entity,String customTableCode, String fieldToReturn) throws BusinessException {
+    public static Object getCFRefValue(ICustomFieldEntity entity, String customTableCode, String fieldToReturn) throws BusinessException {
     	Object cfValue = getCFValue(entity, customTableCode);
     	if(fieldToReturn.contains(".")) {
     		String[] fields= fieldToReturn.split("\\.");
     		for(String field:fields) {
-    			cfValue = extractFieldFromCT(cfValue, field);
+    			cfValue = extractFieldFromRef(cfValue, field);
     		}
     		return cfValue;
     	}else {
-    		return extractFieldFromCT(cfValue, fieldToReturn);
+    		return extractFieldFromRef(cfValue, fieldToReturn);
     	}
     }
 
-	private static Object extractFieldFromCT(Object cfValue, String fieldToReturn) {
+	private static Object extractFieldFromRef(Object cfValue, String fieldToReturn) {
 		if (cfValue instanceof EntityReferenceWrapper) {
-			return getCustomTableService().findFieldFromEntity((EntityReferenceWrapper) cfValue, fieldToReturn);
-		}else if(cfValue instanceof ICustomFieldEntity) {
-			return geFieldOrCFValue(((ICustomFieldEntity) cfValue), fieldToReturn);
+			 cfValue = getCustomTableService().findEntityFromReference((EntityReferenceWrapper) cfValue);
+			if(cfValue instanceof Map) {
+				return ((Map)cfValue).get(fieldToReturn.toLowerCase());
+			} 
 		}
-		return cfValue;
+		return getFieldOrCFValue(cfValue, fieldToReturn);
+	}	
+
+	private static Object getFieldOrCFValue(Object obj, String fieldToReturn) {
+		Object field = getField(obj, fieldToReturn);
+		return field != null ? field : (obj instanceof ICustomFieldEntity) ? getCFValue((ICustomFieldEntity) obj, fieldToReturn) : null;
 	}
 
-	private static Object geFieldOrCFValue(ICustomFieldEntity iCustomFieldEntity, String fieldToReturn) {
+	private static Object getField(Object iCustomFieldEntity, String fieldToReturn) {
 		try {
 			if (Arrays.stream(FieldUtils.getAllFields(iCustomFieldEntity.getClass())).anyMatch(f -> f.getName().equals(fieldToReturn)) ) {
 				return FieldUtils.readField(iCustomFieldEntity, fieldToReturn, true);
@@ -1789,7 +1796,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 		} catch (IllegalAccessException e) {
             log.error("Failed to get field "+fieldToReturn+" from Entity "+iCustomFieldEntity, e);
 		}
-		return getCFValue(iCustomFieldEntity, fieldToReturn);
+		return null;
 	}
 	
 }
