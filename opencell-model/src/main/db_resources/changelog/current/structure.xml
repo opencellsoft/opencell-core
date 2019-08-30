@@ -1436,9 +1436,9 @@
     
         <sql>CREATE INDEX rt_ba_sub_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, subscription_id)</sql>
         
-        <sql dbms="postgres">CREATE INDEX rt_ba_serv_notnull_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, service_instance_id) WHERE service_instance_id IS NOT NULL</sql>
-        <sql dbms="postgres">CREATE INDEX rt_order_index ON ${db.schema.adapted}billing_rated_transaction (order_number) where order_number IS NOT NULL</sql>
-        <sql dbms="postgres">CREATE INDEX rt_sub_serv_index ON ${db.schema.adapted}billing_rated_transaction (subscription_id, service_instance_id) where subscription_id IS NOT NULL</sql>
+        <sql dbms="postgresql">CREATE INDEX rt_ba_serv_notnull_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, service_instance_id) WHERE service_instance_id IS NOT NULL</sql>
+        <sql dbms="postgresql">CREATE INDEX rt_order_index ON ${db.schema.adapted}billing_rated_transaction (order_number) where order_number IS NOT NULL</sql>
+        <sql dbms="postgresql">CREATE INDEX rt_sub_serv_index ON ${db.schema.adapted}billing_rated_transaction (subscription_id, service_instance_id) where subscription_id IS NOT NULL</sql>
         
         <sql dbms="mysql">CREATE INDEX rt_ba_serv_notnull_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, service_instance_id)</sql>
         <sql dbms="mysql">CREATE INDEX rt_order_index ON ${db.schema.adapted}billing_rated_transaction (order_number)</sql>
