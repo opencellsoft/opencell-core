@@ -332,14 +332,21 @@ public class FlatFileValidator {
         //Validate the input file
         StringBuilder errors = validate(file, fileName, fileFormat, inputDirectory);
 
+        FileStatusEnum status = FileStatusEnum.WELL_FORMED;
+        String currentDirectory = inputDirectory;
+        if (errors.length() > 0) {
+            status = FileStatusEnum.BAD_FORMED;
+            currentDirectory = rejectDirectory;
+        }
+
         //Log in database the input file.
-        FlatFile flatFile = flatFileService
-                .create(fileName, fileName, fileFormat, errors.toString(), errors.length() > 0 ? FileStatusEnum.BAD_FORMED : FileStatusEnum.WELL_FORMED, null, null, null, null);
+        FlatFile flatFile = flatFileService.create(fileName, fileName, currentDirectory, fileFormat, errors.toString(), status, null, null, null, null);
 
         //Move the file to the corresponding directory
         String fileCurrentName = moveFile(file, flatFile, inputDirectory, rejectDirectory);
 
         flatFile.setFileCurrentName(fileCurrentName);
+        flatFile.setCurrentDirectory(currentDirectory);
         flatFileService.update(flatFile);
 
         return flatFile;

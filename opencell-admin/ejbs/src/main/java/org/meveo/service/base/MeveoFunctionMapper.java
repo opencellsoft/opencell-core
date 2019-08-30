@@ -2,6 +2,7 @@ package org.meveo.service.base;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.commons.utils.EjbUtils;
@@ -28,8 +30,6 @@ import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import net.bytebuddy.implementation.bytecode.Throw;
 
 /**
  * Provides custom functions for Meveo application. The following functions are provided:
@@ -50,6 +50,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
     private static ScriptInstanceService scriptInstanceService;
 
     private static CustomTableService customTableService;
+    
+    private static Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
 
     public MeveoFunctionMapper() {
 
@@ -231,7 +233,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
                 Object.class, String.class, Object.class, String.class, Object.class, String.class, Object.class));
             
             addFunction("mv", "getCFValueForCT", MeveoFunctionMapper.class.getMethod("getCFValueForCT", ICustomFieldEntity.class, String.class, String.class));
-
+            
             //adding all Math methods with 'math' as prefix
 			for (Method method : Math.class.getMethods()) {
 				int modifiers = method.getModifiers();
@@ -244,7 +246,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
             // addFunction("mv", "call", MeveoFunctionMapper.class.getMethod("call", String.class, String.class,String.class, Object[].class));
         } catch (NoSuchMethodException | SecurityException e) {
-            Logger log = LoggerFactory.getLogger(this.getClass());
             log.error("Failed to instantiate EL custom function mv:xx", e);
         }
     }
@@ -1759,18 +1760,36 @@ public class MeveoFunctionMapper extends FunctionMapper {
     }
     
     public static Object getCFValueForCT(ICustomFieldEntity entity,String customTableCode, String fieldToReturn) throws BusinessException {
-
     	Object cfValue = getCFValue(entity, customTableCode);
-    	if(cfValue instanceof EntityReferenceWrapper) {
-    		EntityReferenceWrapper referenceWrapper =(EntityReferenceWrapper) cfValue;
-    		return getCFValueFromCT(customTableCode, fieldToReturn,  Long.parseLong(referenceWrapper.getCode()));
+    	if(fieldToReturn.contains(".")) {
+    		String[] fields= fieldToReturn.split("\\.");
+    		for(String field:fields) {
+    			cfValue = extractFieldFromCT(cfValue, field);
+    		}
+    		return cfValue;
+    	}else {
+    		return extractFieldFromCT(cfValue, fieldToReturn);
     	}
-    	throw new BusinessException("CF "+customTableCode+" is not a customTable ");
     }
-    
-    public static Object getCFValueFromCT(String tableName, String fieldName, Long id) {
-    	return getCustomTableService().findFieldByIdAndTableName(id, tableName, fieldName);
-    }
-    
-    
+
+	private static Object extractFieldFromCT(Object cfValue, String fieldToReturn) {
+		if (cfValue instanceof EntityReferenceWrapper) {
+			return getCustomTableService().findFieldFromEntity((EntityReferenceWrapper) cfValue, fieldToReturn);
+		}else if(cfValue instanceof ICustomFieldEntity) {
+			return geFieldOrCFValue(((ICustomFieldEntity) cfValue), fieldToReturn);
+		}
+		return cfValue;
+	}
+
+	private static Object geFieldOrCFValue(ICustomFieldEntity iCustomFieldEntity, String fieldToReturn) {
+		try {
+			if (Arrays.stream(FieldUtils.getAllFields(iCustomFieldEntity.getClass())).anyMatch(f -> f.getName().equals(fieldToReturn)) ) {
+				return FieldUtils.readField(iCustomFieldEntity, fieldToReturn, true);
+			}
+		} catch (IllegalAccessException e) {
+            log.error("Failed to get field "+fieldToReturn+" from Entity "+iCustomFieldEntity, e);
+		}
+		return getCFValue(iCustomFieldEntity, fieldToReturn);
+	}
+	
 }

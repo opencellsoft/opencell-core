@@ -185,7 +185,8 @@ public class FlatFileProcessingJobBean {
             if (StringUtils.isBlank(fileCurrentName)) {
                 fileCurrentName = !errors.isEmpty() ? rejectedfileName : processedfileName;
             }
-            flatFileProcessing.updateFlatFile(fileName, fileCurrentName, errors, result.getNbItemsCorrectlyProcessed(), result.getNbItemsProcessedWithError(), result.getJobInstance().getCode());
+            String currentDirectory = !errors.isEmpty() ? rejectDir : outputDir;
+            flatFileProcessing.updateFlatFile(fileName, fileCurrentName, currentDirectory, errors, result.getNbItemsCorrectlyProcessed(), result.getNbItemsProcessedWithError(), result.getJobInstance().getCode());
             try {
                 if (fileParser != null) {
                     fileParser.close();
