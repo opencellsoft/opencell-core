@@ -40,10 +40,7 @@ public class SendInvoiceJobBean extends BaseJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        Boolean sendDraft = Boolean.FALSE;
-        if(this.getParamOrCFValue(jobInstance, "sendDraft") != null) {
-            sendDraft = (Boolean) this.getParamOrCFValue(jobInstance, "sendDraft");
-        }
+        Boolean sendDraft = Boolean.valueOf((String) this.getParamOrCFValue(jobInstance, "sendDraft"));
         HashMap<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("context", jobInstance);
         String overrideEmailEl = (String) this.getParamOrCFValue(jobInstance, "overrideEmailEl");
