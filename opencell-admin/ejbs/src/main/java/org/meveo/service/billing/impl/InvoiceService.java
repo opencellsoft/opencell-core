@@ -618,7 +618,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoiceDate date of invoice
      * @param firstTransactionDate date of first transaction
      * @param lastTransactionDate date of last transaction
-     * @param instantiateMinRts Should rated transactions to reach minimum invoicing amount be checked and instantiated
+     * @param instantiateMinRtsForService Should rated transactions to reach minimum invoicing amount be checked and instantiated on service level.
+     * @param instantiateMinRtsForSubscription Should rated transactions to reach minimum invoicing amount be checked and instantiated on subscription level.
+     * @param instantiateMinRtsForBA Should rated transactions to reach minimum invoicing amount be checked and instantiated on Billing account level.
      * @param isDraft Is this a draft invoice
      * @param assignNumber Should a number be assigned to the invoice
      * @return A list of created invoices
@@ -627,9 +629,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<Invoice> createAgregatesAndInvoiceInNewTransaction(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
-            Date firstTransactionDate, Date lastTransactionDate, boolean instantiateMinRts, boolean isDraft) throws BusinessException {
+            Date firstTransactionDate, Date lastTransactionDate, boolean instantiateMinRtsForService, boolean instantiateMinRtsForSubscription, boolean instantiateMinRtsForBA,
+            boolean isDraft) throws BusinessException {
 
-        return createAgregatesAndInvoice(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate, instantiateMinRts, isDraft);
+        return createAgregatesAndInvoice(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate, instantiateMinRtsForService,
+            instantiateMinRtsForSubscription, instantiateMinRtsForBA, isDraft);
     }
 
     /**
@@ -641,13 +645,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoiceDate date of invoice
      * @param firstTransactionDate date of first transaction
      * @param lastTransactionDate date of last transaction
-     * @param instantiateMinRts Should rated transactions to reach minimum invoicing amount be checked and instantiated
+     * @param instantiateMinRtsForService Should rated transactions to reach minimum invoicing amount be checked and instantiated on service level.
+     * @param instantiateMinRtsForSubscription Should rated transactions to reach minimum invoicing amount be checked and instantiated on subscription level.
+     * @param instantiateMinRtsForBA Should rated transactions to reach minimum invoicing amount be checked and instantiated on Billing account level.
      * @param isDraft Is this a draft invoice
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
     public List<Invoice> createAgregatesAndInvoice(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
-            Date firstTransactionDate, Date lastTransactionDate, boolean instantiateMinRts, boolean isDraft) throws BusinessException {
+            Date firstTransactionDate, Date lastTransactionDate, boolean instantiateMinRtsForService, boolean instantiateMinRtsForSubscription, boolean instantiateMinRtsForBA,
+            boolean isDraft) throws BusinessException {
 
         log.debug("Will create invoice and aggregates for {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
 
@@ -693,8 +700,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
             }
 
-            if (instantiateMinRts) {
-                ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, false);
+            // Instantiate additional RTs to reach minimum amount to invoice on service, subscription or BA level if needed
+            if (instantiateMinRtsForService
+                    || (instantiateMinRtsForSubscription
+                            && (entityToInvoice instanceof Subscription && !StringUtils.isBlank(((Subscription) entityToInvoice).getMinimumAmountEl())))
+                    || (instantiateMinRtsForBA && (entityToInvoice instanceof BillingAccount && !StringUtils.isBlank(((BillingAccount) entityToInvoice).getMinimumAmountEl())))) {
+                ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, false,
+                    instantiateMinRtsForService, instantiateMinRtsForSubscription, instantiateMinRtsForBA);
                 minAmountTransactions = entityToInvoice.getMinRatedTransactions();
             }
 
@@ -1961,7 +1973,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Create missing rated transactions up to a last transaction date
         ratedTransactionService.createRatedTransaction(entity, lastTransactionDate);
 
-        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, true, isDraft);
+        boolean[] minRTsUsed = ratedTransactionService.isMinRTsUsed();
+
+        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, minRTsUsed[0], minRTsUsed[1],
+            minRTsUsed[2], isDraft);
 
         return invoices;
     }
@@ -3336,7 +3351,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         subCatAmountWithTax = subCatAmountWithTax.add(amountWithTax);
                     }
                 }
-                
+
                 // Include existing Open rated transactions for a given user account and invoice sub category
                 if (invoiceDTO.getInvoiceType().equals(invoiceTypeService.getCommercialCode())) {
 
@@ -3351,9 +3366,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
                 }
 
-             // TODO Why the size does not take into account the existing open RTs that were added for a commercial invoice
+                // TODO AKK Why the size does not take into account the existing open RTs that were added for a commercial invoice
                 if (isDetailledInvoiceMode) {
-                    invoiceAgregateSubcat.setItemNumber(subCatInvAgrDTO.getRatedTransactions().size());   
+                    invoiceAgregateSubcat.setItemNumber(subCatInvAgrDTO.getRatedTransactions().size());
                     invoiceAgregateSubcat.setAmountWithoutTax(subCatAmountWithoutTax);
                     invoiceAgregateSubcat.setAmountTax(subCatAmountTax);
                     invoiceAgregateSubcat.setAmountWithTax(subCatAmountWithTax);
