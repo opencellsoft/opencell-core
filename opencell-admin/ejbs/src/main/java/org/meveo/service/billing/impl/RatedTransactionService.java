@@ -650,15 +650,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 totalInvoiceableAmounts = computeTotalInvoiceableAmountForBillingAccount(billingAccount, new Date(0), lastTransactionDate);
 
                 // Sum up
-                for (Map<String, Amounts> serviceAmountInfo : createdAmountServices.values()) {
-                    for (Amounts amounts : serviceAmountInfo.values()) {
+                if (createdAmountServices != null) {
+                    for (Map<String, Amounts> serviceAmountInfo : createdAmountServices.values()) {
+                        for (Amounts amounts : serviceAmountInfo.values()) {
+                            totalInvoiceableAmounts.addAmounts(amounts);
+                        }
+                    }
+                }
+
+                if (createdAmountSubscription != null) {
+                    for (Amounts amounts : createdAmountSubscription.values()) {
                         totalInvoiceableAmounts.addAmounts(amounts);
                     }
                 }
-                for (Amounts amounts : createdAmountSubscription.values()) {
-                    totalInvoiceableAmounts.addAmounts(amounts);
-                }
-
+                
                 if (instantiateMinRtsForBA && isAppliesMinRTForBA(billingAccount, totalInvoiceableAmounts)) {
 
                     Map<String, Amounts> extraAmounts = new HashMap<>();
