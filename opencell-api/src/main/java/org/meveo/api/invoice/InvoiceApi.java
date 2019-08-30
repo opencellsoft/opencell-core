@@ -169,7 +169,7 @@ public class InvoiceApi extends BaseApi {
         }
         // pdf and xml are added to response if requested
         if ((invoiceDTO.isReturnXml() != null && invoiceDTO.isReturnXml()) || (invoiceDTO.isReturnPdf() != null && invoiceDTO.isReturnPdf())) {
-            invoiceService.produceInvoiceXml(invoice);
+            invoice = invoiceService.produceInvoiceXml(invoice);
             String invoiceXml = invoiceService.getInvoiceXml(invoice);
             response.setXmlInvoice(invoiceXml);
             response.setXmlFilename(invoice.getXmlFilename());
