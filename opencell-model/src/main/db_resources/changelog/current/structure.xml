@@ -1387,11 +1387,11 @@
         <dropColumn tableName="rating_edr" columnName="status" />
         <dropColumn tableName="rating_edr" columnName="reject_reason" />
         
-        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON billing_rated_transaction (billing_account__id, usage_date, service_instance_id) where service_instance_id is not null</sql>
-        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON billing_rated_transaction (billing_account__id, usage_date, subscription_id)</sql>
-        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON billing_rated_transaction (subscription_id, usage_date, service_instance_id) where subscription_id is not null</sql>
-        <sql>CREATE INDEX rt_invoice_index ON billing_rated_transaction_status (invoice_id)</sql>
-        <sql>CREATE INDEX rt_order_index ON billing_rated_transaction (order_number, usage_date) where order_number is not null</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON {db.schema.adapted}billing_rated_transaction (billing_account__id, usage_date, service_instance_id) where service_instance_id is not null</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON {db.schema.adapted}billing_rated_transaction (billing_account__id, usage_date, subscription_id)</sql>
+        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON {db.schema.adapted}billing_rated_transaction (subscription_id, usage_date, service_instance_id) where subscription_id is not null</sql>
+        <sql>CREATE INDEX rt_invoice_index ON {db.schema.adapted}billing_rated_transaction_status (invoice_id)</sql>
+        <sql>CREATE INDEX rt_order_index ON {db.schema.adapted}billing_rated_transaction (order_number, usage_date) where order_number is not null</sql>
         
     </changeSet>
     
@@ -1420,6 +1420,36 @@
         <addForeignKeyConstraint baseColumnNames="rated_transaction_id" baseTableName="billing_wallet_operation_status" constraintName="fk_billing_wo_rt" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_rated_transaction" />
                 
+    </changeSet>    
+
+    <changeSet id="#4511_20190829" author="AndriusKarpavicius">
+    
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_rt_ua"/>
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_bbnhg8vn7jkttghphr65iwug5"/>
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_ropedrid"/>
+    
+        <dropIndex tableName="billing_rated_transaction" indexName="rt_ba_invoice_open_serv_index"/>
+        <dropIndex tableName="billing_rated_transaction" indexName="rt_ba_invoice_open_sub_index"/>
+        <dropIndex tableName="billing_rated_transaction" indexName="rt_order_index"/>
+        <dropIndex tableName="billing_rated_transaction" indexName="rt_sub_invoice_open_serv_index"/>
+        <dropIndex tableName="billing_rated_transaction" indexName="transaction_billing_account_index"/>
+    
+        <sql>CREATE INDEX rt_ba_sub_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, subscription_id)</sql>
+        
+        <sql dbms="postgres">CREATE INDEX rt_ba_serv_notnull_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, service_instance_id) WHERE service_instance_id IS NOT NULL</sql>
+        <sql dbms="postgres">CREATE INDEX rt_order_index ON ${db.schema.adapted}billing_rated_transaction (order_number) where order_number IS NOT NULL</sql>
+        <sql dbms="postgres">CREATE INDEX rt_sub_serv_index ON ${db.schema.adapted}billing_rated_transaction (subscription_id, service_instance_id) where subscription_id IS NOT NULL</sql>
+        
+        <sql dbms="mysql">CREATE INDEX rt_ba_serv_notnull_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, service_instance_id)</sql>
+        <sql dbms="mysql">CREATE INDEX rt_order_index ON ${db.schema.adapted}billing_rated_transaction (order_number)</sql>
+        <sql dbms="mysql">CREATE INDEX rt_sub_serv_index ON ${db.schema.adapted}billing_rated_transaction (subscription_id, service_instance_id)</sql>
+      
+    </changeSet>
+        
+    <changeSet id="#4511_20190829-M" author="AndriusKarpavicius" dbms="mysql">    
+        <dropIndex tableName="billing_rated_transaction" indexName="fk_rt_ua"/> 
+        <dropIndex tableName="billing_rated_transaction" indexName="fk_bbnhg8vn7jkttghphr65iwug5"/> 
+        <dropIndex tableName="billing_rated_transaction" indexName="fk_ropedrid"/>
     </changeSet>    
     
 </databaseChangeLog>
