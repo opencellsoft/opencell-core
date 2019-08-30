@@ -1387,11 +1387,11 @@
         <dropColumn tableName="rating_edr" columnName="status" />
         <dropColumn tableName="rating_edr" columnName="reject_reason" />
         
-        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON {db.schema.adapted}billing_rated_transaction (billing_account__id, usage_date, service_instance_id) where service_instance_id is not null</sql>
-        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON {db.schema.adapted}billing_rated_transaction (billing_account__id, usage_date, subscription_id)</sql>
-        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON {db.schema.adapted}billing_rated_transaction (subscription_id, usage_date, service_instance_id) where subscription_id is not null</sql>
-        <sql>CREATE INDEX rt_invoice_index ON {db.schema.adapted}billing_rated_transaction_status (invoice_id)</sql>
-        <sql>CREATE INDEX rt_order_index ON {db.schema.adapted}billing_rated_transaction (order_number, usage_date) where order_number is not null</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, usage_date, service_instance_id) where service_instance_id is not null</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, usage_date, subscription_id)</sql>
+        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON ${db.schema.adapted}billing_rated_transaction (subscription_id, usage_date, service_instance_id) where subscription_id is not null</sql>
+        <sql>CREATE INDEX rt_invoice_index ON ${db.schema.adapted}billing_rated_transaction_status (invoice_id)</sql>
+        <sql>CREATE INDEX rt_order_index ON ${db.schema.adapted}billing_rated_transaction (order_number, usage_date) where order_number is not null</sql>
         
     </changeSet>
     
