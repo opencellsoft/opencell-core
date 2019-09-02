@@ -20,7 +20,9 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -541,7 +543,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     public RatedTransaction(WalletOperation walletOperation) {
 
         super();
-
+        this.walletOperations= new HashSet<>(Arrays.asList(walletOperation));
         this.code = walletOperation.getCode();
         this.description = walletOperation.getDescription();
         this.chargeInstance = walletOperation.getChargeInstance();
