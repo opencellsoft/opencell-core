@@ -835,5 +835,12 @@
         <sql>update ${db.schema.adapted}billing_invoice_type set invoice_accountable = 1 where code not in ('QUOTE','DRAFT','PREPAID')</sql>
         <sql>update ${db.schema.adapted}billing_invoice_type set invoice_accountable = 0 where code in ('QUOTE','DRAFT','PREPAID')</sql>
     </changeSet>
-    
+
+  <changeSet id="#4480_210819" author="SaidRamli">
+    <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="billing_invoice"
+                             constraintName="fk_invoice_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="ar_payment_token" />
+
+  </changeSet>
+
 </databaseChangeLog> 

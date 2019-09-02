@@ -84,7 +84,14 @@ import org.meveo.model.rating.EDR;
                 + " and w.id IN :notBilledWalletIdList"),
         @NamedQuery(name = "WalletOperation.listByChargeInstance", query = "SELECT o FROM WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "),
         @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
-                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"), })
+                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"),
+        @NamedQuery(name = "WalletOperation.listOpenWObetweenTwoDates", query = "SELECT o FROM WalletOperation o join fetch o.seller "
+                + "join fetch o.currency join fetch o.wallet join fetch o.chargeInstance WHERE o.status = org.meveo.model.billing.WalletOperationStatusEnum.OPEN AND  "
+                + ":firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate order by o.operationDate desc"),
+        @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.OPEN AND  "
+                + ":firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate"),
+        @NamedQuery(name = "WalletOperation.prepareToSafeDeleteNotOpenWObetweenTwoDates", query = "UPDATE WalletOperation o  SET o.edr = NULL WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.OPEN AND  "
+                + ":firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate") })
 public class WalletOperation extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;

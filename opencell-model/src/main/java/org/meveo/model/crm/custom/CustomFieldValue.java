@@ -1,5 +1,23 @@
 package org.meveo.model.crm.custom;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import org.meveo.commons.utils.CustomDateSerializer;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.shared.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -13,25 +31,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.meveo.commons.utils.CustomDateSerializer;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.shared.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 /**
  * Encapsulates a custom field value. Supports the following data types:
@@ -103,6 +102,12 @@ public class CustomFieldValue implements Serializable {
     private Double doubleValue;
 
     /**
+     * Double type value
+     */
+    @JsonProperty("boolean")
+    private Boolean booleanValue;
+
+    /**
      * Entity reference type value
      */
     @JsonProperty("entity")
@@ -140,6 +145,12 @@ public class CustomFieldValue implements Serializable {
     private List<EntityReferenceWrapper> listEntityValue = null;
 
     /**
+     * List of Boolean type value
+     */
+    @JsonProperty("listBoolean")
+    private List<Boolean> listBooleanValue = null;
+
+    /**
      * Map of String type value
      */
     @JsonProperty("mapString")
@@ -171,6 +182,13 @@ public class CustomFieldValue implements Serializable {
     private Map<String, EntityReferenceWrapper> mapEntityValue = null;
 
     /**
+     * Map of Boolean type value
+     */
+    @JsonProperty("mapBoolean")
+    private Map<String, Boolean> mapBooleanValue = null;
+
+
+    /**
      * Contains mapValue adapted for GUI data entry in the following way:
      * 
      * List item corresponds to an entry in a mapValue with the following list's map values: MAP_KEY=mapValue.entry.key and MAP_VALUE=mapValue.entry.value
@@ -194,6 +212,14 @@ public class CustomFieldValue implements Serializable {
      */
     @JsonIgnore
     private List<CustomFieldValueHolder> childEntityValuesForGUI = new ArrayList<>();
+
+    public Boolean getBooleanValue() {
+        return booleanValue;
+    }
+
+    public void setBooleanValue(Boolean booleanValue) {
+        this.booleanValue = booleanValue;
+    }
 
     /**
      * Contains entityReferenceValue converted into a BusinessEntity object in the following way:
@@ -284,6 +310,35 @@ public class CustomFieldValue implements Serializable {
         this.entityReferenceValue = entityReferenceValue;
     }
 
+    /**
+     * @return List of Boolean type value
+     */
+    public List<Boolean> getListBooleanValue() {
+        return listBooleanValue;
+    }
+
+    /**
+     * @param listBooleanValue List of Boolean type value
+     */
+    public void setListBooleanValue(List<Boolean> listBooleanValue) {
+        this.listBooleanValue = listBooleanValue;
+    }
+
+    /**
+     * @return Map of Boolean type value
+     */
+    public Map<String, Boolean> getMapBooleanValue() {
+        return mapBooleanValue;
+    }
+
+    /**
+     * @param mapBooleanValue Map of Boolean type value
+     */
+    public void setMapBooleanValue(Map<String, Boolean> mapBooleanValue) {
+        this.mapBooleanValue = mapBooleanValue;
+    }
+
+
     @SuppressWarnings("rawtypes")
     public List getListValue() {
         if (listStringValue != null) {
@@ -294,6 +349,8 @@ public class CustomFieldValue implements Serializable {
             return listLongValue;
         } else if (listDoubleValue != null) {
             return listDoubleValue;
+        } else if (listBooleanValue != null) {
+            return listBooleanValue;
         } else if (listEntityValue != null) {
             return listEntityValue;
         }
@@ -344,6 +401,14 @@ public class CustomFieldValue implements Serializable {
                 }
             }
 
+        } else if (itemClass == Boolean.class) {
+            listBooleanValue = new ArrayList<>();
+            for (Object listItem : listValue) {
+                if (listItem instanceof Boolean) {
+                    listBooleanValue.add(((Boolean) listItem).booleanValue());
+                }
+            }
+
         } else if (itemClass == EntityReferenceWrapper.class) {
             listEntityValue = new ArrayList<>();
             for (Object listItem : listValue) {
@@ -362,6 +427,8 @@ public class CustomFieldValue implements Serializable {
             return mapLongValue;
         } else if (mapDoubleValue != null && !mapDoubleValue.isEmpty()) {
             return mapDoubleValue;
+        } else if (mapBooleanValue != null && !mapBooleanValue.isEmpty()) {
+            return mapBooleanValue;
         } else if (mapEntityValue != null && !mapEntityValue.isEmpty()) {
             return mapEntityValue;
         }
@@ -433,6 +500,14 @@ public class CustomFieldValue implements Serializable {
                     mapDoubleValue.put(mapItem.getKey(), ((BigDecimal) mapItem.getValue()).doubleValue());
                 } else if (mapItem.getValue() instanceof Double) {
                     mapDoubleValue.put(mapItem.getKey(), (Double) mapItem.getValue());
+                }
+            }
+
+        } else if (itemClass == Boolean.class) {
+            mapBooleanValue = new LinkedHashMap<>();
+            for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
+                if (mapItem.getValue() instanceof Boolean) {
+                    mapBooleanValue.put(mapItem.getKey(), ((Boolean) mapItem.getValue()).booleanValue());
                 }
             }
 
@@ -518,6 +593,12 @@ public class CustomFieldValue implements Serializable {
             }
             break;
 
+        case BOOLEAN:
+            if (value instanceof Boolean) {
+                booleanValue = ((Boolean) value);
+            }
+            break;
+
         case STRING:
         case LIST:
         case TEXT_AREA:
@@ -548,6 +629,8 @@ public class CustomFieldValue implements Serializable {
             return longValue.toString();
         } else if (doubleValue != null) {
             return doubleValue.toString();
+        } else if (booleanValue != null) {
+            return booleanValue.toString();
         } else {
             List listValue = getListValue();
             if (listValue != null) {
@@ -571,6 +654,8 @@ public class CustomFieldValue implements Serializable {
             return longValue.toString();
         } else if (doubleValue != null) {
             return doubleValue.toString();
+        } else if (booleanValue != null) {
+            return booleanValue.toString();
         }
 
         return "";
@@ -779,6 +864,11 @@ public class CustomFieldValue implements Serializable {
                     return longValue.toString();
                 }
                 break;
+            case BOOLEAN:
+                if (booleanValue != null) {
+                    return booleanValue.toString();
+                }
+                break;
             case STRING:
             case LIST:
             case TEXT_AREA:
@@ -893,6 +983,8 @@ public class CustomFieldValue implements Serializable {
                 itemClass = String.class;
             } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
                 itemClass = Long.class;
+            } else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+                itemClass = Boolean.class;
             }
 
             if (itemClass != null) {
@@ -914,6 +1006,8 @@ public class CustomFieldValue implements Serializable {
                 itemClass = String.class;
             } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
                 itemClass = Long.class;
+            } else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+                itemClass = Boolean.class;
             }
 
             // Handle map that stores matrix type values
@@ -1023,6 +1117,9 @@ public class CustomFieldValue implements Serializable {
             } else if (Double.class.getSimpleName().equals(subType) || BigDecimal.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<List<Double>>() {
                 }.getType();
+            } else if (Boolean.class.getSimpleName().equals(subType)) {
+                itemType = new TypeToken<List<Boolean>>() {
+                }.getType();
             } else if (Long.class.getSimpleName().equals(subType) || Integer.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<List<Long>>() {
                 }.getType();
@@ -1045,10 +1142,11 @@ public class CustomFieldValue implements Serializable {
             if (Date.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<LinkedHashMap<String, Date>>() {
                 }.getType();
-            } else if (Double.class.getSimpleName().equals(subType) || BigDecimal.class.getSimpleName().equals(subType))
-
-            {
+            } else if (Double.class.getSimpleName().equals(subType) || BigDecimal.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<LinkedHashMap<String, Double>>() {
+                }.getType();
+            }  else if (Boolean.class.getSimpleName().equals(subType)) {
+                itemType = new TypeToken<LinkedHashMap<String, Boolean>>() {
                 }.getType();
             } else if (Long.class.getSimpleName().equals(subType) || Integer.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<LinkedHashMap<String, Long>>() {
@@ -1074,6 +1172,9 @@ public class CustomFieldValue implements Serializable {
                 }.getType();
             } else if (Double.class.getSimpleName().equals(subType) || BigDecimal.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<LinkedHashMap<String, Double>>() {
+                }.getType();
+            } else if (Boolean.class.getSimpleName().equals(subType)) {
+                itemType = new TypeToken<LinkedHashMap<String, Boolean>>() {
                 }.getType();
             } else if (Long.class.getSimpleName().equals(subType) || Integer.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<LinkedHashMap<String, Long>>() {
@@ -1106,6 +1207,8 @@ public class CustomFieldValue implements Serializable {
             return mapLongValue;
         } else if (mapDoubleValue != null && !mapDoubleValue.isEmpty()) {
             return mapDoubleValue;
+        } else if (mapBooleanValue != null && !mapBooleanValue.isEmpty()) {
+            return mapBooleanValue;
         } else if (mapEntityValue != null && !mapEntityValue.isEmpty()) {
             return mapEntityValue;
         } else if (listStringValue != null && !listStringValue.isEmpty()) {
@@ -1116,6 +1219,8 @@ public class CustomFieldValue implements Serializable {
             return listLongValue;
         } else if (listDoubleValue != null && !listDoubleValue.isEmpty()) {
             return listDoubleValue;
+        } else if (listBooleanValue != null && !listBooleanValue.isEmpty()) {
+            return listBooleanValue;
         } else if (listEntityValue != null && !listEntityValue.isEmpty()) {
             return listEntityValue;
         } else if (stringValue != null) {
@@ -1124,6 +1229,8 @@ public class CustomFieldValue implements Serializable {
             return dateValue;
         } else if (doubleValue != null) {
             return doubleValue;
+        } else if (booleanValue != null) {
+            return booleanValue;
         } else if (longValue != null) {
             return longValue;
         } else if (entityReferenceValue != null) {
@@ -1142,6 +1249,7 @@ public class CustomFieldValue implements Serializable {
 
         dateValue = null;
         doubleValue = null;
+        booleanValue = null;
         longValue = null;
         stringValue = null;
         entityReferenceValue = null;
@@ -1149,11 +1257,13 @@ public class CustomFieldValue implements Serializable {
         mapDateValue = null;
         mapLongValue = null;
         mapDoubleValue = null;
+        mapBooleanValue = null;
         mapEntityValue = null;
         listStringValue = null;
         listDateValue = null;
         listLongValue = null;
         listDoubleValue = null;
+        listBooleanValue = null;
         listEntityValue = null;
 
         if (value instanceof Date) {
@@ -1164,6 +1274,9 @@ public class CustomFieldValue implements Serializable {
 
         } else if (value instanceof Double) {
             doubleValue = (Double) value;
+
+        } else if (value instanceof Boolean) {
+            booleanValue = (Boolean) value;
 
         } else if (value instanceof Long) {
             longValue = (Long) value;
@@ -1192,7 +1305,7 @@ public class CustomFieldValue implements Serializable {
     public String toString() {
         final int maxLen = 10;
         return String.format(
-            "CustomFieldValue [stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, entityReferenceValue=%s, listValue=%s, mapValue=%s, mapValuesForGUI=%s, matrixValuesForGUI=%s, childEntityValuesForGUI=%s, entityReferenceValueForGUI=%s]",
+            "CustomFieldValue [stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, booleanValue=%s, entityReferenceValue=%s, listValue=%s, mapValue=%s, mapValuesForGUI=%s, matrixValuesForGUI=%s, childEntityValuesForGUI=%s, entityReferenceValueForGUI=%s]",
             stringValue, dateValue, longValue, doubleValue, entityReferenceValue, getListValue() != null ? toString(getListValue(), maxLen) : null,
             getMapValue() != null ? toString(getMapValue().entrySet(), maxLen) : null, mapValuesForGUI != null ? toString(mapValuesForGUI, maxLen) : null,
             matrixValuesForGUI != null ? toString(matrixValuesForGUI, maxLen) : null, childEntityValuesForGUI != null ? toString(childEntityValuesForGUI, maxLen) : null,
@@ -1236,6 +1349,8 @@ public class CustomFieldValue implements Serializable {
             if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && !cft.getFieldType().isStoredSerialized()) {
                 if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
                     return Double.parseDouble(valueToConvert);
+                } else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+                    return Boolean.parseBoolean(valueToConvert);
                 } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
                     return Long.parseLong(valueToConvert);
                 } else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST

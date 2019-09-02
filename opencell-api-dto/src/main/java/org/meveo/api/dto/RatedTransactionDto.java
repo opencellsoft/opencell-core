@@ -18,15 +18,14 @@
  */
 package org.meveo.api.dto;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import org.meveo.model.billing.RatedTransaction;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.model.billing.RatedTransaction;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * The Class RatedTransactionDto.
@@ -86,6 +85,11 @@ public class RatedTransactionDto extends BaseDto {
     private boolean doNotTriggerInvoicing = false;
 
     /**
+     * BillingAccount code
+     */
+    private String billingAccountCode;
+
+    /**
      * Instantiates a new rated transaction dto.
      */
     public RatedTransactionDto() {
@@ -113,6 +117,9 @@ public class RatedTransactionDto extends BaseDto {
             this.setPriceplanCode(ratedTransaction.getPriceplan().getCode());
         }
         this.setDoNotTriggerInvoicing(ratedTransaction.isDoNotTriggerInvoicing());
+        if (ratedTransaction.getBillingAccount() != null) {
+            this.setBillingAccountCode(ratedTransaction.getBillingAccount().getCode());
+        }
     }
 
     /**
@@ -347,6 +354,19 @@ public class RatedTransactionDto extends BaseDto {
      */
     public void setPriceplanCode(String priceplanCode) {
         this.priceplanCode = priceplanCode;
+    }
+
+    /**
+     * @return Billing Account code
+     */
+    public String getBillingAccountCode() {
+        return billingAccountCode;
+    }
+    /**
+     * @param billingAccountCode billing account code
+     */
+    public void setBillingAccountCode(String billingAccountCode) {
+        this.billingAccountCode = billingAccountCode;
     }
 
 }
