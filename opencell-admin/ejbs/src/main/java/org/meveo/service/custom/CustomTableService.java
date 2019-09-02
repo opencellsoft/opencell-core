@@ -33,16 +33,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import com.fasterxml.jackson.core.JsonGenerator.Feature;
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
-import com.fasterxml.jackson.databind.SequenceWriter;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema.ColumnType;
-
 import org.apache.commons.collections4.MapUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.document.DocumentField;
@@ -58,6 +48,7 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
@@ -67,6 +58,16 @@ import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.index.ElasticSearchClassInfo;
+
+import com.fasterxml.jackson.core.JsonGenerator.Feature;
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
+import com.fasterxml.jackson.databind.SequenceWriter;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema.ColumnType;
 
 @Stateless
 public class CustomTableService extends NativePersistenceService {
@@ -923,12 +924,31 @@ public class CustomTableService extends NativePersistenceService {
         return !query.list().isEmpty();
     }
     
-    public Object findFieldByIdAndTableName(Long id, String tableName, String fieldName) {
-        QueryBuilder queryBuilder = getQuery(tableName, null);
-        queryBuilder.addCriterion("id", "=", id, true);
-        Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
-        Map<String, Object> result = (Map<String, Object>) query.uniqueResult();
-		return result.get(fieldName);
-    }
-
+	/**
+	 * Fetch entity from a referenceWrapper. This method return the wrapped object if it's an entity managed or a CustomEntity,
+	 *  but return a map of values if the wrapped object is a reference to a custom table
+	 * 
+	 * @param referenceWrapper
+	 * @return
+	 */
+	public Object findEntityFromReference(EntityReferenceWrapper referenceWrapper) {
+		String classname = referenceWrapper.getClassname();
+		String code = referenceWrapper.getCode();
+		if (classname.equals(CustomEntityInstance.class.getName())) {
+			CustomEntityTemplate cet = customEntityTemplateService.findByCode(referenceWrapper.getClassnameCode());
+			if (cet.isStoreAsTable()) {
+				return findRecordByIdAndTableName( Long.parseLong(code),cet.getDbTablename());
+			}else {
+				return customEntityInstanceService.findByCodeByCet(cet.getDbTablename(), code);
+			}
+		} else {
+			try {
+				return customEntityInstanceService.findByEntityClassAndCode(Class.forName(classname), code);
+			} catch (ClassNotFoundException e) {
+				log.error("class in the ClassRefWrapper " + referenceWrapper + " not found ", e);
+			}
+		}
+		return null;
+	}
+	
 }
