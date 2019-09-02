@@ -145,7 +145,7 @@ import org.meveo.model.rating.EDR;
 
         @NamedQuery(name = "RatedTransaction.listByInvoice", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where s.invoice=:invoice order by r.usageDate"),
         @NamedQuery(name = "RatedTransaction.listByInvoiceNotFree", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where s.invoice=:invoice and r.amountWithoutTax<>0 order by r.usageDate"),
-        @NamedQuery(name = "RatedTransaction.listByInvoiceSubCategoryAggr", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where s.invoiceAgregateF=:invoiceAgregateF order by r.usageDate") })
+        @NamedQuery(name = "RatedTransaction.listByInvoiceSubCategoryAggr", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where s.invoice=:invoice and s.invoiceAgregateF=:invoiceAgregateF order by r.usageDate") })
 public class RatedTransaction extends BaseEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;
@@ -266,7 +266,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     /**
      * Rated transaction processing status
      */
-    @OneToOne(mappedBy = "ratedTransaction", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "ratedTransaction", fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
+            CascadeType.REMOVE }, orphanRemoval = true)
     private RatedTransactionProcessingStatus processingStatus;
 
     /**

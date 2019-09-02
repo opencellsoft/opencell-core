@@ -149,7 +149,7 @@
 																</p:row>
 					                                    	</p:panelGrid>
 					                                    	
-															<p:dataTable rendered="#{subCat.ratedTransactions!=null and !subCat.ratedTransactions.isEmpty()}" var="rated" resizableColumns="true" value="#{invoiceBean.getRatedTransactions(subCat)}" rows="30" lazy="true" rowKey="#{rated.id}" paginator="true"
+															<p:dataTable var="rated" resizableColumns="true" value="#{invoiceBean.getRatedTransactions(subCat)}" rows="30" lazy="true" rowKey="#{rated.id}" paginator="true"
 																paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="30">
 																<p:column headerText="#{messages['ratedTransaction.usageDate']}">
 																	<h:outputText value="#{rated.usageDate}">
@@ -160,9 +160,10 @@
 																	<h:outputText value="#{not empty rated.offerTemplate ? rated.offerTemplate.code : ''}" />
 																</p:column>
 																<p:column headerText="#{messages['walletOperation.chargeInstance']}">
-																	<ui:repeat value="#{ratedTransactionBean.getWalletOperationCodes(rated.getId())}" var="wo" varStatus="loop">
-																	    #{wo}#{not loop.last ? ', ' : ''}
-																	</ui:repeat>
+                                                                    <h:outputText value="#{rated.code}" />
+<!-- 																	<ui:repeat value="#{ratedTransactionBean.getWalletOperationCodes(rated.getId())}" var="wo" varStatus="loop"> -->
+<!-- 																	    #{wo}#{not loop.last ? ', ' : ''} -->
+<!-- 																	</ui:repeat> -->
 																</p:column>
 																<p:column headerText="#{messages['pricePlan.panel']}">
 																	<h:outputText value="#{rated.priceplan.code}" />
@@ -201,11 +202,7 @@
 																<p:column headerText="#{messages['order.number']}">
 																	<h:outputText value="#{rated.orderNumber}" />
 																</p:column>
-<!-- 																<p:column headerText="#{messages['ratedTransaction.status']}"> -->
-<!-- 																	<h:outputText value="#{rated.processingStatus.status}" /> -->
-<!-- 																</p:column> -->
 															</p:dataTable>
-
 													</p:tab>
 		                        				</p:accordionPanel>
 		                        			</p:column>

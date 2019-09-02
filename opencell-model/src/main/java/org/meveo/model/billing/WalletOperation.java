@@ -85,7 +85,7 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "WalletOperation.listToInvoiceByOrderNumber", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.orderNumber=:orderNumber"),
 
         @NamedQuery(name = "WalletOperation.listToRerate", query = "SELECT s.id FROM WalletOperationProcessingStatus s WHERE s.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE"),
-        
+
         @NamedQuery(name = "WalletOperation.getBalancesForWalletInstance", query = "SELECT sum(case when (s is null or s.status in ('OPEN','TREATED')) then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o left join o.processingStatus s WHERE o.wallet.id=:walletId and (s is null or s.status in ('RESERVED','TREATED'))"),
         @NamedQuery(name = "WalletOperation.getBalancesForCache", query = "SELECT o.wallet.id, sum(case when (s is null or s.status in ('OPEN','TREATED')) then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o left join o.processingStatus s WHERE (s is null or s.status in ('RESERVED','TREATED')) and o.wallet.walletTemplate.walletType='PREPAID' group by o.wallet.id"),
 
@@ -97,7 +97,7 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE o.chargeInstance=:chargeInstance AND o.id in (select s.id from WalletOperationProcessingStatus s where s.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED)"),
 
         @NamedQuery(name = "WalletOperation.findByUAAndCode", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE o.wallet.userAccount=:userAccount and o.code=:code"),
-        
+
         @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o left join o.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED) AND o.wallet.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o left join o.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED) AND o.wallet.userAccount=:userAccount"),
         @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o left join o.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED) AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount"),
@@ -388,7 +388,8 @@ public class WalletOperation extends BusinessEntity {
     /**
      * Wallet operation processing status
      */
-    @OneToOne(mappedBy = "walletOperation", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "walletOperation", fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
+            CascadeType.REMOVE }, orphanRemoval = true)
     private WalletOperationProcessingStatus processingStatus;
 
     public WalletInstance getWallet() {

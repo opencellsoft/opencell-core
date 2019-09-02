@@ -663,7 +663,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         totalInvoiceableAmounts.addAmounts(amounts);
                     }
                 }
-                
+
                 if (instantiateMinRtsForBA && isAppliesMinRTForBA(billingAccount, totalInvoiceableAmounts)) {
 
                     Map<String, Amounts> extraAmounts = new HashMap<>();
@@ -1636,6 +1636,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         return getEntityManager().createNamedQuery("RatedTransaction.listByInvoiceSubCategoryAggr", RatedTransaction.class)
-            .setParameter("invoiceAgregateF", subCategoryInvoiceAgregate).getResultList();
+            .setParameter("invoice", subCategoryInvoiceAgregate.getInvoice()).setParameter("invoiceAgregateF", subCategoryInvoiceAgregate).getResultList();
     }
 }
