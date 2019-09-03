@@ -115,8 +115,8 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
                 + " AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount"),
         @NamedQuery(name = "WalletOperation.countNbrWalletsOperationByStatus", query = "select status, count(*) from WalletOperation group by status"),
-        @NamedQuery(name = "WalletOperation.listOpenWObetweenTwoDates", query = "SELECT o FROM WalletOperation o join fetch o.seller join fetch o.tax "
-                + "join fetch o.offerTemplate join fetch o.currency join fetch o.wallet join fetch o.chargeInstance WHERE o.status = org.meveo.model.billing.WalletOperationStatusEnum.OPEN AND  "
+        @NamedQuery(name = "WalletOperation.listNotOpenedWObetweenTwoDates", query = "SELECT o FROM WalletOperation o join fetch o.seller join fetch o.tax "
+                + "join fetch o.offerTemplate join fetch o.currency join fetch o.wallet join fetch o.chargeInstance WHERE o.status != org.meveo.model.billing.WalletOperationStatusEnum.OPEN AND  "
                 + ":firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate order by o.operationDate desc"),
         @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.OPEN AND  "
                 + ":firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate"),

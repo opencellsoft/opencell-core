@@ -1786,9 +1786,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param lastTransactionDate last Transaction Date
      * @return All open rated transaction between two date.
      */
-    public List<RatedTransaction> getOpenRatedTransactionBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
-        return getEntityManager().createNamedQuery("RatedTransaction.listOpenBetweenTwoDates", RatedTransaction.class).setParameter("firstTransactionDate", firstTransactionDate)
-            .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+    public List<RatedTransaction> getNotOpenedRatedTransactionBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate){
+        return getEntityManager().createNamedQuery("RatedTransaction.listNotOpenedBetweenTwoDates", RatedTransaction.class).setParameter("firstTransactionDate",firstTransactionDate)
+                .setParameter("lastTransactionDate",lastTransactionDate)
+                .getResultList();
+
     }
 
     /**
