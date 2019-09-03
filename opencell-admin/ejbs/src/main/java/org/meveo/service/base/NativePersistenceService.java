@@ -1042,7 +1042,7 @@ public class NativePersistenceService extends BaseService {
                     return value;
                 } else if (numberVal != null) {
                     return new Date(numberVal.longValue());
-                } else if (stringVal != null) {
+                } else if (stringVal != null && ! stringVal.isEmpty()) {
 
                     // Use provided date patterns or try default patterns if they were not provided
                     if (datePatterns != null) {
@@ -1065,7 +1065,9 @@ public class NativePersistenceService extends BaseService {
                         if (date == null) {
                             date = DateUtils.parseDateWithPattern(stringVal, paramBean.getDateFormat());
                         }
-                        return date;
+                        if (date == null) {
+                        	throw new ValidationException("wrong value format for filter, cannot parse date value '"+value+"'");
+                        }
                     }
                 }
 
@@ -1131,7 +1133,7 @@ public class NativePersistenceService extends BaseService {
             }
 
         } catch (NumberFormatException e) {
-            // Swallow - validation will take care of it later
+            throw new ValidationException("wrong value format for filter, cannot cast '"+value+"' to "+targetClass, e);
         }
         return null;
     }
