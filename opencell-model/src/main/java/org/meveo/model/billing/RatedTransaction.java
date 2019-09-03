@@ -107,8 +107,8 @@ import org.meveo.model.rating.EDR;
                 + " WHERE r.invoice=:invoice AND r.wallet IS null"),
         
         @NamedQuery(name = "RatedTransaction.getDistinctOrderNumsByInvoice", query = "SELECT DISTINCT rt.orderNumber from RatedTransaction rt where  rt.invoice=:invoice AND NOT(rt.orderNumber IS null)"),
-        @NamedQuery(name = "RatedTransaction.listOpenBetweenTwoDates", query = "SELECT r FROM RatedTransaction r join fetch r.priceplan join fetch r.billingAccount where "
-                + " r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
+        @NamedQuery(name = "RatedTransaction.listNotOpenedBetweenTwoDates", query = "SELECT r FROM RatedTransaction r join fetch r.priceplan join fetch r.billingAccount where "
+                + " r.status!=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
                 + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.usageDate desc "),
         @NamedQuery(name = "RatedTransaction.deleteNotOpenBetweenTwoDates", query = "delete FROM RatedTransaction r where "
                 + " r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "

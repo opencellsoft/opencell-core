@@ -1226,8 +1226,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param lastTransactionDate last Transaction Date
      * @return All open rated transaction between two date.
      */
-    public List<RatedTransaction> getOpenRatedTransactionBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate){
-        return getEntityManager().createNamedQuery("RatedTransaction.listOpenBetweenTwoDates", RatedTransaction.class).setParameter("firstTransactionDate",firstTransactionDate)
+    public List<RatedTransaction> getNotOpenedRatedTransactionBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate){
+        return getEntityManager().createNamedQuery("RatedTransaction.listNotOpenedBetweenTwoDates", RatedTransaction.class).setParameter("firstTransactionDate",firstTransactionDate)
                 .setParameter("lastTransactionDate",lastTransactionDate)
                 .getResultList();
     }
@@ -1255,6 +1255,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 ratedTransaction.setBillingAccount(billingAccount);
             }
             ratedTransaction.setUsageDate(dto.getUsageDate());
+            ratedTransaction.setStatus(dto.getStatus());
             ratedTransaction.setUnitAmountWithoutTax(dto.getUnitAmountWithoutTax());
             ratedTransaction.setUnitAmountWithTax(dto.getUnitAmountWithTax());
             ratedTransaction.setUnitAmountTax(dto.getUnitAmountTax());
