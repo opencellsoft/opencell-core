@@ -149,8 +149,8 @@
 																</p:row>
 					                                    	</p:panelGrid>
 					                                    	
-															<p:dataTable var="rated" resizableColumns="true" value="#{invoiceBean.getRatedTransactions(subCat)}" rows="30" lazy="true" rowKey="#{rated.id}" paginator="true"
-																paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="30">
+															<p:dataTable var="rated" resizableColumns="true" value="#{invoiceBean.getRatedTransactions(subCat)}" rows="30" lazy="true" rowKey="#{rated.id}" paginator="true" paginatorAlwaysVisible="false"
+																paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="20,30,50,100">
 																<p:column headerText="#{messages['ratedTransaction.usageDate']}">
 																	<h:outputText value="#{rated.usageDate}">
 																		<f:convertDateTime pattern="#{datePattern}" />

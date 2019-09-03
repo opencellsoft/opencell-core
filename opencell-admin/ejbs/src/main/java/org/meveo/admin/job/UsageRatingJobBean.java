@@ -52,7 +52,6 @@ public class UsageRatingJobBean extends BaseJobBean {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        log.debug("Running with parameter={}", jobInstance.getParametres());
 
         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
         if (nbRuns == -1) {
@@ -69,14 +68,14 @@ public class UsageRatingJobBean extends BaseJobBean {
             } catch (Exception e) {
                 log.warn("Cant get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
             }
-            
+
             List<EDR> edrs = edrService.getEDRsToRate(rateUntilDate, ratingGroup, PROCESS_NR_IN_JOB_RUN);
-            
+
             result.setNbItemsToProcess(edrs.size());
-            
+
             List<Future<String>> futures = new ArrayList<>();
             SubListCreator<EDR> subListCreator = new SubListCreator(edrs, nbRuns.intValue());
-            log.debug("Will rate {} EDRS in {} threads", edrs.size(), nbRuns);
+            log.info("Will rate {} EDRS", edrs.size());
 
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
