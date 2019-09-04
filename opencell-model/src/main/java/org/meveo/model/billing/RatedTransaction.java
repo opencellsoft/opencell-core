@@ -20,7 +20,9 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -154,8 +156,8 @@ import org.meveo.model.rating.EDR;
 
         @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfo", query = "UPDATE RatedTransaction rt set rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, rt.invoiceAgregateF=:invoiceAgregateF, rt.billingRun=:billingRun, invoice=:invoice where rt.id in :ids"),
         
-        @NamedQuery(name = "RatedTransaction.listOpenBetweenTwoDates", query = "SELECT r FROM RatedTransaction r join fetch r.priceplan join fetch r.tax join fetch r.billingAccount join fetch r.seller where "
-                + " r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
+        @NamedQuery(name = "RatedTransaction.listNotOpenedBetweenTwoDates", query = "SELECT r FROM RatedTransaction r join fetch r.priceplan join fetch r.billingAccount where "
+                + " r.status!=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
                 + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.usageDate desc "),
         @NamedQuery(name = "RatedTransaction.deleteNotOpenBetweenTwoDates", query = "delete FROM RatedTransaction r where "
                 + " r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.OPEN " + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate ") })
@@ -541,7 +543,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     public RatedTransaction(WalletOperation walletOperation) {
 
         super();
-
+        this.walletOperations= new HashSet<>(Arrays.asList(walletOperation));
         this.code = walletOperation.getCode();
         this.description = walletOperation.getDescription();
         this.chargeInstance = walletOperation.getChargeInstance();

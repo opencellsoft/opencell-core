@@ -35,8 +35,8 @@ public interface CalendarRs extends IBaseRs {
      * @param postData The calendar's data
      * @return Request processing status
      */
-    @Path("/")
     @POST
+    @Path("/")
     ActionStatus create(CalendarDto postData);
 
     /**
@@ -45,8 +45,8 @@ public interface CalendarRs extends IBaseRs {
      * @param postData calendar infos
      * @return Request processing status
      */
-    @Path("/")
     @PUT
+    @Path("/")
     ActionStatus update(CalendarDto postData);
 
     /**
@@ -55,8 +55,8 @@ public interface CalendarRs extends IBaseRs {
      * @param calendarCode The calendar's code
      * @return calendar if exists
      */
-    @Path("/")
     @GET
+    @Path("/")
     GetCalendarResponse find(@QueryParam("calendarCode") String calendarCode);
     
     /**
@@ -65,8 +65,8 @@ public interface CalendarRs extends IBaseRs {
      * @param date the date to check if is a working date or not
      * @return the banking date status
      */
-    @Path("/bankingDateStatus")
     @GET
+    @Path("/bankingDateStatus")
     BankingDateStatusResponse getBankingDateStatus(@QueryParam("date") @RestDateParam Date date);
 
     /**
@@ -74,8 +74,9 @@ public interface CalendarRs extends IBaseRs {
      * 
      * @return list of all calendars
      */
+    @GET 
     @Path("/list")
-    @GET ListCalendarResponse list();
+    ListCalendarResponse list();
 
     /**
      * Remove calendar with a given code.
@@ -83,8 +84,9 @@ public interface CalendarRs extends IBaseRs {
      * @param calendarCode The calendar's code
      * @return action result
      */
+    @DELETE 
     @Path("/{calendarCode}")
-    @DELETE ActionStatus remove(@PathParam("calendarCode") String calendarCode);
+    ActionStatus remove(@PathParam("calendarCode") String calendarCode);
 
     /**
      * Create new or update an existing calendar with a given code.
@@ -92,7 +94,8 @@ public interface CalendarRs extends IBaseRs {
      * @param postData The calendars data
      * @return Request processing status
      */
+    @POST 
     @Path("/createOrUpdate")
-    @POST ActionStatus createOrUpdate(CalendarDto postData);
+    ActionStatus createOrUpdate(CalendarDto postData);
 
 }

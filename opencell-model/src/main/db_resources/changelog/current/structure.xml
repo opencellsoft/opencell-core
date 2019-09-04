@@ -128,7 +128,8 @@
             <column name="uuid" type="varchar(60)" />
         </addColumn>
         <sql>update ${db.schema.adapted}adm_notification set uuid = id</sql>
-        <sql>update ${db.schema.adapted}adm_notif_email set email_template_id=NEXTVAL('${db.schema.adapted}com_msg_tmpl_seq')</sql>
+        <sql dbms="postgres">update ${db.schema.adapted}adm_notif_email set email_template_id=NEXTVAL('${db.schema.adapted}com_msg_tmpl_seq')</sql>
+        <sql dbms="mysql">update ${db.schema.adapted}adm_notif_email set email_template_id = (select max(next_val) from ${db.schema.adapted}com_msg_tmpl_seq);</sql>
         <sql>
             INSERT INTO ${db.schema.adapted}com_message_template(id, version, created, code, subject, textcontent, htmlcontent, media)   
             SELECT email_template_id, 0, now(), notif.code, email_subject, email_body, email_html_body, 'EMAIL' as media
@@ -199,11 +200,11 @@
       <changeSet id="#4207_2019042903" author="MohamedElYoussoufi" dbms="mysql">
       
       	<sql>
-        	 update ${db.schema.adapted}billing_rated_transaction rt join ${db.schema.adapted}billing_subscription s on s.id=rt.subscription_id  set offer_id = s.offer_id where rt.subscription_id is not null
+        	 update ${db.schema.adapted}billing_rated_transaction rt join ${db.schema.adapted}billing_subscription s on s.id=rt.subscription_id  set rt.offer_id = s.offer_id where rt.subscription_id is not null
         </sql>
         
         <sql>
-        	update ${db.schema.adapted}billing_wallet_operation wo join ${db.schema.adapted}billing_subscription s on s.id=wo.subscription_id  set offer_id = s.offer_id where wo.subscription_id is not null
+        	update ${db.schema.adapted}billing_wallet_operation wo join ${db.schema.adapted}billing_subscription s on s.id=wo.subscription_id  set wo.offer_id = s.offer_id where wo.subscription_id is not null
 		</sql>
       
       </changeSet>
@@ -249,11 +250,13 @@
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
        <sql>CREATE INDEX rt_subscription_index ON ${db.schema.adapted}billing_rated_transaction  (subscription_id, invoice_id, usage_date)</sql>
        <sql>CREATE INDEX rt_ba_invoice_index ON ${db.schema.adapted}billing_rated_transaction  (billing_account__id, invoice_id, usage_date)</sql>
-       <sql>CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
-       <sql>CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
+        <sql dbms="postgres">CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
+        <sql dbms="mysql">CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el)</sql>
+        <sql dbms="postgres">CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
+        <sql dbms="mysql">CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el)</sql>
     </changeSet>
 
-    <changeSet id="#4282_20190524" author="AndriusKarpavicius">
+    <changeSet id="#4282_20190524" author="AndriusKarpavicius" dbms="postgres">
         <sql>DROP INDEX rt_ba_invoice_index</sql>
         <sql>DROP INDEX rt_subscription_index</sql>
         <sql>DROP INDEX transaction_billing_index</sql>
@@ -264,7 +267,14 @@
         <sql>CREATE INDEX rt_invoice_index ON billing_rated_transaction (invoice_id, invoice_sub_category_id, wallet_id) where status='BILLED'</sql>
         <sql>CREATE INDEX rt_order_index ON billing_rated_transaction (order_number, status, usage_date) where order_number is not null</sql>
     </changeSet>
-
+    <!-- MySQL currently doesn't support conditional indexes -->
+    <changeSet id="#4282_20190524-MS" author="MohamedSTITANE" dbms="mysql">
+        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON billing_rated_transaction (billing_account__id, usage_date, service_instance_id)</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON billing_rated_transaction (billing_account__id, usage_date, subscription_id)</sql>
+        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON billing_rated_transaction (subscription_id, usage_date, service_instance_id)</sql>
+        <sql>CREATE INDEX rt_invoice_index ON billing_rated_transaction (invoice_id, invoice_sub_category_id, wallet_id)</sql>
+        <sql>CREATE INDEX rt_order_index ON billing_rated_transaction (order_number, status, usage_date)</sql>
+    </changeSet>
 
 <!-- Takes many hours on 30M RT
     <changeSet id="#4282_20190520-P" author="AndriusKarpavicius" dbms="postgresql">
@@ -292,10 +302,10 @@
 
     <changeSet id="#4290_20190520-M" author="AndriusKarpavicius" dbms="mysql">
         <sql>update ${db.schema.adapted}billing_service_instance si join ${db.schema.adapted}cat_service_template st on si.service_template_id = st.id
-                set si.minimum_amount_el = st.minimum_amount_el, siminimum_label_el = st.minimum_label_el where si.minimum_amount_el is not null
+                set si.minimum_amount_el = st.minimum_amount_el, si.minimum_label_el = st.minimum_label_el where si.minimum_amount_el is not null
         </sql>
         <sql>update ${db.schema.adapted}billing_service_instance si join ${db.schema.adapted}cat_service_template st on si.service_template_id = st.id
-                set si.minimum_amount_el_sp = st.minimum_amount_el_sp, siminimum_label_el_sp = st.minimum_label_el_sp where si.minimum_amount_el_sp is not null
+                set si.minimum_amount_el_sp = st.minimum_amount_el_sp, si.minimum_label_el_sp = st.minimum_label_el_sp where si.minimum_amount_el_sp is not null
         </sql>
     </changeSet>
     
@@ -1183,7 +1193,6 @@
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}flat_file_seq values(1)</sql>
-        <sql>CREATE INDEX flat_file_code_index ON ${db.schema.adapted} flat_file(code)</sql>
     </changeSet>
 
     <changeSet id="#4371_20190620_4" author="AbdellatifBARI">
@@ -1210,9 +1219,10 @@
         <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari6yr9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="flat_file" />
         <addForeignKeyConstraint baseColumnNames="file_format_id" baseTableName="flat_file" constraintName="fk_d4iavkklx1qg1ani36bari5o5i" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_format" />
+        <sql dbms="mysql">CREATE INDEX flat_file_code_index ON ${db.schema.adapted}flat_file(code)</sql>
     </changeSet>
     <changeSet id="#4371_20190620_5" author="AbdellatifBARI" dbms="postgresql">
-        <sql>CREATE INDEX flat_file_code_index ON ${db.schema.adapted} flat_file(lower(code))</sql>
+        <sql>CREATE INDEX flat_file_code_index ON ${db.schema.adapted}flat_file(lower(code))</sql>
     </changeSet>
 
     <changeSet id="#4160_20190105 - Accounting Writing" author="MounirBOUKAYOUA">
@@ -1295,7 +1305,7 @@
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_mcols where cft_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob')</sql>
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob'</sql>           
     </changeSet> 
-    <changeSet id="#4392_20190625" author="AndriusKarpavicius">
+    <changeSet id="#4392_20190625" author="AndriusKarpavicius" dbms="postgres">
         <sql>update ${db.schema.adapted}meveo_script_instance set reuse=0 where reuse is null</sql>
         <sql>update ${db.schema.adapted}meveo_script_instance set is_error=0 where is_error is null</sql>
         <sql>update ${db.schema.adapted}adm_notification set run_async=0 where run_async is null</sql>
@@ -1303,7 +1313,16 @@
         <addNotNullConstraint tableName="meveo_script_instance" columnName="is_error" columnDataType="${type.boolean}"/>
         <addNotNullConstraint tableName="adm_notification" columnName="run_async" columnDataType="${type.boolean}"/>
     </changeSet>
-    
+    <!-- addNotNullConstraint generates SQL with the default numeric value missing, which blocks the insertions-->
+    <changeSet id="#4392_20190625-UPDATED-20190827" author="MohamedSTITANE" dbms="mysql">
+        <sql>update ${db.schema.adapted}meveo_script_instance set reuse=0 where reuse is null</sql>
+        <sql>update ${db.schema.adapted}meveo_script_instance set is_error=0 where is_error is null</sql>
+        <sql>update ${db.schema.adapted}adm_notification set run_async=0 where run_async is null</sql>
+        <sql>ALTER TABLE ${db.schema.adapted}meveo_script_instance MODIFY `reuse` INT NOT NULL DEFAULT 0</sql>
+        <sql>ALTER TABLE ${db.schema.adapted}meveo_script_instance MODIFY is_error INT NOT NULL DEFAULT 0</sql>
+        <sql>ALTER TABLE ${db.schema.adapted}adm_notification MODIFY run_async INT NOT NULL DEFAULT 0;</sql>
+    </changeSet>
+
     <changeSet id="#4326_20190811" author="AndriusKarpavicius"> 
     	<addColumn tableName="billing_invoice">
     		<column name="prepaid" type="${type.boolean}" defaultValueNumeric="0">
