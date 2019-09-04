@@ -268,7 +268,7 @@ public class EDR extends BaseEntity {
     /**
      * EDR processing status
      */
-    @OneToOne(mappedBy = "edr", fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE }, orphanRemoval = true)
+    @OneToOne(mappedBy = "edr", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private EDRProcessingStatus processingStatus;
 
     @Transient

@@ -266,8 +266,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     /**
      * Rated transaction processing status
      */
-    @OneToOne(mappedBy = "ratedTransaction", fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
-            CascadeType.REMOVE }, orphanRemoval = true)
+    @OneToOne(mappedBy = "ratedTransaction", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private RatedTransactionProcessingStatus processingStatus;
 
     /**

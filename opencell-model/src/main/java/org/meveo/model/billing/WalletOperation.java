@@ -388,8 +388,7 @@ public class WalletOperation extends BusinessEntity {
     /**
      * Wallet operation processing status
      */
-    @OneToOne(mappedBy = "walletOperation", fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
-            CascadeType.REMOVE }, orphanRemoval = true)
+    @OneToOne(mappedBy = "walletOperation", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private WalletOperationProcessingStatus processingStatus;
 
     public WalletInstance getWallet() {
