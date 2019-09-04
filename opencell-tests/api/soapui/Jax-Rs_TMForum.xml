@@ -31400,6 +31400,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <amountWithTax>10.500000000000</amountWithTax>
   <amountTax>0.500000000000</amountTax>
   <code>${#Project#baseEntityPrefix}_OST</code>
+  <status>BILLED</status>
   <description>Termination charge</description>
   <unityDescription>1</unityDescription>
   <priceplanCode>${#Project#baseEntityPrefix}_OST</priceplanCode>
@@ -31427,6 +31428,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <amountWithTax>-21.000000000000</amountWithTax>
   <amountTax>-1.000000000000</amountTax>
   <code>${#Project#baseEntityPrefix}_REC1</code>
+  <status>BILLED</status>
   <description>Recurring charge</description>
   <unityDescription>1</unityDescription>
   <priceplanCode>${#Project#baseEntityPrefix}_REC1</priceplanCode>
@@ -32242,6 +32244,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <amountWithTax>10.500000000000</amountWithTax>
   <amountTax>0.500000000000</amountTax>
   <code>${#Project#baseEntityPrefix}_OST</code>
+  <status>BILLED</status>
   <description>Termination charge</description>
   <unityDescription>1</unityDescription>
   <priceplanCode>${#Project#baseEntityPrefix}_OST</priceplanCode>
@@ -32384,6 +32387,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                                  <amountWithTax>-31.500000000000</amountWithTax>
                                  <amountTax>-1.500000000000</amountTax>
                                  <code>${#Project#baseEntityPrefix}_REC1</code>
+                                 <status>BILLED</status>
                                  <description>Recurring charge</description>
                                  <unityDescription>1</unityDescription>
                                  <priceplanCode>${#Project#baseEntityPrefix}_REC1</priceplanCode>
