@@ -44,11 +44,4 @@ public class GenericApiLoadService extends GenericApiService {
                                 Collections.singletonMap("data",persistenceService.findById(id, searchConfig.getFetchFields()))));
     }
 
-    private Class getEntityClass(String entityName) {
-        checkEntityName(entityName);
-        Class entityClass = entitiesByName.get(entityName.toLowerCase());
-        checkEntityClass(entityClass);
-        return entityClass;
-    }
-
 }
