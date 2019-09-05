@@ -1,32 +1,35 @@
 package org.meveo.apiv2;
 
-import org.meveo.api.dto.GenericPagingAndFiltering;
+import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.common.LinkGenerator;
 import org.meveo.apiv2.services.generic.GenericApiLoadService;
 import org.meveo.apiv2.services.generic.GenericApiAlteringService;
+import org.meveo.apiv2.services.generic.GenericRequestMapper;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.Response;
 import java.util.Collections;
 
+@Stateless
 public class GenericResourceImpl implements GenericResource {
+    private final GenericRequestMapper genericRequestMapper = new GenericRequestMapper();
     @Inject
     private GenericApiLoadService loadService;
-    
     @Inject
     private GenericApiAlteringService genericApiAlteringService;
 
     @Override
     public Response getAll(String entityName, GenericPagingAndFiltering searchConfig) {
-        return Response.ok().entity(loadService.findPaginatedRecords(entityName, searchConfig))
+        return Response.ok().entity(loadService.findPaginatedRecords(entityName, genericRequestMapper.mapTo(searchConfig), searchConfig.getGenericFields()))
                 .links(buildPaginatedResourceLink(entityName)).build();
     }
     
     @Override
     public Response get(String entityName, Long id, GenericPagingAndFiltering searchConfig) {
-        return loadService.findByClassNameAndId(entityName, id, searchConfig)
+        return loadService.findByClassNameAndId(entityName, id, genericRequestMapper.mapTo(searchConfig), searchConfig.getGenericFields())
                 .map(deletedEntity -> Response.ok().entity(deletedEntity).links(buildSingleResourceLink(entityName, id)).build())
                 .orElseThrow(NotFoundException::new);
     }
