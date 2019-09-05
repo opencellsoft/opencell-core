@@ -1478,13 +1478,11 @@
             <column name="current_directory" type="varchar(255)" />
         </addColumn>
     </changeSet>
-    
-    <changeSet id="#4313_17062019" author="mohamed.el.youssoufi">
-		<addColumn tableName="wf_generic_workflow">
-			<column name="cf_values_accum" type="${type.json}"></column>
-			<column name="cf_values" type="${type.json}"></column>
-			<column name="uuid" type="varchar(60)" />
-		</addColumn>
-	</changeSet>
+    <changeSet id="#4550_20190904" author="AbdellatifBARI">
+        <addColumn tableName="billing_trading_country">
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
