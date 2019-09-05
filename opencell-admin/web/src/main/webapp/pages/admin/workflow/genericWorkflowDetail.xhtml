@@ -1,7 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
@@ -225,6 +226,9 @@
                         </p:panel>
                     </p:outputPanel>
                 </p:tab>
+                <hftl:formPanel formId="customFieldsForm" backingBean="#{genericWorkflowBean}">
+                	<hftl:customFields backingBean="#{genericWorkflowBean}"/>
+                </hftl:formPanel>
 			</p:tabView>
 		</p:panel>
 	</ui:define>
