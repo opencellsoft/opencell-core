@@ -18,14 +18,9 @@ import java.util.Set;
 
 public class JsonGenericMapper extends ObjectMapper{
     private static final String[] forbiddenFieldNames = {
-            "NB_DECIMALS",
-            "historized",
-            "notified",
-            "NB_PRECISION",
-            "appendGeneratedCode",
-            "serialVersionUID",
-            "transient",
-            "codeChanged"
+            "NB_DECIMALS", "historized", "notified", "NB_PRECISION", "appendGeneratedCode", "serialVersionUID", "transient", "codeChanged",
+            "version", "uuid", "cfValuesNullSafe", "cfAccumulatedValuesNullSafe", "descriptionOrCode", "descriptionAndCode", "referenceCode",
+            "referenceDescription"
     };
     private final SimpleFilterProvider simpleFilterProvider;
 
@@ -33,31 +28,19 @@ public class JsonGenericMapper extends ObjectMapper{
         registerModule(new LazyProxyModule());
         setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
-
-        addMixIn(Object.class, ForbiddenFieldsMixIn.class);
         simpleFilterProvider = new SimpleFilterProvider();
-        simpleFilterProvider
-                .addFilter("ForbiddenFieldsFilter", SimpleBeanPropertyFilter.serializeAllExcept(forbiddenFieldNames));
-
-        addMixIn(BaseEntity.class, CyclicEntitySubObjectFieldFilterMixIn.class);
-        simpleFilterProvider
-                .addFilter("CyclicEntitySubObjectFieldFilterMixIn", SimpleBeanPropertyFilter.serializeAllExcept(forbiddenFieldNames));
-
+        addMixIn(BaseEntity.class, ForbiddenFieldsMixIn.class);
+        simpleFilterProvider.addFilter("ForbiddenFieldsFilter", SimpleBeanPropertyFilter.serializeAllExcept(forbiddenFieldNames));
         addMixIn(GenericPaginatedResource.class, GenericPaginatedResourceMixIn.class);
-        simpleFilterProvider
-                .addFilter("GenericPaginatedResourceFilter", SimpleBeanPropertyFilter.filterOutAllExcept("data","total","offset","limit"));
-
+        simpleFilterProvider.addFilter("GenericPaginatedResourceFilter", SimpleBeanPropertyFilter.filterOutAllExcept("data","total","offset","limit"));
     }
 
     public String toJson(Set<String> fields, Class entityClass, Object dtoToSerialize) {
         if(fields != null && !fields.isEmpty()){
             addMixIn(entityClass, EntityFieldsFilterMixIn.class);
-            simpleFilterProvider
-                    .addFilter("EntityFieldsFilter", SimpleBeanPropertyFilter.filterOutAllExcept(fields));
-
+            simpleFilterProvider.addFilter("EntityFieldsFilter", SimpleBeanPropertyFilter.filterOutAllExcept(fields));
             addMixIn(BaseEntity.class, EntitySubObjectFieldFilterMixIn.class);
-            simpleFilterProvider
-                    .addFilter("EntitySubObjectFieldFilter", new GenericSimpleBeanPropertyFilter(getEntitySubFieldsToInclude(fields)));
+            simpleFilterProvider.addFilter("EntitySubObjectFieldFilter", new GenericSimpleBeanPropertyFilter(getEntitySubFieldsToInclude(fields)));
         }
         setFilterProvider(simpleFilterProvider);
         try {
@@ -67,8 +50,10 @@ public class JsonGenericMapper extends ObjectMapper{
         }
     }
 
-
     private Set<String>  getEntitySubFieldsToInclude(Set<String> fields) {
+        if(fields == null ){
+            return Collections.emptySet();
+        }
         Set<String> filteredSubFields = new HashSet<>();
         Iterator<String> iterator = fields.iterator();
         iterator.forEachRemaining(s -> {
@@ -82,11 +67,8 @@ public class JsonGenericMapper extends ObjectMapper{
     @JsonFilter("EntityFieldsFilter")
     private abstract class EntityFieldsFilterMixIn {}
 
-    @JsonFilter("CyclicEntitySubObjectFieldFilterMixIn")
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-    private abstract class CyclicEntitySubObjectFieldFilterMixIn {}
-
     @JsonFilter("EntitySubObjectFieldFilter")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private abstract class EntitySubObjectFieldFilterMixIn {}
 
     @JsonFilter("ForbiddenFieldsFilter")
