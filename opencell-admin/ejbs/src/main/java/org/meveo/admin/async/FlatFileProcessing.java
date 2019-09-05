@@ -221,6 +221,7 @@ public class FlatFileProcessing {
      *
      * @param fileOriginalName file original name that was processed
      * @param fileCurrentName file current name that was processed
+     * @param currentDirectory current directory
      * @param errors Processed flat file errors
      * @param processSuccess Number of items processed successfully
      * @param processedError Number of items processed with failure
@@ -228,7 +229,7 @@ public class FlatFileProcessing {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void updateFlatFile(String fileOriginalName, String fileCurrentName, List<String> errors, long processSuccess, long processedError, String jobCode) {
+    public void updateFlatFile(String fileOriginalName, String fileCurrentName, String currentDirectory, List<String> errors, long processSuccess, long processedError, String jobCode) {
         try {
             String[] param = fileOriginalName.split("_");
             String code = param.length > 0 ? param[0] : null;
@@ -242,10 +243,11 @@ public class FlatFileProcessing {
             }
             FlatFile flatFile = flatFileService.findByCode(code);
             if (flatFile == null) {
-                flatFileService.create(fileOriginalName, fileCurrentName, null, errorMessage, status, jobCode, 1, new Long(processSuccess).intValue(),
+                flatFileService.create(fileOriginalName, fileCurrentName, currentDirectory, null, errorMessage, status, jobCode, 1, new Long(processSuccess).intValue(),
                         new Long(processedError).intValue());
             } else {
                 flatFile.setFileCurrentName(fileCurrentName);
+                flatFile.setCurrentDirectory(currentDirectory);
                 flatFile.setFlatFileJobCode(jobCode);
                 flatFile.setProcessingAttempts(flatFile.getProcessingAttempts() != null ? flatFile.getProcessingAttempts() + 1 : 1);
                 flatFile.setLinesInSuccess(new Long(processSuccess).intValue());

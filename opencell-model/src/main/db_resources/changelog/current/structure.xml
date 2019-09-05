@@ -1476,6 +1476,9 @@
             <column name="file_current_name" type="varchar(255)" />
         </addColumn>
     </changeSet>
-
-
+    <changeSet id="#4538_20190829" author="AbdellatifBARI">
+        <addColumn tableName="flat_file">
+            <column name="current_directory" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
