@@ -622,7 +622,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param lastTransactionDate date of last transaction
      * @param instantiateMinRts Should rated transactions to reach minimum invoicing amount be checked and instantiated
      * @param isDraft Is this a draft invoice
-     * @param assignNumber Should a number be assigned to the invoice
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
@@ -1977,7 +1976,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param produceXml To produce xml invoice file
      * @param producePdf To produce pdf invoice file
      * @param generateAO To generate Account operations
-     * @param invoice Invoice to operate on
+     * @param invoiceId  id of Invoice to operate on
      * @param isDraft Is it a draft invoice
      * @throws BusinessException General business exception
      * @throws InvoiceExistException Invoice already exist exception
@@ -3252,7 +3251,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param seller
      * @param billingAccount
      * @param invoiceType
-     * @return
+     * @return invoice
      * @throws EntityDoesNotExistsException
      * @throws BusinessApiException
      * @throws BusinessException
