@@ -49,11 +49,25 @@ public class FlatFile extends BusinessEntity {
     private static final long serialVersionUID = -4989724064567423956L;
 
     /**
-     * File name.
+     * File original name.
      */
-    @Column(name = "file_name", length = 255)
+    @Column(name = "file_original_name", length = 255)
     @Size(max = 255)
-    private String fileName;
+    private String fileOriginalName;
+
+    /**
+     * File current name.
+     */
+    @Column(name = "file_current_name", length = 255)
+    @Size(max = 255)
+    private String fileCurrentName;
+
+    /**
+     * Current directory.
+     */
+    @Column(name = "current_directory", length = 255)
+    @Size(max = 255)
+    private String currentDirectory;
 
     /**
      * File status
@@ -107,21 +121,57 @@ public class FlatFile extends BusinessEntity {
     private String flatFileJobCode;
 
     /**
-     * Gets the fileName
+     * Gets the fileOriginalName
      *
-     * @return the fileName
+     * @return the fileOriginalName
      */
-    public String getFileName() {
-        return fileName;
+    public String getFileOriginalName() {
+        return fileOriginalName;
     }
 
     /**
-     * Sets the fileName.
+     * Sets the fileOriginalName.
      *
-     * @param fileName the new fileName
+     * @param fileOriginalName the new fileOriginalName
      */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFileOriginalName(String fileOriginalName) {
+        this.fileOriginalName = fileOriginalName;
+    }
+
+    /**
+     * Gets the fileCurrentName
+     *
+     * @return the fileCurrentName
+     */
+    public String getFileCurrentName() {
+        return fileCurrentName;
+    }
+
+    /**
+     * Sets the fileCurrentName.
+     *
+     * @param fileCurrentName the new fileCurrentName
+     */
+    public void setFileCurrentName(String fileCurrentName) {
+        this.fileCurrentName = fileCurrentName;
+    }
+
+    /**
+     * Gets the currentDirectory
+     *
+     * @return the currentDirectory
+     */
+    public String getCurrentDirectory() {
+        return currentDirectory;
+    }
+
+    /**
+     * Sets the currentDirectory.
+     *
+     * @param currentDirectory the new currentDirectory
+     */
+    public void setCurrentDirectory(String currentDirectory) {
+        this.currentDirectory = currentDirectory;
     }
 
     /**

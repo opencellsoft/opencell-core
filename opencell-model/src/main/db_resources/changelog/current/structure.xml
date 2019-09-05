@@ -1465,5 +1465,20 @@
                                  referencedColumnNames="id" referencedTableName="ar_payment_token" />
 
     </changeSet>
-  
+
+    <changeSet id="#4512_20190819" author="AbdellatifBARI">
+        <dropColumn tableName="flat_file">
+            <column name="file_name"></column>
+        </dropColumn>
+
+        <addColumn tableName="flat_file">
+            <column name="file_original_name" type="varchar(255)" />
+            <column name="file_current_name" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="#4538_20190829" author="AbdellatifBARI">
+        <addColumn tableName="flat_file">
+            <column name="current_directory" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
