@@ -18,7 +18,6 @@ import org.meveo.admin.async.UsageRatingAsync;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.rating.EDR;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.EdrService;
@@ -69,17 +68,17 @@ public class UsageRatingJobBean extends BaseJobBean {
                 log.warn("Cant get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
             }
 
-            List<EDR> edrs = edrService.getEDRsToRate(rateUntilDate, ratingGroup, PROCESS_NR_IN_JOB_RUN);
+            List<Long> edrIds = edrService.getEDRsToRate(rateUntilDate, ratingGroup, PROCESS_NR_IN_JOB_RUN);
 
-            result.setNbItemsToProcess(edrs.size());
+            result.setNbItemsToProcess(edrIds.size());
 
             List<Future<String>> futures = new ArrayList<>();
-            SubListCreator<EDR> subListCreator = new SubListCreator(edrs, nbRuns.intValue());
-            log.info("Will rate {} EDRS", edrs.size());
+            SubListCreator<Long> subListCreator = new SubListCreator(edrIds, nbRuns.intValue());
+            log.info("Will rate {} EDRS", edrIds.size());
 
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                futures.add(usageRatingAsync.launchAndForget((List<EDR>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
+                futures.add(usageRatingAsync.launchAndForget(subListCreator.getNextWorkSet(), result, lastCurrentUser));
 
                 if (subListCreator.isHasNext()) {
                     try {
@@ -106,8 +105,8 @@ public class UsageRatingJobBean extends BaseJobBean {
             }
 
             // Check if there are any more EDRS to process and mark job as completed if there are none
-            edrs = edrService.getEDRsToRate(rateUntilDate, ratingGroup, 1);
-            result.setDone(edrs.isEmpty());
+            edrIds = edrService.getEDRsToRate(rateUntilDate, ratingGroup, 1);
+            result.setDone(edrIds.isEmpty());
 
         } catch (Exception e) {
             log.error("Failed to run usage rating job", e);

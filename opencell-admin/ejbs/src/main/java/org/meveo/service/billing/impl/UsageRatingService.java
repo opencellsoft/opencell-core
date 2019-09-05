@@ -592,18 +592,19 @@ public class UsageRatingService implements Serializable {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void ratePostpaidUsage(EDR edr) throws BusinessException, RatingException {
+    public void ratePostpaidUsage(Long edrId) throws BusinessException, RatingException {
 
         try {
+            EDR edr = getEntityManager().find(EDR.class, edrId);
             rateUsageWithinTransaction(edr, false, false, 0, 0);
         } catch (RatingException e) {
-            log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
-            usageRatingServiceNewTX.rejectEDR(edr, e);
+            log.trace("Failed to rate EDR {}: {}", edrId, e.getRejectionReason());
+            usageRatingServiceNewTX.rejectEDR(edrId, e);
             throw e;
 
         } catch (BusinessException e) {
-            log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
-            usageRatingServiceNewTX.rejectEDR(edr, e);
+            log.error("Failed to rate EDR {}: {}", edrId, e.getMessage(), e);
+            usageRatingServiceNewTX.rejectEDR(edrId, e);
             throw e;
         }
     }
@@ -983,12 +984,12 @@ public class UsageRatingService implements Serializable {
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void rejectEDR(EDR edr, Exception e) {
+    public void rejectEDR(Long edrId, Exception e) {
         String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage(), 255, true);
-        EDRProcessingStatus edrStatus = new EDRProcessingStatus(edr.getId(), EDRStatusEnum.REJECTED, rejectReason);
+        EDRProcessingStatus edrStatus = new EDRProcessingStatus(edrId, EDRStatusEnum.REJECTED, rejectReason);
         getEntityManager().persist(edrStatus);
 
-        edr = edrService.findById(edr.getId());
+        EDR edr = edrService.findById(edrId);
 
         rejectedEdrProducer.fire(edr);
     }

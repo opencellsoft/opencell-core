@@ -99,8 +99,8 @@ public class EdrService extends PersistenceService<EDR> {
      * @return List of EDR's we can rate until a given date.
      */
     @SuppressWarnings("unchecked")
-    public List<EDR> getEDRsToRate(Date rateUntilDate, String ratingGroup, int nbToRetrieve) {
-        QueryBuilder qb = new QueryBuilder("select e from EDR e left join fetch e.processingStatus s", "e");
+    public List<Long> getEDRsToRate(Date rateUntilDate, String ratingGroup, int nbToRetrieve) {
+        QueryBuilder qb = new QueryBuilder("select e.id from EDR e left join e.processingStatus s", "e");
         qb.addSql("s is null");
         if (rateUntilDate != null) {
             qb.addCriterion("e.eventDate", "<", rateUntilDate, false);
@@ -110,11 +110,7 @@ public class EdrService extends PersistenceService<EDR> {
         }
         qb.addOrderMultiCriterion("e.subscription", true, "e.id", true);
 
-        try {
-            return qb.getQuery(getEntityManager()).setMaxResults(nbToRetrieve).setHint("org.hibernate.readOnly", true).getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
+        return qb.getQuery(getEntityManager()).setMaxResults(nbToRetrieve).getResultList();
     }
 
     /**
