@@ -67,6 +67,7 @@ import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.view.LazyDataModelWSize;
@@ -74,7 +75,6 @@ import org.omnifaces.cdi.Param;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -116,6 +116,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     @Inject
     @Param
     private Long adjustedInvoiceIdParam;
+
+    @Inject
+    private ServiceSingleton serviceSingleton;
 
     @Inject
     @Param
@@ -226,6 +229,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @param billingAccounts a billing accounts list
      * @return return true if BillingAccounts list is null or empty
      */
+    @SuppressWarnings("rawtypes")
     private boolean isNullOrEmpty(Object billingAccounts) {
         if (billingAccounts == null) {
             return true;
@@ -486,6 +490,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public boolean isPdfInvoiceAlreadyGenerated() {
+
         if (!pdfGenerated.containsKey(entity.getId())) {
             pdfGenerated.put(entity.getId(), invoiceService.isInvoicePdfExist(entity));
         }
@@ -495,12 +500,11 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public boolean isPdfInvoiceAlreadyGenerated(Long invoiceId) {
 
-        Invoice invoice = invoiceService.findById(invoiceId);
-        if (!pdfGenerated.containsKey(invoice.getId())) {
-            pdfGenerated.put(invoice.getId(), invoiceService.isInvoicePdfExist(invoice));
+        if (!pdfGenerated.containsKey(invoiceId)) {
+            Invoice invoice = invoiceService.findById(invoiceId);
+            pdfGenerated.put(invoiceId, invoiceService.isInvoicePdfExist(invoice));
         }
-
-        return pdfGenerated.get(invoice.getId());
+        return pdfGenerated.get(invoiceId);
     }
 
     public void excludeBillingAccounts(BillingRun billingrun) {
@@ -711,13 +715,13 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             if (billingAccountId != 0) {
                 BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
                 entity.setBillingAccount(billingAccount);
-                invoiceService.assignInvoiceNumber(entity);
+                entity = serviceSingleton.assignInvoiceNumber(entity);
             }
 
             super.saveOrUpdate(false);
         }
         if (isDetailed()) {
-            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, new Date());
+            invoiceService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, new Date());
             entity = invoiceService.update(entity);
 
         } else {
@@ -821,7 +825,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGeneratePdfBtnActive() {
-        if (invoiceService.isPrepaidReport(entity)) {
+        if (entity.isPrepaid()) {
             return false;
         }
         String value = ParamBean.getInstance().getProperty("billing.activateGenaratePdfBtn", "true");
@@ -837,7 +841,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGenerateXmlBtnActive() {
-        if (invoiceService.isPrepaidReport(entity)) {
+        if (entity.isPrepaid()) {
             return false;
         }
         String value = ParamBean.getInstance().getProperty("billing.activateGenarateXmlBtn", "true");
@@ -853,10 +857,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return true if the invoice is not a prepaid report
      */
     public boolean getSendByEmailBtnActive() {
-        if (invoiceService.isPrepaidReport(entity)) {
-            return false;
-        }
-        return true;
+        return !entity.isPrepaid();
     }
 
     public void sendInvoiceByEmail() throws BusinessException {
@@ -871,7 +872,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public LazyDataModelWSize<RatedTransaction> getRatedTransactions(InvoiceSubCategoryDTO invoiceSubCategoryDTO) {
         LazyDataModelWSize<RatedTransaction> lazyRatedTransactions = ratedTransactionsDM.get(invoiceSubCategoryDTO.getCode());
-        if (lazyRatedTransactions != null) {
+            if (lazyRatedTransactions != null) {
             return lazyRatedTransactions;
         }
 
@@ -900,10 +901,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return true if the invoice is not a prepaid report
      */
     public boolean getShowBtnNewIAAggregateds() {
-        if (invoiceService.isPrepaidReport(entity)) {
-            return false;
-        }
-        return true;
+        return !entity.isPrepaid();
     }
 
     /**
@@ -912,9 +910,6 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return true if the invoice is not a prepaid report
      */
     public boolean getShowBtnNewIADetailed() {
-        if (invoiceService.isPrepaidReport(entity)) {
-            return false;
-        }
-        return true;
+        return !entity.isPrepaid();
     }
 }

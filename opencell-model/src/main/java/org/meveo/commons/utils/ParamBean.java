@@ -198,7 +198,7 @@ public class ParamBean {
         if (currentInstance == null) {
             return multiTenancyEnabled;
         }
-        
+
         if (multiTenancyEnabled == null) {
             multiTenancyEnabled = Boolean.valueOf(currentInstance.getProperty("meveo.multiTenancy", "false"));
         }
@@ -216,7 +216,7 @@ public class ParamBean {
         if (currentInstance == null) {
             return null;
         }
-        
+
         if (!isMultitenancyEnabled() || "".equals(provider) || provider == null) {
             return currentInstance.getProperty("providers.rootDir", "./opencelldata") + File.separator + instance.getProperty("provider.rootDir", "default");
         }
@@ -399,6 +399,22 @@ public class ParamBean {
         // setInstance(new ParamBean(fileName));
         // log.info("-Fin saveProperties , result:" + result);
         return result;
+    }
+
+    /**
+     * Get property value as integer. Sets the property to a default value if value was not set previously.
+     * 
+     * @param key Property key
+     * @param defaultValue Default value
+     * @return Value of property, or a default value if it is not set yet
+     */
+    public int getPropertyAsInteger(String key, int defaultValue) {
+        int value = defaultValue;
+        try {
+            value = Integer.parseInt(getProperty("invoicing.invoiceCreationBatchSize", Integer.toString(defaultValue)));
+        } catch (NumberFormatException e) {
+        }
+        return value;
     }
 
     /**
@@ -625,7 +641,7 @@ public class ParamBean {
             if (instanceByProvider != null) {
                 return instanceByProvider.getDateTimeFormat();
             }
-            
+
         }
         return getDateTimeFormat();
     }

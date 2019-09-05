@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 public class StringUtils {
 
     public static final String CODE_REGEX = "^[@A-Za-z0-9_\\.\\/-]+$";
+    public static final String EMPTY = "";
 
     /**
      * Checks if string is in array of strings.
@@ -64,7 +65,11 @@ public class StringUtils {
      * @return True if value is null or is empty
      */
     public static boolean isBlank(String value) {
-        return (value == null || value.trim().length() == 0);
+        return (value == null || value.trim().isEmpty());
+    }
+
+    public static boolean isNotBlank(String value){
+        return !isBlank(value);
     }
 
     public static String concatenate(String... values) {

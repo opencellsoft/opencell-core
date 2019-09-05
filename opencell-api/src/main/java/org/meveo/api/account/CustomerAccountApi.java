@@ -1,20 +1,11 @@
 package org.meveo.api.account;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.CustomerAccountsDto;
+import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
@@ -48,13 +39,22 @@ import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 /**
  * CRUD API for {@link CustomerAccount}.
  *
  * @author Edward P. Legaspi
  * @author anasseh
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 8.0.0
  */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -384,11 +384,11 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
     public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances) throws Exception {
-        return find(customerAccountCode, calculateBalances, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+        return find(customerAccountCode, calculateBalances, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false);
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
-    public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances, CustomFieldInheritanceEnum inheritCF) throws Exception {
+    public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances, CustomFieldInheritanceEnum inheritCF, Boolean withAccountOperations) {
 
         if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
@@ -425,6 +425,18 @@ public class CustomerAccountApi extends AccountEntityApi {
             customerAccountDto.setTotalInvoiceBalance(totalInvoiceBalance);
             customerAccountDto.setCreditBalance(creditBalance);
             customerAccountDto.setAccountBalance(accountBalance);
+        }
+
+        if (withAccountOperations != null && withAccountOperations) {
+            List<AccountOperation> accountOperations = customerAccount.getAccountOperations();
+            if (accountOperations != null && !accountOperations.isEmpty()) {
+                List<AccountOperationDto> accountOperationsDto = new ArrayList<>();
+                for (AccountOperation accountOperation : accountOperations) {
+                    AccountOperationDto accountOperationDto = new AccountOperationDto(accountOperation, entityToDtoConverter.getCustomFieldsDTO(accountOperation, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+                    accountOperationsDto.add(accountOperationDto);
+                }
+                customerAccountDto.setAccountOperations(accountOperationsDto);
+            }
         }
 
         return customerAccountDto;
@@ -673,5 +685,27 @@ public class CustomerAccountApi extends AccountEntityApi {
 		
 		return result;
 	}
+
+    /**
+     * Transfer amount from a customer account to an other.
+     *
+     * @param transferCustomerAccountDto
+     */
+    public void transferAccount(TransferCustomerAccountDto transferCustomerAccountDto) {
+
+        if (StringUtils.isBlank(transferCustomerAccountDto.getFromCustomerAccountCode())) {
+            missingParameters.add("fromCustomerAccountCode");
+        }
+        if (StringUtils.isBlank(transferCustomerAccountDto.getToCustomerAccountCode())) {
+            missingParameters.add("toCustomerAccountCode");
+        }
+        if (StringUtils.isBlank(transferCustomerAccountDto.getAmount())) {
+            missingParameters.add("amount");
+        }
+        handleMissingParameters();
+
+        customerAccountService.transferAccount(transferCustomerAccountDto.getFromCustomerAccountCode(), transferCustomerAccountDto.getToCustomerAccountCode(),
+                transferCustomerAccountDto.getAmount());
+    }
 
 }

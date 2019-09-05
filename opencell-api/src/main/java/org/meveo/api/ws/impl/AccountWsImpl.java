@@ -87,7 +87,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  * @author anasseh
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 8.0.0
  */
 @WebService(serviceName = "AccountWs", endpointInterface = "org.meveo.api.ws.AccountWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -267,7 +267,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         GetCustomerAccountResponseDto result = new GetCustomerAccountResponseDto();
 
         try {
-            result.setCustomerAccount(customerAccountApi.find(customerAccountCode, calculateBalances, inheritCF != null ? inheritCF : CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+            result.setCustomerAccount(customerAccountApi.find(customerAccountCode, calculateBalances, inheritCF != null ? inheritCF : CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

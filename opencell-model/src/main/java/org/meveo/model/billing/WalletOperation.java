@@ -114,7 +114,14 @@ import org.meveo.model.rating.EDR;
                 + " AND o.wallet.userAccount=:userAccount"),
         @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
                 + " AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount"),
-        @NamedQuery(name = "WalletOperation.countNbrWalletsOperationByStatus", query = "select status, count(*) from WalletOperation group by status") })
+        @NamedQuery(name = "WalletOperation.countNbrWalletsOperationByStatus", query = "select status, count(*) from WalletOperation group by status"),
+        @NamedQuery(name = "WalletOperation.listNotOpenedWObetweenTwoDates", query = "SELECT o FROM WalletOperation o join fetch o.seller join fetch o.tax "
+                + "join fetch o.offerTemplate join fetch o.currency join fetch o.wallet join fetch o.chargeInstance WHERE o.status != org.meveo.model.billing.WalletOperationStatusEnum.OPEN AND  "
+                + ":firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate order by o.operationDate desc"),
+        @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.OPEN AND  "
+                + ":firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate"),
+        @NamedQuery(name = "WalletOperation.prepareToSafeDeleteNotOpenWObetweenTwoDates", query = "UPDATE WalletOperation o  SET o.edr = NULL, o.ratedTransaction=NULL WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.OPEN AND  "
+                + ":firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate")})
 public class WalletOperation extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -165,14 +172,16 @@ public class WalletOperation extends BusinessEntity {
     /**
      * Tax applied
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tax_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "tax_id", nullable = false)
+    @NotNull
     private Tax tax;
 
     /**
      * Tax percent applied
      */
-    @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
+    @NotNull
     private BigDecimal taxPercent;
 
     /**

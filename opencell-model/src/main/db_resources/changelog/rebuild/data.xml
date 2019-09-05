@@ -10915,7 +10915,6 @@
             <column name="description" value="Invoice for quote" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="invoice_sequence_id" valueNumeric="-4" />
-            <column name="occ_template_id" value="-25" />
             <column name="matching_auto" valueNumeric="0" />
             <column name="uuid" value="InvoiceType-QUOTE" />
         </insert>
@@ -11308,22 +11307,73 @@ public class PaymentCallBackScript extends Script {
 }
         ');]]></sql>
 
-        <sql><![CDATA[INSERT INTO ${db.schema.adapted}ar_payment_gateway VALUES (-10, 0, 0, now(), NULL, 'customGatewayDemo', 'A customGateway for Demo', 'CUSTOM', 'CARD', NULL, NULL, -10, NULL, NULL,
-          '3bb099a3-e72d-49ea-9d96-908e74569e02', 'opencell.admin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);]]></sql>
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}ar_payment_gateway (id, version, disabled, created, updated, code, description, type, payment_method, card_type,
+        implementation_class_name, script_instance_id, trading_currency_id, application_el, uuid, creator) VALUES (-10, 0, 0, now(), NULL, 'customGatewayDemo', 'A customGateway for Demo', 'CUSTOM', 'CARD', NULL, NULL, -10, NULL, NULL,
+          '3bb099a3-e72d-49ea-9d96-908e74569e02', 'opencell.admin');]]></sql>
 
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}adm_notification VALUES (-10, 0, 0, now(), NULL, 'PaymentCallBack', NULL, 'org.meveo.model.notification.InboundRequest', 
           '#{event.pathInfo.startsWith("/DEMO/custom_payment-callback?")}', 'INBOUND_REQ', 'opencell.admin', NULL, NULL, NULL, -11, 0);]]></sql>
 
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}adm_notification_params VALUES (-10, '#{event.getParameters()}', 'params');]]></sql>
-        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_job_instance VALUES (-16, 6, 0, now(), now(), 'PaymentCard_Job', NULL, 'ACCOUNT_RECEIVABLES',
- 'PaymentJob', NULL, 'opencell.admin', 'opencell.admin', NULL, NULL, '2c72550b-4e79-4dab-a8bd-df8499abd25b', NULL, 1, '{"PaymentJob_creditOrDebit":[{"string":"Credit"}],"waitingMillis":[{"long":0}],
- "PaymentJob_matchingAO":[{"string":"YES"}],"PaymentJob_cardOrDD":[{"string":"CARD"}],"PaymentJob_createAO":[{"string":"YES"}],"nbRuns":[{"long":1}],"PaymentJob_AOorCA":[{"string":"CA"}]}', NULL);]]></sql>
-        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_job_instance VALUES (-17, 3, 0, now(), now(), 'RefundCard_Job', NULL, 'ACCOUNT_RECEIVABLES', 'PaymentJob',
- NULL, 'opencell.admin', 'opencell.admin', NULL, NULL, 'a4bb9554-85f3-4c0a-8f62-438fec7bdac2', NULL, 1, '{"PaymentJob_creditOrDebit":[{"string":"Debit"}],"waitingMillis":[{"long":0}],
- "PaymentJob_matchingAO":[{"string":"YES"}],"PaymentJob_cardOrDD":[{"string":"CARD"}],"PaymentJob_createAO":[{"string":"YES"}],"nbRuns":[{"long":1}],"PaymentJob_AOorCA":[{"string":"CA"}]}', NULL);]]></sql>
-
         <sql><![CDATA[ UPDATE ${db.schema.adapted}ar_payment_gateway set application_el ='#{"is already setup" eq "OK"}' where code <> 'customGatewayDemo';]]></sql>
 
+    </changeSet>
+    <changeSet author="MohamedSTITANE" id="rebuild-data-job-instances">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-16"/>
+            <column name="version" valueNumeric="6"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="updated" valueDate="now()"/>
+            <column name="code" value="PaymentCard_Job"/>
+            <column name="description" value="NULL"/>
+            <column name="job_category" value="ACCOUNT_RECEIVABLES"/>
+            <column name="job_template"  value="PaymentJob"/>
+            <column name="parametres" value="NULL"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="updater" value="opencell.admin"/>
+            <column name="timerentity_id" value="NULL"/>
+            <column name="following_job_id" value="NULL"/>
+            <column name="uuid" value="2c72550b-4e79-4dab-a8bd-df8499abd25b"/>
+            <column name="run_on_nodes" value="NULL"/>
+            <column name="single_node" valueNumeric="1"/>
+            <column name="cf_values" value="{&quot;PaymentJob_creditOrDebit&quot;:[{&quot;string&quot;:&quot;Credit&quot;}],&quot;waitingMillis&quot;:[{&quot;long&quot;:0}],&quot;PaymentJob_matchingAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;PaymentJob_cardOrDD&quot;:[{&quot;string&quot;:&quot;CARD&quot;}],&quot;PaymentJob_createAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;nbRuns&quot;:[{&quot;long&quot;:1}],&quot;PaymentJob_AOorCA&quot;:[{&quot;string&quot;:&quot;CA&quot;}]}"/>
+            <column name="cf_values_accum" value="NULL"/>
+            <column name="exclude_inv_without_amount" valueNumeric="0"/>
+        </insert>
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-17"/>
+            <column name="version" valueNumeric="3"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="now()"/>
+            <column name="updated" valueDate="now()"/>
+            <column name="code" value="RefundCard_Job"/>
+            <column name="description" value="NULL"/>
+            <column name="job_category" value="ACCOUNT_RECEIVABLES"/>
+            <column name="job_template"  value="PaymentJob"/>
+            <column name="parametres" value="NULL"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="updater" value="opencell.admin"/>
+            <column name="timerentity_id" value="NULL"/>
+            <column name="following_job_id" value="NULL"/>
+            <column name="uuid" value="a4bb9554-85f3-4c0a-8f62-438fec7bdac2"/>
+            <column name="run_on_nodes" value="NULL"/>
+            <column name="single_node" valueNumeric="1"/>
+            <column name="cf_values" value="{&quot;PaymentJob_creditOrDebit&quot;:[{&quot;string&quot;:&quot;Debit&quot;}],&quot;waitingMillis&quot;:[{&quot;long&quot;:0}],&quot;PaymentJob_matchingAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;PaymentJob_cardOrDD&quot;:[{&quot;string&quot;:&quot;CARD&quot;}],&quot;PaymentJob_createAO&quot;:[{&quot;string&quot;:&quot;YES&quot;}],&quot;nbRuns&quot;:[{&quot;long&quot;:1}],&quot;PaymentJob_AOorCA&quot;:[{&quot;string&quot;:&quot;CA&quot;}]}"/>
+            <column name="cf_values_accum" value="NULL"/>
+            <column name="exclude_inv_without_amount" valueNumeric="0"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="AndriusKarpavicius" id="rebuild-data-script-categories">
+        <insert tableName="meveo_script_instance_cat">
+            <column name="id" valueNumeric="-1" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="created" valueDate="now()" />
+            <column name="code" value="REPORT_EXTRACT" />
+            <column name="description" value="Report Extract" />
+        </insert>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-script-categories">

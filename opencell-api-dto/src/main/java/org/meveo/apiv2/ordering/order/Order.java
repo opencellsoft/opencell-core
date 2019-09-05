@@ -14,8 +14,6 @@ import java.util.List;
 @Value.Immutable
 @Value.Style(jdkOnly=true)
 @JsonDeserialize(as = ImmutableOrder.class)
-@XmlType(propOrder = { "id", "code", "description", "priority", "deliveryInstructions", "category", "status", "statusMessage", "billingCycle", "orderDate" })
-
 public interface Order extends Resource {
     @Nullable
     String getCode();

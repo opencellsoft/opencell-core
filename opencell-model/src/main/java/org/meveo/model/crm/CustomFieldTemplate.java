@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -57,7 +58,7 @@ import org.meveo.model.shared.DateUtils;
 
 /**
  * Custom field template
- * 
+ *
  * @author Andrius Karpavicius
  * @author Khalid HORRI
  * @author Abdellatif BARI
@@ -77,7 +78,8 @@ import org.meveo.model.shared.DateUtils;
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
         @NamedQuery(name = "CustomFieldTemplate.getCFTByAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo=:appliesTo order by cft.code", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-        @NamedQuery(name = "CustomFieldTemplate.getCFTsForAccumulation", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo='Seller' or cft.code in (SELECT cftu.code from CustomFieldTemplate cftu where cftu.appliesTo in :appliesTo group by cftu.code having count(cftu.code)>1) order by cft.code") })
+        @NamedQuery(name = "CustomFieldTemplate.getCFTsForAccumulation", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo='Seller' or cft.code in (SELECT cftu.code from CustomFieldTemplate cftu where cftu.appliesTo in :appliesTo group by cftu.code having count(cftu.code)>1) order by cft.code"),
+        @NamedQuery(name = "CustomFieldTemplate.getUniqueFromTable", query = "SELECT cft from CustomFieldTemplate cft where cft.uniqueConstraint = true and lower(cft.appliesTo) = :appliesTo") })
 public class CustomFieldTemplate extends EnableBusinessEntity implements Comparable<CustomFieldTemplate> {
 
     private static final long serialVersionUID = -1403961759495272885L;
@@ -85,6 +87,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     public static long DEFAULT_MAX_LENGTH_STRING = 50L;
 
     public static String ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR = " - ";
+    private static final String CUSTOM_TABLE_STRUCTURE_REGEX = "org.meveo.model.customEntities.CustomEntityTemplate - [a-zA-Z\\S]{1,}$";
 
     public enum GroupedCustomFieldTreeItemType {
 
@@ -119,6 +122,12 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Type(type = "numeric_boolean")
     @Column(name = "value_required")
     private boolean valueRequired;
+    /**
+     * Is value part of unique constraint
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "unique_constraint")
+    private boolean uniqueConstraint;
 
     /**
      * Values for selection from a picklist
@@ -360,7 +369,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * create a Map of attribute from sorted List
-     * 
+     *
      * @return a sorted LinkedHashMap values
      */
     public Map<String, String> getListValuesSorted() {
@@ -647,6 +656,10 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     public Long getMaxValue() {
         return maxValue;
+    }
+    
+    public Long getMaxValueOrDefault(Long defaultValue) {
+        return Optional.ofNullable(maxValue).orElse(defaultValue);
     }
 
     public void setMaxValue(Long maxValue) {
@@ -1020,6 +1033,14 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         this.hideInGUI = hideInGUI;
     }
 
+    public boolean isUniqueConstraint() {
+        return uniqueConstraint;
+    }
+
+    public void setUniqueConstraint(boolean uniqueConstraint) {
+        this.uniqueConstraint = uniqueConstraint;
+    }
+
     /**
      * Get a database field name derived from a code value. Lowercase and spaces replaced by "_".
      *
@@ -1073,5 +1094,10 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
      */
     public void setRoundingMode(RoundingModeEnum roundingMode) {
         this.roundingMode = roundingMode;
+    }
+
+    public String tableName() {
+        return Optional.ofNullable(this.entityClazz).filter(entityClazz -> entityClazz.matches(CUSTOM_TABLE_STRUCTURE_REGEX))
+                .map(tableName -> tableName.split(ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR)[1]).orElse(null);
     }
 }

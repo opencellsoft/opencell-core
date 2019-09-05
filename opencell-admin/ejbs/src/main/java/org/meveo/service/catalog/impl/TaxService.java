@@ -18,6 +18,7 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -62,6 +63,21 @@ public class TaxService extends BusinessService<Tax> {
             return getEntityManager().createNamedQuery("Tax.getZeroTax", Tax.class).setMaxResults(1).getSingleResult();
         } catch (NoResultException e) {
             throw new BusinessException("No tax defined with ZERO %");
+        }
+    }
+
+    /**
+     * Find a tax with a given percent
+     * 
+     * @param percent Percent to match
+     * @return A tax with zero percent
+     * @throws BusinessException When no tax with given % was found.
+     */
+    public Tax findTaxByPercent(BigDecimal percent) throws BusinessException {
+        try {
+            return getEntityManager().createNamedQuery("Tax.getTaxByPercent", Tax.class).setParameter("percent", percent).setMaxResults(1).getSingleResult();
+        } catch (NoResultException e) {
+            throw new BusinessException("No tax defined with " + percent.intValue() + " %");
         }
     }
 }

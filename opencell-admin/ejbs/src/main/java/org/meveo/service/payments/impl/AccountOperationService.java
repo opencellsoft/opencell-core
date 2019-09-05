@@ -18,34 +18,73 @@
  */
 package org.meveo.service.payments.impl;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
+import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.account.TransferAccountOperationDto;
+import org.meveo.api.dto.account.TransferCustomerAccountDto;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * AccountOperation service implementation.
  * 
  * @author anasseh
- * @lastModifiedVersion 5.3 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  */
 @Stateless
 public class AccountOperationService extends PersistenceService<AccountOperation> {
+
+    /** The customer account service. */
+    @Inject
+    private CustomerAccountService customerAccountService;
+
+    /** The o CC template service. */
+    @Inject
+    private OCCTemplateService oCCTemplateService;
+
+    /** The matching code service. */
+    @Inject
+    private MatchingCodeService matchingCodeService;
+
+    /**
+     * Account operation action Enum
+     */
+    public enum AccountOperationActionEnum {
+        s("Source AO"), t("transfer AO"), c("cancel AO");
+
+        private String label;
+
+        AccountOperationActionEnum(String label) {
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return this.label;
+        }
+    }
 
     /**
      * Gets the account operations.
@@ -244,6 +283,180 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             return (AccountOperation) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException ne) {
             return null;
+        }
+    }
+
+    /**
+     * Get the account operation reference
+     *
+     * @param accountOperationId        the account operation Id
+     * @param accountOperationReference the account operation reference
+     * @param accountOperationAction    the account operation action ('s' : source, 't' : transfer, 'c' cancelation)
+     * @return the account operation reference
+     */
+    public String getRefrence(Long accountOperationId, String accountOperationReference, String accountOperationAction) {
+        return !StringUtils.isBlank(accountOperationReference) ? accountOperationAction + "_" + accountOperationId + "_" + accountOperationReference : accountOperationReference;
+    }
+
+    /**
+     * Create the new account operation on the fromCustomerAccountCode to settle the old one.
+     *
+     * @param accountOperation the account operation to transfer
+     * @param amount           the amount to transfer
+     * @return the other credit and charge
+     * @throws BusinessException business exception
+     */
+    public OtherCreditAndCharge createFromAccountOperation(AccountOperation accountOperation, BigDecimal amount) throws BusinessException {
+
+        ParamBean paramBean = paramBeanFactory.getInstance();
+        String debitOccTemplateCode = null;
+
+        if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
+            debitOccTemplateCode = paramBean.getProperty("occ.transferAccountOperation.debit", "CRD_TRS");
+        } else if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
+            debitOccTemplateCode = paramBean.getProperty("occ.transferAccountOperation.debit", "DBT_TRS");
+        } else {
+            throw new BusinessException("Unrecognized operation category for the account operation with  " + accountOperation.getId() + "id");
+        }
+
+        OCCTemplate occTemplate = oCCTemplateService.findByCode(debitOccTemplateCode);
+        if (occTemplate == null) {
+            throw new BusinessException("Cannot find AO Template with code:" + debitOccTemplateCode);
+        }
+
+        OtherCreditAndCharge newAccountOperation = new OtherCreditAndCharge();
+        newAccountOperation.setMatchingAmount(BigDecimal.ZERO);
+        newAccountOperation.setMatchingStatus(MatchingStatusEnum.O);
+        newAccountOperation.setUnMatchingAmount(amount);
+        newAccountOperation.setAmount(amount);
+        newAccountOperation.setCustomerAccount(accountOperation.getCustomerAccount());
+        newAccountOperation.setAccountingCode(occTemplate.getAccountingCode());
+        newAccountOperation.setCode(occTemplate.getCode());
+        newAccountOperation.setDescription(occTemplate.getDescription());
+        newAccountOperation.setTransactionCategory(occTemplate.getOccCategory());
+        newAccountOperation.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
+        newAccountOperation.setTransactionDate(new Date());
+        newAccountOperation.setDueDate(new Date());
+
+        if (accountOperation.getCustomerAccount() != null) {
+            accountOperation.getCustomerAccount().getAccountOperations().add(newAccountOperation);
+        }
+        create(newAccountOperation);
+
+        newAccountOperation.setReference(getRefrence(newAccountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.c.name()));
+
+        List<Long> accountOperations = new ArrayList<>();
+        accountOperations.add(accountOperation.getId());
+        accountOperations.add(newAccountOperation.getId());
+        try {
+            matchingCodeService.matchOperations(accountOperation.getCustomerAccount().getId(), null, accountOperations, null);
+        } catch (Exception e) {
+            log.error("Error on payment callback processing:", e);
+            throw new BusinessException(e.getMessage(), e);
+        }
+        return newAccountOperation;
+    }
+
+    /**
+     * Create the new account operation on the toCustomerAccountCode which is equivalent to the transfer.
+     *
+     * @param accountOperation  the account operation to transfer
+     * @param toCustomerAccount the destination customer account
+     * @param amount            the amount to transfer
+     * @return the account operation.
+     */
+    public AccountOperation createToAccountOperation(AccountOperation accountOperation, CustomerAccount toCustomerAccount, BigDecimal amount) {
+
+        try {
+            AccountOperation newAccountOperation = (AccountOperation) BeanUtils.cloneBean(accountOperation);
+            newAccountOperation.setId(null);
+            newAccountOperation.setMatchingAmount(BigDecimal.ZERO);
+            newAccountOperation.setMatchingStatus(MatchingStatusEnum.O);
+            newAccountOperation.setUnMatchingAmount(amount);
+            newAccountOperation.setAmount(amount);
+            newAccountOperation.setCustomerAccount(toCustomerAccount);
+            newAccountOperation.setAccountingWritings(new ArrayList<>());
+            newAccountOperation.setInvoices(null);
+            newAccountOperation.setMatchingAmounts(new ArrayList<>());
+            newAccountOperation.setTransactionDate(new Date());
+            //newAccountOperation.setDueDate(new Date());
+            create(newAccountOperation);
+
+            newAccountOperation.setReference(getRefrence(newAccountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.t.name()));
+            return newAccountOperation;
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+            throw new BusinessException("Failed to create new account operation on the customer account " + toCustomerAccount.getCode(), e);
+        }
+    }
+
+    /**
+     * Transfer an account operation from a customer account to an other.
+     *
+     * @param accountOperation           the account operation
+     * @param transferCustomerAccountDto destination customer account
+     * @throws BusinessException business exception
+     */
+    public void transferAccountOperation(AccountOperation accountOperation, TransferCustomerAccountDto transferCustomerAccountDto) throws BusinessException {
+
+        String toCustomerAccountCode = transferCustomerAccountDto.getToCustomerAccountCode();
+        BigDecimal amount = transferCustomerAccountDto.getAmount();
+
+        // check if it is not the same account
+        if (toCustomerAccountCode.equalsIgnoreCase(accountOperation.getCustomerAccount().getCode())) {
+            throw new BusinessException("the source customer account is the same as the destination customer account");
+        }
+
+        CustomerAccount toCustomerAccount = customerAccountService.findByCode(toCustomerAccountCode);
+        if (toCustomerAccount == null) {
+            throw new BusinessException("The destination customer account with code : " + toCustomerAccountCode + " is not found");
+        }
+
+        // Create the new account operation on the fromCustomerAccountCode to settle the old one.
+        createFromAccountOperation(accountOperation, amount);
+
+        // Create the new account operation on the toCustomerAccountCode which is equivalent to the transfer.
+        createToAccountOperation(accountOperation, toCustomerAccount, amount);
+
+    }
+
+    /**
+     * Transfer an account operation from a customer account to an other.
+     *
+     * @param transferAccountOperationDto the transfer account operation Dto
+     * @throws BusinessException business exception
+     */
+    public void transferAccountOperation(TransferAccountOperationDto transferAccountOperationDto) throws BusinessException {
+
+        String fromCustomerAccountCode = transferAccountOperationDto.getFromCustomerAccountCode();
+        Long accountOperationId = transferAccountOperationDto.getAccountOperationId();
+
+        // Get the account operation to transfer
+        AccountOperation accountOperation = findById(accountOperationId);
+        if (accountOperation == null) {
+            throw new BusinessException("the account operation " + accountOperationId + " not found");
+        }
+
+        CustomerAccount fromCustomerAccount = customerAccountService.findByCode(fromCustomerAccountCode);
+        if (fromCustomerAccount == null) {
+            throw new BusinessException("The source customer account with code : " + fromCustomerAccountCode + " is not found");
+        }
+
+        if (!fromCustomerAccount.equals(accountOperation.getCustomerAccount())) {
+            throw new BusinessException(
+                    "the account operation " + accountOperationId + " to be the transfer doesn't belong to the source customer account " + fromCustomerAccountCode);
+        }
+
+        if (transferAccountOperationDto.getToCustomerAccounts() != null && !transferAccountOperationDto.getToCustomerAccounts().isEmpty()) {
+            // Unmatching the accountOperation
+            if (accountOperation.getMatchingStatus() == MatchingStatusEnum.L || accountOperation.getMatchingStatus() == MatchingStatusEnum.P) {
+                matchingCodeService.unmatchingOperationAccount(accountOperation);
+            }
+            for (TransferCustomerAccountDto toCustomerAccount : transferAccountOperationDto.getToCustomerAccounts()) {
+                transferAccountOperation(accountOperation, toCustomerAccount);
+            }
+
+            // Update the old account operation
+            accountOperation.setReference(getRefrence(accountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.s.name()));
         }
     }
 }

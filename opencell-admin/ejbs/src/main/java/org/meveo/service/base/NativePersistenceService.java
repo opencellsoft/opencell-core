@@ -22,6 +22,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -39,6 +41,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
@@ -50,8 +54,13 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.IdentifiableEnum;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
 
 /**
@@ -91,6 +100,12 @@ public class NativePersistenceService extends BaseService {
     @MeveoParamBean
     protected ParamBean paramBean;
 
+    @Inject
+    private DeletionService deletionService;
+
+    @Inject
+    private CustomFieldTemplateService customFieldTemplateService;
+
     /**
      * Find record by its identifier
      * 
@@ -102,16 +117,20 @@ public class NativePersistenceService extends BaseService {
     public Map<String, Object> findById(String tableName, Long id) {
 
         try {
-
             Session session = getEntityManager().unwrap(Session.class);
             SQLQuery query = session.createSQLQuery("select * from " + tableName + " e where id=:id");
             query.setParameter("id", id);
             query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
 
             Map<String, Object> values = (Map<String, Object>) query.uniqueResult();
+            for (String key : values.keySet()) {
+                if (values.get(key) instanceof java.sql.Timestamp) {
+                    java.sql.Timestamp date = (java.sql.Timestamp) values.get(key);
+                    values.put(key, new Date(date.getTime()));
+                }
+            }
 
             return values;
-
         } catch (Exception e) {
             log.error("Failed to retrieve values from table by id {}/{} sql {}", tableName, id, e);
             throw e;
@@ -142,7 +161,7 @@ public class NativePersistenceService extends BaseService {
      * @param values A list of values to insert
      * @throws BusinessException General exception
      */
-    public void create(String tableName, List<Map<String, Object>> values) throws BusinessException {
+    public void create(String tableName, String code, List<Map<String, Object>> values) throws BusinessException {
 
         if (values == null || values.isEmpty()) {
             return;
@@ -155,9 +174,9 @@ public class NativePersistenceService extends BaseService {
         StringBuffer fields = new StringBuffer();
         StringBuffer fieldValues = new StringBuffer();
         List<String> fieldNames = new LinkedList<>();
-
+        Map<String, Object> customTableFields = getFields(code);
         boolean first = true;
-        for (String fieldName : firstValue.keySet()) {
+        for (String fieldName : customTableFields.keySet()) {
 
             if (!first) {
                 fields.append(",");
@@ -188,10 +207,11 @@ public class NativePersistenceService extends BaseService {
                         i = 1;
                         for (String fieldName : fieldNames) {
                             fieldValue = value.get(fieldName);
-
+                            Object defaultValue = customTableFields.get(fieldName);
                             if (fieldValue == null) {
-                                preparedStatement.setNull(i, Types.NULL);
-                            } else if (fieldValue instanceof String) {
+                                fieldValue = defaultValue;
+                            }
+                            if (fieldValue instanceof String) {
                                 preparedStatement.setString(i, (String) fieldValue);
                             } else if (fieldValue instanceof Long) {
                                 preparedStatement.setLong(i, (Long) fieldValue);
@@ -205,7 +225,12 @@ public class NativePersistenceService extends BaseService {
                                 preparedStatement.setBigDecimal(i, (BigDecimal) fieldValue);
                             } else if (fieldValue instanceof Date) {
                                 preparedStatement.setDate(i, new java.sql.Date(((Date) fieldValue).getTime()));
+                            } else if (fieldValue instanceof Boolean) {
+                                preparedStatement.setBoolean(i, (Boolean) fieldValue);
+                            } else if (fieldValue == null) {
+                                preparedStatement.setNull(i, Types.NULL);
                             }
+
 
                             i++;
                         }
@@ -226,6 +251,44 @@ public class NativePersistenceService extends BaseService {
                 }
             }
         });
+    }
+
+    /**
+     * List all fields with thier default values of tableName
+     * @param tableName the table name
+     * @return
+     */
+    private Map<String, Object> getFields(String tableName) {
+        Map<String, Object> fields = new HashedMap();
+        Map<String, CustomFieldTemplate> customFieldTemplateMap = customFieldTemplateService.findByAppliesTo(CustomEntityTemplate.CFT_PREFIX + "_" + tableName);
+        for (String key : customFieldTemplateMap.keySet()) {
+            CustomFieldTemplate cft = customFieldTemplateMap.get(key);
+            Class clazz = cft.getFieldType().getDataClass();
+            String defaultValueString = cft.getDefaultValue();
+            if (StringUtils.isBlank(defaultValueString)) {
+                fields.put(cft.getDbFieldname(), defaultValueString);
+                continue;
+            }
+            Object defaultValue = defaultValueString;
+
+            if (Long.class.equals(clazz)) {
+                defaultValue = new Long(defaultValueString);
+            } else if (Double.class.equals(clazz)) {
+                defaultValue = new Double(defaultValueString);
+            } else if (BigInteger.class.equals(clazz)) {
+                defaultValue = new BigInteger(defaultValueString);
+            } else if (Integer.class.equals(clazz)) {
+                defaultValue = new Integer(defaultValueString);
+            } else if (BigDecimal.class.equals(clazz)) {
+                defaultValue = new BigDecimal(defaultValueString);
+            } else if (Date.class.equals(clazz)) {
+                defaultValue = DateUtils.parseDateWithPattern(defaultValueString, DateUtils.DATE_TIME_PATTERN);
+            } else if (Boolean.class.equals(clazz)) {
+                defaultValue = new Boolean(defaultValueString);
+            }
+            fields.put(cft.getDbFieldname(), defaultValue);
+        }
+        return fields;
     }
 
     /**
@@ -258,30 +321,33 @@ public class NativePersistenceService extends BaseService {
             StringBuffer findIdFields = new StringBuffer();
 
             boolean first = true;
-            for (String fieldName : values.keySet()) {
-                // Ignore a null ID field
-                if (fieldName.equals(FIELD_ID) && values.get(fieldName) == null) {
-                    continue;
+            if(values.isEmpty()){
+                sql.append(" DEFAULT VALUES");
+            }else {
+                for (String fieldName : values.keySet()) {
+                    // Ignore a null ID field
+                    if (fieldName.equals(FIELD_ID) && values.get(fieldName) == null) {
+                        continue;
+                    }
+
+                    if (!first) {
+                        fields.append(",");
+                        fieldValues.append(",");
+                        findIdFields.append(" and ");
+                    }
+                    fields.append(fieldName);
+                    if (values.get(fieldName) == null) {
+                        fieldValues.append("NULL");
+                        findIdFields.append(fieldName).append(" IS NULL");
+                    } else {
+                        fieldValues.append(":").append(fieldName);
+                        findIdFields.append(fieldName).append("=:").append(fieldName);
+                    }
+                    first = false;
                 }
 
-                if (!first) {
-                    fields.append(",");
-                    fieldValues.append(",");
-                    findIdFields.append(" and ");
-                }
-                fields.append(fieldName);
-                if (values.get(fieldName) == null) {
-                    fieldValues.append("NULL");
-                    findIdFields.append(fieldName).append(" IS NULL");
-                } else {
-                    fieldValues.append(":").append(fieldName);
-                    findIdFields.append(fieldName).append("=:").append(fieldName);
-                }
-                first = false;
+                sql.append(" (").append(fields).append(") values (").append(fieldValues).append(")");
             }
-
-            sql.append(" (").append(fields).append(") values (").append(fieldValues).append(")");
-
             Query query = getEntityManager().createNativeQuery(sql.toString());
             for (String fieldName : values.keySet()) {
                 if (values.get(fieldName) == null) {
@@ -296,8 +362,9 @@ public class NativePersistenceService extends BaseService {
                 if (id != null) {
                     return (Long) id;
                 }
+                StringBuffer requestConstruction = buildSqlInsertionRequest(tableName, findIdFields);
 
-                query = getEntityManager().createNativeQuery("select id from " + tableName + " where " + findIdFields + " order by id desc").setMaxResults(1);
+                query = getEntityManager().createNativeQuery(requestConstruction.toString()).setMaxResults(1);
                 for (String fieldName : values.keySet()) {
                     if (values.get(fieldName) == null) {
                         continue;
@@ -323,6 +390,15 @@ public class NativePersistenceService extends BaseService {
             log.error("Failed to insert values into OR find ID of table {} {} sql {}", tableName, values, sql, e);
             throw e;
         }
+    }
+
+    StringBuffer buildSqlInsertionRequest(String tableName, StringBuffer findIdFields) {
+        StringBuffer requestConstruction = new StringBuffer("select id from " + tableName);
+        if(StringUtils.isNotEmpty(findIdFields)){
+            requestConstruction.append(" where " + findIdFields);
+        }
+        requestConstruction.append(" order by id desc");
+        return requestConstruction;
     }
 
     /**
@@ -455,7 +531,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void remove(String tableName, Long id) throws BusinessException {
-
+        this.deletionService.checkTablenotreferenced(tableName, id);
         getEntityManager().createNativeQuery("delete from " + tableName + " where id=" + id).executeUpdate();
     }
 
@@ -467,6 +543,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void remove(String tableName, Set<Long> ids) throws BusinessException {
+        ids.stream().forEach(id -> deletionService.checkTablenotreferenced(tableName, id));
         getEntityManager().createNativeQuery("delete from " + tableName + " where id in:ids").setParameter("ids", ids).executeUpdate();
 
     }
@@ -953,6 +1030,9 @@ public class NativePersistenceService extends BaseService {
                     return value.toString();
                 }
 
+            }else if(targetClass == EntityReferenceWrapper.class){
+                return Long.parseLong(value.toString());
+
             } else if (targetClass == Boolean.class || (targetClass.isPrimitive() && targetClass.getName().equals("boolean"))) {
                 if (booleanVal != null) {
                     return value;
@@ -965,7 +1045,7 @@ public class NativePersistenceService extends BaseService {
                     return value;
                 } else if (numberVal != null) {
                     return new Date(numberVal.longValue());
-                } else if (stringVal != null) {
+                } else if (stringVal != null && ! stringVal.isEmpty()) {
 
                     // Use provided date patterns or try default patterns if they were not provided
                     if (datePatterns != null) {
@@ -988,7 +1068,9 @@ public class NativePersistenceService extends BaseService {
                         if (date == null) {
                             date = DateUtils.parseDateWithPattern(stringVal, paramBean.getDateFormat());
                         }
-                        return date;
+                        if (date == null) {
+                        	throw new ValidationException("wrong value format for filter, cannot parse date value '"+value+"'");
+                        }
                     }
                 }
 
@@ -1054,7 +1136,7 @@ public class NativePersistenceService extends BaseService {
             }
 
         } catch (NumberFormatException e) {
-            // Swallow - validation will take care of it later
+            throw new ValidationException("wrong value format for filter, cannot cast '"+value+"' to "+targetClass, e);
         }
         return null;
     }

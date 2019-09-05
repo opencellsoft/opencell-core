@@ -288,11 +288,11 @@
 
 
 	</p:submenu>
-	
+
 	<!-- <p:submenu id="menurecouvrement" label="#{messages['menu.Recouvrement']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">
 		<p:menuitem id="dunningWF" outcome="dunning_workflows" value="#{messages['dunningProcess.title']}" />
 	</p:submenu> -->
-	
+
 	<p:submenu id="workflows" label="#{messages['menu.workflow']}" rendered="#{currentUser.hasRole('administrationVisualization')}">
 		<p:menuitem id="genericWorkflows" value="#{messages['menu.generic.workflows']}"
 			outcome="genericWorkflows" />
@@ -303,10 +303,11 @@
 	<p:submenu id="finance" label="#{messages['menu.finance']}" rendered="#{currentUser.hasRole('financeVisualization') or currentUser.hasRole('financeManagement') }">
 		<p:menuitem id="chartOfAccounts" outcome="accountingCodes" value="#{messages['menu.chartOfAccounts']}" rendered="#{currentUser.hasRole('financeVisualization')}" />
 		<p:menuitem id="generalLedgers" outcome="generalLedgers" value="#{messages['menu.generalLedgers']}" />
-		<p:menuitem id="revenueRecognitionRules" outcome="revenueRecognitionRules" value="#{messages['menu.revenueRecognitionRules']}" />				
+		<p:menuitem id="revenueRecognitionRules" outcome="revenueRecognitionRules" value="#{messages['menu.revenueRecognitionRules']}" />
 		<p:menuitem id="revenueSchedules" outcome="revenueSchedules" value="#{messages['menu.revenueSchedules']}" />
 		<p:menuitem id="reportExtracts" outcome="reportExtracts" value="#{messages['menu.reportExtracts']}" />
 		<p:menuitem id="reportExtractHistories" outcome="reportExtractHistories" value="#{messages['menu.reportExtractHistories']}" />
+		<p:menuitem id="accountingWritings" outcome="accountingWritings" value="#{messages['menu.accountingWriting']}"/>
 	</p:submenu>
 
 	<p:submenu id="reporting" label="#{messages['menu.reporting']}"
@@ -320,7 +321,7 @@
 		<p:menuitem id="charts" value="#{messages['menu.charts']}"
 			outcome="charts" />
 	</p:submenu>
-        
+
     <p:submenu id="customEntites"
 		label="#{messages['menu.customEntities']}"
 		rendered="#{!empty(customEntityTemplateBean.listAll()) and currentUser.hasRole('administrationVisualization')}">

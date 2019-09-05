@@ -57,7 +57,7 @@ public class Payment extends AccountOperation {
 
     /**
      * get the  associated dunning doc if exists
-     * @return
+     * @return dunningDocument
      */
     public DunningDocument getDunningDocument() {
         return dunningDocument;

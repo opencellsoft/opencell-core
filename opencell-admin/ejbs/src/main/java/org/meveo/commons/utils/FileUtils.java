@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
@@ -44,6 +45,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.meveo.model.shared.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,12 +54,17 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Donatas Remeika
  * @author Edward P. Legaspi
- * 
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  */
 public final class FileUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
+
+    /**
+     * The Constant DATETIME_FORMAT for file names
+     */
+    private static final String DATETIME_FORMAT = "dd_MM_yyyy-HHmmss";
 
     /**
      * No need to create instance.
@@ -118,6 +125,23 @@ public final class FileUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Move file. In case a file with the same name exists, create a name with a timestamp
+     *
+     * @param dest the destination
+     * @param file the file
+     * @param name the file name
+     * @return the file name
+     */
+    public static String moveFileDontOverwrite(String dest, File file, String name) {
+        String destName = name;
+        if ((new File(dest + File.separator + name)).exists()) {
+            destName += "_COPY_" + DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT);
+        }
+        moveFile(dest, file, destName);
+        return destName;
     }
 
     /**
@@ -676,17 +700,17 @@ public final class FileUtils {
                 if (extensions == null && fileNameFilterUpper == null) {
                     return true;
                 }
-                
+
                 if (extensions == null && nameUpper.contains(fileNameFilterUpper)) {
                     return true;
                 }
-                
+
                 for (String extension : extensions) {
                     if ((name.endsWith(extension) || "*".equals(extension)) && (fileNameFilterUpper == null || nameUpper.contains(fileNameFilterUpper))) {
                         return true;
                     }
                 }
-                
+
                 return false;
             }
 
