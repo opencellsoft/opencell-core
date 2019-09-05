@@ -22,6 +22,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.admin.ViewBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -63,7 +64,7 @@ import java.util.TreeMap;
 @Named
 @ViewScoped
 @ViewBean
-public class GenericWorkflowBean extends BaseBean<GenericWorkflow> {
+public class GenericWorkflowBean extends CustomFieldBean<GenericWorkflow> {
 
     private static final long serialVersionUID = 1L;
 

@@ -18,13 +18,8 @@
  */
 package org.meveo.model.generic.wf;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.model.EnableBusinessEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ModuleItem;
-import org.meveo.model.filter.Filter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -39,8 +34,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
+import org.meveo.model.filter.Filter;
 
 /**
  * Generic Workflow for entity data processing
@@ -53,11 +55,12 @@ import java.util.List;
 @ModuleItem
 @Cacheable
 @ExportIdentifier({ "code" })
+@CustomFieldEntity(cftCodePrefix = "GenericWorkflow")
 @Table(name = "wf_generic_workflow", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "wf_generic_workflow_seq") })
 @NamedQueries({ @NamedQuery(name = "GenericWorkflow.findByTargetEntityClass", query = "From GenericWorkflow where targetEntityClass=:targetEntityClass") })
-public class GenericWorkflow extends EnableBusinessEntity {
+public class GenericWorkflow extends EnableBusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
