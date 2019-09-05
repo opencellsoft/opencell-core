@@ -36,6 +36,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
@@ -44,6 +46,8 @@ import org.meveo.model.ObservableEntity;
  * Country enabled in application
  * 
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  */
 @Entity
 @ObservableEntity
@@ -54,7 +58,7 @@ import org.meveo.model.ObservableEntity;
         @Parameter(name = "sequence_name", value = "billing_trading_country_seq"), })
 @NamedQueries({ @NamedQuery(name = "TradingCountry.getByCode", query = "from TradingCountry tr where tr.country.countryCode = :tradingCountryCode) ", hints = {
         @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
-public class TradingCountry extends EnableEntity {
+public class TradingCountry extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
