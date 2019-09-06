@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 import java.math.BigDecimal;
 import java.util.List;
 
+@XmlType(name="product", propOrder = { "id", "code", "name", "description" })
 @Value.Immutable
 @Value.Style(jdkOnly=true)
 @JsonDeserialize(as = ImmutableProduct.class)
