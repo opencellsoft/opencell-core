@@ -109,7 +109,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        log.debug("Running for parameter={}", jobInstance.getParametres());
+        
         try {
             DDRequestBuilder ddRequestBuilder = null;
             Seller seller = null;

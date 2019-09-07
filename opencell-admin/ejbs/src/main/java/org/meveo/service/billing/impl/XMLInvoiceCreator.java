@@ -318,7 +318,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = null;
 
         if (!isVirtual) {
-            ratedTransactions = ratedTransactionService.getRatedTransactionsByInvoice(invoice, appProvider.isDisplayFreeTransacInInvoice());
             subCategoryInvoiceAgregates = invoiceService.listByInvoice(invoice);
         }
 
@@ -625,6 +624,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             invoiceTag.appendChild(detail);
         }
 
+        if (!isVirtual && displayDetail) {
+            ratedTransactions = ratedTransactionService.getRatedTransactionsByInvoice(invoice, appProvider.isDisplayFreeTransacInInvoice());
+        }
+        
         addUserAccounts(invoice, doc, detail, entreprise, invoiceTag, displayDetail, isVirtual, invoiceAgregates, hasInvoiceAgregates, ratedTransactions,
                 subCategoryInvoiceAgregates);
         addCustomFields(invoice, doc, invoiceTag);
