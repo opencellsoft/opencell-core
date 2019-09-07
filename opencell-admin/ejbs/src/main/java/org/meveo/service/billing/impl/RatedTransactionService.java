@@ -1401,12 +1401,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param firstTransactionDate Usage date range - start date
      * @param lastTransactionDate Usage date range - end date
      * @param ratedTransactionFilter Filter returning a list of rated transactions
+     * @param rtPageSize Number of records to return
      * @return A list of RT entities
      * @throws BusinessException General exception
      */
     @SuppressWarnings("unchecked")
-    public List<RatedTransaction> listRTsToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTransactionFilter)
-            throws BusinessException {
+    public List<RatedTransaction> listRTsToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTransactionFilter,
+            int rtPageSize) throws BusinessException {
 
         if (ratedTransactionFilter != null) {
             return (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);
@@ -1414,17 +1415,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         } else if (entityToInvoice instanceof Subscription) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class)
                 .setParameter("subscriptionId", entityToInvoice.getId()).setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).getResultList();
+                .setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
 
         } else if (entityToInvoice instanceof BillingAccount) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", RatedTransaction.class)
                 .setParameter("billingAccountId", entityToInvoice.getId()).setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).getResultList();
+                .setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
 
         } else if (entityToInvoice instanceof Order) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class)
                 .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber()).setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).getResultList();
+                .setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
         }
 
         return new ArrayList<>();

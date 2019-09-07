@@ -63,7 +63,7 @@ public class RatedTransactionProcessingStatus implements Serializable {
     /**
      * Subcategory invoice aggregate that Rated transaction was invoiced under
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aggregate_id_f")
     private SubCategoryInvoiceAgregate invoiceAgregateF;
 

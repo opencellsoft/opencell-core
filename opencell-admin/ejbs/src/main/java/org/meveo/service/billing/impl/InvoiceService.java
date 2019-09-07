@@ -44,6 +44,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -189,7 +190,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     private CustomerAccountService customerAccountService;
 
-    /** The invoice agregate service. */
+    /** The invoice aggregate service. */
     @Inject
     private InvoiceAgregateService invoiceAgregateService;
 
@@ -276,6 +277,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Description translation map.
      */
     private Map<String, String> descriptionMap = new HashMap<>();
+
+    private static int rtPaginationSize = 30000;
+
+    @PostConstruct
+    private void init() {
+        ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
+
+        rtPaginationSize = paramBean.getPropertyAsInteger("invoicing.rtPaginationSize", 30000);
+    }
 
     /**
      * Gets the invoice.
@@ -540,18 +550,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param firstTransactionDate date of first transaction
      * @param lastTransactionDate date of last transaction
      * @param isDraft Is it a draft invoice
-     * @return list of rated transaction groups for entity.
+     * @return List of rated transaction groups for entity and a flag indicating if there are more Rated transactions to retrieve
      */
-    public List<RatedTransactionGroup> getRatedTransactionGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun,
+    private RatedTransactionsToInvoice getRatedTransactionGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun,
             BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType, Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft)
             throws BusinessException {
 
-        List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter);
+        List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter,
+            rtPaginationSize);
+
+        // If retrieved RT and pagination size does not match, it means no more RTs are pending to be processed and invoice can be closed
+        boolean moreRts = ratedTransactions.size() == rtPaginationSize;
 
         // Split RTs billing account groups to billing account/seller groups
         if (log.isDebugEnabled()) {
-            log.debug("Split {} RTs for {}/{} in to billing account/seller/invoice type groups", ratedTransactions.size(), entityToInvoice.getClass().getSimpleName(),
-                entityToInvoice.getId());
+            log.debug("Split {} RTs for {}/{} in to billing account/seller/invoice type groups. {} RTs to retrieve.", ratedTransactions.size(),
+                entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), moreRts ? "More" : "No more");
         }
         // Instantiated invoices. Key ba.id_seller.id_invoiceType.id
         Map<String, RatedTransactionGroup> rtGroups = new HashMap<>();
@@ -607,7 +621,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
 
-        return convertedRtGroups;
+        return new RatedTransactionsToInvoice(moreRts, convertedRtGroups);
 
     }
 
@@ -800,85 +814,179 @@ public class InvoiceService extends PersistenceService<Invoice> {
             PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balanceDue, BigDecimal totalInvoiceBalance) throws BusinessException {
 
         List<Invoice> invoiceList = new ArrayList<>();
-
-        // Retrieve Rated transactions and split them into BA/seller combinations
-        List<RatedTransactionGroup> ratedTransactionGroups = getRatedTransactionGroups(entityToInvoice, billingAccount, billingRun, defaultBillingCycle, defaultInvoiceType,
-            ratedTransactionFilter, firstTransactionDate, lastTransactionDate, isDraft);
-
-        if (ratedTransactionGroups.isEmpty()) {
-            log.warn("Account {}/{} has no billable transactions", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
-            return invoiceList;
-            // throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
-        }
+        boolean moreRatedTransactionsExpected = true;
 
         PaymentMethod paymentMethod = defaultPaymentMethod;
 
-        // Process each BA/seller/invoiceType combination separately, what corresponds to a separate invoice
-        for (RatedTransactionGroup rtGroup : ratedTransactionGroups) {
+        Map<String, InvoiceAggregateProcessingInfo> rtGroupToInvoiceMap = new HashMap<>();
 
-            // For order calculate for each BA
+        boolean allRTsInOneRun = true;
+
+        while (moreRatedTransactionsExpected) {
+
             if (entityToInvoice instanceof Order) {
-                if (billingAccount == null || !billingAccount.getId().equals(rtGroup.getBillingAccount().getId())) {
-                    billingAccount = rtGroup.getBillingAccount();
-                    if (defaultPaymentMethod == null) {
-                        paymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
-                    }
-                    // Due balance are calculated on CA level and will be the same for all rated transactions
-                    balanceDue = customerAccountService.customerAccountBalanceDue(billingAccount.getCustomerAccount(), new Date());
-                    totalInvoiceBalance = customerAccountService.customerAccountFutureBalanceExigibleWithoutLitigation(billingAccount.getCustomerAccount());
-                }
+                billingAccount = null;
+                defaultInvoiceType = null;
             }
 
-            Invoice invoice = instantiateInvoice(entityToInvoice, rtGroup.getBillingAccount(), rtGroup.getSeller(), billingRun, invoiceDate, isDraft, rtGroup.getBillingCycle(),
-                paymentMethod, rtGroup.getInvoiceType(), rtGroup.isPrepaid(), balanceDue.add(totalInvoiceBalance));
+            // Retrieve Rated transactions and split them into BA/seller combinations
+            RatedTransactionsToInvoice rtsToInvoice = getRatedTransactionGroups(entityToInvoice, billingAccount, billingRun, defaultBillingCycle, defaultInvoiceType,
+                ratedTransactionFilter, firstTransactionDate, lastTransactionDate, isDraft);
 
-            // Create aggregates
-            appendInvoiceAgregates(entityToInvoice, rtGroup.getBillingAccount(), invoice, rtGroup.getRatedTransactions(), false);
+            List<RatedTransactionGroup> ratedTransactionGroupsPaged = rtsToInvoice.ratedTransactionGroups;
+            moreRatedTransactionsExpected = rtsToInvoice.moreRatedTransactions;
+            if (moreRatedTransactionsExpected) {
+                allRTsInOneRun = false;
+            }
 
-            // Collect information needed to update RTs with invoice information
+            if (rtGroupToInvoiceMap.isEmpty() && ratedTransactionGroupsPaged.isEmpty()) {
+                log.warn("Account {}/{} has no billable transactions", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
+                return new ArrayList<>();
+                // throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
 
-//          Start of alternative 1 for 4326 // TODO 4326 alternative
-            List<Object[]> rtMassUpdates = new ArrayList<>();
-            List<Object[]> rtUpdates = new ArrayList<>();
+                // Process newly retrieved rated transactions
 
-            for (InvoiceAgregate invAggregate : invoice.getInvoiceAgregates()) {
-                if (invAggregate instanceof SubCategoryInvoiceAgregate && !((SubCategoryInvoiceAgregate) invAggregate).isDiscountAggregate()
-                        && ((SubCategoryInvoiceAgregate) invAggregate).getRatedtransactionsToAssociate() != null) {
-                    SubCategoryInvoiceAgregate subAggregate = ((SubCategoryInvoiceAgregate) invAggregate);
-                    List<Long> rtIds = new ArrayList<>();
-                    List<RatedTransaction> rts = new ArrayList<>();
+            } else if (!ratedTransactionGroupsPaged.isEmpty()) {
 
-                    for (RatedTransaction rt : subAggregate.getRatedtransactionsToAssociate()) {
+                // Process each BA/seller/invoiceType combination separately, what corresponds to a separate invoice
+                for (RatedTransactionGroup rtGroup : ratedTransactionGroupsPaged) {
 
-                        // Check that tax was not overridden in WO and tax recalculation should be ignored
-                        if (rt.isTaxRecalculated()) {
-                            rts.add(rt);
-                        } else {
-                            rtIds.add(rt.getId());
+                    // For order calculate for each BA
+                    if (entityToInvoice instanceof Order) {
+                        if (billingAccount == null || !billingAccount.getId().equals(rtGroup.getBillingAccount().getId())) {
+                            billingAccount = rtGroup.getBillingAccount();
+                            if (defaultPaymentMethod == null) {
+                                paymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
+                            }
+                            // Due balance are calculated on CA level and will be the same for all rated transactions
+                            balanceDue = customerAccountService.customerAccountBalanceDue(billingAccount.getCustomerAccount(), new Date());
+                            totalInvoiceBalance = customerAccountService.customerAccountFutureBalanceExigibleWithoutLitigation(billingAccount.getCustomerAccount());
                         }
                     }
 
-                    if (!rtIds.isEmpty()) {
-                        rtMassUpdates.add(new Object[] { invAggregate, rtIds });
-                    } else if (!rts.isEmpty()) {
-                        rtUpdates.add(new Object[] { invAggregate, rts });
+                    String invoiceKey = rtGroup.getInvoiceKey();
+
+                    InvoiceAggregateProcessingInfo invoiceAggregateProcessingInfo = rtGroupToInvoiceMap.get(invoiceKey);
+                    if (invoiceAggregateProcessingInfo == null) {
+                        invoiceAggregateProcessingInfo = new InvoiceAggregateProcessingInfo();
+                        rtGroupToInvoiceMap.put(invoiceKey, invoiceAggregateProcessingInfo);
                     }
-                }
-            }
+
+                    if (invoiceAggregateProcessingInfo.invoice == null) {
+                        invoiceAggregateProcessingInfo.invoice = instantiateInvoice(entityToInvoice, rtGroup.getBillingAccount(), rtGroup.getSeller(), billingRun, invoiceDate,
+                            isDraft, rtGroup.getBillingCycle(), paymentMethod, rtGroup.getInvoiceType(), rtGroup.isPrepaid(), balanceDue.add(totalInvoiceBalance));
+                        invoiceList.add(invoiceAggregateProcessingInfo.invoice);
+                    }
+
+                    Invoice invoice = invoiceAggregateProcessingInfo.invoice;
+
+                    // Create aggregates.
+                    // Indicate that no more RTs to process only in case when all RTs were retrieved for processing in a single query page.
+                    // In other case - need to close invoices when all RTs are processed
+                    appendInvoiceAgregates(entityToInvoice, rtGroup.getBillingAccount(), invoice, rtGroup.getRatedTransactions(), false, invoiceAggregateProcessingInfo,
+                        !allRTsInOneRun);
+
+                    // Collect information needed to update RTs with invoice information
+
+//          Start of alternative 1 for 4326 // TODO 4326 alternative
+                    List<Object[]> rtMassUpdates = new ArrayList<>();
+                    List<Object[]> rtUpdates = new ArrayList<>();
+
+                    for (SubCategoryInvoiceAgregate subAggregate : invoiceAggregateProcessingInfo.subCategoryAggregates.values()) {
+                        if (subAggregate.getRatedtransactionsToAssociate() == null) {
+                            continue;
+                        }
+                        List<Long> rtIds = new ArrayList<>();
+                        List<RatedTransaction> rts = new ArrayList<>();
+
+                        for (RatedTransaction rt : subAggregate.getRatedtransactionsToAssociate()) {
+
+                            // Check that tax was not overridden in WO and tax recalculation should be ignored
+                            if (rt.isTaxRecalculated()) {
+                                rts.add(rt);
+                            } else {
+                                rtIds.add(rt.getId());
+                            }
+                        }
+
+                        if (!rtIds.isEmpty()) {
+                            rtMassUpdates.add(new Object[] { subAggregate, rtIds });
+                        } else if (!rts.isEmpty()) {
+                            rtUpdates.add(new Object[] { subAggregate, rts });
+                        }
+                        subAggregate.setRatedtransactionsToAssociate(new ArrayList<>());
+                    }
+
 // End of alternative 1 for 4326   
 // Start of alternative 2 for 4326       
-//            List<RatedTransaction> rtsToUpdate = new ArrayList<>();            
-//            for (InvoiceAgregate invAggregate : invoice.getInvoiceAgregates()) {
-//                if (invAggregate instanceof SubCategoryInvoiceAgregate && !((SubCategoryInvoiceAgregate) invAggregate).isDiscountAggregate()
-//                        && ((SubCategoryInvoiceAgregate) invAggregate).getRatedtransactionsToAssociate() != null) {
-//                    SubCategoryInvoiceAgregate subAggregate = ((SubCategoryInvoiceAgregate) invAggregate);
+//                List<RatedTransaction> rtsToUpdate = new ArrayList<>();
+//                for (SubCategoryInvoiceAgregate subAggregate : invoiceAggregateProcessingInfo.subCategoryAggregates.values()) {
+//                    if (subAggregate.getRatedtransactionsToAssociate() == null) {
+//                        continue;
+//                    }
 //                    rtsToUpdate.addAll(subAggregate.getRatedtransactionsToAssociate());
 //                }
-//            }
 // End of alternative 2 for 4326             
 
+                    EntityManager em = getEntityManager();
+
+                    // Save invoice and its aggregates during the first pagination run, or save only newly created aggregates during later pagination runs
+                    if (invoice.getId() == null) {
+                        this.create(invoice);
+
+                    } else {
+                        for (InvoiceAgregate invoiceAggregate : invoice.getInvoiceAgregates()) {
+                            if (invoiceAggregate.getId() == null) {
+                                em.persist(invoiceAggregate);
+                            }
+                        }
+                    }
+
+                    // Update RTs with invoice information
+
+                    // AKK alternative 1 for 4326
+
+                    Invoice invoiceRef = em.getReference(Invoice.class, invoice.getId());
+                    for (Object[] aggregateAndRtIds : rtMassUpdates) {
+                        SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRtIds[0];
+                        SubCategoryInvoiceAgregate subCategoryAggregateRef = em.getReference(SubCategoryInvoiceAgregate.class, subCategoryAggregate.getId());
+                        List<Long> rtIds = (List<Long>) aggregateAndRtIds[1];
+                        for (Long rtId : rtIds) {
+                            RatedTransactionProcessingStatus processingStatus = new RatedTransactionProcessingStatus(rtId, billingRun, invoiceRef, subCategoryAggregateRef,
+                                RatedTransactionStatusEnum.BILLED);
+                            em.persist(processingStatus);
+                        }
+                    }
+
+                    for (Object[] aggregateAndRts : rtUpdates) {
+                        SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRts[0];
+                        List<RatedTransaction> rts = (List<RatedTransaction>) aggregateAndRts[1];
+                        for (RatedTransaction rt : rts) {
+                            RatedTransactionProcessingStatus processingStatus = new RatedTransactionProcessingStatus(rt.getId(), billingRun, invoice, subCategoryAggregate,
+                                RatedTransactionStatusEnum.BILLED);
+                            rt.setProcessingStatus(processingStatus);
+                            em.merge(rt);
+                        }
+                    }
+                    // End of alternative 1 for 4326
+                    // Start of alternative 2 for 4326
+                    // ratedTransactionService.updateViaDeleteAndInsert(rtsToUpdate);
+                    // End of alternative 2 for 4326
+                }
+            }
+        }
+
+        // Finalize invoices
+
+        for (InvoiceAggregateProcessingInfo invoiceAggregateProcessingInfo : rtGroupToInvoiceMap.values()) {
+
+            // Create discount, category and tax aggregates if not all RTs were retrieved and processed in a single page
+            if (!allRTsInOneRun) {
+                addDiscountCategoryAndTaxAggregates(invoiceAggregateProcessingInfo.invoice, invoiceAggregateProcessingInfo.subCategoryAggregates.values());
+            }
+
             // Link orders to invoice
-            Set<String> orderNums = invoice.getOrderNumbers();
+            Set<String> orderNums = invoiceAggregateProcessingInfo.orderNumbers;
             if (entityToInvoice instanceof Order) {
                 orderNums.add(((Order) entityToInvoice).getOrderNumber());
             }
@@ -887,45 +995,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 for (String orderNum : orderNums) {
                     orders.add(orderService.findByCodeOrExternalId(orderNum));
                 }
-                invoice.setOrders(orders);
+                invoiceAggregateProcessingInfo.invoice.setOrders(orders);
             }
 
-            this.create(invoice);
-
-            // Update RTs with invoice information
-
-            // AKK alternative 1 for 4326
-            EntityManager em = getEntityManager();
-
-            for (Object[] aggregateAndRtIds : rtMassUpdates) {
-                SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRtIds[0];
-                List<Long> rtIds = (List<Long>) aggregateAndRtIds[1];
-                for (Long rtId : rtIds) {
-                    RatedTransactionProcessingStatus processingStatus = new RatedTransactionProcessingStatus(rtId, billingRun, invoice, subCategoryAggregate,
-                        RatedTransactionStatusEnum.BILLED);
-                    em.persist(processingStatus);
-                }
-            }
-
-            for (Object[] aggregateAndRts : rtUpdates) {
-                SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRts[0];
-                List<RatedTransaction> rts = (List<RatedTransaction>) aggregateAndRts[1];
-                for (RatedTransaction rt : rts) {
-                    RatedTransactionProcessingStatus processingStatus = new RatedTransactionProcessingStatus(rt.getId(), billingRun, invoice, subCategoryAggregate,
-                        RatedTransactionStatusEnum.BILLED); 
-                    rt.setProcessingStatus(processingStatus);
-                    em.merge(rt);
-                }
-            }
-            // End of alternative 1 for 4326
-            // Start of alternative 2 for 4326
-            // ratedTransactionService.updateViaDeleteAndInsert(rtsToUpdate);
-            // End of alternative 2 for 4326
-            invoice.assignTemporaryInvoiceNumber();
-
-            postCreate(invoice);
-
-            invoiceList.add(invoice);
+            invoiceAggregateProcessingInfo.invoice.assignTemporaryInvoiceNumber();
+            postCreate(invoiceAggregateProcessingInfo.invoice);
         }
 
         return invoiceList;
@@ -1005,7 +1079,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
         }
 
-        appendInvoiceAgregates(billingAccount, billingAccount, invoice, ratedTransactions, false);
+        appendInvoiceAgregates(billingAccount, billingAccount, invoice, ratedTransactions, false, null, false);
         invoice.setTemporaryInvoiceNumber(UUID.randomUUID().toString());
 
         return invoice;
@@ -2636,7 +2710,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             .setParameter("billingAccount", billingAccount).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
             .getResultList();
 
-        appendInvoiceAgregates(billingAccount, billingAccount, invoice, ratedTransactions, false);
+        appendInvoiceAgregates(billingAccount, billingAccount, invoice, ratedTransactions, false, null, false);
     }
 
     /**
@@ -2647,10 +2721,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoice Invoice to append invoice aggregates to
      * @param ratedTransactions A list of rated transactions
      * @param isInvoiceAdjustment Is this invoice adjustment
+     * @param invoiceAggregateProcessingInfo RT to invoice aggregation information when invoice is created with paged RT retrieval. NOTE: should pass NULL in non-paginated
+     *        invoicing cases
+     * @param subCategoryAggregates Subcategory aggregates for invoice mapped by a key
+     * @param moreRatedTransactionsExpected Indicates that there are more RTs to be retrieved and aggregated in invoice before invoice can be closed. NOTE: should pass FALSE in
+     *        non-paginated invoicing cases
      * @throws BusinessException BusinessException
      */
-    public void appendInvoiceAgregates(IBillableEntity entityToInvoice, BillingAccount billingAccount, Invoice invoice, List<RatedTransaction> ratedTransactions,
-            boolean isInvoiceAdjustment) throws BusinessException {
+    private void appendInvoiceAgregates(IBillableEntity entityToInvoice, BillingAccount billingAccount, Invoice invoice, List<RatedTransaction> ratedTransactions,
+            boolean isInvoiceAdjustment, InvoiceAggregateProcessingInfo invoiceAggregateProcessingInfo, boolean moreRatedTransactionsExpected) throws BusinessException {
 
         boolean isEnterprise = appProvider.isEntreprise();
         String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
@@ -2663,19 +2742,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
         RoundingModeEnum rtRoundingMode = appProvider.getRoundingMode();
         RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
         Tax taxZero = isExonerated ? taxService.getZeroTax() : null;
-        invoice.setOrderNumbers(invoice.getOrderNumbers() == null ? new HashSet<String>() : invoice.getOrderNumbers());
 
         // InvoiceType.taxScript will calculate all tax aggregates at once.
         boolean calculateTaxOnSubCategoryLevel = invoice.getInvoiceType().getTaxScript() == null;
 
-        // Tax change mapping. Key is ba.id_seller.id_invoiceType.id_ua.id_walletInstance.id_invoiceSubCategory.id_tax.id and value is an array of [Tax to apply, True/false if tax
-        // has changed]
-        Map<String, Object[]> taxChangeMap = new HashMap<>();
-
         // Should tax calculation on subcategory level be done externally
         boolean calculateExternalTax = "YES".equalsIgnoreCase((String) appProvider.getCfValue("OPENCELL_ENABLE_TAX_CALCULATION"));
 
-        Map<String, SubCategoryInvoiceAgregate> subCategoryAggregates = new HashMap<>();
+        // Tax change mapping. Key is ba.id_seller.id_invoiceType.id_ua.id_walletInstance.id_invoiceSubCategory.id_tax.id and value is an array of [Tax to apply, True/false if tax
+        // has changed]
+        Map<String, Object[]> taxChangeMap = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.taxChangeMap : new HashMap<>();
+
+        // Subcategory aggregates mapping. Key is ua.id_walletInstance.id_invoiceSubCategory.id_tax.id
+        Map<String, SubCategoryInvoiceAgregate> subCategoryAggregates = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.subCategoryAggregates
+                : new HashMap<>();
+
+        Set<String> orderNumbers = invoiceAggregateProcessingInfo != null ? invoiceAggregateProcessingInfo.orderNumbers : new HashSet<String>();
 
         String scaKey = null;
         String scaKeyWithoutTax = null;
@@ -2749,7 +2831,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             scAggregate.addRatedTransaction(ratedTransaction);
 
             if (!(entityToInvoice instanceof Order) && ratedTransaction.getOrderNumber() != null) {
-                invoice.getOrderNumbers().add(ratedTransaction.getOrderNumber());
+                orderNumbers.add(ratedTransaction.getOrderNumber());
             }
 
             if (taxWasRecalculated) {
@@ -2759,15 +2841,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
 
-        // Calculate derived aggregate amounts for subcategory aggregate, create category aggregates, discount aggregates and tax aggregates
-        BigDecimal[] amounts = null;
-        for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates.values()) {
-
-            amounts = NumberUtils.computeDerivedAmounts(scAggregate.getAmountWithoutTax(), scAggregate.getAmountWithTax(), scAggregate.getTaxPercent(), isEnterprise,
-                invoiceRounding, invoiceRoundingMode.getRoundingMode());
-            scAggregate.setAmountWithoutTax(amounts[0]);
-            scAggregate.setAmountWithTax(amounts[1]);
-            scAggregate.setAmountTax(amounts[2]);
+        // Postpone other aggregate calculation until the last RT is aggregated to invoice
+        if (moreRatedTransactionsExpected) {
+            return;
         }
 
         addDiscountCategoryAndTaxAggregates(invoice, subCategoryAggregates.values());
@@ -2813,6 +2889,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Map<String, TaxInvoiceAgregate> taxAggregates = new HashMap<>();
 
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates) {
+
+            // Calculate derived amounts
+            scAggregate.computeDerivedAmounts(isEnterprise, invoiceRounding, invoiceRoundingMode.getRoundingMode());
 
             InvoiceSubCategory invoiceSubCategory = scAggregate.getInvoiceSubCategory();
 
@@ -3133,7 +3212,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setInvoiceType(invoiceType);
         invoice.setPrepaid(isPrepaid);
         invoice.setInvoiceDate(invoiceDate);
-        invoice.setOrderNumbers(new HashSet<String>());
         if (billingRun != null) {
             invoice.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
         }
@@ -3483,5 +3561,60 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public void deleteInvoices(BillingRun billingRun) {
         getEntityManager().createNamedQuery("Invoice.deleteByBR").setParameter("billingRun", billingRun).executeUpdate();
+    }
+
+    /**
+     * Rated transactions to invoice
+     */
+    private class RatedTransactionsToInvoice {
+
+        /**
+         * Indicates that there are more RTs to be retrieved and aggregated in invoice before invoice can be closed
+         */
+        private boolean moreRatedTransactions;
+
+        /**
+         * Rated transactions split for invoicing based on Billing account, seller and invoice type
+         */
+        private List<RatedTransactionGroup> ratedTransactionGroups;
+
+        /**
+         * Constructor
+         * 
+         * @param moreRatedTransactions Indicates that there are more RTs to be retrieved and aggregated in invoice before invoice can be closed
+         * @param ratedTransactionGroups Rated transactions split for invoicing based on Billing account, seller and invoice type
+         */
+        private RatedTransactionsToInvoice(boolean moreRatedTransactions, List<RatedTransactionGroup> ratedTransactionGroups) {
+            super();
+            this.moreRatedTransactions = moreRatedTransactions;
+            this.ratedTransactionGroups = ratedTransactionGroups;
+        }
+    }
+
+    /**
+     * Stores Invoice and invoice aggregate information between paginated RT invoicing
+     */
+    private class InvoiceAggregateProcessingInfo {
+
+        /**
+         * Invoice
+         */
+        private Invoice invoice = null;
+
+        /**
+         * Tax change mapping. Key is ba.id_seller.id_invoiceType.id_ua.id_walletInstance.id_invoiceSubCategory.id_tax.id and value is an array of [Tax to apply, True/false if tax
+         * has changed]
+         */
+        private Map<String, Object[]> taxChangeMap = new HashMap<>();
+
+        /**
+         * Subcategory aggregates mapping. Key is ua.id_walletInstance.id_invoiceSubCategory.id_tax.id
+         */
+        private Map<String, SubCategoryInvoiceAgregate> subCategoryAggregates = new HashMap<>();
+
+        /**
+         * Orders (numbers) referenced from Rated transactions
+         */
+        private Set<String> orderNumbers = new HashSet<String>();
     }
 }

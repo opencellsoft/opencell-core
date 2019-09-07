@@ -314,12 +314,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     private List<Order> orders = new ArrayList<>();
 
     /**
-     * Orders (numbers) referenced from Rated transactions
-     */
-    @Transient
-    private Set<String> orderNumbers;
-
-    /**
      * Quote that invoice was produced for
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -1039,20 +1033,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Override
     public void setDescription(String description) {
 
-    }
-
-    /**
-     * @return Orders (numbers) referenced from Rated transactions
-     */
-    public Set<String> getOrderNumbers() {
-        return orderNumbers;
-    }
-
-    /**
-     * @param orderNumbers Orders (numbers) referenced from Rated transactions
-     */
-    public void setOrderNumbers(Set<String> orderNumbers) {
-        this.orderNumbers = orderNumbers;
     }
 
     /**

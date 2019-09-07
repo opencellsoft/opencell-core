@@ -19,6 +19,7 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +37,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.catalog.DiscountPlanItem;
 
 /**
@@ -561,5 +563,20 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      */
     public void setRatedtransactionsToAssociate(List<RatedTransaction> ratedtransactionsToAssociate) {
         this.ratedtransactionsToAssociate = ratedtransactionsToAssociate;
+    }
+
+    /**
+     * Compute derived amounts amountWithoutTax/amountWithTax/amountTax. If taxPercent is null, or ZERO returned amountWithoutTax and amountWithTax values will be the same
+     * (whichone, depending on isEnterprise value)
+     * 
+     * @param isEnterprise Is application used used in B2B (base prices are without tax) or B2C mode (base prices are with tax)
+     * @param rounding Rounding precision to apply
+     * @param roundingMode Rounding mode to apply
+     */
+    public void computeDerivedAmounts(boolean isEnterprise, int invoiceRounding, RoundingMode roundingMode) {
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(getAmountWithoutTax(), getAmountWithTax(), getTaxPercent(), isEnterprise, invoiceRounding, roundingMode);
+        setAmountWithoutTax(amounts[0]);
+        setAmountWithTax(amounts[1]);
+        setAmountTax(amounts[2]);
     }
 }
