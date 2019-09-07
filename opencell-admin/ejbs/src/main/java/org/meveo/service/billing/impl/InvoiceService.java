@@ -549,8 +549,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter);
 
         // Split RTs billing account groups to billing account/seller groups
-        log.trace("Split RTs billing account groups to billing account/seller/invoice type groups");
-
+        if (log.isDebugEnabled()) {
+            log.debug("Split {} RTs for {}/{} in to billing account/seller/invoice type groups", ratedTransactions.size(), entityToInvoice.getClass().getSimpleName(),
+                entityToInvoice.getId());
+        }
         // Instantiated invoices. Key ba.id_seller.id_invoiceType.id
         Map<String, RatedTransactionGroup> rtGroups = new HashMap<>();
 
@@ -910,7 +912,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 List<RatedTransaction> rts = (List<RatedTransaction>) aggregateAndRts[1];
                 for (RatedTransaction rt : rts) {
                     RatedTransactionProcessingStatus processingStatus = new RatedTransactionProcessingStatus(rt.getId(), billingRun, invoice, subCategoryAggregate,
-                        RatedTransactionStatusEnum.BILLED);
+                        RatedTransactionStatusEnum.BILLED); 
                     rt.setProcessingStatus(processingStatus);
                     em.merge(rt);
                 }
@@ -1172,7 +1174,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (!jasperFile.exists()) {
                 throw new InvoiceJasperNotFoundException("The jasper file doesn't exist.");
             }
-            log.info(String.format("Jasper template used: %s", jasperFile.getCanonicalPath()));
+            log.debug("Jasper template used: {}", jasperFile.getCanonicalPath());
 
             reportTemplate = new FileInputStream(jasperFile);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

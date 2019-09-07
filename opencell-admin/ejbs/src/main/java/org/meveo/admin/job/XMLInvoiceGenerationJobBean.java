@@ -42,7 +42,6 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, String parameter, JobInstance jobInstance) {
-        log.debug("Running for parameter={}", parameter);
 
         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
         if (nbRuns == -1) {
@@ -70,8 +69,6 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
             List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
             SubListCreator subListCreator = new SubListCreator(invoiceIds, nbRuns.intValue());
             result.setNbItemsToProcess(subListCreator.getListSize());
-            log.debug("block to run:" + subListCreator.getBlocToRun());
-            log.debug("nbThreads:" + nbRuns);
 
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
