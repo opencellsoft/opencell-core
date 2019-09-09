@@ -31,7 +31,7 @@ import org.slf4j.Logger;
  * To call this servlet the url must be in this format: /inbound/&lt;provider.code&gt;
  * 
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.3.0
+ * @lastModifiedVersion 8.0.0
  */
 @WebServlet("/inbound/*")
 @ServletSecurity(@HttpConstraint(rolesAllowed = "apiAccess"))
