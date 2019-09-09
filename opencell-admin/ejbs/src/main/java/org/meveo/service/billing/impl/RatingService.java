@@ -71,6 +71,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
@@ -126,6 +127,9 @@ public class RatingService extends BusinessService<WalletOperation> {
 
     @Inject
     private TriggeredEdrScriptService triggeredEdrScriptService;
+
+    @Inject
+	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
     /**
      * @param level level enum
@@ -257,7 +261,7 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         } else if (inputQuantity != null) {
             walletOperation.setQuantity(
-                NumberUtils.getInChargeUnit(inputQuantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
+                NumberUtils.getInChargeUnit(inputQuantity, chargeTemplateService.evaluateUnitRating(chargeTemplate), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
         }
 
         walletOperation.setRatingUnitDescription(chargeTemplate.getRatingUnitDescription());

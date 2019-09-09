@@ -26,6 +26,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.slf4j.Logger;
@@ -63,6 +64,9 @@ public class RealtimeChargingService {
     /** The recurring charge template service. */
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
+    
+    @Inject
+	private ChargeTemplateService<RecurringChargeTemplate> chargeTemplateService;
 
     /**
      * Gets the application price.
@@ -143,7 +147,7 @@ public class RealtimeChargingService {
 
         op.setDescription("");
         op.setInputQuantity(inputQuantity);
-        op.setQuantity(NumberUtils.getInChargeUnit(inputQuantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
+        op.setQuantity(NumberUtils.getInChargeUnit(inputQuantity, chargeTemplateService.evaluateUnitRating(chargeTemplate), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
         op.setTax(tax);
         op.setTaxPercent(tax == null ? BigDecimal.ZERO : tax.getPercent());
         op.setCurrency(currency.getCurrency());

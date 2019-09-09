@@ -145,6 +145,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     @Inject
     private WalletTemplateService walletTemplateService;
 
+	private ChargeTemplateService<OneShotChargeTemplate> chargeTemplateService;
+
     public BigDecimal getRatedAmount(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
             Date endDate, boolean amountWithTax) {
 
@@ -259,7 +261,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
         log.debug(
             "WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, multiplicator={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}",
-            new Object[] { subscription.getId(), quantityInChargeUnits, chargeInstance.getChargeTemplate().getUnitMultiplicator(), applicationDate, chargeInstance.getId(),
+            new Object[] { subscription.getId(), quantityInChargeUnits, chargeTemplateService.evaluateUnitRating(chargeInstance.getChargeTemplate()), applicationDate, chargeInstance.getId(),
                     chargeInstance.getDescription() });
 
         WalletOperation walletOperation = rateOneShotApplication(subscription, chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate, isVirtual,

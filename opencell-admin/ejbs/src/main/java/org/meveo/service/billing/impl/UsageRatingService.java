@@ -45,6 +45,7 @@ import org.meveo.model.rating.RatedEDRResult;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
@@ -139,6 +140,8 @@ public class UsageRatingService implements Serializable {
     private TriggeredEdrScriptService triggeredEdrScriptService;
 
     private Map<String, String> descriptionMap = new HashMap<>();
+
+	private ChargeTemplateService<UsageChargeTemplate> chargeTemplateService;
 
     // @PreDestroy
     // accessing Entity manager in predestroy is bugged in jboss7.1.3
@@ -252,7 +255,7 @@ public class UsageRatingService implements Serializable {
 
         walletOperation.setInputQuantity(quantityToCharge);
         walletOperation
-            .setQuantity(NumberUtils.getInChargeUnit(quantityToCharge, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
+            .setQuantity(NumberUtils.getInChargeUnit(quantityToCharge, chargeTemplateService.evaluateUnitRating(chargeTemplate), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
         if (isExonerated) {
             walletOperation.setTaxPercent(BigDecimal.ZERO);
         } else {
@@ -309,7 +312,7 @@ public class UsageRatingService implements Serializable {
         }
 
         BigDecimal quantityToDeduce = chargeTemplate.getInChargeUnit(edr.getQuantity());
-        log.debug("value to deduce {} * {} = {} from current value {}", edr.getQuantity(), chargeTemplate.getUnitMultiplicator(), quantityToDeduce, counterPeriod.getValue());
+        log.debug("value to deduce {} * {} = {} from current value {}", edr.getQuantity(), chargeTemplateService.evaluateUnitRating(chargeTemplate), quantityToDeduce, counterPeriod.getValue());
 
         synchronized (this) {// cachedCounterPeriod) { TODO how to ensure one at a time update?
             counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterPeriod, quantityToDeduce, isVirtual);

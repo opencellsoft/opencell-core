@@ -262,13 +262,6 @@ public class ChargeTemplate extends EnableBusinessCFEntity {
     }
 
 	public BigDecimal getUnitMultiplicator() {
-		return calculateUnitMultiplicator();
-	}
-
-    private BigDecimal calculateUnitMultiplicator() {
-		if(inputUnitOfMeasure!=null && ratingUnitOfMeasure != null && inputUnitOfMeasure.isCompatibleWith(ratingUnitOfMeasure)){
-			return BigDecimal.valueOf(inputUnitOfMeasure.getMultiplicator()).divide(BigDecimal.valueOf(ratingUnitOfMeasure.getMultiplicator()),BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP );
-		}
 		return unitMultiplicator;
 	}
 
@@ -371,7 +364,7 @@ public class ChargeTemplate extends EnableBusinessCFEntity {
 
     public void setInputUnitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
         this.inputUnitOfMeasure = inputUnitOfMeasure;
-        setUnitMultiplicator(calculateUnitMultiplicator());
+        updateUnitMultiplicator();
     }
 
     public UnitOfMeasure getRatingUnitOfMeasure() {
@@ -380,7 +373,18 @@ public class ChargeTemplate extends EnableBusinessCFEntity {
 
     public void setRatingUnitOfMeasure(UnitOfMeasure ratingUnitOfMeasure) {
         this.ratingUnitOfMeasure = ratingUnitOfMeasure;
-        setUnitMultiplicator(calculateUnitMultiplicator());
+        updateUnitMultiplicator();
     }
+
+	private void updateUnitMultiplicator() {
+		setUnitMultiplicator(calculateUnitMultiplicator(this.inputUnitOfMeasure, this.ratingUnitOfMeasure));
+	}
+	
+    private BigDecimal calculateUnitMultiplicator(UnitOfMeasure IUM, UnitOfMeasure RUM) {
+		if(IUM!=null && RUM != null && IUM.isCompatibleWith(RUM)){
+			return BigDecimal.valueOf(IUM.getMultiplicator()).divide(BigDecimal.valueOf(RUM.getMultiplicator()),BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP );
+		}
+		return unitMultiplicator;
+	}
 
 }
