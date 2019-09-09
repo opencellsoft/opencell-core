@@ -55,6 +55,10 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     private String inputUnitOfMeasureCode;
     
     private String ratingUnitOfMeasureCode;
+    
+    private String inputUnitEL;
+
+    private String outputUnitEL;
 
     /**
      * EDR and WO quantity field value precision
@@ -104,6 +108,8 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
         customFields = customFieldInstances;
         inputUnitOfMeasureCode=chargeTemplate.getInputUnitOfMeasure()!=null?chargeTemplate.getInputUnitOfMeasure().getCode():null;
         ratingUnitOfMeasureCode=chargeTemplate.getRatingUnitOfMeasure()!=null?chargeTemplate.getRatingUnitOfMeasure().getCode():null;
+        inputUnitEL=chargeTemplate.getInputUnitEL();
+        outputUnitEL=chargeTemplate.getOutputUnitEL();
         inputUnitDescription = chargeTemplate.getInputUnitDescription();
         ratingUnitDescription = chargeTemplate.getRatingUnitDescription();
         unitMultiplicator = chargeTemplate.getUnitMultiplicator();
@@ -345,5 +351,33 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
 	 */
 	public void setRatingUnitOfMeasureCode(String ratingUnitOfMeasureCode) {
 		this.ratingUnitOfMeasureCode = ratingUnitOfMeasureCode;
+	}
+
+	/**
+	 * @return the inputUnitEL
+	 */
+	public String getInputUnitEL() {
+		return inputUnitEL;
+	}
+
+	/**
+	 * @param inputUnitEL the inputUnitEL to set
+	 */
+	public void setInputUnitEL(String inputUnitEL) {
+		this.inputUnitEL = inputUnitEL;
+	}
+
+	/**
+	 * @return the outputUnitEL
+	 */
+	public String getOutputUnitEL() {
+		return outputUnitEL;
+	}
+
+	/**
+	 * @param outputUnitEL the outputUnitEL to set
+	 */
+	public void setOutputUnitEL(String outputUnitEL) {
+		this.outputUnitEL = outputUnitEL;
 	}
 }

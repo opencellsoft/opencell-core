@@ -138,8 +138,39 @@ public class ChargeTemplate extends EnableBusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rating_unitofmeasure")
     private UnitOfMeasure ratingUnitOfMeasure;
-
+    
+    
     /**
+     * Expression to calculate input unitOfMeasure
+     */
+    @Column(name = "input_unit_el", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String inputUnitEL;
+    
+    /**
+     * Expression to calculate input unitOfMeasure
+     */
+    @Column(name = "output_unit_el", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String outputUnitEL;
+
+    public String getInputUnitEL() {
+		return inputUnitEL;
+	}
+
+	public void setInputUnitEL(String inputUnitEL) {
+		this.inputUnitEL = inputUnitEL;
+	}
+
+	public String getOutputUnitEL() {
+		return outputUnitEL;
+	}
+
+	public void setOutputUnitEL(String outputUnitEL) {
+		this.outputUnitEL = outputUnitEL;
+	}
+
+	/**
      * Unit multiplicator between input and rating unit
      */
     @Column(name = "unit_multiplicator", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
