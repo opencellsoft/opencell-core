@@ -50,7 +50,7 @@ import java.util.List;
  */
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "country.countryCode" })
+@ExportIdentifier({ "code" })
 @EntityListeners({ TradingCountryListener.class })
 @Cacheable
 @Table(name = "billing_trading_country")
@@ -82,17 +82,13 @@ public class TradingCountry extends EnableBusinessCFEntity {
     @Column(name = "pr_description", length = 255)
     @Size(max = 255)
     private String prDescription;
-
-    /**
-     * Country code
-     */
-    @Transient
-    String countryCode;
-
+    
+    @Deprecated
     public String getPrDescription() {
         return prDescription;
     }
 
+    @Deprecated
     public void setPrDescription(String prDescription) {
         this.prDescription = prDescription;
     }

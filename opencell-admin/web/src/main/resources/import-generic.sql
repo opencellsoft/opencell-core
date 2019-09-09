@@ -933,8 +933,8 @@ insert into billing_trading_currency (id, version, disabled, created, provider_i
 insert into billing_trading_currency (id, version, disabled, created, provider_id, creator_id, currency_id, pr_description) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, 5, 'France');
 
 /* Trading Country */
-insert into billing_trading_country (id, version, disabled, created, provider_id, creator_id, country_id, pr_description, uuid) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, 220, 'United States', 'Trading_Country_US');
-insert into billing_trading_country (id, version, disabled, created, provider_id, creator_id, country_id, pr_description, uuid) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, 70, 'France', 'Trading_Country_FR');
+insert into billing_trading_country (id, version, disabled, created, provider_id, creator_id, country_id, pr_description, code, description, uuid) values (1, 0, false, CURRENT_TIMESTAMP, 1, 1, 220, 'United States', 'US', 'United States', 'Trading_Country_US');
+insert into billing_trading_country (id, version, disabled, created, provider_id, creator_id, country_id, pr_description, code, description, uuid) values (2, 0, false, CURRENT_TIMESTAMP, 1, 1, 70, 'France', 'FR', 'France', 'Trading_Country_FR');
 
 /* Monthly Calendar */
 insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, code, description) values ('YEARLY',1, 0, false, CURRENT_TIMESTAMP, 1, 1, 'MONTHLY', 'Monthly Calendar');

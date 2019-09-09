@@ -959,8 +959,8 @@ DROP SEQUENCE IF EXISTS billing_trading_currency_SEQ;
 CREATE SEQUENCE billing_trading_currency_SEQ start with 3 increment by 1;
 
 --Trading Country
-insert into billing_trading_country (id, version, disabled, created, provider_id, creator_id, country_id, pr_description, uuid) values (1, 0, false, now(), 1, 1, 220, 'United States', 'Trading_Country_US');
-insert into billing_trading_country (id, version, disabled, created, provider_id, creator_id, country_id, pr_description, uuid) values (2, 0, false, now(), 1, 1, 70, 'France', 'Trading_Country_FR');
+insert into billing_trading_country (id, version, disabled, created, provider_id, creator_id, country_id, pr_description, code, description, uuid) values (1, 0, false, now(), 1, 1, 220, 'United States', 'US', 'United States', 'Trading_Country_US');
+insert into billing_trading_country (id, version, disabled, created, provider_id, creator_id, country_id, pr_description, code, description, uuid) values (2, 0, false, now(), 1, 1, 70, 'France', 'FR', 'France', 'Trading_Country_FR');
 
 DROP SEQUENCE IF EXISTS billing_trading_country_SEQ;
 CREATE SEQUENCE billing_trading_country_SEQ start with 3 increment by 1;
