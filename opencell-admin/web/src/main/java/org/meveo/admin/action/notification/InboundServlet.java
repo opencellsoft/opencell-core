@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.util.Enumeration;
 
 import javax.enterprise.event.Event;
@@ -120,17 +121,30 @@ public class InboundServlet extends HttpServlet {
             inReq.setRequestURI(req.getRequestURI());
             inboundRequestService.create(inReq);
 
+            int status = HttpURLConnection.HTTP_OK;
             // process the notifications
-            eventProducer.fire(inReq);
+            try {
+                eventProducer.fire(inReq);
+                if (inReq.getHeaders().get("fired").equals("false")) {
+                    status = HttpURLConnection.HTTP_NOT_FOUND;
+                }
+            } catch (BusinessException be) {
+                log.error("Failed when processing the notifications", be);
+                status = HttpURLConnection.HTTP_NOT_FOUND;
+            }
 
             log.debug("triggered {} notification, resp body= {}", inReq.getNotificationHistories().size(), inReq.getResponseBody());
             // ONLY ScriptNotifications will produce notification history in
             // synchronous mode. Other type notifications will produce notification
             // history in asynchronous mode and thus
             // will not be related to inbound request.
-            if ((!inReq.getHeaders().containsKey("fired")) || inReq.getHeaders().get("fired").equals("false")) {
-                res.setStatus(404);
-            } else {
+
+            if (inReq.getResponseStatus() != null) {
+                status = inReq.getResponseStatus();
+            }
+            res.setStatus(status);
+
+            if (status != HttpURLConnection.HTTP_NOT_FOUND) {
                 // produce the response
                 res.setCharacterEncoding(inReq.getResponseEncoding() == null ? req.getCharacterEncoding() : inReq.getResponseEncoding());
                 res.setContentType(inReq.getResponseContentType() == null ? inReq.getContentType() : inReq.getResponseContentType());
@@ -142,12 +156,7 @@ public class InboundServlet extends HttpServlet {
                     res.addHeader(headerName, inReq.getResponseHeaders().get(headerName));
                 }
 
-                if (inReq.getResponseStatus() != null) {
-                    res.setStatus(inReq.getResponseStatus());
-                } else {
-                    res.setStatus(200);
-                }
-                if(inReq.getBytes() != null) {
+                if (inReq.getBytes() != null) {
                     IOUtils.copy(new ByteArrayInputStream(inReq.getBytes()), res.getOutputStream());
                     res.flushBuffer();
                 } else if (inReq.getResponseBody() != null) {
@@ -155,7 +164,7 @@ public class InboundServlet extends HttpServlet {
                         out.print(inReq.getResponseBody());
                     } catch (IOException e) {
                         log.error("Failed to produce the response", e);
-                        res.setStatus(500);
+                        res.setStatus(HttpURLConnection.HTTP_INTERNAL_ERROR);
                     }
                 }
             }
