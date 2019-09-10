@@ -130,7 +130,7 @@ public class InboundServlet extends HttpServlet {
                 }
             } catch (BusinessException be) {
                 log.error("Failed when processing the notifications", be);
-                status = HttpURLConnection.HTTP_NOT_FOUND;
+                status = HttpURLConnection.HTTP_INTERNAL_ERROR;
             }
 
             log.debug("triggered {} notification, resp body= {}", inReq.getNotificationHistories().size(), inReq.getResponseBody());
