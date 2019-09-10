@@ -272,6 +272,8 @@
         <addColumn tableName="cat_charge_template">
             <column name="input_unitofmeasure" type="bigint"/>
             <column name="rating_unitofmeasure" type="bigint"/>
+            <column name="input_unit_el" type="varchar(2000)"/>
+            <column name="output_unit_el" type="varchar(2000)"/>
         </addColumn>
 
         <addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="cat_charge_template" constraintName="fk_input_cat_charge_template_cat_unit_of_measure" deferrable="false"

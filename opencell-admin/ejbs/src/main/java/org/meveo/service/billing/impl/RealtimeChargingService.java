@@ -21,6 +21,7 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -66,7 +67,7 @@ public class RealtimeChargingService {
     private RecurringChargeTemplateService recurringChargeTemplateService;
     
     @Inject
-	private ChargeTemplateService<RecurringChargeTemplate> chargeTemplateService;
+	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
     /**
      * Gets the application price.

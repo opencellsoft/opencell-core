@@ -145,7 +145,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     @Inject
     private WalletTemplateService walletTemplateService;
 
-	private ChargeTemplateService<OneShotChargeTemplate> chargeTemplateService;
+	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
     public BigDecimal getRatedAmount(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
             Date endDate, boolean amountWithTax) {

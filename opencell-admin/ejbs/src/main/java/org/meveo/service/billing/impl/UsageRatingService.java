@@ -141,7 +141,7 @@ public class UsageRatingService implements Serializable {
 
     private Map<String, String> descriptionMap = new HashMap<>();
 
-	private ChargeTemplateService<UsageChargeTemplate> chargeTemplateService;
+	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
     // @PreDestroy
     // accessing Entity manager in predestroy is bugged in jboss7.1.3

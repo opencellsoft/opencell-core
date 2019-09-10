@@ -49,9 +49,6 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
     private TriggeredEDRTemplateService edrTemplateService;
     
     @Inject
-    private ValueExpressionWrapper valueExpressionWrapper;
-    
-    @Inject
     private UnitOfMeasureService unitOfMeasureService;
 
     public synchronized void duplicate(P chargeTemplate) throws BusinessException {
@@ -301,7 +298,7 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 		UnitOfMeasure unitFromEL = null;
 		if (!StringUtils.isBlank(expression)) {
 			String code = "";
-			code = valueExpressionWrapper.evaluateToStringMultiVariable(expression);
+			code = ValueExpressionWrapper.evaluateToStringMultiVariable(expression);
 			unitFromEL = unitOfMeasureService.findByCode(code);
 			if (unitFromEL == null) {
 				throw new BusinessException("Cannot find unitOfMeasure by code '" + code + "', el was : " + expression);
