@@ -1479,6 +1479,9 @@
         </addColumn>
     </changeSet>
     <changeSet id="#4550_20190904" author="AbdellatifBARI">
+        <dropColumn tableName="billing_trading_country">
+            <column name="pr_description"></column>
+        </dropColumn>
         <addColumn tableName="billing_trading_country">
             <column name="code" type="varchar(255)" />
             <column name="description" type="varchar(255)" />
