@@ -22,9 +22,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +59,6 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
 
 /**
@@ -224,7 +222,7 @@ public class NativePersistenceService extends BaseService {
                             } else if (fieldValue instanceof BigDecimal) {
                                 preparedStatement.setBigDecimal(i, (BigDecimal) fieldValue);
                             } else if (fieldValue instanceof Date) {
-                                preparedStatement.setDate(i, new java.sql.Date(((Date) fieldValue).getTime()));
+                                preparedStatement.setTimestamp(i, new Timestamp(((Date) fieldValue).getTime()));
                             } else if (fieldValue instanceof Boolean) {
                                 preparedStatement.setBoolean(i, (Boolean) fieldValue);
                             } else if (fieldValue == null) {
@@ -1140,4 +1138,5 @@ public class NativePersistenceService extends BaseService {
         }
         return null;
     }
+    
 }
