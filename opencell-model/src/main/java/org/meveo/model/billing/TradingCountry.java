@@ -75,24 +75,6 @@ public class TradingCountry extends EnableBusinessCFEntity {
     @JoinColumn(name = "country_id")
     private Country country;
 
-    /**
-     * Description. Deprecated in 5.3 for not use.
-     */
-    @Deprecated
-    @Column(name = "pr_description", length = 255)
-    @Size(max = 255)
-    private String prDescription;
-    
-    @Deprecated
-    public String getPrDescription() {
-        return prDescription;
-    }
-
-    @Deprecated
-    public void setPrDescription(String prDescription) {
-        this.prDescription = prDescription;
-    }
-
     public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
         return invoiceSubcategoryCountries;
     }
