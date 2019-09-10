@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -221,7 +222,7 @@ public class NativePersistenceService extends BaseService {
                             } else if (fieldValue instanceof BigDecimal) {
                                 preparedStatement.setBigDecimal(i, (BigDecimal) fieldValue);
                             } else if (fieldValue instanceof Date) {
-                                preparedStatement.setDate(i, new java.sql.Date(((Date) fieldValue).getTime()));
+                                preparedStatement.setTimestamp(i, new Timestamp(((Date) fieldValue).getTime()));
                             } else if (fieldValue instanceof Boolean) {
                                 preparedStatement.setBoolean(i, (Boolean) fieldValue);
                             } else if (fieldValue == null) {
@@ -1137,4 +1138,5 @@ public class NativePersistenceService extends BaseService {
         }
         return null;
     }
+    
 }
