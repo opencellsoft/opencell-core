@@ -116,13 +116,7 @@ public class SepaDirectDebitJobBean {
                     }
 
                     ddrequestLotOp.setStatus(DDRequestOpStatusEnum.PROCESSED);
-
-                } catch (BusinessEntityException e) {
-                    log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
-                    ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
-                    ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
-                    dDRequestLotOpService.updateNoCheck(ddrequestLotOp);
-
+                
                 } catch (Exception e) {
                     log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
                     ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);

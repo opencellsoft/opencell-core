@@ -59,7 +59,7 @@ public class OCCTemplateService extends BusinessService<OCCTemplate> {
 	}
 
 	public OCCTemplate getDirectDebitOCCTemplate() {				
-		String occCodeDefaultValue = "DD_OCC";				
+		String occCodeDefaultValue = "PAY_DDT";				
 		return getOccTemplateByCFKeyOrProperty(DDREQUEST_OCC_CODE, occCodeDefaultValue);
 	}
 
