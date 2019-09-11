@@ -26,7 +26,7 @@ public class UnitaryCustomTableDataDto extends BaseEntityDto {
      * Should data be overwritten (deleted all data first) instead of appended to existing values. Defaults to false if omitted.
      */
     @XmlAttribute
-    private Boolean overrwrite;
+    private Boolean overwrite;
 
     /**
      * A list of values with field name as map's key and field value as map's value
@@ -51,15 +51,15 @@ public class UnitaryCustomTableDataDto extends BaseEntityDto {
     /**
      * @return Should data be overwritten (deleted all data first) instead of appended to existing values. Defaults to false if null.
      */
-    public Boolean getOverrwrite() {
-        return Optional.ofNullable(overrwrite).orElse(false);
+    public Boolean getOverwrite() {
+        return Optional.ofNullable(overwrite).orElse(false);
     }
 
     /**
      * @param overrwrite Should data be overwritten (deleted all data first) instead of appended to existing values.
      */
-    public void setOverrwrite(Boolean overrwrite) {
-        this.overrwrite = overrwrite;
+    public void setOverwrite(Boolean overrwrite) {
+        this.overwrite = overrwrite;
     }
 
     /**
