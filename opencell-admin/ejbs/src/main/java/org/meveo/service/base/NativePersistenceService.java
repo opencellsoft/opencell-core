@@ -22,9 +22,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -60,7 +60,6 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
 
 /**
@@ -224,7 +223,7 @@ public class NativePersistenceService extends BaseService {
                             } else if (fieldValue instanceof BigDecimal) {
                                 preparedStatement.setBigDecimal(i, (BigDecimal) fieldValue);
                             } else if (fieldValue instanceof Date) {
-                                preparedStatement.setDate(i, new java.sql.Date(((Date) fieldValue).getTime()));
+                                preparedStatement.setTimestamp(i, new Timestamp(((Date) fieldValue).getTime()));
                             } else if (fieldValue instanceof Boolean) {
                                 preparedStatement.setBoolean(i, (Boolean) fieldValue);
                             } else if (fieldValue == null) {
@@ -956,17 +955,23 @@ public class NativePersistenceService extends BaseService {
      *        converted accordingly. If a single value is passed, it will be added to a list.
      * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
      *        standard date and time and then date only patterns will be applied.
+     * @param regExp 
      * @return A converted data type
      * @throws ValidationException Value can not be cast to a target class
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected Object castValue(Object value, Class targetClass, boolean expectedList, String[] datePatterns) throws ValidationException {
+    protected Object castValue(Object value, Class targetClass, boolean expectedList, String[] datePatterns, Pattern pattern) throws ValidationException {
 
         // log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
         // value != null ? value.getClass().isArray() : null);
 
         // Nothing to cast - same data type
         if (targetClass.isAssignableFrom(value.getClass()) && !expectedList) {
+        	if (targetClass == String.class && pattern!=null) {
+                if (!pattern.matcher((String)value).matches()) {
+                    throw new ValidationException("value of String "+value+" not accepted for regexp"+pattern.toString());
+                }
+            }
             return value;
 
             // A list is expected as value. If value is not a list, parse value as comma separated string and convert each value separately
@@ -979,7 +984,7 @@ public class NativePersistenceService extends BaseService {
                 List valuesConverted = new ArrayList<>();
                 String[] valueItems = ((String) value).split(",");
                 for (String valueItem : valueItems) {
-                    Object valueConverted = castValue(valueItem, targetClass, false, datePatterns);
+                    Object valueConverted = castValue(valueItem, targetClass, false, datePatterns, pattern);
                     if (valueConverted != null) {
                         valuesConverted.add(valueConverted);
                     } else {
@@ -990,7 +995,7 @@ public class NativePersistenceService extends BaseService {
 
                 // A single value list
             } else {
-                Object valueConverted = castValue(value, targetClass, false, datePatterns);
+                Object valueConverted = castValue(value, targetClass, false, datePatterns, pattern);
                 if (valueConverted != null) {
                     return Arrays.asList(valueConverted);
                 } else {
@@ -1024,13 +1029,14 @@ public class NativePersistenceService extends BaseService {
 
         try {
             if (targetClass == String.class) {
-                if (stringVal != null || listVal != null) {
-                    return value;
-                } else {
-                    return value.toString();
-                }
-
-            }else if(targetClass == EntityReferenceWrapper.class){
+            	String result = (stringVal == null && listVal == null) ? value.toString():(String)value;
+                    if(pattern!=null) {
+                        if (!pattern.matcher(result).matches()) {
+                            throw new ValidationException("value of String "+result+" not accepted for regexp"+pattern.toString());
+                        }
+                    }
+                    return result;
+            } else if(targetClass == EntityReferenceWrapper.class){
                 return Long.parseLong(value.toString());
 
             } else if (targetClass == Boolean.class || (targetClass.isPrimitive() && targetClass.getName().equals("boolean"))) {
@@ -1140,4 +1146,5 @@ public class NativePersistenceService extends BaseService {
         }
         return null;
     }
+    
 }
