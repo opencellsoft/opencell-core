@@ -200,6 +200,7 @@ public interface WalletRs extends IBaseRs {
      * List wallet operations matching a given criteria
      * 
      * @param pagingAndFiltering Pagination and filtering criteria
+     * @param withRTs if true load the related rated transaction
      * @return List of wallet operations
      */
     @POST
