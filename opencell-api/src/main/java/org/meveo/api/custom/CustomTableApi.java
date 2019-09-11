@@ -79,8 +79,8 @@ public class CustomTableApi extends BaseApi {
 
         handleMissingParameters();
 
-        if (dto.getOverrwrite() == null) {
-            dto.setOverrwrite(false);
+        if (dto.getOverwrite() == null) {
+            dto.setOverwrite(false);
         }
 
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCustomTableCode());
@@ -94,7 +94,7 @@ public class CustomTableApi extends BaseApi {
             values.add(record.getValues());
         }
 
-        customTableService.importData(cet, values, !dto.getOverrwrite());
+        customTableService.importData(cet, values, !dto.getOverwrite());
 
     }
 
