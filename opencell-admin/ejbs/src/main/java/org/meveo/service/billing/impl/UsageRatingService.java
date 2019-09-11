@@ -141,6 +141,7 @@ public class UsageRatingService implements Serializable {
 
     private Map<String, String> descriptionMap = new HashMap<>();
 
+    @Inject
 	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
     // @PreDestroy
