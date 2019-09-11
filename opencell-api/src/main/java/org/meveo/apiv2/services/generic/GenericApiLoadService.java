@@ -26,7 +26,7 @@ public class GenericApiLoadService extends GenericApiService {
                 .offset(Long.valueOf(searchConfig.getFirstRow()))
                 .total(getCount(searchConfig, entityClass))
                 .build();
-        return new JsonGenericMapper().toJson(new HashSet<>(genericFields), entityClass, genericPaginatedResource);
+        return new JsonGenericMapper().toJson(genericFields, entityClass, genericPaginatedResource);
     }
 
     private long getCount(PaginationConfiguration searchConfig, Class entityClass) {
@@ -40,8 +40,7 @@ public class GenericApiLoadService extends GenericApiService {
         PersistenceService persistenceService = getPersistenceService(entityClass);
         return Optional
                 .ofNullable(new JsonGenericMapper()
-                        .toJson(new HashSet<>(genericFields), entityClass,
-                                Collections.singletonMap("data",persistenceService.findById(id, searchConfig.getFetchFields()))));
+                        .toJson(genericFields, entityClass, Collections.singletonMap("data",persistenceService.findById(id, searchConfig.getFetchFields()))));
     }
 
 }
