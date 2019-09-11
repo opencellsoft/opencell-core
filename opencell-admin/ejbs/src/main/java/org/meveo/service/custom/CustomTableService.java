@@ -101,11 +101,6 @@ public class CustomTableService extends NativePersistenceService {
     public Long create(String tableName, Map<String, Object> values) throws BusinessException {
 
         Long id = super.create(tableName, values, true); // Force to return ID as we need it to retrieve data for Elastic Search population
-        CustomEntityInstance entity = new CustomEntityInstance();
-        entity.setId(id);
-        entity.setCetCode(tableName);
-        entity.setCode(id.toString());
-        customEntityInstanceService.create(entity);
         elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, values, false, true);
 
         return id;
