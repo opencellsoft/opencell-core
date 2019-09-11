@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Future;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.ejb.AsyncResult;
@@ -381,10 +382,12 @@ public class CustomTableService extends NativePersistenceService {
 
         Map<String, Class> fieldTypes = new HashMap<>();
         Map<String, Object> defaultValues = new HashMap<>();
+        Map<String, String> regexpFields= new HashMap<>();
         for (CustomFieldTemplate cft : fields) {
             fieldTypes.put(cft.getCode(), cft.getFieldType().getDataClass());
             fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
             defaultValues.put(cft.getCode(), cft.getDefaultValueConverted());
+            regexpFields.computeIfAbsent(cft.getCode(), val -> cft.getRegExp());
         }
 
         String tableName = customEntityTemplate.getDbTablename();
@@ -411,7 +414,8 @@ public class CustomTableService extends NativePersistenceService {
                 // Save to DB every 500 records
                 if (importedLines >= 500) {
 
-                    values = convertValues(values, fieldTypes, false, defaultValues);
+                    
+					values = convertValues(values, fieldTypes, false, defaultValues, regexpFields);
                     customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), values, updateESImediately);
 
                     values.clear();
@@ -430,7 +434,7 @@ public class CustomTableService extends NativePersistenceService {
             }
 
             // Save to DB remaining records
-            values = convertValues(values, fieldTypes, false, defaultValues);
+            values = convertValues(values, fieldTypes, false, defaultValues, regexpFields);
             customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), values, updateESImediately);
 
             // Re-populate ES index
@@ -482,8 +486,10 @@ public class CustomTableService extends NativePersistenceService {
         });
 
         Map<String, Class> fieldTypes = new HashMap<>();
+        Map<String, String> regexpFields = new HashMap<>();
         Map<String, Object> defaultValues = new HashMap<>();
         for (CustomFieldTemplate cft : fields) {
+        	regexpFields.computeIfAbsent(cft.getCode(), val -> cft.getRegExp());
             fieldTypes.put(cft.getCode(), cft.getFieldType().getDataClass());
             fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
             defaultValues.put(cft.getCode(), cft.getDefaultValueConverted());
@@ -512,7 +518,7 @@ public class CustomTableService extends NativePersistenceService {
                 // Save to DB every 1000 records
                 if (importedLines >= 1000) {
 
-                    valuesPartial = convertValues(valuesPartial, fieldTypes, false, defaultValues);
+                    valuesPartial = convertValues(valuesPartial, fieldTypes, false, defaultValues, regexpFields);
                     customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
 
                     valuesPartial.clear();
@@ -526,7 +532,7 @@ public class CustomTableService extends NativePersistenceService {
             }
 
             // Save to DB remaining records
-            valuesPartial = convertValues(valuesPartial, fieldTypes, false, defaultValues);
+            valuesPartial = convertValues(valuesPartial, fieldTypes, false, defaultValues, regexpFields);
             customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
 
             // Repopulate ES index
@@ -750,13 +756,16 @@ public class CustomTableService extends NativePersistenceService {
 
         Map<String, Class> fieldTypes = new HashMap<>();
         Map<String, Object> defaultValues = new HashMap<>();
+        Map<String, String> regexpFields = new HashMap<>();
         for (CustomFieldTemplate cft : fields) {
             fieldTypes.put(cft.getCode(), cft.getFieldType().getDataClass());
             fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
             defaultValues.put(cft.getCode(), cft.getDefaultValueConverted());
+            
+			regexpFields.computeIfAbsent(cft.getCode(), val -> cft.getRegExp());
         }
 
-        return convertValues(values, fieldTypes, discardNull, defaultValues);
+        return convertValues(values, fieldTypes, discardNull, defaultValues, regexpFields);
 
     }
 
@@ -766,11 +775,12 @@ public class CustomTableService extends NativePersistenceService {
      * @param values A map of values with field name of customFieldTemplate code as a key and field value as a value
      * @param fields Field definitions with field name or field code as a key and data class as a value
      * @param discardNull If True, null values will be discarded
+     * @param regexpFields 
      * @return Converted values with db field name as a key and field value as value.
      * @throws ValidationException
      */
     @SuppressWarnings("rawtypes")
-    public List<Map<String, Object>> convertValues(List<Map<String, Object>> values, Map<String, Class> fields, boolean discardNull, Map<String, Object> defaultValues)
+    public List<Map<String, Object>> convertValues(List<Map<String, Object>> values, Map<String, Class> fields, boolean discardNull, Map<String, Object> defaultValues, Map<String, String> regexpFields)
             throws ValidationException {
 
         if (values == null) {
@@ -781,7 +791,7 @@ public class CustomTableService extends NativePersistenceService {
         String[] datePatterns = new String[] { DateUtils.DATE_TIME_PATTERN, paramBean.getDateTimeFormat(), DateUtils.DATE_PATTERN, paramBean.getDateFormat() };
 
         for (Map<String, Object> value : values) {
-            convertedValues.add(convertValue(value, fields, discardNull, datePatterns, defaultValues));
+            convertedValues.add(convertValue(value, fields, discardNull, datePatterns, defaultValues, regexpFields));
         }
 
         return convertedValues;
@@ -808,13 +818,16 @@ public class CustomTableService extends NativePersistenceService {
 
         Map<String, Class> fieldTypes = new HashMap<>();
         Map<String, Object> defaultValues = new HashMap<>();
+        Map<String, String> regexpFields = new HashMap<>();
         for (CustomFieldTemplate cft : fields) {
             fieldTypes.put(cft.getCode(), cft.getFieldType().getDataClass());
             fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
             defaultValues.put(cft.getCode(), cft.getDefaultValueConverted());
+            
+			regexpFields.computeIfAbsent(cft.getCode(), val -> cft.getRegExp());
         }
 
-        return convertValue(values, fieldTypes, discardNull, datePatterns, defaultValues);
+        return convertValue(values, fieldTypes, discardNull, datePatterns, defaultValues, regexpFields);
     }
 
     /**
@@ -825,11 +838,12 @@ public class CustomTableService extends NativePersistenceService {
      * @param discardNull If True, null values will be discarded
      * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
      *        standard date and time and then date only patterns will be applied.
+     * @param regexpFields 
      * @return Converted values with db field name as a key and field value as value.
      * @throws ValidationException
      */
     @SuppressWarnings("rawtypes")
-    private Map<String, Object> convertValue(Map<String, Object> values, Map<String, Class> fields, boolean discardNull, String[] datePatterns, Map<String, Object> defaultValues)
+    private Map<String, Object> convertValue(Map<String, Object> values, Map<String, Class> fields, boolean discardNull, String[] datePatterns, Map<String, Object> defaultValues, Map<String, String> regexpFields)
             throws ValidationException {
 
         if (values == null) {
@@ -841,7 +855,7 @@ public class CustomTableService extends NativePersistenceService {
         // Handle ID field
         Object id = values.get(FIELD_ID);
         if (id != null) {
-            valuesConverted.put(FIELD_ID, castValue(id, Long.class, false, datePatterns));
+            valuesConverted.put(FIELD_ID, castValue(id, Long.class, false, datePatterns,null));
         }
 
         // Convert field based on data type
@@ -871,7 +885,9 @@ public class CustomTableService extends NativePersistenceService {
                     if (dataClass == null) {
                         throw new ValidationException("No field definition " + fieldName + " was found");
                     }
-                    Object value = castValue(valueEntry.getValue(), dataClass, false, datePatterns);
+                    String regExp = regexpFields.getOrDefault(key,null);
+                    final Pattern pattern = regExp!=null?Pattern.compile(regExp):null;
+					Object value = castValue(valueEntry.getValue(), dataClass, false, datePatterns, pattern);
 
                     // Replace cft code with db field name if needed
                     String dbFieldname = CustomFieldTemplate.getDbFieldname(fieldName);
