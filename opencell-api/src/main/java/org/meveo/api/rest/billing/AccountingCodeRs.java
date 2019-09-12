@@ -69,7 +69,7 @@ public interface AccountingCodeRs extends IBaseRs {
      * @return request processing status
      */
     @GET
-		@Path("") // necessary for documentation
+		@Path("") // necessary for swagger documentation
     AccountingCodeGetResponseDto find(@QueryParam("accountingCode") String accountingCode);
 
     /**
