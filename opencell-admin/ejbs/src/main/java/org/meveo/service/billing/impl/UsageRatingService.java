@@ -460,7 +460,7 @@ public class UsageRatingService implements Serializable {
                     meveoInstance = meveoInstanceService.findByCode(opencellInstanceCode);
                 }
 
-                log.debug("Will trigger EDR {}", triggeredEDRTemplate.getCode());
+                log.debug("Will trigger EDR {} for EDR {} / WO {}", triggeredEDRTemplate.getCode(), edr.getId(), walletOperation.getId());
 
                 if (meveoInstance == null) {
                     EDR newEdr = new EDR();
@@ -903,11 +903,7 @@ public class UsageRatingService implements Serializable {
             userMap.put("ua", walletOperation.getWallet().getUserAccount());
         }
         if (expression.indexOf("serviceInstance") >= 0) {
-            ServiceInstance service = null;
-            if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
-                service = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
-                userMap.put("serviceInstance", service);
-            }
+            userMap.put("serviceInstance", walletOperation.getServiceInstance());
         }
 
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
@@ -937,11 +933,7 @@ public class UsageRatingService implements Serializable {
             userMap.put("ua", walletOperation.getWallet().getUserAccount());
         }
         if (expression.indexOf("serviceInstance") >= 0) {
-            ServiceInstance service = null;
-            if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
-                service = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
-                userMap.put("serviceInstance", service);
-            }
+            userMap.put("serviceInstance", walletOperation.getServiceInstance());
         }
 
         String result = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
@@ -964,11 +956,7 @@ public class UsageRatingService implements Serializable {
             userMap.put("ua", walletOperation.getWallet().getUserAccount());
         }
         if (expression.indexOf("serviceInstance") >= 0) {
-            ServiceInstance service = null;
-            if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
-                service = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
-                userMap.put("serviceInstance", service);
-            }
+            userMap.put("serviceInstance", walletOperation.getServiceInstance());
         }
 
         Double result = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);

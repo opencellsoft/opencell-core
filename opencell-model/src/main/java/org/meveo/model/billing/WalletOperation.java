@@ -428,22 +428,8 @@ public class WalletOperation extends BusinessEntity {
     }
 
     public void setChargeInstance(ChargeInstance chargeInstance) {
-        if (chargeInstance instanceof RecurringChargeInstance) {
-            setServiceInstance(((RecurringChargeInstance) chargeInstance).getServiceInstance());
 
-        } else if (chargeInstance instanceof OneShotChargeInstance) {
-            OneShotChargeInstance os = ((OneShotChargeInstance) chargeInstance);
-            if (os.getSubscriptionServiceInstance() != null) {
-                setServiceInstance(os.getSubscriptionServiceInstance());
-
-            } else {
-                setServiceInstance(os.getTerminationServiceInstance());
-            }
-
-        } else if (chargeInstance instanceof UsageChargeInstance) {
-            setServiceInstance(((UsageChargeInstance) chargeInstance).getServiceInstance());
-        }
-
+        setServiceInstance(chargeInstance.getServiceInstance());
         this.chargeInstance = chargeInstance;
     }
 

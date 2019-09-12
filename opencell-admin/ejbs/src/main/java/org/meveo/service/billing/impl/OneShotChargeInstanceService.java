@@ -39,6 +39,8 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionChargeInstance;
+import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationProcessingStatus;
@@ -96,13 +98,30 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         return oneShotChargeInstance;
     }
 
+    /**
+     * Instantiate subscription or termination charge
+     * 
+     * @param serviceInstance Service instance
+     * @param chargeTemplate Charge template
+     * @param amoutWithoutTax Amount without tax
+     * @param amoutWithTax Amount with tax
+     * @param isSubscriptionCharge True if this is a subscription charge
+     * @param isVirtual Is it a virtual charge - should not be persisted
+     * @return Subscription or termination charge instance
+     * @throws BusinessException General exception
+     */
     public OneShotChargeInstance oneShotChargeInstanciation(ServiceInstance serviceInstance, OneShotChargeTemplate chargeTemplate, BigDecimal amoutWithoutTax,
-            BigDecimal amoutWithoutTx2, boolean isSubscriptionCharge, boolean isVirtual) throws BusinessException {
+            BigDecimal amoutWithTax, boolean isSubscriptionCharge, boolean isVirtual) throws BusinessException {
 
         log.debug("Instanciate a oneshot for code {} on subscription {}", chargeTemplate.getCode(), serviceInstance.getSubscription().getCode());
 
-        OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(amoutWithoutTax, amoutWithoutTx2, chargeTemplate, serviceInstance, InstanceStatusEnum.INACTIVE);
+        OneShotChargeInstance oneShotChargeInstance = null;
 
+        if (isSubscriptionCharge) {
+            oneShotChargeInstance = new SubscriptionChargeInstance(amoutWithoutTax, amoutWithTax, chargeTemplate, serviceInstance, InstanceStatusEnum.INACTIVE);
+        } else {
+            oneShotChargeInstance = new TerminationChargeInstance(amoutWithoutTax, amoutWithTax, chargeTemplate, serviceInstance, InstanceStatusEnum.INACTIVE);
+        }
         List<WalletTemplate> walletTemplates = null;
 
         // FIXME : this code should not be here
@@ -188,8 +207,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
         create(oneShotChargeInstance);
 
-        OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(oneShotChargeInstance.getCode());
-        if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeTemplate.getFilterExpression())) {
+        if (!walletOperationService.isChargeMatch(oneShotChargeInstance, chargeTemplate.getFilterExpression())) {
             log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", oneShotChargeInstance.getCode());
             return oneShotChargeInstance;
         }
@@ -202,8 +220,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
     public void oneShotChargeApplication(Subscription subscription, OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity,
             String orderNumberOverride) throws BusinessException, RatingException {
-        OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(oneShotChargeInstance.getCode());
-        if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeTemplate.getFilterExpression())) {
+        if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeInstance.getChargeTemplate().getFilterExpression())) {
             log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", oneShotChargeInstance.getCode());
             return;
         }
@@ -228,8 +245,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         log.debug("Apply one shot charge on Virtual operation. User account {}, offer {}, charge {}, quantity {}", oneShotChargeInstance.getUserAccount().getCode(),
             subscription.getOffer().getCode(), oneShotChargeInstance.getChargeTemplate().getCode(), quantity);
 
-        OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(oneShotChargeInstance.getCode());
-        if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeTemplate.getFilterExpression())) {
+        if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeInstance.getChargeTemplate().getFilterExpression())) {
             log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", oneShotChargeInstance.getCode());
             return null;
         }

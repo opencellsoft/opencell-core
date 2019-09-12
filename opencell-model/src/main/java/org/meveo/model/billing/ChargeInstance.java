@@ -30,6 +30,8 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -74,9 +76,10 @@ import org.slf4j.LoggerFactory;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_charge_instance_seq"), })
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "charge_type", discriminatorType = DiscriminatorType.STRING)
 @NamedQueries({ @NamedQuery(name = "ChargeInstance.listPrepaid", query = "SELECT c FROM ChargeInstance c where c.prepaid=true and  c.status='ACTIVE'") })
-public class ChargeInstance extends BusinessEntity {
+public abstract class ChargeInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -189,14 +192,6 @@ public class ChargeInstance extends BusinessEntity {
     protected Subscription subscription;
 
     /**
-     * Description. Deprecated in 5.3 for not used.
-     */
-    @Deprecated
-    @Column(name = "pr_description", length = 255)
-    @Size(max = 255)
-    protected String prDescription;
-
-    /**
      * Currency
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -217,6 +212,13 @@ public class ChargeInstance extends BusinessEntity {
     @JoinTable(name = "billing_chrginst_wallet", joinColumns = @JoinColumn(name = "chrg_instance_id"), inverseJoinColumns = @JoinColumn(name = "wallet_instance_id"))
     @OrderColumn(name = "INDX")
     protected List<WalletInstance> walletInstances = new ArrayList<>();
+
+    /**
+     * Subscribed service
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_instance_id")
+    private ServiceInstance serviceInstance;
 
     /**
      * Prepaid wallet instances
@@ -261,6 +263,7 @@ public class ChargeInstance extends BusinessEntity {
         }
         this.amountWithoutTax = amountWithoutTax;
         this.amountWithTax = amountWithTax;
+        this.serviceInstance = serviceInstance;
         this.userAccount = serviceInstance.getSubscription().getUserAccount();
         this.subscription = serviceInstance.getSubscription();
         this.seller = subscription.getSeller();
@@ -388,14 +391,6 @@ public class ChargeInstance extends BusinessEntity {
         return sortedWalletOperations;
     }
 
-    public String getPrDescription() {
-        return prDescription;
-    }
-
-    public void setPrDescription(String prDescription) {
-        this.prDescription = prDescription;
-    }
-
     public BigDecimal getAmountWithTax() {
         return amountWithTax;
     }
@@ -489,4 +484,19 @@ public class ChargeInstance extends BusinessEntity {
         }
         return prepaidWalletInstances;
     }
+
+    /**
+     * @return Service instance that charge is associated to
+     */
+    public ServiceInstance getServiceInstance() {
+        return serviceInstance;
+    }
+
+    /**
+     * @param serviceInstance Service instance that charge is associated to
+     */
+    public void setServiceInstance(ServiceInstance serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
+
 }

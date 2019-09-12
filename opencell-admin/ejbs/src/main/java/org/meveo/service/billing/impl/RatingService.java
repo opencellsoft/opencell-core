@@ -39,7 +39,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RatedTransaction;
@@ -51,7 +50,6 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -1080,17 +1078,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             userMap.put("chargeTemplate", charge);
         }
         if (expression.indexOf("serviceInstance") >= 0) {
-            ServiceInstance service = null;
-            if (chargeInstance instanceof RecurringChargeInstance) {
-                service = ((RecurringChargeInstance) chargeInstance).getServiceInstance();
-            } else if (chargeInstance instanceof UsageChargeInstance) {
-                service = ((UsageChargeInstance) chargeInstance).getServiceInstance();
-            } else if (chargeInstance instanceof OneShotChargeInstance) {
-                service = ((OneShotChargeInstance) chargeInstance).getSubscriptionServiceInstance();
-                if (service == null) {
-                    service = ((OneShotChargeInstance) chargeInstance).getTerminationServiceInstance();
-                }
-            }
+            ServiceInstance service = chargeInstance.getServiceInstance();
             if (service != null) {
                 userMap.put("serviceInstance", service);
             }
