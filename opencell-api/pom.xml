@@ -14,6 +14,7 @@
         <swagger.version>2.0.7</swagger.version>
         <springfox.swagger.version>2.8.0</springfox.swagger.version>
         <swagger.ui.version>2.8.0</swagger.ui.version>
+        <swagger.server.link>http://localhost:8080/opencell/api/rest</swagger.server.link>
     </properties>
     <dependencies>
 
@@ -119,6 +120,17 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+              <groupId>io.openapitools.swagger</groupId>
+              <artifactId>swagger-maven-plugin</artifactId>
+              <version>2.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.javaparser</groupId>
+            <artifactId>javaparser-symbol-solver-core</artifactId>
+            <version>3.14.5</version>
+        </dependency>
+
         <!-- End of libraries provided in Jboss -->
         
         <dependency>
@@ -173,6 +185,17 @@
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
             <version>${swagger.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox.swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swagger.ui.version}</version>
         </dependency>
 
         <dependency>
@@ -377,7 +400,138 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>swagger</id>
+            <dependencies>
+                <dependency>
+                      <groupId>io.openapitools.swagger</groupId>
+                      <artifactId>swagger-maven-plugin</artifactId>
+                      <version>2.0.3</version>
+                </dependency>
+		        <dependency>
+		            <groupId>com.github.javaparser</groupId>
+		            <artifactId>javaparser-symbol-solver-core</artifactId>
+		            <version>3.14.5</version>
+		        </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.github.javaparser</groupId>
+                                <artifactId>javaparser-symbol-solver-core</artifactId>
+                                <version>3.14.5</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>org.meveo.api.ParserSwagger</mainClass>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                          <groupId>io.openapitools.swagger</groupId>
+                          <artifactId>swagger-maven-plugin</artifactId>
+                          <version>2.1.0</version>
 
+                          <dependencies>
+                                <dependency>
+                                    <groupId>com.opencellsoft</groupId>
+                                    <artifactId>opencell-model</artifactId>
+                                    <version>${project.version}</version>
+                                </dependency>
+
+                                <dependency>
+                                    <groupId>com.opencellsoft</groupId>
+                                    <artifactId>opencell-api-dto</artifactId>
+                                    <version>${project.version}</version>
+                                </dependency>
+
+                                <dependency>
+                                    <groupId>com.opencellsoft</groupId>
+                                    <artifactId>opencell-admin-ejbs</artifactId>
+                                    <version>${project.version}</version>
+                                </dependency>
+
+                                <dependency>
+                                    <groupId>com.opencellsoft</groupId>
+                                    <artifactId>opencell-api</artifactId>
+                                    <version>${project.version}</version>
+                                </dependency>
+
+                                <dependency>
+                                    <groupId>javax.servlet</groupId>
+                                    <artifactId>servlet-api</artifactId>
+                                    <version>2.5</version>
+                                    <scope>compile</scope>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.jboss.resteasy</groupId>
+                                    <artifactId>resteasy-multipart-provider</artifactId>
+                                    <version>2.2.1.GA</version>
+                                    <scope>compile</scope>
+                                </dependency>
+						        <dependency>
+						            <groupId>com.github.javaparser</groupId>
+						            <artifactId>javaparser-symbol-solver-core</artifactId>
+						            <version>LATEST</version>
+						        </dependency>
+                          </dependencies>
+
+                          <configuration>
+                                <swaggerConfig>
+                                  <servers>
+                                    <server>
+                                      <url>${swagger.server.link}</url>
+                                      <description>Server to test</description>
+                                    </server>
+                                  </servers>
+                                  <info>
+                                    <title>Swagger of Opencellsoft Api</title>
+                                    <version>${project.version}</version>
+                                    <contact>
+                                      <email>contact@opencellsoft.fr</email>
+                                      <name>OpenCellSoft</name>
+                                      <url>https://opencellsoft.com/contact_us/</url>
+                                    </contact>
+                                    <license>
+                                      <url>https://opencellsoft.com/</url>
+                                      <name>Opencellsoft</name>
+                                    </license>
+                                    <description>@#Introduction</description>
+                                  </info>
+                                </swaggerConfig>
+                                <resourcePackages>
+                                    <resourcePackage>org.meveo.api.rest</resourcePackage>
+                                    <resourcePackage>org.meveo.apiv2</resourcePackage>
+                                </resourcePackages>
+                                <outputDirectory>${project.build.directory}/doc/swagger</outputDirectory>
+                                <outputFilename>swagger</outputFilename>
+                                <outputFormats>JSON,YAML</outputFormats>
+                                <prettyPrint>true</prettyPrint>
+                                <useResourcePackagesChildren>true</useResourcePackagesChildren>
+                          </configuration>
+                          <executions>
+                            <execution>
+                                <goals>
+                                  <goal>generate</goal>
+                                </goals>
+                            </execution>
+                          </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <!-- An optional Arquillian testing profile that executes tests in your JBoss AS instance -->
             <!-- This profile will start a new JBoss AS instance, and execute the test, shutting it down when done -->
@@ -399,6 +553,33 @@
                         <version>2.17</version>
                         <configuration>
                             <skipTests>false</skipTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>mdmodification</id>
+            <dependencies>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <dependencies>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>org.meveo.api.MdSwaggerModification</mainClass>
                         </configuration>
                     </plugin>
                 </plugins>
