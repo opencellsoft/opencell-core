@@ -5,7 +5,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -349,7 +348,7 @@ public class CatalogHierarchyBuilderService {
                                 pricePlansInMemory.add(newPriceplanmaMatrix);
                             }
 
-                            pricePlanMatrixService.create(newPriceplanmaMatrix);
+                            pricePlanMatrixService.createPP(newPriceplanmaMatrix);
                         }
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new BusinessException(e.getMessage());
@@ -595,7 +594,7 @@ public class CatalogHierarchyBuilderService {
                                 pricePlansInMemory.add(newPriceplanmaMatrix);
                             }
 
-                            pricePlanMatrixService.create(newPriceplanmaMatrix);
+                            pricePlanMatrixService.createPP(newPriceplanmaMatrix);
                         }
                     }
                 }
@@ -628,7 +627,7 @@ public class CatalogHierarchyBuilderService {
                                 pricePlansInMemory.add(newPriceplanmaMatrix);
                             }
 
-                            pricePlanMatrixService.create(newPriceplanmaMatrix);
+                            pricePlanMatrixService.createPP(newPriceplanmaMatrix);
                         }
                     }
                 }
@@ -661,7 +660,7 @@ public class CatalogHierarchyBuilderService {
                                 pricePlansInMemory.add(newPriceplanmaMatrix);
                             }
 
-                            pricePlanMatrixService.create(newPriceplanmaMatrix);
+                            pricePlanMatrixService.createPP(newPriceplanmaMatrix);
                         }
                     }
                 }
@@ -693,7 +692,7 @@ public class CatalogHierarchyBuilderService {
                                 pricePlansInMemory.add(newPriceplanmaMatrix);
                             }
 
-                            pricePlanMatrixService.create(newPriceplanmaMatrix);
+                            pricePlanMatrixService.createPP(newPriceplanmaMatrix);
                         }
                     }
                 }
