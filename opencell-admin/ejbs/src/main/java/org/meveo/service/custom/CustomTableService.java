@@ -383,6 +383,7 @@ public class CustomTableService extends NativePersistenceService {
             fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
             defaultValues.put(cft.getCode(), cft.getDefaultValueConverted());
             regexpFields.computeIfAbsent(cft.getCode(), val -> cft.getRegExp());
+            regexpFields.computeIfAbsent(cft.getDbFieldname(), val -> cft.getRegExp());
         }
 
         String tableName = customEntityTemplate.getDbTablename();
@@ -485,6 +486,7 @@ public class CustomTableService extends NativePersistenceService {
         Map<String, Object> defaultValues = new HashMap<>();
         for (CustomFieldTemplate cft : fields) {
         	regexpFields.computeIfAbsent(cft.getCode(), val -> cft.getRegExp());
+        	regexpFields.computeIfAbsent(cft.getDbFieldname(), val -> cft.getRegExp());
             fieldTypes.put(cft.getCode(), cft.getFieldType().getDataClass());
             fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
             defaultValues.put(cft.getCode(), cft.getDefaultValueConverted());
@@ -758,6 +760,7 @@ public class CustomTableService extends NativePersistenceService {
             defaultValues.put(cft.getCode(), cft.getDefaultValueConverted());
             
 			regexpFields.computeIfAbsent(cft.getCode(), val -> cft.getRegExp());
+			regexpFields.computeIfAbsent(cft.getDbFieldname(), val -> cft.getRegExp());
         }
 
         return convertValues(values, fieldTypes, discardNull, defaultValues, regexpFields);
@@ -820,6 +823,7 @@ public class CustomTableService extends NativePersistenceService {
             defaultValues.put(cft.getCode(), cft.getDefaultValueConverted());
             
 			regexpFields.computeIfAbsent(cft.getCode(), val -> cft.getRegExp());
+			regexpFields.computeIfAbsent(cft.getDbFieldname(), val -> cft.getRegExp());
         }
 
         return convertValue(values, fieldTypes, discardNull, datePatterns, defaultValues, regexpFields);
