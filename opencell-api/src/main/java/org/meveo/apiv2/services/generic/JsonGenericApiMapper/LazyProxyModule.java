@@ -34,24 +34,9 @@ class LazyProxyModule extends SimpleModule {
 
          @Override
          public void serialize(HibernateProxy value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-             LazyInitializer hibernateLazyInitializer = value.getHibernateLazyInitializer();
-             final Object unProxyDependency;
-             Serializable lazyInitializerIdentifier = hibernateLazyInitializer.getIdentifier();
-             try {
-                 unProxyDependency = PersistenceUtils.initializeAndUnproxy(value);
-                 gen.writeStartObject();
-                 gen.writeObjectField("id", lazyInitializerIdentifier);
-                 if (hibernateLazyInitializer != null){
-                     if (unProxyDependency instanceof BusinessEntity){
-                         gen.writeStringField("code", ((BusinessEntity)unProxyDependency).getCode());
-                     }
-                 }
-                 gen.writeEndObject();
-             }catch (Exception e){
-                 gen.writeStartObject();
-                 gen.writeObjectField("id", lazyInitializerIdentifier);
-                 gen.writeEndObject();
-             }
+             gen.writeStartObject();
+             gen.writeObjectField("id", value.getHibernateLazyInitializer().getIdentifier());
+             gen.writeEndObject();
          }
      }
 
