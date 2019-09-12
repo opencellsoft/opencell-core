@@ -69,6 +69,7 @@ public interface AccountingCodeRs extends IBaseRs {
      * @return request processing status
      */
     @GET
+		@Path("") // necessary for documentation
     AccountingCodeGetResponseDto find(@QueryParam("accountingCode") String accountingCode);
 
     /**
