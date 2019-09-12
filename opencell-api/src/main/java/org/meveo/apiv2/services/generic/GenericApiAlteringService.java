@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -63,7 +64,7 @@ public class GenericApiAlteringService extends GenericApiService {
     private void updateEntityWithDtoFields(String dto, BaseEntity entity, BaseEntity entityToUpdate) {
         Iterable<String> fieldNames = () -> JacksonUtil.toJsonNode(dto).fieldNames();
         StreamSupport.stream(fieldNames.spliterator(), false)
-                .filter(forbiddenFieldsToUpdate::contains)
+                .filter(((Predicate<String>) forbiddenFieldsToUpdate::contains).negate())
                 .forEach(fieldName -> FetchOrSetField(fieldName, entityToUpdate, entity));
     }
     private void FetchOrSetField(String fieldName, BaseEntity entityToUpdate, BaseEntity entity) {
