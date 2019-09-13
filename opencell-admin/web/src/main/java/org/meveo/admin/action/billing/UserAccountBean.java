@@ -108,7 +108,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
     @Inject
     private ProductTemplateService productTemplateService;
-    
+
     @Inject
     private SellerService sellerService;
 
@@ -164,8 +164,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         this.initNestedFields(entity);
         return entity;
     }
-    
-    
+
     @Override
     public UserAccount getEntity() {
         UserAccount ua = super.getEntity();
@@ -244,15 +243,15 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public String terminateAccount() {
         log.debug("resiliateAccount userAccountId:" + entity.getId());
         try {
-            
+
             Date terminationDate = entity.getTerminationDate();
             SubscriptionTerminationReason terminationReason = entity.getTerminationReason();
-            
+
             entity = userAccountService.refreshOrRetrieve(entity);
 
             entity.setTerminationDate(terminationDate);
             entity.setTerminationReason(terminationReason);
-           
+
             entity = userAccountService.userAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason());
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
@@ -311,19 +310,18 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         return result;
     }
 
-    
-    public LazyDataModel<WalletOperation> getWalletOperations(String walletCode) {   	
+    public LazyDataModel<WalletOperation> getWalletOperations(String walletCode) {
 
-   	 HashMap<String, Object> filters = new HashMap<String, Object>();
-   	 filters.put("wallet.code", walletCode);
-   	 filters.put("wallet.userAccount", entity);
-   	 
-		if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
-			log.debug("getWalletOperations {}", walletCode);
-			walletOperations.put(walletCode,walletOperationBean.getLazyDataModel(filters, true));
-		}		 
-		return walletOperations.get(walletCode);
-   }
+        HashMap<String, Object> filters = new HashMap<String, Object>();
+        filters.put("wallet.code", walletCode);
+        filters.put("wallet.userAccount", entity);
+
+        if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
+            log.debug("getWalletOperations {}", walletCode);
+            walletOperations.put(walletCode, walletOperationBean.getLazyDataModel(filters, true));
+        }
+        return walletOperations.get(walletCode);
+    }
 
     public void populateAccounts(BillingAccount billingAccount) {
         entity.setBillingAccount(billingAccount);
@@ -383,10 +381,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
     public void reload() throws BusinessException {
         walletOperationService.create(reloadOperation);
-        
-        WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(reloadOperation, null, WalletOperationStatusEnum.TREATED);
-        walletOperationService.getEntityManager().persist(woProcessingStatus);
-        reloadOperation = null;
+
+        reloadOperation.getProcessingStatus().setStatus(WalletOperationStatusEnum.TREATED);
     }
 
     public String getCachedOpenBalance(WalletInstance wallet) {
@@ -487,11 +483,12 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public List<SelectItem> getWalletOperationStatusList() {
         ResourceBundle resourceBundle = ResourceBundle.getBundle("messages", Faces.getLocale());
 
-        List<SelectItem> filterLockedOptions = new ArrayList<SelectItem>(Arrays.asList(new SelectItem(WalletOperationStatusEnum.OPEN, resourceBundle.getString("walletOperationStatus.open")),
-            new SelectItem(WalletOperationStatusEnum.TREATED, resourceBundle.getString("walletOperationStatus.treated")),
-            new SelectItem(WalletOperationStatusEnum.CANCELED, resourceBundle.getString("walletOperationStatus.canceled")),
-            new SelectItem(WalletOperationStatusEnum.RESERVED, resourceBundle.getString("walletOperationStatus.reserved")),
-            new SelectItem(WalletOperationStatusEnum.TO_RERATE, resourceBundle.getString("walletOperationStatus.to_rerate"))));
+        List<SelectItem> filterLockedOptions = new ArrayList<SelectItem>(
+            Arrays.asList(new SelectItem(WalletOperationStatusEnum.OPEN, resourceBundle.getString("walletOperationStatus.open")),
+                new SelectItem(WalletOperationStatusEnum.TREATED, resourceBundle.getString("walletOperationStatus.treated")),
+                new SelectItem(WalletOperationStatusEnum.CANCELED, resourceBundle.getString("walletOperationStatus.canceled")),
+                new SelectItem(WalletOperationStatusEnum.RESERVED, resourceBundle.getString("walletOperationStatus.reserved")),
+                new SelectItem(WalletOperationStatusEnum.TO_RERATE, resourceBundle.getString("walletOperationStatus.to_rerate"))));
 
         return filterLockedOptions;
     }
@@ -595,8 +592,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     }
 
     public List<Seller> listSellers() {
-        if(productInstance!= null && productInstance.getProductTemplate() != null) {
-            if(productInstance.getProductTemplate().getSellers().size() > 0) {
+        if (productInstance != null && productInstance.getProductTemplate() != null) {
+            if (productInstance.getProductTemplate().getSellers().size() > 0) {
                 return productInstance.getProductTemplate().getSellers();
             } else {
                 return sellerService.list();

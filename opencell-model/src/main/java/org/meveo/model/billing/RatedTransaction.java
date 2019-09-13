@@ -69,79 +69,77 @@ import org.meveo.model.rating.EDR;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_rated_transaction_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r left join fetch r.processingStatus s where r.wallet=:wallet and r.processingStatus is not null order by usageDate desc "),
+        @NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where r.wallet=:wallet and r.processingStatus.status<>'OPEN' order by usageDate desc "),
 
-        @NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumber", query = "SELECT r FROM RatedTransaction r left join fetch r.processingStatus s where "
-                + " s is null AND r.orderNumber=:orderNumber " + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.billingAccount.id "),
-        @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscription", query = "SELECT r FROM RatedTransaction r left join fetch r.processingStatus s where r.subscription.id=:subscriptionId"
-                + " AND s is null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
-        @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccount", query = "SELECT r FROM RatedTransaction r left join fetch r.processingStatus s where r.billingAccount.id=:billingAccountId "
-                + " AND s is null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
+        @NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumber", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where "
+                + " s.status='OPEN' AND r.orderNumber=:orderNumber AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.billingAccount.id "),
+        @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscription", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where r.subscription.id=:subscriptionId"
+                + " AND s.status='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
+        @NamedQuery(name = "RatedTransaction.listToInvoiceByBillingAccount", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where r.billingAccount.id=:billingAccountId "
+                + " AND s.status='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
 
-        @NamedQuery(name = "RatedTransaction.listOrdersBySubscription", query = "SELECT distinct r.orderNumber FROM RatedTransaction r left join r.processingStatus s where r.subscription=:subscription"
-                + " AND s is null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
-                + " AND r.seller=:seller and r.orderNumber is not null and r.id<=:lastId"),
-        @NamedQuery(name = "RatedTransaction.listOrdersByBillingAccount", query = "SELECT distinct r.orderNumber FROM RatedTransaction r left join r.processingStatus s where r.billingAccount=:billingAccount"
-                + " AND s is null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
-                + " AND r.seller=:seller and r.orderNumber is not null and r.id<=:lastId"),
+        @NamedQuery(name = "RatedTransaction.listOrdersBySubscription", query = "SELECT distinct r.orderNumber FROM RatedTransaction r join r.processingStatus s where r.subscription=:subscription"
+                + " AND s.status='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate AND r.seller=:seller and r.orderNumber is not null and r.id<=:lastId"),
+        @NamedQuery(name = "RatedTransaction.listOrdersByBillingAccount", query = "SELECT distinct r.orderNumber FROM RatedTransaction r join r.processingStatus s where r.billingAccount=:billingAccount"
+                + " AND s.status='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate AND r.seller=:seller and r.orderNumber is not null and r.id<=:lastId"),
 
-        @NamedQuery(name = "RatedTransaction.sumInvoiceableByServiceWithMinAmountBySubscription", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.serviceInstance.id FROM RatedTransaction r left join r.processingStatus s "
-                + " WHERE s is null  AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+        @NamedQuery(name = "RatedTransaction.sumInvoiceableByServiceWithMinAmountBySubscription", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.serviceInstance.id FROM RatedTransaction r join r.processingStatus s "
+                + " WHERE s.status='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " and r.subscription=:subscription and r.serviceInstance.minimumAmountEl is not null GROUP BY r.invoiceSubCategory.id, r.serviceInstance.id"),
-        @NamedQuery(name = "RatedTransaction.sumInvoiceableByServiceWithMinAmountByBA", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.serviceInstance.id  FROM RatedTransaction r left join r.processingStatus s "
-                + " WHERE s is null  AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+        @NamedQuery(name = "RatedTransaction.sumInvoiceableByServiceWithMinAmountByBA", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.serviceInstance.id  FROM RatedTransaction r join r.processingStatus s "
+                + " WHERE s.status='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " and r.billingAccount=:billingAccount and r.serviceInstance.minimumAmountEl is not null GROUP BY r.invoiceSubCategory.id, r.serviceInstance.id"),
 
-        @NamedQuery(name = "RatedTransaction.sumInvoiceableBySubscriptionWithMinAmountBySubscription", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.subscription.id FROM RatedTransaction r left join r.processingStatus s "
-                + " WHERE s is null  AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+        @NamedQuery(name = "RatedTransaction.sumInvoiceableBySubscriptionWithMinAmountBySubscription", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.subscription.id FROM RatedTransaction r join r.processingStatus s "
+                + " WHERE s.status='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " and r.subscription=:subscription and r.subscription.minimumAmountEl is not null GROUP BY r.invoiceSubCategory.id, r.subscription.id"),
-        @NamedQuery(name = "RatedTransaction.sumInvoiceableBySubscriptionWithMinAmountByBA", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.subscription.id  FROM RatedTransaction r left join r.processingStatus s "
-                + " WHERE s is null  AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+        @NamedQuery(name = "RatedTransaction.sumInvoiceableBySubscriptionWithMinAmountByBA", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.subscription.id  FROM RatedTransaction r join r.processingStatus s "
+                + " WHERE s.status='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " and r.billingAccount=:billingAccount and r.subscription.minimumAmountEl is not null GROUP BY r.invoiceSubCategory.id, r.subscription.id"),
 
-        @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableBySubscription", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r left join r.processingStatus s "
-                + " WHERE s is null  AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate " + " and r.subscription=:subscription"),
-        @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableBySubscriptionExcludePrepaidWO", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r left join r.processingStatus s "
-                + " WHERE s is null  AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+        @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableBySubscription", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r join r.processingStatus s "
+                + " WHERE s.status='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate " + " and r.subscription=:subscription"),
+        @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableBySubscriptionExcludePrepaidWO", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r join r.processingStatus s "
+                + " WHERE s.status='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " and r.subscription=:subscription AND r.wallet.id NOT IN (:walletsIds)"),
 
-        @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByBA", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r left join r.processingStatus s "
-                + " WHERE s is null  AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate " + " and r.billingAccount=:billingAccount"),
-        @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByBAExcludePrepaidWO", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r left join r.processingStatus s "
-                + " WHERE s is null  AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+        @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByBA", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r join r.processingStatus s "
+                + " WHERE s.status='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate " + " and r.billingAccount=:billingAccount"),
+        @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByBAExcludePrepaidWO", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r join r.processingStatus s "
+                + " WHERE s.status='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " and r.billingAccount=:billingAccount AND r.wallet.id NOT IN (:walletsIds)"),
 
-        @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByOrderNumber", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r left join r.processingStatus s "
-                + "WHERE s is null" + " AND r.orderNumber=:orderNumber AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
-        @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByOrderNumberExcludePrpaidWO", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r left join r.processingStatus s "
-                + "WHERE s is null"
-                + " AND r.orderNumber=:orderNumber AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate AND r.wallet.id NOT IN (:walletsIds)"),
+        @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByOrderNumber", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r join r.processingStatus s "
+                + "WHERE s.status='OPEN' AND r.orderNumber=:orderNumber AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
+        @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByOrderNumberExcludePrpaidWO", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r join r.processingStatus s "
+                + "WHERE s.status='OPEN' AND r.orderNumber=:orderNumber AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate AND r.wallet.id NOT IN (:walletsIds)"),
 
-        @NamedQuery(name = "RatedTransaction.sumInvoiceableByBA", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.seller.id FROM RatedTransaction r left join r.processingStatus s "
-                + " WHERE s is null  AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
-                + " and r.billingAccount=:billingAccount GROUP BY r.invoiceSubCategory.id, r.seller.id"),
+        @NamedQuery(name = "RatedTransaction.sumInvoiceableByBA", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.seller.id FROM RatedTransaction r join r.processingStatus s "
+                + " WHERE s.status='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate and r.billingAccount=:billingAccount GROUP BY r.invoiceSubCategory.id, r.seller.id"),
 
         @NamedQuery(name = "RatedTransaction.cancelByWOIds", query = "UPDATE RatedTransactionProcessingStatus r SET r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.statusDate = :now WHERE id IN (SELECT ws.ratedTransaction.id FROM WalletOperationProcessingStatus ws WHERE ws.id IN :notBilledWalletIdList)"),
         @NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", query = "select r.ratedTransaction from RatedTransactionProcessingStatus r where r.invoice=:invoice and r.ratedTransaction.invoiceSubCategory=:invoiceSubCategory "),
 
-        @NamedQuery(name = "RatedTransaction.unInvoiceByInvoice", query = "Delete from RatedTransactionProcessingStatus r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice=:invoice"),
-        @NamedQuery(name = "RatedTransaction.unInvoiceByBR", query = "Delete from RatedTransactionProcessingStatus r where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.billingRun=:billingRun"),
+        @NamedQuery(name = "RatedTransaction.unInvoiceByInvoice", query = "update RatedTransactionProcessingStatus r set r.status='OPEN', r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice=:invoice"),
+        @NamedQuery(name = "RatedTransaction.unInvoiceByBR", query = "update RatedTransactionProcessingStatus r set r.status='OPEN', r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.billingRun=:billingRun"),
 
         @NamedQuery(name = "RatedTransaction.deleteMinRTByInvoice", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.id in (select s.id from RatedTransactionProcessingStatus s where s.invoice=:invoice)"),
         @NamedQuery(name = "RatedTransaction.deleteMinRTByBR", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.id in (select s.id from RatedTransactionProcessingStatus s where s.billingRun=:billingRun)"),
 
-        @NamedQuery(name = "RatedTransaction.countNotInvoicedOpenByBA", query = "SELECT count(r) FROM RatedTransaction r left join r.processingStatus s WHERE r.billingAccount=:billingAccount"
-                + " AND s is null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedOpenByBA", query = "SELECT count(r) FROM RatedTransaction r join r.processingStatus s WHERE r.billingAccount=:billingAccount"
+                + " AND s.status='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
 
-        @NamedQuery(name = "RatedTransaction.countNotInvoicedByBA", query = "SELECT count(*) FROM RatedTransaction r left join r.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) AND r.billingAccount=:billingAccount"),
-        @NamedQuery(name = "RatedTransaction.countNotInvoicedByUA", query = "SELECT count(*) FROM RatedTransaction r left join r.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) AND r.wallet.userAccount=:userAccount"),
-        @NamedQuery(name = "RatedTransaction.countNotInvoicedByCA", query = "SELECT count(*) FROM RatedTransaction r left join r.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED) AND r.billingAccount.customerAccount=:customerAccount"),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedByBA", query = "SELECT count(*) FROM RatedTransaction r join r.processingStatus s WHERE s.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.billingAccount=:billingAccount"),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedByUA", query = "SELECT count(*) FROM RatedTransaction r join r.processingStatus s WHERE s.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.wallet.userAccount=:userAccount"),
+        @NamedQuery(name = "RatedTransaction.countNotInvoicedByCA", query = "SELECT count(*) FROM RatedTransaction r join r.processingStatus s WHERE s.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.billingAccount.customerAccount=:customerAccount"),
 
         @NamedQuery(name = "RatedTransaction.cancelByRTIds", query = "UPDATE RatedTransactionProcessingStatus r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.statusDate = :now where r.id IN :rsIds "),
         @NamedQuery(name = "RatedTransaction.findByWalletOperationId", query = "SELECT s.ratedTransaction FROM WalletOperationProcessingStatus s WHERE s.id=:walletOperationId"),
 
-        @NamedQuery(name = "RatedTransaction.listOpenBetweenTwoDates", query = "SELECT r FROM RatedTransaction r left join r.processingStatus s where s is null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.usageDate desc "),
-        @NamedQuery(name = "RatedTransaction.deleteNotOpenBetweenTwoDates", query = "delete FROM RatedTransaction r where r.processingStatus.status is not null AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
+        @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfo", query = "UPDATE RatedTransactionProcessingStatus s set s.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, s.invoiceAgregateF=:invoiceAgregateF, s.billingRun=:billingRun, s.invoice=:invoice where s.id in :ids"),
+
+        @NamedQuery(name = "RatedTransaction.listOpenBetweenTwoDates", query = "SELECT r FROM RatedTransaction r join r.processingStatus s where s.status='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.usageDate desc "),
+        @NamedQuery(name = "RatedTransaction.deleteNotOpenBetweenTwoDates", query = "delete FROM RatedTransaction r where r.processingStatus.status.status<>'OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
 
         @NamedQuery(name = "RatedTransaction.listByInvoice", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where s.invoice=:invoice order by r.usageDate"),
         @NamedQuery(name = "RatedTransaction.listByInvoiceNotFree", query = "SELECT r FROM RatedTransaction r join fetch r.processingStatus s where s.invoice=:invoice and r.amountWithoutTax<>0 order by r.usageDate"),

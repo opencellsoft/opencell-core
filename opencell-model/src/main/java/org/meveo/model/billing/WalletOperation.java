@@ -75,37 +75,39 @@ import org.meveo.model.rating.EDR;
 @NamedQueries({
         @NamedQuery(name = "WalletOperation.getWalletOperationsBilled", query = "SELECT ws.id FROM WalletOperationProcessingStatus ws join ws.ratedTransaction rt join rt.processingStatus rs "
                 + " WHERE rs.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND ws.id IN :walletIdList"),
-        @NamedQuery(name = "WalletOperation.listByRatedTransactionId", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s.ratedTransaction.id=:ratedTransactionId"),
+        @NamedQuery(name = "WalletOperation.listByRatedTransactionId", query = "SELECT o FROM WalletOperation o join fetch o.processingStatus s WHERE s.ratedTransaction.id=:ratedTransactionId"),
 
-        @NamedQuery(name = "WalletOperation.listByBRId", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s.ratedTransaction.id in (select rs.id from RatedTransactionProcessingStatus rs where rs.billingRun.id=:brId)"),
+        @NamedQuery(name = "WalletOperation.listByBRId", query = "SELECT o FROM WalletOperation o join fetch o.processingStatus s WHERE s.ratedTransaction.id in (select rs.id from RatedTransactionProcessingStatus rs where rs.billingRun.id=:brId)"),
 
-        @NamedQuery(name = "WalletOperation.listToRateIds", query = "SELECT o.id FROM WalletOperation o left join o.processingStatus s WHERE s is null and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate )"),
-        @NamedQuery(name = "WalletOperation.listToInvoiceByUA", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.wallet.userAccount=:userAccount"),
-        @NamedQuery(name = "WalletOperation.listToInvoiceBySubscription", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.subscription=:subscription"),
-        @NamedQuery(name = "WalletOperation.listToInvoiceByOrderNumber", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.orderNumber=:orderNumber"),
+        @NamedQuery(name = "WalletOperation.listToRateIds", query = "SELECT o.id FROM WalletOperation o join o.processingStatus s WHERE s.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate )"),
+        @NamedQuery(name = "WalletOperation.listToInvoiceByUA", query = "SELECT o FROM WalletOperation o join fetch o.processingStatus s WHERE s.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.wallet.userAccount=:userAccount"),
+        @NamedQuery(name = "WalletOperation.listToInvoiceBySubscription", query = "SELECT o FROM WalletOperation o join fetch o.processingStatus s WHERE s.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.subscription=:subscription"),
+        @NamedQuery(name = "WalletOperation.listToInvoiceByOrderNumber", query = "SELECT o FROM WalletOperation o join fetch o.processingStatus s WHERE s.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.orderNumber=:orderNumber"),
 
         @NamedQuery(name = "WalletOperation.listToRerate", query = "SELECT s.id FROM WalletOperationProcessingStatus s WHERE s.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE"),
 
-        @NamedQuery(name = "WalletOperation.getBalancesForWalletInstance", query = "SELECT sum(case when (s is null or s.status in ('OPEN','TREATED')) then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o left join o.processingStatus s WHERE o.wallet.id=:walletId and (s is null or s.status in ('RESERVED','TREATED'))"),
-        @NamedQuery(name = "WalletOperation.getBalancesForCache", query = "SELECT o.wallet.id, sum(case when (s is null or s.status in ('OPEN','TREATED')) then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o left join o.processingStatus s WHERE (s is null or s.status in ('RESERVED','TREATED')) and o.wallet.walletTemplate.walletType='PREPAID' group by o.wallet.id"),
+        @NamedQuery(name = "WalletOperation.getBalancesForWalletInstance", query = "SELECT sum(case when s.status in ('OPEN','TREATED') then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o join o.processingStatus s WHERE o.wallet.id=:walletId and s.status in ('OPEN','RESERVED','TREATED')"),
+        @NamedQuery(name = "WalletOperation.getBalancesForCache", query = "SELECT o.wallet.id, sum(case when s.status in ('OPEN','TREATED') then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o join o.processingStatus s WHERE s.status in ('OPEN','RESERVED','TREATED') and o.wallet.walletTemplate.walletType='PREPAID' group by o.wallet.id"),
 
-        @NamedQuery(name = "WalletOperation.getOpenByWallet", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null and o.wallet=:wallet"),
+        @NamedQuery(name = "WalletOperation.getOpenByWallet", query = "SELECT o FROM WalletOperation o join fetch o.processingStatus s WHERE s.status='OPEN' and o.wallet=:wallet"),
 
         @NamedQuery(name = "WalletOperation.setStatusToRerate", query = "UPDATE WalletOperationProcessingStatus s SET s.ratedTransaction=NULL, s.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE, s.statusDate = :now "
                 + " WHERE s.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED AND s.ratedTransaction.id IN (SELECT s1.ratedTransaction.id FROM WalletOperationProcessingStatus s1 WHERE s1.id IN :notBilledWalletIdList)"),
 
+        @NamedQuery(name = "WalletOperation.setStatusToCanceled", query = "UPDATE WalletOperationProcessingStatus s SET s.status=org.meveo.model.billing.WalletOperationStatusEnum.CANCELED, s.statusDate = :now where s.status<>org.meveo.model.billing.WalletOperationStatusEnum.TREATED and s.id in (select wo.id from WalletOperation wo where wo.chargeInstance=:chargeInstance)"),
+
         @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE o.chargeInstance=:chargeInstance AND o.id in (select s.id from WalletOperationProcessingStatus s where s.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED)"),
 
-        @NamedQuery(name = "WalletOperation.findByUAAndCode", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE o.wallet.userAccount=:userAccount and o.code=:code"),
+        @NamedQuery(name = "WalletOperation.findByUAAndCode", query = "SELECT o FROM WalletOperation o join fetch o.processingStatus s WHERE o.wallet.userAccount=:userAccount and o.code=:code"),
 
-        @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o left join o.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED) AND o.wallet.userAccount.billingAccount=:billingAccount"),
-        @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o left join o.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED) AND o.wallet.userAccount=:userAccount"),
-        @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o left join o.processingStatus s WHERE (s is null or s.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED) AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount"),
+        @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o join o.processingStatus s WHERE s.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED AND o.wallet.userAccount.billingAccount=:billingAccount"),
+        @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o join o.processingStatus s WHERE s.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED AND o.wallet.userAccount=:userAccount"),
+        @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o join o.processingStatus s WHERE s.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount"),
 
-        @NamedQuery(name = "WalletOperation.countNbrWalletsOperationByStatus", query = "select s.status, count(o.id) from WalletOperation o left join o.processingStatus s group by s.status"),
+        @NamedQuery(name = "WalletOperation.countNbrWalletsOperationByStatus", query = "select s.status, count(o.id) from WalletOperation o join o.processingStatus s group by s.status"),
 
-        @NamedQuery(name = "WalletOperation.listOpenWObetweenTwoDates", query = "SELECT o FROM WalletOperation o left join fetch o.processingStatus s WHERE s is null AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate order by o.operationDate desc"),
-        @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.processingStatus is not null AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate") })
+        @NamedQuery(name = "WalletOperation.listOpenWObetweenTwoDates", query = "SELECT o FROM WalletOperation o join fetch o.processingStatus s WHERE s.status='OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate order by o.operationDate desc"),
+        @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.processingStatus.status<>'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate") })
 public class WalletOperation extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;

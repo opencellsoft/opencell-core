@@ -946,25 +946,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     // AKK alternative 1 for 4326
 
-                    Invoice invoiceRef = em.getReference(Invoice.class, invoice.getId());
+                    em.flush(); // Need to flush, so RTs can be updated in mass
+                    
                     for (Object[] aggregateAndRtIds : rtMassUpdates) {
                         SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRtIds[0];
-                        SubCategoryInvoiceAgregate subCategoryAggregateRef = em.getReference(SubCategoryInvoiceAgregate.class, subCategoryAggregate.getId());
                         List<Long> rtIds = (List<Long>) aggregateAndRtIds[1];
-                        for (Long rtId : rtIds) {
-                            RatedTransactionProcessingStatus processingStatus = new RatedTransactionProcessingStatus(rtId, billingRun, invoiceRef, subCategoryAggregateRef,
-                                RatedTransactionStatusEnum.BILLED);
-                            em.persist(processingStatus);
-                        }
+                        em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice)
+                            .setParameter("invoiceAgregateF", subCategoryAggregate).setParameter("ids", rtIds).executeUpdate();
                     }
 
                     for (Object[] aggregateAndRts : rtUpdates) {
                         SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRts[0];
                         List<RatedTransaction> rts = (List<RatedTransaction>) aggregateAndRts[1];
                         for (RatedTransaction rt : rts) {
-                            RatedTransactionProcessingStatus processingStatus = new RatedTransactionProcessingStatus(rt.getId(), billingRun, invoice, subCategoryAggregate,
-                                RatedTransactionStatusEnum.BILLED);
-                            rt.setProcessingStatus(processingStatus);
+                            RatedTransactionProcessingStatus processingStatus = rt.getProcessingStatus();
+                            processingStatus.setBillingRun(billingRun);
+                            processingStatus.setInvoice(invoice);
+                            processingStatus.setInvoiceAgregateF(subCategoryAggregate);
+                            processingStatus.setStatus(RatedTransactionStatusEnum.BILLED);
                             em.merge(rt);
                         }
                     }
@@ -3422,9 +3421,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
 
                         ratedTransactionService.create(meveoRatedTransaction);
-                        RatedTransactionProcessingStatus rtProcessingStatus = new RatedTransactionProcessingStatus(meveoRatedTransaction.getId(), null, invoice,
-                            invoiceAgregateSubcat, RatedTransactionStatusEnum.BILLED);
-                        em.persist(rtProcessingStatus);
+                        meveoRatedTransaction.getProcessingStatus().setStatus(RatedTransactionStatusEnum.BILLED);
+                        meveoRatedTransaction.getProcessingStatus().setInvoice(invoice);
+                        meveoRatedTransaction.getProcessingStatus().setInvoiceAgregateF(invoiceAgregateSubcat);
 
                         subCatAmountWithoutTax = subCatAmountWithoutTax.add(amountWithoutTax);
                         subCatAmountTax = subCatAmountTax.add(amountTax);
@@ -3440,9 +3439,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         subCatAmountWithoutTax = subCatAmountWithoutTax.add(ratedTransaction.getAmountWithoutTax());
                         subCatAmountTax = subCatAmountTax.add(ratedTransaction.getAmountTax());
                         subCatAmountWithTax = subCatAmountWithTax.add(ratedTransaction.getAmountWithTax());
-                        RatedTransactionProcessingStatus rtStatus = new RatedTransactionProcessingStatus(ratedTransaction.getId(), null, invoice, invoiceAgregateSubcat,
-                            RatedTransactionStatusEnum.BILLED);
-                        em.persist(rtStatus);
+
+                        ratedTransaction.getProcessingStatus().setStatus(RatedTransactionStatusEnum.BILLED);
+                        ratedTransaction.getProcessingStatus().setInvoice(invoice);
+                        ratedTransaction.getProcessingStatus().setInvoiceAgregateF(invoiceAgregateSubcat);
                     }
                 }
 

@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -108,13 +107,13 @@ public class WalletInstance extends BusinessEntity {
     /**
      * Operations against this wallet
      */
-    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "wallet", fetch = FetchType.LAZY)
     private List<WalletOperation> operations;
 
     /**
      * Rated transactions against this wallet
      */
-    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "wallet", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions;
 
     /**

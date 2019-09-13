@@ -203,7 +203,7 @@ public class RatingService extends BusinessService<WalletOperation> {
     }
 
     /**
-     * This method is used to prerate a oneshot or recurring charge.
+     * This method is used to rate a oneshot or recurring charge.
      * 
      * @param chargeTemplate charge template
      * @param subscriptionDate subscription date
@@ -235,7 +235,7 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
     @SuppressWarnings("deprecation")
-    public WalletOperation prerateChargeApplication(ChargeTemplate chargeTemplate, Date subscriptionDate, OfferTemplate offerTemplate, ChargeInstance chargeInstance,
+    public WalletOperation rateCharge(ChargeTemplate chargeTemplate, Date subscriptionDate, OfferTemplate offerTemplate, ChargeInstance chargeInstance,
             ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity,
             BigDecimal quantityInChargeUnits, TradingCurrency tCurrency, Long countryId, String languageCode, Tax tax, BigDecimal discountPercent, Date nextApplicationDate,
             InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber, Date startdate, Date endDate,
@@ -329,7 +329,7 @@ public class RatingService extends BusinessService<WalletOperation> {
     }
 
     /**
-     * used to rate a oneshot, recurring or product charge and triggerEDR
+     * Used to rate a oneshot, recurring or product charge and triggerEDR. Same as prerateChargeApplication but in addition triggers EDRs. NOTE: Does not persist WO
      * 
      * @param chargeInstance charge instance
      * @param applicationType type of application
@@ -357,7 +357,7 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @throws BusinessException business exception
      * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public WalletOperation rateChargeApplication(ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax,
+    public WalletOperation rateChargeAndTriggerEDRs(ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax,
             BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, TradingCurrency tCurrency, Long countryId, Tax tax, BigDecimal discountPercent,
             Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber, Date startdate, Date endDate,
             ChargeApplicationModeEnum mode, boolean forSchedule, boolean isVirtual) throws BusinessException, RatingException {
@@ -372,11 +372,11 @@ public class RatingService extends BusinessService<WalletOperation> {
         String languageCode = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
 
         Subscription subscription = chargeInstance.getSubscription();
-        WalletOperation walletOperation = prerateChargeApplication(chargeInstance.getChargeTemplate(), subscriptionDate, subscription == null ? null : subscription.getOffer(),
+        WalletOperation walletOperation = rateCharge(chargeInstance.getChargeTemplate(), subscriptionDate, subscription == null ? null : subscription.getOffer(),
             chargeInstance, applicationType, applicationDate, amountWithoutTax, amountWithTax, inputQuantity, quantityInChargeUnits, tCurrency, countryId, languageCode, tax,
             discountPercent, nextApplicationDate, invoiceSubCategory, criteria1, criteria2, criteria3, orderNumber, startdate, endDate, mode, chargeInstance.getUserAccount());
 
-        chargeInstance.getWalletOperations().add(walletOperation);
+        // chargeInstance.getWalletOperations().add(walletOperation);
 
         // handle associated edr creation unless it is a Scheduled or virtual operation
         if (forSchedule || isVirtual) {
@@ -860,17 +860,13 @@ public class RatingService extends BusinessService<WalletOperation> {
             // Change related Rated transaction status to Rerated
             RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
             RatedTransactionProcessingStatus rtStatus = ratedTransaction.getProcessingStatus();
-            if (rtStatus != null) {
-                if (rtStatus.getStatus() == RatedTransactionStatusEnum.BILLED) {
-                    throw new UnrolledbackBusinessException("Can not rerate an already billed Wallet Operation. Wallet Operation " + operationToRerateId
-                            + " corresponds to rated transaction " + ratedTransaction.getId());
-                } else if (rtStatus.getStatus() != RatedTransactionStatusEnum.CANCELED && rtStatus.getStatus() != RatedTransactionStatusEnum.RERATED) {
-                    rtStatus.setStatus(RatedTransactionStatusEnum.RERATED);
-                }
-            } else {
-                rtStatus = new RatedTransactionProcessingStatus(ratedTransaction, RatedTransactionStatusEnum.RERATED);
-                getEntityManager().persist(rtStatus);
+            if (rtStatus.getStatus() == RatedTransactionStatusEnum.BILLED) {
+                throw new UnrolledbackBusinessException(
+                    "Can not rerate an already billed Wallet Operation. Wallet Operation " + operationToRerateId + " corresponds to rated transaction " + ratedTransaction.getId());
+            } else if (rtStatus.getStatus() != RatedTransactionStatusEnum.CANCELED && rtStatus.getStatus() != RatedTransactionStatusEnum.RERATED) {
+                rtStatus.setStatus(RatedTransactionStatusEnum.RERATED);
             }
+
             WalletOperation operation = operationToRerate.getUnratedClone();
             operationToRerate.setReratedWalletOperation(operation);
             operationToRerate.getProcessingStatus().setStatus(WalletOperationStatusEnum.RERATED);
@@ -924,7 +920,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             create(operation);
             updateNoCheck(operationToRerate);
             log.debug("updated wallet operation");
-        
+
         } catch (UnrolledbackBusinessException e) {
             log.error("Failed to reRate", e.getMessage());
             operationToRerate.getProcessingStatus().setStatus(WalletOperationStatusEnum.TREATED);

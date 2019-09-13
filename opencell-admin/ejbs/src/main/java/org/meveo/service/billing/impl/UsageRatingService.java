@@ -577,8 +577,7 @@ public class UsageRatingService implements Serializable {
 
         walletOperationService.chargeWalletOperation(walletOperation);
 
-        WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(walletOperation, null, WalletOperationStatusEnum.RESERVED);
-        getEntityManager().persist(woProcessingStatus);
+        walletOperation.getProcessingStatus().setStatus(WalletOperationStatusEnum.RESERVED);
 
         return stopEDRRating;
     }
@@ -707,11 +706,11 @@ public class UsageRatingService implements Serializable {
 
             if (ratedEDRResult.isEDRfullyRated()) {
 
-                EDRProcessingStatus edrStatus = new EDRProcessingStatus(edr, EDRStatusEnum.RATED, null);
                 if (isVirtual) {
+                    EDRProcessingStatus edrStatus = new EDRProcessingStatus(edr, EDRStatusEnum.RATED, null);
                     edr.setProcessingStatus(edrStatus);
                 } else {
-                    getEntityManager().persist(edrStatus);
+                    edr.getProcessingStatus().setStatus(EDRStatusEnum.RATED);
                 }
 
             } else if (!foundPricePlan) {
@@ -867,8 +866,7 @@ public class UsageRatingService implements Serializable {
                     log.debug("found matching charge inst : id {}", usageChargeInstance.getId());
                     edrIsRated = reserveEDRonChargeAndCounters(reservation, edr, usageChargeInstance);
                     if (edrIsRated) {
-                        EDRProcessingStatus edrStatus = new EDRProcessingStatus(edr.getId(), EDRStatusEnum.RATED, null);
-                        getEntityManager().persist(edrStatus);
+                        edr.getProcessingStatus().setStatus(EDRStatusEnum.RATED);
                         break;
                     }
                 }
@@ -974,10 +972,10 @@ public class UsageRatingService implements Serializable {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void rejectEDR(Long edrId, Exception e) {
         String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage(), 255, true);
-        EDRProcessingStatus edrStatus = new EDRProcessingStatus(edrId, EDRStatusEnum.REJECTED, rejectReason);
-        getEntityManager().persist(edrStatus);
 
         EDR edr = edrService.findById(edrId);
+        edr.getProcessingStatus().setStatus(EDRStatusEnum.REJECTED);
+        edr.getProcessingStatus().setRejectReason(rejectReason);
 
         rejectedEdrProducer.fire(edr);
     }

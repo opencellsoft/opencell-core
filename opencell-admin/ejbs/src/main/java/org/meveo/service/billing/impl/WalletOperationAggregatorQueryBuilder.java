@@ -136,8 +136,8 @@ public class WalletOperationAggregatorQueryBuilder {
 				+ ", " + getParameter2Field() //
 				+ ", " + getParameter3Field() //
 				+ ", " + getParameterExtraField() //
-				+ ")" + " FROM WalletOperation o left join fetch o.processingStatus s " //
-				+ " WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate) AND s is null " //
+				+ ")" + " FROM WalletOperation o join fetch o.processingStatus s " //
+				+ " WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate) AND s.status='OPEN' " //
 				+ " GROUP BY o.seller.id, o.tax, o.invoiceSubCategory, " + groupBy;
 	}
 

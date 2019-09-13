@@ -218,8 +218,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         RecurringChargeInstance recurringChargeInstance = findById(recurringChargeInstanId, true);
 
-        log.debug("recurringChargeDeactivation : recurringChargeInstanceId={},ChargeApplications size={}", recurringChargeInstance.getId(),
-            recurringChargeInstance.getWalletOperations().size());
+        log.debug("recurringChargeDeactivation : recurringChargeInstanceId={}", recurringChargeInstance.getId());
 
         recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 
@@ -234,8 +233,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         RecurringChargeInstance recurringChargeInstance = findById(recurringChargeInstanId, true);
 
-        log.debug("recurringChargeSuspension : recurringChargeInstanceId={},ChargeApplications size={}", recurringChargeInstance.getId(),
-            recurringChargeInstance.getWalletOperations().size());
+        log.debug("recurringChargeSuspension : recurringChargeInstanceId={}", recurringChargeInstance.getId());
 
         recurringChargeInstance.setStatus(InstanceStatusEnum.SUSPENDED);
         update(recurringChargeInstance);
@@ -362,8 +360,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                         } else {
                             walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false, recurringChargeTemplate, true);
                         }
-                        log.debug("chargeDate {},nextChargeDate {},  wo size {}", activeRecurringChargeInstance.getChargeDate(), activeRecurringChargeInstance.getNextChargeDate(),
-                            activeRecurringChargeInstance.getWalletOperations().size());
+                        log.debug("chargeDate {},nextChargeDate {}", activeRecurringChargeInstance.getChargeDate(), activeRecurringChargeInstance.getNextChargeDate());
                         applyChargeFromDate = activeRecurringChargeInstance.getNextChargeDate();
 
                     }

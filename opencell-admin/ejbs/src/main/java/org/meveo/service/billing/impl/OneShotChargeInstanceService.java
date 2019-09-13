@@ -43,7 +43,6 @@ import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationProcessingStatus;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -213,7 +212,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         }
 
         if (applyCharge) {
-            walletOperationService.oneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effetDate, false, subscription.getOrderNumber());
+            walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effetDate, false, subscription.getOrderNumber());
         }
         return oneShotChargeInstance;
     }
@@ -225,7 +224,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             return;
         }
 
-        walletOperationService.oneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effectiveDate, false, orderNumberOverride);
+        walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effectiveDate, false, orderNumberOverride);
     }
 
     /**
@@ -250,7 +249,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             return null;
         }
 
-        return walletOperationService.oneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effectiveDate, true, subscription.getOrderNumber());
+        return walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effectiveDate, true, subscription.getOrderNumber());
 
     }
 
@@ -262,18 +261,10 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     }
 
     public void terminateOneShotChargeInstance(OneShotChargeInstance oneShotChargeInstance) throws BusinessException {
-        List<WalletOperation> walletOperations = oneShotChargeInstance.getWalletOperations();
 
-        EntityManager em = getEntityManager();
-        for (WalletOperation wo : walletOperations) {
-            if (wo.getStatus() == WalletOperationStatusEnum.OPEN) {
-                WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(wo, null, WalletOperationStatusEnum.CANCELED);
-                em.persist(woProcessingStatus);
-            } else {
-                wo.getProcessingStatus().changeStatus(WalletOperationStatusEnum.CANCELED);
-            }
-        }
+        getEntityManager().createNamedQuery("WalletOperation.setStatusToCanceled").setParameter("chargeInstance", oneShotChargeInstance);
         oneShotChargeInstance.setStatus(InstanceStatusEnum.CANCELED);
+
         update(oneShotChargeInstance);
     }
 
@@ -311,8 +302,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             balanceNoTax = balanceNoTax.subtract(wo.getAmountWithoutTax());
             balanceWithTax = balanceWithTax.subtract(wo.getAmountWithTax());
 
-            WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(wo, null, WalletOperationStatusEnum.TREATED);
-            walletOperationService.getEntityManager().persist(woProcessingStatus);
+            wo.getProcessingStatus().setStatus(WalletOperationStatusEnum.TREATED);
 
         }
         if (firstActiveSubscription == null) {
@@ -340,13 +330,12 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         }
         BigDecimal inputQuantity = BigDecimal.ONE;
 
-        WalletOperation op = walletOperationService.oneShotWalletOperation(firstActiveSubscription, matchingCharge, inputQuantity, null, new Date(), false,
+        WalletOperation op = walletOperationService.applyOneShotWalletOperation(firstActiveSubscription, matchingCharge, inputQuantity, null, new Date(), false,
             firstActiveSubscription.getOrderNumber());
-        WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(op, null, WalletOperationStatusEnum.TREATED);
-        em.persist(woProcessingStatus);
+        op.getProcessingStatus().setStatus(WalletOperationStatusEnum.TREATED);
 
-        walletOperationService.oneShotWalletOperation(firstActiveSubscription, compensationCharge, inputQuantity, null, new Date(), false, null);
-        
+        walletOperationService.applyOneShotWalletOperation(firstActiveSubscription, compensationCharge, inputQuantity, null, new Date(), false, null);
+
         // we check that balance is unchanged
         BigDecimal cacheBalance = walletService.getWalletBalance(wallet.getId());
         if (cacheBalance.compareTo(balanceWithTax) != 0) {

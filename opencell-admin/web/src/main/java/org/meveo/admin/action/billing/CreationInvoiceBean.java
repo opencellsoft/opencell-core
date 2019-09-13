@@ -569,10 +569,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     BeanUtils.copyProperties(rtCopy, rt);
                     rtCopy.setId(null);
                     rtCopy.setBillingAccount(billingAccount);
-                    RatedTransactionProcessingStatus rtStatus = new RatedTransactionProcessingStatus(rtCopy, RatedTransactionStatusEnum.BILLED);
-                    rtStatus.setInvoice(invoiceCopy);
-                    rtCopy.setProcessingStatus(rtStatus);
                     ratedTransactionService.create(rtCopy);
+                    rtCopy.getProcessingStatus().setStatus(RatedTransactionStatusEnum.BILLED);
+                    rtCopy.getProcessingStatus().setInvoice(invoiceCopy);
+                    
                     ratedTransactionCopy.add(rtCopy);
                 }
             }
@@ -656,14 +656,12 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
             for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
                 for (RatedTransaction rt : subcat.getRatedtransactionsToAssociate()) {
-                    RatedTransactionProcessingStatus rtStatus = new RatedTransactionProcessingStatus(rt, RatedTransactionStatusEnum.BILLED);
-                    rtStatus.setInvoice(entity);
-                    rt.setProcessingStatus(rtStatus);
                     if (rt.isTransient()) {
                         ratedTransactionService.create(rt);
                     } else {
                         ratedTransactionService.update(rt);
                     }
+                    rt.getProcessingStatus().setStatus(RatedTransactionStatusEnum.BILLED);
                 }
             }
 

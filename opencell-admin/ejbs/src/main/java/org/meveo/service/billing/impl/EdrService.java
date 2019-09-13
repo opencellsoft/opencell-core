@@ -100,8 +100,8 @@ public class EdrService extends PersistenceService<EDR> {
      */
     @SuppressWarnings("unchecked")
     public List<Long> getEDRsToRate(Date rateUntilDate, String ratingGroup, int nbToRetrieve) {
-        QueryBuilder qb = new QueryBuilder("select e.id from EDR e left join e.processingStatus s", "e");
-        qb.addSql("s is null");
+        QueryBuilder qb = new QueryBuilder("select e.id from EDR e join e.processingStatus s", "e");
+        qb.addSql("s.status=org.meveo.model.rating.EDRStatusEnum.OPEN");
         if (rateUntilDate != null) {
             qb.addCriterion("e.eventDate", "<", rateUntilDate, false);
         }
@@ -174,6 +174,11 @@ public class EdrService extends PersistenceService<EDR> {
     @Override
     public void create(EDR edr) throws BusinessException {
         super.create(edr);
+
+        EDRProcessingStatus edrProcessingStatus = new EDRProcessingStatus(edr, EDRStatusEnum.OPEN, null);
+        edr.setProcessingStatus(edrProcessingStatus);
+        getEntityManager().persist(edrProcessingStatus);
+
         if (deduplicateEdrs && useInMemoryDeduplication) {
             cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(edr.getOriginBatch(), edr.getOriginRecord());
         }
@@ -242,12 +247,7 @@ public class EdrService extends PersistenceService<EDR> {
                 Subscription subscription = subscriptionService.findByCode(dto.getSubscriptionCode());
                 edr.setSubscription(subscription);
             }
-            if (dto.getStatus() != null && dto.getStatus() != EDRStatusEnum.OPEN) {
-                EDRProcessingStatus processingStatus = new EDRProcessingStatus(edr, dto.getStatus(), dto.getRejectReason());
-                processingStatus.setStatus(dto.getStatus());
-                processingStatus.setEdr(edr);
-                edr.setProcessingStatus(processingStatus);
-            }
+
             edr.setOriginBatch(dto.getOriginBatch());
             edr.setOriginRecord(dto.getOriginRecord());
             edr.setEventDate(dto.getEventDate());
@@ -276,6 +276,11 @@ public class EdrService extends PersistenceService<EDR> {
             edr.setAccessCode(dto.getAccessCode());
             edr.setExtraParameter(dto.getExtraParameter());
             create(edr);
+
+            if (dto.getStatus() != null && dto.getStatus() != EDRStatusEnum.OPEN) {
+                edr.getProcessingStatus().setStatus(dto.getStatus());
+                edr.getProcessingStatus().setEdr(edr);
+            }
         }
     }
 }

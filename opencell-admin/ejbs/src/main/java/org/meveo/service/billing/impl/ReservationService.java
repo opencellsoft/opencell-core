@@ -171,9 +171,6 @@ public class ReservationService extends PersistenceService<Reservation> {
 
         walletReservationService.create(walletReservation);
 
-        WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(walletReservation, null, WalletOperationStatusEnum.RESERVED);
-        walletReservationService.getEntityManager().persist(woProcessingStatus);
-
         // #4 Return the reservationId.
         return reservation.getId();
     }
@@ -277,16 +274,8 @@ public class ReservationService extends PersistenceService<Reservation> {
         List<WalletReservation> ops = getEntityManager().createNamedQuery("WalletReservation.listByReservationId").setParameter("reservationId", reservation.getId())
             .getResultList();
 
-        EntityManager em = getEntityManager();
         for (WalletReservation wo : ops) {
-            if (wo.getStatus() == WalletOperationStatusEnum.OPEN) {
-                WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(wo, null, WalletOperationStatusEnum.CANCELED);
-                em.persist(woProcessingStatus);
-                wo.setProcessingStatus(woProcessingStatus);
-            } else {
-                wo.getProcessingStatus().changeStatus(WalletOperationStatusEnum.CANCELED);
-            }
-
+            wo.getProcessingStatus().changeStatus(WalletOperationStatusEnum.CANCELED);            
             walletCacheContainerProvider.updateBalance(wo);
         }
 

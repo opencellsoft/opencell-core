@@ -563,8 +563,7 @@ public class WalletApi extends BaseApi {
         walletOperationService.create(walletOperation);
 
         if (postData.getStatus() != WalletOperationStatusEnum.OPEN) {
-            WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(walletOperation, null, postData.getStatus());
-            walletOperationService.getEntityManager().persist(woProcessingStatus);
+            walletOperation.getProcessingStatus().setStatus(postData.getStatus());
         }
         return walletOperation;
 
