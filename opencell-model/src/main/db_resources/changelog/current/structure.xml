@@ -1717,4 +1717,12 @@
     
     </changeSet>
     
+    <changeSet id="#4511_20190912" author="AndriusKarpavicius">
+        <sql dbms="postgresql">CREATE INDEX edr_status_open_index ON ${db.schema.adapted}rating_edr_status (status) where status='OPEN'</sql>
+        <sql dbms="postgresql">CREATE INDEX wo_status_open_index ON ${db.schema.adapted}billing_wallet_operation_status (status) where status='OPEN'</sql>
+        <sql dbms="postgresql">CREATE INDEX rt_status_open_index ON ${db.schema.adapted}billing_rated_transaction_status (status) where status='OPEN'</sql>
+        <sql dbms="mysql">CREATE INDEX edr_status_open_index ON ${db.schema.adapted}rating_edr_status (status)</sql>
+        <sql dbms="mysql">CREATE INDEX wo_status_open_index ON ${db.schema.adapted}billing_wallet_operation_status (status)</sql>
+        <sql dbms="mysql">CREATE INDEX rt_status_open_index ON ${db.schema.adapted}billing_rated_transaction_status (status)</sql>
+    </changeSet>
 </databaseChangeLog>
