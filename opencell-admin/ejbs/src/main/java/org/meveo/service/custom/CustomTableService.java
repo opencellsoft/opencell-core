@@ -949,8 +949,13 @@ public class CustomTableService extends NativePersistenceService {
 	public Object findEntityFromReference(EntityReferenceWrapper referenceWrapper) {
 		String classname = referenceWrapper.getClassname();
 		String code = referenceWrapper.getCode();
+		String classnameCode = referenceWrapper.getClassnameCode();
+		return findEntityByClassNameAndKey(classname, code, classnameCode);
+	}
+
+	private Object findEntityByClassNameAndKey(String classname, String code, String classnameCode) {
 		if (classname.equals(CustomEntityInstance.class.getName())) {
-			CustomEntityTemplate cet = customEntityTemplateService.findByCode(referenceWrapper.getClassnameCode());
+			CustomEntityTemplate cet = customEntityTemplateService.findByCode(classnameCode);
 			if (cet.isStoreAsTable()) {
 				return findRecordByIdAndTableName( Long.parseLong(code),cet.getDbTablename());
 			}else {
@@ -960,7 +965,7 @@ public class CustomTableService extends NativePersistenceService {
 			try {
 				return customEntityInstanceService.findByEntityClassAndCode(Class.forName(classname), code);
 			} catch (ClassNotFoundException e) {
-				log.error("class in the ClassRefWrapper " + referenceWrapper + " not found ", e);
+				log.error("class in the ClassRefWrapper " + classname + " not found ", e);
 			}
 		}
 		return null;
