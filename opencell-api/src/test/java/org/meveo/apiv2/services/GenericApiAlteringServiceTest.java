@@ -52,7 +52,6 @@ public class GenericApiAlteringServiceTest {
     
     @Before
     public void init() throws Exception {
-        sut.init();
         when(entityManagerWrapper.getEntityManager()).thenReturn(entityManager);
     }
     
