@@ -12,6 +12,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.Response;
 import java.util.Collections;
+import java.util.Set;
 
 @Stateless
 public class GenericResourceImpl implements GenericResource {
@@ -23,13 +24,21 @@ public class GenericResourceImpl implements GenericResource {
 
     @Override
     public Response getAll(String entityName, GenericPagingAndFiltering searchConfig) {
-        return Response.ok().entity(loadService.findPaginatedRecords(entityName, genericRequestMapper.mapTo(searchConfig), searchConfig.getGenericFields()))
+        Set<String> genericFields = null;
+        if(searchConfig != null){
+            genericFields = searchConfig.getGenericFields();
+        }
+        return Response.ok().entity(loadService.findPaginatedRecords(entityName, genericRequestMapper.mapTo(searchConfig), genericFields))
                 .links(buildPaginatedResourceLink(entityName)).build();
     }
     
     @Override
     public Response get(String entityName, Long id, GenericPagingAndFiltering searchConfig) {
-        return loadService.findByClassNameAndId(entityName, id, genericRequestMapper.mapTo(searchConfig), searchConfig.getGenericFields())
+        Set<String> genericFields = null;
+        if(searchConfig != null){
+            genericFields = searchConfig.getGenericFields();
+        }
+        return loadService.findByClassNameAndId(entityName, id, genericRequestMapper.mapTo(searchConfig), genericFields)
                 .map(deletedEntity -> Response.ok().entity(deletedEntity).links(buildSingleResourceLink(entityName, id)).build())
                 .orElseThrow(NotFoundException::new);
     }
