@@ -184,7 +184,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
                 .collect(Collectors.toSet());
 
         allClassName.addAll(customizedBusinessEntities);
-        allClassName.addAll(customizedEntityService.getCustomizedEntities("", false, true, false, null, null));
+        allClassName.addAll(customizedEntityService.getCustomizedEntities("", true, true, false, null, null));
         allClassName.addAll(customEntityTemplateService.listCustomTableTemplates().stream().map(i -> new CustomizedEntity(i.getName(), CustomEntityTemplate.class)).collect(
                 Collectors.toList()));
         return allClassName;
