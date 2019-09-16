@@ -2172,4 +2172,19 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}ar_accounting_writing_seq values(1)</sql>
     </changeSet>
+    
+	<changeSet id="#4198_03052019" author="SaidRamli">
+		<addColumn tableName="billing_invoice_type">
+			<column name="invoice_accountable" type="${type.boolean}" defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+		<sql>update ${db.schema.adapted}billing_invoice_type set
+			invoice_accountable = 1 where code not in ('QUOTE','DRAFT','PREPAID')
+		</sql>
+		<sql>update ${db.schema.adapted}billing_invoice_type set
+			invoice_accountable = 0 where code in ('QUOTE','DRAFT','PREPAID')
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
