@@ -51,8 +51,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
@@ -161,6 +159,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Column(name = "invoice_date")
     private Date invoiceDate;
+    
+    /**
+     * Invoice status
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 25)
+    private InvoiceStatusEnum status;
 
     /**
      * Payment due date
@@ -691,6 +696,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void setInvoiceAdjustmentCurrentProviderNb(Long invoiceAdjustmentCurrentProviderNb) {
         this.invoiceAdjustmentCurrentProviderNb = invoiceAdjustmentCurrentProviderNb;
+    }
+    
+    public InvoiceStatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(InvoiceStatusEnum status) {
+        this.status = status;
     }
 
     @Override

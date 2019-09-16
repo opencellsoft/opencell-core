@@ -32,8 +32,11 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
@@ -43,6 +46,7 @@ import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.payments.WriteOff;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -76,11 +80,17 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
         MatchingCode matchingCode = new MatchingCode();
         BigDecimal amountToMatch = BigDecimal.ZERO;
-
         BigDecimal amountCredit = amount;
         BigDecimal amountDebit = amount;
         boolean fullMatch = false;
+        boolean withWriteOff = false;
         List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<PaymentScheduleInstanceItem>();
+        
+        for (AccountOperation accountOperation : listOcc) {
+            if (accountOperation instanceof WriteOff) {
+                withWriteOff = true;
+            }
+        }
 
         // log.debug("AKK will match for amount {} partial match is for {}", amount, aoToMatchLast != null ? aoToMatchLast.getId() + "_" + aoToMatchLast.getReference() : null);
         for (AccountOperation accountOperation : listOcc) {
@@ -88,7 +98,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             if (accountOperation instanceof RecordedInvoice && ((RecordedInvoice) accountOperation).getPaymentScheduleInstanceItem() != null) {
                 listPaymentScheduleInstanceItem.add(((RecordedInvoice) accountOperation).getPaymentScheduleInstanceItem());
             }
-
+            
             if (aoToMatchLast != null && accountOperation.getId().equals(aoToMatchLast.getId())) {
                 continue;
             }
@@ -119,7 +129,18 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     amountDebit = BigDecimal.ZERO;
                 }
             }
-
+            
+            if(accountOperation instanceof RecordedInvoice) {
+                Invoice invoice = ((RecordedInvoice)accountOperation).getInvoice();
+                if(withWriteOff) {
+                    invoice.setStatus(InvoiceStatusEnum.ABANDONED);
+                } else if(fullMatch) {
+                    invoice.setStatus(InvoiceStatusEnum.PAID);
+                } else if(!fullMatch) {
+                    invoice.setStatus(InvoiceStatusEnum.PPAID);
+                }
+            }
+            
             accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
             accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
             accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
@@ -163,6 +184,17 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     fullMatch = false;
                     amountToMatch = amountDebit;
                     amountDebit = BigDecimal.ZERO;
+                }
+            }
+            
+            if(accountOperation instanceof RecordedInvoice) {
+                Invoice invoice = ((RecordedInvoice)accountOperation).getInvoice();
+                if(withWriteOff) {
+                    invoice.setStatus(InvoiceStatusEnum.ABANDONED);
+                } else if(fullMatch) {
+                    invoice.setStatus(InvoiceStatusEnum.PAID);
+                } else if(!fullMatch) {
+                    invoice.setStatus(InvoiceStatusEnum.PPAID);
                 }
             }
 
@@ -239,8 +271,22 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 operation.setMatchingAmount(operation.getMatchingAmount().subtract(matchingAmount.getMatchingAmount()));
                 if (BigDecimal.ZERO.compareTo(operation.getMatchingAmount()) == 0) {
                     operation.setMatchingStatus(MatchingStatusEnum.O);
+                    if (operation instanceof RecordedInvoice) {
+                        Invoice invoice = ((RecordedInvoice)operation).getInvoice();
+                        if(invoice.isAlreadySent()) {
+                            invoice.setStatus(InvoiceStatusEnum.SENT);
+                        } else if(StringUtils.isNotBlank(invoice.getXmlFilename())) {
+                            invoice.setStatus(InvoiceStatusEnum.GENERATED);
+                        } else {
+                            invoice.setStatus(InvoiceStatusEnum.CREATED);
+                        }
+                    }
                 } else {
                     operation.setMatchingStatus(MatchingStatusEnum.P);
+                    if (operation instanceof RecordedInvoice) {
+                        Invoice invoice = ((RecordedInvoice)operation).getInvoice();
+                        invoice.setStatus(InvoiceStatusEnum.PPAID);
+                    }
                 }
                 operation.getMatchingAmounts().remove(matchingAmount);
                 accountOperationService.update(operation);
