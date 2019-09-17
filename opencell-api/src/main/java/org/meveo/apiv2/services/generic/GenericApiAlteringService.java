@@ -31,8 +31,7 @@ public class GenericApiAlteringService extends GenericApiService {
         Class entityClass = entitiesByName.get(entityName.toLowerCase());
         checkEntityClass(entityClass);
         BaseEntity entityById = find(entityClass, id);
-        BaseEntity parsedEntity = (BaseEntity) JacksonUtil.fromString(jsonDto, entityClass);
-        updateEntityWithDtoFields(jsonDto, entityById, parsedEntity);
+        refreshEntityWithDotFields(jsonDto, entityById, new JsonGenericMapper().parseFromJson(jsonDto, entityClass));
         PersistenceService service = getPersistenceService(entityClass);
         service.enable(entityById);
         service.update(entityById);
@@ -40,12 +39,13 @@ public class GenericApiAlteringService extends GenericApiService {
         return Optional.ofNullable(new JsonGenericMapper().toJson(null, entityClass, entityById));
     }
 
-    public Long create(String entityName, String dto) {
-        checkEntityName(entityName).checkDto(dto);
+
+    public Long create(String entityName, String jsonDto) {
+        checkEntityName(entityName).checkDto(jsonDto);
         Class entityClass = entitiesByName.get(entityName.toLowerCase());
         checkEntityClass(entityClass);
-        BaseEntity entityToCreate = (BaseEntity) JacksonUtil.fromString(dto, entityClass);
-        updateEntityWithDtoFields(dto, entityToCreate, entityToCreate);
+        BaseEntity entityToCreate = new JsonGenericMapper().parseFromJson(jsonDto, entityClass);
+        refreshEntityWithDotFields(jsonDto, entityToCreate, entityToCreate);
         PersistenceService service = getPersistenceService(entityClass);
         service.create(entityToCreate);
         return entityToCreate.getId();
@@ -61,25 +61,25 @@ public class GenericApiAlteringService extends GenericApiService {
         return Optional.ofNullable(new JsonGenericMapper().toJson(null, entityClass, entity));
     }
 
-    private void updateEntityWithDtoFields(String dto, BaseEntity entity, BaseEntity entityToUpdate) {
+    private void refreshEntityWithDotFields(String dto, BaseEntity fetchedEntity, BaseEntity parsedEntity) {
         Iterable<String> fieldNames = () -> JacksonUtil.toJsonNode(dto).fieldNames();
         StreamSupport.stream(fieldNames.spliterator(), false)
                 .filter(((Predicate<String>) forbiddenFieldsToUpdate::contains).negate())
-                .forEach(fieldName -> FetchOrSetField(fieldName, entityToUpdate, entity));
+                .forEach(fieldName -> FetchOrSetField(fieldName, parsedEntity, fetchedEntity));
     }
-    private void FetchOrSetField(String fieldName, BaseEntity entityToUpdate, BaseEntity entity) {
-        Field updatedField = FieldUtils.getField(entityToUpdate.getClass(), fieldName, true);
+    private void FetchOrSetField(String fieldName, BaseEntity parsedEntity, BaseEntity fetchedEntity) {
+        Field updatedField = FieldUtils.getField(parsedEntity.getClass(), fieldName, true);
         try {
-            Object value = updatedField.get(entityToUpdate);
+            Object newValue = updatedField.get(parsedEntity);
             if(updatedField.getType().isAssignableFrom(List.class)){
-                value = ((List<? extends BaseEntity>) value)
+                newValue = ((List<? extends BaseEntity>) newValue)
                         .parallelStream()
                         .map(o -> o.getId() == null ? o : entityManagerWrapper.getEntityManager().getReference(o.getClass(), o.getId()))
                         .collect(Collectors.toCollection(ArrayList::new));
-            } else if(updatedField.getType().isAnnotationPresent(Entity.class) && ((BaseEntity) value).getId() != null){
-                value = entityManagerWrapper.getEntityManager().getReference(value.getClass(), ((BaseEntity) value).getId());
+            } else if(updatedField.getType().isAnnotationPresent(Entity.class) && ((BaseEntity) newValue).getId() != null){
+                newValue = entityManagerWrapper.getEntityManager().getReference(newValue.getClass(), ((BaseEntity) newValue).getId());
             }
-            updatedField.set(entity, value);
+            updatedField.set(fetchedEntity, newValue);
         } catch (IllegalAccessException e) {
             logger.error(String.format("Failed to update field %s", fieldName), e);
         }
