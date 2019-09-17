@@ -838,7 +838,8 @@ public class NativePersistenceService extends BaseService {
                         queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " != " : " = ", filterValue, true);
 
                     } else if (filterValue instanceof Boolean) {
-                        queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " not is" : " is ", filterValue, true);
+                    	boolean bValue= (boolean)filterValue;
+                        queryBuilder.addBooleanCriterion("a." + fieldName, "ne".equals(condition) ? !bValue :  bValue);
 
                     } else if (filterValue instanceof Enum) {
                         if (filterValue instanceof IdentifiableEnum) {
