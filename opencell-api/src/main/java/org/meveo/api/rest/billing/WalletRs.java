@@ -183,6 +183,7 @@ public interface WalletRs extends IBaseRs {
      * @param limit Pagination - number of records to retrieve
      * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      * @param sortOrder Sorting - sort order.
+     * @param withRTs if true load the related rated transaction
      * @return List of wallet operations
      */
     @GET
@@ -199,6 +200,7 @@ public interface WalletRs extends IBaseRs {
      * List wallet operations matching a given criteria
      * 
      * @param pagingAndFiltering Pagination and filtering criteria
+     * @param withRTs if true load the related rated transaction
      * @return List of wallet operations
      */
     @POST
