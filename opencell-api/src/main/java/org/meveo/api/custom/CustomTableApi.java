@@ -107,8 +107,15 @@ public class CustomTableApi extends BaseApi {
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCustomTableCode());
         }
+        
+        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
+        if (cfts == null || cfts.isEmpty()) {
+            throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
+        }
 
-        Long id = customTableService.create(cet.getDbTablename(), dto.getRowValues());
+        Map<String, Object> values = customTableService.convertValue(dto.getRowValues(), cfts.values(), false,null);
+
+        Long id = customTableService.create(cet.getDbTablename(), values);
         dto.getValue().setId(id);
     }
 
