@@ -403,15 +403,24 @@ public class CustomTableApi extends BaseApi {
             missingParameters.add("id");
         }
         handleMissingParameters();
-
-        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(tableName.toLowerCase(), id.toString());
-        if (cei == null) {
+        
+        CustomEntityTemplate cet = customEntityTemplateService.findByCodeOrDbTablename(tableName);
+        if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, tableName);
         }
-
-        cei.setDisabled(!enable);
-        customEntityInstanceService.update(cei);
-
+        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
+        if (cfts == null || cfts.isEmpty()) {
+            throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
+        }
+        if (cfts == null || cfts.isEmpty() || !cfts.containsKey(NativePersistenceService.FIELD_DISABLED)) {
+            throw new ValidationException("Custom table does not contain a field 'disabled'", "customTable.noDisabledField");
+        }
+        
+        if (enable) {
+            customTableService.enable(cet.getDbTablename(), id);
+        } else {
+            customTableService.disable(cet.getDbTablename(), id);
+        }
     }
 
     /**
