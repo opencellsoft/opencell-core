@@ -11,6 +11,9 @@ import org.meveo.model.Auditable;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Equivalent of AuditableEntity in DTO
  * Contain the entity creation and modification dates.
@@ -18,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AuditableDto implements Serializable {
+public @Hidden class AuditableDto implements Serializable {
 
     private static final long serialVersionUID = -8188627756883991240L;
 
@@ -26,24 +29,28 @@ public class AuditableDto implements Serializable {
      * Created date
      */
     @XmlAttribute()
+    @Schema(description = "Created date",hidden=true)
     private Date created;
 
     /**
      * Updated date
      */
     @XmlAttribute()
+    @Schema(description = "Updated date",hidden=true)
     private Date updated;
 
     /**
      * User who created the record
      */
     @XmlAttribute()
+    @Schema(description = "User who created the record",hidden=true)
     private String creator;
 
     /**
      * Set to the user who updated this record
      */
     @XmlAttribute()
+    @Schema(description = "Set to the user who updated this record",hidden=true)
     private String updater;
 
     public AuditableDto() {
