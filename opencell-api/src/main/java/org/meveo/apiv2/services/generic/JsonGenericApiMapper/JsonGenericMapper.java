@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.meveo.apiv2.generic.GenericPaginatedResource;
 import org.meveo.model.BaseEntity;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -50,6 +51,14 @@ public class JsonGenericMapper extends ObjectMapper{
         }
     }
 
+    public BaseEntity parseFromJson(String jsonDto, Class entityClass) {
+        try {
+            return  (BaseEntity) readValue(jsonDto, entityClass);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("The given string value: " + jsonDto + " cannot be transformed to Json object", e);
+        }
+    }
+
     private Set<String>  getEntitySubFieldsToInclude(Set<String> fields) {
         if(fields == null ){
             return Collections.emptySet();
@@ -72,6 +81,7 @@ public class JsonGenericMapper extends ObjectMapper{
     private abstract class EntitySubObjectFieldFilterMixIn {}
 
     @JsonFilter("ForbiddenFieldsFilter")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private abstract class ForbiddenFieldsMixIn {}
 
     private @JsonFilter("GenericPaginatedResourceFilter")
