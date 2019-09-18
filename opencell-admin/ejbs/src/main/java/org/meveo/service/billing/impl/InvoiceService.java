@@ -606,7 +606,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
-    @JpaAmpNewTx
+    @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<Invoice> createAgregatesAndInvoice(IBillableEntity entity, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate, Date firstTransactionDate,
             Date lastTransactionDate, List<RatedTransaction> minAmountTransactions, boolean isDraft) throws BusinessException {
@@ -1760,7 +1760,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of generated invoices
      * @throws BusinessException General business exception
      */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public List<Invoice> generateInvoice(IBillableEntity entity, GenerateInvoiceRequestDto generateInvoiceRequestDto, Filter ratedTxFilter, boolean isDraft,
             CustomFieldValues customFieldValues) throws BusinessException {
 

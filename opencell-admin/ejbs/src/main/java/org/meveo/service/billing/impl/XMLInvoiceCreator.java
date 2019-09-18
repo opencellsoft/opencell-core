@@ -296,9 +296,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      */
     public Document createDocument(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException {
 
-        if (invoice.getId() != null) {
-            invoice = invoiceService.refreshOrRetrieve(invoice);
-        }
+        invoice = this.retrieveIfNotManaged(invoice);
+
         Long id = invoice.getId();
         String alias = invoice.getAlias();
         String invoiceNumber = invoice.getInvoiceNumber();

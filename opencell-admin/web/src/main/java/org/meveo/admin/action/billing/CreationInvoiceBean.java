@@ -534,7 +534,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             invoiceCopy.setLinkedInvoices(invoiceService.retrieveIfNotManaged(entity.getLinkedInvoices()));
             BillingAccount billingAccount = invoiceCopy.getBillingAccount();
             Customer customer = billingAccount.getCustomerAccount().getCustomer();
-            invoiceCopy.setSeller(customer.getSeller());
+            if (invoiceCopy.getSeller() == null) {
+                invoiceCopy.setSeller(customer.getSeller());
+            }
             invoiceCopy.setInvoiceAgregates(new ArrayList<InvoiceAgregate>());
             getPersistenceService().create(invoiceCopy);
 
@@ -582,7 +584,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 }
             }
 
-            invoiceService.commit();
             invoiceCopy = invoiceService.generateXmlAndPdfInvoice(invoiceCopy, true);
             draftGenerated = true;
 
@@ -601,9 +602,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             }
 
             invoiceService.cancelInvoice(invoiceCopy);
-            invoiceService.commit();
 
         } catch (Exception e) {
+            log.error("Error generating xml / pdf invoice=" + e.getMessage(), e);
             messages.error("Error generating xml / pdf invoice=" + e.getMessage());
         }
 
