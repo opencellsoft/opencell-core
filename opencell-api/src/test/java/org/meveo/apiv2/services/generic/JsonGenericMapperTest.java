@@ -1,17 +1,28 @@
 package org.meveo.apiv2.services.generic;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.apiv2.services.generic.JsonGenericApiMapper.JsonGenericMapper;
+import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.intcrm.AddressBook;
+import org.meveo.model.order.Order;
+import org.meveo.model.order.OrderItem;
+import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
@@ -21,11 +32,20 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.io.IOException;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,7 +54,7 @@ public class JsonGenericMapperTest {
     private JsonGenericMapper jsonGenericMapper;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         jsonGenericMapper = new JsonGenericMapper();
     }
 
@@ -46,16 +66,6 @@ public class JsonGenericMapperTest {
         String expected = jsonGenericMapper.toJson(null, BigDecimal.class, param);
         //Then
         assertThat(expected).isEqualTo("12345.05");
-    }
-
-    @Test
-    public void should_toJson_return_the_string_representation_of_millis_when_param_is_date() {
-        //Given
-        Date param = new Date();
-        //When
-        String expected = jsonGenericMapper.toJson(null, Date.class, param);
-        //Then
-        assertThat(expected).isEqualTo(String.valueOf(param.getTime()));
     }
 
 
@@ -168,6 +178,42 @@ public class JsonGenericMapperTest {
     }
 
     @Test
+    public void should_serialize_and_deserialize_date() throws IOException {
+        //Given
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+        invoiceSubcategoryCountry.setStartValidityDate(getDefaultDate());
+        invoiceSubcategoryCountry.setEndValidityDate(getDefaultDate());
+
+        //When
+        HashSet<String> fields = new HashSet<>();
+        fields.addAll(Arrays.asList("endValidityDate","startValidityDate"));
+        String userJson = jsonGenericMapper.toJson(fields, InvoiceSubcategoryCountry.class, invoiceSubcategoryCountry);
+        InvoiceSubcategoryCountry parsedInvoiceSubcategoryCountry = jsonGenericMapper.readValue(userJson, InvoiceSubcategoryCountry.class);
+        //Then
+        assertThat(parsedInvoiceSubcategoryCountry.getEndValidityDate()).isEqualTo(invoiceSubcategoryCountry.getEndValidityDate());
+        assertThat(parsedInvoiceSubcategoryCountry.getStartValidityDate()).isEqualTo(invoiceSubcategoryCountry.getStartValidityDate());
+    }
+
+    @Test
+    public void should_serialize_cf_value() {
+        //Given
+        ServiceTemplate serviceTemplate = new ServiceTemplate();
+        serviceTemplate.setId(1234L);
+
+        Map cf_values = new HashMap<>();
+        cf_values.put("objectID", 123L);
+
+        serviceTemplate.setCfValue("cf_serviceTemplate", cf_values);
+        //When
+        HashSet<String> fields = new HashSet<>();
+        fields.add("cfValues");
+        String serviceTemplateJson = jsonGenericMapper.toJson(null, ServiceTemplate.class, serviceTemplate);
+        jsonGenericMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        //Then
+        assertTrue(serviceTemplateJson.contains("\"cf_serviceTemplate\":[{\"priority\":0,\"value\":{\"objectID\":123}"));
+    }
+
+    @Test
     public void should_transform_title_into_title_with_code() {
         //Given
         Title title = new Title();
@@ -184,6 +230,28 @@ public class JsonGenericMapperTest {
 
     }
 
+    @Test
+    public void should_transform_cyclic_reference_without_stackoverflow_error() throws IOException {
+        //Given
+        Subscription subscription = new Subscription();
+        ServiceInstance serviceInstance = new ServiceInstance();
+
+        subscription.setId(123L);
+        subscription.setCode("MY_SUBSCRIPTION");
+        subscription.setDescription("my subscription description");
+
+        serviceInstance.setId(456L);
+        serviceInstance.setCode("MY_SERVICE_INSTANCE");
+        serviceInstance.setDescription("my description service instance");
+
+        subscription.setServiceInstances(Arrays.asList(serviceInstance));
+        serviceInstance.setSubscription(subscription);
+
+        //When
+        HashSet<String> fields = new HashSet<>();
+        String transform = jsonGenericMapper.toJson(fields, Subscription.class, subscription);
+        assertTrue(transform.contains("\"serviceInstances\":[{\"id\":456"));
+    }
     private Date getDefaultDate() {
         return Date.from(LocalDate.of(2019, 01, 01).atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
