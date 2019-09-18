@@ -1891,7 +1891,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of generated invoices
      * @throws BusinessException General business exception
      */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public List<Invoice> generateInvoice(IBillableEntity entity, GenerateInvoiceRequestDto generateInvoiceRequestDto, Filter ratedTxFilter, boolean isDraft,
             CustomFieldValues customFieldValues) throws BusinessException {
 
