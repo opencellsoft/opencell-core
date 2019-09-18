@@ -122,6 +122,7 @@ public class NativePersistenceService extends BaseService {
             query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
 
             Map<String, Object> values = (Map<String, Object>) query.uniqueResult();
+            if(values!=null) {
             for (String key : values.keySet()) {
                 if (values.get(key) instanceof java.sql.Timestamp) {
                     java.sql.Timestamp date = (java.sql.Timestamp) values.get(key);
@@ -130,6 +131,9 @@ public class NativePersistenceService extends BaseService {
             }
 
             return values;
+            } else {
+            	throw new BusinessException("Failed to retrieve values from table "+tableName+" by id "+ id );
+            }
         } catch (Exception e) {
             log.error("Failed to retrieve values from table by id {}/{} sql {}", tableName, id, e);
             throw e;
@@ -838,7 +842,8 @@ public class NativePersistenceService extends BaseService {
                         queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " != " : " = ", filterValue, true);
 
                     } else if (filterValue instanceof Boolean) {
-                        queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " not is" : " is ", filterValue, true);
+                    	boolean bValue= (boolean)filterValue;
+                        queryBuilder.addBooleanCriterion("a." + fieldName, "ne".equals(condition) ? !bValue :  bValue);
 
                     } else if (filterValue instanceof Enum) {
                         if (filterValue instanceof IdentifiableEnum) {
