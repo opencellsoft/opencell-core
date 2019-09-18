@@ -122,6 +122,7 @@ public class NativePersistenceService extends BaseService {
             query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
 
             Map<String, Object> values = (Map<String, Object>) query.uniqueResult();
+            if(values!=null) {
             for (String key : values.keySet()) {
                 if (values.get(key) instanceof java.sql.Timestamp) {
                     java.sql.Timestamp date = (java.sql.Timestamp) values.get(key);
@@ -130,6 +131,9 @@ public class NativePersistenceService extends BaseService {
             }
 
             return values;
+            } else {
+            	throw new BusinessException("Failed to retrieve values from table "+tableName+" by id "+ id );
+            }
         } catch (Exception e) {
             log.error("Failed to retrieve values from table by id {}/{} sql {}", tableName, id, e);
             throw e;
