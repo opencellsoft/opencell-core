@@ -110,9 +110,9 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         return checkValidityDateFromList(invoiceSubcategoryCountry, invoiceSubcategoryCountries);
     }
 
-	public InvoiceSubcategoryCountry checkValidityDateFromList(InvoiceSubcategoryCountry invoiceSubcategoryCountry,
-			List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) throws BusinessException {
-		if (invoiceSubcategoryCountries != null) {
+    public InvoiceSubcategoryCountry checkValidityDateFromList(InvoiceSubcategoryCountry invoiceSubcategoryCountry, List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries)
+            throws BusinessException {
+        if (invoiceSubcategoryCountries != null) {
             InvoiceSubcategoryCountry invoiceSubcategoryCountryFound = null;
             // check for overlap
             for (InvoiceSubcategoryCountry invoiceSubcategoryCountryTemp : invoiceSubcategoryCountries) {
@@ -145,8 +145,8 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
 
             invoiceSubcategoryCountry.setPriority(getNextPriority(invoiceSubcategoryCountries));
         }
-		return invoiceSubcategoryCountry;
-	}
+        return invoiceSubcategoryCountry;
+    }
 
     private int getNextPriority(List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
         int maxPriority = 0;
@@ -450,7 +450,11 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         if (taxCode == null) {
             throw new BusinessException("Expression " + expression + " evaluates to null  ");
         } else {
-            result = taxService.findByCode(taxCode);
+            try {
+                result = getEntityManager().createNamedQuery("Tax.getTaxByCode", Tax.class).setParameter("code", taxCode).setMaxResults(1).getSingleResult();
+            } catch (NoResultException e) {
+                log.debug("No Tax of code {} found", taxCode);
+            }
         }
 
         return result;

@@ -33,7 +33,6 @@ import org.meveo.api.dto.billing.EDRDto;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.RatedTransactionGroup;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.rating.EDR;
@@ -98,19 +97,24 @@ public class EdrService extends PersistenceService<EDR> {
      * @param nbToRetrieve Number of items to retrieve for processing
      * @return List of EDR's we can rate until a given date.
      */
-    @SuppressWarnings("unchecked")
     public List<Long> getEDRsToRate(Date rateUntilDate, String ratingGroup, int nbToRetrieve) {
-        QueryBuilder qb = new QueryBuilder("select e.id from EDR e join e.processingStatus s", "e");
-        qb.addSql("s.status=org.meveo.model.rating.EDRStatusEnum.OPEN");
-        if (rateUntilDate != null) {
-            qb.addCriterion("e.eventDate", "<", rateUntilDate, false);
-        }
-        if (ratingGroup != null) {
-            qb.addCriterion("e.subscription.ratingGroup", "=", ratingGroup, false);
-        }
-        qb.addOrderMultiCriterion("e.subscription", true, "e.id", true);
 
-        return qb.getQuery(getEntityManager()).setMaxResults(nbToRetrieve).getResultList();
+        if (rateUntilDate == null && ratingGroup == null) {
+            return getEntityManager().createNamedQuery("EDR.listToRateIds", Long.class).setMaxResults(nbToRetrieve).getResultList();
+
+        } else if (rateUntilDate != null && ratingGroup == null) {
+            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByDate", Long.class).setParameter("rateUntilDate", rateUntilDate).setMaxResults(nbToRetrieve)
+                .getResultList();
+
+        } else if (rateUntilDate == null && ratingGroup != null) {
+            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByRG", Long.class).setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve)
+                .getResultList();
+
+        } else {
+            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByDateAndRG", Long.class).setParameter("rateUntilDate", rateUntilDate)
+                .setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve).getResultList();
+        }
+
     }
 
     /**

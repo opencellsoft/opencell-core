@@ -55,6 +55,11 @@ import org.meveo.model.billing.Subscription;
 @NamedQueries({
         @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_',case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e join e.processingStatus s where s.status=org.meveo.model.rating.EDRStatusEnum.OPEN ORDER BY e.eventDate DESC"),
 
+        @NamedQuery(name = "EDR.listToRateIds", query = "SELECT e.id from EDR e join fetch e.processingStatus s where s.status=org.meveo.model.rating.EDRStatusEnum.OPEN order by e.subscription, e.id"),
+        @NamedQuery(name = "EDR.listToRateIdsLimitByDate", query = "SELECT e.id from EDR e join fetch e.processingStatus s where s.status=org.meveo.model.rating.EDRStatusEnum.OPEN and e.eventDate<:rateUntilDate order by e.subscription, e.id"),
+        @NamedQuery(name = "EDR.listToRateIdsLimitByRG", query = "SELECT e.id from EDR e join fetch e.processingStatus s where s.status=org.meveo.model.rating.EDRStatusEnum.OPEN and e.subscription.ratingGroup=:ratingGroup order by e.subscription, e.id"),
+        @NamedQuery(name = "EDR.listToRateIdsLimitByDateAndRG", query = "SELECT e.id from EDR e join fetch e.processingStatus s where s.status=org.meveo.model.rating.EDRStatusEnum.OPEN and e.eventDate<:rateUntilDate and e.subscription.ratingGroup=:ratingGroup order by e.subscription, e.id"),
+        
         @NamedQuery(name = "EDR.countNbrEdrByStatus", query = "select s.status, count(e.id) from EDR e join e.processingStatus s group by s.status"),
 
         @NamedQuery(name = "EDR.listOpenEdrBetweenTwoDate", query = "SELECT e from EDR e join fetch e.processingStatus s where s.status=org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate order by e.eventDate desc"),
