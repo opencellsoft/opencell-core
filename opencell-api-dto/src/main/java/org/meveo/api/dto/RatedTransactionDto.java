@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -85,6 +85,9 @@ public class RatedTransactionDto extends BaseEntityDto {
     /** The code. */
     @XmlElement(required = true)
     private String code;
+    
+    /** The status. */
+    private RatedTransactionStatusEnum status;
 
     /** The description. */
     private String description;
@@ -164,6 +167,7 @@ public class RatedTransactionDto extends BaseEntityDto {
         this.setAmountTax(ratedTransaction.getAmountTax());
         this.setCode(ratedTransaction.getCode());
         this.setDescription(ratedTransaction.getDescription());
+        this.setStatus(ratedTransaction.getStatus());
         this.setUnityDescription(ratedTransaction.getUnityDescription());
         if (ratedTransaction.getPriceplan() != null) {
             this.setPriceplanCode(ratedTransaction.getPriceplan().getCode());
@@ -627,4 +631,19 @@ public class RatedTransactionDto extends BaseEntityDto {
     public void setBillingAccountCode(String billingAccountCode) {
         this.billingAccountCode = billingAccountCode;
     }
+    
+    /**
+     * @return the status
+     */
+    public RatedTransactionStatusEnum getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(RatedTransactionStatusEnum status) {
+        this.status = status;
+    }
+    
 }

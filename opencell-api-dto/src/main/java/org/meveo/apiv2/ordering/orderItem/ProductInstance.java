@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlType;
 @Value.Immutable
 @Value.Style(jdkOnly=true)
 @JsonDeserialize(as = ImmutableProductInstance.class)
-@XmlType(name="productInstance", propOrder = { "id", "code", "seller", "product" })
 public interface ProductInstance extends Resource {
     @Nullable
     String getCode();

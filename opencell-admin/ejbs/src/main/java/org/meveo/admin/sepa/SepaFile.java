@@ -265,6 +265,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
             String schemaLocation = paramBean.getProperty("sepa.schemaLocation.pain008", SDD_SCHEMA_LOCATION);
             JAXBUtils.marshaller(document, new File(ddRequestLot.getFileName()), schemaLocation);
         } catch (Exception e) {
+        	log.error("Error on generateDDRequestLotFileForSSD",e);
             throw new BusinessException(e.getMessage());
         }
 

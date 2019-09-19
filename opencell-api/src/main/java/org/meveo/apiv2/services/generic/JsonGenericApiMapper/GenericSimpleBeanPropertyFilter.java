@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import java.util.Arrays;
 import java.util.Set;
 
-public class GenericSimpleBeanPropertyFilter extends SimpleBeanPropertyFilter.FilterExceptFilter {
+class GenericSimpleBeanPropertyFilter extends SimpleBeanPropertyFilter.FilterExceptFilter {
     private final Set<String> GenericSimpleBeanPropertyFilterPropertiesToInclude;
     public GenericSimpleBeanPropertyFilter(Set<String> properties) {
         super(properties);

@@ -11,8 +11,9 @@ import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.BusinessEntity;
 
 import java.io.IOException;
+import java.io.Serializable;
 
- class LazyProxyModule extends SimpleModule {
+class LazyProxyModule extends SimpleModule {
     private static final String NAME = "CustomLazyProxyModule";
     private static final VersionUtil VERSION_UTIL = new VersionUtil() {};
 
@@ -33,16 +34,9 @@ import java.io.IOException;
 
          @Override
          public void serialize(HibernateProxy value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-             LazyInitializer hibernateLazyInitializer = value.getHibernateLazyInitializer();
-             final Object unProxyDependency = PersistenceUtils.initializeAndUnproxy(value);
-             if (hibernateLazyInitializer != null){
-                 gen.writeStartObject();
-                 gen.writeObjectField("id", hibernateLazyInitializer.getIdentifier());
-                 if (unProxyDependency instanceof BusinessEntity){
-                     gen.writeStringField("code", ((BusinessEntity)unProxyDependency).getCode());
-                 }
-                 gen.writeEndObject();
-             }
+             gen.writeStartObject();
+             gen.writeObjectField("id", value.getHibernateLazyInitializer().getIdentifier());
+             gen.writeEndObject();
          }
      }
 
