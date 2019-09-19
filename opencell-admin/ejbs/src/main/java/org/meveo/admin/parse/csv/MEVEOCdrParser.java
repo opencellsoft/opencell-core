@@ -1,13 +1,16 @@
 package org.meveo.admin.parse.csv;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.inject.Named;
 
@@ -15,7 +18,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.service.medina.impl.CDRParsingService;
+import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
 import org.meveo.service.medina.impl.CSVCDRParser;
 import org.meveo.service.medina.impl.InvalidAccessException;
 import org.meveo.service.medina.impl.InvalidFormatException;
@@ -24,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A default CDR file parser
+ * 
  * @lastModifiedVersion willBeSetLater
  * 
  * @author Andrius Karpavicius
@@ -32,9 +36,6 @@ import org.slf4j.LoggerFactory;
 public class MEVEOCdrParser implements CSVCDRParser {
 
     private static Logger log = LoggerFactory.getLogger(MEVEOCdrParser.class);
-
-    DateTimeFormatter formatter1 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    DateTimeFormatter formatter2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     static MessageDigest messageDigest = null;
     static {
@@ -46,46 +47,54 @@ public class MEVEOCdrParser implements CSVCDRParser {
     }
 
     private String batchName;
-    private Map<String, String> originBatch;
     private String username;
+    private BufferedReader cdrReader = null;
+    private CDR_ORIGIN_ENUM origin;
 
     @Override
-    public void init(File CDRFile) {
-        batchName = "CDR_" + CDRFile.getName();
-        if (originBatch == null) {
-            originBatch = new HashMap<>();
-        }
-
-        originBatch.put(CDRParsingService.CDR_ORIGIN_JOB, batchName);
+    public void init(File cdrFile) throws FileNotFoundException {
+        batchName = "CDR_" + cdrFile.getName();
+        cdrReader = new BufferedReader(new InputStreamReader(new FileInputStream(cdrFile)));
     }
 
     @Override
     public void initByApi(String username, String ip) {
-        if (originBatch == null) {
-            originBatch = new HashMap<>();
-        }
-        originBatch.put(CDRParsingService.CDR_ORIGIN_API, "API_" + ip);
+        this.batchName = "API_" + ip;
         this.username = username;
     }
 
-    @Override
-    public Map<String, String> getOriginBatch() {
-        if (StringUtils.isBlank(originBatch.get(CDRParsingService.CDR_ORIGIN_JOB))) {
-            originBatch.put(CDRParsingService.CDR_ORIGIN_JOB, batchName == null ? "CDR_CONS_CSV" : batchName);
-        }
-        return originBatch;
+    public String getBatchName() {
+        return batchName;
     }
 
     @Override
-    public CDR getCDR(String line, String origin) throws InvalidFormatException {
+    public synchronized CDR getNextRecord() throws IOException {
+
+        return parseCDR(cdrReader.readLine());
+    }
+
+    @Override
+    public CDR parseCDR(String line) {
+
+        if (line == null) {
+            return null;
+        }
+
         CDR cdr = new CDR();
+        cdr.setLine(line);
         try {
             String[] fields = line.split(";");
             if (fields.length == 0) {
                 throw new InvalidFormatException(line, "record empty");
+
             } else if (fields.length < 4) {
                 throw new InvalidFormatException(line, "only " + fields.length + " in the record");
+
             } else {
+
+                DateTimeFormatter formatter1 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                DateTimeFormatter formatter2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
                 try {
                     DateTime dt = formatter1.parseDateTime(fields[0]);
                     cdr.setTimestamp(new Date(dt.getMillis()));
@@ -96,9 +105,7 @@ public class MEVEOCdrParser implements CSVCDRParser {
                 cdr.setQuantity(new BigDecimal(fields[1]));
 
                 cdr.setAccess_id(fields[2]);
-                if (cdr.getAccess_id() == null) {
-                    throw new InvalidAccessException(line, "userId is empty");
-                }
+
                 cdr.setParam1(fields[3]);
                 if (fields.length <= 4) {
                     cdr.setParam2(null);
@@ -229,56 +236,52 @@ public class MEVEOCdrParser implements CSVCDRParser {
                 }
             }
 
-            cdr.setOriginBatch(getOriginBatch().get(origin));
-            cdr.setOriginRecord(getOriginRecord(cdr, origin));
-            cdr.setLine(line);
+            cdr.setOriginBatch(batchName);
+            cdr.setOriginRecord(getOriginRecord(line));
+
+            if (cdr.getAccess_id() == null || cdr.getAccess_id().trim().length() == 0) {
+                cdr.setRejectReason(new InvalidAccessException(line, "userId is empty"));
+            }
 
         } catch (Exception e) {
-            throw new InvalidFormatException(line, e.getMessage());
+            cdr.setRejectReason(new InvalidFormatException(line, e));
         }
         return cdr;
     }
 
-    @Override
-    public String getOriginRecord(CDR object, String origin) {
-        String result = null;
-        if (StringUtils.isBlank(username) || origin.equals(CDRParsingService.CDR_ORIGIN_JOB)) {
-            CDR cdr = (CDR) object;
-            result = cdr.toString();
+    /**
+     * Build and return a unique identifier from the CDR in order. To avoid importing twice the same CDR.
+     * 
+     * @param cdr : CDR object parsed
+     * @return CDR's unique key
+     */
+    private String getOriginRecord(String cdr) {
+
+        if (StringUtils.isBlank(username) || CDR_ORIGIN_ENUM.JOB == origin) {
 
             if (messageDigest != null) {
                 synchronized (messageDigest) {
                     messageDigest.reset();
-                    messageDigest.update(result.getBytes(Charset.forName("UTF8")));
+                    messageDigest.update(cdr.getBytes(Charset.forName("UTF8")));
                     final byte[] resultByte = messageDigest.digest();
                     StringBuffer sb = new StringBuffer();
                     for (int i = 0; i < resultByte.length; ++i) {
                         sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1, 3));
                     }
-                    result = sb.toString();
+                    return sb.toString();
                 }
             }
         } else {
             return username + "_" + new Date().getTime();
         }
 
-        return result;
+        return null;
     }
 
     @Override
-    public String getAccessUserId(CDR cdr) throws InvalidAccessException {
-        String result = cdr.getAccess_id();
-        if (result == null || result.trim().length() == 0) {
-            throw new InvalidAccessException(cdr);
+    public void close() throws IOException {
+        if (cdrReader != null) {
+            cdrReader.close();
         }
-        /*
-         * if(((CDR)cdr).service_id!=null && (((CDR)cdr).service_id.length()>0) ){ result+="_"+((CDR)cdr).service_id; }
-         */
-        return result;
-    }
-
-    @Override
-    public String getCDRLine(CDR cdr, String reason) {
-        return ((CDR) cdr).toString() + ";" + reason;
     }
 }

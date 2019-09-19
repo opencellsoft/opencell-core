@@ -121,34 +121,6 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 	
 	@Override
 	public Map<String, Object> getFilters() {
-		
-        super.getFilters();
-		
-		if (filters.containsKey("chargeInstance")) {
-			filters.put("chargeInstance.chargeTemplate", filters.get("chargeInstance")); 
-			filters.remove("chargeInstance");
-		}
-		if (filters.containsKey("wallet")) {
-			filters.put("wallet.walletTemplate", filters.get("wallet")); 
-			filters.remove("wallet");
-		}
-		if (filters.containsKey("counter")) {
-			filters.put("counter.counterTemplate", filters.get("counter"));
-			filters.remove("counter");
-		}
-		if (filters.containsKey("billingAccount")) {
-			filters.put("wallet.userAccount.billingAccount", filters.get("billingAccount"));
-			filters.remove("billingAccount");
-		}
-		if (filters.containsKey("invoiceSubCategory")) {
-			filters.put("chargeInstance.chargeTemplate.invoiceSubCategory", filters.get("invoiceSubCategory"));
-			filters.remove("invoiceSubCategory");
-		}
-		if (filters.containsKey("offerTemplate")) {
-			filters.put("priceplan.offerTemplate", filters.get("offerTemplate"));
-			filters.remove("offerTemplate");
-		}
-		
 		return super.getFilters();
 	}
 	

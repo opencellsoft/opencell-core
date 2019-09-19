@@ -13,6 +13,8 @@ import org.meveo.model.billing.TradingCountry;
  * The Class CountryDto.
  *
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  * @since Oct 4, 2013
  */
 @XmlRootElement(name = "Country")
@@ -80,7 +82,7 @@ public class CountryDto extends AuditableEntityDto implements IEnableDto {
      */
     public CountryDto(TradingCountry tradingCountry) {
         countryCode = tradingCountry.getCountryCode();
-        name = tradingCountry.getPrDescription();
+        name = tradingCountry.getDescription();
 
         if (tradingCountry.getCountry() != null && tradingCountry.getCountry().getCurrency() != null) {
             currencyCode = tradingCountry.getCountry().getCurrency().getCurrencyCode();
@@ -100,7 +102,7 @@ public class CountryDto extends AuditableEntityDto implements IEnableDto {
      */
     public CountryDto(TradingCountry tradingCountry, Country country) {
         countryCode = tradingCountry.getCountryCode();
-        name = tradingCountry.getPrDescription();
+        name = tradingCountry.getDescription();
 
         currencyCode = country.getCurrency().getCurrencyCode();
 
