@@ -289,8 +289,8 @@
         <exception-type>javax.faces.application.ViewExpiredException</exception-type>
         <location>/errors/expired.xhtml</location>
     </error-page>     
-    <error-page>
-        <exception-type>org.jboss.weld.context.NonexistentConversationException</exception-type>
+    <error-page><!--fix for WF17-->
+        <exception-type>javax.enterprise.context.NonexistentConversationException</exception-type>
         <location>/errors/expired.xhtml</location>
     </error-page> 
     <error-page>
