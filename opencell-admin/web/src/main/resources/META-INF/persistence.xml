@@ -28,9 +28,6 @@
 
             <!--skip duplicate ID_GENERATOR ERROR IN WF17-->
             <property name="hibernate.jpa.compliance.global_id_generators" value="false" />
-
-            <!--skip error HQL named queries IN WF17-->
-            <property name="hibernate.query.startup_check" value="false"/>
         </properties>
     </persistence-unit>
 

@@ -198,7 +198,11 @@ public class EdrService extends PersistenceService<EDR> {
      */
     public List<String> getUnprocessedEdrsForCache(int from, int pageSize) {
 
-        List<String> edrCacheKeys = getEntityManager().createNamedQuery("EDR.getEdrsForCache", String.class).setFirstResult(from).setMaxResults(pageSize).getResultList();
+        List<String> edrCacheKeys = getEntityManager().createNamedQuery("EDR.getEdrsForCache", String.class)
+                .setParameter("status", EDRStatusEnum.OPEN)
+                .setFirstResult(from)
+                .setMaxResults(pageSize)
+                .getResultList();
 
         return edrCacheKeys;
     }
@@ -211,7 +215,9 @@ public class EdrService extends PersistenceService<EDR> {
      * @return All open EDR between two Date
      */
     public List<EDR> getNotOpenedEdrsBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
-        return getEntityManager().createNamedQuery("EDR.getNotOpenedEdrBetweenTwoDate", EDR.class).setParameter("firstTransactionDate", firstTransactionDate)
+        return getEntityManager().createNamedQuery("EDR.getNotOpenedEdrBetweenTwoDate", EDR.class)
+                .setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("status", EDRStatusEnum.OPEN)
                 .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
     }
 
@@ -224,12 +230,15 @@ public class EdrService extends PersistenceService<EDR> {
      */
     public long purge(Date firstTransactionDate, Date lastTransactionDate) {
 
-        getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate)
+        getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletion")
+                .setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("status", EDRStatusEnum.OPEN)
                 .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
 
         return getEntityManager().createNamedQuery("EDR.deleteNotOpenEdrBetweenTwoDate").setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
-
+                .setParameter("lastTransactionDate", lastTransactionDate)
+                .setParameter("status", EDRStatusEnum.OPEN)
+                .executeUpdate();
     }
 
     public void importEdrs(List<EDRDto> edrs) throws BusinessException {
