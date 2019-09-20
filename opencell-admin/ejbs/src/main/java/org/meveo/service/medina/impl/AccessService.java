@@ -24,6 +24,7 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.hibernate.FlushMode;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
@@ -47,7 +48,7 @@ public class AccessService extends PersistenceService<Access> {
         Query query = getEntityManager().createQuery(stringQuery);
         query.setParameter("accessUserId", access.getAccessUserId());
         query.setParameter("subscriptionId", access.getSubscription().getId());
-        query.setHint("org.hibernate.flushMode", "NEVER");
+        query.setHint("org.hibernate.flushMode", FlushMode.MANUAL);
         return ((Long) query.getSingleResult()).intValue() != 0;
     }
 
