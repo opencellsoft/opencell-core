@@ -1926,7 +1926,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             } catch (Exception e) {
                 log.error("Failed to generate XML/PDF files or recorded invoice AO for invoice {}/{}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber(), e);
             }
-            invoice.setDontSend(!generateInvoiceRequestDto.getSendInvoice());
         }
         return refreshOrRetrieve(invoices);
     }
@@ -2384,6 +2383,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         return result;
+    }
+    
+    /**
+     * Update unpaid invoices status
+     */
+    public void updateUnpaidInvoicesStatus() {
+        getEntityManager().createNamedQuery("Invoice.updateUnpaidInvoicesStatus").executeUpdate();
     }
 
     /**

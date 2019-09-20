@@ -47,6 +47,7 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.WriteOff;
+import org.meveo.model.payments.Refund;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -84,11 +85,14 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         BigDecimal amountDebit = amount;
         boolean fullMatch = false;
         boolean withWriteOff = false;
+        boolean withRefund = false;
         List<PaymentScheduleInstanceItem> listPaymentScheduleInstanceItem = new ArrayList<PaymentScheduleInstanceItem>();
         
         for (AccountOperation accountOperation : listOcc) {
             if (accountOperation instanceof WriteOff) {
                 withWriteOff = true;
+            } else if (accountOperation instanceof Refund) {
+                withRefund = true;
             }
         }
 
@@ -134,6 +138,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 Invoice invoice = ((RecordedInvoice)accountOperation).getInvoice();
                 if(withWriteOff) {
                     invoice.setStatus(InvoiceStatusEnum.ABANDONED);
+                } else if(withRefund) {
+                    invoice.setStatus(InvoiceStatusEnum.REFUNDED);
                 } else if(fullMatch) {
                     invoice.setStatus(InvoiceStatusEnum.PAID);
                 } else if(!fullMatch) {
@@ -191,6 +197,8 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 Invoice invoice = ((RecordedInvoice)accountOperation).getInvoice();
                 if(withWriteOff) {
                     invoice.setStatus(InvoiceStatusEnum.ABANDONED);
+                } else if(withRefund) {
+                    invoice.setStatus(InvoiceStatusEnum.REFUNDED);
                 } else if(fullMatch) {
                     invoice.setStatus(InvoiceStatusEnum.PAID);
                 } else if(!fullMatch) {
