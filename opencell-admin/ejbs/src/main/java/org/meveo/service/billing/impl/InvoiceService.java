@@ -109,7 +109,6 @@ import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionGroup;
-import org.meveo.model.billing.RatedTransactionProcessingStatus;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
@@ -947,7 +946,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     // AKK alternative 1 for 4326
 
                     em.flush(); // Need to flush, so RTs can be updated in mass
-                    
+
                     for (Object[] aggregateAndRtIds : rtMassUpdates) {
                         SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRtIds[0];
                         List<Long> rtIds = (List<Long>) aggregateAndRtIds[1];
@@ -959,11 +958,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRts[0];
                         List<RatedTransaction> rts = (List<RatedTransaction>) aggregateAndRts[1];
                         for (RatedTransaction rt : rts) {
-                            RatedTransactionProcessingStatus processingStatus = rt.getProcessingStatus();
-                            processingStatus.setBillingRun(billingRun);
-                            processingStatus.setInvoice(invoice);
-                            processingStatus.setInvoiceAgregateF(subCategoryAggregate);
-                            processingStatus.setStatus(RatedTransactionStatusEnum.BILLED);
+                            rt.setBillingRun(billingRun);
+                            rt.setInvoice(invoice);
+                            rt.setInvoiceAgregateF(subCategoryAggregate);
+                            rt.changeStatus(RatedTransactionStatusEnum.BILLED);
                             em.merge(rt);
                         }
                     }
@@ -3420,10 +3418,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             meveoRatedTransaction.setParameter3(ratedTransactionDto.getParameter3());
                         }
 
+                        meveoRatedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
+                        meveoRatedTransaction.setInvoice(invoice);
+                        meveoRatedTransaction.setInvoiceAgregateF(invoiceAgregateSubcat);
+
                         ratedTransactionService.create(meveoRatedTransaction);
-                        meveoRatedTransaction.getProcessingStatus().setStatus(RatedTransactionStatusEnum.BILLED);
-                        meveoRatedTransaction.getProcessingStatus().setInvoice(invoice);
-                        meveoRatedTransaction.getProcessingStatus().setInvoiceAgregateF(invoiceAgregateSubcat);
 
                         subCatAmountWithoutTax = subCatAmountWithoutTax.add(amountWithoutTax);
                         subCatAmountTax = subCatAmountTax.add(amountTax);
@@ -3440,9 +3439,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         subCatAmountTax = subCatAmountTax.add(ratedTransaction.getAmountTax());
                         subCatAmountWithTax = subCatAmountWithTax.add(ratedTransaction.getAmountWithTax());
 
-                        ratedTransaction.getProcessingStatus().setStatus(RatedTransactionStatusEnum.BILLED);
-                        ratedTransaction.getProcessingStatus().setInvoice(invoice);
-                        ratedTransaction.getProcessingStatus().setInvoiceAgregateF(invoiceAgregateSubcat);
+                        ratedTransaction.changeStatus(RatedTransactionStatusEnum.BILLED);
+                        ratedTransaction.setInvoice(invoice);
+                        ratedTransaction.setInvoiceAgregateF(invoiceAgregateSubcat);
                     }
                 }
 

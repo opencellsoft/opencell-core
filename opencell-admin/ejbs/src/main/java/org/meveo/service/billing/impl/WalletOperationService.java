@@ -31,7 +31,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -67,7 +66,6 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationProcessingStatus;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -644,11 +642,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
             walletOperation.setSubscriptionDate(serviceInstance.getSubscriptionDate());
 
-            List<WalletOperation> operations = chargeWalletOperation(walletOperation);
-
             if (forSchedule) {
-                walletOperation.getProcessingStatus().setStatus(WalletOperationStatusEnum.SCHEDULED);
+                walletOperation.changeStatus(WalletOperationStatusEnum.SCHEDULED);
             }
+
+            List<WalletOperation> operations = chargeWalletOperation(walletOperation);
 
             walletOperations.addAll(operations);
 
@@ -1206,12 +1204,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
     @SuppressWarnings("unchecked")
     public List<WalletOperation> openWalletOperationsBySubCat(WalletInstance walletInstance, InvoiceSubCategory invoiceSubCategory, Date from, Date to) {
-        QueryBuilder qb = new QueryBuilder("Select o from WalletOperation o left join fetch o.processingStatus s", "op");
+        QueryBuilder qb = new QueryBuilder("Select op from WalletOperation op", "op");
         if (invoiceSubCategory != null) {
             qb.addCriterionEntity("op.chargeInstance.chargeTemplate.invoiceSubCategory", invoiceSubCategory);
         }
         qb.addCriterionEntity("op.wallet", walletInstance);
-        qb.addSql(" s is null");
+        qb.addSql(" op.status = 'OPEN'");
         if (from != null) {
             qb.addCriterion("operationDate", ">=", from, false);
         }
@@ -1395,8 +1393,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      */
     public void importWalletOperation(List<WalletOperationDto> walletOperations) throws BusinessException {
 
-        EntityManager em = getEntityManager();
-
         for (WalletOperationDto dto : walletOperations) {
             WalletOperation wo = new WalletOperation();
             if (dto.getSeller() != null) {
@@ -1445,11 +1441,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             wo.setSubscriptionDate(dto.getSubscriptionDate());
             wo.setRawAmountWithoutTax(dto.getRawAmountWithoutTax());
             wo.setRawAmountWithTax(dto.getRawAmountWithTax());
-            create(wo);
 
             if (dto.getStatus() != WalletOperationStatusEnum.OPEN) {
-                wo.getProcessingStatus().setStatus(dto.getStatus());
+                wo.setStatus(dto.getStatus());
             }
+
+            create(wo);
         }
     }
 
@@ -1464,16 +1461,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             .getResultList();
 
         for (WalletOperation walletOperation : walletOperations) {
-            walletOperation.getProcessingStatus().changeStatus(WalletOperationStatusEnum.TO_RERATE);
+            walletOperation.changeStatus(WalletOperationStatusEnum.TO_RERATE);
         }
-    }
-
-    @Override
-    public void create(WalletOperation walletOperation) throws BusinessException {
-        super.create(walletOperation);
-
-        WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(walletOperation, null, WalletOperationStatusEnum.OPEN);
-        walletOperation.setProcessingStatus(woProcessingStatus);
-        getEntityManager().persist(woProcessingStatus);
     }
 }

@@ -36,7 +36,6 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationProcessingStatus;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -560,11 +559,11 @@ public class WalletApi extends BaseApi {
             }
         }
 
+        if (postData.getStatus() != WalletOperationStatusEnum.OPEN) {
+            walletOperation.setStatus(postData.getStatus());
+        }
         walletOperationService.create(walletOperation);
 
-        if (postData.getStatus() != WalletOperationStatusEnum.OPEN) {
-            walletOperation.getProcessingStatus().setStatus(postData.getStatus());
-        }
         return walletOperation;
 
     }

@@ -36,7 +36,6 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.billing.RatedTransactionGroup;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.rating.EDR;
-import org.meveo.model.rating.EDRProcessingStatus;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
@@ -179,10 +178,6 @@ public class EdrService extends PersistenceService<EDR> {
     public void create(EDR edr) throws BusinessException {
         super.create(edr);
 
-        EDRProcessingStatus edrProcessingStatus = new EDRProcessingStatus(edr, EDRStatusEnum.OPEN, null);
-        edr.setProcessingStatus(edrProcessingStatus);
-        getEntityManager().persist(edrProcessingStatus);
-
         if (deduplicateEdrs && useInMemoryDeduplication) {
             cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(edr.getOriginBatch(), edr.getOriginRecord());
         }
@@ -279,12 +274,10 @@ public class EdrService extends PersistenceService<EDR> {
             edr.setLastUpdate(dto.getLastUpdate());
             edr.setAccessCode(dto.getAccessCode());
             edr.setExtraParameter(dto.getExtraParameter());
-            create(edr);
-
             if (dto.getStatus() != null && dto.getStatus() != EDRStatusEnum.OPEN) {
-                edr.getProcessingStatus().setStatus(dto.getStatus());
-                edr.getProcessingStatus().setEdr(edr);
+                edr.setStatus(dto.getStatus());
             }
+            create(edr);
         }
     }
 }

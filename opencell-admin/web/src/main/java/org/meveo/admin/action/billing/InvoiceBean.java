@@ -307,19 +307,14 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                     protected Map<String, Object> getSearchCriteria() {
 
                         Map<String, Object> filters = new HashMap<>();
-                        filters.put("processingStatus.invoice", entity);
-                        filters.put("processingStatus.invoiceAgregateF", subCatInvoiceAgregate);
+                        filters.put("invoice", entity);
+                        filters.put("invoiceAgregateF", subCatInvoiceAgregate);
                         return filters;
                     }
 
                     @Override
                     protected String getDefaultSortImpl() {
                         return "usageDate";
-                    }
-
-                    @Override
-                    protected List<String> getListFieldsToFetchImpl() {
-                        return Arrays.asList("processingStatus");
                     }
 
                     @Override

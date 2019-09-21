@@ -123,14 +123,4 @@ public class RatedTransactionBean extends BaseBean<RatedTransaction> {
         }
         return false;
     }
-
-    @Override
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("processingStatus");
-    }
-
-    @Override
-    protected List<String> getListFieldsToFetch() {
-        return Arrays.asList("processingStatus");
-    }
 }

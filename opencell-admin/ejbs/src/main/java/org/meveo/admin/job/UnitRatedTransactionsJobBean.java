@@ -1,6 +1,5 @@
 package org.meveo.admin.job;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import javax.ejb.Stateless;
@@ -39,7 +38,7 @@ public class UnitRatedTransactionsJobBean {
     public void execute(JobExecutionResultImpl result, Long walletOperationId) {
 
         try {
-            WalletOperation walletOperation = walletOperationService.findById(walletOperationId, Arrays.asList("processingStatus"));
+            WalletOperation walletOperation = walletOperationService.findById(walletOperationId);
             
             ratedTransactionService.createRatedTransaction(walletOperation, false);
             result.registerSucces();

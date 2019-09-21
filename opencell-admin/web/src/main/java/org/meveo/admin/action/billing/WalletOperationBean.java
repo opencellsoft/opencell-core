@@ -19,23 +19,19 @@
 package org.meveo.admin.action.billing;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Produces;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.service.admin.impl.TradingCurrencyService;
@@ -151,7 +147,7 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
     private LazyDataModel<WalletOperation> filterDataModelByBillingRun(boolean forceReload) {
         if (filters.containsKey("billingRun")) {
             BillingRun br = (BillingRun) filters.get("billingRun");
-            filters.put("ratedTransaction.processingStatus.billingRun", br);
+            filters.put("ratedTransaction.billingRun", br);
             filters.remove("billingRun");
         }
         return super.getLazyDataModel(filters, forceReload);
@@ -190,15 +186,5 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
         }
         conversation.end();
         return "walletOperations";
-    }
-
-    @Override
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("processingStatus");
-    }
-
-    @Override
-    protected List<String> getListFieldsToFetch() {
-        return Arrays.asList("processingStatus");
     }
 }

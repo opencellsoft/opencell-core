@@ -1311,177 +1311,6 @@
             </column>
     	</addColumn>
     </changeSet>
-
-
-	<changeSet id="#4511_20190820-M" author="AndriusKarpavicius" dbms="mysql">
-		<createTable tableName="billing_rated_transaction_status">
-			<column name="id" type="bigint">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="billing_rated_transaction_status_pkey" />
-			</column>
-			<column name="status" type="varchar(9)">
-				<constraints nullable="false" />
-			</column>
-			<column name="billing_run_id" type="bigint" />
-			<column name="invoice_id" type="bigint" />
-			<column name="aggregate_id_f" type="bigint" />
-			<column name="status_date" type="datetime" />
-		</createTable>
-
-        <dropIndex tableName="rating_edr" indexName="rating_edr_status"/>   
-
-        <createTable tableName="rating_edr_status">
-            <column name="id" type="bigint">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="rating_edr_status_pkey" />
-            </column>
-            <column name="status" type="varchar(10)">
-                <constraints nullable="false" />
-            </column>
-            <column name="reject_reason" type="${type.text}" />
-            <column name="status_date" type="datetime" />
-        </createTable>        
-        
-        
-        <dropIndex tableName="billing_wallet_operation" indexName="billing_wallet_operation_status"/>
-        
-        <createTable tableName="billing_wallet_operation_status">
-            <column name="id" type="bigint">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_wallet_operation_status_pkey" />
-            </column>
-            <column name="status" type="varchar(9)">
-                <constraints nullable="false" />
-            </column>
-            <column name="rated_transaction_id" type="bigint" />
-            <column name="status_date" type="datetime" />
-        </createTable> 
-    </changeSet>
-     
-
-    <changeSet id="#4511_20190820-P" author="AndriusKarpavicius" dbms="postgresql">
-        
-        <dropIndex tableName="rating_edr" indexName="rating_edr_status"/>   
-        
-        <sql>
-            CREATE TABLE ${db.schema.adapted}rating_edr_status (
-              id bigint NOT NULL,
-              status character varying(10) NOT NULL,
-              reject_reason text,
-              status_date timestamp without time zone,
-              CONSTRAINT rating_edr_status_pkey PRIMARY KEY (id, status)
-            )partition by list (status)
-        </sql>
-        <sql>create table ${db.schema.adapted}rating_edr_status_open partition of ${db.schema.adapted}rating_edr_status for values in('OPEN')</sql>
-        <sql>create table ${db.schema.adapted}rating_edr_status_other partition of ${db.schema.adapted}rating_edr_status default</sql>
-    
-        <sql>
-            CREATE TABLE ${db.schema.adapted}billing_rated_transaction_status(
-              id bigint NOT NULL,
-              status character varying(9) NOT NULL,
-              billing_run_id bigint,
-              invoice_id bigint,
-              aggregate_id_f bigint,
-              status_date timestamp without time zone,
-              CONSTRAINT billing_rated_transaction_status_pkey PRIMARY KEY (id,status)
-              ) partition by list (status)
-        </sql>
-             
-        <sql>create table ${db.schema.adapted}billing_rated_transaction_status_open  partition of ${db.schema.adapted}billing_rated_transaction_status for values in('OPEN')</sql>
-        <sql>create table ${db.schema.adapted}billing_rated_transaction_status_other partition of ${db.schema.adapted}billing_rated_transaction_status default</sql>
-                
-        <dropIndex tableName="billing_wallet_operation" indexName="billing_wallet_operation_status"/>
-        
-        <sql>
-            CREATE TABLE ${db.schema.adapted}billing_wallet_operation_status(
-              id bigint NOT NULL,
-              status character varying(9) NOT NULL,
-              rated_transaction_id bigint,
-              status_date timestamp without time zone,
-              CONSTRAINT billing_wallet_operation_status_pkey PRIMARY KEY (id,status)
-            )partition by list (status)
-         </sql>
-         <sql>create table ${db.schema.adapted}billing_wallet_operation_status_open partition of ${db.schema.adapted}billing_wallet_operation_status for values in('OPEN')</sql>
-         <sql>create table ${db.schema.adapted}billing_wallet_operation_status_other partition of ${db.schema.adapted}billing_wallet_operation_status default</sql>
-        
-     </changeSet>        
-        
-     <changeSet id="#4511_20190820-migrate" author="AndriusKarpavicius">
-        <sql>insert into ${db.schema.adapted}rating_edr_status (id, status, reject_reason, status_date) select id, status, reject_reason, last_updated from ${db.schema.adapted}rating_edr</sql>        
-        <sql>insert into ${db.schema.adapted}billing_rated_transaction_status (id,status, billing_run_id, invoice_id, aggregate_id_f, status_date)
-            select id, status, billing_run_id, invoice_id, aggregate_id_f, usage_date from ${db.schema.adapted}billing_rated_transaction
-        </sql>
-        <sql>insert into ${db.schema.adapted}billing_wallet_operation_status (id,status, rated_transaction_id, status_date)
-            select id, status, rated_transaction_id, updated from ${db.schema.adapted}billing_wallet_operation
-        </sql>                       
-        
-        <addForeignKeyConstraint baseColumnNames="billing_run_id" baseTableName="billing_rated_transaction_status" constraintName="fk_billing_rt_billing_run" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_run" />
-        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="billing_rated_transaction_status" constraintName="fk_billing_rt_invoice" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
-        <addForeignKeyConstraint baseColumnNames="aggregate_id_f" baseTableName="billing_rated_transaction_status" constraintName="fk_billing_rt_agregate_f" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />            
-                
-        <addForeignKeyConstraint baseColumnNames="rated_transaction_id" baseTableName="billing_wallet_operation_status" constraintName="fk_billing_wo_rt" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_rated_transaction" />
-                 
-        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_o2mp1mqcyi2l7q2b1p88h20dw"/>
-        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_8g8jlmakt1wyw73oxs5yltlsd"/>
-        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_amwacie0nqfumpd1sc7y9nv0p"/>
-        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_rjpm9k6xsumg297fxefffyryh"/>
-        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_gq86s178gc3orumcl8symk4nn"/>
-        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_rt_ua"/>
-        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_bbnhg8vn7jkttghphr65iwug5"/>
-        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_ropedrid"/>
-            
-        <dropIndex tableName="billing_rated_transaction" indexName="rt_ba_invoice_open_serv_index"/>
-        <dropIndex tableName="billing_rated_transaction" indexName="rt_ba_invoice_open_sub_index"/>
-        <dropIndex tableName="billing_rated_transaction" indexName="rt_sub_invoice_open_serv_index"/>
-        <dropIndex tableName="billing_rated_transaction" indexName="rt_invoice_index"/>
-        <dropIndex tableName="billing_rated_transaction" indexName="rt_order_index"/>
-        <dropIndex tableName="billing_rated_transaction" indexName="transaction_billing_account_index"/>
-                         
-    </changeSet>
-
-    <changeSet id="#4511_20190820-M2" author="AndriusKarpavicius" dbms="mysql">    
-        <dropIndex tableName="billing_rated_transaction" indexName="fk_o2mp1mqcyi2l7q2b1p88h20dw"/>
-        <dropIndex tableName="billing_rated_transaction" indexName="fk_8g8jlmakt1wyw73oxs5yltlsd"/>
-        <dropIndex tableName="billing_rated_transaction" indexName="fk_amwacie0nqfumpd1sc7y9nv0p"/>
-        <dropIndex tableName="billing_rated_transaction" indexName="fk_rjpm9k6xsumg297fxefffyryh"/>
-        <dropIndex tableName="billing_rated_transaction" indexName="fk_gq86s178gc3orumcl8symk4nn"/>
-        <dropIndex tableName="billing_rated_transaction" indexName="fk_rt_ua"/> 
-        <dropIndex tableName="billing_rated_transaction" indexName="fk_bbnhg8vn7jkttghphr65iwug5"/> 
-        <dropIndex tableName="billing_rated_transaction" indexName="fk_ropedrid"/>
-    </changeSet>
-
-    <changeSet id="#4511_20190820-end" author="AndriusKarpavicius">
-		<dropColumn tableName="billing_rated_transaction" columnName="status" />
-		<dropColumn tableName="billing_rated_transaction" columnName="billing_run_id" />
-		<dropColumn tableName="billing_rated_transaction" columnName="invoice_id" />
-		<dropColumn tableName="billing_rated_transaction" columnName="aggregate_id_f" />
-		<dropColumn tableName="billing_rated_transaction" columnName="aggregate_id_r" />
-		<dropColumn tableName="billing_rated_transaction" columnName="aggregate_id_t" />
-    
-        <dropColumn tableName="rating_edr" columnName="status" />
-        <dropColumn tableName="rating_edr" columnName="reject_reason" />
-                
-        <dropColumn tableName="billing_wallet_operation" columnName="status" />
-        <dropColumn tableName="billing_wallet_operation" columnName="rated_transaction_id" />
-        
-        <sql>CREATE INDEX rt_ba_sub_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, subscription_id)</sql>
-        <sql>CREATE INDEX rating_edr_sub_id_index ON ${db.schema.adapted}rating_edr (subscription_id, id)</sql>
-        
-        <sql dbms="postgresql">CREATE INDEX rt_ba_serv_notnull_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, service_instance_id) WHERE service_instance_id IS NOT NULL</sql>
-        <sql dbms="postgresql">CREATE INDEX rt_order_index ON ${db.schema.adapted}billing_rated_transaction (order_number) where order_number IS NOT NULL</sql>
-        <sql dbms="postgresql">CREATE INDEX rt_sub_serv_index ON ${db.schema.adapted}billing_rated_transaction (subscription_id, service_instance_id) where subscription_id IS NOT NULL</sql>
-        <sql dbms="postgresql">CREATE INDEX rt_invoice_index ON ${db.schema.adapted}billing_rated_transaction_status (invoice_id) where invoice_id IS NOT NULL</sql>
-        
-        <sql dbms="mysql">CREATE INDEX rt_ba_serv_notnull_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, service_instance_id)</sql>
-        <sql dbms="mysql">CREATE INDEX rt_order_index ON ${db.schema.adapted}billing_rated_transaction (order_number)</sql>
-        <sql dbms="mysql">CREATE INDEX rt_sub_serv_index ON ${db.schema.adapted}billing_rated_transaction (subscription_id, service_instance_id)</sql>
-        <sql dbms="mysql">CREATE INDEX rt_invoice_index ON ${db.schema.adapted}billing_rated_transaction_status (invoice_id)</sql>
-        <sql dbms="mysql">CREATE INDEX edr_status_open_index ON ${db.schema.adapted}rating_edr_status (status)</sql>
-        <sql dbms="mysql">CREATE INDEX wo_status_open_index ON ${db.schema.adapted}billing_wallet_operation_status (status)</sql>
-        <sql dbms="mysql">CREATE INDEX rt_status_open_index ON ${db.schema.adapted}billing_rated_transaction_status (status)</sql>                
-                
-    </changeSet>
         
     <changeSet id="#4555_20190903" author="AndriusKarpavicius">
         <addColumn tableName="cat_charge_template">        
@@ -1746,4 +1575,301 @@
         <dropTable tableName="billing_usage_charge_inst"/>    
     
     </changeSet>    
+    
+    <changeSet id="#4555_20190919-M" author="AndriusKarpavicius" dbms="mysql"> 
+    
+        <dropColumn tableName="billing_rated_transaction" columnName="aggregate_id_r"/>
+        <dropColumn tableName="billing_rated_transaction" columnName="aggregate_id_t"/>
+    
+        <dropIndex tableName="billing_rated_transaction" indexName="rt_ba_invoice_open_serv_index"/>
+        <dropIndex tableName="billing_rated_transaction" indexName="rt_ba_invoice_open_sub_index"/>
+        <dropIndex tableName="billing_rated_transaction" indexName="rt_sub_invoice_open_serv_index"/>
+        <dropIndex tableName="billing_rated_transaction" indexName="rt_invoice_index"/>
+        <dropIndex tableName="billing_rated_transaction" indexName="rt_order_index"/>
+        
+        <sql>CREATE INDEX rating_edr_sub_id_index ON ${db.schema.adapted}rating_edr (subscription_id, id)</sql>
+                
+        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, service_instance_id)</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, subscription_id)</sql>
+        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON ${db.schema.adapted}billing_rated_transaction (subscription_id, service_instance_id)</sql>
+        <sql>CREATE INDEX rt_invoice_index ON ${db.schema.adapted}billing_rated_transaction (invoice_id)</sql>
+        <sql>CREATE INDEX rt_order_index ON ${db.schema.adapted}billing_rated_transaction (order_number, status)</sql>
+    </changeSet>
+        
+    <changeSet id="#4555_20190919-P" author="AndriusKarpavicius" dbms="postgresql"> 
+        
+        <sql>alter table ${db.schema.adapted}rating_edr alter column id drop default</sql>
+        <sql>alter table ${db.schema.adapted}billing_wallet_operation alter column id drop default</sql>
+        <sql>alter table ${db.schema.adapted}billing_rated_transaction alter column id drop default</sql>
+        
+        <sql>alter table ${db.schema.adapted}rating_edr rename to rating_edr_tmp</sql>
+        <sql>alter table ${db.schema.adapted}billing_wallet_operation rename to billing_wallet_operation_tmp</sql>
+        <sql>alter table ${db.schema.adapted}billing_rated_transaction rename to billing_rated_transaction_tmp</sql>    
+    
+        <sql>
+            CREATE TABLE ${db.schema.adapted}rating_edr (
+              id bigint NOT NULL DEFAULT nextval('rating_edr_seq'),
+              version integer,
+              created timestamp without time zone,
+              event_date timestamp without time zone,
+              last_updated timestamp without time zone,
+              origin_batch character varying(255),
+              origin_record character varying(255),
+              parameter_1 character varying(255),
+              parameter_2 character varying(255),
+              parameter_3 character varying(255),
+              parameter_4 character varying(255),
+              quantity numeric(23,12),
+              reject_reason text,
+              status character varying(255),
+              subscription_id bigint NOT NULL,
+              parameter_5 character varying(255),
+              parameter_6 character varying(255),
+              parameter_7 character varying(255),
+              parameter_8 character varying(255),
+              parameter_9 character varying(255),
+              date_parameter_1 timestamp without time zone,
+              date_parameter_2 timestamp without time zone,
+              date_parameter_3 timestamp without time zone,
+              date_parameter_4 timestamp without time zone,
+              date_parameter_5 timestamp without time zone,
+              decimal_parameter_1 numeric(23,12),
+              decimal_parameter_2 numeric(23,12),
+              decimal_parameter_3 numeric(23,12),
+              decimal_parameter_4 numeric(23,12),
+              decimal_parameter_5 numeric(23,12),
+              access_code character varying(255),
+              header_edr_id bigint,
+              extra_parameter text,
+              CONSTRAINT rating_edr_p_pkey PRIMARY KEY (id, status)
+            ) partition by list (status)
+        </sql>
+    
+        <sql>
+            CREATE TABLE ${db.schema.adapted}billing_wallet_operation (
+              id bigint NOT NULL DEFAULT nextval('billing_wallet_operation_seq'),
+              operation_type character varying(31) NOT NULL,
+              version integer,
+              created timestamp without time zone NOT NULL,
+              updated timestamp without time zone,
+              code character varying(255) NOT NULL,
+              description character varying(255),
+              amount_tax numeric(23,12),
+              amount_with_tax numeric(23,12),
+              amount_without_tax numeric(23,12),
+              end_date timestamp without time zone,
+              offer_code character varying(255),
+              operation_date timestamp without time zone,
+              parameter_1 character varying(255),
+              parameter_2 character varying(255),
+              parameter_3 character varying(255),
+              quantity numeric(23,12),
+              start_date timestamp without time zone,
+              status character varying(255),
+              subscription_date timestamp without time zone,
+              tax_percent numeric(23,12) NOT NULL,
+              credit_debit_flag character varying(255),
+              unit_amount_tax numeric(23,12),
+              unit_amount_with_tax numeric(23,12),
+              unit_amount_without_tax numeric(23,12),
+              creator character varying(100),
+              updater character varying(100),
+              aggregate_serv_id bigint,
+              charge_instance_id bigint NOT NULL,
+              counter_id bigint,
+              currency_id bigint,
+              priceplan_id bigint,
+              reratedwalletoperation_id bigint,
+              seller_id bigint NOT NULL,
+              wallet_id bigint,
+              reservation_id bigint,
+              invoicing_date timestamp without time zone,
+              input_quantity numeric(23,12),
+              input_unit_description character varying(20),
+              rating_unit_description character varying(20),
+              edr_id bigint,
+              order_number character varying(100),
+              parameter_extra text,
+              raw_amount_without_tax numeric(23,12),
+              raw_amount_with_tax numeric(23,12),
+              invoice_sub_category_id bigint,
+              subscription_id bigint,
+              tax_id bigint NOT NULL,
+              rated_transaction_id bigint,
+              service_instance_id bigint,
+              offer_id bigint,
+              CONSTRAINT billing_wallet_operation_p_pkey PRIMARY KEY (id, status)
+            ) partition by list (status)
+        </sql>       
+        
+        <sql>
+            CREATE TABLE ${db.schema.adapted}billing_rated_transaction (
+              id bigint NOT NULL DEFAULT nextval('billing_rated_transaction_seq'),
+              version integer,
+              amount_tax numeric(23,12),
+              amount_with_tax numeric(23,12),
+              amount_without_tax numeric(23,12),
+              code character varying(255),
+              description text,
+              do_not_trigger_invoicing integer NOT NULL DEFAULT 0,
+              parameter_1 character varying(255),
+              parameter_2 character varying(255),
+              parameter_3 character varying(255),
+              quantity numeric(23,12),
+              status character varying(255),
+              unit_amount_tax numeric(23,12),
+              unit_amount_with_tax numeric(23,12),
+              unit_amount_without_tax numeric(23,12),
+              unity_description character varying(20),
+              usage_date timestamp without time zone,
+              billing_account__id bigint,
+              billing_run_id bigint,
+              invoice_id bigint,
+              aggregate_id_f bigint,
+              invoice_sub_category_id bigint,
+              priceplan_id bigint,
+              wallet_id bigint,
+              edr_id bigint,
+              adjusted_rated_tx bigint,
+              order_number character varying(100),
+              rating_unit_description character varying(20),
+              parameter_extra text,
+              start_date timestamp without time zone,
+              end_date timestamp without time zone,
+              subscription_id bigint,
+              seller_id bigint NOT NULL,
+              charge_instance_id bigint,
+              tax_id bigint NOT NULL,
+              tax_percent numeric(23,12) NOT NULL,
+              user_account_id bigint,
+              offer_id bigint,
+              service_instance_id bigint,
+              CONSTRAINT billing_rated_transaction_p_pkey PRIMARY KEY (id, status)
+            ) partition by list (status)
+        </sql>
+        
+        <sql>create table ${db.schema.adapted}rating_edr_open partition of ${db.schema.adapted}rating_edr for values in('OPEN')</sql>
+        <sql>create table ${db.schema.adapted}rating_edr_other partition of ${db.schema.adapted}rating_edr default</sql>
+
+        <sql>create table ${db.schema.adapted}billing_wallet_operation_open partition of ${db.schema.adapted}billing_wallet_operation for values in('OPEN')</sql>
+        <sql>create table ${db.schema.adapted}billing_wallet_operation_other partition of ${db.schema.adapted}billing_wallet_operation default</sql>
+
+        <sql>create table ${db.schema.adapted}billing_rated_transaction_open  partition of ${db.schema.adapted}billing_rated_transaction for values in('OPEN')</sql>
+        <sql>create table ${db.schema.adapted}billing_rated_transaction_other partition of ${db.schema.adapted}billing_rated_transaction default</sql>
+
+        <sql>insert into ${db.schema.adapted}rating_edr (id,version,created,event_date,last_updated,origin_batch,origin_record,parameter_1,parameter_2,parameter_3,parameter_4,quantity,reject_reason,status,subscription_id,parameter_5,parameter_6,parameter_7,parameter_8,parameter_9,date_parameter_1,date_parameter_2,date_parameter_3,date_parameter_4,date_parameter_5,decimal_parameter_1,decimal_parameter_2,decimal_parameter_3,decimal_parameter_4,decimal_parameter_5,access_code,header_edr_id,extra_parameter) 
+                (select id,version,created,event_date,last_updated,origin_batch,origin_record,parameter_1,parameter_2,parameter_3,parameter_4,quantity,reject_reason,status,subscription_id,parameter_5,parameter_6,parameter_7,parameter_8,parameter_9,date_parameter_1,date_parameter_2,date_parameter_3,date_parameter_4,date_parameter_5,decimal_parameter_1,decimal_parameter_2,decimal_parameter_3,decimal_parameter_4,decimal_parameter_5,access_code,header_edr_id,extra_parameter from ${db.schema.adapted}rating_edr_tmp) </sql>       
+        <sql>insert into ${db.schema.adapted}billing_wallet_operation (id,operation_type,version,created,updated,code,description,amount_tax,amount_with_tax,amount_without_tax,end_date,offer_code,operation_date,parameter_1,parameter_2,parameter_3,quantity,start_date,status,subscription_date,tax_percent,credit_debit_flag,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,creator,updater,aggregate_serv_id,charge_instance_id,counter_id,currency_id,priceplan_id,reratedwalletoperation_id,seller_id,wallet_id,reservation_id,invoicing_date,input_quantity,input_unit_description,rating_unit_description,edr_id,order_number,parameter_extra,raw_amount_without_tax,raw_amount_with_tax,invoice_sub_category_id,subscription_id,tax_id,rated_transaction_id,service_instance_id,offer_id) 
+                (select id,operation_type,version,created,updated,code,description,amount_tax,amount_with_tax,amount_without_tax,end_date,offer_code,operation_date,parameter_1,parameter_2,parameter_3,quantity,start_date,status,subscription_date,tax_percent,credit_debit_flag,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,creator,updater,aggregate_serv_id,charge_instance_id,counter_id,currency_id,priceplan_id,reratedwalletoperation_id,seller_id,wallet_id,reservation_id,invoicing_date,input_quantity,input_unit_description,rating_unit_description,edr_id,order_number,parameter_extra,raw_amount_without_tax,raw_amount_with_tax,invoice_sub_category_id,subscription_id,tax_id,rated_transaction_id,service_instance_id,offer_id from ${db.schema.adapted}billing_wallet_operation_tmp)</sql>
+        <sql>insert into ${db.schema.adapted}billing_rated_transaction (id,version,amount_tax,amount_with_tax,amount_without_tax,code,description,do_not_trigger_invoicing,parameter_1,parameter_2,parameter_3,quantity,status,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,unity_description,usage_date,billing_account__id,billing_run_id,invoice_id,aggregate_id_f,invoice_sub_category_id,priceplan_id,wallet_id,edr_id,adjusted_rated_tx,order_number,rating_unit_description,parameter_extra,start_date,end_date,subscription_id,seller_id,charge_instance_id,tax_id,tax_percent,user_account_id,offer_id,service_instance_id) 
+                (select id,version,amount_tax,amount_with_tax,amount_without_tax,code,description,do_not_trigger_invoicing,parameter_1,parameter_2,parameter_3,quantity,status,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,unity_description,usage_date,billing_account__id,billing_run_id,invoice_id,aggregate_id_f,invoice_sub_category_id,priceplan_id,wallet_id,edr_id,adjusted_rated_tx,order_number,rating_unit_description,parameter_extra,start_date,end_date,subscription_id,seller_id,charge_instance_id,tax_id,tax_percent,user_account_id,offer_id,service_instance_id from ${db.schema.adapted}billing_rated_transaction_tmp)</sql>
+    
+    </changeSet>
+    
+    <changeSet id="#4555_20190919-P-end" author="AndriusKarpavicius" dbms="postgresql">       
+        
+
+        <sql>ALTER SEQUENCE ${db.schema.adapted}rating_edr_seq OWNED BY ${db.schema.adapted}rating_edr.id</sql>
+        <sql>ALTER SEQUENCE ${db.schema.adapted}billing_wallet_operation_seq OWNED BY ${db.schema.adapted}billing_wallet_operation.id</sql>
+        <sql>ALTER SEQUENCE ${db.schema.adapted}billing_rated_transaction_seq OWNED BY ${db.schema.adapted}billing_rated_transaction.id</sql>
+
+        <dropForeignKeyConstraint baseTableName="billing_reservation" constraintName="fk_reservation_edr"/>
+<!--         <addForeignKeyConstraint baseColumnNames="origin_edr_id" baseTableName="billing_reservation" constraintName="fk_reservation_edr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" -->
+<!--             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="rating_edr" /> -->
+
+        <dropTable tableName="billing_wallet_operation_tmp"/>
+        <dropTable tableName="billing_rated_transaction_tmp"/>
+        <dropTable tableName="rating_edr_tmp"/>
+        
+        <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="rating_edr" constraintName="fk_f5tulmo519cm4il45bhborgq1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+<!--         <addForeignKeyConstraint baseColumnNames="header_edr_id" baseTableName="rating_edr" constraintName="fk_headeredrid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" -->
+<!--             referencedColumnNames="id" referencedTableName="rating_edr" />               -->
+            
+        <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_batch, origin_record)</sql>                  
+<!--         <sql>CREATE INDEX rating_edr_status_index ON ${db.schema.adapted}rating_edr(status)</sql> -->
+        <sql>CREATE INDEX rating_edr_sub_id_index ON ${db.schema.adapted}rating_edr_open (subscription_id, id)</sql>
+               
+        
+        <addForeignKeyConstraint baseColumnNames="reservation_id" baseTableName="billing_wallet_operation" constraintName="fk_32r2ed0015tnd2pp5196vcqpy" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_reservation" />
+        <addForeignKeyConstraint baseColumnNames="wallet_id" baseTableName="billing_wallet_operation" constraintName="fk_5htics7k9v44an8ap11wivraf" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_wallet" />
+        <addForeignKeyConstraint baseColumnNames="counter_id" baseTableName="billing_wallet_operation" constraintName="fk_60qrdadyj5wvmyii1einfb2lo" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_counter" />
+        <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_wallet_operation" constraintName="fk_75hyldnus6ti0y40vwcl49ued" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
+        <addForeignKeyConstraint baseColumnNames="aggregate_serv_id" baseTableName="billing_wallet_operation" constraintName="fk_awekpkm39bhaqrf2k2gwvd4p5" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+        <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_billing_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />       
+        <addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_offer_template" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+        <addForeignKeyConstraint baseColumnNames="priceplan_id" baseTableName="billing_wallet_operation" constraintName="fk_f0v21kf4sbdcq1wwqsxmb5tsk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_wallet_operation" constraintName="fk_hg1a5impet68w8a37dehlnib0" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />            
+<!--         <addForeignKeyConstraint baseColumnNames="reratedwalletoperation_id" baseTableName="billing_wallet_operation" constraintName="fk_j3ntuqkj79m0fgdwa3anib1nk" deferrable="false" initiallyDeferred="false" -->
+<!--             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_wallet_operation" /> -->
+        <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_wallet_operation" constraintName="fk_rt_charge" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
+        <addForeignKeyConstraint baseColumnNames="currency_id" baseTableName="billing_wallet_operation" constraintName="fk_t98kqb1prnfw6scvudimx1u0q" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_currency" />
+        <addForeignKeyConstraint constraintName="fk_wallet_operation_service_instance" baseColumnNames="service_instance_id" baseTableName="billing_wallet_operation"
+            referencedColumnNames="id" referencedTableName="billing_service_instance" />
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_wallet_operation" constraintName="fk_wo_tax" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+            referencedColumnNames="id" referencedTableName="billing_tax" />
+<!--         <addForeignKeyConstraint baseColumnNames="edr_id" baseTableName="billing_wallet_operation" constraintName="fk_wopedrid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" -->
+<!--             referencedColumnNames="id" referencedTableName="rating_edr" /> -->
+            
+        <sql>CREATE INDEX billing_wallet_operation_index ON ${db.schema.adapted}billing_wallet_operation(wallet_id, charge_instance_id)</sql>            
+<!--         <sql>CREATE INDEX billing_wallet_operation_status_index ON ${db.schema.adapted}billing_wallet_operation(status)</sql> -->
+                
+        <addForeignKeyConstraint baseColumnNames="wallet_id" baseTableName="billing_rated_transaction" constraintName="fk_anslvrbm465ossqx8surjyu22" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_wallet" />
+        <addForeignKeyConstraint baseColumnNames="billing_account__id" baseTableName="billing_rated_transaction" constraintName="fk_bbnhg8vn7jkttghphr65iwug5" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_crm_seller" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+        <addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_offer_template" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+        <addForeignKeyConstraint baseColumnNames="priceplan_id" baseTableName="billing_rated_transaction" constraintName="fk_eucl7of9ovyut1c4r2jkf01u6" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />
+        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="billing_rated_transaction" constraintName="fk_gq86s178gc3orumcl8symk4nn" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+        <addForeignKeyConstraint baseColumnNames="billing_run_id" baseTableName="billing_rated_transaction" constraintName="fk_o2mp1mqcyi2l7q2b1p88h20dw" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_run" />
+        <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_rated_transaction" constraintName="fk_o5yu3c0bnac626w755w5f0voc" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+        <addForeignKeyConstraint baseColumnNames="aggregate_id_f" baseTableName="billing_rated_transaction" constraintName="fk_rjpm9k6xsumg297fxefffyryh" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
+<!--         <addForeignKeyConstraint baseColumnNames="edr_id" baseTableName="billing_rated_transaction" constraintName="fk_ropedrid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" -->
+<!--             referencedColumnNames="id" referencedTableName="rating_edr" /> -->
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_service_instance" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_tax" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+            referencedColumnNames="id" referencedTableName="billing_tax" />
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_ua" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="account_entity" />        
+        
+        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON ${db.schema.adapted}billing_rated_transaction_open (billing_account__id, service_instance_id) where service_instance_id is not null</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON ${db.schema.adapted}billing_rated_transaction_open (billing_account__id, subscription_id)</sql>
+        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON ${db.schema.adapted}billing_rated_transaction_open (subscription_id, service_instance_id) where subscription_id is not null</sql>
+        <sql>CREATE INDEX rt_invoice_index ON ${db.schema.adapted}billing_rated_transaction_other (invoice_id)</sql>
+        <sql>CREATE INDEX rt_order_index ON ${db.schema.adapted}billing_rated_transaction (order_number) where order_number is not null</sql>
+        
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}create_partitions</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}detach_partitions</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}drop_all_table_indexes</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}rename_all_table_pks</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}create_all_table_indexes</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}switch_billing_rated_transaction_to_partition(text,text,text,date,date)</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}switch_billing_rated_transaction_to_partition</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}switch_billing_wallet_operation_to_partition(text,text,text,date,date)</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}switch_billing_wallet_operation_to_partition</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}switch_rating_edr_to_partition(text,text,text,date,date)</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}switch_rating_edr_to_partition</sql>       
+        
+    </changeSet>
+    
 </databaseChangeLog>

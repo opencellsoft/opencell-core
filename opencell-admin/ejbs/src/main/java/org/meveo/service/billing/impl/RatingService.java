@@ -42,7 +42,6 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionProcessingStatus;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -859,17 +858,16 @@ public class RatingService extends BusinessService<WalletOperation> {
 
             // Change related Rated transaction status to Rerated
             RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
-            RatedTransactionProcessingStatus rtStatus = ratedTransaction.getProcessingStatus();
-            if (rtStatus.getStatus() == RatedTransactionStatusEnum.BILLED) {
+            if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.BILLED) {
                 throw new UnrolledbackBusinessException(
                     "Can not rerate an already billed Wallet Operation. Wallet Operation " + operationToRerateId + " corresponds to rated transaction " + ratedTransaction.getId());
-            } else if (rtStatus.getStatus() != RatedTransactionStatusEnum.CANCELED && rtStatus.getStatus() != RatedTransactionStatusEnum.RERATED) {
-                rtStatus.setStatus(RatedTransactionStatusEnum.RERATED);
+            } else if (ratedTransaction.getStatus() != RatedTransactionStatusEnum.CANCELED && ratedTransaction.getStatus() != RatedTransactionStatusEnum.RERATED) {
+                ratedTransaction.changeStatus(RatedTransactionStatusEnum.RERATED);
             }
 
             WalletOperation operation = operationToRerate.getUnratedClone();
             operationToRerate.setReratedWalletOperation(operation);
-            operationToRerate.getProcessingStatus().setStatus(WalletOperationStatusEnum.RERATED);
+            operationToRerate.changeStatus(WalletOperationStatusEnum.RERATED);
             PricePlanMatrix priceplan = operation.getPriceplan();
             WalletInstance wallet = operation.getWallet();
             UserAccount userAccount = wallet.getUserAccount();
@@ -923,7 +921,7 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         } catch (UnrolledbackBusinessException e) {
             log.error("Failed to reRate", e.getMessage());
-            operationToRerate.getProcessingStatus().setStatus(WalletOperationStatusEnum.TREATED);
+            operationToRerate.changeStatus(WalletOperationStatusEnum.TREATED);
             operationToRerate.setReratedWalletOperation(null);
         }
 

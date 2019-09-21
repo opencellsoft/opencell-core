@@ -12,7 +12,7 @@ import javax.persistence.Transient;
 
 @Entity
 @DiscriminatorValue("R")
-@NamedQueries({ @NamedQuery(name = "WalletReservation.listByReservationId", query = "SELECT r FROM WalletReservation r left join fetch r.processingStatus s WHERE r.reservation.id=:reservationId") })
+@NamedQueries({ @NamedQuery(name = "WalletReservation.listByReservationId", query = "SELECT r FROM WalletReservation r WHERE r.reservation.id=:reservationId") })
 public class WalletReservation extends WalletOperation {
 
     private static final long serialVersionUID = 2757123710864061091L;

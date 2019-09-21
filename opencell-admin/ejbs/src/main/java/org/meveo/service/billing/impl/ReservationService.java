@@ -28,7 +28,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.WalletCacheContainerProvider;
@@ -41,7 +40,6 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.billing.WalletOperationProcessingStatus;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.OfferTemplate;
@@ -275,7 +273,7 @@ public class ReservationService extends PersistenceService<Reservation> {
             .getResultList();
 
         for (WalletReservation wo : ops) {
-            wo.getProcessingStatus().changeStatus(WalletOperationStatusEnum.CANCELED);            
+            wo.changeStatus(WalletOperationStatusEnum.CANCELED);            
             walletCacheContainerProvider.updateBalance(wo);
         }
 
@@ -297,11 +295,9 @@ public class ReservationService extends PersistenceService<Reservation> {
         List<WalletReservation> ops = getEntityManager().createNamedQuery("WalletReservation.listByReservationId").setParameter("reservationId", reservation.getId())
             .getResultList();
 
-        EntityManager em = getEntityManager();
         for (WalletReservation wo : ops) {
             if (wo.getStatus() != WalletOperationStatusEnum.OPEN) {
-                em.remove(wo.getProcessingStatus());
-                wo.setProcessingStatus(null);
+                wo.changeStatus(WalletOperationStatusEnum.OPEN);
             }
             walletCacheContainerProvider.updateBalance(wo);
         }

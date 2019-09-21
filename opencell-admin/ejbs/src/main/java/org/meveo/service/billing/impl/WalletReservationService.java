@@ -12,7 +12,6 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletOperationProcessingStatus;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.Calendar;
@@ -228,7 +227,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
         try {
             StringBuilder strQuery = new StringBuilder();
-            strQuery.append("select new org.meveo.model.billing.Amounts(SUM(r.amountWithoutTax), SUM(r.amountWithTax)) from WalletOperation r join r.processingStatus s WHERE 1=1 ");
+            strQuery.append("select new org.meveo.model.billing.Amounts(SUM(r.amountWithoutTax), SUM(r.amountWithTax)) from WalletOperation r WHERE 1=1 ");
 
             if (startDate != null) {
                 strQuery.append(" AND r.operationDate>=:startDate ");
@@ -237,11 +236,11 @@ public class WalletReservationService extends PersistenceService<WalletReservati
                 strQuery.append(" AND r.operationDate<:endDate ");
             }
             if (mode == BalanceTypeEnum.CURRENT) {
-                strQuery.append(" AND (s.status='OPEN' OR s.status='RESERVED' OR s.status='TREATED') ");
+                strQuery.append(" AND (r.status='OPEN' OR r.status='RESERVED' OR r.status='TREATED') ");
             } else if (mode == BalanceTypeEnum.RESERVED) {
-                strQuery.append(" AND s.status='RESERVED' ");
+                strQuery.append(" AND r.status='RESERVED' ");
             } else if (mode == BalanceTypeEnum.OPEN) {
-                strQuery.append(" AND (s.status='OPEN' OR s.status='TREATED')  ");
+                strQuery.append(" AND (r.status='OPEN' OR r.status='TREATED')  ");
             }
             if (walletId != null) {
                 strQuery.append(" AND r.wallet.id=:walletId ");
@@ -322,9 +321,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
     @Override
     public void create(WalletReservation walletReservation) throws BusinessException {
+        walletReservation.setStatus(WalletOperationStatusEnum.RESERVED);
         super.create(walletReservation);
-        WalletOperationProcessingStatus woProcessingStatus = new WalletOperationProcessingStatus(walletReservation, null, WalletOperationStatusEnum.RESERVED);
-        walletReservation.setProcessingStatus(woProcessingStatus);
-        getEntityManager().persist(woProcessingStatus);
     }
 }

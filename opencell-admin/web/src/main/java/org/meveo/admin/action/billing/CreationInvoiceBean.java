@@ -57,7 +57,6 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionProcessingStatus;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.TaxInvoiceAgregate;
@@ -323,7 +322,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             RatedTransactionStatusEnum.BILLED, ua.getWallet(), ua.getBillingAccount(), null, selectInvoiceSubCat, parameter1, parameter2, parameter3, null, orderNumber, null, null,
             null, null, null, null, selectedCharge.getCode(), description, rtStartDate, rtEndDate, seller, null, null, null);
 
-        ratedTransaction.getProcessingStatus().setInvoice(entity);
+        ratedTransaction.setInvoice(entity);
 
         aggregateHandler.addRT(ratedTransaction, selectInvoiceSubCat.getDescription(), ua);
         updateAmountsAndLines(getFreshBA());
@@ -570,8 +569,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     rtCopy.setId(null);
                     rtCopy.setBillingAccount(billingAccount);
                     ratedTransactionService.create(rtCopy);
-                    rtCopy.getProcessingStatus().setStatus(RatedTransactionStatusEnum.BILLED);
-                    rtCopy.getProcessingStatus().setInvoice(invoiceCopy);
+                    rtCopy.changeStatus(RatedTransactionStatusEnum.BILLED);
+                    rtCopy.setInvoice(invoiceCopy);
                     
                     ratedTransactionCopy.add(rtCopy);
                 }
@@ -661,7 +660,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     } else {
                         ratedTransactionService.update(rt);
                     }
-                    rt.getProcessingStatus().setStatus(RatedTransactionStatusEnum.BILLED);
+                    rt.changeStatus(RatedTransactionStatusEnum.BILLED);
                 }
             }
 
@@ -721,7 +720,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                             rt.getParameter1(), rt.getParameter2(), rt.getParameter3(), null, rt.getOrderNumber(), null, null, null, null, null, null, rt.getCode(),
                             rt.getDescription(), rt.getStartDate(), rt.getEndDate(), rt.getSeller(), null, null, null);
         
-                        newRT.getProcessingStatus().setInvoice(entity);
+                        newRT.setInvoice(entity);
 
                         aggregateHandler.addRT(newRT, rt.getInvoiceSubCategory().getDescription(), getFreshUA());
                         updateAmountsAndLines(getFreshBA());

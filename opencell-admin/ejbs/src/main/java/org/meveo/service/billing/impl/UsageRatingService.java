@@ -56,7 +56,6 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
-import org.meveo.model.rating.EDRProcessingStatus;
 import org.meveo.model.rating.EDRRejectReasonEnum;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.rating.RatedEDRResult;
@@ -574,9 +573,9 @@ public class UsageRatingService implements Serializable {
         reservation.setAmountWithoutTax(reservation.getAmountWithoutTax().add(walletOperation.getAmountWithoutTax()));
         reservation.setAmountWithTax(reservation.getAmountWithoutTax().add(walletOperation.getAmountWithTax()));
 
-        walletOperationService.chargeWalletOperation(walletOperation);
+        walletOperation.setStatus(WalletOperationStatusEnum.RESERVED);
 
-        walletOperation.getProcessingStatus().setStatus(WalletOperationStatusEnum.RESERVED);
+        walletOperationService.chargeWalletOperation(walletOperation);
 
         return stopEDRRating;
     }
@@ -704,13 +703,7 @@ public class UsageRatingService implements Serializable {
             }
 
             if (ratedEDRResult.isEDRfullyRated()) {
-
-                if (isVirtual) {
-                    EDRProcessingStatus edrStatus = new EDRProcessingStatus(edr, EDRStatusEnum.RATED, null);
-                    edr.setProcessingStatus(edrStatus);
-                } else {
-                    edr.getProcessingStatus().setStatus(EDRStatusEnum.RATED);
-                }
+                edr.changeStatus(EDRStatusEnum.RATED);
 
             } else if (!foundPricePlan) {
                 throw new NoPricePlanException("At least one charge was matched but did not contain an applicable price plan for EDR " + edr.getId());
@@ -865,7 +858,7 @@ public class UsageRatingService implements Serializable {
                     log.debug("found matching charge inst : id {}", usageChargeInstance.getId());
                     edrIsRated = reserveEDRonChargeAndCounters(reservation, edr, usageChargeInstance);
                     if (edrIsRated) {
-                        edr.getProcessingStatus().setStatus(EDRStatusEnum.RATED);
+                        edr.changeStatus(EDRStatusEnum.RATED);
                         break;
                     }
                 }
@@ -973,8 +966,8 @@ public class UsageRatingService implements Serializable {
         String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage(), 255, true);
 
         EDR edr = edrService.findById(edrId);
-        edr.getProcessingStatus().setStatus(EDRStatusEnum.REJECTED);
-        edr.getProcessingStatus().setRejectReason(rejectReason);
+        edr.changeStatus(EDRStatusEnum.REJECTED);
+        edr.setRejectReason(rejectReason);
 
         rejectedEdrProducer.fire(edr);
     }

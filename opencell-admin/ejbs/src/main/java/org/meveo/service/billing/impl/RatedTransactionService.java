@@ -55,7 +55,6 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionMinAmountTypeEnum;
-import org.meveo.model.billing.RatedTransactionProcessingStatus;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
@@ -64,7 +63,6 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationProcessingStatus;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.filter.Filter;
@@ -230,14 +228,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         if (!isVirtual) {
             create(ratedTransaction);
-            
-        } else {
-            RatedTransactionProcessingStatus rtProcessingStatus = new RatedTransactionProcessingStatus(ratedTransaction, RatedTransactionStatusEnum.OPEN);
-            ratedTransaction.setProcessingStatus(rtProcessingStatus);
         }
-        
-        
-        walletOperation.getProcessingStatus().setStatus(WalletOperationStatusEnum.TREATED);
+
+        walletOperation.changeStatus(WalletOperationStatusEnum.TREATED);
 
         return ratedTransaction;
     }
@@ -399,8 +392,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             List<WalletOperation> walletOps = (List<WalletOperation>) query.getResultList();
 
             for (WalletOperation tempWo : walletOps) {
-                tempWo.getProcessingStatus().setStatus(WalletOperationStatusEnum.TREATED);
-                tempWo.getProcessingStatus().setRatedTransaction(ratedTransaction);
+                tempWo.changeStatus(WalletOperationStatusEnum.TREATED);
             }
         }
 
@@ -418,12 +410,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     @SuppressWarnings("unchecked")
     public List<RatedTransaction> openRTbySubCat(WalletInstance walletInstance, InvoiceSubCategory invoiceSubCategory, Date from, Date to) {
-        QueryBuilder qb = new QueryBuilder("select rt from RatedTransaction rt join fetch rt.processingStatus s", "rt");
+        QueryBuilder qb = new QueryBuilder("select rt from RatedTransaction rt ", "rt");
         if (invoiceSubCategory != null) {
             qb.addCriterionEntity("rt.invoiceSubCategory", invoiceSubCategory);
         }
         qb.addCriterionEntity("rt.wallet", walletInstance);
-        qb.addSql("s.status='OPEN'");
+        qb.addSql("rt.status='OPEN'");
         if (from != null) {
             qb.addCriterion("usageDate", ">=", from, false);
         }
@@ -1636,13 +1628,5 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         return getEntityManager().createNamedQuery("RatedTransaction.listByInvoiceSubCategoryAggr", RatedTransaction.class)
             .setParameter("invoice", subCategoryInvoiceAgregate.getInvoice()).setParameter("invoiceAgregateF", subCategoryInvoiceAgregate).getResultList();
-    }
-    
-    @Override
-    public void create(RatedTransaction ratedTransaction) throws BusinessException {
-        super.create(ratedTransaction);
-        RatedTransactionProcessingStatus rtProcessingStatus = new RatedTransactionProcessingStatus(ratedTransaction, RatedTransactionStatusEnum.OPEN);
-        ratedTransaction.setProcessingStatus(rtProcessingStatus);
-        getEntityManager().persist(rtProcessingStatus);
     }
 }

@@ -27,7 +27,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -290,8 +289,6 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         BigDecimal balanceNoTax = BigDecimal.ZERO;
         BigDecimal balanceWithTax = BigDecimal.ZERO;
 
-        EntityManager em = getEntityManager();
-
         Subscription firstActiveSubscription = null;
         for (WalletOperation wo : wos) {
             if (firstActiveSubscription == null && wo.getSubscription() != null && wo.getSubscription().isActive()) {
@@ -302,7 +299,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             balanceNoTax = balanceNoTax.subtract(wo.getAmountWithoutTax());
             balanceWithTax = balanceWithTax.subtract(wo.getAmountWithTax());
 
-            wo.getProcessingStatus().setStatus(WalletOperationStatusEnum.TREATED);
+            wo.changeStatus(WalletOperationStatusEnum.TREATED);
 
         }
         if (firstActiveSubscription == null) {
@@ -332,7 +329,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
         WalletOperation op = walletOperationService.applyOneShotWalletOperation(firstActiveSubscription, matchingCharge, inputQuantity, null, new Date(), false,
             firstActiveSubscription.getOrderNumber());
-        op.getProcessingStatus().setStatus(WalletOperationStatusEnum.TREATED);
+        op.changeStatus(WalletOperationStatusEnum.TREATED);
 
         walletOperationService.applyOneShotWalletOperation(firstActiveSubscription, compensationCharge, inputQuantity, null, new Date(), false, null);
 
