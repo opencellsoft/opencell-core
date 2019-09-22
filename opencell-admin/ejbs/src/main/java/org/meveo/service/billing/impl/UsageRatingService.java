@@ -587,13 +587,12 @@ public class UsageRatingService implements Serializable {
      * @throws BusinessException business exception.
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void ratePostpaidUsage(Long edrId) throws BusinessException, RatingException {
 
         try {
-            EDR edr = getEntityManager().find(EDR.class, edrId);
-            rateUsageWithinTransaction(edr, false, false, 0, 0);
+            usageRatingServiceNewTX.rateUsageInNewTransaction(edrId, false, 0, 0);
+
         } catch (RatingException e) {
             log.trace("Failed to rate EDR {}: {}", edrId, e.getRejectionReason());
             usageRatingServiceNewTX.rejectEDR(edrId, e);
@@ -616,6 +615,25 @@ public class UsageRatingService implements Serializable {
      */
     public List<WalletOperation> rateVirtualEDR(EDR edr) throws BusinessException, RatingException {
         return rateUsageWithinTransaction(edr, true, false, 0, 0);
+    }
+
+    /**
+     * Rate EDR in a new transaction
+     * 
+     * @param edrId EDR id
+     * @param rateTriggeredEdr check whether the rating for triggered EDR is enabled or not.
+     * @param maxDeep The max level of triggered EDR rating depth
+     * @param currentRatingDepth Tracks the current triggered EDR rating depth
+     * @return A list of wallet operations corresponding to rated EDR
+     * @throws BusinessException General exception.
+     * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public List<WalletOperation> rateUsageInNewTransaction(Long edrId, boolean rateTriggeredEdr, int maxDeep, int currentRatingDepth) throws BusinessException, RatingException {
+
+        EDR edr = getEntityManager().find(EDR.class, edrId);
+        return rateUsageWithinTransaction(edr, false, rateTriggeredEdr, maxDeep, currentRatingDepth);
     }
 
     /**
