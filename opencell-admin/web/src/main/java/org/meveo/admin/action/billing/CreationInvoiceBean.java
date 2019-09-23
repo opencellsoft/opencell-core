@@ -684,7 +684,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
             invoiceService.postCreate(entity);
 
-            entity = serviceSingleton.assignInvoiceNumber(entity);
+            entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
 
             try {
                 // invoiceService.commit();
