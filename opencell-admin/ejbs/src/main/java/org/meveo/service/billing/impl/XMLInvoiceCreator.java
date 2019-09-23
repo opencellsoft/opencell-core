@@ -147,9 +147,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     private BillingAccountService billingAccountService;
 
     @Inject
-    private TradingLanguageService tradingLanguageService;
-
-    @Inject
     private CounterPeriodService counterPeriodService;
 
     @Inject
