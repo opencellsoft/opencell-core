@@ -43,30 +43,6 @@
             <id>jboss-repo</id>
             <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
         </repository>
-        <!-- <repository> -->
-        <!-- <id>pentaho.repo</id> -->
-        <!-- <url>http://repository.pentaho.org/artifactory/repo/</url> -->
-        <!-- </repository> -->
-        <repository>
-            <id>opencell-repo</id>
-            <url>http://libs.opencellsoft.com/</url>
-        </repository>
-
-
-
-        <!-- <repository> -->
-        <!-- <id>sonatype-oss-public</id> -->
-        <!-- <url>https://oss.sonatype.org/content/groups/public/</url> -->
-        <!-- <snapshots> -->
-        <!-- <enabled>true</enabled> -->
-        <!-- </snapshots> -->
-        <!-- </repository> -->
-        <!-- <repository> -->
-        <!-- <id>prime-repo</id> -->
-        <!-- <name>PrimeFaces Maven Repository</name> -->
-        <!-- <url>http://repository.primefaces.org</url> -->
-        <!-- <layout>default</layout> -->
-        <!-- </repository> -->
     </repositories>
     
     <pluginRepositories>
