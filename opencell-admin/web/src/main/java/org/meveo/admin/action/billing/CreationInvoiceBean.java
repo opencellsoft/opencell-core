@@ -587,6 +587,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     rtCopy.setInvoice(invoiceCopy);
                     rtCopy.setId(null);
                     rtCopy.setStatus(RatedTransactionStatusEnum.BILLED);
+                    rtCopy.setTax(subcat.getTax());
+                    rtCopy.setTaxPercent(subcat.getTaxPercent());
                     rtCopy.setBillingAccount(billingAccount);
                     ratedTransactionService.create(rtCopy);
                     ratedTransactionCopy.add(rtCopy);
@@ -672,8 +674,11 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
             for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
                 for (RatedTransaction rt : subcat.getRatedtransactions()) {
+                	rt.setTax(subcat.getTax());
+                	rt.setTaxPercent(subcat.getTaxPercent());
                     rt.setInvoice(entity);
                     rt.setStatus(RatedTransactionStatusEnum.BILLED);
+                    ratedTransactionService.refreshOrRetrieve(rt);
                     if (rt.isTransient()) {
                         ratedTransactionService.create(rt);
                     } else {
