@@ -199,7 +199,6 @@ public class EdrService extends PersistenceService<EDR> {
     public List<String> getUnprocessedEdrsForCache(int from, int pageSize) {
 
         List<String> edrCacheKeys = getEntityManager().createNamedQuery("EDR.getEdrsForCache", String.class)
-                .setParameter("status", EDRStatusEnum.OPEN)
                 .setFirstResult(from)
                 .setMaxResults(pageSize)
                 .getResultList();
@@ -217,7 +216,6 @@ public class EdrService extends PersistenceService<EDR> {
     public List<EDR> getNotOpenedEdrsBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
         return getEntityManager().createNamedQuery("EDR.getNotOpenedEdrBetweenTwoDate", EDR.class)
                 .setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("status", EDRStatusEnum.OPEN)
                 .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
     }
 
@@ -232,12 +230,10 @@ public class EdrService extends PersistenceService<EDR> {
 
         getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletion")
                 .setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("status", EDRStatusEnum.OPEN)
                 .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
 
         return getEntityManager().createNamedQuery("EDR.deleteNotOpenEdrBetweenTwoDate").setParameter("firstTransactionDate", firstTransactionDate)
                 .setParameter("lastTransactionDate", lastTransactionDate)
-                .setParameter("status", EDRStatusEnum.OPEN)
                 .executeUpdate();
     }
 

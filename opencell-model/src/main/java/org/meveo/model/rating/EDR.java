@@ -52,11 +52,11 @@ import org.meveo.model.billing.Subscription;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "rating_edr_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_',case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status= :status ORDER BY e.eventDate DESC"),
+        @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_',case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status= 'OPEN' ORDER BY e.eventDate DESC"),
         @NamedQuery(name = "EDR.countNbrEdrByStatus", query = "select status, count(*) from EDR group by status"),
-        @NamedQuery(name = "EDR.getNotOpenedEdrBetweenTwoDate", query = "SELECT e from EDR e join fetch e.subscription where e.status != :status AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate order by e.eventDate desc"),
-        @NamedQuery(name = "EDR.updateWalletOperationForSafeDeletion", query = "update WalletOperation wo set wo.edr=NULL where wo.edr in (select e FROM EDR e where e.status <> :status AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
-        @NamedQuery(name = "EDR.deleteNotOpenEdrBetweenTwoDate", query = "delete from EDR e  where e.status <> :status AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate")})
+        @NamedQuery(name = "EDR.getNotOpenedEdrBetweenTwoDate", query = "SELECT e from EDR e join fetch e.subscription where e.status != 'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate order by e.eventDate desc"),
+        @NamedQuery(name = "EDR.updateWalletOperationForSafeDeletion", query = "update WalletOperation wo set wo.edr=NULL where wo.edr in (select e FROM EDR e where e.status <> 'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
+        @NamedQuery(name = "EDR.deleteNotOpenEdrBetweenTwoDate", query = "delete from EDR e  where e.status <> 'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate")})
 
 public class EDR extends BaseEntity {
 
