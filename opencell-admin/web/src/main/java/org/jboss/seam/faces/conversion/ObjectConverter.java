@@ -62,7 +62,7 @@ public class ObjectConverter implements javax.faces.convert.Converter, Serializa
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        if (this.conversation.isTransient()) {
+        if (this.conversation != null && this.conversation.isTransient()) {
             log.warn("Conversion attempted without a long running conversation");
         }
 
