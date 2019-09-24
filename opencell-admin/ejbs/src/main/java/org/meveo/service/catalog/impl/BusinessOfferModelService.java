@@ -435,7 +435,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
     
 
     private List<BusinessServiceModel> getBusinessServiceModelsFromMeveoModuleItem(BusinessOfferModel businessOfferModel) {
-        if(businessServiceModels == null){
+        if(businessServiceModels == null || businessServiceModels.isEmpty()){
             businessServiceModels = businessServiceModelService.findByCodes(businessOfferModel.getModuleItems().stream()
                     .filter(meveoModuleItem -> meveoModuleItem.getItemClass().equals(BusinessServiceModel.class.getName()))
                     .map(meveoModuleItem -> meveoModuleItem.getItemCode())
