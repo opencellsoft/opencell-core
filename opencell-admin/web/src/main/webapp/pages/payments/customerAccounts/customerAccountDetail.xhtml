@@ -211,7 +211,7 @@
 
                                             <p:panel id="paymentMethodPanelId"  header="#{messages['customerAccount.paymentMethod']}" rendered="#{customerAccountBean.selectedPaymentMethod!=null}">
                                                 <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
-                                                    <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.alias']}" field="alias" required="true" />
+                                                    <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.alias']}" field="alias" />
 
                                                     <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.CARD}">
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.cardType']}" field="cardType"
