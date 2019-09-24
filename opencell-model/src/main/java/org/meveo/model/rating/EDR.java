@@ -53,22 +53,22 @@ import org.meveo.model.billing.Subscription;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "rating_edr_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_',case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status=org.meveo.model.rating.EDRStatusEnum.OPEN ORDER BY e.eventDate DESC"),
+        @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_',case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status='OPEN' ORDER BY e.eventDate DESC"),
 
-        @NamedQuery(name = "EDR.listToRateIds", query = "SELECT e.id from EDR e where e.status=org.meveo.model.rating.EDRStatusEnum.OPEN order by e.subscription, e.id"),
-        @NamedQuery(name = "EDR.listToRateIdsLimitByDate", query = "SELECT e.id from EDR e where e.status=org.meveo.model.rating.EDRStatusEnum.OPEN and e.eventDate<:rateUntilDate order by e.subscription, e.id"),
-        @NamedQuery(name = "EDR.listToRateIdsLimitByRG", query = "SELECT e.id from EDR e where e.status=org.meveo.model.rating.EDRStatusEnum.OPEN and e.subscription.ratingGroup=:ratingGroup order by e.subscription, e.id"),
-        @NamedQuery(name = "EDR.listToRateIdsLimitByDateAndRG", query = "SELECT e.id from EDR e where e.status=org.meveo.model.rating.EDRStatusEnum.OPEN and e.eventDate<:rateUntilDate and e.subscription.ratingGroup=:ratingGroup order by e.subscription, e.id"),
+        @NamedQuery(name = "EDR.listToRateIds", query = "SELECT e.id from EDR e join e.subscription sub where e.status='OPEN' order by sub.userAccount.id, e.subscription.id, e.id"),
+        @NamedQuery(name = "EDR.listToRateIdsLimitByDate", query = "SELECT e.id from EDR e join e.subscription sub where e.status='OPEN' and e.eventDate<:rateUntilDate order by sub.userAccount.id, e.subscription.id, e.id"),
+        @NamedQuery(name = "EDR.listToRateIdsLimitByRG", query = "SELECT e.id from EDR e join e.subscription sub where e.status='OPEN' and e.subscription.ratingGroup=:ratingGroup order by sub.userAccount.id, e.subscription.id, e.id"),
+        @NamedQuery(name = "EDR.listToRateIdsLimitByDateAndRG", query = "SELECT e.id from EDR e join e.subscription sub where e.status='OPEN' and e.eventDate<:rateUntilDate and e.subscription.ratingGroup=:ratingGroup order by sub.userAccount.id, e.subscription.id, e.id"),
 
         @NamedQuery(name = "EDR.countNbrEdrByStatus", query = "select e.status, count(e.id) from EDR e group by e.status"),
 
-        @NamedQuery(name = "EDR.listOpenEdrBetweenTwoDate", query = "SELECT e from EDR e where e.status=org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate order by e.eventDate desc"),
+        @NamedQuery(name = "EDR.listOpenEdrBetweenTwoDate", query = "SELECT e from EDR e where e.status='OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate order by e.eventDate desc"),
 
-        @NamedQuery(name = "EDR.updateWalletOperationForSafeDeletion", query = "update WalletOperation wo set wo.edr=NULL where wo.edr in (select e FROM EDR e where e.status<>org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
-        @NamedQuery(name = "EDR.updateRatedTransactionForSafeDeletion", query = "update RatedTransaction rt set rt.edr=NULL where rt.edr in (select e FROM EDR e where e.status<>org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
-        @NamedQuery(name = "EDR.deleteNotOpenEdrBetweenTwoDate", query = "delete from EDR e where e.status<>org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate"),
+        @NamedQuery(name = "EDR.updateWalletOperationForSafeDeletion", query = "update WalletOperation wo set wo.edr=NULL where wo.edr in (select e FROM EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
+        @NamedQuery(name = "EDR.updateRatedTransactionForSafeDeletion", query = "update RatedTransaction rt set rt.edr=NULL where rt.edr in (select e FROM EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
+        @NamedQuery(name = "EDR.deleteNotOpenEdrBetweenTwoDate", query = "delete from EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate"),
 
-        @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status=org.meveo.model.rating.EDRStatusEnum.OPEN where e.status=org.meveo.model.billing.RatedTransactionStatusEnum.REJECTED and e.id in :ids") })
+        @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN' where e.status='REJECTED' and e.id in :ids") })
 
 public class EDR extends BaseEntity {
 
