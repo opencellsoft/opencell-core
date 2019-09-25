@@ -1275,7 +1275,7 @@
         <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="ar_account_operation" constraintName="fk_billing_invoice" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
     	<sql>
-            UPDATE ${db.schema.adapted}ar_account_operation AO SET recorded_invoice_id=(SELECT id FROM ${db.schema.adapted}billing_invoice BI WHERE BI.invoice_number=AO.reference)
+            UPDATE ${db.schema.adapted}ar_account_operation AO SET invoice_id=(SELECT id FROM ${db.schema.adapted}billing_invoice BI WHERE BI.invoice_number=AO.reference)
             WHERE AO.transaction_type='I'
         </sql>   
     </changeSet>
