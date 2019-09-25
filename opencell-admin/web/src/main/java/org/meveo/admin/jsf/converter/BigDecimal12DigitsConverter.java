@@ -22,7 +22,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
 import javax.faces.context.FacesContext;
-import javax.faces.convert.FacesConverter;
+import javax.inject.Named;
 
 @Named("bigDecimal12DigitsConverter")
 public class BigDecimal12DigitsConverter extends BigDecimalConverter {

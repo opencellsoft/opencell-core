@@ -25,7 +25,7 @@ import java.text.DecimalFormat;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
+import javax.inject.Named;
 
 @Named("bigDecimalConverter")
 public class BigDecimalConverter implements Converter<BigDecimal>, Serializable {

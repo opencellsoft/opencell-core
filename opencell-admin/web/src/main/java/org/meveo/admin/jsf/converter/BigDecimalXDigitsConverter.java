@@ -1,16 +1,17 @@
 package org.meveo.admin.jsf.converter;
 
-import org.apache.commons.lang.StringUtils;
-import org.meveo.commons.utils.NumberUtils;
-import org.meveo.model.catalog.RoundingModeEnum;
-
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.FacesConverter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.inject.Named;
+
+import org.apache.commons.lang.StringUtils;
+import org.meveo.commons.utils.NumberUtils;
+import org.meveo.model.catalog.RoundingModeEnum;
 
 /**
  * Round a number depending on the number of decimal's digits and the rounding mode
