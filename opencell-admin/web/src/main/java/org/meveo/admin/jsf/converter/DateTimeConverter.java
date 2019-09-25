@@ -35,7 +35,7 @@ import org.meveo.commons.utils.ParamBeanFactory;
  * @lastModifiedVersion 5.0
  *
  */
-@FacesConverter("dateTimeConverter")
+@Named("dateTimeConverter")
 public class DateTimeConverter implements Converter {
 
     @Override

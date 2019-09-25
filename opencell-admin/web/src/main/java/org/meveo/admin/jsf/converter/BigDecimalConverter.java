@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.jsf.converter;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
@@ -26,14 +27,14 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-@FacesConverter("bigDecimalConverter")
-public class BigDecimalConverter implements Converter {
+@Named("bigDecimalConverter")
+public class BigDecimalConverter implements Converter<BigDecimal>, Serializable {
 
 	private DecimalFormat format = new DecimalFormat("#,##0.00");
 
 	@Override
 	public String getAsString(FacesContext facesContext,
-			UIComponent uIComponent, Object obj) {
+			UIComponent uIComponent, BigDecimal obj) {
 		if (obj == null || obj.toString().length() == 0) {
 			return "";
 		}
@@ -46,7 +47,7 @@ public class BigDecimalConverter implements Converter {
 	}
 
 	@Override
-	public Object getAsObject(FacesContext facesContext,
+	public BigDecimal getAsObject(FacesContext facesContext,
 			UIComponent uIComponent, String str) {
 		if (str == null || str.equals("")) {
 			return null;

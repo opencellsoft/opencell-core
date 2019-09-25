@@ -17,7 +17,7 @@ import java.text.DecimalFormatSymbols;
  * @author Khalid HORRI
  * @lastModifiedVersion 7.0
  */
-@FacesConverter("bigDecimalXDigitsConverter")
+@Named("bigDecimalXDigitsConverter")
 public class BigDecimalXDigitsConverter extends BigDecimalConverter {
     /**
      * Number of digits in decimal part for a number
@@ -30,7 +30,7 @@ public class BigDecimalXDigitsConverter extends BigDecimalConverter {
 
     @Override
     public String getAsString(FacesContext facesContext,
-            UIComponent uIComponent, Object obj) {
+            UIComponent uIComponent, BigDecimal obj) {
         if (obj == null || obj.toString().length() == 0) {
             return "";
         }
@@ -41,7 +41,7 @@ public class BigDecimalXDigitsConverter extends BigDecimalConverter {
         return value;
     }
     @Override
-    public Object getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
+    public BigDecimal getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
         RoundingModeEnum roundingModeAttribute = (RoundingModeEnum) uIComponent.getAttributes().get("roundingMode");
         Integer nbDecimalAttribute = (Integer) uIComponent.getAttributes().get("nbDecimal");
         if (nbDecimalAttribute != null && nbDecimalAttribute != 0) {

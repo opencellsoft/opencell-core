@@ -24,7 +24,7 @@ import java.text.DecimalFormatSymbols;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.FacesConverter;
 
-@FacesConverter("bigDecimal12DigitsConverter")
+@Named("bigDecimal12DigitsConverter")
 public class BigDecimal12DigitsConverter extends BigDecimalConverter {
 
 	@Override
