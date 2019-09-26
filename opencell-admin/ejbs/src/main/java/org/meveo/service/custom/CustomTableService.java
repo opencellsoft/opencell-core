@@ -974,12 +974,12 @@ public class CustomTableService extends NativePersistenceService {
 		return null;
 	}
 
-	    public List<Map<String, Object>> completeWithEntities(List<Map<String, Object>> list, Map<String, CustomFieldTemplate> cfts, int loadReferenceDepth) {
+	public List<Map<String, Object>> completeWithEntities(List<Map<String, Object>> list, Map<String, CustomFieldTemplate> cfts, int loadReferenceDepth) {
         list.forEach(map -> completeWithEntities(cfts, map, 0, loadReferenceDepth));
         return list;
     }
 
-    private void completeWithEntities(Map<String, CustomFieldTemplate> cfts, Map<String, Object> map, int currentDepth, int maxDepth) {
+	public void completeWithEntities(Map<String, CustomFieldTemplate> cfts, Map<String, Object> map, int currentDepth, int maxDepth) {
         if (currentDepth < maxDepth) {
             Map<String, CustomFieldTemplate> reference = toLowerCaseKeys(cfts);
             map.entrySet().stream().filter(entry -> reference.containsKey(entry.getKey().toLowerCase()))
@@ -987,7 +987,7 @@ public class CustomTableService extends NativePersistenceService {
         }
     }
 
-    void replaceIdValueByItsRepresentation(Map<String, CustomFieldTemplate> reference, Map.Entry<String, Object> entry, int currentDepth, int maxDepth) {
+    public void replaceIdValueByItsRepresentation(Map<String, CustomFieldTemplate> reference, Map.Entry<String, Object> entry, int currentDepth, int maxDepth) {
         if (entry.getValue() != null && entry.getValue().toString().matches(ONLY_DIGIT_REGEX)) {
             CustomFieldTemplate customFieldTemplate = reference.get(entry.getKey().toLowerCase());
             Optional.ofNullable(customFieldTemplate).filter(field -> Objects.nonNull(field.getEntityClazz()))
@@ -996,7 +996,7 @@ public class CustomTableService extends NativePersistenceService {
         }
     }
 
-    Map<String, Object> getEitherTableOrEntityValue(CustomFieldTemplate field, Long id) {
+    public Map<String, Object> getEitherTableOrEntityValue(CustomFieldTemplate field, Long id) {
         CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(field.tableName());
         if (relatedEntity != null ) {
         	if(relatedEntity.isStoreAsTable()) {
@@ -1007,14 +1007,14 @@ public class CustomTableService extends NativePersistenceService {
         return customTableService.findByClassAndId(field.getEntityClazz(), id);
     }
 
-    private void replaceValue(Map.Entry<String, Object> entry, CustomFieldTemplate customFieldTemplate, Map<String, Object> values, int currentDepth, int maxDepth) {
+    public void replaceValue(Map.Entry<String, Object> entry, CustomFieldTemplate customFieldTemplate, Map<String, Object> values, int currentDepth, int maxDepth) {
         entry.setValue(values);
         final int depth = ++currentDepth;
         Optional.ofNullable(customEntityTemplateService.findByCodeOrDbTablename(customFieldTemplate.tableName()))
                 .ifPresent(cet -> completeWithEntities(customFieldTemplateService.findByAppliesTo(cet.getAppliesTo()), values, depth, maxDepth));
     }
 
-    Map<String, CustomFieldTemplate> toLowerCaseKeys(Map<String, CustomFieldTemplate> cfts) {
+    public Map<String, CustomFieldTemplate> toLowerCaseKeys(Map<String, CustomFieldTemplate> cfts) {
         return cfts.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().toLowerCase(), Map.Entry::getValue));
     }
 	
