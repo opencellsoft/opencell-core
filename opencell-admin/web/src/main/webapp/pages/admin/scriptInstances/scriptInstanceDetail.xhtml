@@ -39,7 +39,8 @@
             <hftl:decorateFormField label="#{messages['scriptInstance.script']}" fieldId="codeMirror" componentWidth="100">
                 <pe:codeMirror id="codeMirror" theme="eclipse" mode="text/x-java" value="#{scriptInstanceBean.entity.script}" lineNumbers="true" required="true" />
                 <h:panelGroup layout="block" styleClass="form-panel-actions">
-                    <p:commandButton value="#{messages['scriptInstance.testCompilation']}" action="#{scriptInstanceBean.testCompilation}" update="@form" />
+                    <p:commandButton value="#{messages['scriptInstance.testCompilation']}"
+                                     action="#{scriptInstanceBean.testCompilation}" process="@this" update="messages" />
                 </h:panelGroup>
             </hftl:decorateFormField>
             <h:panelGroup id="scriptErrors">
