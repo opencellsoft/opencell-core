@@ -198,7 +198,6 @@
         <dependency>
             <groupId>org.jboss.spec.javax.servlet</groupId>
             <artifactId>jboss-servlet-api_4.0_spec</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -220,7 +219,6 @@
         <dependency>
             <groupId>org.jboss.spec.javax.ejb</groupId>
             <artifactId>jboss-ejb-api_3.2_spec</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -244,7 +242,6 @@
         <dependency>
             <groupId>org.jboss.spec.javax.el</groupId>
             <artifactId>jboss-el-api_3.0_spec</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

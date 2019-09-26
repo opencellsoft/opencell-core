@@ -51,8 +51,8 @@ import org.meveo.util.view.ESBasedDataModel;
 import org.meveo.util.view.PagePermission;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.omnifaces.cdi.Param;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.LazyDataModel;
@@ -468,7 +468,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             result = false;
         }
 
-        RequestContext.getCurrentInstance().addCallbackParam("result", result);
+        PrimeFaces.current().ajax().addCallbackParam("result", result);
         return null;
     }
 

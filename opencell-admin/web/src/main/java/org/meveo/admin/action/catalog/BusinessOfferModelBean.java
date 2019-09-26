@@ -24,7 +24,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.BusinessProductModelService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DualListModel;
 
@@ -77,7 +77,7 @@ public class BusinessOfferModelBean extends GenericModuleBean<BusinessOfferModel
         values.add(getEntity().getId().toString());
         params.put("objectId", values);
 
-        RequestContext.getCurrentInstance().openDialog("createOfferFromBOM", options, params);
+        PrimeFaces.current().dialog().openDynamic("createOfferFromBOM", options, params);
     }
 
     public void onBOMOfferCreation(SelectEvent event) {

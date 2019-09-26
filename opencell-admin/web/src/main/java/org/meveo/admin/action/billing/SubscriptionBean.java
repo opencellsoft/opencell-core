@@ -79,8 +79,8 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
 import javax.faces.context.FacesContext;
@@ -1144,7 +1144,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @ActionMethod
     public String cancelSubscriptionRenewal() throws BusinessException {
         subscriptionService.cancelSubscriptionRenewal(entity);
-        RequestContext.getCurrentInstance().reset("subscriptionTab");
+        PrimeFaces.current().resetInputs("subscriptionTab");
         return null;
     }
 
