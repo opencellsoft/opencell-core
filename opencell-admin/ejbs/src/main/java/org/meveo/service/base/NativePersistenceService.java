@@ -45,6 +45,10 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.internal.SessionFactoryImpl;
+import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -1150,6 +1154,24 @@ public class NativePersistenceService extends BaseService {
             throw new ValidationException("wrong value format for filter, cannot cast '"+value+"' to "+targetClass, e);
         }
         return null;
+    }
+    
+    public Map<String, Object> findByClassAndId(String className, Long id) {
+		try {
+			Class clazz = Class.forName(className);
+			String tableName= getTableNameForClass(clazz);
+	        return findById(tableName, id);
+		} catch (ClassNotFoundException e) {
+			throw new BusinessException("Exception when trying to get class with name: "+className);
+		}
+    }
+    
+    public String getTableNameForClass(Class entityClass){
+        SessionFactory sessionFactory = ((Session) getEntityManager().getDelegate()).getSessionFactory();
+        ClassMetadata classMetadata = sessionFactory.getClassMetadata(entityClass);
+        SessionFactoryImpl sessionFactoryImpl = (SessionFactoryImpl) sessionFactory;
+        AbstractEntityPersister entityPersister = (AbstractEntityPersister) sessionFactoryImpl.getEntityPersister(classMetadata.getEntityName());
+        return entityPersister.getTableName();
     }
     
 }
