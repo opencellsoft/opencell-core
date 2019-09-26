@@ -52,7 +52,7 @@ public class CustomTableApiTest {
             put("GNINENDIDEN", mock(CustomFieldTemplate.class));
         }};
         //When
-        Map<String, CustomFieldTemplate> lowerCaseKeysMap = sut.toLowerCaseKeys(map);
+        Map<String, CustomFieldTemplate> lowerCaseKeysMap = customTableService.toLowerCaseKeys(map);
         //Then
         assertThat(lowerCaseKeysMap.keySet()).contains("flirtikit", "bidlidez", "gninendiden");
         assertThat(lowerCaseKeysMap.keySet()).doesNotContain("FLIRTIKIT", "BIDLIDEZ", "GNINENDIDEN");
@@ -64,7 +64,7 @@ public class CustomTableApiTest {
         Map<String, CustomFieldTemplate> reference = new HashMap<>();
         Map.Entry<String, Object> entry = new TestEntry("flirtikit", null);
         //When
-        sut.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
+        customTableService.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
         //Then
         assertThat(entry.getValue()).isNull();
     }
@@ -77,7 +77,7 @@ public class CustomTableApiTest {
         }};
         Map.Entry<String, Object> entry = new TestEntry("flirtikit", null);
         //When
-        sut.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
+        customTableService.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
         //Then
         assertThat(entry.getValue()).isNull();
     }
@@ -92,7 +92,7 @@ public class CustomTableApiTest {
         }};
         Map.Entry<String, Object> entry = new TestEntry("flirtikit", 55L);
         //When
-        sut.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
+        customTableService.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
         //Then
         assertThat(entry.getValue()).isEqualTo(55L);
     }
@@ -107,7 +107,7 @@ public class CustomTableApiTest {
         }};
         Map.Entry<String, Object> entry = new TestEntry("flirtikit", 55L);
         //When
-        sut.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
+        customTableService.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
         //Then
         assertThat(entry.getValue()).isNotNull();
     }
@@ -118,7 +118,7 @@ public class CustomTableApiTest {
         Map<String, CustomFieldTemplate> reference = new HashMap<>();
         Map.Entry<String, Object> entry = new TestEntry("flirtikit", null);
         //When
-        sut.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
+        customTableService.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
         //Then
         assertThat(entry.getValue()).isNull();
     }
@@ -129,7 +129,7 @@ public class CustomTableApiTest {
         Map<String, CustomFieldTemplate> reference = new HashMap<>();
         Map.Entry<String, Object> entry = new TestEntry("flirtikit", "bidlidez");
         //When
-        sut.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
+        customTableService.replaceIdValueByItsRepresentation(reference, entry, 0, 0);
         //Then
         assertThat(entry.getValue()).isEqualTo("bidlidez");
     }
@@ -143,7 +143,7 @@ public class CustomTableApiTest {
         when(relatedEntity.isStoreAsTable()).thenReturn(true);
         when(customEntityTemplateService.findByCode(anyString())).thenReturn(relatedEntity);
         //When
-        sut.getEitherTableOrEntityValue(field, 15L);
+        customTableService.getEitherTableOrEntityValue(field, 15L);
         //Then
         verify(customTableService).findRecordOfTableById(eq(field), eq(15L));
     }
@@ -157,7 +157,7 @@ public class CustomTableApiTest {
         when(relatedEntity.isStoreAsTable()).thenReturn(false);
         when(customEntityTemplateService.findByCode(anyString())).thenReturn(relatedEntity);
         //When
-        sut.getEitherTableOrEntityValue(field, 15L);
+        customTableService.getEitherTableOrEntityValue(field, 15L);
         //Then
         verify(customEntityInstanceService).findById(eq(15L));
     }
