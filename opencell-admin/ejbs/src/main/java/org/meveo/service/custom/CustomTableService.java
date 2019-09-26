@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
@@ -78,6 +79,8 @@ public class CustomTableService extends NativePersistenceService {
      */
     public static final String FILE_APPEND = "_append";
 
+    public static final String ONLY_DIGIT_REGEX = "^-{0,1}[0-9]*$";
+    
     @Inject
     private ElasticClient elasticClient;
 
@@ -970,5 +973,49 @@ public class CustomTableService extends NativePersistenceService {
 		}
 		return null;
 	}
+
+	    public List<Map<String, Object>> completeWithEntities(List<Map<String, Object>> list, Map<String, CustomFieldTemplate> cfts, int loadReferenceDepth) {
+        list.forEach(map -> completeWithEntities(cfts, map, 0, loadReferenceDepth));
+        return list;
+    }
+
+    private void completeWithEntities(Map<String, CustomFieldTemplate> cfts, Map<String, Object> map, int currentDepth, int maxDepth) {
+        if (currentDepth < maxDepth) {
+            Map<String, CustomFieldTemplate> reference = toLowerCaseKeys(cfts);
+            map.entrySet().stream().filter(entry -> reference.containsKey(entry.getKey().toLowerCase()))
+                    .forEach(entry -> replaceIdValueByItsRepresentation(reference, entry, currentDepth, maxDepth));
+        }
+    }
+
+    void replaceIdValueByItsRepresentation(Map<String, CustomFieldTemplate> reference, Map.Entry<String, Object> entry, int currentDepth, int maxDepth) {
+        if (entry.getValue() != null && entry.getValue().toString().matches(ONLY_DIGIT_REGEX)) {
+            CustomFieldTemplate customFieldTemplate = reference.get(entry.getKey().toLowerCase());
+            Optional.ofNullable(customFieldTemplate).filter(field -> Objects.nonNull(field.getEntityClazz()))
+                    .map(field -> getEitherTableOrEntityValue(field, Long.valueOf(entry.getValue().toString()))).filter(values -> values.size() > 0)
+                    .ifPresent(values -> replaceValue(entry, customFieldTemplate, values, currentDepth, maxDepth));
+        }
+    }
+
+    Map<String, Object> getEitherTableOrEntityValue(CustomFieldTemplate field, Long id) {
+        CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(field.tableName());
+        if (relatedEntity != null ) {
+        	if(relatedEntity.isStoreAsTable()) {
+        		return customTableService.findRecordOfTableById(field, id);
+        	}
+            return Optional.ofNullable(customEntityInstanceService.findById(id)).map(customEntityInstanceService::customEntityInstanceAsMapWithCfValues).orElse(new HashMap<>());
+        }
+        return customTableService.findByClassAndId(field.getEntityClazz(), id);
+    }
+
+    private void replaceValue(Map.Entry<String, Object> entry, CustomFieldTemplate customFieldTemplate, Map<String, Object> values, int currentDepth, int maxDepth) {
+        entry.setValue(values);
+        final int depth = ++currentDepth;
+        Optional.ofNullable(customEntityTemplateService.findByCodeOrDbTablename(customFieldTemplate.tableName()))
+                .ifPresent(cet -> completeWithEntities(customFieldTemplateService.findByAppliesTo(cet.getAppliesTo()), values, depth, maxDepth));
+    }
+
+    Map<String, CustomFieldTemplate> toLowerCaseKeys(Map<String, CustomFieldTemplate> cfts) {
+        return cfts.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().toLowerCase(), Map.Entry::getValue));
+    }
 	
 }
