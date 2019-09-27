@@ -162,25 +162,17 @@ public class OrderService extends BusinessService<Order> {
         }
     }
 
-	public Quote getReference(Class<Quote> clazz, Long quoteId) {
-		return getEntityManager().getReference(clazz, quoteId);
-	}
+    public Quote getReference(Class<Quote> clazz, Long quoteId) {
+        return getEntityManager().getReference(clazz, quoteId);
+    }
 
     @SuppressWarnings("unchecked")
     public List<Order> findOrders(BillingCycle billingCycle, Date startdate, Date endDate) {
         try {
             QueryBuilder qb = new QueryBuilder(Order.class, "o", null);
             qb.addCriterionEntity("o.billingCycle.id", billingCycle.getId());
-
-            if (startdate != null) {
-                qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
-            }
-
-            if (endDate != null) {
-                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false);
-            }
-
             return (List<Order>) qb.getQuery(getEntityManager()).getResultList();
+
         } catch (Exception ex) {
             log.error("failed to find billing accounts", ex);
         }

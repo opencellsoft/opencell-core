@@ -486,9 +486,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Update billing account total amounts.
+     * Calculate billable amount per entity, create additional rated transactions to reach a minimum invoiceable amount and link billable entity with a Billing run
      *
-     * @param entity entity
+     * @param entity Entity to invoice
      * @param billingRun the billing run
      * @param instantiateMinRtsForService Should rated transactions to reach minimum invoicing amount be checked and instantiated on service level.
      * @param instantiateMinRtsForSubscription Should rated transactions to reach minimum invoicing amount be checked and instantiated on subscription level.
@@ -498,8 +498,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public IBillableEntity updateEntityTotalAmounts(IBillableEntity entity, BillingRun billingRun, boolean instantiateMinRtsForService, boolean instantiateMinRtsForSubscription,
-            boolean instantiateMinRtsForBA) throws BusinessException {
+    public IBillableEntity updateEntityTotalAmountsAndLinkToBR(IBillableEntity entity, BillingRun billingRun, boolean instantiateMinRtsForService,
+            boolean instantiateMinRtsForSubscription, boolean instantiateMinRtsForBA) throws BusinessException {
 
         log.debug("Calculating total amounts and creating min RTs for {}/{}", entity.getClass().getSimpleName(), entity.getId());
 
@@ -537,8 +537,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
 
             if (invoicingThreshold != null && invoicingThreshold.compareTo(invoiceAmount) > 0) {
-                log.debug("updateEntityTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}", entity.getCode(), invoiceAmount,
-                    invoicingThreshold);
+                log.debug("Invoicing threshold {}/{} was not met for {}. Entity will not be invoiced", invoiceAmount, invoicingThreshold, entity.getClass().getSimpleName(),
+                    entity.getCode());
                 return null;
             }
 
@@ -556,6 +556,77 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             orderService.updateNoCheck((Order) entity);
         }
         if (entity instanceof Subscription) {
+            subscriptionService.updateNoCheck((Subscription) entity);
+        }
+
+        return entity;
+    }
+
+    /**
+     * Calculate billable amount per entity, create additional rated transactions to reach a minimum invoiceable amount and link billable entity with a Billing run
+     *
+     * @param entityId ID of an entity to invoice
+     * @param billingRun The billing run
+     * @param totalAmounts Amounts to invoice
+     * @return Updated entity
+     * @throws BusinessException The business exception
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public IBillableEntity updateEntityTotalAmountsAndLinkToBR(Long entityId, BillingRun billingRun, Amounts totalAmounts) throws BusinessException {
+
+        IBillableEntity entity = null;
+        BillingAccount billingAccount = null;
+
+        switch (billingRun.getBillingCycle().getType()) {
+        case BILLINGACCOUNT:
+            entity = billingAccountService.findById(entityId);
+            billingAccount = (BillingAccount) entity;
+            break;
+            
+        case SUBSCRIPTION:
+            entity = subscriptionService.findById(entityId);
+            billingAccount = ((Subscription) entity).getUserAccount() != null ? ((Subscription) entity).getUserAccount().getBillingAccount() : null;
+            break;
+            
+        case ORDER:
+            entity = orderService.findById(entityId);
+            if ((((Order) entity).getUserAccounts() != null) && !((Order) entity).getUserAccounts().isEmpty()) {
+                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null
+                        ? (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount()
+                        : null;
+            }
+            break;
+        }
+        entity.setTotalInvoicingAmountWithoutTax(totalAmounts.getAmountWithoutTax());
+        entity.setTotalInvoicingAmountWithTax(totalAmounts.getAmountWithTax());
+        entity.setTotalInvoicingAmountTax(totalAmounts.getAmountTax());
+
+        BigDecimal invoiceAmount = totalAmounts.getAmountWithoutTax();
+        BigDecimal invoicingThreshold = null;
+        if (billingAccount != null) {
+            invoicingThreshold = billingAccount.getInvoicingThreshold();
+        }
+        if (invoicingThreshold == null) {
+            invoicingThreshold = billingRun.getBillingCycle().getInvoicingThreshold();
+        }
+
+        if (invoicingThreshold != null && invoicingThreshold.compareTo(invoiceAmount) > 0) {
+            log.debug("Invoicing threshold {}/{} was not met for {}. Entity will not be invoiced", invoiceAmount, invoicingThreshold, entity.getClass().getSimpleName(),
+                entity.getCode());
+            return null;
+        }
+
+        log.debug("{}/{} will be updated with BR amount {}. Invoice threshold applied {}", entity.getClass().getSimpleName(), entity.getId(), invoiceAmount, invoicingThreshold);
+
+        entity.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
+
+        if (entity instanceof BillingAccount) {
+            ((BillingAccount) entity).setBrAmountWithoutTax(invoiceAmount);
+            billingAccountService.updateNoCheck((BillingAccount) entity);
+        } else if (entity instanceof Order) {
+            orderService.updateNoCheck((Order) entity);
+        } else if (entity instanceof Subscription) {
             subscriptionService.updateNoCheck((Subscription) entity);
         }
 

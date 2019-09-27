@@ -59,9 +59,10 @@ public class InvoicingAsync {
     private InvoicingAsync invoicingNewTransaction;
 
     /**
-     * Update billing account total amounts async. One billing account at a time in a separate transaction.
+     * Calculate amounts to invoice, link with Billing run and update Billing account with amount to invoice (if it is a billable entity). One billable entity at a time in a
+     * separate transaction.
      *
-     * @param entities Entities
+     * @param entities Entities to invoice
      * @param billingRun The billing run
      * @param jobInstanceId Job instance id
      * @param instantiateMinRtsForService Should rated transactions to reach minimum invoicing amount be checked and instantiated on service level.
@@ -69,12 +70,12 @@ public class InvoicingAsync {
      * @param instantiateMinRtsForBA Should rated transactions to reach minimum invoicing amount be checked and instantiated on Billing account level.
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
-     * @return the future
+     * @return The future with a list of entities to invoice and amount to invoice.
      * @throws BusinessException the business exception
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<List<IBillableEntity>> updateBillingAccountTotalAmountsAsync(List<IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId,
+    public Future<List<IBillableEntity>> calculateBillableAmountsAsync(List<IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId,
             boolean instantiateMinRtsForService, boolean instantiateMinRtsForSubscription, boolean instantiateMinRtsForBA, MeveoUser lastCurrentUser) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
@@ -86,8 +87,43 @@ public class InvoicingAsync {
             if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
-            IBillableEntity billableEntity = ratedTransactionService.updateEntityTotalAmounts(entity, billingRun, instantiateMinRtsForService, instantiateMinRtsForSubscription,
-                instantiateMinRtsForBA);
+            IBillableEntity billableEntity = ratedTransactionService.updateEntityTotalAmountsAndLinkToBR(entity, billingRun, instantiateMinRtsForService,
+                instantiateMinRtsForSubscription, instantiateMinRtsForBA);
+            if (billableEntity != null) {
+                billableEntities.add(billableEntity);
+            }
+        }
+        return new AsyncResult<List<IBillableEntity>>(billableEntities);
+    }
+
+    /**
+     * Calculate amounts to invoice, link with Billing run and update Billing account with amount to invoice (if it is a billable entity). One billable entity at a time in a
+     * separate transaction.
+     *
+     * @param entitiesAndAmounts Entities (ids) and amounts to invoice
+     * @param billingRun The billing run
+     * @param jobInstanceId Job instance id
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     * @return The future with a list of entities to invoice and amount to invoice.
+     * @throws BusinessException the business exception
+     */
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Future<List<IBillableEntity>> calculateBillableAmountsAsync(List<AmountsToInvoice> entitiesAndAmounts, BillingRun billingRun, Long jobInstanceId,
+            MeveoUser lastCurrentUser) throws BusinessException {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
+        List<IBillableEntity> billableEntities = new ArrayList<IBillableEntity>();
+        int i = 0;
+        for (AmountsToInvoice amountsToInvoice : entitiesAndAmounts) {
+            i++;
+            if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                break;
+            }
+            IBillableEntity billableEntity = ratedTransactionService.updateEntityTotalAmountsAndLinkToBR(amountsToInvoice.getEntityToInvoiceId(), billingRun,
+                amountsToInvoice.getAmountsToInvoice());
             if (billableEntity != null) {
                 billableEntities.add(billableEntity);
             }

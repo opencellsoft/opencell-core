@@ -744,14 +744,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
         try {
             QueryBuilder qb = new QueryBuilder(Subscription.class, "s", null);
             qb.addCriterionEntity("s.billingCycle.id", billingCycle.getId());
-
-            if (startdate != null) {
-                qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
-            }
-
-            if (endDate != null) {
-                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false);
-            }
             qb.addOrderCriterionAsIs("id", true);
 
             return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
