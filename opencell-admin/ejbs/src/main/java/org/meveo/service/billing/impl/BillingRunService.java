@@ -829,7 +829,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void validate(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result) throws Exception {
-        log.debug("Processing billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
+        log.info("Processing billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
 
         List<IBillableEntity> billableEntities = new ArrayList<>();
 
