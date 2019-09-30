@@ -5,10 +5,10 @@ import java.text.MessageFormat;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -20,7 +20,7 @@ import org.meveo.commons.utils.StringUtils;
  * @lastModifiedVersion 5.0
  * 
  **/
-@FacesValidator("codeValidator")
+@Named("codeValidator")
 public class CodeValidator implements Validator {
 
     @Inject
