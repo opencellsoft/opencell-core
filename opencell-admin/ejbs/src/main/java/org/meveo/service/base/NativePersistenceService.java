@@ -60,10 +60,12 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
 
 /**
@@ -108,6 +110,9 @@ public class NativePersistenceService extends BaseService {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+
+    @Inject
+	private CustomEntityTemplateService customEntityTemplateService;
 
     /**
      * Find record by its identifier
@@ -964,19 +969,23 @@ public class NativePersistenceService extends BaseService {
      *        converted accordingly. If a single value is passed, it will be added to a list.
      * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
      *        standard date and time and then date only patterns will be applied.
+     * @param cft 
      * @param regExp 
      * @return A converted data type
      * @throws ValidationException Value can not be cast to a target class
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected Object castValue(Object value, Class targetClass, boolean expectedList, String[] datePatterns, Pattern pattern) throws ValidationException {
+    protected Object castValue(Object value, Class targetClass, boolean expectedList, String[] datePatterns, CustomFieldTemplate cft) throws ValidationException {
 
         // log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
         // value != null ? value.getClass().isArray() : null);
 
-        // Nothing to cast - same data type
+		// Nothing to cast - same data type
         if (targetClass.isAssignableFrom(value.getClass()) && !expectedList) {
-        	if (targetClass == String.class && pattern!=null) {
+        	
+        	
+        	if (targetClass == String.class && cft.getRegExp()!=null) {
+        		final Pattern pattern = Pattern.compile(cft.getRegExp());
                 if (!pattern.matcher((String)value).matches()) {
                     throw new ValidationException("value of String "+value+" not accepted for regexp"+pattern.toString());
                 }
@@ -993,7 +1002,7 @@ public class NativePersistenceService extends BaseService {
                 List valuesConverted = new ArrayList<>();
                 String[] valueItems = ((String) value).split(",");
                 for (String valueItem : valueItems) {
-                    Object valueConverted = castValue(valueItem, targetClass, false, datePatterns, pattern);
+                    Object valueConverted = castValue(valueItem, targetClass, false, datePatterns, cft);
                     if (valueConverted != null) {
                         valuesConverted.add(valueConverted);
                     } else {
@@ -1004,7 +1013,7 @@ public class NativePersistenceService extends BaseService {
 
                 // A single value list
             } else {
-                Object valueConverted = castValue(value, targetClass, false, datePatterns, pattern);
+                Object valueConverted = castValue(value, targetClass, false, datePatterns, cft);
                 if (valueConverted != null) {
                     return Arrays.asList(valueConverted);
                 } else {
@@ -1039,14 +1048,20 @@ public class NativePersistenceService extends BaseService {
         try {
             if (targetClass == String.class) {
             	String result = (stringVal == null && listVal == null) ? value.toString():(String)value;
-                    if(pattern!=null) {
-                        if (!pattern.matcher(result).matches()) {
-                            throw new ValidationException("value of String "+result+" not accepted for regexp"+pattern.toString());
+                    if(cft.getRegExp()!=null) {
+                		final Pattern pattern = Pattern.compile(cft.getRegExp());
+                        if (!pattern.matcher((String)value).matches()) {
+                            throw new ValidationException("value of String "+value+" not accepted for regexp"+pattern.toString());
                         }
                     }
                     return result;
             } else if(targetClass == EntityReferenceWrapper.class){
-                return Long.parseLong(value.toString());
+                long id = Long.parseLong(value.toString());
+                boolean exist=validateRecordExistance(cft, id);
+                if (!exist) {
+                    throw new ValidationException("Failed to find reference of record on database [ class: "+cft.getEntityClazz()+", id: "+id+"]");
+                }
+				return id;
 
             } else if (targetClass == Boolean.class || (targetClass.isPrimitive() && targetClass.getName().equals("boolean"))) {
                 if (booleanVal != null) {
@@ -1083,12 +1098,9 @@ public class NativePersistenceService extends BaseService {
                         if (date == null) {
                             date = DateUtils.parseDateWithPattern(stringVal, paramBean.getDateFormat());
                         }
-                        if (date == null) {
-                        	throw new ValidationException("wrong value format for filter, cannot parse date value '"+value+"'");
-                        }
                     }
                 }
-
+                
             } else if (targetClass.isEnum()) {
                 if (listVal != null || targetClass.isAssignableFrom(value.getClass())) {
                     return value;
@@ -1153,7 +1165,7 @@ public class NativePersistenceService extends BaseService {
         } catch (NumberFormatException e) {
             throw new ValidationException("wrong value format for filter, cannot cast '"+value+"' to "+targetClass, e);
         }
-        return null;
+        throw new ValidationException("Failed to cast value [" + value + "] to class: " + targetClass.getSimpleName());
     }
     
     public Map<String, Object> findByClassAndId(String className, Long id) {
@@ -1174,4 +1186,41 @@ public class NativePersistenceService extends BaseService {
         return entityPersister.getTableName();
     }
     
+    public boolean validateRecordExistance(CustomFieldTemplate field, Long id) {
+    	String tableName =null;
+    	
+		CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(field.tableName());
+		try {
+			if (relatedEntity != null) {
+				if (relatedEntity.isStoreAsTable()) {
+					tableName = relatedEntity.getDbTablename();
+				} else {
+					tableName = getTableNameForClass(CustomEntityInstance.class);
+				}
+			} else {
+				tableName = getTableNameForClass(Class.forName(field.getEntityClazz()));
+			}
+		} catch (ClassNotFoundException e) {
+			throw new BusinessException("Exception when trying to get class with name: "+field.getEntityClazz());
+		}
+        
+        return validateRecordExistanceByTableName(tableName, id);
+    }
+
+	public boolean validateRecordExistanceByTableName(String tableName,Long id) {
+		Session session = getEntityManager().unwrap(Session.class);
+        SQLQuery query = session.createSQLQuery("select "+FIELD_ID+" from " + tableName + " e where "+FIELD_ID+"=:id");
+        query.setParameter("id", id);
+        return query.uniqueResult()!=null;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<BigInteger> filterExistingRecordsOnTable(String tableName,List<Long> ids) {
+		Session session = getEntityManager().unwrap(Session.class);
+		
+        SQLQuery query = session.createSQLQuery("select "+FIELD_ID+" from " + tableName + " e where "+FIELD_ID+" in (:ids)");
+        query.setParameterList("ids", ids);
+        return (List<BigInteger>)query.list();
+	}
 }
