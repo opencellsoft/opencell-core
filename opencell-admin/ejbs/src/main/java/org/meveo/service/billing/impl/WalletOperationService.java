@@ -1559,5 +1559,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 	}
 
+	public List<WalletOperation> getWalletOperationBetweenTwoDatesByStatus(Date firstTransactionDate, Date lastTransactionDate, List<WalletOperationStatusEnum> formattedStatus) {
+		return getEntityManager().createNamedQuery("WalletOperation.listWObetweenTwoDatesByStatus", WalletOperation.class).setParameter("status", formattedStatus).setParameter("firstTransactionDate", firstTransactionDate)
+				.setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+	}
+
 
 }

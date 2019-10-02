@@ -283,5 +283,12 @@ public class EdrService extends PersistenceService<EDR> {
         return 0;
         
 	}
+
+	public List<EDR> getEdrsBetweenTwoDatesByStatus(Date firstTransactionDate, Date lastTransactionDate, List<EDRStatusEnum> formattedStatus) {
+		 return getEntityManager().createNamedQuery("EDR.getEdrBetweenTwoDateByStatus", EDR.class).setParameter("status", formattedStatus).setParameter("firstTransactionDate", firstTransactionDate)
+	                .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+	}
+	
+	
 	
 }

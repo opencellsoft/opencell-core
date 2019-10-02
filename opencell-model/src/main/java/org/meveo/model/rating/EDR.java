@@ -43,7 +43,8 @@ import java.util.Date;
         @NamedQuery(name = "EDR.deleteNotOpenEdrBetweenTwoDate", query = "delete from EDR e  where e.status <> org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate"),
         @NamedQuery(name = "EDR.countEdrBetweenTwoDateByStatus", query = "select count(e) from EDR e where e.status in (:status) AND e.eventDate >= :firstTransactionDate and e.eventDate <= :lastTransactionDate"),
         @NamedQuery(name = "EDR.getEdrIdsBetweenTwoDateByStatus", query = "select e.id from EDR e where e.status in (:formattedStatus) and e.eventDate >= :firstTransactionDate and e.eventDate <= :lastTransactionDate"),
-        @NamedQuery(name = "EDR.deleteEdrsByIds", query = "delete from EDR e where e.id in (:edrIds)")})
+        @NamedQuery(name = "EDR.deleteEdrsByIds", query = "delete from EDR e where e.id in (:edrIds)"),
+        @NamedQuery(name = "EDR.getEdrBetweenTwoDateByStatus", query = "SELECT e from EDR e join fetch e.subscription where e.status in (:status) AND e.eventDate >= :firstTransactionDate and e.eventDate <= :lastTransactionDate order by e.eventDate desc")})
 public class EDR extends BaseEntity {
 
     private static final long serialVersionUID = 1278336655583933747L;

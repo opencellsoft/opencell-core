@@ -77,16 +77,13 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.sumbillingRunByList", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
                 + "WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null" + " AND r.usageDate<:lastTransactionDate "
                 + " AND r.billingAccount IN :billingAccountList"),
-        
         @NamedQuery(name = "RatedTransaction.sumBillingAccount", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax) FROM RatedTransaction r "
                 + "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " AND r.doNotTriggerInvoicing=false " + "AND r.invoice is null" + " AND r.billingAccount=:billingAccount"),
-        
         @NamedQuery(name = "RatedTransaction.sumByCharge", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax), r.invoiceSubCategory.id  FROM RatedTransaction r "
                 + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " AND r.doNotTriggerInvoicing=false AND r.invoice is null AND r.billingAccount=:billingAccount AND r.walletOperationEntity.chargeInstance=:chargeInstance"
                 + " GROUP BY r.invoiceSubCategory.id"),
-        
         @NamedQuery(name = "RatedTransaction.updateInvoiced", query = "UPDATE RatedTransaction r "
                 + "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED " + "where r.invoice is null"
                 + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN " + " and r.doNotTriggerInvoicing=false" + " AND r.usageDate<:lastTransactionDate "
@@ -102,10 +99,8 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", query = "from RatedTransaction t where t.invoice=:invoice and t.invoiceSubCategory=:invoiceSubCategory "),
         @NamedQuery(name = "RatedTransaction.deleteInvoice", query = "UPDATE RatedTransaction r "
                 + "set r.invoice=null,r.invoiceAgregateF=null,r.invoiceAgregateR=null,r.invoiceAgregateT=null,r.billingRun=null,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN where r.invoice=:invoice"),
-
         @NamedQuery(name = "RatedTransaction.deleteMinRT", query = "DELETE from RatedTransaction r "
                 + " WHERE r.invoice=:invoice AND r.wallet IS null"),
-        
         @NamedQuery(name = "RatedTransaction.getDistinctOrderNumsByInvoice", query = "SELECT DISTINCT rt.orderNumber from RatedTransaction rt where  rt.invoice=:invoice AND NOT(rt.orderNumber IS null)"),
         @NamedQuery(name = "RatedTransaction.listNotOpenedBetweenTwoDates", query = "SELECT r FROM RatedTransaction r join fetch r.priceplan join fetch r.billingAccount where "
                 + " r.status!=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
@@ -118,7 +113,9 @@ import org.meveo.model.rating.EDR;
                 + " AND :firstTransactionDate<=r.usageDate AND r.usageDate<=:lastTransactionDate AND r.priceplan is not null AND r.billingAccount is not null"),
         @NamedQuery(name = "RatedTransaction.getRtIdsBetweenTwoDateByStatus", query = "select r.id FROM RatedTransaction r where r.status in (:status) "
                 + " AND :firstTransactionDate<=r.usageDate AND r.usageDate<=:lastTransactionDate AND r.priceplan is not null AND r.billingAccount is not null"),
-        @NamedQuery(name = "RatedTransaction.deleteRtsByIds", query = "delete FROM RatedTransaction rt WHERE rt.id in (:rtIds)")})
+        @NamedQuery(name = "RatedTransaction.deleteRtsByIds", query = "delete FROM RatedTransaction rt WHERE rt.id in (:rtIds)"),
+        @NamedQuery(name = "RatedTransaction.listBetweenTwoDatesByStatus", query = "SELECT r FROM RatedTransaction r join fetch r.priceplan join fetch r.billingAccount where r.status in (:status) "
+                + " AND :firstTransactionDate<=r.usageDate AND r.usageDate<=:lastTransactionDate order by r.usageDate desc ")})
 public class RatedTransaction extends BaseEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;

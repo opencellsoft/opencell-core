@@ -49,7 +49,7 @@ public class PurgeMediationDataJob extends Job {
 	
 	public static final String MESSAGE_PURGE_ENTITY_JOB_PACKETS_NUMBER = "purgeEntityJob.packetsNumber";
 	
-	public static final String MESSAGE_EXPORT_ENTITY_JOB_DAYS_TO_PURGE = "exportEntityJob.daysToPurge";
+	public static final String MESSAGE_EXPORT_ENTITY_JOB_DAYS_TO_RETAIN = "exportEntityJob.daysToRetain";
 	
 	public static final String MESSAGE_EXPORT_ENTITY_JOB_LAST_TRANSACTION_DATE = "exportEntityJob.lastTransactionDate";
 	
@@ -165,7 +165,7 @@ public class PurgeMediationDataJob extends Job {
         daysToPurge.setCode(PURGE_MEDIATION_DATA_JOB_DAYS_TO_PURGE);
         daysToPurge.setAppliesTo(APPLIES_TO_NAME);
         daysToPurge.setActive(true);
-        daysToPurge.setDescription(resourceMessages.getString(MESSAGE_EXPORT_ENTITY_JOB_DAYS_TO_PURGE));
+        daysToPurge.setDescription(resourceMessages.getString(MESSAGE_EXPORT_ENTITY_JOB_DAYS_TO_RETAIN));
         daysToPurge.setFieldType(CustomFieldTypeEnum.LONG);
         daysToPurge.setValueRequired(false);
         daysToPurge.setDefaultValue("0");

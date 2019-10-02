@@ -154,10 +154,10 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
     
     private  <T extends Enum<T>> List<T> getTargetStatusList(JobInstance jobInstance, Class<T> clazz, String cfCode) {
         List<T> formattedStatus = new ArrayList<T>();
-        String woStatusListStr = (String) this.getParamOrCFValue(jobInstance, cfCode);
-        if (woStatusListStr != null && !woStatusListStr.isEmpty()) {
-            List<String> edrStatusList = Arrays.asList(woStatusListStr.split(SPLIT_CHAR));
-            for (String status : edrStatusList) {
+        String statusListStr = (String) this.getParamOrCFValue(jobInstance, cfCode);
+        if (statusListStr != null && !statusListStr.isEmpty()) {
+            List<String> statusList = Arrays.asList(statusListStr.split(SPLIT_CHAR));
+            for (String status : statusList) {
                 T statusEnum = T.valueOf(clazz, status.toUpperCase());
                 if (statusEnum != null) {
                     formattedStatus.add(statusEnum);

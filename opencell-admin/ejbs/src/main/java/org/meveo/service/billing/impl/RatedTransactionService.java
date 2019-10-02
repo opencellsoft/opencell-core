@@ -1288,5 +1288,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 		return 0;
 	}
+
+	public List<RatedTransaction> getRatedTransactionBetweenTwoDatesByStatus(Date firstTransactionDate, Date lastTransactionDate, List<RatedTransactionStatusEnum> formattedStatus) {
+		return getEntityManager().createNamedQuery("RatedTransaction.listBetweenTwoDatesByStatus", RatedTransaction.class).setParameter("status", formattedStatus).setParameter("firstTransactionDate", firstTransactionDate)
+				.setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+	}
 	
 }
