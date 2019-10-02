@@ -60,6 +60,7 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
@@ -982,16 +983,7 @@ public class NativePersistenceService extends BaseService {
 
 		// Nothing to cast - same data type
         if (targetClass.isAssignableFrom(value.getClass()) && !expectedList) {
-        	
-        	
-        	if (targetClass == String.class && cft.getRegExp()!=null) {
-        		final Pattern pattern = Pattern.compile(cft.getRegExp());
-                if (!pattern.matcher((String)value).matches()) {
-                    throw new ValidationException("value of String "+value+" not accepted for regexp"+pattern.toString());
-                }
-            }
-            return value;
-
+			return extractString(value, targetClass, cft);
             // A list is expected as value. If value is not a list, parse value as comma separated string and convert each value separately
         } else if (expectedList) {
             if (value instanceof List || value instanceof Set || value.getClass().isArray()) {
@@ -1047,14 +1039,7 @@ public class NativePersistenceService extends BaseService {
 
         try {
             if (targetClass == String.class) {
-            	String result = (stringVal == null && listVal == null) ? value.toString():(String)value;
-                    if(cft.getRegExp()!=null) {
-                		final Pattern pattern = Pattern.compile(cft.getRegExp());
-                        if (!pattern.matcher((String)value).matches()) {
-                            throw new ValidationException("value of String "+value+" not accepted for regexp"+pattern.toString());
-                        }
-                    }
-                    return result;
+            	return extractString(value, targetClass, cft);
             } else if(targetClass == EntityReferenceWrapper.class){
                 long id = Long.parseLong(value.toString());
                 boolean exist=validateRecordExistance(cft, id);
@@ -1167,6 +1152,24 @@ public class NativePersistenceService extends BaseService {
         }
         throw new ValidationException("Failed to cast value [" + value + "] to class: " + targetClass.getSimpleName());
     }
+
+	private Object extractString(Object value, Class targetClass, CustomFieldTemplate cft) {
+		if (targetClass == String.class) {
+			if (cft.getRegExp() != null) {
+				final Pattern pattern = Pattern.compile(cft.getRegExp());
+				if (!pattern.matcher((String) value).matches()) {
+					throw new ValidationException( "value of String " + value + " not accepted for regexp" + pattern.toString());
+				}
+			}
+			if(CustomFieldTypeEnum.LIST.equals(cft.getFieldType())) {
+				Map<String, String> listValues = cft.getListValuesSorted();
+				if(!listValues.containsKey(value)) {
+					throw new ValidationException( "value " + value + " is not accepted as value for enum " + cft.getCode());
+				}
+			}
+		}
+		return value;
+	}
     
     public Map<String, Object> findByClassAndId(String className, Long id) {
 		try {

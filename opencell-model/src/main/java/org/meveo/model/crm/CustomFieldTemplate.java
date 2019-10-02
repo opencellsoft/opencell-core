@@ -132,7 +132,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     /**
      * Values for selection from a picklist
      */
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "crm_custom_field_tmpl_val")
     private Map<String, String> listValues;
 

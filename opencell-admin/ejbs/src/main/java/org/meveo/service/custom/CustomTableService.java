@@ -854,7 +854,9 @@ public class CustomTableService extends NativePersistenceService {
                 
                 String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1]; // field name here can be a db field name or a custom field code
                 CustomFieldTemplate cft = cftsMap.get(fieldName);  
-
+                if (cft == null) {
+                    throw new ValidationException("No field definition " + fieldName + " was found");
+                }
                 if (valueEntry.getValue() == null && !discardNull) {
                     // must check the default value
                     valuesConverted.put(key, cft.getDefaultValueConverted());
