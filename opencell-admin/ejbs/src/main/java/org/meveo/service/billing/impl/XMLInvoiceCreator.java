@@ -1006,7 +1006,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         addressTag.appendChild(postalCode);
 
         Element state = doc.createElement("state");
-        if (seller.getAddress() != null) {
+        if (seller.getAddress() != null && seller.getAddress().getState()!=null) {
 	        Text stateTxt = doc.createTextNode(seller.getAddress().getState());
 	        state.appendChild(stateTxt);
         }
@@ -1114,7 +1114,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         addressTag.appendChild(postalCode);
 
         Element state = doc.createElement("state");
-        if (account.getAddress() != null) {
+        if (account.getAddress() != null && account.getAddress().getState()!=null) {
 	        Text stateTxt = doc.createTextNode(account.getAddress().getState());
 	        state.appendChild(stateTxt);
         }
