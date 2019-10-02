@@ -112,7 +112,13 @@ import org.meveo.model.rating.EDR;
                 + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate order by r.usageDate desc "),
         @NamedQuery(name = "RatedTransaction.deleteNotOpenBetweenTwoDates", query = "delete FROM RatedTransaction r where "
                 + " r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.OPEN "
-                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate ") })
+                + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "),
+        @NamedQuery(name = "RatedTransaction.detachEdrsByIds", query = "update RatedTransaction rt set rt.edr = null where rt.edr.id in (:edrIds)"),
+        @NamedQuery(name = "RatedTransaction.countRtBetweenTwoDatesByStatus", query = "select count(r) FROM RatedTransaction r where r.status in (:status) "
+                + " AND :firstTransactionDate<=r.usageDate AND r.usageDate<=:lastTransactionDate AND r.priceplan is not null AND r.billingAccount is not null"),
+        @NamedQuery(name = "RatedTransaction.getRtIdsBetweenTwoDateByStatus", query = "select r.id FROM RatedTransaction r where r.status in (:status) "
+                + " AND :firstTransactionDate<=r.usageDate AND r.usageDate<=:lastTransactionDate AND r.priceplan is not null AND r.billingAccount is not null"),
+        @NamedQuery(name = "RatedTransaction.deleteRtsByIds", query = "delete FROM RatedTransaction rt WHERE rt.id in (:rtIds)")})
 public class RatedTransaction extends BaseEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;

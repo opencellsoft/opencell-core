@@ -1539,5 +1539,25 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         }
     }
 
+	public long count(Date firstTransactionDate, Date lastTransactionDate, List<WalletOperationStatusEnum> targetStatusList) {
+		return (long) getEntityManager().createNamedQuery("WalletOperation.countWoBetweenTwoDatesByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).getSingleResult();
+	}
+
+	public long purge(Date firstTransactionDate, Date lastTransactionDate, List<WalletOperationStatusEnum> targetStatusList, long paquetSize) {
+		
+		@SuppressWarnings("unchecked")
+		List<Long> woIds = getEntityManager().createNamedQuery("WalletOperation.getWoIdsBetweenTwoDateByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
+				.setParameter("lastTransactionDate", lastTransactionDate).setMaxResults(Integer.parseInt("" + paquetSize)).getResultList();
+        
+		if (woIds != null && woIds.size() > 0) {
+            getEntityManager().createNamedQuery("WalletOperation.detachWoFromEdrByIds").setParameter("woIds", woIds).executeUpdate();
+            return getEntityManager().createNamedQuery("WalletOperation.deleteWosByIds").setParameter("woIds", woIds).executeUpdate();
+        }
+		
+        return 0;
+
+	}
+
 
 }

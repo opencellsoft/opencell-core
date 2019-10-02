@@ -40,7 +40,10 @@ import java.util.Date;
         @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_',case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status= org.meveo.model.rating.EDRStatusEnum.OPEN ORDER BY e.eventDate DESC"),
         @NamedQuery(name = "EDR.getNotOpenedEdrBetweenTwoDate", query = "SELECT e from EDR e join fetch e.subscription where e.status != org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate order by e.eventDate desc"),
         @NamedQuery(name = "EDR.updateWalletOperationForSafeDeletion", query = "update WalletOperation wo set wo.edr=NULL where wo.edr in (select e FROM EDR e where e.status <> org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
-        @NamedQuery(name = "EDR.deleteNotOpenEdrBetweenTwoDate", query = "delete from EDR e  where e.status <> org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate") })
+        @NamedQuery(name = "EDR.deleteNotOpenEdrBetweenTwoDate", query = "delete from EDR e  where e.status <> org.meveo.model.rating.EDRStatusEnum.OPEN AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate"),
+        @NamedQuery(name = "EDR.countEdrBetweenTwoDateByStatus", query = "select count(e) from EDR e where e.status in (:status) AND e.eventDate >= :firstTransactionDate and e.eventDate <= :lastTransactionDate"),
+        @NamedQuery(name = "EDR.getEdrIdsBetweenTwoDateByStatus", query = "select e.id from EDR e where e.status in (:formattedStatus) and e.eventDate >= :firstTransactionDate and e.eventDate <= :lastTransactionDate"),
+        @NamedQuery(name = "EDR.deleteEdrsByIds", query = "delete from EDR e where e.id in (:edrIds)")})
 public class EDR extends BaseEntity {
 
     private static final long serialVersionUID = 1278336655583933747L;
