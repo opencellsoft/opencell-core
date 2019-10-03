@@ -1,7 +1,6 @@
 package org.meveo.service.security;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -11,7 +10,6 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
-import org.meveo.model.admin.User;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -45,10 +43,10 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
         return null;
     }
 
-    public boolean isEntityAllowed(BusinessEntity entity, User user, boolean isParentEntity) {
+    public boolean isEntityAllowed(BusinessEntity entity, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap, boolean isParentEntity) {
 
         // Doing this check first allows verification without going to DB.
-        if (entityFoundInSecuredEntities(entity, user.getAllSecuredEntities())) {
+        if (entityFoundInSecuredEntities(entity, allSecuredEntitiesMap)) {
             // Match was found authorization successful
             return true;
         }
@@ -57,7 +55,7 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
         if (entity != null) {
             // Check if entity's type is restricted to a specific group of
             // entities. i.e. only specific Customers, CA, BA, etc.
-            Set<SecuredEntity> securedEntities = user.getSecuredEntitiesMap().get(entity.getClass());
+            Set<SecuredEntity> securedEntities = allSecuredEntitiesMap.get(entity.getClass());
             boolean isSameTypeAsParent = entity.getClass() == entity.getParentEntityType();
             if (!isSameTypeAsParent && securedEntities != null && !securedEntities.isEmpty()) {
                 // This means that the entity type is being restricted. Since
@@ -81,18 +79,18 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
                 parentEntity = getEntityByCode(entity.getParentEntityType(), parentEntity.getCode());
             }
 
-            return isEntityAllowed(parentEntity, user, true);
+            return isEntityAllowed(parentEntity, allSecuredEntitiesMap, true);
         } else {
             return false;
         }
     }
 
-    private static boolean entityFoundInSecuredEntities(BusinessEntity entity, List<SecuredEntity> securedEntities) {
-        if (entity == null) {
+    private static boolean entityFoundInSecuredEntities(BusinessEntity entity, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap) {
+        if (entity == null || allSecuredEntitiesMap.get(entity.getClass()) == null) {
             return false;
         }
         boolean found = false;
-        for (SecuredEntity securedEntity : securedEntities) {
+        for (SecuredEntity securedEntity : allSecuredEntitiesMap.get(entity.getClass())) {
             if (securedEntity.equals(entity)) {
                 found = true;
                 break;

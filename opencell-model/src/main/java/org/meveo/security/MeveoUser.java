@@ -127,6 +127,15 @@ public abstract class MeveoUser implements Serializable {
         return false;
     }
 
+    /**
+     * Get all user's associated roles
+     *
+     * @return user's roles
+     */
+    public Set<String> getRoles() {
+        return roles;
+    }
+
     public String getLocale() {
         return locale;
     }
