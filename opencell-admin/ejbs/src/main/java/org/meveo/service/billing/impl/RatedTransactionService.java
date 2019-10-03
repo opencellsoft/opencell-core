@@ -1270,4 +1270,28 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             create(ratedTransaction);
         }
     }
+
+	public long count(Date firstTransactionDate, Date lastTransactionDate, List<RatedTransactionStatusEnum> targetStatusList) {
+		return (long) getEntityManager().createNamedQuery("RatedTransaction.countRtBetweenTwoDatesByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
+				.setParameter("lastTransactionDate", lastTransactionDate).getSingleResult();
+	}
+
+	public long purge(Date firstTransactionDate, Date lastTransactionDate, List<RatedTransactionStatusEnum> targetStatusList, long paquetSize) {
+
+		@SuppressWarnings("unchecked")
+		List<Long> rtIds = getEntityManager().createNamedQuery("RatedTransaction.getRtIdsBetweenTwoDateByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
+				.setParameter("lastTransactionDate", lastTransactionDate).setMaxResults(Integer.parseInt("" + paquetSize)).getResultList();
+
+		if (rtIds != null && !rtIds.isEmpty()) {
+			return getEntityManager().createNamedQuery("RatedTransaction.deleteRtsByIds").setParameter("rtIds", rtIds).executeUpdate();
+		}
+
+		return 0;
+	}
+
+	public List<RatedTransaction> getRatedTransactionBetweenTwoDatesByStatus(Date firstTransactionDate, Date lastTransactionDate, List<RatedTransactionStatusEnum> formattedStatus) {
+		return getEntityManager().createNamedQuery("RatedTransaction.listBetweenTwoDatesByStatus", RatedTransaction.class).setParameter("status", formattedStatus).setParameter("firstTransactionDate", firstTransactionDate)
+				.setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+	}
+	
 }

@@ -91,7 +91,16 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.OPEN AND  "
                 + ":firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate"),
         @NamedQuery(name = "WalletOperation.prepareToSafeDeleteNotOpenWObetweenTwoDates", query = "UPDATE WalletOperation o  SET o.edr = NULL WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.OPEN AND  "
-                + ":firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate") })
+                + ":firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate"),
+        @NamedQuery(name = "WalletOperation.detachEdrsByIds", query = "update WalletOperation wo set wo.edr = null where wo.edr.id in (:edrIds)"),
+        @NamedQuery(name = "WalletOperation.countWoBetweenTwoDatesByStatus", query = "select count(o) FROM WalletOperation o WHERE o.status in (:status) AND "
+                + ":firstTransactionDate <= o.operationDate AND o.operationDate <= :lastTransactionDate"),
+        @NamedQuery(name = "WalletOperation.detachWoFromEdrByIds", query = "UPDATE WalletOperation o  SET o.edr = NULL WHERE o.id in (:woIds)"),
+        @NamedQuery(name = "WalletOperation.deleteWosByIds", query = "delete FROM WalletOperation o WHERE o.id in (:woIds)"),
+        @NamedQuery(name = "WalletOperation.getWoIdsBetweenTwoDateByStatus", query = "select o.id FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate <= o.operationDate AND o.operationDate <= :lastTransactionDate"),
+        @NamedQuery(name = "WalletOperation.listWObetweenTwoDatesByStatus", query = "SELECT o FROM WalletOperation o join fetch o.seller "
+                + "join fetch o.currency join fetch o.wallet join fetch o.chargeInstance WHERE o.status in (:status) AND  "
+                + ":firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate order by o.operationDate desc")})
 public class WalletOperation extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;

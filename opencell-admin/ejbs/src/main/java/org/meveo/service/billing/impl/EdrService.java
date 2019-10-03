@@ -262,4 +262,33 @@ public class EdrService extends PersistenceService<EDR> {
             create(edr);
         }
     }
+
+	public long count(Date firstTransactionDate, Date lastTransactionDate, List<EDRStatusEnum> formattedStatus) {
+		return (long) getEntityManager().createNamedQuery("EDR.countEdrBetweenTwoDateByStatus").setParameter("status", formattedStatus).setParameter("firstTransactionDate", firstTransactionDate)
+				.setParameter("lastTransactionDate", lastTransactionDate).getSingleResult();
+	}
+
+	public long purge(Date firstTransactionDate, Date lastTransactionDate, List<EDRStatusEnum> targetStatusList, long paquetSize) {
+		
+		@SuppressWarnings("unchecked")
+		List<Long> edrIds = getEntityManager().createNamedQuery("EDR.getEdrIdsBetweenTwoDateByStatus").setParameter("formattedStatus", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
+				.setParameter("lastTransactionDate", lastTransactionDate).setMaxResults(Integer.parseInt("" + paquetSize)).getResultList();
+        
+        if (edrIds != null && edrIds.size() > 0) {
+            getEntityManager().createNamedQuery("WalletOperation.detachEdrsByIds").setParameter("edrIds", edrIds).executeUpdate();
+            getEntityManager().createNamedQuery("RatedTransaction.detachEdrsByIds").setParameter("edrIds", edrIds).executeUpdate();
+            return getEntityManager().createNamedQuery("EDR.deleteEdrsByIds").setParameter("edrIds", edrIds).executeUpdate();
+        }
+        
+        return 0;
+        
+	}
+
+	public List<EDR> getEdrsBetweenTwoDatesByStatus(Date firstTransactionDate, Date lastTransactionDate, List<EDRStatusEnum> formattedStatus) {
+		 return getEntityManager().createNamedQuery("EDR.getEdrBetweenTwoDateByStatus", EDR.class).setParameter("status", formattedStatus).setParameter("firstTransactionDate", firstTransactionDate)
+	                .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+	}
+	
+	
+	
 }
