@@ -1,9 +1,7 @@
 package org.meveo.api.security.filter;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import javax.inject.Inject;
 
@@ -15,7 +13,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.User;
+import org.meveo.model.admin.SecuredEntity;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.security.SecuredBusinessEntityService;
 
@@ -26,7 +24,7 @@ public class ListFilter extends SecureMethodResultFilter {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public Object filterResult(Method methodContext, Object result, MeveoUser currentUser, User user) throws MeveoApiException {
+    public Object filterResult(Method methodContext, Object result, MeveoUser currentUser, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap) throws MeveoApiException {
         if (result == null) {
             // result is empty. no need to filter.
             log.warn("Result is empty. Skipping filter...");
@@ -87,7 +85,7 @@ public class ListFilter extends SecureMethodResultFilter {
                         BusinessEntity entity = filterProperty.entityClass().newInstance();
                         entity.setCode((String) value);// FilterProperty could be expanded to include a target property to set instead of using "code"
 
-                        if (securedBusinessEntityService.isEntityAllowed(entity, user, false)) {
+                        if (securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
                             log.debug("Adding item {} to filtered list.", entity);
                             filteredList.add(itemToFilter);
                             break filterLoop;
