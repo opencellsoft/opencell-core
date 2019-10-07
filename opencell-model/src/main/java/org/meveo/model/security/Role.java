@@ -48,7 +48,7 @@ import org.meveo.model.admin.SecuredEntity;
         @Parameter(name = "sequence_name", value = "adm_role_seq"), })
 @NamedQueries({ @NamedQuery(name = "Role.getAllRoles", query = "select r from org.meveo.model.security.Role r LEFT JOIN r.permissions p", hints = {
         @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-				@NamedQuery(name = "Role.getRolesWithSecuredEntities", query = "Select r from Role r Where r.name IN (:currentUserRoles) And size(r.securedEntities) > 0", hints = {
+				@NamedQuery(name = "Role.getRolesWithSecuredEntities", query = "Select r from Role r LEFT JOIN r.securedEntities Where r.name IN (:currentUserRoles) And size(r.securedEntities) > 0", hints = {
 				        @QueryHint(name = "org.hibernate.cacheable", value = "true")})})
 public class Role extends BaseEntity {
 
