@@ -2315,5 +2315,10 @@
                                referencedColumnNames="id" referencedTableName="ar_payment_token" />
   
     </changeSet>
+    
+    <changeSet id="#4640_071019" author="Mohammed_EL-AZZOUZI">
+       <addNotNullConstraint tableName="billing_subscription" columnName="end_of_term_action"/>
+    </changeSet>
+    
 
 </databaseChangeLog>

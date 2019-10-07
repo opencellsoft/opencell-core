@@ -121,7 +121,7 @@ public class SubscriptionRenewal implements Serializable {
      * Whether the Subscription should be suspended or terminated if not renewed
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "end_of_term_action", length = 10)
+    @Column(name = "end_of_term_action", length = 10, nullable = false)
     private EndOfTermActionEnum endOfTermAction;
 
     /**
