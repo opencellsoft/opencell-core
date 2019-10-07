@@ -25,12 +25,16 @@ import java.text.DecimalFormat;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
+import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 
 @Named("bigDecimalConverter")
+@FacesConverter(value = "bigDecimalConverter", managed = true)
 public class BigDecimalConverter implements Converter<BigDecimal>, Serializable {
 
-	private DecimalFormat format = new DecimalFormat("#,##0.00");
+    private static final long serialVersionUID = 7431045453306531451L;
+
+    private DecimalFormat format = new DecimalFormat("#,##0.00");
 
 	@Override
 	public String getAsString(FacesContext facesContext,

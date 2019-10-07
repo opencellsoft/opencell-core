@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.enterprise.inject.Produces;
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -292,7 +291,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         } catch (Exception e) {
             log.error("Failed to reactivate account ", e);
             messages.error(new BundleKey("messages", "reactivation.reactivateUnsuccessful"), e.getMessage());
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
         }
         return getEditViewName();
     }

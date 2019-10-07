@@ -424,8 +424,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         OutputStream out = null;
         InputStream fin = null;
         try {
-            javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
-            HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
+            HttpServletResponse res = (HttpServletResponse) facesContext.getExternalContext().getResponse();
             res.setContentType("application/force-download");
             res.setContentLength((int) file.length());
             res.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");
@@ -441,7 +440,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             fin.close();
             out.flush();
             out.close();
-            context.responseComplete();
+            facesContext.responseComplete();
             log.info("File made available for download");
         } catch (Exception e) {
             log.error("Error:#0, when dowload file: #1", e.getMessage(), file.getAbsolutePath());

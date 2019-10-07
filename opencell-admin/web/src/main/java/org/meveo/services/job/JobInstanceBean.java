@@ -3,6 +3,7 @@ package org.meveo.services.job;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +46,57 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
+
+    private String value1;
+
+    private String value2;
+
+    private String externalRef1;
+    private String externalRef2;
+
+    public String getValue1() {
+        return value1;
+    }
+
+    public String getValue2() {
+        return value2;
+
+    }
+
+    public void setValue1(String value1) {
+
+        this.value1 = value1;
+
+        if ("one".equals(value1)) {
+            value2 = "vienas";
+        } else {
+            value2 = value2 + value1;
+        }
+    }
+
+    public void setValue2(String value2) {
+        this.value2 = value2;
+    }
+
+    public String getExternalRef1() {
+        return externalRef1;
+    }
+
+    public void setExternalRef1(String externalRef1) {
+        this.externalRef1 = externalRef1;
+    }
+
+    public String getExternalRef2() {
+        return externalRef2;
+    }
+
+    public void setExternalRef2(String externalRef2) {
+        this.externalRef2 = externalRef2;
+    }
+
+    public void test() {
+        value2 = new Date().toString();
+    }
 
     public JobInstanceBean() {
         super(JobInstance.class);
@@ -117,6 +169,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
+                
         super.saveOrUpdate(killConversation);
         return getEditViewName();
     }

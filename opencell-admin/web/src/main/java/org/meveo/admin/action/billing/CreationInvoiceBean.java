@@ -60,6 +60,7 @@ import org.omnifaces.cdi.Param;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 import javax.faces.view.ViewScoped;
@@ -130,7 +131,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @Inject
     private ChargeTemplateServiceAll chargeTemplateServiceAll;
-
+    
     private Invoice invoiceToAdd;
     private Invoice selectedInvoice;
     private InvoiceSubCategory selectedInvoiceSubCategory;
@@ -415,8 +416,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         OutputStream out = null;
         InputStream fin = null;
         try {
-            javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
-            HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
+            HttpServletResponse res = (HttpServletResponse) facesContext.getExternalContext().getResponse();
             res.setContentType("application/force-download");
             res.setContentLength((int) file.length());
             res.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");
@@ -432,7 +432,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             fin.close();
             out.flush();
             out.close();
-            context.responseComplete();
+            facesContext.responseComplete();
             log.info("File made available for download");
         } catch (Exception e) {
             log.error("Error: {}, when dowload file: {}", e.getMessage(), file.getAbsolutePath());
