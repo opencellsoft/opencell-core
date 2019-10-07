@@ -302,11 +302,11 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    public EntityCustomizationResponseDto listELFiltered(String appliesTo, String entityCode) {
+    public EntityCustomizationResponseDto listELFiltered(String appliesTo, String entityCode, Long id) {
         EntityCustomizationResponseDto result = new EntityCustomizationResponseDto();
 
         try {
-            result.setEntityCustomization(customEntityTemplateApi.listELFiltered(appliesTo, entityCode));
+            result.setEntityCustomization(customEntityTemplateApi.listELFiltered(appliesTo, entityCode, id));
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());
