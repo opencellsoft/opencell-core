@@ -1335,7 +1335,38 @@
         <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="billing_invoice"
                                  constraintName="fk_invoice_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="ar_payment_token" />
+    </changeSet>                          
 
+   	<changeSet id="#4606_260919" author="AbdelmounaimAkadid"> 	
+     	<addColumn tableName="billing_subscription">
+            <column name="minimum_invoice_sub_category_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="billing_subscription" constraintName="fk_billing_subscription_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+            
+        <addColumn tableName="cat_offer_template">
+            <column name="minimum_invoice_sub_category_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="cat_offer_template" constraintName="fk_billing_cat_offer_template_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+      
+        <addColumn tableName="billing_billing_account">
+            <column name="minimum_invoice_sub_category_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="billing_billing_account" constraintName="fk_billing_billing_account_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+          
+        <addColumn tableName="billing_service_instance">
+            <column name="minimum_invoice_sub_category_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="billing_service_instance" constraintName="fk_billing_service_instance_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+            
+        <addColumn tableName="cat_service_template">
+            <column name="minimum_invoice_sub_category_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="cat_service_template" constraintName="fk_billing_cat_service_template_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
     </changeSet>
     
 </databaseChangeLog>
