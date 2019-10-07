@@ -47,7 +47,9 @@ import org.meveo.model.admin.SecuredEntity;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "adm_role_seq"), })
 @NamedQueries({ @NamedQuery(name = "Role.getAllRoles", query = "select r from org.meveo.model.security.Role r LEFT JOIN r.permissions p", hints = {
-        @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+        @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+				@NamedQuery(name = "Role.getRolesWithSecuredEntities", query = "Select r from Role r Where r.name IN (:currentUserRoles) And size(r.securedEntities) > 0", hints = {
+				        @QueryHint(name = "org.hibernate.cacheable", value = "true")})})
 public class Role extends BaseEntity {
 
     private static final long serialVersionUID = -2309961042891712685L;
