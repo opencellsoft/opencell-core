@@ -105,7 +105,7 @@ public interface EntityCustomizationWs extends IBaseWs {
 	CustomEntityTemplatesResponseDto listEntityTemplates(@WebParam(name = "customEntityTemplateCode") String customEntityTemplateCode);
 	
 	@WebMethod
-	EntityCustomizationResponseDto listELFiltered(@WebParam(name = "appliesTo") String appliesTo, @WebParam(name = "entityCode") String entityCode);
+	EntityCustomizationResponseDto listELFiltered(@WebParam(name = "appliesTo") String appliesTo, @WebParam(name = "entityCode") String entityCode, @WebParam(name="entityId") Long id);
 
 	@WebMethod
 	ActionStatus executeAction(@WebParam(name = "actionCode") String actionCode,

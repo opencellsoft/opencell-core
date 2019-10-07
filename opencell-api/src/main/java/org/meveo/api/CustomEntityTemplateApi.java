@@ -344,7 +344,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
      * @throws MissingParameterException when there is a missing parameter
      * @throws BusinessException business logic is violated
      */
-	public EntityCustomizationDto listELFiltered(String appliesTo, String entityCode)
+	public EntityCustomizationDto listELFiltered(String appliesTo, String entityCode, Long entityId)
 			throws MissingParameterException, BusinessException {
 		EntityCustomizationDto result = new EntityCustomizationDto();
 		log.debug("IPIEL: listELFiltered");
@@ -352,7 +352,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 		if (StringUtils.isBlank(appliesTo)) {
 			missingParameters.add("appliesTo");
 		}
-		if (StringUtils.isBlank(entityCode)) {
+		if (StringUtils.isBlank(entityCode) && entityId == null) {
 			missingParameters.add("entityCode");
 		}
 
@@ -370,8 +370,10 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 			}
 		}
 
+		String key=entityId!=null ? "id" : "code";
+		Object value=entityId!=null?entityId:entityCode;
 		// search for custom field entity filtered by type and code
-		ICustomFieldEntity entityInstance = customEntityTemplateService.findByClassAndCode(entityClass, entityCode);
+		ICustomFieldEntity entityInstance = customEntityTemplateService.findByClassAndKeyValue(entityClass, key, value);
 
 		// custom fields that applies to an entity type, eg. OFFER
 		Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo);
