@@ -33,6 +33,11 @@ public class PDFDocumentRequestDto extends BaseEntityDto {
     
     /** The absolut paths. */
     private boolean absolutePaths;
+
+    /**
+     * If true the pdf form is flattened and be a read-only pdf
+     */
+    private Boolean flattened;
     
     
     /**
@@ -136,5 +141,24 @@ public class PDFDocumentRequestDto extends BaseEntityDto {
      */
     public void setCombineFiles(boolean combineFiles) {
         this.combineFiles = combineFiles;
+    }
+
+    /**
+     *
+     * @return flattened flag
+     */
+    public Boolean isFlattened() {
+        if(flattened == null){
+            return true;
+        }
+        return flattened;
+    }
+
+    /**
+     * Sets the flattened flag
+     * @param flattened flattened flag
+     */
+    public void setFlattened(Boolean flattened) {
+        this.flattened = flattened;
     }
 }
