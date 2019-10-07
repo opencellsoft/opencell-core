@@ -1503,5 +1503,10 @@
 			<column name="uuid" type="varchar(60)" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="#4640_071019" author="Mohammed_EL-AZZOUZI">
+       <addNotNullConstraint tableName="billing_subscription" 
+       columnName="end_of_term_action" columnDataType="varchar(10)"/>
+    </changeSet>
 
 </databaseChangeLog>
