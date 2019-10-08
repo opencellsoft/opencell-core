@@ -44,10 +44,17 @@ public class CustomFieldTemplateApi extends BaseApi {
 
     @Inject
     private CustomizedEntityService customizedEntityService;
-
+    
     public void create(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {
+        create(postData, appliesTo, true);
+    }
 
-        if (StringUtils.isBlank(postData.getCode())) {
+    public void createWithoutUniqueConstraint(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {
+        create(postData, appliesTo, false);
+    }
+
+	private void create(CustomFieldTemplateDto postData, String appliesTo, Boolean updateUniqueConstraint) {
+		if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
         if (StringUtils.isBlank(postData.getDescription())) {
@@ -114,9 +121,8 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         CustomFieldTemplate cft = fromDTO(postData, appliesTo, null);
-        customFieldTemplateService.create(cft);
-
-    }
+        customFieldTemplateService.create(cft, updateUniqueConstraint);
+	}
 
     public void update(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {
 
