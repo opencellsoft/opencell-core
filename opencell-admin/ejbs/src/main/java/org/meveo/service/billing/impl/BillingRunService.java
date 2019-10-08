@@ -177,23 +177,26 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             if (preferedPaymentMethod != null) {
                 paymentMethodEnum = preferedPaymentMethod.getPaymentType();
             }
-            switch (paymentMethodEnum) {
-            case CHECK:
-                checkBANumber++;
-                break;
-            case DIRECTDEBIT:
-                directDebitBANumber++;
-                break;
-            case WIRETRANSFER:
-                wiretransferBANumber++;
-                break;
+            // avoiding NPE
+            if (paymentMethodEnum != null) {
+                switch (paymentMethodEnum) {
+                case CHECK:
+                    checkBANumber++;
+                    break;
+                case DIRECTDEBIT:
+                    directDebitBANumber++;
+                    break;
+                case WIRETRANSFER:
+                    wiretransferBANumber++;
+                    break;
 
-            case CARD:
-                creditDebitCardBANumber++;
-                break;
+                case CARD:
+                    creditDebitCardBANumber++;
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
+                }
             }
 
         }
@@ -207,6 +210,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             if (preferedPaymentMethod != null) {
                 paymentMethodEnum = preferedPaymentMethod.getPaymentType();
             }
+
+            // avoiding NPE
             if (paymentMethodEnum != null) {
                 switch (paymentMethodEnum) {
                 case CHECK:

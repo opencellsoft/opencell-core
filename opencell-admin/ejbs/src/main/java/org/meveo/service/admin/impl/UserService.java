@@ -48,7 +48,7 @@ public class UserService extends PersistenceService<User> {
     @RolesAllowed({ "userManagement", "userSelfManagement" })
     public void create(User user) throws UsernameAlreadyExistsException, BusinessException {
 
-        if (isUsernameExists(user.getUserName())) {
+        if (findByUsername(user.getUserName()) != null) {
             throw new UsernameAlreadyExistsException(user.getUserName());
         }
 

@@ -62,14 +62,11 @@ import org.meveo.model.billing.Subscription;
 
         @NamedQuery(name = "EDR.countNbrEdrByStatus", query = "select e.status, count(e.id) from EDR e group by e.status"),
 
-        @NamedQuery(name = "EDR.listOpenEdrBetweenTwoDate", query = "SELECT e from EDR e where e.status='OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate order by e.eventDate desc"),
-
         @NamedQuery(name = "EDR.updateWalletOperationForSafeDeletion", query = "update WalletOperation wo set wo.edr=NULL where wo.edr in (select e FROM EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
         @NamedQuery(name = "EDR.updateRatedTransactionForSafeDeletion", query = "update RatedTransaction rt set rt.edr=NULL where rt.edr in (select e FROM EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
         @NamedQuery(name = "EDR.deleteNotOpenEdrBetweenTwoDate", query = "delete from EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate"),
 
-        @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN' where e.status='REJECTED' and e.id in :ids") })
-
+        @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN' where e.status='REJECTED' and e.id in :ids") })        
 public class EDR extends BaseEntity {
 
     private static final long serialVersionUID = 1278336655583933747L;

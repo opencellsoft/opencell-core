@@ -118,7 +118,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
      */
     private JobExecutionResultImpl exportEDR(JobExecutionResultImpl result, ParamBean param, File dir, Date firstTransactionDate, Date lastTransactionDate) throws JAXBException {
         String timestamp = sdf.format(new Date());
-        List<EDR> edrList = edrService.getOpenEdrsBetweenTwoDates(firstTransactionDate, lastTransactionDate);
+        List<EDR> edrList = edrService.getNotOpenedEdrsBetweenTwoDates(firstTransactionDate, lastTransactionDate);
         EDRs edrs = edrsToDto(edrList, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance().getId());
         int nbItems = edrs.getEdrs() != null ? edrs.getEdrs().size() : 0;
         result.setNbItemsToProcess(nbItems);
@@ -140,7 +140,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     private JobExecutionResultImpl exportWalletOperation(JobExecutionResultImpl result, ParamBean param, File dir, Date firstTransactionDate, Date lastTransactionDate)
             throws JAXBException {
         String timestamp = sdf.format(new Date());
-        List<WalletOperation> walletOperations = walletOperationService.getOpenWalletOperationBetweenTwoDates(firstTransactionDate, lastTransactionDate);
+        List<WalletOperation> walletOperations = walletOperationService.getNotOpenedWalletOperationBetweenTwoDates(firstTransactionDate, lastTransactionDate);
         WalletOperations walletOperationDtos = walletOperationsToDto(walletOperations, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance().getId());
         int nbItems = walletOperationDtos.getWalletOperations() != null ? walletOperationDtos.getWalletOperations().size() : 0;
         result.setNbItemsToProcess(nbItems);
@@ -163,7 +163,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     private JobExecutionResultImpl exportRatedTransaction(JobExecutionResultImpl result, ParamBean param, File dir, Date firstTransactionDate, Date lastTransactionDate)
             throws JAXBException {
         String timestamp = sdf.format(new Date());
-        List<RatedTransaction> ratedTransactions = ratedTransactionService.getOpenRatedTransactionBetweenTwoDates(firstTransactionDate, lastTransactionDate);
+        List<RatedTransaction> ratedTransactions = ratedTransactionService.getNotOpenedRatedTransactionBetweenTwoDates(firstTransactionDate, lastTransactionDate);
         RatedTransactions ratedTransactionDtos = ratedTransactionToDto(ratedTransactions, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"),
             result.getJobInstance().getId());
         int nbItems = ratedTransactionDtos.getRatedTransactions() != null ? ratedTransactionDtos.getRatedTransactions().size() : 0;

@@ -975,12 +975,6 @@
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}meveo_module_item_seq values(1)</sql>
-        <createTable tableName="ftp_transferred_file_seq">
-            <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="ftp_transferred_file_seq_pk" />
-            </column>
-        </createTable>
-        <sql>insert into ${db.schema.adapted}ftp_transferred_file_seq values(1)</sql>
         <createTable tableName="cat_offer_template_category_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_offer_template_category_seq_pk" />

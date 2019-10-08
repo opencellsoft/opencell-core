@@ -18,16 +18,21 @@
  */
 package org.meveo.admin.action.finance;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Named;
+
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.finance.AccountingWriting;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
+import org.meveo.model.payments.MatchingAmount;
+import org.meveo.model.payments.MatchingCode;
+import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.RecordedInvoice;
-
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Named;
-import java.util.List;
 
 /**
  * Standard backing bean for {@link AccountingWriting}
@@ -84,18 +89,28 @@ public class AccountingWritingListBean extends AccountingWritingBean {
 	}
 	
 	/**
-	 * get Invoice number linked to the AO if it's a Recorded invoice
-	 * 
-	 * @param accountOperation AO
-	 * @return invoice number
-	 */
-	public Invoice getInvoice(AccountOperation accountOperation) {
-        if (isRecordedInvoice(accountOperation)) {
-        	RecordedInvoice recordedInvoice = (RecordedInvoice) accountOperation;
-        	return recordedInvoice.getInvoices().size() > 0 ? recordedInvoice.getInvoices().get(0) : null;
-        } else {
-        	return null;
+     * Get invoices linked to the AO
+     * 
+     * @param accountOperation AO
+     * @return invoices
+     */
+    public List<Invoice> getInvoices(AccountOperation accountOperation) {
+        if (accountOperation instanceof RecordedInvoice) {
+            RecordedInvoice recordedInvoice = (RecordedInvoice) accountOperation;
+            return recordedInvoice.getInvoices();
+        } else if (accountOperation instanceof Payment || accountOperation instanceof OtherCreditAndCharge) {
+            List<MatchingAmount> listMatchingAmount = accountOperation.getMatchingAmounts();
+            for(MatchingAmount ma : listMatchingAmount) {
+                MatchingCode mc = ma.getMatchingCode();
+                for(MatchingAmount ma2 : mc.getMatchingAmounts()) {
+                    AccountOperation ao = ma2.getAccountOperation();
+                    if(ao instanceof RecordedInvoice) {
+                        return ao.getInvoices();
+                    }
+                }
+            }
         }
+        return new ArrayList<Invoice>();
     }
 	
 	/**

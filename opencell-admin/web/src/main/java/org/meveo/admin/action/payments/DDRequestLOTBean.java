@@ -44,6 +44,9 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
 /**
  * Standard backing bean for {@link DDRequestLOT} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * 
+ * @author anasseh
  */
 @Named
 @ViewScoped
@@ -91,6 +94,8 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
             ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
             ddrequestLotOp.setDdRequestBuilder(entity.getDdRequestBuilder());
             ddrequestLotOp.setDdrequestLOT(entity);
+            ddrequestLotOp.setPaymentOrRefundEnum(entity.getPaymentOrRefundEnum());
+            ddrequestLotOp.setRecurrent(Boolean.FALSE);
             ddrequestLotOpService.create(ddrequestLotOp);
             messages.info(new BundleKey("messages", "ddrequestLot.generateFileSuccessful"));
         } catch (Exception e) {
@@ -113,6 +118,8 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
             ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
             ddrequestLotOp.setDdRequestBuilder(entity.getDdRequestBuilder());
             ddrequestLotOp.setDdrequestLOT(entity);
+            ddrequestLotOp.setPaymentOrRefundEnum(entity.getPaymentOrRefundEnum());
+            ddrequestLotOp.setRecurrent(Boolean.FALSE);
             ddrequestLotOpService.create(ddrequestLotOp);
             messages.info(new BundleKey("messages", "ddrequestLot.doPaymentsSuccessful"));
         } catch (Exception e) {
@@ -214,4 +221,13 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
         }
         return false;
     }
+    
+    public boolean canCreatePayments() {
+        if (entity != null && !entity.isPaymentCreated() && !StringUtils.isBlank(entity.getFileName())) {
+            return true;
+        }
+        return false;
+    }
+    
+    
 }

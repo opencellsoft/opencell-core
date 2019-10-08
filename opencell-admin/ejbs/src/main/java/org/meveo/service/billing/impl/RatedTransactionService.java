@@ -198,40 +198,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public RatedTransaction createRatedTransaction(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
 
-//        WalletInstance wallet = walletService.retrieveIfNotManaged(walletOperation.getWallet());
-//
-//        ChargeInstance chargeInstance = null;
-//
-//        String inputUnitDescription = walletOperation.getInputUnitDescription();
-//        if (inputUnitDescription == null) {
-//            chargeInstance = genericChargeInstanceService.retrieveIfNotManaged(walletOperation.getChargeInstance());
-//            inputUnitDescription = chargeInstance.getChargeTemplate().getInputUnitDescription();
-//        }
-//        String ratingUnitDescription = walletOperation.getRatingUnitDescription();
-//        if (ratingUnitDescription == null) {
-//            if (chargeInstance == null) {
-//                chargeInstance = genericChargeInstanceService.retrieveIfNotManaged(walletOperation.getChargeInstance());
-//            }
-//            ratingUnitDescription = chargeInstance.getChargeTemplate().getRatingUnitDescription();
-//        }
-//
-//        RatedTransaction ratedTransaction = new RatedTransaction(walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(),
-//            walletOperation.getUnitAmountWithTax(), walletOperation.getUnitAmountTax(), walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(),
-//            walletOperation.getAmountWithTax(), walletOperation.getAmountTax(), RatedTransactionStatusEnum.OPEN, wallet, wallet.getUserAccount().getBillingAccount(),
-//            wallet.getUserAccount(), walletOperation.getInvoiceSubCategory(), walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(),
-//            walletOperation.getParameterExtra(), walletOperation.getOrderNumber(), walletOperation.getSubscription(), inputUnitDescription, ratingUnitDescription,
-//            walletOperation.getPriceplan(), walletOperation.getOfferTemplate(), walletOperation.getEdr(), walletOperation.getCode(), walletOperation.getDescription(),
-//            walletOperation.getStartDate(), walletOperation.getEndDate(), walletOperation.getSeller(), walletOperation.getTax(), walletOperation.getTaxPercent(),
-//            walletOperation.getServiceInstance());
-
         RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
-
+        walletOperation.changeStatus(WalletOperationStatusEnum.TREATED);
+        
         if (!isVirtual) {
             create(ratedTransaction);
         }
-
-        walletOperation.changeStatus(WalletOperationStatusEnum.TREATED);
-
         return ratedTransaction;
     }
 
@@ -1575,9 +1547,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param lastTransactionDate last Transaction Date
      * @return All open rated transaction between two date.
      */
-    public List<RatedTransaction> getOpenRatedTransactionBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
-        return getEntityManager().createNamedQuery("RatedTransaction.listOpenBetweenTwoDates", RatedTransaction.class).setParameter("firstTransactionDate", firstTransactionDate)
-            .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+    public List<RatedTransaction> getNotOpenedRatedTransactionBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate){
+        return getEntityManager().createNamedQuery("RatedTransaction.listNotOpenedBetweenTwoDates", RatedTransaction.class).setParameter("firstTransactionDate",firstTransactionDate)
+                .setParameter("lastTransactionDate",lastTransactionDate)
+                .getResultList();
+
     }
 
     /**

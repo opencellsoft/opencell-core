@@ -1367,8 +1367,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * @param lastTransactionDate last operation date
      * @return a list of Wallet Operation
      */
-    public List<WalletOperation> getOpenWalletOperationBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
-        return getEntityManager().createNamedQuery("WalletOperation.listOpenWObetweenTwoDates", WalletOperation.class).setParameter("firstTransactionDate", firstTransactionDate)
+    public List<WalletOperation> getNotOpenedWalletOperationBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate){
+        return getEntityManager().createNamedQuery("WalletOperation.listNotOpenedWObetweenTwoDates", WalletOperation.class).setParameter("firstTransactionDate",firstTransactionDate)
             .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
     }
 

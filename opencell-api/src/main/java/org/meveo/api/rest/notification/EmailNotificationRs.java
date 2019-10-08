@@ -49,7 +49,7 @@ public interface EmailNotificationRs extends IBaseRs {
      * Find a email notification with a given code
      * 
      * @param notificationCode The email notification's code
-     * @return
+     * @return  Email Notification Response data
      */
     @GET
     @Path("/")

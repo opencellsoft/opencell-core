@@ -184,6 +184,8 @@ public class InvoiceApi extends BaseApi {
 
         if (invoice.isDraft()) {
             invoiceService.cancelInvoice(invoice);
+        } else {
+        	invoiceService.update(invoice);
         }
 
         return response;

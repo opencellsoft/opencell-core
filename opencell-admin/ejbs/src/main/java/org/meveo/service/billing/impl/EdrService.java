@@ -208,14 +208,14 @@ public class EdrService extends PersistenceService<EDR> {
     }
 
     /**
-     * Gets All open EDR between two Date.
+     * Gets All not open EDR between two Date.
      *
      * @param firstTransactionDate first Transaction Date
      * @param lastTransactionDate last Transaction Date
      * @return All open EDR between two Date
      */
-    public List<EDR> getOpenEdrsBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
-        return getEntityManager().createNamedQuery("EDR.listOpenEdrBetweenTwoDate", EDR.class).setParameter("firstTransactionDate", firstTransactionDate)
+    public List<EDR> getNotOpenedEdrsBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
+        return getEntityManager().createNamedQuery("EDR.getNotOpenedEdrBetweenTwoDate", EDR.class).setParameter("firstTransactionDate", firstTransactionDate)
             .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
     }
 
