@@ -17,17 +17,17 @@
 			</p:breadCrumb>
 		</h:form>
 		<hftl:formPanel id="formPanel" label="#{messages['ratedTransaction.panel']}" backingBean="#{ratedTransactionBean}" showDeleteButton="false" showBackButton="true"
-			showFormButtons="#{ratedTransactionBean.entity.processingStatus.invoice.invoiceNumber!=null ? false : true}">
+			showFormButtons="#{ratedTransactionBean.entity.invoice.invoiceNumber!=null ? false : true}">
 			<hftl:formField label="#{messages['BusinessEntity.code']}" field="code" disabled="#{ratedTransactionBean.isBilled()}" />
 			<hftl:formField label="#{messages['BusinessEntity.description']}" field="description" disabled="#{ratedTransactionBean.isBilled()}" />
 			<hftl:formField id="priceplanSelectId" label="#{messages['ratedTransaction.pricePlan']}" field="priceplan" childField="code" disabled="true" />
 			<hftl:formField id="walletId" label="#{messages['ratedTransaction.wallet']}" field="wallet" childField="code" disabled="true" />
-			<hftl:formField label="#{messages['ratedTransaction.invoice']}" id="invoice" field="processingStatus" childField="invoice" edit="false" />
+			<hftl:formField label="#{messages['ratedTransaction.invoice']}" id="invoice" field="invoice" edit="false" />
 			<hftl:decorateFormField label="#{messages['ratedTransaction.invoice']}">
-				<h:outputText value="#{ratedTransactionBean.entity.processingStatus.invoice.getInvoiceNumberOrTemporaryNumber()}" styleClass="field-value"/>
+				<h:outputText value="#{ratedTransactionBean.entity.invoice.getInvoiceNumberOrTemporaryNumber()}" styleClass="field-value"/>
 			</hftl:decorateFormField>
 			<hftl:formField label="#{messages['billingAccount.billingAccountPanel']}" id="billingAccountId" field="billingAccount" childField="code" disabled="true" />
-			<hftl:formField label="#{messages['billingRun.panel']}" id="billingRunId" field="processingStatus" childField="billingRun" edit="false" />
+			<hftl:formField label="#{messages['billingRun.panel']}" id="billingRunId" field="billingRun" edit="false" />
 			<hftl:formField label="#{messages['ratedTransaction.edr']}" id="edrId" field="edr" childField="id" disabled="true" />
 			<hftl:formField label="#{messages['ratedTransaction.unitAmountWithoutTax']}" field="unitAmountWithoutTax" converter="bigDecimal4DigitsConverter" disabled="#{ratedTransactionBean.isBilled()}" />
 			<hftl:formField label="#{messages['ratedTransaction.unitAmountTax']}" field="unitAmountTax" converter="bigDecimal4DigitsConverter" disabled="#{ratedTransactionBean.isBilled()}" />
@@ -36,7 +36,7 @@
 			<hftl:formField label="#{messages['ratedTransaction.amountWithoutTax']}" field="amountWithoutTax" converter="bigDecimal4DigitsConverter" disabled="#{ratedTransactionBean.isBilled()}" />
 			<hftl:formField label="#{messages['ratedTransaction.amountTax']}" field="amountTax" converter="bigDecimal4DigitsConverter" disabled="#{ratedTransactionBean.isBilled()}" />
 			<hftl:formField label="#{messages['ratedTransaction.amountWithTax']}" field="amountWithTax" converter="bigDecimal4DigitsConverter" disabled="#{ratedTransactionBean.isBilled()}" />
-			<hftl:formField label="#{messages['ratedTransaction.status']}" field="processingStatus" childField="status" disabled="#{ratedTransactionBean.isBilled()}" />
+			<hftl:formField label="#{messages['ratedTransaction.status']}" field="status" disabled="#{ratedTransactionBean.isBilled()}" />
 			<hftl:formField label="#{messages['ratedTransaction.param1']}" field="parameter1" disabled="#{ratedTransactionBean.isBilled()}" />
 			<hftl:formField label="#{messages['ratedTransaction.param2']}" field="parameter2" disabled="#{ratedTransactionBean.isBilled()}" />
 			<hftl:formField label="#{messages['ratedTransaction.param3']}" field="parameter3" disabled="#{ratedTransactionBean.isBilled()}" />
@@ -46,7 +46,7 @@
 
 			<ui:param name="buttons" value="true" />
 			<ui:define name="buttons">
-				<p:button id="backButton" value="#{messages['action.back']}" outcome="#{ratedTransactionBean.back()}" rendered="#{ratedTransactionBean.entity.processingStatus.invoice.invoiceNumber!=null}">
+				<p:button id="backButton" value="#{messages['action.back']}" outcome="#{ratedTransactionBean.back()}" rendered="#{ratedTransactionBean.entity.invoice.invoiceNumber!=null}">
 					<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 				</p:button>
 			</ui:define>

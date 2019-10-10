@@ -44,8 +44,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.catalog.impl.TaxService;
 
 /**
  * Service for Invoice subcategory country entity management and applicable tax determination
@@ -56,13 +54,7 @@ import org.meveo.service.catalog.impl.TaxService;
 public class InvoiceSubCategoryCountryService extends PersistenceService<InvoiceSubcategoryCountry> {
 
     @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
-
-    @Inject
     private ResourceBundle resourceBundle;
-
-    @Inject
-    private TaxService taxService;
 
     @Override
     public void create(InvoiceSubcategoryCountry invoiceSubcategoryCountry) throws BusinessException {
@@ -410,6 +402,7 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         return tax;
     }
 
+    @SuppressWarnings("deprecation")
     private Tax evaluateTaxCodeEL(String expression, UserAccount userAccount, BillingAccount billingAccount, Invoice invoice) throws BusinessException {
         Tax result = null;
         if (StringUtils.isBlank(expression)) {

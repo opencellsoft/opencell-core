@@ -6068,7 +6068,6 @@ import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
-import org.meveo.model.rating.EDRProcessingStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -6121,15 +6120,15 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 				edr.setAccessCode(accessPoint.getAccessUserId());
 				edr.setQuantity(cdr.getQuantity());
 				edr.setSubscription(accessPoint.getSubscription());
-				edrService.create(edr);
+				
 				if("VOICE".equals(cdr.getParam1())){
 				    Subscription sub = subService.findById(accessPoint.getSubscription().getId());
 				    Customer cust= sub.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
 				    //increment CF value
-
-				    EDRProcessingStatus processingStatus = new EDRProcessingStatus(edr, EDRStatusEnum.MEDIATING, null);
-				    edrService.getEntityManager().persist(processingStatus);
+                   
+                   edr.setStatus(EDRStatusEnum.MEDIATING);
 				}
+                edrService.create(edr);
 			}
 			log.info("Created EDR OK");
 		}

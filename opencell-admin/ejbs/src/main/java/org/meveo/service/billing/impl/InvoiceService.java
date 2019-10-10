@@ -1965,14 +1965,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Create pending Rated transactions and generate invoice for the billingAccount. DOES assign an invoice number AND create XML/PDF files or account operation if requested.
      * 
-     * @param entity Entity to invoice
+     * @param entityToInvoice Entity to invoice
      * @param generateInvoiceRequestDto Generate invoice request
      * @param ratedTxFilter A filter to select rated transactions
      * @param isDraft Is it a draft invoice
      * @return A list of generated invoices
      * @throws BusinessException General business exception
      */
-    public List<Invoice> generateInvoice(IBillableEntity entity, GenerateInvoiceRequestDto generateInvoiceRequestDto, Filter ratedTxFilter, boolean isDraft,
+    public List<Invoice> generateInvoice(IBillableEntity entityToInvoice, GenerateInvoiceRequestDto generateInvoiceRequestDto, Filter ratedTxFilter, boolean isDraft,
             CustomFieldValues customFieldValues) throws BusinessException {
 
         boolean produceXml = (generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())
@@ -1980,7 +1980,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
 
-        List<Invoice> invoices = invoiceService.createInvoice(entity, generateInvoiceRequestDto, ratedTxFilter, isDraft);
+        List<Invoice> invoices = invoiceService.createInvoice(entityToInvoice, generateInvoiceRequestDto, ratedTxFilter, isDraft);
 
         List<Invoice> invoicesWNumber = new ArrayList<Invoice>();
         for (Invoice invoice : invoices) {
@@ -2060,7 +2060,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param produceXml To produce xml invoice file
      * @param producePdf To produce pdf invoice file
      * @param generateAO To generate Account operations
-     * @param invoiceId  id of Invoice to operate on
+     * @param invoiceId id of Invoice to operate on
      * @param isDraft Is it a draft invoice
      * @throws BusinessException General business exception
      * @throws InvoiceExistException Invoice already exist exception
@@ -3073,40 +3073,40 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 } else {
                     discountAmount = discountValue.negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
                 }
-                
-                if (!((discountAmount.compareTo(BigDecimal.ZERO) < 0 && amount.compareTo(BigDecimal.ZERO) < 0) 
-                            || (discountAmount.compareTo(BigDecimal.ZERO) > 0 && amount.compareTo(BigDecimal.ZERO) > 0))) {
-                    if(discountAmount.abs().compareTo(amount.abs()) > 0) {
+
+                if (!((discountAmount.compareTo(BigDecimal.ZERO) < 0 && amount.compareTo(BigDecimal.ZERO) < 0)
+                        || (discountAmount.compareTo(BigDecimal.ZERO) > 0 && amount.compareTo(BigDecimal.ZERO) > 0))) {
+                    if (discountAmount.abs().compareTo(amount.abs()) > 0) {
                         discountAmount = amount.negate();
-            }
+                    }
                 }
 
                 if (discountAmount != null && discountAmount.compareTo(BigDecimal.ZERO) != 0) {
-                discountAggregate = new SubCategoryInvoiceAgregate(scAggregate.getInvoiceSubCategory(), billingAccount, scAggregate.getUserAccount(), scAggregate.getWallet(),
-                    scAggregate.getTax(), invoice, null);
+                    discountAggregate = new SubCategoryInvoiceAgregate(scAggregate.getInvoiceSubCategory(), billingAccount, scAggregate.getUserAccount(), scAggregate.getWallet(),
+                        scAggregate.getTax(), invoice, null);
 
-                discountAggregate.updateAudit(currentUser);
-                discountAggregate.setItemNumber(scAggregate.getItemNumber());
-                discountAggregate.setCategoryInvoiceAgregate(cAggregate);
+                    discountAggregate.updateAudit(currentUser);
+                    discountAggregate.setItemNumber(scAggregate.getItemNumber());
+                    discountAggregate.setCategoryInvoiceAgregate(cAggregate);
 
-                discountAggregate.setDiscountAggregate(true);
-                if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-                    discountAggregate.setDiscountPercent(discountValue);
+                    discountAggregate.setDiscountAggregate(true);
+                    if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+                        discountAggregate.setDiscountPercent(discountValue);
+                    }
+                    discountAggregate.setDiscountPlanItem(discountPlanItem);
+                    discountAggregate.setDescription(discountPlanItem.getCode());
+
+                    amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, scAggregate.getTaxPercent(), isEnterprise, invoiceRounding,
+                        invoiceRoundingMode.getRoundingMode());
+
+                    discountAggregate.setAmountWithoutTax(amounts[0]);
+                    discountAggregate.setAmountWithTax(amounts[1]);
+                    discountAggregate.setAmountTax(amounts[2]);
+
+                    invoice.addInvoiceAggregate(discountAggregate);
+                    return discountAggregate;
                 }
-                discountAggregate.setDiscountPlanItem(discountPlanItem);
-                discountAggregate.setDescription(discountPlanItem.getCode());
-
-                amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, scAggregate.getTaxPercent(), isEnterprise, invoiceRounding,
-                    invoiceRoundingMode.getRoundingMode());
-
-                discountAggregate.setAmountWithoutTax(amounts[0]);
-                discountAggregate.setAmountWithTax(amounts[1]);
-                discountAggregate.setAmountTax(amounts[2]);
-
-                invoice.addInvoiceAggregate(discountAggregate);
-                return discountAggregate;
             }
-        }
         }
         return null;
     }
@@ -3125,7 +3125,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (computedDiscount == null || amount == null) {
             return BigDecimal.ZERO;
         }
-        
+
         return computedDiscount;
     }
 
@@ -3436,11 +3436,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             meveoRatedTransaction.setParameter3(ratedTransactionDto.getParameter3());
                         }
 
-                        meveoRatedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
+                        meveoRatedTransaction.changeStatus(RatedTransactionStatusEnum.BILLED);
                         meveoRatedTransaction.setInvoice(invoice);
                         meveoRatedTransaction.setInvoiceAgregateF(invoiceAgregateSubcat);
 
-                        ratedTransactionService.create(meveoRatedTransaction);
+                        invoiceAgregateSubcat.addRatedTransaction(meveoRatedTransaction);
 
                         subCatAmountWithoutTax = subCatAmountWithoutTax.add(amountWithoutTax);
                         subCatAmountTax = subCatAmountTax.add(amountTax);
@@ -3460,6 +3460,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         ratedTransaction.changeStatus(RatedTransactionStatusEnum.BILLED);
                         ratedTransaction.setInvoice(invoice);
                         ratedTransaction.setInvoiceAgregateF(invoiceAgregateSubcat);
+                        invoiceAgregateSubcat.addRatedTransaction(ratedTransaction);
                     }
                 }
 
@@ -3472,12 +3473,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 } else {
                     // we add subCatAmountWithoutTax, in the case if there any opened RT to include
-                    BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(subCatInvAgrDTO.getAmountWithoutTax(), subCatInvAgrDTO.getAmountWithTax(),
-                        tax.getPercent(), isEnterprise, invoiceRounding, invoiceRoundingMode.getRoundingMode());
+                    BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(subCatInvAgrDTO.getAmountWithoutTax(), subCatInvAgrDTO.getAmountWithTax(), tax.getPercent(),
+                        isEnterprise, invoiceRounding, invoiceRoundingMode.getRoundingMode());
 
                     invoiceAgregateSubcat.setAmountWithoutTax(amounts[0]);
                     invoiceAgregateSubcat.setAmountWithTax(amounts[1]);
                     invoiceAgregateSubcat.setAmountTax(amounts[2]);
+                }
+
+                // Save invoice subcategory and associate rated transactions
+                List<RatedTransaction> ratedTransactions = invoiceAgregateSubcat.getRatedtransactionsToAssociate();
+                em.persist(invoiceAgregateSubcat);
+                for (RatedTransaction ratedTransaction : ratedTransactions) {
+                    if (ratedTransaction.getId() == null) {
+                        em.persist(ratedTransaction);
+                    } else {
+                        em.merge(ratedTransaction);
+                    }
                 }
 
                 TaxInvoiceAgregate invoiceAgregateTax = null;
