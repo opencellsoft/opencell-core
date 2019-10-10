@@ -4,25 +4,19 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.meveo.apiv2.generic.ImmutableGenericPaginatedResource;
 import org.meveo.apiv2.services.generic.JsonGenericApiMapper.JsonGenericMapper;
-import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.Channel;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
-import org.meveo.model.crm.custom.CustomFieldValue;
-import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.intcrm.AddressBook;
-import org.meveo.model.order.Order;
-import org.meveo.model.order.OrderItem;
-import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
@@ -32,7 +26,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,7 +37,6 @@ import java.io.IOException;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +47,7 @@ public class JsonGenericMapperTest {
 
     @Before
     public void setUp() {
-        jsonGenericMapper = new JsonGenericMapper();
+        jsonGenericMapper = new JsonGenericMapper(null);
     }
 
     @Test
@@ -228,6 +220,60 @@ public class JsonGenericMapperTest {
         String transform = jsonGenericMapper.toJson(fields, Name.class, name);
         assertThat(transform).isEqualTo("{\"title\":{\"code\":\"MR.\"},\"firstName\":\"aaa\",\"lastName\":\"bbb\"}");
 
+    }
+
+    @Test
+    public void should_return_only_ids_of_referenced_entities_code() {
+        JsonGenericMapper jsonGenericMapper1 = new JsonGenericMapper(null);
+        //Given
+        OfferTemplate offerTemplate=new OfferTemplate();
+        OfferTemplate offerTemplate1=new OfferTemplate();
+        OfferTemplate offerTemplate2=new OfferTemplate();
+
+        Channel channel1 = new Channel();
+        channel1.setId(1l);
+        channel1.setCode("code-ch-1");
+        Channel channel2 = new Channel();
+        channel2.setId(2l);
+        channel2.setCode("code-ch-2");
+        Channel channel3 = new Channel();
+        channel3.setId(3l);
+        channel3.setCode("code-ch-3");
+
+        offerTemplate.setChannels(Arrays.asList(channel1, channel2, channel3));
+        offerTemplate1.setChannels(Arrays.asList(channel1, channel2, channel3));
+        offerTemplate2.setChannels(Arrays.asList(channel1, channel2, channel3));
+        ImmutableGenericPaginatedResource immutableGenericPaginatedResource = ImmutableGenericPaginatedResource.builder()
+                .total(3l).limit(0l).offset(0l)
+                .addData(offerTemplate, offerTemplate1, offerTemplate2).build();
+        //When
+        HashSet<String> fields = new HashSet<>();
+        fields.addAll(Arrays.asList("channels"));
+        String transform = jsonGenericMapper1.toJson(fields, offerTemplate.getClass(), immutableGenericPaginatedResource);
+        assertThat(transform).isEqualTo("{\"total\":3,\"limit\":0,\"offset\":0,\"data\":[{\"channels\":[1,2,3]},{\"channels\":[1,2,3]},{\"channels\":[1,2,3]}]}");
+    }
+
+    @Test
+    public void should_return_the_fields_of_referenced_entities_code() {
+        HashSet<String> nestedEntities = new HashSet<>();
+        nestedEntities.add("channels");
+        JsonGenericMapper jsonGenericMapper1 = new JsonGenericMapper(nestedEntities);
+        //Given
+        OfferTemplate offerTemplate=new OfferTemplate();
+
+        Channel channel1 = new Channel();
+        channel1.setId(1l);
+        Channel channel2 = new Channel();
+
+        offerTemplate.setChannels(Arrays.asList(channel1, channel2));
+        ImmutableGenericPaginatedResource immutableGenericPaginatedResource = ImmutableGenericPaginatedResource.builder()
+                .total(1l).limit(0l).offset(0l)
+                .addData(offerTemplate).build();
+        //When
+        HashSet<String> fields = new HashSet<>();
+        fields.addAll(Arrays.asList("channels"));
+        String transform = jsonGenericMapper1.toJson(fields, offerTemplate.getClass(), immutableGenericPaginatedResource);
+        assertThat(transform).isEqualTo("{\"total\":1,\"limit\":0,\"offset\":0,\"data\":[{\"channels\":[{\"id\":1,\"historized\":false,\"notified\":false,\"appendGeneratedCode\":false,\"disabled\":false,\"active\":true,\"codeChanged\":false,\"transient\":false},{\"historized\":false,\"notified\":false,\"appendGeneratedCode\":false,\"disabled\":false,\"active\":true,\"codeChanged\":false,\"transient\":true}]}]}");
     }
 
     @Test

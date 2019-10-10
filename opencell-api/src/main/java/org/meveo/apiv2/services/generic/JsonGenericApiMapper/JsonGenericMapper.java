@@ -25,8 +25,8 @@ public class JsonGenericMapper extends ObjectMapper{
     };
     private final SimpleFilterProvider simpleFilterProvider;
 
-    public JsonGenericMapper() {
-        registerModule(new LazyProxyModule());
+    public JsonGenericMapper(HashSet<String> nestedEntities) {
+        registerModule(new GenericModule(nestedEntities));
         setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
         simpleFilterProvider = new SimpleFilterProvider();
