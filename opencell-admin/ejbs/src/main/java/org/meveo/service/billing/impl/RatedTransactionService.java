@@ -165,23 +165,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * Convert Wallet operations to Rated transactions for a given billable entity up to a given date
      * 
-     * @param entity entity to bill
-     * @param invoicingDate invoicing date
-     * @throws BusinessException business exception.
+     * @param entityToInvoice Entity to invoice
+     * @param invoicingDate Invoicing date
+     * @throws BusinessException General business exception.
      */
-    public void createRatedTransaction(IBillableEntity entity, Date invoicingDate) throws BusinessException {
-        List<WalletOperation> walletOps = new ArrayList<WalletOperation>();
-        if (entity instanceof BillingAccount) {
-            BillingAccount billingAccount = billingAccountService.findById(((BillingAccount) entity).getId());
-            List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
-            for (UserAccount ua : userAccounts) {
-                walletOps.addAll(walletOperationService.listToInvoiceByUserAccount(invoicingDate, ua));
-            }
-        } else if (entity instanceof Subscription) {
-            walletOps.addAll(walletOperationService.listToInvoiceBySubscription(invoicingDate, (Subscription) entity));
-        } else if (entity instanceof Order) {
-            walletOps.addAll(walletOperationService.listToInvoiceByOrder(invoicingDate, (Order) entity));
-        }
+    public void createRatedTransaction(IBillableEntity entityToInvoice, Date invoicingDate) throws BusinessException {
+        List<WalletOperation> walletOps = walletOperationService.listToRate(entityToInvoice, invoicingDate);
 
         for (WalletOperation walletOp : walletOps) {
             createRatedTransaction(walletOp, false);
@@ -200,7 +189,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         RatedTransaction ratedTransaction = new RatedTransaction(walletOperation);
         walletOperation.changeStatus(WalletOperationStatusEnum.TREATED);
-        
+
         if (!isVirtual) {
             create(ratedTransaction);
         }
@@ -555,12 +544,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             entity = billingAccountService.findById(entityId);
             billingAccount = (BillingAccount) entity;
             break;
-            
+
         case SUBSCRIPTION:
             entity = subscriptionService.findById(entityId);
             billingAccount = ((Subscription) entity).getUserAccount() != null ? ((Subscription) entity).getUserAccount().getBillingAccount() : null;
             break;
-            
+
         case ORDER:
             entity = orderService.findById(entityId);
             if ((((Order) entity).getUserAccounts() != null) && !((Order) entity).getUserAccounts().isEmpty()) {
@@ -1547,10 +1536,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param lastTransactionDate last Transaction Date
      * @return All open rated transaction between two date.
      */
-    public List<RatedTransaction> getNotOpenedRatedTransactionBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate){
-        return getEntityManager().createNamedQuery("RatedTransaction.listNotOpenedBetweenTwoDates", RatedTransaction.class).setParameter("firstTransactionDate",firstTransactionDate)
-                .setParameter("lastTransactionDate",lastTransactionDate)
-                .getResultList();
+    public List<RatedTransaction> getNotOpenedRatedTransactionBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
+        return getEntityManager().createNamedQuery("RatedTransaction.listNotOpenedBetweenTwoDates", RatedTransaction.class)
+            .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
 
     }
 

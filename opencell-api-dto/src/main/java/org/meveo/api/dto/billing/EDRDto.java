@@ -211,7 +211,7 @@ public class EDRDto extends BusinessEntityDto {
         this.status = e.getStatus();
         this.rejectReason = e.getRejectReason();
         this.created = e.getCreated();
-        this.lastUpdate = e.getLastUpdate();
+        this.lastUpdate = e.getUpdated();
         this.accessCode = e.getAccessCode();
         this.extraParameter = e.getExtraParameter();
     }

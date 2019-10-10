@@ -271,7 +271,7 @@ public class EdrService extends PersistenceService<EDR> {
             edr.setDecimalParam4(dto.getDecimalParam4());
             edr.setDecimalParam5(dto.getDecimalParam5());
             edr.setCreated(dto.getCreated());
-            edr.setLastUpdate(dto.getLastUpdate());
+            edr.setUpdated(dto.getLastUpdate());
             edr.setAccessCode(dto.getAccessCode());
             edr.setExtraParameter(dto.getExtraParameter());
             if (dto.getStatus() != null && dto.getStatus() != EDRStatusEnum.OPEN) {

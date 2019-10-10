@@ -50,9 +50,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -74,42 +74,62 @@ import org.meveo.model.rating.EDR;
 @DiscriminatorValue("W")
 @NamedQueries({
         @NamedQuery(name = "WalletOperation.getWalletOperationsBilled", query = "SELECT o.id FROM WalletOperation o join o.ratedTransaction rt WHERE rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND o.id IN :walletIdList"),
-        @NamedQuery(name = "WalletOperation.listByRatedTransactionId", query = "SELECT o FROM WalletOperation o WHERE o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED and o.ratedTransaction.id=:ratedTransactionId"),
+        @NamedQuery(name = "WalletOperation.listByRatedTransactionId", query = "SELECT o FROM WalletOperation o WHERE o.status='TREATED' and o.ratedTransaction.id=:ratedTransactionId"),
 
-        @NamedQuery(name = "WalletOperation.listByBRId", query = "SELECT o FROM WalletOperation o WHERE o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED and o.ratedTransaction.billingRun.id=:brId)"),
+        @NamedQuery(name = "WalletOperation.listByBRId", query = "SELECT o FROM WalletOperation o WHERE o.status='TREATED' and o.ratedTransaction.billingRun.id=:brId)"),
 
-        @NamedQuery(name = "WalletOperation.listToRateIds", query = "SELECT o.id FROM WalletOperation o WHERE o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate )"),
-        @NamedQuery(name = "WalletOperation.listToInvoiceByUA", query = "SELECT o FROM WalletOperation o WHERE o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.wallet.userAccount=:userAccount"),
-        @NamedQuery(name = "WalletOperation.listToInvoiceBySubscription", query = "SELECT o FROM WalletOperation o WHERE o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.subscription=:subscription"),
-        @NamedQuery(name = "WalletOperation.listToInvoiceByOrderNumber", query = "SELECT o FROM WalletOperation o WHERE o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.orderNumber=:orderNumber"),
+        @NamedQuery(name = "WalletOperation.listToRateIds", query = "SELECT o.id FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate )"),
+        @NamedQuery(name = "WalletOperation.listToRateByBA", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.wallet.userAccount.billingAccount=:billingAccount"),
+        @NamedQuery(name = "WalletOperation.listToRateBySubscription", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.subscription=:subscription"),
+        @NamedQuery(name = "WalletOperation.listToRateByOrderNumber", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.orderNumber=:orderNumber"),
 
-        @NamedQuery(name = "WalletOperation.listToRerate", query = "SELECT o.id FROM WalletOperation o WHERE o.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE"),
+        @NamedQuery(name = "WalletOperation.listToRerate", query = "SELECT o.id FROM WalletOperation o WHERE o.status='TO_RERATE'"),
 
         @NamedQuery(name = "WalletOperation.getBalancesForWalletInstance", query = "SELECT sum(case when o.status in ('OPEN','TREATED') then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o WHERE o.wallet.id=:walletId and o.status in ('OPEN','RESERVED','TREATED')"),
         @NamedQuery(name = "WalletOperation.getBalancesForCache", query = "SELECT o.wallet.id, sum(case when o.status in ('OPEN','TREATED') then o.amountWithTax else 0 end), sum(o.amountWithTax) FROM WalletOperation o WHERE o.status in ('OPEN','RESERVED','TREATED') and o.wallet.walletTemplate.walletType='PREPAID' group by o.wallet.id"),
 
         @NamedQuery(name = "WalletOperation.getOpenByWallet", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and o.wallet=:wallet"),
 
-        @NamedQuery(name = "WalletOperation.setStatusToRerate", query = "UPDATE WalletOperation o SET o.ratedTransaction=NULL, o.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE, o.auditable.updated = :now "
-                + " WHERE o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED AND o.ratedTransaction.id IN (SELECT o1.ratedTransaction.id FROM WalletOperation o1 WHERE o1.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED and o1.id IN :notBilledWalletIdList)"),
+        @NamedQuery(name = "WalletOperation.setStatusToRerate", query = "UPDATE WalletOperation o SET o.ratedTransaction=NULL, o.status='TO_RERATE', o.updated = :now "
+                + " WHERE o.status='TREATED' AND o.ratedTransaction.id IN (SELECT o1.ratedTransaction.id FROM WalletOperation o1 WHERE o1.status='TREATED' and o1.id IN :notBilledWalletIdList)"),
 
-        @NamedQuery(name = "WalletOperation.setStatusToCanceled", query = "UPDATE WalletOperation o SET o.status=org.meveo.model.billing.WalletOperationStatusEnum.CANCELED, o.auditable.updated = :now where o.status<>org.meveo.model.billing.WalletOperationStatusEnum.TREATED and o.chargeInstance=:chargeInstance"),
+        @NamedQuery(name = "WalletOperation.setStatusToCanceled", query = "UPDATE WalletOperation o SET o.status='CANCELED', o.updated = :now where o.status<>'TREATED' and o.chargeInstance=:chargeInstance"),
 
         @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE o.chargeInstance=:chargeInstance AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"),
 
         @NamedQuery(name = "WalletOperation.findByUAAndCode", query = "SELECT o FROM WalletOperation o WHERE o.wallet.userAccount=:userAccount and o.code=:code"),
 
-        @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED AND o.wallet.userAccount.billingAccount=:billingAccount"),
-        @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED AND o.wallet.userAccount=:userAccount"),
-        @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> org.meveo.model.billing.WalletOperationStatusEnum.TREATED AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount"),
+        @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.wallet.userAccount.billingAccount=:billingAccount"),
+        @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.wallet.userAccount=:userAccount"),
+        @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount"),
 
         @NamedQuery(name = "WalletOperation.countNbrWalletsOperationByStatus", query = "select o.status, count(o.id) from WalletOperation o group by o.status"),
 
         @NamedQuery(name = "WalletOperation.listNotOpenedWObetweenTwoDates", query = "SELECT o FROM WalletOperation o  WHERE o.status != 'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate order by o.operationDate desc"),
         @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status<>'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate") })
-public class WalletOperation extends BusinessEntity {
+public class WalletOperation extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * Operation code - corresponds in majority of cases to charge code
+     */
+    @Column(name = "code", length = 255)
+    @Size(max = 255)
+    private String code;
+
+    /**
+     * Description - corresponds in majority of cases to charge description
+     */
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
+    /**
+     * Last status change timestamp
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated")
+    private Date updated;
 
     /**
      * The wallet on which the operation is applied.
@@ -214,18 +234,6 @@ public class WalletOperation extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counter_id")
     private CounterInstance counter;
-
-    /**
-     * Aggregated service instance. Deprecated in 5.3 for not use
-     */
-    @Deprecated
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "aggregate_serv_id")
-    private ServiceInstance aggregatedServiceInstance;
-
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "edr_id")
-    // private EDR usageEdr;
 
     /**
      * Additional rating parameter
@@ -337,7 +345,7 @@ public class WalletOperation extends BusinessEntity {
     private String orderNumber;
 
     /**
-     * Raw rating amount without tax from Price plan without any rounding. Deprecated in 5.3 for not use.
+     * Raw rating amount without tax from Price plan. Might differ from amountWitouttax when minimumAmount is set on a price plan.
      */
     @Deprecated
     @Column(name = "raw_amount_without_tax", precision = 23, scale = 12)
@@ -345,7 +353,7 @@ public class WalletOperation extends BusinessEntity {
     private BigDecimal rawAmountWithoutTax;
 
     /**
-     * Raw rating amount with tax from Price plan without any rounding. Deprecated in 5.3 for not use.
+     * Raw rating amount with tax from Price plan. Might differ from amountWitouttax when minimumAmount is set on a price plan.
      */
     @Deprecated
     @Column(name = "raw_amount_with_tax", precision = 23, scale = 12)
@@ -400,6 +408,205 @@ public class WalletOperation extends BusinessEntity {
     @Column(name = "status")
     private WalletOperationStatusEnum status = WalletOperationStatusEnum.OPEN;
 
+    /**
+     * Constructor
+     */
+    public WalletOperation() {
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param chargeInstance Charge instance
+     * @param inputQuantity Input quantity
+     * @param quantityInChargeUnits Quantity in charge units
+     * @param operationDate Operation date
+     * @param orderNumber Order number
+     * @param criteria1 Criteria 1
+     * @param criteria2 Criteria 2
+     * @param criteria3 Criteria 3
+     * @param criteriaExtra Criteria extra
+     * @param tax Tax to apply
+     * @param startDate Operation date range - start date
+     * @param endDate Operation date range - end date
+     */
+    @SuppressWarnings("deprecation")
+    public WalletOperation(ChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date operationDate, String orderNumber, String criteria1,
+            String criteria2, String criteria3, String criteriaExtra, Tax tax, Date startDate, Date endDate) {
+
+        ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+
+        this.code = chargeTemplate.getCode();
+        this.description = chargeInstance.getDescription();
+        this.chargeInstance = chargeInstance;
+        this.ratingUnitDescription = chargeTemplate.getRatingUnitDescription();
+        this.inputUnitDescription = chargeTemplate.getInputUnitDescription();
+        this.operationDate = operationDate;
+        this.orderNumber = orderNumber;
+        this.parameter1 = criteria1;
+        this.parameter2 = criteria2;
+        this.parameter3 = criteria3;
+        this.inputQuantity = inputQuantity;
+
+        if (chargeInstance instanceof RecurringChargeInstance) {
+            this.subscriptionDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
+
+        } else if (chargeInstance instanceof UsageChargeInstance) {
+            this.subscriptionDate = chargeInstance.getSubscription().getSubscriptionDate();
+            this.counter = ((UsageChargeInstance) chargeInstance).getCounter();
+
+        } else if (chargeInstance instanceof OneShotChargeInstance) {
+            if (chargeInstance.getServiceInstance() != null) {
+                this.subscriptionDate = chargeInstance.getServiceInstance().getSubscriptionDate();
+            } else if (chargeInstance.getSubscription() != null) {
+                this.subscriptionDate = chargeInstance.getSubscription().getSubscriptionDate();
+            }
+        }
+
+        if (quantityInChargeUnits != null) {
+            this.quantity = quantityInChargeUnits;
+
+        } else if (inputQuantity != null) {
+            this.quantity = NumberUtils.getInChargeUnit(inputQuantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode());
+        }
+
+        UserAccount userAccount = chargeInstance.getUserAccount();
+
+        if (chargeInstance.getInvoicingCalendar() != null && this.subscriptionDate != null) {
+            chargeInstance.getInvoicingCalendar().setInitDate(this.subscriptionDate);
+
+            this.invoicingDate = chargeInstance.getInvoicingCalendar().nextCalendarDate(operationDate);
+        }
+
+        this.seller = chargeInstance.getSeller();
+        this.serviceInstance = chargeInstance.getServiceInstance();
+        this.subscription = chargeInstance.getSubscription();
+        this.currency = chargeInstance.getCurrency().getCurrency();
+
+        if (this.seller == null && userAccount != null) {
+            this.seller = userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        }
+
+        this.tax = tax;
+        this.taxPercent = tax.getPercent();
+
+        this.startDate = startDate;
+        this.endDate = endDate;
+
+        if (this.subscription != null) {
+            this.offerTemplate = this.subscription.getOffer();
+            this.offerCode = this.offerTemplate.getCode();
+        }
+        this.invoiceSubCategory = chargeTemplate.getInvoiceSubCategory();
+
+        // TODO:check that setting the principal wallet at this stage is correct
+        this.wallet = userAccount.getWallet();
+        this.subscription = chargeInstance.getSubscription();
+        this.billingAccount = userAccount.getBillingAccount();
+
+        this.status = WalletOperationStatusEnum.OPEN;
+        this.updated = new Date();
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param code Code
+     * @param description Charge description
+     * @param wallet Wallet on which operation is performed
+     * @param operationDate Operation date
+     * @param invoicingDate Invoicing date
+     * @param type Credit/Debit type
+     * @param currency Currency
+     * @param tax Tax applied
+     * @param unitAmountWithoutTax Unit amount without tax
+     * @param unitAmountWithTax Unit amount with tax
+     * @param unitAmountTax Unit amount tax
+     * @param quantity Rating quantity
+     * @param amountWithoutTax Amount without tax
+     * @param amountWithTax Amount with tax
+     * @param amountTax Amount tax
+     * @param parameter1 Parameter 1
+     * @param parameter2 Parameter 2
+     * @param parameter3 Parameter 3
+     * @param parameterExtra Extra parameter
+     * @param startDate Operation date range - Start date
+     * @param endDate Operation date range - End date
+     * @param subscriptionDate Subscription date
+     * @param offerTemplate Offer template
+     * @param seller Seller
+     * @param inputUnitDescription Input unit description
+     * @param ratingUnitDescription Rating unit description
+     * @param inputQuantity Input quantity
+     * @param orderNumber Order number
+     * @param invoiceSubCategory Invoice sub category
+     * @param status Status
+     */
+    public WalletOperation(String code, String description, WalletInstance wallet, Date operationDate, Date invoicingDate, OperationTypeEnum type, Currency currency, Tax tax,
+            BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax,
+            BigDecimal amountTax, String parameter1, String parameter2, String parameter3, String parameterExtra, Date startDate, Date endDate, Date subscriptionDate,
+            OfferTemplate offerTemplate, Seller seller, String inputUnitDescription, String ratingUnitDescription, BigDecimal inputQuantity, String orderNumber,
+            InvoiceSubCategory invoiceSubCategory, WalletOperationStatusEnum status) {
+        super();
+        this.code = code;
+        this.description = description;
+        this.wallet = wallet;
+        this.operationDate = operationDate;
+        this.invoicingDate = invoicingDate;
+        this.type = type;
+        this.currency = currency;
+        this.tax = tax;
+        this.taxPercent = tax.getPercent();
+        this.unitAmountWithoutTax = unitAmountWithoutTax;
+        this.unitAmountWithTax = unitAmountWithTax;
+        this.unitAmountTax = unitAmountTax;
+        this.quantity = quantity;
+        this.amountWithoutTax = amountWithoutTax;
+        this.amountWithTax = amountWithTax;
+        this.amountTax = amountTax;
+        this.parameter1 = parameter1;
+        this.parameter2 = parameter2;
+        this.parameter3 = parameter3;
+        this.parameterExtra = parameterExtra;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.subscriptionDate = subscriptionDate;
+        this.seller = seller;
+        this.inputUnitDescription = inputUnitDescription;
+        this.ratingUnitDescription = ratingUnitDescription;
+        this.inputQuantity = inputQuantity;
+        this.orderNumber = orderNumber;
+        this.invoiceSubCategory = invoiceSubCategory;
+
+        if (chargeInstance != null) {
+            this.serviceInstance = chargeInstance.getServiceInstance();
+            this.subscription = chargeInstance.getSubscription();
+            this.currency = chargeInstance.getCurrency().getCurrency();
+        }
+        this.offerTemplate = offerTemplate;
+        if (offerTemplate != null) {
+            this.offerCode = offerTemplate.getCode();
+        }
+        this.status = status != null ? status : WalletOperationStatusEnum.OPEN;
+        this.updated = new Date();
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code != null ? code : "";
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public WalletInstance getWallet() {
         return wallet;
     }
@@ -437,8 +644,6 @@ public class WalletOperation extends BusinessEntity {
     }
 
     public void setChargeInstance(ChargeInstance chargeInstance) {
-
-        setServiceInstance(chargeInstance.getServiceInstance());
         this.chargeInstance = chargeInstance;
     }
 
@@ -542,19 +747,6 @@ public class WalletOperation extends BusinessEntity {
         this.counter = counter;
     }
 
-    public ServiceInstance getAggregatedServiceInstance() {
-        return aggregatedServiceInstance;
-    }
-
-    public void setAggregatedServiceInstance(ServiceInstance aggregatedServiceInstance) {
-        this.aggregatedServiceInstance = aggregatedServiceInstance;
-    }
-
-    /*
-     * public EDR getUsageEdr() { return usageEdr; }
-     * 
-     * public void setUsageEdr(EDR usageEdr) { this.usageEdr = usageEdr; }
-     */
     public String getParameter1() {
         return parameter1;
     }
@@ -664,9 +856,6 @@ public class WalletOperation extends BusinessEntity {
     }
 
     protected WalletOperation fillUnratedClone(WalletOperation result) {
-        result.setAggregatedServiceInstance(aggregatedServiceInstance);
-        result.setAppendGeneratedCode(appendGeneratedCode);
-        result.setAuditable(getAuditable());
         result.setBillingAccount(billingAccount);
         result.setChargeInstance(chargeInstance);
         result.setCode(code);
@@ -701,6 +890,8 @@ public class WalletOperation extends BusinessEntity {
         result.setWallet(wallet);
         result.setEdr(edr);
         result.setSubscription(subscription);
+        result.setUpdated(updated);
+
         return result;
     }
 
@@ -863,6 +1054,20 @@ public class WalletOperation extends BusinessEntity {
      */
     public void changeStatus(WalletOperationStatusEnum status) {
         this.status = status;
-        this.auditable.setUpdated(new Date());
+        this.setUpdated(new Date());
+    }
+
+    /**
+     * @return Last status change date
+     */
+    public Date getUpdated() {
+        return updated;
+    }
+
+    /**
+     * @param updated Last status change date
+     */
+    public void setUpdated(Date updated) {
+        this.updated = updated;
     }
 }

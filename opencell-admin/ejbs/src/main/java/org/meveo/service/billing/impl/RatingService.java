@@ -1,7 +1,5 @@
 package org.meveo.service.billing.impl;
 
-import static org.meveo.commons.utils.NumberUtils.round;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
@@ -31,7 +29,6 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ApplicationTypeEnum;
@@ -69,7 +66,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -87,7 +84,7 @@ import org.meveo.service.script.catalog.TriggeredEdrScriptService;
  * @lastModifiedVersion 7.0
  */
 @Stateless
-public class RatingService extends BusinessService<WalletOperation> {
+public class RatingService extends PersistenceService<WalletOperation> {
 
     @Inject
     private EdrService edrService;
@@ -109,8 +106,6 @@ public class RatingService extends BusinessService<WalletOperation> {
 
     @Inject
     private MeveoInstanceService meveoInstanceService;
-
-    private static final BigDecimal HUNDRED = new BigDecimal("100");
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
@@ -202,133 +197,49 @@ public class RatingService extends BusinessService<WalletOperation> {
     }
 
     /**
-     * This method is used to rate a oneshot or recurring charge.
+     * Rate a oneshot or recurring charge. DOES NOT persist walletOperation to DB.
      * 
-     * @param chargeTemplate charge template
-     * @param subscriptionDate subscription date
-     * @param offerTemplate offer Template
-     * @param chargeInstance charge instance
-     * @param applicationType type of application
-     * @param applicationDate date of application
+     * @param subscriptionDate Subscription date
+     * @param chargeInstance Charge instance to apply
+     * @param applicationType Application type
+     * @param applicationDate Date of application
      * @param amountWithoutTax amount without tax
      * @param amountWithTax amount with tax
      * @param inputQuantity input quantity
      * @param quantityInChargeUnits Input quantity converted to charge units. If null, will be calculated automatically
-     * @param tCurrency trading currency
-     * @param countryId id of country
-     * @param languageCode code of language
      * @param tax Tax to apply
-     * @param discountPercent discount percent
-     * @param nextApplicationDate next date of application
-     * @param invoiceSubCategory subcategory of invoice
-     * @param criteria1 criteria 1
-     * @param criteria2 criteria 2
-     * @param criteria3 criteria 3
-     * @param orderNumber order number
+     * @param orderNumberOverride order number
      * @param startdate start date
      * @param endDate end date
-     * @param mode mode
-     * @param userAccount user account
+     * @param chargeMode Charge mode
      * @return wallet operation
      * @throws BusinessException business exception
      * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    @SuppressWarnings("deprecation")
-    public WalletOperation rateCharge(ChargeTemplate chargeTemplate, Date subscriptionDate, OfferTemplate offerTemplate, ChargeInstance chargeInstance,
-            ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity,
-            BigDecimal quantityInChargeUnits, TradingCurrency tCurrency, Long countryId, String languageCode, Tax tax, BigDecimal discountPercent, Date nextApplicationDate,
-            InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber, Date startdate, Date endDate,
-            ChargeApplicationModeEnum mode, UserAccount userAccount) throws BusinessException, RatingException {
+    public WalletOperation rateCharge(ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax,
+            BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Tax tax, String orderNumberOverride, Date startdate, Date endDate,
+            ChargeApplicationModeEnum chargeMode) throws BusinessException, RatingException {
 
-        WalletOperation walletOperation = new WalletOperation();
-        Auditable auditable = new Auditable(currentUser);
-        walletOperation.setAuditable(auditable);
-
-        if (chargeTemplate.getChargeType().equals(RecurringChargeTemplate.CHARGE_TYPE)) {
-            walletOperation.setSubscriptionDate(subscriptionDate);
-        }
-
-        walletOperation.setInputQuantity(inputQuantity);
-        if (quantityInChargeUnits != null) {
-            walletOperation.setQuantity(quantityInChargeUnits);
-
-        } else if (inputQuantity != null) {
-            walletOperation.setQuantity(
-                NumberUtils.getInChargeUnit(inputQuantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
-        }
-
-        walletOperation.setRatingUnitDescription(chargeTemplate.getRatingUnitDescription());
-        walletOperation.setInputUnitDescription(chargeTemplate.getInputUnitDescription());
-        walletOperation.setOperationDate(applicationDate);
-        walletOperation.setOrderNumber(orderNumber);
-        walletOperation.setParameter1(criteria1);
-        walletOperation.setParameter2(criteria2);
-        walletOperation.setParameter3(criteria3);
-        if (chargeInstance != null) {
-            walletOperation.setDescription(chargeInstance.getDescription());
-            walletOperation.setChargeInstance(chargeInstance);
-            if (chargeInstance.getInvoicingCalendar() != null) {
-                chargeInstance.getInvoicingCalendar().setInitDate(subscriptionDate);
-
-                walletOperation.setInvoicingDate(chargeInstance.getInvoicingCalendar().nextCalendarDate(walletOperation.getOperationDate()));
-            }
-
-            if (chargeInstance.getSeller() != null) {
-                walletOperation.setSeller(chargeInstance.getSeller());
-            } else {
-                walletOperation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
-            }
-        }
-
-        walletOperation.setCode(chargeTemplate.getCode());
-
-        BillingAccount billingAccount = userAccount.getBillingAccount();
-
+        BillingAccount billingAccount = chargeInstance.getUserAccount().getBillingAccount();
         if (billingAccountService.isExonerated(billingAccount)) {
-            walletOperation.setTax(taxService.getZeroTax());
-            walletOperation.setTaxPercent(BigDecimal.ZERO);
-        } else {
-            walletOperation.setTax(tax);
-            walletOperation.setTaxPercent(tax.getPercent());
-        }
-        walletOperation.setCurrency(tCurrency.getCurrency());
-        walletOperation.setStartDate(startdate);
-        walletOperation.setEndDate(endDate);
-        // walletOperation.setOfferCode(offerTemplate.getCode()); Offer code is set in walletOperation.setOfferTemplate
-        walletOperation.setOfferTemplate(offerTemplate);
-
-        if (invoiceSubCategory != null) {
-            walletOperation.setInvoiceSubCategory(invoiceSubCategory);
-        } else {
-            walletOperation.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());
-        }
-        if (chargeInstance != null) {
-            walletOperation.setSeller(chargeInstance.getSeller());
-        } else {
-            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-            Customer customer = customerAccount.getCustomer();
-            Seller seller = customer.getSeller();
-            walletOperation.setSeller(seller);
+            tax = taxService.getZeroTax();
         }
 
-        // TODO:check that setting the principal wallet at this stage is correct
-        walletOperation.setWallet(userAccount.getWallet());
-        walletOperation.setSubscription(chargeInstance.getSubscription());
-        if (chargeInstance != null && chargeInstance.getSubscription() != null) {
-            walletOperation.setBillingAccount(billingAccount);
-        }
+        WalletOperation walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
+            orderNumberOverride != null ? (orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride) : chargeInstance.getOrderNumber(),
+            chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), null, tax, startdate, endDate);
 
         BigDecimal unitPriceWithoutTax = amountWithoutTax;
         BigDecimal unitPriceWithTax = amountWithTax;
 
-        rateBareWalletOperation(walletOperation, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency);
+        rateBareWalletOperation(walletOperation, unitPriceWithoutTax, unitPriceWithTax, chargeInstance.getCountry().getId(), chargeInstance.getCurrency());
         log.debug(" wo amountWithoutTax={}", walletOperation.getAmountWithoutTax());
         return walletOperation;
 
     }
 
     /**
-     * Used to rate a oneshot, recurring or product charge and triggerEDR. Same as prerateChargeApplication but in addition triggers EDRs. NOTE: Does not persist WO
+     * Rate a oneshot, recurring or product charge and triggerEDR. Same as rateCharge but in addition triggers EDRs. NOTE: Does not persist WO
      * 
      * @param chargeInstance charge instance
      * @param applicationType type of application
@@ -340,16 +251,10 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param tCurrency trading currency
      * @param countryId country id
      * @param tax Tax to charge
-     * @param discountPercent discount percent
-     * @param nextApplicationDate next application date
-     * @param invoiceSubCategory sub category date
-     * @param criteria1 criteria 1
-     * @param criteria2 criteria 2
-     * @param criteria3 criteria 3
-     * @param orderNumber order number
+     * @param orderNumberOverride order number
      * @param startdate start date
      * @param endDate end date
-     * @param mode mode
+     * @param chargeMode mode
      * @param forSchedule true/false
      * @param isVirtual true/false
      * @return wallet operation
@@ -357,25 +262,14 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
     public WalletOperation rateChargeAndTriggerEDRs(ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax,
-            BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, TradingCurrency tCurrency, Long countryId, Tax tax, BigDecimal discountPercent,
-            Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber, Date startdate, Date endDate,
-            ChargeApplicationModeEnum mode, boolean forSchedule, boolean isVirtual) throws BusinessException, RatingException {
-        Date subscriptionDate = null;
-
-        if (chargeInstance instanceof RecurringChargeInstance) {
-            subscriptionDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
-        }
+            BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Tax tax, String orderNumberOverride, Date startdate, Date endDate,
+            ChargeApplicationModeEnum chargeMode, boolean forSchedule, boolean isVirtual) throws BusinessException, RatingException {
 
         UserAccount ua = chargeInstance.getUserAccount();
-        BillingAccount billingAccount = ua.getBillingAccount();
-        String languageCode = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
 
         Subscription subscription = chargeInstance.getSubscription();
-        WalletOperation walletOperation = rateCharge(chargeInstance.getChargeTemplate(), subscriptionDate, subscription == null ? null : subscription.getOffer(),
-            chargeInstance, applicationType, applicationDate, amountWithoutTax, amountWithTax, inputQuantity, quantityInChargeUnits, tCurrency, countryId, languageCode, tax,
-            discountPercent, nextApplicationDate, invoiceSubCategory, criteria1, criteria2, criteria3, orderNumber, startdate, endDate, mode, chargeInstance.getUserAccount());
-
-        // chargeInstance.getWalletOperations().add(walletOperation);
+        WalletOperation walletOperation = rateCharge(chargeInstance, applicationType, applicationDate, amountWithoutTax, amountWithTax, inputQuantity, quantityInChargeUnits, tax,
+            orderNumberOverride, startdate, endDate, chargeMode);
 
         // handle associated edr creation unless it is a Scheduled or virtual operation
         if (forSchedule || isVirtual) {
@@ -639,46 +533,24 @@ public class RatingService extends BusinessService<WalletOperation> {
         walletOperation.setAmountWithTax(amounts[1]);
         walletOperation.setAmountTax(amounts[2]);
 
-        // we override the wo if minimum amount el is set
-        if (walletOperation.getPriceplan() != null) {
-            if (appProvider.isEntreprise() && !StringUtils.isBlank(walletOperation.getPriceplan().getMinimumAmountEL())) {
-                BigDecimal minimumAmount = BigDecimal
-                    .valueOf(evaluateDoubleExpression(walletOperation.getPriceplan().getMinimumAmountEL(), walletOperation, walletOperation.getWallet().getUserAccount()));
-                // if minAmount > amountWithoutTax override its value
-                if (walletOperation.getAmountWithoutTax().compareTo(minimumAmount) < 0) {
-                    walletOperation.setAmountWithoutTax(minimumAmount);
-                    BigDecimal amountTax = minimumAmount.multiply(walletOperation.getTaxPercent().divide(HUNDRED));
-                    amountTax = round(amountTax, rounding, roundingMode);
-                    walletOperation.setAmountTax(amountTax);
-                    walletOperation.setAmountWithTax(minimumAmount.add(amountTax));
+        // we override the wo amount if minimum amount el is set on price plan
+        if (walletOperation.getPriceplan() != null && !StringUtils.isBlank(walletOperation.getPriceplan().getMinimumAmountEL())) {
+            BigDecimal minimumAmount = BigDecimal
+                .valueOf(evaluateDoubleExpression(walletOperation.getPriceplan().getMinimumAmountEL(), walletOperation, walletOperation.getWallet().getUserAccount()));
 
-                    // sets the raw amount
-                    if (StringUtils.isBlank(walletOperation.getPriceplan().getAmountWithoutTaxEL())) {
-                        walletOperation.setRawAmountWithoutTax(walletOperation.getPriceplan().getAmountWithoutTax());
+            if ((appProvider.isEntreprise() && walletOperation.getAmountWithoutTax().compareTo(minimumAmount) < 0)
+                    || (!appProvider.isEntreprise() && walletOperation.getAmountWithTax().compareTo(minimumAmount) < 0)) {
 
-                    } else {
-                        if (unitPriceWithoutTax != null) {
-                            walletOperation.setRawAmountWithoutTax(unitPriceWithoutTax.multiply(walletOperation.getQuantity()));
-                        }
-                    }
-                }
+                // Remember the raw calculated amount
+                walletOperation.setRawAmountWithoutTax(walletOperation.getAmountWithoutTax());
+                walletOperation.setRawAmountWithTax(walletOperation.getAmountWithTax());
 
-            } else if (!StringUtils.isBlank(walletOperation.getPriceplan().getMinimumAmountEL())) {
-                BigDecimal minimumAmount = BigDecimal
-                    .valueOf(evaluateDoubleExpression(walletOperation.getPriceplan().getMinimumAmountEL(), walletOperation, walletOperation.getWallet().getUserAccount()));
-                if (walletOperation.getAmountWithTax().compareTo(minimumAmount) < 0) {
-                    BigDecimal oldAmountWithTax = walletOperation.getPriceplan().getAmountWithTax();
-                    walletOperation.setAmountWithTax(minimumAmount);
+                amounts = NumberUtils.computeDerivedAmounts(minimumAmount, minimumAmount, walletOperation.getTaxPercent(), appProvider.isEntreprise(), rounding,
+                    roundingMode.getRoundingMode());
 
-                    if (StringUtils.isBlank(walletOperation.getPriceplan().getAmountWithTaxEL())) {
-                        walletOperation.setRawAmountWithTax(oldAmountWithTax);
-
-                    } else {
-                        if (unitPriceWithTax != null) {
-                            walletOperation.setRawAmountWithTax(unitPriceWithTax.multiply(walletOperation.getQuantity()));
-                        }
-                    }
-                }
+                walletOperation.setAmountWithoutTax(amounts[0]);
+                walletOperation.setAmountWithTax(amounts[1]);
+                walletOperation.setAmountTax(amounts[2]);
             }
         }
     }

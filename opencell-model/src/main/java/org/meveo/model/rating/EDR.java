@@ -66,7 +66,7 @@ import org.meveo.model.billing.Subscription;
         @NamedQuery(name = "EDR.updateRatedTransactionForSafeDeletion", query = "update RatedTransaction rt set rt.edr=NULL where rt.edr in (select e FROM EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
         @NamedQuery(name = "EDR.deleteNotOpenEdrBetweenTwoDate", query = "delete from EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate"),
 
-        @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN' where e.status='REJECTED' and e.id in :ids") })        
+        @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN' where e.status='REJECTED' and e.id in :ids") })
 public class EDR extends BaseEntity {
 
     private static final long serialVersionUID = 1278336655583933747L;
@@ -245,7 +245,7 @@ public class EDR extends BaseEntity {
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_updated")
-    private Date lastUpdate;
+    private Date updated;
 
     /**
      * Access code
@@ -370,12 +370,18 @@ public class EDR extends BaseEntity {
         this.created = created;
     }
 
-    public Date getLastUpdate() {
-        return lastUpdate;
+    /**
+     * @return Last status change date
+     */
+    public Date getUpdated() {
+        return updated;
     }
 
-    public void setLastUpdate(Date lastUpdate) {
-        this.lastUpdate = lastUpdate;
+    /**
+     * @param updated Last status change date
+     */
+    public void setUpdated(Date updated) {
+        this.updated = updated;
     }
 
     public String getParameter5() {
@@ -544,7 +550,7 @@ public class EDR extends BaseEntity {
                 + parameter8 + ", parameter9=" + parameter9 + ", dateParam1=" + dateParam1 + ", dateParam2=" + dateParam2 + ", dateParam3=" + dateParam3 + ", dateParam4="
                 + dateParam4 + ", dateParam5=" + dateParam5 + ", decimalParam1=" + decimalParam1 + ", dateParam2=" + dateParam2 + ", decimalParam3=" + decimalParam3
                 + ", dateParam4=" + dateParam4 + ", decimalParam5=" + decimalParam5 + ", extraParameter=" + extraParameter + ", headerEDR="
-                + ((headerEDR == null) ? "null" : headerEDR.getId()) + ", created=" + created + ", lastUpdate=" + lastUpdate + "]";
+                + ((headerEDR == null) ? "null" : headerEDR.getId()) + ", created=" + created + ", lastUpdate=" + updated + "]";
     }
 
     @Override
@@ -610,7 +616,7 @@ public class EDR extends BaseEntity {
      */
     public void changeStatus(EDRStatusEnum status) {
         this.status = status;
-        this.lastUpdate = new Date();
+        this.updated = new Date();
     }
 
     /**

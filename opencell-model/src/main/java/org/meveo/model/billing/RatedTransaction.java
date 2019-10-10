@@ -396,6 +396,13 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     private RatedTransactionStatusEnum status = RatedTransactionStatusEnum.OPEN;
 
     /**
+     * Last record/entity update timestamp
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated")
+    private Date updated;
+
+    /**
      * Was tax explicitly overridden during rating and should not be recalculated at invoice time
      */
     @Transient
@@ -451,8 +458,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.unityDescription = inputUnitDescription;
         this.ratingUnitDescription = ratingUnitDescription;
         this.serviceInstance = serviceInstance;
+        this.updated = new Date();
     }
 
+    /**
+     * Constructor
+     * 
+     * @param walletOperation WalletOperation to convert to rated transaction
+     */
     public RatedTransaction(WalletOperation walletOperation) {
 
         super();
@@ -487,6 +500,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.taxPercent = walletOperation.getTaxPercent();
         this.serviceInstance = walletOperation.getServiceInstance();
         this.status = RatedTransactionStatusEnum.OPEN;
+        this.updated = new Date();
 
         this.unityDescription = walletOperation.getInputUnitDescription();
         if (this.unityDescription == null) {
@@ -990,11 +1004,26 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     }
 
     /**
+     * @return Last status change date
+     */
+    public Date getUpdated() {
+        return updated;
+    }
+
+    /**
+     * @param updated Last status change date
+     */
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
+    /**
      * Change status and update a last updated timestamp
      * 
      * @param status Processing status
      */
     public void changeStatus(RatedTransactionStatusEnum status) {
         this.status = status;
+        this.updated = new Date();
     }
 }

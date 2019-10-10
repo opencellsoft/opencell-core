@@ -318,10 +318,4 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
         return result;
     }
-
-    @Override
-    public void create(WalletReservation walletReservation) throws BusinessException {
-        walletReservation.setStatus(WalletOperationStatusEnum.RESERVED);
-        super.create(walletReservation);
-    }
 }
