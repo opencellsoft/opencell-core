@@ -164,7 +164,9 @@ public class JobExecutionResultImpl extends BaseEntity {
      * @param error Message to log
      */
     public synchronized void registerError(String error) {
-        errors.add(error);
+        if (jobInstance.isVerboseReport() && !StringUtils.isBlank(error)) {
+            errors.add(error);
+        }
         nbItemsProcessedWithError++;
     }
 
@@ -425,9 +427,7 @@ public class JobExecutionResultImpl extends BaseEntity {
      */
 
     public synchronized void addReport(String messageToAppend) {
-        if (jobInstance.isVerboseReport() && !StringUtils.isBlank(messageToAppend)) {
-            this.report = (this.report == null ? "" : (this.report + " \n ")) + messageToAppend;
-        }
+        this.report = (this.report == null ? "" : (this.report + " \n ")) + messageToAppend;
     }
 
     /**

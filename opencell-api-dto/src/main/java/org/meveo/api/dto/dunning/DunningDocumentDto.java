@@ -12,10 +12,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentDto;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.dunning.DunningDocument;
-import org.meveo.model.payments.Payment;
-import org.meveo.model.payments.RecordedInvoice;
 
 /**
  * DTO equivalent of DunningDocument entity.
@@ -28,12 +24,12 @@ public class DunningDocumentDto extends AuditableEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -1897384994086770497L;
-    
+
     /**
      * DunningDocument Id
      */
     protected String dunningDocumentId;
-    
+
     /**
      * Customer account Code
      */
@@ -53,47 +49,6 @@ public class DunningDocumentDto extends AuditableEntityDto {
     @XmlElementWrapper
     @XmlElement(name = "dueInvoice", required = true)
     protected List<InvoiceDto> dueInvoices = new ArrayList<InvoiceDto>();
-    
-    /**
-     * Instantiates a new dunningDocument dto.
-     */
-    public DunningDocumentDto() {
-        super();
-    }
-    
-    /**
-     * Instantiates a new dunningDocument dto.
-     * 
-     * @param dunningDocument DunningDocument entity
-     */
-    public DunningDocumentDto(DunningDocument dunningDocument) {
-        super(dunningDocument);
-
-        if(dunningDocument.getCustomerAccount() != null) {
-            setCustomerAccountCode(dunningDocument.getCustomerAccount().getCode());
-        }
-        if(dunningDocument.getSubscription() != null) {
-            setSubscriptionCode(dunningDocument.getSubscription().getCode());
-        }
-        if(dunningDocument.getDueInvoices() != null) {
-            List<InvoiceDto> dueInvoices = new ArrayList<InvoiceDto>();
-            for(RecordedInvoice recordedInvoice : dunningDocument.getDueInvoices()) {
-                for(Invoice invoice : recordedInvoice.getInvoices()) {
-                    dueInvoices.add(new InvoiceDto(invoice, false));
-                }
-                
-            }
-            setDueInvoices(dueInvoices);
-        }
-        
-        if(dunningDocument.getPayments() != null) {
-            List<PaymentDto> paymentDtos = new ArrayList<PaymentDto>();
-            for(Payment payment : dunningDocument.getPayments()) {
-                 paymentDtos.add(new PaymentDto(payment));
-            }
-            setPayments(paymentDtos);
-        }        
-    }
 
     /**
      * @return the customerAccountCode
@@ -164,5 +119,5 @@ public class DunningDocumentDto extends AuditableEntityDto {
     public void setDunningDocumentId(String dunningDocumentId) {
         this.dunningDocumentId = dunningDocumentId;
     }
-    
+
 }

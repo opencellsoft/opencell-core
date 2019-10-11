@@ -48,7 +48,7 @@ public class RatedTransactionGroup implements Serializable {
     }
 
     /**
-     * Constructror
+     * Constructor
      * 
      * @param billingAccount Billing account
      * @param seller Seller
@@ -139,5 +139,11 @@ public class RatedTransactionGroup implements Serializable {
      */
     public boolean isPrepaid() {
         return prepaid;
+    }
+
+    public String getInvoiceKey() {
+        String invoiceKey = billingAccount.getId() + "_" + seller.getId() + "_" + invoiceType.getId() + "_" + prepaid;
+
+        return invoiceKey;
     }
 }
