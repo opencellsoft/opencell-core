@@ -47,25 +47,6 @@ public class RecurringChargeTemplateService extends ChargeTemplateService<Recurr
     private CalendarService calendarService;
 
     /**
-     * Gets the nbr recurring chrg with not price plan.
-     *
-     * @return the nbr recurring chrg with not price plan
-     */
-    public int getNbrRecurringChrgWithNotPricePlan() {
-        return ((Long) getEntityManager().createNamedQuery("recurringChargeTemplate.getNbrRecurringChrgWithNotPricePlan", Long.class).getSingleResult()).intValue();
-    }
-
-    /**
-     * Gets the recurring chrg with not price plan.
-     *
-     * @return the recurring chrg with not price plan
-     */
-    public List<RecurringChargeTemplate> getRecurringChrgWithNotPricePlan() {
-        return (List<RecurringChargeTemplate>) getEntityManager().createNamedQuery("recurringChargeTemplate.getRecurringChrgWithNotPricePlan", RecurringChargeTemplate.class)
-            .getResultList();
-    }
-
-    /**
      * Gets the nbr recurring chrg not associated.
      *
      * @return the nbr recurring chrg not associated

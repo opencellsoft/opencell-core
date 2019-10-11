@@ -27,8 +27,8 @@ public interface TerminationReasonRs extends IBaseRs {
      * @param postData The termination reason's data
      * @return Request processing status
      */
-    @Path("/")
     @POST
+    @Path("/")
     ActionStatus create(TerminationReasonDto postData);
 
     /**
@@ -37,8 +37,8 @@ public interface TerminationReasonRs extends IBaseRs {
      * @param postData The termination reason's data
      * @return Request processing status
      */
-    @Path("/")
     @PUT
+    @Path("/")
     ActionStatus update(TerminationReasonDto postData);
 
     /**
@@ -47,8 +47,8 @@ public interface TerminationReasonRs extends IBaseRs {
      * @param postData The termination reason's data
      * @return Request processing status
      */
-    @Path("/createOrUpdate")
     @POST
+    @Path("/createOrUpdate")
     ActionStatus createOrUpdate(TerminationReasonDto postData);
 
     /**
@@ -57,8 +57,8 @@ public interface TerminationReasonRs extends IBaseRs {
      * @param terminationReasonCode The termination reason's code
      * @return Request processing status
      */
-    @Path("/{terminationReasonCode}")
     @DELETE
+    @Path("/{terminationReasonCode}")
     ActionStatus remove(@PathParam("terminationReasonCode") String terminationReasonCode);
 
     /**
@@ -67,8 +67,8 @@ public interface TerminationReasonRs extends IBaseRs {
      * @param code The termination reason's code
      * @return found termination reason
      */
-    @Path("/")
     @GET
+    @Path("/")
     GetTerminationReasonResponse find(@QueryParam("terminationReasonCode") String code);
 
     /**
@@ -76,8 +76,8 @@ public interface TerminationReasonRs extends IBaseRs {
      * 
      * @return A list of termination reasons
      */
-    @Path("/list")
     @GET
+    @Path("/list")
     GetTerminationReasonResponse list();
 
 }

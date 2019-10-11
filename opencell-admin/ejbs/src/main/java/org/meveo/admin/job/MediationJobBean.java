@@ -183,7 +183,7 @@ public class MediationJobBean {
             }
 
             // Delete reject file if it is empty
-            if (result.getErrors().isEmpty() && rejectFile != null) {
+            if ((result.getErrors().isEmpty() && result.getNbItemsProcessedWithError() == 0) && rejectFile != null) {
                 try {
                     rejectFile.delete();
                 } catch (Exception e) {

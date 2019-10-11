@@ -42,7 +42,6 @@ public class PDFInvoiceGenerationJobBean extends BaseJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        log.debug("Running with parameter={}", jobInstance.getParametres());
 
         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
         if (nbRuns == -1) {

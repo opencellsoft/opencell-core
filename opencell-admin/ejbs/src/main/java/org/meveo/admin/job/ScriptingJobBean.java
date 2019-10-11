@@ -46,7 +46,7 @@ public class ScriptingJobBean extends BaseJobBean {
 
 	
     @Inject
-    private ScriptingAsync scriptingAsync;
+	private ScriptingAsync scriptingAsync;
 
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

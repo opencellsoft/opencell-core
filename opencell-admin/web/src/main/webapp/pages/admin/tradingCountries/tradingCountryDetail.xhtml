@@ -14,14 +14,14 @@
 
 	<ui:define name="body">
 		<hftl:entityPopup header="#{messages['tradingCountry.popup.header']}"
-			updateField=":formCountries:countrySelectedId :formCountries:countrySelectedId_text :formCountries:prDescription" 
+			updateField=":formCountries:countrySelectedId :formCountries:countrySelectedId_text :formCountries:description"
 			selection="#{tradingCountryBean.entity.country}"
 			backingBean="#{countryBean}"
 			searchField1Label="#{messages['country.countryCode']}"
 			searchField1="countryCode"
 			column1Label="#{messages['country.countryCode']}"
 			column1="countryCode"
-			column2Label="#{messages['tradingLanguage.prDescription']}"
+			column2Label="#{messages['tradingCountry.description']}"
 			column2="description" selectionListenerBean="#{tradingCountryBean}" selectionListenerMethod="onCountrySelect">
 		</hftl:entityPopup>
 
@@ -33,7 +33,7 @@
 				<p:menuitem value="#{messages['commons.new']} #{messages['tradingCountry']}"
 					disabled="true" rendered="#{tradingCountryBean.entity.transient}" />
 				<p:menuitem
-					value="#{messages['tradingCountry']} - #{tradingCountryBean.entity.prDescription}"
+					value="#{messages['tradingCountry']} - #{tradingCountryBean.entity.description}"
 					disabled="true" rendered="#{!tradingCountryBean.entity.transient}" />
 			</p:breadCrumb>
 		</h:form>
@@ -46,8 +46,8 @@
 				label="#{messages['tradingCountry.countryCode']}" field="country"
 				valueLabelField="countryCode" popup="true" required="true" showPopupOnlyOnNew="true" />
 
-			<hftl:formField label="#{messages['tradingCountry.prDescription']}"
-				field="prDescription" id="prDescription"/>
+			<hftl:formField label="#{messages['tradingCountry.description']}"
+				field="description" id="description"/>
 			<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
 				field="disabled" isMessage="true"/>
 
