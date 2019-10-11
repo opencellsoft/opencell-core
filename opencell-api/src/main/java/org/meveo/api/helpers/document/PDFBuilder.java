@@ -169,8 +169,8 @@ public class PDFBuilder {
                 setFieldValue(acroForm, key, this.mapFormFields.get(key));
             }
         }
-        if(flattened) {
-            docCatalog.getAcroForm().flatten();
+        if(flattened && acroForm != null) {
+            acroForm.flatten();
         }
     }
 
