@@ -67,7 +67,6 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
     @Inject
     private BusinessProductModelService businessProductModelService;
-    private List<BusinessServiceModel> businessServiceModels;
 
     /**
      * Creates an offer given a BusinessOfferModel.
@@ -435,14 +434,12 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
     
 
     private List<BusinessServiceModel> getBusinessServiceModelsFromMeveoModuleItem(BusinessOfferModel businessOfferModel) {
-        if(businessServiceModels == null || businessServiceModels.isEmpty()){
-            businessServiceModels = businessServiceModelService.findByCodes(businessOfferModel.getModuleItems().stream()
+        List<BusinessServiceModel> businessServiceModels = businessServiceModelService.findByCodes(businessOfferModel.getModuleItems().stream()
                     .filter(meveoModuleItem -> meveoModuleItem.getItemClass().equals(BusinessServiceModel.class.getName()))
                     .map(meveoModuleItem -> meveoModuleItem.getItemCode())
                     .collect(Collectors.toList()));
-            if(businessServiceModels == null){
-                businessServiceModels = new ArrayList<>();
-            }
+        if(businessServiceModels == null){
+            businessServiceModels = new ArrayList<>();
         }
         return businessServiceModels;
     }
