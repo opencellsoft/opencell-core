@@ -14,7 +14,7 @@
 <cc:interface>
 	<cc:attribute name="treeBean" required="true" />
 	<cc:attribute name="entity" required="true" />
-	<cc:attribute name="treeValue" default="#{cc.attrs.treeBean.buildAccountsHierarchy(cc.attrs.entity)}" />
+	<cc:attribute name="treeValue" default="#{cc.attrs.treeBean.buildAccountsHierarchy(cc.attrs.entity, false)}" />
 	<!-- valid values are PANEL, TOGGLE and OVERLAY -->
 	<cc:attribute name="mode" required="false" default="TOGGLE"/>
 	<cc:attribute name="menuPanel" required="false" default=".col1" />

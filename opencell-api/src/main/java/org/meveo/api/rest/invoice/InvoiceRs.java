@@ -192,10 +192,16 @@ public interface InvoiceRs extends IBaseRs {
      * @return List of invoices
      */
     @GET
-    @Path("/listPresentInAR")
     @Deprecated
+    @Path("/listPresentInAR")
     CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("includePdf") boolean includePdf);
-
+    
+    /**
+     * Generate a Draft invoice
+     * 
+     * @param generateInvoiceRequestDto Post data
+     * @return action status.
+     */
     @POST
     @Path("/generateDraftInvoice")
     GenerateInvoiceResponseDto generateDraftInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto);

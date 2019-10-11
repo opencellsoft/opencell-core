@@ -64,15 +64,15 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
      */
     private void populateEdrCache() {
 
-        boolean useInMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
+        boolean useInMemoryDeduplication = EdrService.DeduplicateEDRTypeEnum.MEMORY.name().equalsIgnoreCase(paramBean.getProperty("mediation.deduplicate", EdrService.DeduplicateEDRTypeEnum.MEMORY.name()));
         if (!useInMemoryDeduplication) {
             log.info("EDR cache population will be skipped as cache will not be used");
             return;
         }
 
-        boolean prepopulateMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "false").equals("true");
+        boolean prepopulateMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "true").equals("true");
         if (!prepopulateMemoryDeduplication) {
-            log.info("EDR cache pre-population will be skipped");
+            log.info("EDR cache is used, but pre-population will be skipped");
             return;
         }
 
