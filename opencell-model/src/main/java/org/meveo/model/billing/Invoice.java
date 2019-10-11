@@ -101,7 +101,9 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.seller.id, inv.invoiceDate"),
         @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
         @NamedQuery(name = "Invoice.nullifyInvoiceFileNames", query = "update Invoice inv set inv.pdfFilename = null , inv.xmlFilename = null where inv.billingRun = :billingRun"),
-        @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId") })
+        @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId"),
+
+        @NamedQuery(name = "Invoice.deleteByBR", query = "delete from Invoice inv where inv.billingRun.id=:billingRunId") })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
@@ -248,12 +250,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     private TradingLanguage tradingLanguage;
 
     /**
-     * Rated transactions that were included in invoice
-     */
-    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
-    private List<RatedTransaction> ratedTransactions = new ArrayList<>();
-
-    /**
      * Comment
      */
     @Column(name = "comment", length = 1200)
@@ -316,12 +312,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_invoices_orders", joinColumns = @JoinColumn(name = "invoice_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
     private List<Order> orders = new ArrayList<>();
-
-    /**
-     * Orders (numbers) referenced from Rated transactions
-     */
-    @Transient
-    private Set<String> orderNumbers;
 
     /**
      * Quote that invoice was produced for
@@ -438,14 +428,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.dueDate = DateUtils.truncateTime(this.dueDate);
         this.invoiceDate = DateUtils.truncateTime(this.invoiceDate);
         setUUIDIfNull();
-    }
-
-    public List<RatedTransaction> getRatedTransactions() {
-        return ratedTransactions;
-    }
-
-    public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
-        this.ratedTransactions = ratedTransactions;
     }
 
     public String getInvoiceNumber() {
@@ -823,19 +805,19 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
         return aggregates;
     }
-
-    public List<RatedTransaction> getRatedTransactionsForCategory(WalletInstance wallet, InvoiceSubCategory invoiceSubCategory) {
-
-        List<RatedTransaction> ratedTransactionsMatched = new ArrayList<>();
-
-        for (RatedTransaction ratedTransaction : ratedTransactions) {
-            if (ratedTransaction.getWallet().equals(wallet) && ratedTransaction.getInvoiceSubCategory().equals(invoiceSubCategory)) {
-                ratedTransactionsMatched.add(ratedTransaction);
-            }
-
-        }
-        return ratedTransactionsMatched;
-    }
+//
+//    public List<RatedTransaction> getRatedTransactionsForCategory(WalletInstance wallet, InvoiceSubCategory invoiceSubCategory) {
+//
+//        List<RatedTransaction> ratedTransactionsMatched = new ArrayList<>();
+//
+//        for (RatedTransaction ratedTransaction : ratedTransactions) {
+//            if (ratedTransaction.getWallet().equals(wallet) && ratedTransaction.getInvoiceSubCategory().equals(invoiceSubCategory)) {
+//                ratedTransactionsMatched.add(ratedTransaction);
+//            }
+//
+//        }
+//        return ratedTransactionsMatched;
+//    }
 
     /**
      * @return Quote that invoice was produced for
@@ -1051,20 +1033,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Override
     public void setDescription(String description) {
 
-    }
-
-    /**
-     * @return Orders (numbers) referenced from Rated transactions
-     */
-    public Set<String> getOrderNumbers() {
-        return orderNumbers;
-    }
-
-    /**
-     * @param orderNumbers Orders (numbers) referenced from Rated transactions
-     */
-    public void setOrderNumbers(Set<String> orderNumbers) {
-        this.orderNumbers = orderNumbers;
     }
 
     /**

@@ -39,7 +39,7 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
 
     private static final long serialVersionUID = -5796910936316457321L;
 
-    private Integer rowCount;
+//    private Integer rowCount;
 
     private Integer rowIndex;
 
@@ -62,8 +62,9 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
             PaginationConfiguration paginationConfig = new PaginationConfiguration(first, pageSize, getSearchCriteria(loadingFilters), null, getListFieldsToFetchImpl(), sortField,
                 sortOrder);
 
-            setRowCount(countRecords(paginationConfig));
-
+            if (first == 0) {
+                setRowCount(countRecords(paginationConfig));
+            }
             if (getRowCount() > 0) {
                 return loadData(paginationConfig);
             }
@@ -199,19 +200,20 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
     public int getRowIndex() {
         return this.rowIndex;
     }
-
-    @Override
-    public void setRowCount(int rowCount) {
-        this.rowCount = rowCount;
-    }
-
-    @Override
-    public int getRowCount() {
-        if (rowCount == null) {
-            rowCount = (int) getPersistenceServiceImpl().count();
-        }
-        return rowCount;
-    }
+//
+//    @Override
+//    public void setRowCount(int rowCount) {
+//        this.rowCount = rowCount;
+//    }
+//
+//    @Override
+//    public int getRowCount() {
+//        if (rowCount == null) {
+//            PaginationConfiguration paginationConfig = new PaginationConfiguration(0, 0, getSearchCriteria(null), null, getListFieldsToFetchImpl(), null, null);
+//            rowCount = countRecords(paginationConfig);
+//        }
+//        return rowCount;
+//    }
 
     /**
      * Load a list of entities matching search criteria
@@ -289,7 +291,7 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
      * @return Size of rows
      */
     public Integer size() {
-        return rowCount;
+        return getRowCount();
     }
 
     /**
