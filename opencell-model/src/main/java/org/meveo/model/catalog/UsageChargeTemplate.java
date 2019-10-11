@@ -28,6 +28,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
 import javax.persistence.PostUpdate;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
@@ -51,15 +52,13 @@ import org.meveo.commons.utils.NumberUtils;
 @NamedQueries({
         @NamedQuery(name = "UsageChargeTemplate.getWithTemplateEDR", query = "SELECT u FROM UsageChargeTemplate u join u.edrTemplates t WHERE :edrTemplate=t"
                 + " and u.disabled=false"),
-        @NamedQuery(name = "usageChargeTemplate.getNbrUsagesChrgWithNotPricePlan", query = "select count (*) from UsageChargeTemplate u where u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)  "),
 
-        @NamedQuery(name = "usageChargeTemplate.getUsagesChrgWithNotPricePlan", query = "from UsageChargeTemplate u where u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
+        @NamedQuery(name = "usageChargeTemplate.getNbrUsagesChrgNotAssociated", query = "select count(*) from UsageChargeTemplate u where (u.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateUsage serv) "
+                + " OR u.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) ", hints = {
+                        @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
 
-        @NamedQuery(name = "usageChargeTemplate.getNbrUsagesChrgNotAssociated", query = "select count(*) from UsageChargeTemplate u where (u.id not in (select serv.chargeTemplate from ServiceChargeTemplateUsage serv) "
-                + " OR u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) "),
-
-        @NamedQuery(name = "usageChargeTemplate.getUsagesChrgNotAssociated", query = "from UsageChargeTemplate u where (u.id not in (select serv.chargeTemplate from ServiceChargeTemplateUsage serv) "
-                + " OR u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) ") })
+        @NamedQuery(name = "usageChargeTemplate.getUsagesChrgNotAssociated", query = "from UsageChargeTemplate u where (u.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateUsage serv) "
+                + " OR u.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) ") })
 public class UsageChargeTemplate extends ChargeTemplate {
     static String WILCARD = "";
 

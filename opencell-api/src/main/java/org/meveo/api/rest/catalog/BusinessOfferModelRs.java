@@ -35,8 +35,8 @@ public interface BusinessOfferModelRs extends IBaseRs {
      * @param postData The business offer model's data
      * @return Request processing status
      */
-    @Path("/")
     @POST
+    @Path("/")
     ActionStatus create(BusinessOfferModelDto postData);
 
     /**
@@ -45,8 +45,8 @@ public interface BusinessOfferModelRs extends IBaseRs {
      * @param postData The business offer model's data
      * @return Request processing status
      */
-    @Path("/")
     @PUT
+    @Path("/")
     ActionStatus update(BusinessOfferModelDto postData);
 
     /**
@@ -59,8 +59,8 @@ public interface BusinessOfferModelRs extends IBaseRs {
      * @param loadProductChargeTemplate if true load the product charges
      * @return A business offer model
      */
-    @Path("/")
     @GET
+    @Path("/")
     GetBusinessOfferModelResponseDto find(@QueryParam("businessOfferModelCode") String businessOfferModelCode,
             @QueryParam("loadOfferServiceTemplate") @DefaultValue("false") boolean loadOfferServiceTemplate, @QueryParam("loadOfferProductTemplate") @DefaultValue("false") boolean loadOfferProductTemplate,
             @QueryParam("loadServiceChargeTemplate") @DefaultValue("false") boolean loadServiceChargeTemplate, @QueryParam("loadProductChargeTemplate") @DefaultValue("false") boolean loadProductChargeTemplate);
@@ -72,8 +72,8 @@ public interface BusinessOfferModelRs extends IBaseRs {
      * @param businessOfferModelCode The business offer model's code
      * @return Request processing status
      */
-    @Path("/{businessOfferModelCode}")
     @DELETE
+    @Path("/{businessOfferModelCode}")
     ActionStatus remove(@PathParam("businessOfferModelCode") String businessOfferModelCode);
 
     /**
@@ -82,8 +82,8 @@ public interface BusinessOfferModelRs extends IBaseRs {
      * @param postData The business offer model's data
      * @return Request processing status
      */
-    @Path("/createOrUpdate")
     @POST
+    @Path("/createOrUpdate")
     ActionStatus createOrUpdate(BusinessOfferModelDto postData);
 
     

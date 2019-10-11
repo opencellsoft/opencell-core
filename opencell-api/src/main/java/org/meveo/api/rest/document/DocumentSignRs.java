@@ -24,18 +24,42 @@ import org.meveo.api.rest.IBaseRs;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML }) 
 public interface DocumentSignRs extends IBaseRs { 
     
+    /**
+     * Creates the procedure.
+     *
+     * @param postData the post data
+     * @return the sign procedure response dto
+     */
     @POST 
     @Path("/procedures") 
     public SignProcedureResponseDto createProcedure(CreateProcedureRequestDto postData); 
     
+    /**
+     * Gets the procedure by id.
+     *
+     * @param id the id
+     * @return the procedure by id
+     */    
     @GET 
     @Path("/procedures/{id}") 
     public SignProcedureResponseDto getProcedureById(@PathParam("id") String id); 
     
+    /**
+     * Gets the procedure status by id.
+     *
+     * @param id the id
+     * @return the procedure status by id
+     */    
     @GET 
     @Path("/procedures/{id}/status") 
     public RawResponseDto<String> getProcedureStatusById(@PathParam("id") String id); 
     
+    /**
+     * Download the files with the given id
+     *
+     * @param id The id
+     * @return the file by id
+     */    
     @GET 
     @Path("/files/{id}/download") 
     public SignFileResponseDto downloadFileById(@PathParam("id") String id); 

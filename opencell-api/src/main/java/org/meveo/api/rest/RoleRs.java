@@ -36,7 +36,8 @@ public interface RoleRs extends IBaseRs {
      * @return action status
      */
     @POST
-    @Path("/") ActionStatus create(RoleDto postData);
+    @Path("/") 
+    ActionStatus create(RoleDto postData);
 
     /**
      * Update role.
@@ -45,7 +46,8 @@ public interface RoleRs extends IBaseRs {
      * @return action status.
      */
     @PUT
-    @Path("/") ActionStatus update(RoleDto postData);
+    @Path("/") 
+    ActionStatus update(RoleDto postData);
 
     /**
      * Remove role.
@@ -54,7 +56,8 @@ public interface RoleRs extends IBaseRs {
      * @return action status.
      */
     @DELETE
-    @Path("/{roleName}/{provider}") ActionStatus remove(@PathParam("roleName") String roleName);
+    @Path("/{roleName}/{provider}") 
+    ActionStatus remove(@PathParam("roleName") String roleName);
 
     /**
      * Search role.
@@ -64,7 +67,8 @@ public interface RoleRs extends IBaseRs {
      * @return found role
      */
     @GET
-    @Path("/") GetRoleResponse find(@QueryParam("roleName") String roleName, @QueryParam("includeSecuredEntities") boolean includeSecuredEntities);
+    @Path("/") 
+    GetRoleResponse find(@QueryParam("roleName") String roleName, @QueryParam("includeSecuredEntities") boolean includeSecuredEntities);
 
     /**
      * Create or update role.
@@ -73,7 +77,8 @@ public interface RoleRs extends IBaseRs {
      * @return action status
      */
     @POST
-    @Path("/createOrUpdate") ActionStatus createOrUpdate(RoleDto postData);
+    @Path("/createOrUpdate") 
+    ActionStatus createOrUpdate(RoleDto postData);
 
     /**
      * List roles matching a given criteria.
@@ -98,13 +103,15 @@ public interface RoleRs extends IBaseRs {
      * @return A list of roles
      */
     @POST
-    @Path("/list") RolesDto listPost(PagingAndFiltering pagingAndFiltering);
+    @Path("/list") 
+    RolesDto listPost(PagingAndFiltering pagingAndFiltering);
     
     /**
      * List external roles.
      * @return list of external roles
      */
     @GET
-    @Path("/external") RolesDto listExternalRoles();
+    @Path("/external") 
+    RolesDto listExternalRoles();
 
 }

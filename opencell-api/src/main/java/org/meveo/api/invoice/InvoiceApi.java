@@ -173,7 +173,7 @@ public class InvoiceApi extends BaseApi {
 
         if (invoice.isDraft()) {
             invoiceService.cancelInvoice(invoice);
-        }else {
+        } else {
         	invoiceService.update(invoice);
         }
 
