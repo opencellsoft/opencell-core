@@ -179,7 +179,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             log.warn("Cant find payment gateway");
         }
 
-        if (gatewayPaymentInterface != null) {
+        if (gatewayPaymentInterface != null && cardPaymentMethod.getMonthExpiration() != null && cardPaymentMethod.getYearExpiration() != null) {
             String tockenID = gatewayPaymentInterface.createCardToken(customerAccount, cardPaymentMethod.getAlias(), cardNumber, cardPaymentMethod.getOwner(),
                 StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
                 cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType());
