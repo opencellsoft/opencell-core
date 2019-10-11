@@ -16,6 +16,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
@@ -883,9 +884,16 @@ public class SubscriptionApi extends BaseApi {
             oneShotChargeInstanceService.oneShotChargeApplication(subscription, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                 postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),
                 postData.getDescription(), subscription.getOrderNumber(), true);
-        } catch (BusinessException e) {
+
+        } catch (RatingException e) {
+            log.trace("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getRejectionReason());
             throw new MeveoApiException(e.getMessage());
+
+        } catch (BusinessException e) {
+            log.error("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getMessage(), e);
+            throw e;
         }
+
     }
 
     /**
@@ -1074,8 +1082,9 @@ public class SubscriptionApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      */
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    @FilterResults(propertyToFilter = "subscription", itemPropertiesToFilter = { @FilterProperty(property = "seller", entityClass = Seller.class),
-			@FilterProperty(property = "userAccount", entityClass = UserAccount.class)})
+	@FilterResults(propertyToFilter = "subscription", itemPropertiesToFilter = {
+			@FilterProperty(property = "seller", entityClass = Seller.class),
+			@FilterProperty(property = "userAccount", entityClass = UserAccount.class) }, totalRecords = "listSize")
     public SubscriptionsDto listByUserAccount(String userAccountCode, boolean mergedCF, String sortBy, SortOrder sortOrder) throws MeveoApiException {
 
         if (StringUtils.isBlank(userAccountCode)) {
@@ -1114,9 +1123,10 @@ public class SubscriptionApi extends BaseApi {
         return list(pagingAndFiltering, CustomFieldInheritanceEnum.getInheritCF(true, merge));
     }
     
-    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    @FilterResults(propertyToFilter = "subscriptions.subscription", itemPropertiesToFilter = { @FilterProperty(property = "seller", entityClass = Seller.class),
-			@FilterProperty(property = "userAccount", entityClass = UserAccount.class)})
+	@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+	@FilterResults(propertyToFilter = "subscriptions.subscription", itemPropertiesToFilter = {
+			@FilterProperty(property = "seller", entityClass = Seller.class),
+			@FilterProperty(property = "userAccount", entityClass = UserAccount.class) }, totalRecords = "subscriptions.listSize")
     public SubscriptionsListResponseDto list(PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 
         String sortBy = DEFAULT_SORT_ORDER_ID;

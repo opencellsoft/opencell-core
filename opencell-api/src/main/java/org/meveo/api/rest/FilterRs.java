@@ -29,8 +29,8 @@ public interface FilterRs extends IBaseRs {
      * @param postData The filter's data
      * @return Request processing status
      */
-    @Path("/createOrUpdate")
     @POST
+    @Path("/createOrUpdate")
     public ActionStatus createOrUpdate(FilterDto postData);
 
     /**
@@ -39,8 +39,8 @@ public interface FilterRs extends IBaseRs {
      * @param filterCode The job instance's code
      * @return Dto for FilteredList API
      */
-    @Path("/")
     @GET
+    @Path("/")
     public GetFilterResponseDto find(@QueryParam("filterCode") String filterCode);
 
     /**

@@ -18,26 +18,36 @@
  */
 package org.meveo.admin.exception;
 
+import org.meveo.model.rating.EDRRejectReasonEnum;
+
 /**
+ * Indicates a failure to resolve Price plan EL expression
+ * 
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.1
  */
-public class PriceELErrorException extends BusinessException {
-    private static final long serialVersionUID = 1L;
+public class PriceELErrorException extends RatingException {
 
+    private static final long serialVersionUID = 199473747306744397L;
+
+    /**
+     * Constructor
+     */
     public PriceELErrorException() {
-        super();
+        super(EDRRejectReasonEnum.PRICE_EL_ERROR);
     }
 
-    public PriceELErrorException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
+    /**
+     * Constructor
+     * 
+     * @param message Error message
+     */
     public PriceELErrorException(String message) {
-        super(message);
+        super(EDRRejectReasonEnum.PRICE_EL_ERROR, message);
     }
-
-    public PriceELErrorException(Throwable cause) {
-        super(cause);
+    
+    @Override
+    public synchronized Throwable initCause(Throwable cause) {
+        return null;
     }
 }

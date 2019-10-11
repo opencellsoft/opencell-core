@@ -53,7 +53,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 
 	protected EM chartEntityModel;
 
-	protected List<EM> chartEntityModels = new ArrayList<EM>();
+	protected List<EM> chartEntityModels = null;
 
 	private static final long serialVersionUID = 5241132812597358412L;
 
@@ -232,9 +232,9 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 	}
 
 	public List<EM> getChartEntityModels() {
-		if (chartEntityModels.size() <= 0) {
-			initChartModelList();
-		}
+        if (chartEntityModels == null) {
+            initChartModelList();
+        }
 		return chartEntityModels;
 	}
 

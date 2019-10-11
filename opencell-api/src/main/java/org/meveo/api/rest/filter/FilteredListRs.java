@@ -37,8 +37,8 @@ public interface FilteredListRs extends IBaseRs {
      * @param size Pagination - number of records per page
      * @return Response
      */
-    @Path("/listByFilter")
     @POST
+    @Path("/listByFilter")
     public Response listByFilter(FilterDto filter, @QueryParam("from") Integer from, @QueryParam("size") Integer size);
 
     /**
@@ -52,8 +52,8 @@ public interface FilteredListRs extends IBaseRs {
      * @param sortOrder Pagination - ASC or DESC order of the results
      * @return Response object that contains JSON results in String format
      */
-    @Path("/search")
     @GET
+    @Path("/search")
     public Response search(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("query") String query, @QueryParam("from") Integer from,
             @QueryParam("size") Integer size, @QueryParam("sortField") String sortField, @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -68,8 +68,8 @@ public interface FilteredListRs extends IBaseRs {
      * @param info provides request URI information
      * @return Response object that contains JSON results in String format
      */
-    @Path("/searchByField")
     @GET
+    @Path("/searchByField")
     public Response searchByField(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("from") Integer from, @QueryParam("size") Integer size,
             @QueryParam("sortField") String sortField, @QueryParam("sortOrder") SortOrder sortOrder, @Context UriInfo info);
 
@@ -78,8 +78,8 @@ public interface FilteredListRs extends IBaseRs {
      *
      * @return Request processing status
      */
-    @Path("/reindex")
     @GET
+    @Path("/reindex")
     public Response reindex();
 
     /**
@@ -95,10 +95,10 @@ public interface FilteredListRs extends IBaseRs {
      * @param sortField Pagination - field used to sort the results
      * @param sortOrder Pagination - ASC or DESC order of the results
      * @return Response object that contains JSON results in String format
-     */
-    @Path("/fullSearch")
+     */    
     @GET
     @Deprecated
+    @Path("/fullSearch")
     public Response fullSearch(@QueryParam("query") String query, @QueryParam("category") String category, @QueryParam("from") Integer from, @QueryParam("size") Integer size,
             @QueryParam("sortField") String sortField, @QueryParam("sortOrder") SortOrder sortOrder);
 }

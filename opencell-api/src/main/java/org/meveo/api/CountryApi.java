@@ -23,9 +23,10 @@ import org.meveo.service.billing.impl.TradingCountryService;
 
 /**
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  * @since Oct 4, 2013
- * 
- **/
+ */
 @Stateless
 public class CountryApi extends BaseApi {
 
@@ -101,7 +102,7 @@ public class CountryApi extends BaseApi {
         tradingCountry = new TradingCountry();
         tradingCountry.setCountry(country);
         tradingCountry.setActive(true);
-        tradingCountry.setPrDescription(postData.getName());
+        tradingCountry.setDescription(postData.getName());
         if (postData.isDisabled() != null) {
             tradingCountry.setDisabled(postData.isDisabled());
         }
@@ -186,8 +187,8 @@ public class CountryApi extends BaseApi {
             }
         }
 
-        if (!StringUtils.isBlank(postData.getName()) && (!postData.getName().equals(country.getDescription()) || !postData.getName().equals(tradingCountry.getPrDescription()))) {
-            tradingCountry.setPrDescription(postData.getName());
+        if (!StringUtils.isBlank(postData.getName()) && (!postData.getName().equals(country.getDescription()) || !postData.getName().equals(tradingCountry.getDescription()))) {
+            tradingCountry.setDescription(postData.getName());
             country.setCurrency(currency);
             country.setDescription(postData.getName());
 
@@ -231,7 +232,7 @@ public class CountryApi extends BaseApi {
             }
             tradingCountry = new TradingCountry();
             tradingCountry.setCountry(country);
-            tradingCountry.setPrDescription(country.getDescription());
+            tradingCountry.setDescription(country.getDescription());
             tradingCountryService.create(tradingCountry);
         }
     }

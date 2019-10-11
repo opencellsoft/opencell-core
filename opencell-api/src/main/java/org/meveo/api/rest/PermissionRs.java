@@ -19,7 +19,7 @@ public interface PermissionRs extends IBaseRs {
      * 
      * @return A list of permissions
      */
-    @Path("/list")
     @GET
+    @Path("/list")
     PermissionResponseDto list();
 }
