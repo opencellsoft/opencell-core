@@ -170,25 +170,19 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
             walletReportConfig = new ConfigIssuesReportingDTO();
             List<Object[]> WOStatus = walletOperationService.getNbrWalletsOperationByStatus();
             for (Object[] s : WOStatus) {
-                if (s[0].equals(WalletOperationStatusEnum.OPEN)) {
+                if (s[0] == null || WalletOperationStatusEnum.OPEN.equals(s[0])) {
                     walletReportConfig.setNbrWalletOpOpen(((Long) s[1]).intValue());
-                }
-                if (s[0].equals(WalletOperationStatusEnum.RERATED)) {
+                } else if (WalletOperationStatusEnum.RERATED.equals(s[0])) {
                     walletReportConfig.setNbrWalletOpRerated(((Long) s[1]).intValue());
-                }
-                if (s[0].equals(WalletOperationStatusEnum.RESERVED)) {
+                } else if (WalletOperationStatusEnum.RESERVED.equals(s[0])) {
                     walletReportConfig.setNbrWalletOpReserved(((Long) s[1]).intValue());
-                }
-                if (s[0].equals(WalletOperationStatusEnum.CANCELED)) {
+                } else if (WalletOperationStatusEnum.CANCELED.equals(s[0])) {
                     walletReportConfig.setNbrWalletOpCancled(((Long) s[1]).intValue());
-                }
-                if (s[0].equals(WalletOperationStatusEnum.TO_RERATE)) {
+                } else if (WalletOperationStatusEnum.TO_RERATE.equals(s[0])) {
                     walletReportConfig.setNbrWalletOpTorerate(((Long) s[1]).intValue());
-                }
-                if (s[0].equals(WalletOperationStatusEnum.TREATED)) {
+                } else if (WalletOperationStatusEnum.TREATED.equals(s[0])) {
                     walletReportConfig.setNbrWalletOpTreated(((Long) s[1]).intValue());
-                }
-                if (s[0].equals(WalletOperationStatusEnum.SCHEDULED)) {
+                } else if (WalletOperationStatusEnum.SCHEDULED.equals(s[0])) {
                     walletReportConfig.setNbrWalletOpScheduled(((Long) s[1]).intValue());
                 }
             }
@@ -203,19 +197,15 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
 
             List<Object[]> EdrStatus = walletOperationService.getNbrEdrByStatus();
             for (Object[] s : EdrStatus) {
-                if (s[0].equals(EDRStatusEnum.OPEN)) {
+                if (s[0] == null || EDRStatusEnum.OPEN.equals(s[0])) {
                     edrReportConfig.setNbrEdrOpen(((Long) s[1]).intValue());
-                }
-                if (s[0].equals(EDRStatusEnum.RATED)) {
+                } else if (EDRStatusEnum.RATED.equals(s[0])) {
                     edrReportConfig.setNbrEdrRated(((Long) s[1]).intValue());
-                }
-                if (s[0].equals(EDRStatusEnum.REJECTED)) {
+                } else if (EDRStatusEnum.REJECTED.equals(s[0])) {
                     edrReportConfig.setNbrEdrRejected(((Long) s[1]).intValue());
-                }
-                if (s[0].equals(EDRStatusEnum.MEDIATING)) {
+                } else if (EDRStatusEnum.MEDIATING.equals(s[0])) {
                     edrReportConfig.setNbrEdrMediating(((Long) s[1]).intValue());
-                }
-                if (s[0].equals(EDRStatusEnum.AGGREGATED)) {
+                } else if (EDRStatusEnum.AGGREGATED.equals(s[0])) {
                     edrReportConfig.setNbrEdrAggregated(((Long) s[1]).intValue());
                 }
             }

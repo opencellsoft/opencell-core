@@ -6,11 +6,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InvoiceSubCategoryDTO {
+    private Long id;
     private String description;
     private String code;
     private BigDecimal amountWithoutTax = BigDecimal.ZERO;
     private BigDecimal amountWithTax = BigDecimal.ZERO;
     private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getDescription() {
         return this.description;

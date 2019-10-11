@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Rejected;
@@ -217,8 +218,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         RecurringChargeInstance recurringChargeInstance = findById(recurringChargeInstanId, true);
 
-        log.debug("recurringChargeDeactivation : recurringChargeInstanceId={},ChargeApplications size={}", recurringChargeInstance.getId(),
-            recurringChargeInstance.getWalletOperations().size());
+        log.debug("recurringChargeDeactivation : recurringChargeInstanceId={}", recurringChargeInstance.getId());
 
         recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 
@@ -233,8 +233,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         RecurringChargeInstance recurringChargeInstance = findById(recurringChargeInstanId, true);
 
-        log.debug("recurringChargeSuspension : recurringChargeInstanceId={},ChargeApplications size={}", recurringChargeInstance.getId(),
-            recurringChargeInstance.getWalletOperations().size());
+        log.debug("recurringChargeSuspension : recurringChargeInstanceId={}", recurringChargeInstance.getId());
 
         recurringChargeInstance.setStatus(InstanceStatusEnum.SUSPENDED);
         update(recurringChargeInstance);
@@ -361,8 +360,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                         } else {
                             walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false, recurringChargeTemplate, true);
                         }
-                        log.debug("chargeDate {},nextChargeDate {},  wo size {}", activeRecurringChargeInstance.getChargeDate(), activeRecurringChargeInstance.getNextChargeDate(),
-                            activeRecurringChargeInstance.getWalletOperations().size());
+                        log.debug("chargeDate {},nextChargeDate {}", activeRecurringChargeInstance.getChargeDate(), activeRecurringChargeInstance.getNextChargeDate());
                         applyChargeFromDate = activeRecurringChargeInstance.getNextChargeDate();
 
                     }
@@ -397,8 +395,9 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * @param toDate Recurring charge application end
      * @return list of wallet operations
      * @throws BusinessException business exception.
+     * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public List<WalletOperation> applyRecurringChargeVirtual(RecurringChargeInstance chargeInstance, Date fromDate, Date toDate) throws BusinessException {
+    public List<WalletOperation> applyRecurringChargeVirtual(RecurringChargeInstance chargeInstance, Date fromDate, Date toDate) throws BusinessException, RatingException {
 
         log.debug("Apply recuring charges on Virtual operation. User account {}, offer {}, charge {}, quantity {}, date range {}-{}", chargeInstance.getUserAccount().getCode(),
             chargeInstance.getServiceInstance().getSubscription().getOffer().getCode(), chargeInstance.getRecurringChargeTemplate().getCode(), chargeInstance.getQuantity(),

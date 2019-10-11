@@ -20,8 +20,6 @@ package org.meveo.api.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,9 +27,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 
 /**
  * The Class SubCategoryInvoiceAgregateDto.
@@ -87,52 +82,7 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
     @XmlElement(name = "ratedTransaction")
     private List<RatedTransactionDto> ratedTransactions;
 
-    /**
-     * Instantiates a new sub category invoice aggregate dto.
-     *
-     * @param subCategoryInvoiceAgregate SubCategory invoice aggregate
-     * @param includeTransactions Should Rated transactions be detailed
-     */
-    @SuppressWarnings("deprecation")
-    public SubCategoryInvoiceAgregateDto(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate, boolean includeTransactions) {
-        itemNumber = subCategoryInvoiceAgregate.getItemNumber();
-        if (subCategoryInvoiceAgregate.getAccountingCode() != null) {
-            accountingCode = subCategoryInvoiceAgregate.getAccountingCode().getCode();
-        }
-        description = subCategoryInvoiceAgregate.getDescription();
-        taxPercent = subCategoryInvoiceAgregate.getTaxPercent();
-        if (subCategoryInvoiceAgregate.getTax() != null) {
-            this.taxCode = subCategoryInvoiceAgregate.getTax().getCode();
-        }
-        quantity = subCategoryInvoiceAgregate.getQuantity();
-        amountWithoutTax = subCategoryInvoiceAgregate.getAmountWithoutTax();
-        amountTax = subCategoryInvoiceAgregate.getAmountTax();
-        amountWithTax = subCategoryInvoiceAgregate.getAmountWithTax();
-
-        invoiceSubCategoryCode = subCategoryInvoiceAgregate.getInvoiceSubCategory().getCode();
-
-        if (subCategoryInvoiceAgregate.getUserAccount() != null) {
-            userAccountCode = subCategoryInvoiceAgregate.getUserAccount().getCode();
-        }
-
-        if (includeTransactions) {
-            ratedTransactions = new ArrayList<>();
-
-            for (RatedTransaction ratedTransaction : subCategoryInvoiceAgregate.getRatedtransactions()) {
-                ratedTransactions.add(new RatedTransactionDto(ratedTransaction));
-            }
-
-            ratedTransactions.sort(Comparator.comparing(RatedTransactionDto::getUsageDate).thenComparing(RatedTransactionDto::getAmountWithTax).thenComparing(RatedTransactionDto::getCode));
-        }
-    }
-
-    /**
-     * Instantiates a new sub category invoice agregate dto.
-     */
-    public SubCategoryInvoiceAgregateDto() {
-
-    }
-
+    
     /**
      * Gets the item number.
      *

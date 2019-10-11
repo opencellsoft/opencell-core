@@ -132,7 +132,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 
     @SuppressWarnings("unchecked")
     public List<UsageChargeInstance> findUsageChargeInstanceBySubscriptionId(Long subscriptionId) {
-        QueryBuilder qb = new QueryBuilder(UsageChargeInstance.class, "c", Arrays.asList("chargeTemplate"));
+        QueryBuilder qb = new QueryBuilder(UsageChargeInstance.class, "c");
         qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
         return qb.getQuery(getEntityManager()).getResultList();
     }
