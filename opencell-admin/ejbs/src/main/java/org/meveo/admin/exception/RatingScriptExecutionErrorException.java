@@ -18,26 +18,28 @@
  */
 package org.meveo.admin.exception;
 
+import org.meveo.model.rating.EDRRejectReasonEnum;
+
 /**
+ * Exception while executing a rating script
+ * 
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.1
  */
-public class RatingScriptExecutionErrorException extends BusinessException {
-    private static final long serialVersionUID = 1L;
+public class RatingScriptExecutionErrorException extends RatingException {
+
+    private static final long serialVersionUID = 8243739658934051547L;
 
     public RatingScriptExecutionErrorException() {
-        super();
+        super(EDRRejectReasonEnum.RATING_SCRIPT_EXECUTION_ERROR);
     }
 
-    public RatingScriptExecutionErrorException(String message, Throwable cause) {
-        super(message, cause);
+    public RatingScriptExecutionErrorException(String message, Exception cause) {
+        super(EDRRejectReasonEnum.RATING_SCRIPT_EXECUTION_ERROR, message, cause);
     }
 
-    public RatingScriptExecutionErrorException(String message) {
-        super(message);
-    }
-
-    public RatingScriptExecutionErrorException(Throwable cause) {
-        super(cause);
+    @Override
+    public BusinessException getBusinessException() {
+        return new BusinessException(this);
     }
 }

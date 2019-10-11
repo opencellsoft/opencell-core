@@ -325,19 +325,18 @@ public class ServiceSingleton {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice assignInvoiceNumber(Invoice invoice) throws BusinessException {
-        invoice = assignInvoiceNumber(invoice, true);        
-        return invoice;
+        return assignInvoiceNumber(invoice, true);
     }
 
     /**
      * Assign invoice number to an invoice
      *
      * @param invoice invoice
-     * @param update Should invoice be persisted
+     * @param saveInvoice Should invoice be persisted
      * @throws BusinessException business exception
      */
     @SuppressWarnings("deprecation")
-    private Invoice assignInvoiceNumber(Invoice invoice, boolean update) throws BusinessException {
+    private Invoice assignInvoiceNumber(Invoice invoice, boolean saveInvoice) throws BusinessException {
 
         InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
 
@@ -378,8 +377,12 @@ public class ServiceSingleton {
         // request to store invoiceNo in alias field
         invoice.setAlias(invoiceNumber);
         invoice.setInvoiceNumber(prefix + invoiceNumber);
-        if (update) {
-            invoice = invoiceService.update(invoice);
+        if (saveInvoice) {
+            if (invoice.getId() == null) {
+                invoiceService.create(invoice);
+            } else {
+                invoice = invoiceService.update(invoice);
+            }
         }
         return invoice;
     }

@@ -16,6 +16,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
@@ -883,9 +884,16 @@ public class SubscriptionApi extends BaseApi {
             oneShotChargeInstanceService.oneShotChargeApplication(subscription, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                 postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),
                 postData.getDescription(), subscription.getOrderNumber(), true);
-        } catch (BusinessException e) {
+
+        } catch (RatingException e) {
+            log.trace("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getRejectionReason());
             throw new MeveoApiException(e.getMessage());
+
+        } catch (BusinessException e) {
+            log.error("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getMessage(), e);
+            throw e;
         }
+
     }
 
     /**

@@ -22,17 +22,15 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 
@@ -45,9 +43,7 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
  */
 
 @Entity
-@Table(name = "billing_recurring_charge_inst")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_recurring_chrg_inst_seq"), })
+@DiscriminatorValue("R")
 public class RecurringChargeInstance extends ChargeInstance {
 
     private static final long serialVersionUID = 1L;
@@ -56,15 +52,8 @@ public class RecurringChargeInstance extends ChargeInstance {
      * Charge template/definition that charge was instantiated from
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recurring_chrg_tmpl_id")
+    @JoinColumn(name = "charge_template_id", insertable = false, updatable = false)
     private RecurringChargeTemplate recurringChargeTemplate;
-
-    /**
-     * Subscribed service
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_instance_id")
-    protected ServiceInstance serviceInstance;
 
     /**
      * Subscription date
@@ -79,7 +68,7 @@ public class RecurringChargeInstance extends ChargeInstance {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "next_charge_date")
     protected Date nextChargeDate;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counter_id")
     private CounterInstance counter;
@@ -102,10 +91,7 @@ public class RecurringChargeInstance extends ChargeInstance {
 
         this.recurringChargeTemplate = recurringChargeTemplate;
         this.quantity = serviceInstance.getQuantity() == null ? BigDecimal.ONE : serviceInstance.getQuantity();
-        this.serviceInstance = serviceInstance;
-        if (serviceInstance.getSubscription().getSeller() != null) {
-            this.seller = serviceInstance.getSubscription().getSeller();
-        }
+
     }
 
     public RecurringChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, Date subscriptionDate, Subscription subscription, Seller seller,
@@ -124,7 +110,7 @@ public class RecurringChargeInstance extends ChargeInstance {
         this.setSubscription(subscription);
         this.country = tradingCountry;
         this.currency = tradingCurrency;
-        if (subscription != null && subscription.getSeller() != null) {
+        if (subscription != null) {
             this.seller = subscription.getSeller();
         }
     }
@@ -137,14 +123,6 @@ public class RecurringChargeInstance extends ChargeInstance {
         this.recurringChargeTemplate = recurringChargeTemplate;
         this.code = recurringChargeTemplate.getCode();
         this.description = recurringChargeTemplate.getDescription();
-    }
-
-    public ServiceInstance getServiceInstance() {
-        return serviceInstance;
-    }
-
-    public void setServiceInstance(ServiceInstance serviceInstance) {
-        this.serviceInstance = serviceInstance;
     }
 
     public Date getSubscriptionDate() {
@@ -163,14 +141,20 @@ public class RecurringChargeInstance extends ChargeInstance {
         this.nextChargeDate = nextChargeDate;
     }
 
+    /**
+     * @return Quantity subscribed
+     */
     public BigDecimal getQuantity() {
         return quantity;
     }
 
+    /**
+     * @param quantity Quantity subscribed
+     */
     public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
     }
-    
+
     public CounterInstance getCounter() {
         return counter;
     }

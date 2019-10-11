@@ -30,6 +30,7 @@
         
     Additional attributes for text type fields
         showTruncated - show truncated text in column and show full text when clicking on the text "..."  
+        truncateToSize - in case of show truncated, a max number of characters to show in a popup
         
     Additional attributes for list type fields
         valueLabelField - used along with isList="true". Specifies a name of a field in list value item.
@@ -116,6 +117,10 @@
 
     <c:if test="${empty showTruncated}">
         <c:set var="showTruncated" value="false" />
+    </c:if>
+    
+    <c:if test="${showTruncated and empty truncateToSize}">
+        <c:set var="truncateToSize" value="10000" />
     </c:if>
 
     <c:if test="${empty exportable}">
@@ -220,7 +225,7 @@
 
                                 <f:facet name="inline">
                                     <p:scrollPanel mode="native" style="width:1000px;max-height:600px">
-                                        <h:outputText value="#{valueField.replaceAll('\\n','&lt;BR/&gt;')}" escape="false" />
+                                        <h:outputText value="#{(valueField.length()>truncateToSize?(fn:substring(valueField,0,truncateToSize)):valueField).replaceAll('\\n','&lt;BR/&gt;')}" escape="false" />
                                     </p:scrollPanel>
                                 </f:facet>
                             </p:lightBox>

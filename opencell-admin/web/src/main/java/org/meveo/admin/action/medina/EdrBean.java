@@ -1,7 +1,7 @@
 package org.meveo.admin.action.medina;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
@@ -19,53 +19,53 @@ import org.meveo.service.billing.impl.EdrService;
 @ConversationScoped
 public class EdrBean extends BaseBean<EDR> {
 
-	private static final long serialVersionUID = 7833532801870480214L;
+    private static final long serialVersionUID = 7833532801870480214L;
 
-	@Inject
-	private EdrService edrService;
+    @Inject
+    private EdrService edrService;
 
-	public EdrBean() {
-		super(EDR.class);
-	}
+    public EdrBean() {
+        super(EDR.class);
+    }
 
-	@Override
-	public String getEditViewName() {
-		return "edrDetail";
-	}
+    @Override
+    public String getEditViewName() {
+        return "edrDetail";
+    }
 
-	public void updateStatus(EDR selectedEdr) throws BusinessException {
-		if(EDRStatusEnum.REJECTED.equals(selectedEdr.getStatus())) {
-			selectedEdr.setStatus(EDRStatusEnum.OPEN);
-			getPersistenceService().update(selectedEdr);
-		} else {
-			messages.warn(new BundleKey("messages", "edr.onlyRejectedCanBeUpdated"));
-		}
-	}
+    public void updateStatus(EDR selectedEdr) throws BusinessException {
+        if (EDRStatusEnum.REJECTED.equals(selectedEdr.getStatus())) {
+            List<Long> ids = new ArrayList<>();
+            ids.add(selectedEdr.getId());
+            edrService.reopenRejectedEDRS(ids);
 
-	public void massUpdate() {
-		if (getSelectedEntities() != null) {
-			log.debug("updating {} edrs", getSelectedEntities().size());
+        } else {
+            messages.warn(new BundleKey("messages", "edr.onlyRejectedCanBeUpdated"));
+        }
+    }
 
-			boolean hasNotRejected = false;
+    public void massUpdate() {
+        if (getSelectedEntities() == null) {
+            return;
+        }
+        log.debug("Reopening {} rejected edrs", getSelectedEntities().size());
 
-			Set<Long> selectedIds = new HashSet<Long>();
-			for (EDR edr : getSelectedEntities()) {
-				hasNotRejected = hasNotRejected || !EDRStatusEnum.REJECTED.equals(edr.getStatus());
-				selectedIds.add(edr.getId());
-			}
+        List<Long> selectedIds = new ArrayList<>();
+        for (EDR edr : getSelectedEntities()) {
+            if (EDRStatusEnum.REJECTED.equals(edr.getStatus())) {
+                selectedIds.add(edr.getId());
+            }
+        }
 
-			if(selectedIds.size() > 0){
-				edrService.massUpdate(EDRStatusEnum.OPEN, selectedIds);
-			}
+        if (selectedIds.size() > 0) {
+            edrService.reopenRejectedEDRS(selectedIds);
+        } else {
+            messages.warn(new BundleKey("messages", "edr.onlyRejectedCanBeUpdated"));
+        }
+    }
 
-			if(hasNotRejected){
-				messages.warn(new BundleKey("messages", "edr.onlyRejectedCanBeUpdated"));
-			}
-		}
-	}
-
-	@Override
-	protected IPersistenceService<EDR> getPersistenceService() {
-		return edrService;
-	}
+    @Override
+    protected IPersistenceService<EDR> getPersistenceService() {
+        return edrService;
+    }
 }

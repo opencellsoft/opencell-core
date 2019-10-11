@@ -31,29 +31,6 @@ public class GenerateInvoiceResultDto extends InvoiceDto {
     private Long accountOperationId;
 
     /**
-     * Instantiates a new generate invoice response dto
-     */
-    public GenerateInvoiceResultDto() {
-        super();
-    }
-
-    /**
-     * Instantiates a new generate invoice response dto. Note: does not fill in XML and PDF information
-     * 
-     * @param invoice Invoice
-     * @param includeTransactions Should Rated transactions be detailed in subcategory aggregate level
-     */
-    public GenerateInvoiceResultDto(Invoice invoice, boolean includeTransactions) {
-        super(invoice, includeTransactions);
-        this.temporaryInvoiceNumber = invoice.getTemporaryInvoiceNumber();
-        this.invoiceTypeCode = invoice.getInvoiceType().getCode();
-        this.amount = invoice.getAmount();
-        if (invoice.getRecordedInvoice() != null) {
-            accountOperationId = invoice.getRecordedInvoice().getId();
-        }
-    }
-
-    /**
      * Gets the temporary invoice number.
      *
      * @return the temporary invoice number
