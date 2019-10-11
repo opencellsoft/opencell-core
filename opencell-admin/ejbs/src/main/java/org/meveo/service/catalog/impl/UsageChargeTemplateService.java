@@ -73,14 +73,6 @@ public class UsageChargeTemplateService extends ChargeTemplateService<UsageCharg
             .getResultList();
     }
 
-    public int getNbrUsagesChrgWithNotPricePlan() {
-        return ((Long) getEntityManager().createNamedQuery("usageChargeTemplate.getNbrUsagesChrgWithNotPricePlan", Long.class).getSingleResult()).intValue();
-    }
-
-    public List<UsageChargeTemplate> getUsagesChrgWithNotPricePlan() {
-        return (List<UsageChargeTemplate>) getEntityManager().createNamedQuery("usageChargeTemplate.getUsagesChrgWithNotPricePlan", UsageChargeTemplate.class).getResultList();
-    }
-
     public int getNbrUsagesChrgNotAssociated() {
         return ((Long) getEntityManager().createNamedQuery("usageChargeTemplate.getNbrUsagesChrgNotAssociated", Long.class).getSingleResult()).intValue();
     }

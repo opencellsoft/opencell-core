@@ -678,7 +678,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 	rt.setTaxPercent(subcat.getTaxPercent());
                     rt.setInvoice(entity);
                     rt.setStatus(RatedTransactionStatusEnum.BILLED);
-                    ratedTransactionService.refreshOrRetrieve(rt);
+                    rt = ratedTransactionService.refreshOrRetrieve(rt);
                     if (rt.isTransient()) {
                         ratedTransactionService.create(rt);
                     } else {
