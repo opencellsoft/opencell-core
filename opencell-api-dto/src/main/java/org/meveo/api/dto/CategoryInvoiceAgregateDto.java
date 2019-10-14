@@ -81,47 +81,6 @@ public class CategoryInvoiceAgregateDto extends BaseEntityDto {
     private List<DiscountInvoiceAggregateDto> discountAggregates;
 
     /**
-     * Instantiates a new category invoice aggregate dto
-     * 
-     * @param categoryAggregate Category invoice aggregate
-     * @param includeTransactions Should Rated transactions be detailed in subcategory aggregate level
-     */
-    public CategoryInvoiceAgregateDto(CategoryInvoiceAgregate categoryAggregate, boolean includeTransactions) {
-
-        this.categoryInvoiceCode = categoryAggregate.getInvoiceCategory().getCode();
-        this.description = categoryAggregate.getDescription();
-        this.amountWithoutTax = categoryAggregate.getAmountWithoutTax();
-        this.amountWithTax = categoryAggregate.getAmountWithTax();
-        this.amountTax = categoryAggregate.getAmountTax();
-        this.itemNumber = categoryAggregate.getItemNumber();
-        if (categoryAggregate.getUserAccount() != null) {
-            this.userAccountCode = categoryAggregate.getUserAccount().getCode();
-        }
-        for (SubCategoryInvoiceAgregate subCategoryAggregate : categoryAggregate.getSubCategoryInvoiceAgregates()) {
-
-            if (subCategoryAggregate.isDiscountAggregate()) {
-                if (discountAggregates == null) {
-                    discountAggregates = new ArrayList<>();
-                }
-                discountAggregates.add(new DiscountInvoiceAggregateDto(subCategoryAggregate));
-            } else {
-                listSubCategoryInvoiceAgregateDto.add(new SubCategoryInvoiceAgregateDto(subCategoryAggregate, includeTransactions));
-            }
-        }
-
-        listSubCategoryInvoiceAgregateDto.sort(Comparator.comparing(SubCategoryInvoiceAgregateDto::getInvoiceSubCategoryCode));
-        if (discountAggregates != null) {
-            discountAggregates.sort(Comparator.comparing(DiscountInvoiceAggregateDto::getDiscountPlanItemCode));
-        }
-    }
-
-    /**
-     * Instantiates a new category invoice aggregate dto.
-     */
-    public CategoryInvoiceAgregateDto() {
-    }
-
-    /**
      * Gets the category invoice code.
      *
      * @return the categoryInvoiceCode

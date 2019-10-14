@@ -87,7 +87,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
      * @return billing run
      */
     @Override
-	public BillingRun initEntity() {
+    public BillingRun initEntity() {
         BillingRun billingRun = super.initEntity();
         getPersistenceService().refresh(billingRun);
 
@@ -175,7 +175,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
 
             customFieldDataEntryBean.saveCustomFieldsToEntity(entity, true);
             billingRunService.create(entity);
-            
+
             return "billingRuns";
 
         } catch (Exception e) {
@@ -220,53 +220,30 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
         return null;
     }
 
-    public String cancelInvoicing() {
+    public String cancel() {
         try {
-            entity = billingRunService.refreshOrRetrieve(entity);
-            entity.setStatus(BillingRunStatusEnum.CANCELED);
-            entity = billingRunService.update(entity);
-            return "billingRuns";
-        } catch (Exception e) {
-            log.error("Failed to cancel invoicing", e);
-            messages.error(new BundleKey("messages", "error.execution"));
-        }
-        return null;
-    }
-
-    public String cancelConfirmedInvoicing() {
-        try {
-            entity = billingRunService.refreshOrRetrieve(entity);
-            entity.setStatus(BillingRunStatusEnum.CANCELED);
-            billingRunService.cleanBillingRun(entity);
-            entity = billingRunService.update(entity);
+            entity = billingRunService.cancelBillingRun(entity);
             return "billingRuns";
 
         } catch (Exception e) {
-            log.error("Failed to cancel confirmed invoicing", e);
+            log.error("Failed to cancel billing run", e);
             messages.error(new BundleKey("messages", "error.execution"));
         }
         return null;
     }
 
-    public String rerateConfirmedInvoicing() {
+    /**
+     * Cancel billing run and mark associated wallet operations to be re-rated
+     * 
+     * @return View name
+     */
+    public String rerate() {
         try {
-            billingRunService.rerateBillingRunTransactions(entity);
-            return cancelConfirmedInvoicing();
+            entity = billingRunService.rerateBillingRun(entity);
+            return "billingRuns";
 
         } catch (Exception e) {
-            log.error("Failed to rerate confirmed invoicing", e);
-            messages.error(new BundleKey("messages", "error.execution"));
-        }
-        return null;
-    }
-
-    public String rerateInvoicing() {
-        try {
-            billingRunService.rerateBillingRunTransactions(entity);
-            return cancelInvoicing();
-
-        } catch (Exception e) {
-            log.error("Failed to rerate invoicing", e);
+            log.error("Failed to rerate billing run", e);
             messages.error(new BundleKey("messages", "error.execution"));
         }
         return null;

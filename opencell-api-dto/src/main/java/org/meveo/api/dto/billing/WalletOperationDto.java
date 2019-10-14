@@ -5,15 +5,18 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class WalletOperationDto.
@@ -24,10 +27,27 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  */
 @XmlRootElement(name = "WalletOperation")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WalletOperationDto extends BusinessEntityDto {
+public class WalletOperationDto extends BaseEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -1920217666509809184L;
+
+    /** The id. */
+    @XmlAttribute()
+    protected Long id;
+
+    /**
+     * The code
+     */
+    // @Pattern(regexp = "^[@A-Za-z0-9_\\.-]+$")
+    @XmlAttribute(required = true)
+    protected String code;
+
+    /**
+     * The description
+     */
+    @XmlAttribute()
+    protected String description;
 
     /** The user account. */
     private String userAccount;
@@ -55,6 +75,12 @@ public class WalletOperationDto extends BusinessEntityDto {
 
     /** The status. */
     private WalletOperationStatusEnum status;
+
+    /**
+     * Updated date
+     */
+    @Schema(description = "Updated date", hidden = true)
+    private Date updated;
 
     /** The rating unit description. */
     private String ratingUnitDescription;
@@ -146,8 +172,11 @@ public class WalletOperationDto extends BusinessEntityDto {
      * @param walletOperation the WalletOperation entity
      */
     public WalletOperationDto(WalletOperation walletOperation) {
-        super(walletOperation);
-        if(walletOperation.getSeller() != null) {
+
+        code = walletOperation.getCode();
+        description = walletOperation.getDescription();
+
+        if (walletOperation.getSeller() != null) {
             seller = walletOperation.getSeller().getCode();
         }
         if (walletOperation.getWallet() != null) {
@@ -181,12 +210,13 @@ public class WalletOperationDto extends BusinessEntityDto {
         subscriptionDate = walletOperation.getSubscriptionDate();
         walletTemplate = walletOperation.getWallet().getCode();
         userAccount = walletOperation.getWallet().getUserAccount().getCode();
-        offerCode = walletOperation.getOfferCode() != null ? walletOperation.getOfferCode() : walletOperation.getOfferTemplate() != null ? walletOperation.getOfferTemplate().getCode() : null;
+        offerCode = walletOperation.getOfferCode() != null ? walletOperation.getOfferCode()
+                : walletOperation.getOfferTemplate() != null ? walletOperation.getOfferTemplate().getCode() : null;
         chargeInstance = walletOperation.getChargeInstance().getCode();
         chargeInstanceId = walletOperation.getChargeInstance().getId();
         rawAmountWithoutTax = walletOperation.getRawAmountWithoutTax();
         rawAmountWithTax = walletOperation.getRawAmountWithTax();
-        code = walletOperation.getCode();
+        updated = walletOperation.getUpdated();
     }
 
     /**
@@ -277,6 +307,14 @@ public class WalletOperationDto extends BusinessEntityDto {
      */
     public void setStatus(WalletOperationStatusEnum status) {
         this.status = status;
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
     }
 
     /**
@@ -771,6 +809,60 @@ public class WalletOperationDto extends BusinessEntityDto {
      */
     public void setWalletId(Long walletId) {
         this.walletId = walletId;
+    }
+
+    /**
+     * Gets the id.
+     *
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * Sets the id.
+     *
+     * @param id the new id
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * Gets the code.
+     *
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * Sets the code.
+     *
+     * @param code the new code
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the description.
+     *
+     * @param description the new description
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

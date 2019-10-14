@@ -31,6 +31,7 @@ public interface RumSequenceRs extends IBaseRs {
 	 * @return status of the operation
 	 */
 	@PUT
+	@Path("/")
 	ActionStatus update(GenericSequenceDto postData);
 
 	/**

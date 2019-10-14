@@ -643,8 +643,7 @@ public class CustomTableService extends NativePersistenceService {
      * @return A field value
      * @throws BusinessException General exception
      */
-    public Object getValue(String cetCodeOrTablename, String fieldToReturn, Map<String, Object> queryValues) 
-    		throws BusinessException {
+    public Object getValue(String cetCodeOrTablename, String fieldToReturn, Map<String, Object> queryValues) throws BusinessException {
         removeEmptyKeys(queryValues);
         Map<String, Object> values = new HashMap<>(queryValues);
         List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.DESC }, new String[] { fieldToReturn });
@@ -851,7 +850,6 @@ public class CustomTableService extends NativePersistenceService {
                 }
                 
                 String[] fieldInfo = key.split(" ");
-                
                 String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1]; // field name here can be a db field name or a custom field code
                 CustomFieldTemplate cft = cftsMap.get(fieldName);  
                 if (cft == null) {

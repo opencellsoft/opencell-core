@@ -55,7 +55,7 @@
 				</p:button>
 				<p:commandButton value="#{messages['action.cancel']}"
 					rendered="#{entity.status != BillingRunStatusEnum.POSTINVOICED and entity.status != BillingRunStatusEnum.CANCELED and entity.status != BillingRunStatusEnum.VALIDATED and entity.status != BillingRunStatusEnum.POSTVALIDATED}"
-					action="#{billingRunBean.cancelInvoicing()}" update=":results_form">
+					action="#{billingRunBean.cancel()}" update=":results_form">
 					<f:setPropertyActionListener target="#{billingRunBean.entity}" value="#{entity}"></f:setPropertyActionListener>
 				</p:commandButton>
 			</p:column>
