@@ -19,9 +19,9 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -29,13 +29,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.QueryHint;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.meveo.model.catalog.UsageChargeTemplate;
 
 /**
@@ -44,22 +39,13 @@ import org.meveo.model.catalog.UsageChargeTemplate;
  * @author Andrius Karpavicius
  */
 @Entity
-@Table(name = "billing_usage_charge_inst")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_usage_charge_inst_seq"), })
+@DiscriminatorValue("U")
 @NamedQueries({
-        @NamedQuery(name = "UsageChargeInstance.getActiveUsageChargesBySubscriptionId", query = "SELECT c FROM UsageChargeInstance c join fetch c.serviceInstance si where c.status='ACTIVE' and c.subscription.id=:subscriptionId order by c.priority ASC", hints = {
+        @NamedQuery(name = "UsageChargeInstance.getActiveUsageChargesBySubscriptionId", query = "SELECT c FROM UsageChargeInstance c where c.status='ACTIVE' and c.subscription.id=:subscriptionId order by c.priority ASC", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class UsageChargeInstance extends ChargeInstance {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Subscribed service
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_instance_id")
-    private ServiceInstance serviceInstance;
 
     /**
      * Counter for consumption tracking
@@ -74,14 +60,6 @@ public class UsageChargeInstance extends ChargeInstance {
     @Column(name = "rating_unit_description", length = 20)
     @Size(max = 20)
     private String ratingUnitDescription;
-
-    /**
-     * Deprecated in 5.3 for not use
-     */
-    @Deprecated
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "last_update")
-    private Date lastUpdate;
 
     /**
      * The lower number, the higher the priority is. Value is a copy from UsageChargeTemplate.priority field and is synchronized when UsageChargeTemplate.priority value change.
@@ -110,19 +88,7 @@ public class UsageChargeInstance extends ChargeInstance {
         super(amountWithoutTax, amountWithTax, usageChargeTemplate, serviceInstance, status);
 
         this.ratingUnitDescription = usageChargeTemplate.getRatingUnitDescription();
-        this.serviceInstance = serviceInstance;
         this.priority = usageChargeTemplate.getPriority();
-        if (serviceInstance.getSubscription().getSeller() != null) {
-            this.seller = serviceInstance.getSubscription().getSeller();
-        }
-    }
-
-    public ServiceInstance getServiceInstance() {
-        return serviceInstance;
-    }
-
-    public void setServiceInstance(ServiceInstance serviceInstance) {
-        this.serviceInstance = serviceInstance;
     }
 
     public CounterInstance getCounter() {
@@ -131,14 +97,6 @@ public class UsageChargeInstance extends ChargeInstance {
 
     public void setCounter(CounterInstance counter) {
         this.counter = counter;
-    }
-
-    public Date getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(Date lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 
     public String getRatingUnitDescription() {

@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -29,12 +30,9 @@ import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
 import javax.persistence.PostUpdate;
 import javax.persistence.QueryHint;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.NumberUtils;
 
@@ -46,9 +44,7 @@ import org.meveo.commons.utils.NumberUtils;
  * @lastModifiedVersion 7.0
  */
 @Entity
-@Table(name = "cat_usage_charge_template")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cat_usage_charge_template_seq"), })
+@DiscriminatorValue("U")
 @NamedQueries({
         @NamedQuery(name = "UsageChargeTemplate.getWithTemplateEDR", query = "SELECT u FROM UsageChargeTemplate u join u.edrTemplates t WHERE :edrTemplate=t"
                 + " and u.disabled=false"),
@@ -60,7 +56,6 @@ import org.meveo.commons.utils.NumberUtils;
         @NamedQuery(name = "usageChargeTemplate.getUsagesChrgNotAssociated", query = "from UsageChargeTemplate u where (u.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateUsage serv) "
                 + " OR u.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) ") })
 public class UsageChargeTemplate extends ChargeTemplate {
-    static String WILCARD = "";
 
     @Transient
     public static final String CHARGE_TYPE = "USAGE";
@@ -72,42 +67,28 @@ public class UsageChargeTemplate extends ChargeTemplate {
      */
     @Column(name = "filter_param_1", length = 255)
     @Size(max = 255)
-    private String filterParam1 = WILCARD;
+    private String filterParam1;
 
     /**
      * EDR parameter to match
      */
     @Column(name = "filter_param_2", length = 255)
     @Size(max = 255)
-    private String filterParam2 = WILCARD;
+    private String filterParam2;
 
     /**
      * EDR parameter to match
      */
     @Column(name = "filter_param_3", length = 255)
     @Size(max = 255)
-    private String filterParam3 = WILCARD;
+    private String filterParam3;
 
     /**
      * EDR parameter to match
      */
     @Column(name = "filter_param_4", length = 255)
     @Size(max = 255)
-    private String filterParam4 = WILCARD;
-
-    /**
-     * Expression to determine if EDR matches
-     */
-    @Column(name = "filter_expression", length = 2000)
-    @Size(max = 2000)
-    private String filterExpression = null;
-
-    /**
-     * Expression to determine if EDR matches - for Spark
-     */
-    @Column(name = "filter_el_sp", length = 2000)
-    @Size(max = 2000)
-    private String filterExpressionSpark = null;
+    private String filterParam4;
 
     /**
      * The lower number, the higher the priority is
@@ -120,20 +101,20 @@ public class UsageChargeTemplate extends ChargeTemplate {
      */
     @Transient
     private int previousPriority = 1;
-    
+
     /**
      * If true and (charge has no counter associated) then the next matching charge with the full quantity of the EDR.
      */
     @Type(type = "numeric_boolean")
     @Column(name = "trigger_next_charge")
-    protected Boolean triggerNextCharge = false;
-    
+    private Boolean triggerNextCharge = false;
+
     /**
      * Overrides the triggerNextCharge switch.
      */
     @Column(name = "trigger_next_charge_el", length = 2000)
     @Size(max = 2000)
-    protected String triggerNextChargeEL;
+    private String triggerNextChargeEL;
 
     public String getFilterParam1() {
         return filterParam1;
@@ -165,34 +146,6 @@ public class UsageChargeTemplate extends ChargeTemplate {
 
     public void setFilterParam4(String filterParam4) {
         this.filterParam4 = filterParam4;
-    }
-
-    /**
-     * @return Expression to determine if charge applies
-     */
-    public String getFilterExpression() {
-        return filterExpression;
-    }
-
-    /**
-     * @param filterExpression Expression to determine if charge applies
-     */
-    public void setFilterExpression(String filterExpression) {
-        this.filterExpression = filterExpression;
-    }
-
-    /**
-     * @return Expression to determine if charge applies - for Spark
-     */
-    public String getFilterExpressionSpark() {
-        return filterExpressionSpark;
-    }
-
-    /**
-     * @param filterExpressionSpark Expression to determine if charge applies - for Spark
-     */
-    public void setFilterExpressionSpark(String filterExpressionSpark) {
-        this.filterExpressionSpark = filterExpressionSpark;
     }
 
     /**
@@ -243,19 +196,19 @@ public class UsageChargeTemplate extends ChargeTemplate {
         return priority != previousPriority;
     }
 
-	public Boolean getTriggerNextCharge() {
-		return triggerNextCharge;
-	}
+    public Boolean getTriggerNextCharge() {
+        return triggerNextCharge;
+    }
 
-	public void setTriggerNextCharge(Boolean triggerNextCharge) {
-		this.triggerNextCharge = triggerNextCharge;
-	}
+    public void setTriggerNextCharge(Boolean triggerNextCharge) {
+        this.triggerNextCharge = triggerNextCharge;
+    }
 
-	public String getTriggerNextChargeEL() {
-		return triggerNextChargeEL;
-	}
+    public String getTriggerNextChargeEL() {
+        return triggerNextChargeEL;
+    }
 
-	public void setTriggerNextChargeEL(String triggerNextChargeEL) {
-		this.triggerNextChargeEL = triggerNextChargeEL;
-	}
+    public void setTriggerNextChargeEL(String triggerNextChargeEL) {
+        this.triggerNextChargeEL = triggerNextChargeEL;
+    }
 }
