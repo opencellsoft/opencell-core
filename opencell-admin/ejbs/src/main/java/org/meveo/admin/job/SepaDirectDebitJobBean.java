@@ -107,7 +107,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        log.debug("Running for parameter={}", jobInstance.getParametres());
+        
         try {
 			Long nbRuns = new Long(1);
 			Long waitingMillis = new Long(0);

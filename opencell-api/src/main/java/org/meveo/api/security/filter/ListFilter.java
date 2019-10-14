@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.api.dto.account.FilterProperty;
 import org.meveo.api.dto.account.FilterResults;
+import org.meveo.api.dto.response.SearchResponse;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
@@ -101,6 +102,21 @@ public class ListFilter extends SecureMethodResultFilter {
 
         itemsToFilter.clear();
         itemsToFilter.addAll(filteredList);
+        if(result instanceof SearchResponse) {
+        	SearchResponse response = (SearchResponse)result;
+        	int totalRecords = filteredList.size();
+			response.getPaging().setTotalNumberOfRecords(totalRecords);
+        	String totalRecordsPropertyName = filterResults.totalRecords();
+			if (!totalRecordsPropertyName.isEmpty()) {
+				try {
+					updateItemsCount(response, totalRecordsPropertyName, totalRecords);
+				} catch (IllegalAccessException e) {
+					throw new InvalidParameterException(String.format("Failed to update property: %s of DTO %s.",
+							totalRecordsPropertyName, result));
+				}
+			}
+        	return response;
+        }
 
         return result;
     }
@@ -125,6 +141,22 @@ public class ListFilter extends SecureMethodResultFilter {
         String fieldName = property.substring(0, fieldIndex);
         Object fieldValue = FieldUtils.readField(obj, fieldName, true);
         return getItemsForFiltering(fieldValue, property.substring(fieldIndex + 1));
+    }
+    
+    private void updateItemsCount(Object obj, String property, int totalRecords) throws IllegalAccessException {
+        int fieldIndex = property.indexOf(".");
+        if (fieldIndex == -1) {
+        	 Class<?> type = FieldUtils.getField(obj.getClass(), property, true).getType();
+        	 if(type.equals(Long.class)) {
+				FieldUtils.writeField(obj, property, new Long(totalRecords), true);
+        	 }else {
+        		 FieldUtils.writeField(obj, property, totalRecords, true);
+        	 }
+             return;
+        }
+        String fieldName = property.substring(0, fieldIndex);
+        Object fieldValue = FieldUtils.readField(obj, fieldName, true);
+        updateItemsCount(fieldValue, property.substring(fieldIndex + 1), totalRecords);
     }
 
 }

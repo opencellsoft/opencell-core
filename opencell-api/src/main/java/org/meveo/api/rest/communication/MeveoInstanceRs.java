@@ -43,7 +43,7 @@ public interface MeveoInstanceRs extends IBaseRs {
 	 * Update a meveoInstance by dto
      *
 	 * @param meveoInstanceDto
-	 * @return
+	 * @return Request processing status
 	 */
     @PUT
     @Path("/")
@@ -52,8 +52,8 @@ public interface MeveoInstanceRs extends IBaseRs {
     /**
      * Find a meveoInstance by code
      *
-     * @param code
-     * @return
+     * @param code the code of the meveo instance
+     * @return Request processing status
      */
     @GET
     @Path("/")
@@ -62,8 +62,8 @@ public interface MeveoInstanceRs extends IBaseRs {
     /**
      * Remove a meveoInstance by code
      *
-     * @param code
-     * @return
+     * @param code the code of the meveo instance
+     * @return Request processing status
      */
     @DELETE
     @Path("/{code}")
@@ -72,7 +72,7 @@ public interface MeveoInstanceRs extends IBaseRs {
     /**
      * List meveoInstances
      *
-     * @return
+     * @return List of Meveo Instances 
      */
     @GET
     @Path("/list")
@@ -81,8 +81,8 @@ public interface MeveoInstanceRs extends IBaseRs {
     /**
      * CreateOrUpdate a meveoInstance by dto
      *
-     * @param meveoInstanceDto
-     * @return
+     * @param meveoInstanceDto meveo Instance data
+     * @return Request processing status
      */
     @POST
     @Path("/createOrUpdate")

@@ -18,6 +18,7 @@
  */
 package org.meveo.model;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Embedded;
@@ -50,6 +51,7 @@ import org.meveo.model.shared.Name;
  */
 @Entity
 @ObservableEntity
+@Cacheable
 @Table(name = "account_entity", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "account_type" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "account_entity_seq"), })
