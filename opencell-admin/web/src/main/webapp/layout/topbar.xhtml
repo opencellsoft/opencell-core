@@ -25,7 +25,7 @@
 							<ul style="display: none; z-index: 1">
 								<li><h:commandLink id="logout" action="#{authenticationProvider.logout}" value="#{messages['menutop.logout']}" /></li>
 								<li><h:link outcome="/index.html"
-										value="#{messages['menutop.changePassword']}" rendered=""
+										value="#{messages['menutop.changePassword']}" rendered="true"
 										styleClass="headerLink" immediate="true" /></li>
 							</ul>
 						</c:if></li>
@@ -50,7 +50,7 @@
 										//e.preventDefault();
 										e.stopPropagation();
 										var id = $(this).attr("id");
-										if (id == "menu1") {
+										if (id === "menu1") {
 											$("#menu2").parent().find('ul')
 													.hide();
 										} else {

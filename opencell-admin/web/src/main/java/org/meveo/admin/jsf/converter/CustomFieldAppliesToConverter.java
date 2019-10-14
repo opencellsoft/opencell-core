@@ -9,9 +9,9 @@ import java.util.Map.Entry;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
+import javax.faces.convert.FacesConverter;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.custom.CustomizedEntity;
@@ -23,7 +23,7 @@ import org.meveo.util.EntityCustomizationUtils;
  * 
  * @author Andrius Karpavicius
  **/
-@Named("customFieldAppliesToConverter")
+@FacesConverter("customFieldAppliesToConverter")
 @ViewScoped
 public class CustomFieldAppliesToConverter implements Converter, Serializable {
 

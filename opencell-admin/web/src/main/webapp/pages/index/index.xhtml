@@ -23,7 +23,7 @@
                         <h:panelGroup rendered="#{indexingBean.reindexingFuture!=null}">
 
                             <p:poll interval="5" update="reindexSummary" stop="#{indexingBean.reindexingFuture!=null and indexingBean.reindexingFuture.isDone()}"
-                                widgetVar="reindexStatusPoll" onerror="PF('reindexStatusPoll').stop()" />
+                                widgetVar="reindexStatusPoll" onerror="PF('reindexStatusPoll').stop()" process="@this"/>
 
                             <h:panelGroup rendered="#{indexingBean.reindexingFuture!=null}">
                                 <h:panelGroup rendered="#{!indexingBean.reindexingFuture.isDone()}">
