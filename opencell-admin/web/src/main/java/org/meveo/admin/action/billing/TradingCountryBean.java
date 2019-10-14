@@ -42,6 +42,8 @@ import org.primefaces.event.SelectEvent;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  */
 @Named
 @ViewScoped
@@ -71,7 +73,7 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 					country != null ? country.getCountryCode() : null);
 			if (country != null) {
 				entity.setCountry(country);
-				entity.setPrDescription(country.getDescription());
+				entity.setDescription(country.getDescription());
 			}
 		}
 

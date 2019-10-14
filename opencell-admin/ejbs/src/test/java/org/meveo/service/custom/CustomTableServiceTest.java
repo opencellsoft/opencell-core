@@ -81,6 +81,7 @@ public class CustomTableServiceTest {
         assertThat(queryValues.size()).isEqualTo(2);
         assertThat(queryValues).containsKeys("flirtikit", "bidlidez");
         assertThat(queryValues).doesNotContainKeys("");
+
     }
 
     private List<Map<String, Object>> buildListMap(int size) {

@@ -249,10 +249,10 @@
                                      value="#{messages['action.validate']}"
                                      rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED'}"/>
                     <!-- <h:commandButton
-                    action="#{billingRunBean.rerateConfirmedInvoicing()}"
+                    action="#{billingRunBean.rerate()}"
                     value="Rerate" /> -->
                     <p:commandButton
-                            action="#{billingRunBean.cancelConfirmedInvoicing()}"
+                            action="#{billingRunBean.cancel()}"
                             value="#{messages['action.cancel']}"
                             rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED'}"
                             onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}"/>

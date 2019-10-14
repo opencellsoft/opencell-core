@@ -19,7 +19,6 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.AggregatedWalletOperation;
 import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting;
@@ -89,11 +88,11 @@ public class RatedTransactionsJobBean extends BaseJobBean {
     }
 
     private void executeWithoutAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis) throws Exception {
-        List<Long> walletOperationIds = walletOperationService.listToInvoiceIds(new Date(), PROCESS_NR_IN_JOB_RUN);
-        log.info("WalletOperations to convert into rateTransactions={}", walletOperationIds.size());
-        result.setNbItemsToProcess(walletOperationIds.size());
+        List<Long> walletOperations = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
+        log.info("WalletOperations to convert into rateTransactions={}", walletOperations.size());
+        result.setNbItemsToProcess(walletOperations.size());
 
-        SubListCreator<Long> subListCreator = new SubListCreator<>(walletOperationIds, nbRuns.intValue());
+        SubListCreator<Long> subListCreator = new SubListCreator<>(walletOperations, nbRuns.intValue());
         List<Future<String>> futures = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
@@ -123,8 +122,8 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         }
 
         // Check if there are any more Wallet Operations to process and mark job as completed if there are none
-        walletOperationIds = walletOperationService.listToInvoiceIds(new Date(), PROCESS_NR_IN_JOB_RUN);
-        result.setDone(walletOperationIds.isEmpty());
+        walletOperations = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
+        result.setDone(walletOperations.isEmpty());
     }
 
     private void executeWithAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis, RatedTransactionsJobAggregationSetting aggregationSetting)
