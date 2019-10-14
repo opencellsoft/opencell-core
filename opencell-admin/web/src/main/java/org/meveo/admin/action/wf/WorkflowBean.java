@@ -490,13 +490,13 @@ public class WorkflowBean extends BaseBean<Workflow> {
 
                 if (existedDecisionRule != null) {
                     messages.error(new BundleKey("messages", "decisionRule.uniqueNameValue"), new Object[] { newWFDecisionRule.getName(), newWFDecisionRule.getValue() });
-                    FacesContext.getCurrentInstance().validationFailed();
+                    facesContext.validationFailed();
                     return false;
                 }
                 RuleNameValue ruleNameValue = new RuleNameValue(newWFDecisionRule.getName(), newWFDecisionRule.getValue());
                 if (uniqueNameValues.contains(ruleNameValue)) {
                     messages.error(new BundleKey("messages", "decisionRule.duplicateNameValue"), new Object[] { ruleNameValue.getName(), ruleNameValue.getValue() });
-                    FacesContext.getCurrentInstance().validationFailed();
+                    facesContext.validationFailed();
                     return false;
                 }
 
@@ -507,7 +507,7 @@ public class WorkflowBean extends BaseBean<Workflow> {
                 RuleNameValue ruleNameValue = new RuleNameValue(groupedDecisionRule.getValue().getName(), groupedDecisionRule.getValue().getValue());
                 if (uniqueNameValues.contains(ruleNameValue)) {
                     messages.error(new BundleKey("messages", "decisionRule.duplicateNameValue"), new Object[] { ruleNameValue.getName(), ruleNameValue.getValue() });
-                    FacesContext.getCurrentInstance().validationFailed();
+                    facesContext.validationFailed();
                     return false;
                 }
                 uniqueNameValues.add(ruleNameValue);

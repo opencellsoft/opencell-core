@@ -1,5 +1,7 @@
 package org.meveo.admin.action.crm;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 import java.lang.reflect.Modifier;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -12,7 +14,6 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -42,8 +43,6 @@ import org.meveo.service.custom.CustomizedEntityService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.primefaces.model.DualListModel;
 import org.reflections.Reflections;
-
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * The Class CustomFieldTemplateBean.
@@ -301,13 +300,12 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
             return;
         }
 
-        FacesContext fc = FacesContext.getCurrentInstance();
         boolean valid = true;
 
         if (cft.getMatrixColumns() == null || cft.getMatrixColumns().isEmpty()) {
             FacesMessage msg = new FacesMessage(resourceMessages.getString("customFieldTemplate.matrixColumn.error.atLeastOne"));
             msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            fc.addMessage(null, msg);
+            facesContext.addMessage(null, msg);
             valid = false;
         } else {
         	boolean columnExist=false;
@@ -316,7 +314,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
                 if (StringUtils.isBlank(column.getCode()) || StringUtils.isBlank(column.getLabel()) || column.getKeyType() == null) {
                     FacesMessage msg = new FacesMessage(resourceMessages.getString("customFieldTemplate.matrixColumn.error.missingFields"));
                     msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-                    fc.addMessage(null, msg);
+                    facesContext.addMessage(null, msg);
                     valid = false;
                     break;
                 }
@@ -330,15 +328,15 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
             if(valid && !(columnExist && keyExist)) {
             	FacesMessage msg = new FacesMessage(resourceMessages.getString("customFieldTemplate.matrixColumn.error.atLeastOneKeyValue"));
                 msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-                fc.addMessage(null, msg);
+                facesContext.addMessage(null, msg);
                 valid = false;
             }
         }
         
 
         if (!valid) {
-            fc.validationFailed();
-            fc.renderResponse();
+            facesContext.validationFailed();
+            facesContext.renderResponse();
         }
     }
 

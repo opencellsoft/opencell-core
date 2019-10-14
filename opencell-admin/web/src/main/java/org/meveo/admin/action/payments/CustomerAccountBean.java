@@ -439,7 +439,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         } catch (Exception e) {
             log.error("Failed to save payment method", e);
             messages.error(new BundleKey("messages", "paymentMethod.saved.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
         }
     }
 

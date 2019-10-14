@@ -7,6 +7,7 @@ import java.text.DecimalFormatSymbols;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
@@ -19,7 +20,11 @@ import org.meveo.model.catalog.RoundingModeEnum;
  * @lastModifiedVersion 7.0
  */
 @Named("bigDecimalXDigitsConverter")
+@FacesConverter(value = "bigDecimalXDigitsConverter", managed = true)
 public class BigDecimalXDigitsConverter extends BigDecimalConverter {
+  
+    private static final long serialVersionUID = -4022913574038089922L;
+  
     /**
      * Number of digits in decimal part for a number
      */

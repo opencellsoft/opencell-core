@@ -20,7 +20,6 @@ package org.meveo.admin.action.catalog;
 
 import java.math.BigDecimal;
 
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -88,14 +87,14 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
                 double dblLevel = 0;
                 try {
                     if (level.endsWith("%") && level.length() == 1) {
-                        FacesContext.getCurrentInstance().validationFailed();
+                        facesContext.validationFailed();
                         messages.error(new BundleKey("messages", "counterTemplate.invalidNotificationLevels"));
                         return null;
 
                     } else if (level.endsWith("%") && level.length() > 1) {
                         dblLevel = Double.parseDouble(level.substring(0, level.length() - 1));
                         if (dblLevel >= 100) {
-                            FacesContext.getCurrentInstance().validationFailed();
+                            facesContext.validationFailed();
                             messages.error(new BundleKey("messages", "counterTemplate.invalidNotificationLevels.higherNumbers"));
                             return null;
                         }
@@ -103,13 +102,13 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
                     } else if (!level.endsWith("%")) {
                         dblLevel = Double.parseDouble(level);
                         if (entity.getCeiling() != null && entity.getCeiling().compareTo(BigDecimal.valueOf(dblLevel)) < 0) {
-                            FacesContext.getCurrentInstance().validationFailed();
+                            facesContext.validationFailed();
                             messages.error(new BundleKey("messages", "counterTemplate.invalidNotificationLevels.higherNumbers"));
                             return null;
                         }
                     }
                 } catch (Exception e) {
-                    FacesContext.getCurrentInstance().validationFailed();
+                    facesContext.validationFailed();
                     messages.error(new BundleKey("messages", "counterTemplate.invalidNotificationLevels"));
                     return null;
                 }

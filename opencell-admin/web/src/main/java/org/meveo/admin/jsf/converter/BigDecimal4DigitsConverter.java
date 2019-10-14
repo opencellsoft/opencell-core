@@ -22,12 +22,16 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
 import javax.faces.context.FacesContext;
+import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 
 @Named("bigDecimal4DigitsConverter")
+@FacesConverter(value = "bigDecimal4DigitsConverter", managed = true)
 public class BigDecimal4DigitsConverter extends BigDecimalConverter {
 
-	@Override
+    private static final long serialVersionUID = -5603608214030315663L;
+
+    @Override
 	protected DecimalFormat getDecimalFormat() {
 		DecimalFormatSymbols decimalFormatSymbol = new DecimalFormatSymbols(FacesContext
 				.getCurrentInstance().getViewRoot().getLocale());
