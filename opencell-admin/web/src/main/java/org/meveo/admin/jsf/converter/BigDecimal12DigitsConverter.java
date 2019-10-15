@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -23,19 +23,15 @@ import java.text.DecimalFormatSymbols;
 
 import javax.faces.context.FacesContext;
 import javax.faces.convert.FacesConverter;
-import javax.inject.Named;
 
-@Named("bigDecimal12DigitsConverter")
 @FacesConverter(value = "bigDecimal12DigitsConverter", managed = true)
 public class BigDecimal12DigitsConverter extends BigDecimalConverter {
 
     private static final long serialVersionUID = -8919073885555682006L;
 
     @Override
-	protected DecimalFormat getDecimalFormat() {
-		DecimalFormatSymbols decimalFormatSymbol = new DecimalFormatSymbols(FacesContext
-				.getCurrentInstance().getViewRoot().getLocale());
-		DecimalFormat format = new DecimalFormat("#,##0.000000000000", decimalFormatSymbol);
-		return format;
-	}
+    protected DecimalFormat getDecimalFormat() {
+        DecimalFormatSymbols decimalFormatSymbol = new DecimalFormatSymbols(FacesContext.getCurrentInstance().getViewRoot().getLocale());
+        return new DecimalFormat("#,##0.000000000000", decimalFormatSymbol);
+    }
 }

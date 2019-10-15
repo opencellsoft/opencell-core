@@ -8,7 +8,6 @@ import java.text.DecimalFormatSymbols;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.FacesConverter;
-import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.commons.utils.NumberUtils;
@@ -16,15 +15,15 @@ import org.meveo.model.catalog.RoundingModeEnum;
 
 /**
  * Round a number depending on the number of decimal's digits and the rounding mode
+ *
  * @author Khalid HORRI
  * @lastModifiedVersion 7.0
  */
-@Named("bigDecimalXDigitsConverter")
 @FacesConverter(value = "bigDecimalXDigitsConverter", managed = true)
 public class BigDecimalXDigitsConverter extends BigDecimalConverter {
-  
+
     private static final long serialVersionUID = -4022913574038089922L;
-  
+
     /**
      * Number of digits in decimal part for a number
      */
@@ -35,8 +34,7 @@ public class BigDecimalXDigitsConverter extends BigDecimalConverter {
     private RoundingMode roundingMode = RoundingModeEnum.NEAREST.getRoundingMode();
 
     @Override
-    public String getAsString(FacesContext facesContext,
-            UIComponent uIComponent, BigDecimal obj) {
+    public String getAsString(FacesContext facesContext, UIComponent uIComponent, BigDecimal obj) {
         if (obj == null || obj.toString().length() == 0) {
             return "";
         }
@@ -46,6 +44,7 @@ public class BigDecimalXDigitsConverter extends BigDecimalConverter {
         value = value.replace("\u00a0", "");
         return value;
     }
+
     @Override
     public BigDecimal getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
         RoundingModeEnum roundingModeAttribute = (RoundingModeEnum) uIComponent.getAttributes().get("roundingMode");
@@ -56,16 +55,15 @@ public class BigDecimalXDigitsConverter extends BigDecimalConverter {
         if (roundingModeAttribute != null) {
             roundingMode = roundingModeAttribute.getRoundingMode();
         }
-        BigDecimal number =  (BigDecimal) super.getAsObject(facesContext, uIComponent, str);
+        BigDecimal number = super.getAsObject(facesContext, uIComponent, str);
         number = NumberUtils.round(number, nbDecimal, roundingMode);
         return number;
     }
 
     @Override
     protected DecimalFormat getDecimalFormat() {
-        DecimalFormatSymbols decimalFormatSymbol = new DecimalFormatSymbols(FacesContext
-                .getCurrentInstance().getViewRoot().getLocale());
+        DecimalFormatSymbols decimalFormatSymbol = new DecimalFormatSymbols(FacesContext.getCurrentInstance().getViewRoot().getLocale());
         String suffixPattern = StringUtils.repeat("0", nbDecimal);
-        return  new DecimalFormat("#,##0." + suffixPattern, decimalFormatSymbol);
+        return new DecimalFormat("#,##0." + suffixPattern, decimalFormatSymbol);
     }
 }

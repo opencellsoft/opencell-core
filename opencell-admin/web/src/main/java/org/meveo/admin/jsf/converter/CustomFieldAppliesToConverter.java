@@ -32,7 +32,7 @@ public class CustomFieldAppliesToConverter implements Converter, Serializable {
     @Inject
     private CustomizedEntityService customizedEntityService;
 
-    private Map<String, String> appliesToMap = new HashMap<String, String>();
+    private Map<String, String> appliesToMap = new HashMap<>();
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
@@ -65,16 +65,12 @@ public class CustomFieldAppliesToConverter implements Converter, Serializable {
             loadAppliesToDefinitions();
         }
 
-        String stringValue = appliesToMap.get(obj.toString());
-        // if (stringValue == null) {
-        // } else {
-        // }
-        return stringValue;
+        return appliesToMap.get(obj.toString());
     }
 
     private void loadAppliesToDefinitions() {
 
-        appliesToMap = new HashMap<String, String>();
+        appliesToMap = new HashMap<>();
 
         List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(null, false, true, true, null, null);
 
