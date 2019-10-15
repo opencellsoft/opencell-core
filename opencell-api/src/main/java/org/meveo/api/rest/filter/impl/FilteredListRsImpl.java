@@ -101,7 +101,7 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
             Map<String, String> queryValues = new HashMap<>();
             MultivaluedMap<String, String> params = info.getQueryParameters();
             for (String paramKey : params.keySet()) {
-                if (!paramKey.equals("classnames") && !paramKey.equals("from") && !paramKey.equals("size") && !paramKey.equals("pretty")) {
+                if (!paramKey.equals("classnamesOrCetCodes") && !paramKey.equals("from") && !paramKey.equals("size") && !paramKey.equals("pretty")) {
                     queryValues.put(paramKey, params.getFirst(paramKey));
                 }
             }
