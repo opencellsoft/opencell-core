@@ -227,7 +227,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
         try {
             StringBuilder strQuery = new StringBuilder();
-            strQuery.append("select new org.meveo.model.billing.Amounts(SUM(r.amountWithoutTax), SUM(r.amountWithTax)) from WalletOperation r " + "WHERE 1=1 ");
+            strQuery.append("select new org.meveo.model.billing.Amounts(SUM(r.amountWithoutTax), SUM(r.amountWithTax)) from WalletOperation r WHERE 1=1 ");
 
             if (startDate != null) {
                 strQuery.append(" AND r.operationDate>=:startDate ");
@@ -264,7 +264,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
             case PROVIDER:
                 break;
             case SELLER:
-                strQuery.append(" AND r.wallet.userAccount.billingAccount.customerAccount.customer.seller=:seller ");
+                strQuery.append(" AND r.seller=:seller ");
                 break;
             case USER_ACCOUNT:
                 strQuery.append(" AND r.wallet.userAccount=:userAccount ");
@@ -318,5 +318,4 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
         return result;
     }
-
 }

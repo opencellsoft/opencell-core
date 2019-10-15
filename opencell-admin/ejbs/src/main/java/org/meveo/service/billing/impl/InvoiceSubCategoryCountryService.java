@@ -44,8 +44,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.catalog.impl.TaxService;
 
 /**
  * Service for Invoice subcategory country entity management and applicable tax determination
@@ -56,13 +54,7 @@ import org.meveo.service.catalog.impl.TaxService;
 public class InvoiceSubCategoryCountryService extends PersistenceService<InvoiceSubcategoryCountry> {
 
     @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
-
-    @Inject
     private ResourceBundle resourceBundle;
-
-    @Inject
-    private TaxService taxService;
 
     @Override
     public void create(InvoiceSubcategoryCountry invoiceSubcategoryCountry) throws BusinessException {
@@ -110,9 +102,9 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         return checkValidityDateFromList(invoiceSubcategoryCountry, invoiceSubcategoryCountries);
     }
 
-	public InvoiceSubcategoryCountry checkValidityDateFromList(InvoiceSubcategoryCountry invoiceSubcategoryCountry,
-			List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) throws BusinessException {
-		if (invoiceSubcategoryCountries != null) {
+    public InvoiceSubcategoryCountry checkValidityDateFromList(InvoiceSubcategoryCountry invoiceSubcategoryCountry, List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries)
+            throws BusinessException {
+        if (invoiceSubcategoryCountries != null) {
             InvoiceSubcategoryCountry invoiceSubcategoryCountryFound = null;
             // check for overlap
             for (InvoiceSubcategoryCountry invoiceSubcategoryCountryTemp : invoiceSubcategoryCountries) {
@@ -145,8 +137,8 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
 
             invoiceSubcategoryCountry.setPriority(getNextPriority(invoiceSubcategoryCountries));
         }
-		return invoiceSubcategoryCountry;
-	}
+        return invoiceSubcategoryCountry;
+    }
 
     private int getNextPriority(List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
         int maxPriority = 0;
@@ -410,6 +402,7 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         return tax;
     }
 
+    @SuppressWarnings("deprecation")
     private Tax evaluateTaxCodeEL(String expression, UserAccount userAccount, BillingAccount billingAccount, Invoice invoice) throws BusinessException {
         Tax result = null;
         if (StringUtils.isBlank(expression)) {
@@ -450,7 +443,11 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         if (taxCode == null) {
             throw new BusinessException("Expression " + expression + " evaluates to null  ");
         } else {
-            result = taxService.findByCode(taxCode);
+            try {
+                result = getEntityManager().createNamedQuery("Tax.getTaxByCode", Tax.class).setParameter("code", taxCode).setMaxResults(1).getSingleResult();
+            } catch (NoResultException e) {
+                log.debug("No Tax of code {} found", taxCode);
+            }
         }
 
         return result;

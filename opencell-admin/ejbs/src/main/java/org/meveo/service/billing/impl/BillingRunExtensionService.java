@@ -25,25 +25,25 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void updateBRAmounts(Long billingRunId, List<IBillableEntity> entites) throws BusinessException {
 
-        log.debug("updateBRAmounts for billingRun {} in new transaction", billingRunId);
+        log.debug("Update BillingRun {} total amounts", billingRunId);
         BigDecimal amountWithoutTax = BigDecimal.ZERO;
         BigDecimal amountWithTax = BigDecimal.ZERO;
         BigDecimal amountTax = BigDecimal.ZERO;
-        
+
         BillingRun billingRun = findById(billingRunId);
-        
-        for(IBillableEntity entity : entites) {
+
+        for (IBillableEntity entity : entites) {
             if (entity.getTotalInvoicingAmountTax() != null) {
                 amountTax = amountTax.add(entity.getTotalInvoicingAmountTax());
                 amountWithoutTax = amountWithoutTax.add(entity.getTotalInvoicingAmountWithoutTax());
                 amountWithTax = amountWithTax.add(entity.getTotalInvoicingAmountWithTax());
             }
         }
-            
+
         billingRun.setPrAmountWithoutTax(amountWithoutTax);
         billingRun.setPrAmountWithTax(amountWithTax);
         billingRun.setPrAmountTax(amountTax);
-        
+
         billingRun = updateNoCheck(billingRun);
     }
 
@@ -51,7 +51,7 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void updateBillingRun(Long billingRunId, Integer sizeBA, Integer billableBA, BillingRunStatusEnum status, Date dateStatus) throws BusinessException {
 
-        log.debug("UpdateBillingRun in new transaction");
+        log.debug("Update BillingRun {} to status {}", billingRunId, status);
         BillingRun billingRun = findById(billingRunId);
 
         if (sizeBA != null) {
