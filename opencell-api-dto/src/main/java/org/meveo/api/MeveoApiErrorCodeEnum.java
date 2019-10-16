@@ -13,7 +13,7 @@ public enum MeveoApiErrorCodeEnum {
      * Entity on which action should be performed or referenced, was not found.
      */
     ENTITY_DOES_NOT_EXISTS_EXCEPTION,
-    
+
     /**
      * Entity on which action should be performed or referenced, is not allowed.
      */
@@ -65,6 +65,11 @@ public enum MeveoApiErrorCodeEnum {
     BUSINESS_API_EXCEPTION,
 
     /**
+     * EDR rejection due to data validation, inconsistency or other rating related failure
+     */
+    RATING_REJECT,
+
+    /**
      * Were not able to authenticate with given user credentials, or user does not have a required permission
      */
     AUTHENTICATION_AUTHORIZATION_EXCEPTION,
@@ -73,7 +78,7 @@ public enum MeveoApiErrorCodeEnum {
      * Action was not allowed to be performed
      */
     ACTION_FORBIDDEN,
-    
+
     /**
      * Could be a wrong content type or invalid image byte[].
      */

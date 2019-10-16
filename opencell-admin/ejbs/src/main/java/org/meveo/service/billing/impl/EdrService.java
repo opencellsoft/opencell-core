@@ -20,7 +20,6 @@ package org.meveo.service.billing.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
@@ -34,7 +33,6 @@ import org.meveo.api.dto.billing.EDRDto;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.RatedTransactionGroup;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.rating.EDR;
@@ -96,24 +94,26 @@ public class EdrService extends PersistenceService<EDR> {
      * @param rateUntilDate date until we still rate
      * @param ratingGroup group of ratedTransaction. {@link RatedTransactionGroup}
      * @param nbToRetrieve Number of items to retrieve for processing
-     * @return list of EDR'sId we can rate until a given date.
+     * @return List of EDR's we can rate until a given date.
      */
-    public List<Long> getEDRidsToRate(Date rateUntilDate, String ratingGroup, int nbToRetrieve) {
-        QueryBuilder qb = new QueryBuilder(EDR.class, "c");
-        qb.addCriterion("c.status", "=", EDRStatusEnum.OPEN, true);
-        if (rateUntilDate != null) {
-            qb.addCriterion("c.eventDate", "<", rateUntilDate, false);
-        }
-		if (ratingGroup != null) {
-			qb.addCriterion("subscription.ratingGroup", "=", ratingGroup, false);
-		}
-        qb.addOrderMultiCriterion("c.subscription", true, "c.id", true);
+    public List<Long> getEDRsToRate(Date rateUntilDate, String ratingGroup, int nbToRetrieve) {
 
-        try {
-            return qb.getIdQuery(getEntityManager()).setMaxResults(nbToRetrieve).getResultList();
-        } catch (NoResultException e) {
-            return null;
+        if (rateUntilDate == null && ratingGroup == null) {
+            return getEntityManager().createNamedQuery("EDR.listToRateIds", Long.class).setMaxResults(nbToRetrieve).getResultList();
+
+        } else if (rateUntilDate != null && ratingGroup == null) {
+            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByDate", Long.class).setParameter("rateUntilDate", rateUntilDate).setMaxResults(nbToRetrieve)
+                .getResultList();
+
+        } else if (rateUntilDate == null && ratingGroup != null) {
+            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByRG", Long.class).setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve)
+                .getResultList();
+
+        } else {
+            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByDateAndRG", Long.class).setParameter("rateUntilDate", rateUntilDate)
+                .setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve).getResultList();
         }
+
     }
 
     /**
@@ -177,44 +177,19 @@ public class EdrService extends PersistenceService<EDR> {
     @Override
     public void create(EDR edr) throws BusinessException {
         super.create(edr);
+
         if (deduplicateEdrs && useInMemoryDeduplication) {
             cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(edr.getOriginBatch(), edr.getOriginRecord());
         }
     }
 
     /**
-     * @param status EDR status
-     * @param subscription subscription in which EDR is updating.
+     * Reopen EDRs that were rejected
+     * 
+     * @param ids List of EDRs to reopen
      */
-    public void massUpdate(EDRStatusEnum status, Subscription subscription) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("UPDATE " + EDR.class.getSimpleName() + " e SET e.status=:newStatus, e.lastUpdate=:lastUpdate WHERE e.status=:oldStatus AND e.subscription=:subscription");
-
-        try {
-            getEntityManager().createQuery(sb.toString()).setParameter("newStatus", status).setParameter("subscription", subscription)
-                .setParameter("oldStatus", EDRStatusEnum.REJECTED).setParameter("lastUpdate", new Date()).executeUpdate();
-
-        } catch (Exception e) {
-            log.error("error while updating edr", e);
-        }
-    }
-
-    /**
-     * @param status EDR status
-     * @param selectedIds list of selected EDR ids
-     */
-    public void massUpdate(EDRStatusEnum status, Set<Long> selectedIds) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("UPDATE " + EDR.class.getSimpleName() + " e SET e.status=:newStatus, e.lastUpdate=:lastUpdate WHERE e.status=:oldStatus AND e.id IN :selectedIds ");
-
-        try {
-            log.debug("{} rows updated", getEntityManager().createQuery(sb.toString()).setParameter("newStatus", status).setParameter("selectedIds", selectedIds)
-                .setParameter("oldStatus", EDRStatusEnum.REJECTED).setParameter("lastUpdate", new Date()).executeUpdate());
-        } catch (Exception e) {
-            log.error("failed to updating edr", e);
-        }
+    public void reopenRejectedEDRS(List<Long> ids) {
+        getEntityManager().createNamedQuery("EDR.reopenByIds").setParameter("ids", ids).executeUpdate();
     }
 
     /**
@@ -233,31 +208,34 @@ public class EdrService extends PersistenceService<EDR> {
     }
 
     /**
-     * Gets All open EDR between two Date.
+     * Gets All not open EDR between two Date.
      *
      * @param firstTransactionDate first Transaction Date
-     * @param lastTransactionDate  last Transaction Date
+     * @param lastTransactionDate last Transaction Date
      * @return All open EDR between two Date
      */
     public List<EDR> getNotOpenedEdrsBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
         return getEntityManager().createNamedQuery("EDR.getNotOpenedEdrBetweenTwoDate", EDR.class).setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+            .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
     }
 
     /**
      * Remove All open EDR between two Date.
      *
      * @param firstTransactionDate first Transaction Date
-     * @param lastTransactionDate  last Transaction Date
+     * @param lastTransactionDate last Transaction Date
      * @return the number of deleted entities
      */
     public long purge(Date firstTransactionDate, Date lastTransactionDate) {
 
         getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+            .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+
+        getEntityManager().createNamedQuery("EDR.updateRatedTransactionForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate)
+            .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
 
         return getEntityManager().createNamedQuery("EDR.deleteNotOpenEdrBetweenTwoDate").setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+            .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
 
     }
 
@@ -268,9 +246,7 @@ public class EdrService extends PersistenceService<EDR> {
                 Subscription subscription = subscriptionService.findByCode(dto.getSubscriptionCode());
                 edr.setSubscription(subscription);
             }
-            if (dto.getStatus() != null) {
-                edr.setStatus(EDRStatusEnum.getByLabel(dto.getStatus()));
-            }
+
             edr.setOriginBatch(dto.getOriginBatch());
             edr.setOriginRecord(dto.getOriginRecord());
             edr.setEventDate(dto.getEventDate());
@@ -294,11 +270,13 @@ public class EdrService extends PersistenceService<EDR> {
             edr.setDecimalParam3(dto.getDecimalParam3());
             edr.setDecimalParam4(dto.getDecimalParam4());
             edr.setDecimalParam5(dto.getDecimalParam5());
-            edr.setRejectReason(dto.getRejectReason());
             edr.setCreated(dto.getCreated());
-            edr.setLastUpdate(dto.getLastUpdate());
+            edr.setUpdated(dto.getLastUpdate());
             edr.setAccessCode(dto.getAccessCode());
             edr.setExtraParameter(dto.getExtraParameter());
+            if (dto.getStatus() != null && dto.getStatus() != EDRStatusEnum.OPEN) {
+                edr.setStatus(dto.getStatus());
+            }
             create(edr);
         }
     }
