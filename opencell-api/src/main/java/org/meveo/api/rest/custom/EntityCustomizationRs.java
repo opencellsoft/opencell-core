@@ -310,6 +310,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      * 
      * @param appliesTo - the type of entity to which the CFT applies. eg OfferTemplate, ServiceTemplate.
      * @param entityCode - code of the entity
+     * @param entityId - id of the entity
      * @return instance of EntityCustomizationResponseDto
      */
     @GET
