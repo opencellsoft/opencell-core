@@ -1474,4 +1474,19 @@ public class ValidateBRScript extends Script {
         </update>
     </changeSet>
     
+    <changeSet id="4403_20190701_export_job" author="AbdelmounaimAkadid">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-26" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2019-07-01 00:00:00.000" />
+            <column name="job_category" value="INVOICING" />
+            <column name="job_template" value="UpdateUnpaidInvoiceStatusJob" />
+            <column name="code" value="UpdateUnpaidInvoiceStatusJob" />
+            <column name="creator" value="opencell.admin" />
+            <column name="description" value="Update Status of Unpaid Invoices"></column>
+            <column name="timerentity_id" valueNumeric="-3" />
+            <column name="uuid" value="UpdateUnpaidInvoiceStatusJob" />
+        </insert>
+    </changeSet>
+    
 </databaseChangeLog>
