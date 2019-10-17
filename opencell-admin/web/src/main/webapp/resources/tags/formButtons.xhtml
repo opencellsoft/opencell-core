@@ -202,7 +202,7 @@
 				}
 		</script>	
 		<p:commandButton id="deletelink" icon="ui-icon-trash" value="#{messages['commons.delete']}" action="#{cc.attrs.backingBean.deleteWithBack}" immediate="true" update="@form"
-			rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null and cc.attrs.backingBean.canUserUpdateEntity()}">
+			rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null and cc.attrs.backingBean.canUserUpdateEntity()}" process="@this">
             <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
 		</p:commandButton>
 
@@ -211,7 +211,7 @@
 			severity="alert" widgetVar="#{cc.attrs.formId}confirmCannotUpdateWithMessageDialog" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="cannotUpdateWithMessage" value="#{messages['commons.ok']}"
-					oncomplete="PF('#{cc.attrs.formId}confirmCannotUpdateWithMessageDialog').hide()" update="@this" />
+					oncomplete="PF('#{cc.attrs.formId}confirmCannotUpdateWithMessageDialog').hide()" update="@this" process="@this" />
 			</p:panel>
 		</p:confirmDialog>		
 	</h:panelGroup>
