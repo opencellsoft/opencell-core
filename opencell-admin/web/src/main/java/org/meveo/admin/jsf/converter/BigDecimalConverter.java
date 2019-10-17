@@ -28,14 +28,14 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
 @FacesConverter(value = "bigDecimalConverter", managed = true)
-public class BigDecimalConverter implements Converter<BigDecimal>, Serializable {
+public class BigDecimalConverter implements Converter, Serializable {
 
     private static final long serialVersionUID = 7431045453306531451L;
 
     private DecimalFormat format = new DecimalFormat("#,##0.00");
 
     @Override
-    public String getAsString(FacesContext facesContext, UIComponent uIComponent, BigDecimal obj) {
+    public String getAsString(FacesContext facesContext, UIComponent uIComponent, Object obj) {
         if (obj == null || obj.toString().length() == 0) {
             return "";
         }
@@ -47,7 +47,7 @@ public class BigDecimalConverter implements Converter<BigDecimal>, Serializable 
     }
 
     @Override
-    public BigDecimal getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
+    public Object getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
         if (str == null || str.equals("")) {
             return null;
         }

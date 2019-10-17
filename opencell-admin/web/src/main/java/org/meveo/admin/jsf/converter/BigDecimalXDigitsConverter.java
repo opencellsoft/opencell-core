@@ -34,7 +34,7 @@ public class BigDecimalXDigitsConverter extends BigDecimalConverter {
     private RoundingMode roundingMode = RoundingModeEnum.NEAREST.getRoundingMode();
 
     @Override
-    public String getAsString(FacesContext facesContext, UIComponent uIComponent, BigDecimal obj) {
+    public String getAsString(FacesContext facesContext, UIComponent uIComponent, Object obj) {
         if (obj == null || obj.toString().length() == 0) {
             return "";
         }
@@ -46,7 +46,7 @@ public class BigDecimalXDigitsConverter extends BigDecimalConverter {
     }
 
     @Override
-    public BigDecimal getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
+    public Object getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
         RoundingModeEnum roundingModeAttribute = (RoundingModeEnum) uIComponent.getAttributes().get("roundingMode");
         Integer nbDecimalAttribute = (Integer) uIComponent.getAttributes().get("nbDecimal");
         if (nbDecimalAttribute != null && nbDecimalAttribute != 0) {
@@ -55,7 +55,7 @@ public class BigDecimalXDigitsConverter extends BigDecimalConverter {
         if (roundingModeAttribute != null) {
             roundingMode = roundingModeAttribute.getRoundingMode();
         }
-        BigDecimal number = super.getAsObject(facesContext, uIComponent, str);
+        BigDecimal number = (BigDecimal) super.getAsObject(facesContext, uIComponent, str);
         number = NumberUtils.round(number, nbDecimal, roundingMode);
         return number;
     }

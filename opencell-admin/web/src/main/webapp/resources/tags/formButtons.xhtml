@@ -82,13 +82,13 @@
 
         <p:commandButton value="#{messages['commons.disable']}"
             rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.active and cc.attrs.backingBean.canUserUpdateEntity()}"
-            action="#{cc.attrs.backingBean.disable}" update="@form">
+            action="#{cc.attrs.backingBean.disable}" update="@form" process="@form">
             <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
         </p:commandButton>
-            
+
         <p:commandButton value="#{messages['commons.enable']}"
             rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.disabled and cc.attrs.backingBean.canUserUpdateEntity()}"
-            action="#{cc.attrs.backingBean.enable}" update="@form">
+            action="#{cc.attrs.backingBean.enable}" update="@form" process="@form">
             <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
         </p:commandButton>
         
