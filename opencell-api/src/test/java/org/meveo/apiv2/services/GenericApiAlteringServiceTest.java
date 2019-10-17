@@ -46,13 +46,10 @@ public class GenericApiAlteringServiceTest {
     
     @Mock
     private EntityManager entityManager;
-    
-    @Mock
-    private PersistenceService persistenceService;
+
     
     @Before
-    public void init() throws Exception {
-        sut.init();
+    public void init() {
         when(entityManagerWrapper.getEntityManager()).thenReturn(entityManager);
     }
     
@@ -149,6 +146,31 @@ public class GenericApiAlteringServiceTest {
         assertThat(customer.getId()).isNotNull();
         assertThat(customer.getId()).isEqualTo(54L);
     }
+
+    @Test
+    public void should_successfully_create_object() {
+        //Given
+        long id =123L;
+        String dto = "{\"id\":"+id+", \"code\":\"xxx\", \"addressbook\": {\"code\":\"xxx\"}}";
+
+        Customer customer = captureParamOnCreate(dto, Customer.class);
+        assertThat(customer).isNotNull();
+        assertThat(customer.getId()).isNotNull();
+        assertThat(customer.getId()).isEqualTo(id);
+        assertThat(customer.getCode()).isEqualTo("xxx");
+        assertThat(customer.getAddressbook().getId()).isNull();
+        assertThat(customer.getAddressbook().getCode()).isEqualTo("xxx");
+    }
+
+    @Test
+    public void should_successfully_delete_object_using_id() {
+        //Given
+        long id = 12L;
+        Customer customer = captureParamOnDelete(id, Customer.class);
+        assertThat(customer).isNotNull();
+        assertThat(customer.getId()).isNotNull();
+        assertThat(customer.getId()).isEqualTo(id);
+    }
     
     @Test
     public void should_not_be_able_to_update_id() {
@@ -168,7 +190,8 @@ public class GenericApiAlteringServiceTest {
         //When
         Customer customer = captureParamOnUpdate(dto, Customer.class);
         assertThat(customer).isNotNull();
-        assertThat(customer.getAddressbook()).isNull();
+        assertThat(customer.getAddressbook().getId()).isNull();
+        assertThat(customer.getAddressbook().getCode()).isEqualTo("xxx");
     }
     
     @Test
@@ -198,7 +221,7 @@ public class GenericApiAlteringServiceTest {
     @Test
     public void should_not_be_able_to_update_status() {
         //Given
-        String dto = "{\n" + "\t\"status\":\"ACKNOWLEDGED\"\n" + "}\n";
+        String dto = "{\"status\":\"ACKNOWLEDGED\",\"orderItems\":[]}";
         //When
         Order order = captureParamOnUpdate(dto, Order.class);
         
@@ -310,31 +333,48 @@ public class GenericApiAlteringServiceTest {
         
     }
     
-    private Address getAddress() {
-        Address expected = new Address();
-        expected.setAddress1("14 rue Crespin du Gast");
-        expected.setZipCode("75002");
-        expected.setCity("Paris");
-        return expected;
-    }
-    
     private boolean getAddressAssertion(Address expected) {
         return expected.getAddress1().equals("14 rue Crespin du Gast") && expected.getZipCode().equals("75011") && expected.getCity().equals("PARIS") && expected.getState()
                 .equals("Paris Area");
     }
     
     private <T extends BaseEntity> T captureParamOnUpdate(String dto, Class<T> type) {
-        doReturn(persistenceService).when(sut).getPersistenceService(eq(type));
-        T expectedEntity = mock(type);
-        when(entityManager.find(eq(type), anyLong())).thenReturn((T) ReflectionUtils.createObject(type.getName()));
+        PersistenceService<T> mockedPersistenceService = mock(PersistenceService.class);
+        doReturn(mockedPersistenceService).when(sut).getPersistenceService(eq(type));
+        when(entityManager.find(eq(type), anyLong())).thenReturn(type.cast(ReflectionUtils.createObject(type.getName())));
         ArgumentCaptor<T> argumentCaptor = ArgumentCaptor.forClass(type);
         //When
         sut.update(type.getSimpleName(), 54L, dto);
         //Then
-        verify(persistenceService).update(argumentCaptor.capture());
+        verify(mockedPersistenceService).update(argumentCaptor.capture());
         T value = argumentCaptor.getValue();
         value.setId(54L);
         return value;
+    }
+
+    private <T extends BaseEntity> T captureParamOnDelete(Long id, Class<T> type) {
+        PersistenceService<T> mockedPersistenceService = mock(PersistenceService.class);
+        doReturn(mockedPersistenceService).when(sut).getPersistenceService(eq(type));
+        Customer customer = new Customer();
+        customer.setId(id);
+        when(entityManager.find(type, id)).thenReturn((T) customer);
+        ArgumentCaptor<T> argumentCaptor = ArgumentCaptor.forClass(type);
+        //When
+        sut.delete(type.getSimpleName(), id);
+        //Then
+        verify(mockedPersistenceService).remove(argumentCaptor.capture());
+        return argumentCaptor.getValue();
+    }
+
+    private <T extends BaseEntity> T captureParamOnCreate(String dto, Class<T> type) {
+        PersistenceService<T> mockedPersistenceService = mock(PersistenceService.class);
+        doReturn(mockedPersistenceService).when(sut).getPersistenceService(eq(type));
+        ArgumentCaptor<T> argumentCaptor = ArgumentCaptor.forClass(type);
+        //When
+        sut.create(type.getSimpleName(), dto);
+        //Then
+        verify(mockedPersistenceService).create(argumentCaptor.capture());
+        return argumentCaptor.getValue();
     }
     
 }

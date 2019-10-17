@@ -45,11 +45,6 @@ public class CustomFieldTemplateBeaTest {
                 .collect(Collectors.toList());
     }
 
-    @Before
-    public void setup() {
-        when(customizedEntityService.getCustomizedEntities("", false, true, false, null, null)).thenReturn(JOBS_CUSTOMIZED_ENTITY);
-    }
-
     @Test
     public void retrieveAllModelClassAndCustomizedEntities(){
         List<String> classNames = CustomFieldTemplateBean.autocompleteClassNames("");

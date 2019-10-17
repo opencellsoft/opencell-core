@@ -18,26 +18,36 @@
  */
 package org.meveo.admin.exception;
 
+import org.meveo.model.rating.EDRRejectReasonEnum;
+
 /**
+ * Charge was matched, but did not have an associated or applicable priceplan
+ * 
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.1
  */
-public class NoPricePlanException extends BusinessException {
-    private static final long serialVersionUID = 1L;
+public class NoPricePlanException extends RatingException {
 
+    private static final long serialVersionUID = 3808507092968832394L;
+
+    /**
+     * Constructor     
+     */
     public NoPricePlanException() {
-        super();
+        super(EDRRejectReasonEnum.NO_PRICEPLAN);
     }
 
-    public NoPricePlanException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
+    /**
+     * Constructor
+     * 
+     * @param message Error message
+     */
     public NoPricePlanException(String message) {
-        super(message);
+        super(EDRRejectReasonEnum.NO_PRICEPLAN, message);
     }
-
-    public NoPricePlanException(Throwable cause) {
-        super(cause);
+    
+    @Override
+    public synchronized Throwable getCause() {
+        return null;
     }
 }

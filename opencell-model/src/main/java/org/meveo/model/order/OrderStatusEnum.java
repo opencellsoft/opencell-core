@@ -51,6 +51,15 @@ public enum OrderStatusEnum {
      * All Order items have failed which results in the entire Order has Failed.
      */
     FAILED("Failed"),
+	/**
+     * Orders that are to be processed alongside other 'associated' (related) orders. 
+     * And all the ‘associated’ orders have not yet been submitted for processing
+     */
+    WAITING("Waiting"),
+    /**
+     * Separate termination and activation orders for example. The processing of activation orders must be deferred until the referenced (terminate) order has been successfully processed
+     */
+    DEFERRED("Deferred"),
     /**
      * Some Order items have failed and some have succeeded so the entire Order is in a Partial state. This provides support for partial Failure of an Order
      */

@@ -411,7 +411,7 @@ public class ParamBean {
     public int getPropertyAsInteger(String key, int defaultValue) {
         int value = defaultValue;
         try {
-            value = Integer.parseInt(getProperty("invoicing.invoiceCreationBatchSize", Integer.toString(defaultValue)));
+            value = Integer.parseInt(getProperty(key, Integer.toString(defaultValue)));
         } catch (NumberFormatException e) {
         }
         return value;

@@ -30,6 +30,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
@@ -57,7 +58,8 @@ import org.meveo.model.ObservableEntity;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_counter_template_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "counterTemplate.getNbrCounterWithNotService", query = "select count(*) from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv)"),
+        @NamedQuery(name = "counterTemplate.getNbrCounterWithNotService", query = "select count(*) from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv)", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
 
         @NamedQuery(name = "counterTemplate.getCounterWithNotService", query = "from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv) ") })
 public class CounterTemplate extends EnableBusinessEntity {

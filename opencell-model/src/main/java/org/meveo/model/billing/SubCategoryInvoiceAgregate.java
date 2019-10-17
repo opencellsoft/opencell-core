@@ -19,6 +19,7 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,12 +32,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.catalog.DiscountPlanItem;
 
 /**
@@ -71,9 +72,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
-
-    @OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY)
-    private List<RatedTransaction> ratedtransactions = new ArrayList<>();
 
     /** The discount plan code. */
     @Column(name = "discount_plan_code", length = 50)
@@ -228,22 +226,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         if (categoryInvoiceAgregate != null && categoryInvoiceAgregate.getSubCategoryInvoiceAgregates() != null) {
             categoryInvoiceAgregate.getSubCategoryInvoiceAgregates().add(this);
         }
-    }
-
-    /**
-     * @return Associated Rated transactions
-     */
-    public List<RatedTransaction> getRatedtransactions() {
-        return ratedtransactions;
-    }
-
-    /**
-     * Associated Rated transactions
-     *
-     * @param ratedtransactions Associated Rated transactions
-     */
-    public void setRatedtransactions(List<RatedTransaction> ratedtransactions) {
-        this.ratedtransactions = ratedtransactions;
     }
 
     /**
@@ -581,5 +563,20 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      */
     public void setRatedtransactionsToAssociate(List<RatedTransaction> ratedtransactionsToAssociate) {
         this.ratedtransactionsToAssociate = ratedtransactionsToAssociate;
+    }
+
+    /**
+     * Compute derived amounts amountWithoutTax/amountWithTax/amountTax. If taxPercent is null, or ZERO returned amountWithoutTax and amountWithTax values will be the same
+     * (whichone, depending on isEnterprise value)
+     * 
+     * @param isEnterprise Is application used used in B2B (base prices are without tax) or B2C mode (base prices are with tax)
+     * @param rounding Rounding precision to apply
+     * @param roundingMode Rounding mode to apply
+     */
+    public void computeDerivedAmounts(boolean isEnterprise, int invoiceRounding, RoundingMode roundingMode) {
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(getAmountWithoutTax(), getAmountWithTax(), getTaxPercent(), isEnterprise, invoiceRounding, roundingMode);
+        setAmountWithoutTax(amounts[0]);
+        setAmountWithTax(amounts[1]);
+        setAmountTax(amounts[2]);
     }
 }

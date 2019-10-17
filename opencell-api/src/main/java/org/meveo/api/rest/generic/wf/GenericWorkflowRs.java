@@ -48,7 +48,7 @@ public interface GenericWorkflowRs extends IBaseRs {
      * Find a workflow with a given code
      * 
      * @param code The workflow's code
-     * @return
+     * @return Generic Work flow Response data
      */
     @GET
     @Path("/")

@@ -41,8 +41,8 @@ public interface OfferTemplateRs extends IBaseRs {
      * @param postData The offer template's data
      * @return Request processing status
      */
-    @Path("/")
     @POST
+    @Path("/")
     ActionStatus create(OfferTemplateDto postData);
 
     /**
@@ -51,8 +51,8 @@ public interface OfferTemplateRs extends IBaseRs {
      * @param postData The offer template's data
      * @return Request processing status
      */
-    @Path("/")
     @PUT
+    @Path("/")
     ActionStatus update(OfferTemplateDto postData);
 
     /**
@@ -66,10 +66,11 @@ public interface OfferTemplateRs extends IBaseRs {
      * @param loadOfferProductTemplate if true loads the products
      * @param loadServiceChargeTemplate if true load the service charges
      * @param loadProductChargeTemplate if true load the product charges
+     * @param loadAllowedDiscountPlan if true load the allowed discount plans
      * @return Return offerTemplateDto containing offerTemplate
      */
-    @Path("/")
     @GET
+    @Path("/")
     GetOfferTemplateResponseDto find(@QueryParam("offerTemplateCode") String offerTemplateCode, @QueryParam("validFrom") @RestDateParam Date validFrom,
             @QueryParam("validTo") @RestDateParam Date validTo, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
             @QueryParam("loadOfferServiceTemplate") @DefaultValue("false") boolean loadOfferServiceTemplate, @QueryParam("loadOfferProductTemplate") @DefaultValue("false") boolean loadOfferProductTemplate,
@@ -120,8 +121,8 @@ public interface OfferTemplateRs extends IBaseRs {
      * @param validTo Offer template validity range - to date
      * @return Request processing status
      */
-    @Path("/{offerTemplateCode}")
     @DELETE
+    @Path("/{offerTemplateCode}")
     ActionStatus remove(@PathParam("offerTemplateCode") String offerTemplateCode, @QueryParam("validFrom") @RestDateParam Date validFrom,
             @QueryParam("validTo") @RestDateParam Date validTo);
 
@@ -131,8 +132,8 @@ public interface OfferTemplateRs extends IBaseRs {
      * @param postData The offer template's data
      * @return Request processing status
      */
-    @Path("/createOrUpdate")
     @POST
+    @Path("/createOrUpdate")
     ActionStatus createOrUpdate(OfferTemplateDto postData);
 
     /**

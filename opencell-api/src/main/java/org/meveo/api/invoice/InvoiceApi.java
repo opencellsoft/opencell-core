@@ -1,9 +1,9 @@
 package org.meveo.api.invoice;
 
 import java.io.FileNotFoundException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -17,12 +17,15 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
+import org.meveo.api.dto.DiscountInvoiceAggregateDto;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
+import org.meveo.api.dto.TaxInvoiceAggregateDto;
 import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
 import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
+import org.meveo.api.dto.payment.RecordedInvoiceDto;
 import org.meveo.api.dto.response.InvoicesDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -40,12 +43,16 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceModeEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
-import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.CustomerAccount;
@@ -54,6 +61,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
@@ -112,6 +120,9 @@ public class InvoiceApi extends BaseApi {
     private FilteredListApi filteredListApi;
 
     @Inject
+    private RatedTransactionService ratedTransactionService;
+
+    @Inject
     @MeveoParamBean
     private ParamBean paramBean;
 
@@ -158,7 +169,7 @@ public class InvoiceApi extends BaseApi {
         }
         // pdf and xml are added to response if requested
         if ((invoiceDTO.isReturnXml() != null && invoiceDTO.isReturnXml()) || (invoiceDTO.isReturnPdf() != null && invoiceDTO.isReturnPdf())) {
-            invoiceService.produceInvoiceXml(invoice);
+            invoice = invoiceService.produceInvoiceXml(invoice);
             String invoiceXml = invoiceService.getInvoiceXml(invoice);
             response.setXmlInvoice(invoiceXml);
             response.setXmlFilename(invoice.getXmlFilename());
@@ -173,7 +184,7 @@ public class InvoiceApi extends BaseApi {
 
         if (invoice.isDraft()) {
             invoiceService.cancelInvoice(invoice);
-        }else {
+        } else {
         	invoiceService.update(invoice);
         }
 
@@ -388,7 +399,7 @@ public class InvoiceApi extends BaseApi {
 
     public GenerateInvoiceResultDto createGenerateInvoiceResultDto(Invoice invoice, boolean includeXml, boolean includePdf, Boolean includeRatedTransactions)
             throws BusinessException {
-        GenerateInvoiceResultDto dto = new GenerateInvoiceResultDto(invoice, includeRatedTransactions);
+        GenerateInvoiceResultDto dto = generateInvoiceResultToDto(invoice, includeRatedTransactions);
 
         if (invoiceService.isInvoicePdfExist(invoice)) {
             dto.setPdfFilename(invoice.getPdfFilename());
@@ -653,31 +664,9 @@ public class InvoiceApi extends BaseApi {
         return invoiceToDto(invoice, includeTransactions, includePdf, includeXml);
     }
 
-    /**
-     * 
-     * @param tax taxe
-     * @param amountWithoutTax amount with tax
-     * @return amount with tax.
-     */
-    private BigDecimal getAmountWithTax(Tax tax, BigDecimal amountWithoutTax) {
-        BigDecimal ttc = amountWithoutTax
-            .add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()));
-        return ttc;
-    }
-
-    /**
-     * 
-     * @param amountWithTax amount with tax
-     * @param amountWithoutTax amount without tax
-     * @return tax amount.
-     */
-    private BigDecimal getAmountTax(BigDecimal amountWithTax, BigDecimal amountWithoutTax) {
-        return amountWithTax.subtract(amountWithoutTax);
-    }
-
     private InvoiceDto invoiceToDto(Invoice invoice, boolean includeTransactions, boolean includePdf, boolean includeXml) {
 
-        InvoiceDto invoiceDto = new InvoiceDto(invoice, includeTransactions);
+        InvoiceDto invoiceDto = invoiceToDto(invoice, includeTransactions, null);
 
         this.setInvoicePdf(invoice, includePdf, invoiceDto);
         this.setInvoiceXml(invoice, includeXml, invoiceDto);
@@ -870,5 +859,214 @@ public class InvoiceApi extends BaseApi {
             }
         }
         return invoicesResult;
+    }
+
+    /**
+     * Instantiates a new sub category invoice aggregate dto.
+     *
+     * @param subCategoryInvoiceAgregate SubCategory invoice aggregate
+     * @param includeTransactions Should Rated transactions be detailed
+     * @param dtoToUpdate DTO entity to fill information with
+     */
+    @SuppressWarnings("deprecation")
+    private SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateToDto(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate, boolean includeTransactions,
+            SubCategoryInvoiceAgregateDto dtoToUpdate) {
+
+        SubCategoryInvoiceAgregateDto dto = dtoToUpdate == null ? new SubCategoryInvoiceAgregateDto() : dtoToUpdate;
+        dto.setItemNumber(subCategoryInvoiceAgregate.getItemNumber());
+        if (subCategoryInvoiceAgregate.getAccountingCode() != null) {
+            dto.setAccountingCode(subCategoryInvoiceAgregate.getAccountingCode().getCode());
+        }
+        dto.setDescription(subCategoryInvoiceAgregate.getDescription());
+        dto.setTaxPercent(subCategoryInvoiceAgregate.getTaxPercent());
+        if (subCategoryInvoiceAgregate.getTax() != null) {
+            dto.setTaxCode(subCategoryInvoiceAgregate.getTax().getCode());
+        }
+        dto.setQuantity(subCategoryInvoiceAgregate.getQuantity());
+        dto.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
+        dto.setAmountTax(subCategoryInvoiceAgregate.getAmountTax());
+        dto.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax());
+
+        dto.setInvoiceSubCategoryCode(subCategoryInvoiceAgregate.getInvoiceSubCategory().getCode());
+
+        if (subCategoryInvoiceAgregate.getUserAccount() != null) {
+            dto.setUserAccountCode(subCategoryInvoiceAgregate.getUserAccount().getCode());
+        }
+
+        if (includeTransactions) {
+
+            List<RatedTransaction> ratedTransactions = ratedTransactionService.getRatedTransactionsByInvoiceAggr(subCategoryInvoiceAgregate);
+
+            List<RatedTransactionDto> ratedTransactionDtos = new ArrayList<>();
+
+            for (RatedTransaction ratedTransaction : ratedTransactions) {
+                ratedTransactionDtos.add(new RatedTransactionDto(ratedTransaction));
+            }
+
+            ratedTransactionDtos
+                .sort(Comparator.comparing(RatedTransactionDto::getUsageDate).thenComparing(RatedTransactionDto::getAmountWithTax).thenComparing(RatedTransactionDto::getCode));
+
+            dto.setRatedTransactions(ratedTransactionDtos);
+        }
+
+        return dto;
+    }
+
+    /**
+     * Instantiates a new sub category invoice aggregate dto.
+     *
+     * @param subCategoryInvoiceAgregate the SubCategoryInvoiceAgregate entity
+     */
+    private DiscountInvoiceAggregateDto discountInvoiceAggregateToDto(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
+
+        DiscountInvoiceAggregateDto dto = new DiscountInvoiceAggregateDto();
+        subCategoryInvoiceAgregateToDto(subCategoryInvoiceAgregate, false, dto);
+
+        dto.setDiscountPlanItemCode(subCategoryInvoiceAgregate.getDiscountPlanItem().getCode());
+        dto.setDiscountPercent(subCategoryInvoiceAgregate.getDiscountPercent());
+
+        return dto;
+    }
+
+    /**
+     * Instantiates a new category invoice aggregate dto
+     * 
+     * @param categoryAggregate Category invoice aggregate
+     * @param includeTransactions Should Rated transactions be detailed in subcategory aggregate level
+     */
+    private CategoryInvoiceAgregateDto categoryInvoiceAgregateToDto(CategoryInvoiceAgregate categoryAggregate, boolean includeTransactions) {
+
+        CategoryInvoiceAgregateDto dto = new CategoryInvoiceAgregateDto();
+
+        dto.setCategoryInvoiceCode(categoryAggregate.getInvoiceCategory().getCode());
+        dto.setDescription(categoryAggregate.getDescription());
+        dto.setAmountWithoutTax(categoryAggregate.getAmountWithoutTax());
+        dto.setAmountWithTax(categoryAggregate.getAmountWithTax());
+        dto.setAmountTax(categoryAggregate.getAmountTax());
+        dto.setItemNumber(categoryAggregate.getItemNumber());
+        if (categoryAggregate.getUserAccount() != null) {
+            dto.setUserAccountCode(categoryAggregate.getUserAccount().getCode());
+        }
+
+        List<DiscountInvoiceAggregateDto> discountAggregates = new ArrayList<>();
+        List<SubCategoryInvoiceAgregateDto> listSubCategoryInvoiceAgregateDto = new ArrayList<>();
+
+        for (SubCategoryInvoiceAgregate subCategoryAggregate : categoryAggregate.getSubCategoryInvoiceAgregates()) {
+
+            if (subCategoryAggregate.isDiscountAggregate()) {
+                discountAggregates.add(discountInvoiceAggregateToDto(subCategoryAggregate));
+            } else {
+                listSubCategoryInvoiceAgregateDto.add(subCategoryInvoiceAgregateToDto(subCategoryAggregate, includeTransactions, null));
+            }
+        }
+        if (!listSubCategoryInvoiceAgregateDto.isEmpty()) {
+            listSubCategoryInvoiceAgregateDto.sort(Comparator.comparing(SubCategoryInvoiceAgregateDto::getInvoiceSubCategoryCode));
+            dto.setListSubCategoryInvoiceAgregateDto(listSubCategoryInvoiceAgregateDto);
+        }
+        if (!discountAggregates.isEmpty()) {
+            discountAggregates.sort(Comparator.comparing(DiscountInvoiceAggregateDto::getDiscountPlanItemCode));
+            dto.setDiscountAggregates(discountAggregates);
+        }
+
+        return dto;
+    }
+
+    /**
+     * Instantiates a new invoice dto. Note: does not fill in XML and PDF information
+     * 
+     * @param invoice Invoice
+     * @param includeTransactions Should Rated transactions be detailed in subcategory aggregate level
+     * @param dtoToUpdate DTO to fill with invoice information
+     */
+    public InvoiceDto invoiceToDto(Invoice invoice, boolean includeTransactions, InvoiceDto dtoToUpdate) {
+
+        InvoiceDto dto = dtoToUpdate == null ? new InvoiceDto() : dtoToUpdate;
+
+        dto.setAuditable(invoice);
+        dto.setInvoiceId(invoice.getId());
+        dto.setBillingAccountCode(invoice.getBillingAccount().getCode());
+        if (invoice.getSubscription() != null) {
+            dto.setSubscriptionCode(invoice.getSubscription().getCode());
+        }
+        if (invoice.getOrder() != null) {
+            dto.setOrderNumber(invoice.getOrder().getOrderNumber());
+        }
+        if (invoice.getSeller() != null) {
+            dto.setSellerCode(invoice.getSeller().getCode());
+        }
+        dto.setInvoiceDate(invoice.getInvoiceDate());
+        dto.setDueDate(invoice.getDueDate());
+
+        dto.setAmountWithoutTax(invoice.getAmountWithoutTax());
+        dto.setAmountTax(invoice.getAmountTax());
+        dto.setAmountWithTax(invoice.getAmountWithTax());
+        dto.setInvoiceNumber(invoice.getInvoiceNumber());
+        dto.setPaymentMethod(invoice.getPaymentMethodType());
+        dto.setInvoiceType(invoice.getInvoiceType().getCode());
+        dto.setDueBalance(invoice.getDueBalance());
+        dto.setXmlFilename(invoice.getXmlFilename());
+        dto.setPdfFilename(invoice.getPdfFilename());
+        dto.setDiscount(invoice.getDiscount());
+        dto.setCheckAlreadySent(invoice.isAlreadySent());
+        dto.setSentByEmail(invoice.isDontSend());
+
+        List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<>();
+        List<TaxInvoiceAggregateDto> taxAggregates = new ArrayList<>();
+        List<Long> listInvoiceIdToLink = new ArrayList<Long>();
+
+        for (InvoiceAgregate invoiceAggregate : invoice.getInvoiceAgregates()) {
+            if (invoiceAggregate instanceof CategoryInvoiceAgregate) {
+                categoryInvoiceAgregates.add(categoryInvoiceAgregateToDto((CategoryInvoiceAgregate) invoiceAggregate, includeTransactions));
+            } else if (invoiceAggregate instanceof TaxInvoiceAgregate) {
+                taxAggregates.add(new TaxInvoiceAggregateDto((TaxInvoiceAgregate) invoiceAggregate));
+            }
+        }
+
+        categoryInvoiceAgregates.sort(Comparator.comparing(CategoryInvoiceAgregateDto::getCategoryInvoiceCode));
+        taxAggregates.sort(Comparator.comparing(TaxInvoiceAggregateDto::getTaxCode));
+
+        for (Invoice inv : invoice.getLinkedInvoices()) {
+            listInvoiceIdToLink.add(inv.getId());
+        }
+
+        if (!categoryInvoiceAgregates.isEmpty()) {
+            dto.setCategoryInvoiceAgregates(categoryInvoiceAgregates);
+        }
+        if (!taxAggregates.isEmpty()) {
+            dto.setTaxAggregates(taxAggregates);
+        }
+        if (!listInvoiceIdToLink.isEmpty()) {
+            dto.setListInvoiceIdToLink(listInvoiceIdToLink);
+        }
+
+        if (invoice.getRecordedInvoice() != null) {
+            RecordedInvoiceDto recordedInvoiceDto = new RecordedInvoiceDto(invoice.getRecordedInvoice());
+            dto.setRecordedInvoiceDto(recordedInvoiceDto);
+        }
+
+        dto.setNetToPay(invoice.getNetToPay());
+
+        return dto;
+    }
+
+    /**
+     * Instantiates a new generate invoice response dto. Note: does not fill in XML and PDF information
+     * 
+     * @param invoice Invoice
+     * @param includeTransactions Should Rated transactions be detailed in subcategory aggregate level
+     */
+    public GenerateInvoiceResultDto generateInvoiceResultToDto(Invoice invoice, boolean includeTransactions) {
+
+        GenerateInvoiceResultDto dto = new GenerateInvoiceResultDto();
+
+        invoiceToDto(invoice, includeTransactions, dto);
+        dto.setTemporaryInvoiceNumber(invoice.getTemporaryInvoiceNumber());
+        dto.setInvoiceTypeCode(invoice.getInvoiceType().getCode());
+        dto.setAmount(invoice.getAmount());
+        if (invoice.getRecordedInvoice() != null) {
+            dto.setAccountOperationId(invoice.getRecordedInvoice().getId());
+        }
+
+        return dto;
     }
 }
