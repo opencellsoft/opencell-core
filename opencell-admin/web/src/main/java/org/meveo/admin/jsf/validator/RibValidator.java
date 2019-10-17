@@ -36,7 +36,7 @@ import org.meveo.admin.util.ResourceBundle;
  * @since Jan 31, 2011
  * 
  */
-@FacesValidator("ribValidator")
+@FacesValidator(value = "ribValidator", managed = true)
 public class RibValidator implements Validator {
     
     @Inject

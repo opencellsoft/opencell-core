@@ -1,6 +1,6 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
-    xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+                xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -373,14 +373,15 @@
 							<ui:define name="add-on-buttons">
                                 <h:panelGroup layout="block" styleClass="form-panel-actions" rendered="#{accountOperationBean.canUserUpdateEntity()}">
                                     <p:commandButton action="#{accountOperationBean.matching(customerAccountBean.entity.id)}" value="#{messages['customerAccount.buttonLettrage']}"
-                                        rendered="#{customerAccountBean.isActiveAccount()}" />
-                                    <p:commandButton action="#{accountOperationBean.consultMatching(customerAccountBean.entity.id)}" value="#{messages['customerAccount.buttonConsultMatching']}"
-                                        rendered="#{customerAccountBean.isActiveAccount()}" />
+                                        rendered="#{customerAccountBean.isActiveAccount()}" process="@this"/>
+                                    <p:commandButton action="#{accountOperationBean.consultMatching(customerAccountBean.entity.id)}"
+                                                     value="#{messages['customerAccount.buttonConsultMatching']}"
+                                        rendered="#{customerAccountBean.isActiveAccount()}" process="@this" />
 
                                     <p:commandButton action="#{accountOperationBean.addLitigation(customerAccountBean.entity.id)}"
-                                        value="#{messages['accountOperation_I.buttonAddLitigation']}" rendered="#{customerAccountBean.isActiveAccount()}" />
+                                        value="#{messages['accountOperation_I.buttonAddLitigation']}" rendered="#{customerAccountBean.isActiveAccount()}" process="@this" />
                                     <p:commandButton action="#{accountOperationBean.cancelLitigation(customerAccountBean.entity.id)}"
-                                        value="#{messages['accountOperation_I.buttonCancelLitigation']}" rendered="#{customerAccountBean.isActiveAccount()}" />
+                                        value="#{messages['accountOperation_I.buttonCancelLitigation']}" rendered="#{customerAccountBean.isActiveAccount()}" process="@this"/>
                                 </h:panelGroup>
                             </ui:define>
                         </hftl:dataList>

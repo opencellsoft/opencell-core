@@ -49,7 +49,7 @@
                     <p:ajax update="#{listenerUpdate}" listener="#{actionListenerBean[actionListenerMethod]}" event="change" />
                 </c:if>
                 <c:if test="#{field eq 'code'}">
-                    <o:validator binding="#{codeValidator}" />
+                    <o:validator validatorId="codeValidator" />
                 </c:if>
             </p:inputText>
         </c:if>

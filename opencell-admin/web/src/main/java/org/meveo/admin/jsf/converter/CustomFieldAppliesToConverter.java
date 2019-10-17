@@ -23,7 +23,7 @@ import org.meveo.util.EntityCustomizationUtils;
  * 
  * @author Andrius Karpavicius
  **/
-@FacesConverter("customFieldAppliesToConverter")
+@FacesConverter(value = "customFieldAppliesToConverter", managed = true)
 @ViewScoped
 public class CustomFieldAppliesToConverter implements Converter, Serializable {
 
