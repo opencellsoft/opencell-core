@@ -158,7 +158,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             CustomerToken customerToken = new CustomerToken();
             customerToken.setBillingAddress(getBillingAddress(customerAccount));
             customerToken.setCompanyInformation(companyInformation);
-            customerToken.setMerchantCustomerId(customerAccount.getCode());
+            customerToken.setMerchantCustomerId(StringUtils.truncate(""+customerAccount.getId(), 15,false));
             customerToken.setPersonalInformation(personalInformation);
 
             CardWithoutCvv cardWithoutCvv = new CardWithoutCvv();
@@ -338,12 +338,12 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     private Address getBillingAddress(CustomerAccount customerAccount) {
         Address billingAddress = new Address();
         if (customerAccount.getAddress() != null) {
-            billingAddress.setAdditionalInfo(customerAccount.getAddress().getAddress3());
-            billingAddress.setCity(customerAccount.getAddress().getCity());
+            billingAddress.setAdditionalInfo(StringUtils.truncate(customerAccount.getAddress().getAddress3(),50,false));
+            billingAddress.setCity(StringUtils.truncate(customerAccount.getAddress().getCity(), 40, false));
             billingAddress.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode());
             billingAddress.setHouseNumber("");
-            billingAddress.setState(customerAccount.getAddress().getState());
-            billingAddress.setStreet(customerAccount.getAddress().getAddress1());
+            billingAddress.setState(StringUtils.truncate(customerAccount.getAddress().getState(),35,false));
+            billingAddress.setStreet(StringUtils.truncate(customerAccount.getAddress().getAddress1(),50,false));
             billingAddress.setZip(customerAccount.getAddress().getZipCode());
         }
         return billingAddress;
@@ -485,7 +485,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			customer.setName(name);
 
 			PayoutReferences references = new PayoutReferences();
-			references.setMerchantReference(customerAccount.getId() + "-" + amountOfMoney.getAmount() + "-" + System.currentTimeMillis());
+			references.setMerchantReference(StringUtils.truncate(customerAccount.getId() + "-" + amountOfMoney.getAmount() + "-" + System.currentTimeMillis(),40,false));
 			CardPayoutMethodSpecificInput cardPayoutMethodSpecificInput = new CardPayoutMethodSpecificInput();
 			cardPayoutMethodSpecificInput.setToken(paymentToken.getTokenId());
 			cardPayoutMethodSpecificInput.setPaymentProductId(paymentToken.getCardType().getId());
