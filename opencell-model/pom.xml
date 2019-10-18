@@ -48,6 +48,56 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sql-maven-plugin</artifactId>
+                <dependencies>
+                    <!-- specify the dependent jdbc driver here -->
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>42.2.5</version>
+                    </dependency>
+                </dependencies>
+
+                <!-- common configuration shared by all executions -->
+                <configuration>
+                    <driver>${db.driver}</driver>
+                    <url>${db.url}</url>
+                    <username>${db.username}</username>
+                    <password>${db.password}</password>
+                    <settingsKey>sensibleKey</settingsKey>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>drop-db</id>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <url>${db.alternative.url}</url>
+                            <autocommit>true</autocommit>
+                            <sqlCommand>DROP DATABASE IF EXISTS ${db.name}</sqlCommand>
+                            <!-- ignore error when database is not avaiable -->
+                            <onError>continue</onError>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>create-db</id>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <url>${db.alternative.url}</url>
+                            <autocommit>true</autocommit>
+                            <sqlCommand>CREATE DATABASE ${db.name}</sqlCommand>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
         <pluginManagement>
             <plugins>
@@ -85,7 +135,7 @@
                 <plugin>
                     <groupId>org.liquibase</groupId>
                     <artifactId>liquibase-maven-plugin</artifactId>
-                    <version>3.5.3</version>
+                    <version>3.8.0</version>
                     <configuration>
                         <changeLogFile>${liquibase.changeLogFile}</changeLogFile>
                         <driver>${db.driver}</driver>
@@ -107,6 +157,7 @@
                     <!-- </dependency> -->
                     <!-- </dependencies> -->
                 </plugin>
+
             </plugins>
         </pluginManagement>
     </build>
