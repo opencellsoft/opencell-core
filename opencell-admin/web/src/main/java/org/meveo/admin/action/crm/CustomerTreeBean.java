@@ -176,15 +176,16 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
             return accountsHierarchy;
         }
 
-        if (entity == null || entity.isTransient()) {
+        if (entity == null || entity.getId() == null) {
             return null;
         }
 
         if (displayCompleteHierarchy) {
-            return buildAccountsHierarchyComplete(entity);
+            accountsHierarchy = buildAccountsHierarchyComplete(entity);
         } else {
-            return buildAccountsHierarchyShort(entity);
+            accountsHierarchy = buildAccountsHierarchyShort(entity);
         }
+        return accountsHierarchy;
     }
 
     private TreeNode buildAccountsHierarchyShort(BaseEntity entity) {
@@ -233,7 +234,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
                 }
 
                 firstParent = false;
-                
+
                 // Or just add entity to a parent node
             } else {
                 parentNode.getChildren().add(lastNode);
@@ -302,12 +303,10 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
             selectedEntityClass = Access.class;
         }
         if (customer != null && customer.getCode() != null) {
-            accountsHierarchy = buildComplete(customer);
+            return buildComplete(customer);
         } else {
-            accountsHierarchy = null;
+            return null;
         }
-
-        return accountsHierarchy;
     }
 
     private TreeNode buildComplete(BaseEntity entity) {
