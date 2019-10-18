@@ -56,7 +56,7 @@ public class MeveoModule extends EnableBusinessEntity implements Serializable {
      * Module items making up the module
      */
     @OneToMany(mappedBy = "meveoModule", cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<MeveoModuleItem> moduleItems = new ArrayList<MeveoModuleItem>();
+    private List<MeveoModuleItem> moduleItems = new ArrayList<>();
 
     /**
      * Licensing terms
@@ -89,7 +89,7 @@ public class MeveoModule extends EnableBusinessEntity implements Serializable {
     /**
      * Script of type ModuleScript to execute at module installation or deinstallation
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance script;
 
