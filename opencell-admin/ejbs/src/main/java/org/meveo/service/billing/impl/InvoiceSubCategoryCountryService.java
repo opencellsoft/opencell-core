@@ -298,8 +298,8 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
 
         InvoiceSubcategoryCountry invoiceSubcategoryCountry = findByInvoiceSubCategoryAndCountry(invoiceSubCategory, sellersCountry, buyersCountry, date);
         if (invoiceSubcategoryCountry == null) {
-            throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory " + invoiceSubCategory.getId() + "/"
-                    + (sellersCountry != null ? sellersCountry.getId() : null) + "/" + buyersCountry.getId());
+            throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory " + invoiceSubCategory.getId() + ", seller's trading country: "
+                    + (sellersCountry != null ? sellersCountry.getId() : null) + ", buyer's trading country: " + buyersCountry.getId());
         }
 
         Tax tax = null;
@@ -338,8 +338,8 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
             if (ignoreNoTax) {
                 return null;
             }
-            throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory " + invoiceSubCategory.getId() + "/"
-                    + (sellersCountry != null ? sellersCountry.getId() : null) + "/" + buyersCountry.getId());
+            throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory " + invoiceSubCategory.getId() + ", seller's trading country: "
+                    + (sellersCountry != null ? sellersCountry.getId() : null) + ", buyer's trading country: " + buyersCountry.getId());
         }
 
         Tax tax = null;
@@ -380,8 +380,8 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
             if (ignoreNoTax) {
                 return null;
             }
-            throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory " + invoiceSubCategory.getId() + "/"
-                    + (sellersCountry != null ? sellersCountry.getId() : null) + "/" + buyersCountry.getId());
+            throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory " + invoiceSubCategory.getId() + ", seller's trading country: "
+                    + (sellersCountry != null ? sellersCountry.getId() : null) + ", buyer's trading country: " + buyersCountry.getId());
         }
 
         Tax tax = null;
