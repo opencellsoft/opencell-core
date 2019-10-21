@@ -51,6 +51,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>sql-maven-plugin</artifactId>
+                <version>1.5</version>
                 <dependencies>
                     <!-- specify the dependent jdbc driver here -->
                     <dependency>
