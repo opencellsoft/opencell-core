@@ -65,9 +65,8 @@
                 <configuration>
                     <driver>${db.driver}</driver>
                     <url>${db.url}</url>
-                    <username>${db.username}</username>
-                    <password>${db.password}</password>
-                    <settingsKey>sensibleKey</settingsKey>
+                    <username>postgres</username>
+                    <password>postgres</password>
                 </configuration>
 
                 <executions>
@@ -94,6 +93,19 @@
                             <url>${db.alternative.url}</url>
                             <autocommit>true</autocommit>
                             <sqlCommand>CREATE DATABASE ${db.name}</sqlCommand>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>alter-db</id>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+
+                        <phase>execute</phase>
+                        <configuration>
+                            <url>${db.alternative.url}</url>
+                            <autocommit>true</autocommit>
+                            <sqlCommand>ALTER DATABASE ${db.name} owner to ${db.owner} </sqlCommand>
                         </configuration>
                     </execution>
                 </executions>
