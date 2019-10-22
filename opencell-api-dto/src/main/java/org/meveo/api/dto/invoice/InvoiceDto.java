@@ -21,6 +21,7 @@ import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceModeEnum;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.payments.PaymentMethodEnum;
 
@@ -61,6 +62,9 @@ public class InvoiceDto extends AuditableEntityDto {
      * Order number
      */
     protected String orderNumber;
+    
+    /** The invoice status. */
+    private InvoiceStatusEnum status;
 
     /** The due date. */
     @XmlElement(required = true)
@@ -173,6 +177,7 @@ public class InvoiceDto extends AuditableEntityDto {
      * True if the invoice is sent, false otherwise
      */
     protected boolean sentByEmail;
+
 
     /**
      * Gets the list invoice id to link.
@@ -684,6 +689,20 @@ public class InvoiceDto extends AuditableEntityDto {
      */
     public void setSellerCode(String sellerCode) {
         this.sellerCode = sellerCode;
+    }
+    
+    /**
+     * @return the status
+     */
+    public InvoiceStatusEnum getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(InvoiceStatusEnum status) {
+        this.status = status;
     }
 
     public Boolean isDraft() {
