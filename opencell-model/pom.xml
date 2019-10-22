@@ -65,8 +65,8 @@
                 <configuration>
                     <driver>${db.driver}</driver>
                     <url>${db.url}</url>
-                    <username>postgres</username>
-                    <password>postgres</password>
+                    <username>${db.username}</username>
+                    <password>${db.password}</password>
                 </configuration>
 
                 <executions>
@@ -76,12 +76,11 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
-                            <url>${db.alternative.url}</url>
                             <autocommit>true</autocommit>
+                            <!-- drop schema instead of database to avoid restarting wildfly -->
                             <sqlCommand>
-                                DROP DATABASE IF EXISTS ${db.name};
-                                CREATE DATABASE ${db.name};
-                                ALTER DATABASE ${db.name} owner to ${db.owner};
+                                drop schema IF EXISTS ${db.schema} cascade;
+                                create schema ${db.schema} AUTHORIZATION ${db.username};
                             </sqlCommand>
                         </configuration>
                     </execution>
