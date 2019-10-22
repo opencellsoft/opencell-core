@@ -126,10 +126,14 @@ public class CustomTableApi extends BaseApi {
         Map<Boolean, List<CustomTableRecordDto>> partitionedById = dto.getValues().stream().collect(Collectors.partitioningBy(x->x.getValues().get(FIELD_ID)!=null));
         //create records without ids
         List<CustomTableRecordDto> valuesWithoutIds = partitionedById.get(false);
-        customTableService.importData(cet, valuesWithoutIds.stream().map(x->x.getValues()).collect(toList()), !dto.getOverwrite());
+        if (!valuesWithoutIds.isEmpty()) {
+            customTableService.importData(cet, valuesWithoutIds.stream().map(x -> x.getValues()).collect(toList()), !dto.getOverwrite());
+        }
         //update records with ids
         List<CustomTableRecordDto> valuesWithIds = partitionedById.get(true);
-        customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
+        if (!valuesWithIds.isEmpty()) {
+            customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
+        }
     }
 
     /**
