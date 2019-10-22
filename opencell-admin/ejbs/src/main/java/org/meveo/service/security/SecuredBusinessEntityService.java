@@ -6,6 +6,8 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 
+import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.proxy.LazyInitializer;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
@@ -44,9 +46,16 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
     }
 
     public boolean isEntityAllowed(BusinessEntity entity, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap, boolean isParentEntity) {
-
+        Set<SecuredEntity> securedEntities = null;
+        //this because if the current entity is got as parent of a another fisrt entity by
+        // fisrtEntity.getParentEntity() then the real class of entity can be an hibernate proxy
+        if (entity != null) {
+            Class<?> entityClass = getEntityRealClass(entity);
+            securedEntities = allSecuredEntitiesMap.get(entityClass);
+        }
+        
         // Doing this check first allows verification without going to DB.
-        if (entityFoundInSecuredEntities(entity, allSecuredEntitiesMap)) {
+        if (entityFoundInSecuredEntities(entity, securedEntities)) {
             // Match was found authorization successful
             return true;
         }
@@ -55,7 +64,6 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
         if (entity != null) {
             // Check if entity's type is restricted to a specific group of
             // entities. i.e. only specific Customers, CA, BA, etc.
-            Set<SecuredEntity> securedEntities = allSecuredEntitiesMap.get(entity.getClass());
             boolean isSameTypeAsParent = entity.getClass() == entity.getParentEntityType();
             if (!isSameTypeAsParent && securedEntities != null && !securedEntities.isEmpty()) {
                 // This means that the entity type is being restricted. Since
@@ -85,12 +93,12 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
         }
     }
 
-    private static boolean entityFoundInSecuredEntities(BusinessEntity entity, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap) {
-        if (entity == null || allSecuredEntitiesMap.get(entity.getClass()) == null) {
+    private static boolean entityFoundInSecuredEntities(BusinessEntity entity, Set<SecuredEntity> securedEntities) {
+    	if (entity == null || securedEntities == null) {
             return false;
         }
         boolean found = false;
-        for (SecuredEntity securedEntity : allSecuredEntitiesMap.get(entity.getClass())) {
+        for (SecuredEntity securedEntity : securedEntities) {
             if (securedEntity.equals(entity)) {
                 found = true;
                 break;
@@ -98,4 +106,13 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
         }
         return found;
     }
+    
+    public static Class<?> getEntityRealClass(Object entity) {
+        if (entity instanceof HibernateProxy) {
+			LazyInitializer lazyInitializer = ((HibernateProxy) entity).getHibernateLazyInitializer();
+			return lazyInitializer.getPersistentClass();
+		} else {
+			return entity.getClass();
+		}
+	}
 }
