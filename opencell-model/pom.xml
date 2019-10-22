@@ -71,41 +71,18 @@
 
                 <executions>
                     <execution>
-                        <id>drop-db</id>
+                        <id>reset-db</id>
                         <goals>
                             <goal>execute</goal>
                         </goals>
                         <configuration>
                             <url>${db.alternative.url}</url>
                             <autocommit>true</autocommit>
-                            <sqlCommand>DROP DATABASE IF EXISTS ${db.name}</sqlCommand>
-                            <!-- ignore error when database is not avaiable -->
-                            <onError>continue</onError>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>create-db</id>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                        <configuration>
-                            <url>${db.alternative.url}</url>
-                            <autocommit>true</autocommit>
-                            <sqlCommand>CREATE DATABASE ${db.name}</sqlCommand>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>alter-db</id>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-
-                        <phase>execute</phase>
-                        <configuration>
-                            <url>${db.alternative.url}</url>
-                            <autocommit>true</autocommit>
-                            <sqlCommand>ALTER DATABASE ${db.name} owner to ${db.owner} </sqlCommand>
+                            <sqlCommand>
+                                DROP DATABASE IF EXISTS ${db.name};
+                                CREATE DATABASE ${db.name};
+                                ALTER DATABASE ${db.name} owner to ${db.owner};
+                            </sqlCommand>
                         </configuration>
                     </execution>
                 </executions>
