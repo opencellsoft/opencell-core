@@ -23,8 +23,10 @@ package org.meveo.model.billing;
  */
 public enum InvoiceStatusEnum {
 
-    PROCESSING(1, "invoiceStatusEnum.processing"), OPEN(2, "invoiceStatusEnum.open"), CANCELLED(3, "invoiceStatusEnum.cancelled"), PAID(4, "invoiceStatusEnum.paid");
-
+    
+    CREATED(1, "invoiceStatusEnum.created"), GENERATED(2, "invoiceStatusEnum.generated"), SENT(3, "invoiceStatusEnum.sent"), PAID(4, "invoiceStatusEnum.paid"), PPAID(5, "invoiceStatusEnum.ppaid"), 
+    UNPAID(6, "invoiceStatusEnum.unpaid"), ABANDONED(7, "invoiceStatusEnum.abandonned"), REFUNDED(8, "invoiceStatusEnum.refunded"), DISPUTED(9, "invoiceStatusEnum.disputed");
+    
     private Integer id;
     private String label;
 
