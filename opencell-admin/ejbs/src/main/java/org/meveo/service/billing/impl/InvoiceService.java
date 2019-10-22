@@ -35,6 +35,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -104,6 +106,7 @@ import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceModeEnum;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
@@ -126,9 +129,12 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.WriteOff;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -1126,6 +1132,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice produceInvoicePdf(Invoice invoice) throws BusinessException {
 
         produceInvoicePdfNoUpdate(invoice);
+        invoice.setStatus(InvoiceStatusEnum.GENERATED);
         invoice = updateNoCheck(invoice);
         return invoice;
     }
@@ -1201,9 +1208,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplateName + File.separator + "invoiceAdjustmentPdf");
-            if (!destDirInvoiceAdjustment.exists()) {
+            if (!destDirInvoiceAdjustment.exists() && isInvoiceAdjustment) {
                 destDirInvoiceAdjustment.mkdirs();
-                String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment").getPath();
+                String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + "/invoiceAdjustment";
                 File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
                 if (!sourceFileInvoiceAdjustment.exists()) {
                     VirtualFile vfDir = VFS.getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell")
@@ -1761,6 +1768,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice produceInvoiceXml(Invoice invoice) throws BusinessException {
 
         produceInvoiceXmlNoUpdate(invoice);
+        invoice.setStatus(InvoiceStatusEnum.GENERATED);
         invoice = updateNoCheck(invoice);
         return invoice;
     }
@@ -2449,6 +2457,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         return result;
     }
+    
+    /**
+     * Update unpaid invoices status
+     */
+    public void updateUnpaidInvoicesStatus() {
+        getEntityManager().createNamedQuery("Invoice.updateUnpaidInvoicesStatus").executeUpdate();
+    }
 
     /**
      * Return all invoices with now - invoiceDate date &gt; n years.
@@ -2619,6 +2634,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 String content = ValueExpressionWrapper.evaluateExpression(emailTemplate.getTextContent(), params, String.class);
                 String contentHtml = ValueExpressionWrapper.evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
                 emailSender.send(seller.getContactInformation().getEmail(), to, to, cc, null, subject, content, contentHtml, files, null);
+                invoice.setStatus(InvoiceStatusEnum.SENT);
                 invoice.setAlreadySent(true);
                 update(invoice);
 
@@ -3225,6 +3241,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         invoice.setBillingAccount(billingAccount);
         invoice.setSeller(seller);
+        invoice.setStatus(InvoiceStatusEnum.CREATED);
         invoice.setInvoiceType(invoiceType);
         invoice.setPrepaid(isPrepaid);
         invoice.setInvoiceDate(invoiceDate);
@@ -3560,6 +3577,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setDueDate(invoiceDTO.getDueDate());
         invoice.setDraft(invoiceDTO.isDraft());
         invoice.setAlreadySent(invoiceDTO.isCheckAlreadySent());
+        if(invoiceDTO.isCheckAlreadySent()) {
+            invoice.setStatus(InvoiceStatusEnum.SENT);
+        } else {
+            invoice.setStatus(InvoiceStatusEnum.CREATED);
+        }
         invoice.setDontSend(invoiceDTO.isSentByEmail());
         PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
         if (preferedPaymentMethod != null) {
