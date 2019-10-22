@@ -164,6 +164,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Column(name = "invoice_date")
     private Date invoiceDate;
+    
+    /**
+     * Invoice status
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 25)
+    private InvoiceStatusEnum status;
 
     /**
      * Payment due date

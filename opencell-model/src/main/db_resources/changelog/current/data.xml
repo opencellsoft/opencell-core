@@ -1476,7 +1476,7 @@ public class ValidateBRScript extends Script {
     
     <changeSet id="#4064_11092019" author="AbdelmounaimAkadid">
         <insert tableName="meveo_job_instance">
-            <column name="id" valueNumeric="-26" />
+            <column name="id" valueNumeric="-27" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2019-07-01 00:00:00.000" />
             <column name="job_category" value="INVOICING" />
