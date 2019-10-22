@@ -244,12 +244,12 @@
 									<f:facet name="header">
 										<h:outputText value="#{messages['commons.actions']}" />
 									</f:facet>
-									<p:commandButton update=":tabView:formRecurringCharge" process="@this"
+									<p:commandButton update=":tabView:formRecurringCharge :tabView:serviceRecurringChargeTempalte_panel" process="@this"
 										action="#{serviceTemplateBean.editServiceRecurringChargeTemplate(entity)}"
 										icon="ui-icon-document" />
 									<p:commandButton
 										action="#{serviceTemplateBean.deleteServiceRecurringChargeTemplate(entity.getId())}"
-										icon="ui-icon-trash" update=":tabView:formRecurringCharge" process="@this"/>
+										icon="ui-icon-trash" update=":tabView:formRecurringCharge :tabView:serviceRecurringChargeTempalte_panel" process="@this"/>
 								</p:column>
 							</hftl:dataList>
 						</p:outputPanel>
@@ -282,7 +282,7 @@
 									rendered="#{serviceRecurringChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 									action="#{serviceTemplateBean.saveServiceChargeTemplateRecurring}"
 									value="#{messages['action.addSave']}"
-									update=":tabView:serviceRecurringChargediv" />
+									update=":tabView:serviceRecurringChargediv :tabView:serviceRecurringChargeTempalte_panel" process="@this"/>
 								<p:commandButton
 									rendered="#{serviceRecurringChargeTemplate.id!=null}"
 									action="#{serviceTemplateBean.saveServiceChargeTemplateRecurring}"
@@ -347,12 +347,12 @@
 									<f:facet name="header">
 										<h:outputText value="#{messages['commons.actions']}" />
 									</f:facet>
-									<p:commandButton update=":tabView:formSubscriptionCharge"
+									<p:commandButton update=":tabView:formSubscriptionCharge :tabView:serviceSubscriptionChargeTempalte_panel" process="@this"
 										action="#{serviceTemplateBean.editServiceSubscriptionChargeTemplate(entity)}"
 										icon="ui-icon-document" />
 									<p:commandButton
 										action="#{serviceTemplateBean.deleteServiceSubscriptionChargeTemplate(entity.getId())}"
-										icon="ui-icon-trash" update=":tabView:formSubscriptionCharge" />
+										icon="ui-icon-trash" update=":tabView:formSubscriptionCharge :tabView:serviceSubscriptionChargeTempalte_panel" process="@this" />
 								</p:column>
 							</hftl:dataList>
 						</p:outputPanel>
@@ -380,15 +380,15 @@
 									rendered="#{serviceSubscriptionChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 									action="#{serviceTemplateBean.saveServiceChargeTemplateSubscription}"
 									value="#{messages['action.addSave']}"
-									update=":tabView:serviceSubscriptionChargediv" />
+									update=":tabView:serviceSubscriptionChargediv :tabView:serviceSubscriptionChargeTempalte_panel" process="@this"/>
 								<p:commandButton
 									rendered="#{serviceSubscriptionChargeTemplate.id!=null}"
 									action="#{serviceTemplateBean.saveServiceChargeTemplateSubscription}"
 									value="#{messages['serviceSubscriptionChargeTemplate.modifyServiceSubscriptionCharge']}"
-									update=":tabView:serviceSubscriptionChargediv" />
+									update=":tabView:serviceSubscriptionChargediv :tabView:serviceSubscriptionChargeTempalte_panel" process="@this" />
 								<p:commandButton value="#{messages['action.cancel']}"
 									action="#{serviceTemplateBean.newServiceChargeTemplateSubscription}"
-									update=":tabView:serviceSubscriptionChargediv" />
+									update=":tabView:serviceSubscriptionChargediv" process="@this" />
 								<p:button id="buttonBack3" value="#{messages['action.back']}"
 									outcome="#{serviceTemplateBean.back()}"
 									includeViewParams="true">
@@ -443,12 +443,12 @@
 									<f:facet name="header">
 										<h:outputText value="#{messages['commons.actions']}" />
 									</f:facet>
-									<p:commandButton update=":tabView:formTerminationCharge"
+									<p:commandButton update=":tabView:formTerminationCharge :tabView:serviceTerminationChargeTempalte_panel" process="@this"
 										action="#{serviceTemplateBean.editServiceTerminationChargeTemplate(entity)}"
 										icon="ui-icon-document" />
 									<p:commandButton
 										action="#{serviceTemplateBean.deleteServiceTerminationChargeTemplate(entity.getId())}"
-										icon="ui-icon-trash" update=":tabView:formTerminationCharge" />
+										icon="ui-icon-trash" update=":tabView:formTerminationCharge :tabView:serviceTerminationChargeTempalte_panel" process="@this"/>
 								</p:column>
 							</hftl:dataList>
 						</p:outputPanel>
@@ -476,12 +476,12 @@
 									rendered="#{serviceTerminationChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 									action="#{serviceTemplateBean.saveServiceChargeTemplateTermination}"
 									value="#{messages['action.addSave']}"
-									update=":tabView:serviceTerminationChargediv" />
+									update=":tabView:serviceTerminationChargediv :tabView:serviceTerminationChargeTempalte_panel" process="@this" />
 								<p:commandButton
 									rendered="#{serviceTerminationChargeTemplate.id!=null}"
 									action="#{serviceTemplateBean.saveServiceChargeTemplateTermination}"
 									value="#{messages['serviceTerminationChargeTemplate.modifyServiceTerminationCharge']}"
-									update=":tabView:serviceTerminationChargediv" />
+									update=":tabView:serviceTerminationChargediv :tabView:serviceTerminationChargeTempalte_panel" process="@this" />
 								<p:commandButton value="#{messages['action.cancel']}"
 									action="#{serviceTemplateBean.newServiceChargeTemplateTermination}"
 									update=":tabView:serviceTerminationChargediv" />
@@ -540,13 +540,13 @@
 									<f:facet name="header">
 										<h:outputText value="#{messages['commons.actions']}" />
 									</f:facet>
-									<p:commandButton update=":tabView:formUsageCharge"
+									<p:commandButton update=":tabView:formUsageCharge :tabView:serviceUsageChargeTempalte_panel" process="@this"
 										action="#{serviceTemplateBean.editServiceUsageChargeTemplate(entity)}"
 										icon="ui-icon-document" />
 									<p:commandButton
 										action="#{serviceTemplateBean.deleteServiceUsageChargeTemplate(entity.getId())}"
 										icon="ui-icon-trash"
-										update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formUsageCharge" />
+										update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formUsageCharge" process="@this"/>
 								</p:column>
 							</hftl:dataList>
 						</p:outputPanel>
@@ -579,15 +579,15 @@
 									rendered="#{serviceUsageChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
 									action="#{serviceTemplateBean.saveServiceChargeTemplateUsage}"
 									value="#{messages['action.addSave']}"
-									update=":tabView:serviceUsageChargediv" />
+									update=":tabView:serviceUsageChargediv :tabView:serviceUsageChargeTempalte_panel" process="@this" />
 								<p:commandButton
 									rendered="#{serviceUsageChargeTemplate.id!=null}"
 									action="#{serviceTemplateBean.saveServiceChargeTemplateUsage}"
 									value="#{messages['serviceUsageChargeTemplate.modifyServiceUsageCharge']}"
-									update=":tabView:serviceUsageChargediv" />
+									update=":tabView:serviceUsageChargediv :tabView:serviceUsageChargeTempalte_panel" process="@this"  />
 								<p:commandButton value="#{messages['action.cancel']}"
 									action="#{serviceTemplateBean.newServiceChargeTemplateUsage}"
-									update=":tabView:serviceUsageChargediv" />
+									update=":tabView:serviceUsageChargediv" process="@this"/>
 								<p:button id="buttonBack5" value="#{messages['action.back']}"
 									outcome="#{serviceTemplateBean.back()}"
 									includeViewParams="true">
