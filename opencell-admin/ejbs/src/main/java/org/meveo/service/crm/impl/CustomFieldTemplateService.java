@@ -301,9 +301,9 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
     
 	public void addConstraintByColumnsName(CustomEntityTemplate customEntityTemplate, String columnNames) {
-		String constraintName = columnNames.replaceAll(",", "_");
-
-		String query = String.format("ALTER TABLE %s ADD CONSTRAINT %s UNIQUE (%s)", customEntityTemplate.getDbTablename(), constraintName, columnNames);
+		String dbTablename = customEntityTemplate.getDbTablename();
+		String constraintName = dbTablename+ "__" +(columnNames.replaceAll(",", "_"));
+		String query = String.format("ALTER TABLE %s ADD CONSTRAINT %s UNIQUE (%s)", dbTablename, constraintName, columnNames);
 		getEntityManager().createNativeQuery(query).executeUpdate();
 
 		customEntityTemplate.setUniqueContraintName(constraintName);
