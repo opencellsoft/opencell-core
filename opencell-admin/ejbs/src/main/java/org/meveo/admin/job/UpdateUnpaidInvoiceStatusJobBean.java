@@ -13,7 +13,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 /**
@@ -28,9 +27,6 @@ public class UpdateUnpaidInvoiceStatusJobBean extends BaseJobBean {
     protected Logger log;
 
     @Inject
-    private JobExecutionService jobExecutionService;
-
-    @Inject
     InvoiceService invoiceService;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -41,20 +37,8 @@ public class UpdateUnpaidInvoiceStatusJobBean extends BaseJobBean {
         userMap.put("context", jobInstance);
         try {
             invoiceService.updateUnpaidInvoicesStatus();
-            //result.setNbItemsToProcess(unpaidInvoices.size());
-            /*
-            int i = 0;
-            for (Invoice invoice : unpaidInvoices) {
-                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
-                    break;
-                }
-            	invoice.setStatus(InvoiceStatusEnum.UNPAID);
-                result.registerSucces();
-            }
-            */
-
         } catch (BusinessException e) {
-            log.error("Failed to run the job : SendInvoiceJob", e);
+            log.error("Failed to run the job : UpdateUnpaidInvoiceStatusJobBean", e);
             result.registerError(e.getMessage());
         }
 
