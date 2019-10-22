@@ -22,18 +22,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 
 /**
  * One shot charge as part of subscribed service
@@ -41,26 +35,10 @@ import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
  * @author Andrius Karpavicius
  */
 @Entity
-@Table(name = "billing_one_shot_charge_inst")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_one_shot_chrg_inst_seq"), })
+@DiscriminatorValue("O")
 public class OneShotChargeInstance extends ChargeInstance {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Subscribed service - subscription charge relation
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subs_serv_inst_id")
-    private ServiceInstance subscriptionServiceInstance;
-
-    /**
-     * Subscribed service - termination charge relation
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "term_serv_inst_id")
-    private ServiceInstance terminationServiceInstance;
 
     /**
      * Quantity subscribed
@@ -73,23 +51,35 @@ public class OneShotChargeInstance extends ChargeInstance {
 
     }
 
-    public OneShotChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, OneShotChargeTemplate chargeTemplate, ServiceInstance serviceInstance,
+    /**
+     * Constructor
+     * 
+     * @param amountWithoutTax Amount without tax
+     * @param amountWithTax Amount with tax
+     * @param chargeTemplate Charge template
+     * @param serviceInstance Service instance to associate with
+     * @param status Status
+     */
+    protected OneShotChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, OneShotChargeTemplate chargeTemplate, ServiceInstance serviceInstance,
             InstanceStatusEnum status) {
 
         super(amountWithoutTax, amountWithTax, chargeTemplate, serviceInstance, status);
 
         this.quantity = serviceInstance.getQuantity() == null ? BigDecimal.ONE : serviceInstance.getQuantity();
-
-        if (chargeTemplate.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION) {
-            setTerminationServiceInstance(serviceInstance);
-        } else {
-            setSubscriptionServiceInstance(serviceInstance);
-        }
-        if (serviceInstance.getSubscription().getSeller() != null) {
-            this.seller = serviceInstance.getSubscription().getSeller();
-        }
     }
 
+    /**
+     * Constructor
+     * 
+     * @param description Charge description (to override a value from a charge template)
+     * @param chargeDate Charge date
+     * @param amountWithoutTax Amount without tax
+     * @param amountWithTax Amount with tax
+     * @param quantity Quantity
+     * @param orderNumber Order number
+     * @param subscription Subscription
+     * @param chargeTemplate Charge template
+     */
     public OneShotChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumber,
             Subscription subscription, OneShotChargeTemplate chargeTemplate) {
 
@@ -123,26 +113,16 @@ public class OneShotChargeInstance extends ChargeInstance {
         }
     }
 
-    public ServiceInstance getSubscriptionServiceInstance() {
-        return subscriptionServiceInstance;
-    }
-
-    public void setSubscriptionServiceInstance(ServiceInstance subscriptionServiceInstance) {
-        this.subscriptionServiceInstance = subscriptionServiceInstance;
-    }
-
-    public ServiceInstance getTerminationServiceInstance() {
-        return terminationServiceInstance;
-    }
-
-    public void setTerminationServiceInstance(ServiceInstance terminationServiceInstance) {
-        this.terminationServiceInstance = terminationServiceInstance;
-    }
-
+    /**
+     * @return Quantity subscribed
+     */
     public BigDecimal getQuantity() {
         return quantity;
     }
 
+    /**
+     * @param quantity Quantity subscribed
+     */
     public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
     }

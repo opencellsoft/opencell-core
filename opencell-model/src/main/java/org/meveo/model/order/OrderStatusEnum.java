@@ -50,7 +50,7 @@ public enum OrderStatusEnum {
      * All Order items have failed which results in the entire Order has Failed.
      */
     FAILED("Failed"),
-    /**
+	/**
      * Orders that are to be processed alongside other 'associated' (related) orders. 
      * And all the ‘associated’ orders have not yet been submitted for processing
      */

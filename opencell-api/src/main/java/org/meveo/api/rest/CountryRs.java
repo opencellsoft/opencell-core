@@ -69,6 +69,8 @@ public interface CountryRs extends IBaseRs {
     ActionStatus update(CountryDto countryDto);
 
     /**
+     * Create or update a Trading Country base from the supplied country code. If the country code does not exists, a country and tradingCountry records are created
+     *
      * @param countryDto country
      * @return action status
      */

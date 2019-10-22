@@ -28,4 +28,11 @@ public @interface FilterResults {
      * @return array of property to be filtered.
      */
     FilterProperty[] itemPropertiesToFilter();
+    
+    /**
+     * Identifies the DTO property containing the number of records returned to refresh after applying filter
+     * 
+     * 
+     */
+    String totalRecords() default "";
 }

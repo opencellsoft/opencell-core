@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -115,10 +117,13 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         if (dto.getFields() != null) {
             for (CustomFieldTemplateDto cftDto : dto.getFields()) {
-
                 cftDto.setDisabled(dto.isDisabled());
-                customFieldTemplateApi.createOrUpdate(cftDto, cet.getAppliesTo());
+                customFieldTemplateApi.createWithoutUniqueConstraint(cftDto, cet.getAppliesTo());
             }
+			String columnNames = dto.getFields().stream().filter(x->x.getUniqueConstraint()!= null && x.getUniqueConstraint()).map(x-> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
+			if(!StringUtils.isEmpty(columnNames)) {
+				customFieldTemplateService.addConstraintByColumnsName(cet, columnNames);
+        }
         }
 
         if (dto.getActions() != null) {
@@ -384,14 +389,15 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
      * @throws MissingParameterException when there is a missing parameter
      * @throws BusinessException business logic is violated
      */
-    public EntityCustomizationDto listELFiltered(String appliesTo, String entityCode) throws MissingParameterException, BusinessException {
+    public EntityCustomizationDto listELFiltered(String appliesTo, String entityCode, Long entityId)
+            throws MissingParameterException, BusinessException {
         EntityCustomizationDto result = new EntityCustomizationDto();
         log.debug("IPIEL: listELFiltered");
 
         if (StringUtils.isBlank(appliesTo)) {
             missingParameters.add("appliesTo");
         }
-        if (StringUtils.isBlank(entityCode)) {
+        if (StringUtils.isBlank(entityCode) && entityId == null) {
             missingParameters.add("entityCode");
         }
 
@@ -410,7 +416,10 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         }
 
         // search for custom field entity filtered by type and code
-        ICustomFieldEntity entityInstance = customEntityTemplateService.findByClassAndCode(entityClass, entityCode);
+        String key=entityId!=null ? "id" : "code";
+        Object value=entityId!=null?entityId:entityCode;
+        // search for custom field entity filtered by type and code
+        ICustomFieldEntity entityInstance = customEntityTemplateService.findByClassAndKeyValue(entityClass, key, value);
 
         // custom fields that applies to an entity type, eg. OfferTemplate
         Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo);

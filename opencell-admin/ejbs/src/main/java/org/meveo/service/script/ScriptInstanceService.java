@@ -175,6 +175,27 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
         }
     }
 
+    /**
+     * This is used to invoke a method in a new transaction from a script.<br>
+     * This will prevent DB errors in the script from affecting notification history creation.
+     *
+     * @param runnable a runnable that will be run inside a separate transaction
+     * @throws BusinessException business exception.
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void runRunnableWithNewTransaction(Runnable runnable) throws BusinessException {
+        try {
+            runnable.run();
+        } catch (Exception e) {
+            if (e.getCause() != null) {
+                throw new BusinessException(e.getCause());
+            } else {
+                throw new BusinessException(e);
+            }
+        }
+    }
+
     @Override
     public void create(ScriptInstance script) throws BusinessException {
 
