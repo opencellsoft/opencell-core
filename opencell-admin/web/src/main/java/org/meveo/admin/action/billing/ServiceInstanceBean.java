@@ -202,7 +202,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     }
 
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("recurringChargeInstances");
+        return Arrays.asList("chargeInstances");
     }
 
     @Override
