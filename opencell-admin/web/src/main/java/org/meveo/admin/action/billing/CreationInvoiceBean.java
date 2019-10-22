@@ -69,7 +69,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceAggregateHandler;
-import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -110,9 +109,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
-
-    @Inject
-    private InvoiceAgregateService invoiceAgregateService;
 
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
@@ -529,79 +525,74 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 invoiceCopy.setSeller(customer.getSeller());
             }
             invoiceCopy.setInvoiceAgregates(new ArrayList<InvoiceAgregate>());
-            getPersistenceService().create(invoiceCopy);
 
             Map<String, TaxInvoiceAgregate> taxInvAgregateMapCopy = new HashMap<String, TaxInvoiceAgregate>();
-            for (Entry<String, TaxInvoiceAgregate> entry : aggregateHandler.getTaxInvAgregateMap().entrySet()) {
-                TaxInvoiceAgregate taxInvAgr = new TaxInvoiceAgregate();
-                BeanUtils.copyProperties(taxInvAgr, entry.getValue());
-                taxInvAgr.setId(null);
-                taxInvAgr.updateAudit(currentUser);
-                invoiceCopy.addInvoiceAggregate(taxInvAgr);
-                taxInvAgregateMapCopy.put(entry.getKey(), taxInvAgr);
+            for (Entry<String, TaxInvoiceAgregate> taxInvAggr : aggregateHandler.getTaxInvAgregateMap().entrySet()) {
+                TaxInvoiceAgregate taxInvAggrCopy = new TaxInvoiceAgregate();
+                BeanUtils.copyProperties(taxInvAggrCopy, taxInvAggr.getValue());
+                taxInvAggrCopy.setId(null);
+                taxInvAggrCopy.updateAudit(currentUser);
+                taxInvAggrCopy.setInvoice(invoiceCopy);
+                invoiceCopy.addInvoiceAggregate(taxInvAggrCopy);
+                taxInvAgregateMapCopy.put(taxInvAggr.getKey(), taxInvAggrCopy);
             }
 
             List<SubCategoryInvoiceAgregate> subCategoryInvoiceAggregatesCopy = new ArrayList<SubCategoryInvoiceAgregate>();
             List<RatedTransaction> ratedTransactionCopy = new ArrayList<RatedTransaction>();
-            for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
+            for (SubCategoryInvoiceAgregate subCatInvAggr : subCategoryInvoiceAggregates) {
 
-                CategoryInvoiceAgregate catInvAggr = new CategoryInvoiceAgregate();
-                BeanUtils.copyProperties(catInvAggr, subcat.getCategoryInvoiceAgregate());
-                catInvAggr.setId(null);
-                catInvAggr.updateAudit(currentUser);
-                catInvAggr.setInvoice(invoiceCopy);
-                catInvAggr.setSubCategoryInvoiceAgregates(new HashSet<SubCategoryInvoiceAgregate>());
-                invoiceCopy.addInvoiceAggregate(catInvAggr);
+                CategoryInvoiceAgregate catInvAggrCopy = new CategoryInvoiceAgregate();
+                BeanUtils.copyProperties(catInvAggrCopy, subCatInvAggr.getCategoryInvoiceAgregate());
+                catInvAggrCopy.setId(null);
+                catInvAggrCopy.updateAudit(currentUser);
+                catInvAggrCopy.setInvoice(invoiceCopy);
+                catInvAggrCopy.setSubCategoryInvoiceAgregates(new HashSet<SubCategoryInvoiceAgregate>());
+                invoiceCopy.addInvoiceAggregate(catInvAggrCopy);
 
-                SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate();
-                BeanUtils.copyProperties(subCategoryInvoiceAgregate, subcat);
-                subCategoryInvoiceAgregate.setId(null);
-                subCategoryInvoiceAgregate.updateAudit(currentUser);
-                subCategoryInvoiceAgregate.setInvoice(invoiceCopy);
-                subCategoryInvoiceAgregate.setCategoryInvoiceAgregate(catInvAggr);
-                subCategoryInvoiceAgregate.setRatedtransactionsToAssociate(new ArrayList<RatedTransaction>());
-                invoiceCopy.addInvoiceAggregate(subCategoryInvoiceAgregate);
-                subCategoryInvoiceAggregatesCopy.add(subCategoryInvoiceAgregate);
+                SubCategoryInvoiceAgregate subCatInvAggrCopy = new SubCategoryInvoiceAgregate();
+                BeanUtils.copyProperties(subCatInvAggrCopy, subCatInvAggr);
+                subCatInvAggrCopy.setId(null);
+                subCatInvAggrCopy.updateAudit(currentUser);
+                subCatInvAggrCopy.setInvoice(invoiceCopy);
+                subCatInvAggrCopy.setCategoryInvoiceAgregate(catInvAggrCopy);
+                subCatInvAggrCopy.setRatedtransactionsToAssociate(new ArrayList<RatedTransaction>());
+                invoiceCopy.addInvoiceAggregate(subCatInvAggrCopy);
+                subCategoryInvoiceAggregatesCopy.add(subCatInvAggrCopy);
 
-                for (RatedTransaction rt : subcat.getRatedtransactionsToAssociate()) {
+                for (RatedTransaction rt : subCatInvAggr.getRatedtransactionsToAssociate()) {
                     RatedTransaction rtCopy = new RatedTransaction();
                     BeanUtils.copyProperties(rtCopy, rt);
                     rtCopy.setId(null);
-                    rtCopy.setTax(subcat.getTax());
-                    rtCopy.setTaxPercent(subcat.getTaxPercent());
+                    rtCopy.setTax(subCatInvAggr.getTax());
+                    rtCopy.setTaxPercent(subCatInvAggr.getTaxPercent());
                     rtCopy.setBillingAccount(billingAccount);
-                    ratedTransactionService.create(rtCopy);
                     rtCopy.changeStatus(RatedTransactionStatusEnum.BILLED);
                     rtCopy.setInvoice(invoiceCopy);
+                    rtCopy.setInvoiceAgregateF(subCatInvAggrCopy);
                     
                     ratedTransactionCopy.add(rtCopy);
                 }
             }
 
+            getPersistenceService().create(invoiceCopy);
+
+            for (RatedTransaction rtCopy : ratedTransactionCopy) {
+                ratedTransactionService.create(rtCopy);
+            }
+
             invoiceCopy = invoiceService.generateXmlAndPdfInvoice(invoiceCopy, true);
             draftGenerated = true;
 
-            for (Entry<String, TaxInvoiceAgregate> entry : taxInvAgregateMapCopy.entrySet()) {
-                TaxInvoiceAgregate taxInvAgr = entry.getValue();
-                invoiceAgregateService.remove(taxInvAgr);
-            }
-
-            for (RatedTransaction ratedTransaction : ratedTransactionCopy) {
-                ratedTransactionService.remove(ratedTransaction);
-            }
-
-            for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregatesCopy) {
-                invoiceAgregateService.remove(subcat);
-                invoiceAgregateService.remove(subcat.getCategoryInvoiceAgregate());
+            for (RatedTransaction rtCopy : ratedTransactionCopy) {
+                ratedTransactionService.remove(rtCopy);
             }
 
             invoiceService.cancelInvoice(invoiceCopy);
 
         } catch (Exception e) {
-            log.error("Error generating xml / pdf invoice=" + e.getMessage(), e);
+            log.error("Error generating xml / pdf invoice", e);
             messages.error("Error generating xml / pdf invoice=" + e.getMessage());
         }
-
     }
 
     public void downloadXmlInvoice() {
@@ -645,37 +636,36 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 entity.addInvoiceAggregate(catInvAgr);
             }
 
-            for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
-                subcat.setInvoice(entity);
-                subcat.updateAudit(currentUser);
-                entity.addInvoiceAggregate(subcat);
+            List<RatedTransaction> rts = new ArrayList<RatedTransaction>();
+
+            for (SubCategoryInvoiceAgregate subCatInvAggr : subCategoryInvoiceAggregates) {
+                subCatInvAggr.setInvoice(entity);
+                subCatInvAggr.updateAudit(currentUser);
+                entity.addInvoiceAggregate(subCatInvAggr);
+
+                for (RatedTransaction rt : subCatInvAggr.getRatedtransactionsToAssociate()) {
+                    rt.setTax(subCatInvAggr.getTax());
+                    rt.setTaxPercent(subCatInvAggr.getTaxPercent());
+                    rt.setInvoice(entity);
+                    rt.setInvoiceAgregateF(subCatInvAggr);
+                    rt.changeStatus(RatedTransactionStatusEnum.BILLED);
+                    rts.add(rt);
+            }
             }
 
             entity.setLinkedInvoices(invoiceService.retrieveIfNotManaged(entity.getLinkedInvoices()));
 
             super.saveOrUpdate(false);
 
-            for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
-                for (RatedTransaction rt : subcat.getRatedtransactionsToAssociate()) {
-                    rt = ratedTransactionService.refreshOrRetrieve(rt);
-                	rt.setTax(subcat.getTax());
-                	rt.setTaxPercent(subcat.getTaxPercent());
-                    rt.setInvoice(entity);
-                    rt.changeStatus(RatedTransactionStatusEnum.BILLED);
-                    if (rt.isTransient()) {
+            for (RatedTransaction rt : rts) {
                         ratedTransactionService.create(rt);
-                    } else {
-                        ratedTransactionService.update(rt);
                     }
-                }
-            }
 
             invoiceService.postCreate(entity);
 
             entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
 
             try {
-                // invoiceService.commit();
                 entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
             } catch (Exception e) {
                 log.error("Failed to create an XML and PDF invoice", e);
