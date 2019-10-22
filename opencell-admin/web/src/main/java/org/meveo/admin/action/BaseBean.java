@@ -304,10 +304,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 // FIXME: If entity is Auditable, set here the creator and
                 // creation time
             } catch (InstantiationException e) {
-                log.error("Unexpected error!", e);
-                throw new IllegalStateException("could not instantiate a class, abstract class");
+                log.error("Could not instantiate a class, abstract class", e);
             } catch (IllegalAccessException e) {
-                log.error("Unexpected error!", e);
+                log.error("Could not instantiate a class, constructor not accessible", e);
                 throw new IllegalStateException("could not instantiate a class, constructor not accessible");
             }
         }

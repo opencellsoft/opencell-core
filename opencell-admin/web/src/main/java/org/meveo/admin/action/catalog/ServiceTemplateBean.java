@@ -305,6 +305,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     }
 
     public void deleteServiceSubscriptionChargeTemplate(Long id) throws BusinessException {
+        entity = getPersistenceService().retrieveIfNotManaged(entity);
         ServiceChargeTemplateSubscription subscription = serviceChargeTemplateSubscriptionService.findById(id);
         entity.getServiceSubscriptionCharges().remove(subscription);
         entity = getPersistenceService().update(entity);
@@ -360,6 +361,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     }
 
     public void deleteServiceTerminationChargeTemplate(Long id) throws BusinessException {
+        entity = getPersistenceService().retrieveIfNotManaged(entity);
         ServiceChargeTemplateTermination termination = serviceChargeTemplateTerminationService.findById(id);
         entity.getServiceTerminationCharges().remove(termination);
         entity = getPersistenceService().update(entity);
@@ -417,6 +419,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     }
 
     public void deleteServiceRecurringChargeTemplate(Long id) throws BusinessException {
+        entity = getPersistenceService().retrieveIfNotManaged(entity);
         ServiceChargeTemplateRecurring recurring = serviceChargeTemplateRecurringService.findById(id);
         entity.getServiceRecurringCharges().remove(recurring);
         entity = getPersistenceService().update(entity);
@@ -482,6 +485,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
      */
 
     public void deleteServiceUsageChargeTemplate(Long id) throws BusinessException {
+        entity = getPersistenceService().retrieveIfNotManaged(entity);
         ServiceChargeTemplateUsage usage = serviceChargeTemplateUsageService.findById(id);
         entity.getServiceUsageCharges().remove(usage);
         entity = getPersistenceService().update(entity);
