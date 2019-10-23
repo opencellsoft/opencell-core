@@ -25143,8 +25143,8 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -40451,8 +40451,8 @@ public class ForgotPassword extends ModuleScript{
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -41010,8 +41010,8 @@ public class ForgotPassword extends ModuleScript{
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -41363,8 +41363,8 @@ public class ForgotPassword extends ModuleScript{
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -51126,8 +51126,8 @@ MFBG0AAAAABJRU5ErkJggg==
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -51195,8 +51195,8 @@ MFBG0AAAAABJRU5ErkJggg==
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -51237,8 +51237,8 @@ MFBG0AAAAABJRU5ErkJggg==
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -54279,8 +54279,8 @@ MFBG0AAAAABJRU5ErkJggg==
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -55917,8 +55917,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -55965,8 +55965,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -56024,8 +56024,8 @@ http://<server>:<port>/opencell/inbound/DEMO/payment-callback?STATUS=<STATUS>&PA
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -56569,8 +56569,8 @@ public class CreateMandateCallBackScript_${#TestSuite#index} extends Script {
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -56617,8 +56617,8 @@ public class CreateMandateCallBackScript_${#TestSuite#index} extends Script {
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -57044,8 +57044,8 @@ public class CheckPaymentScript_${#TestSuite#index} extends Script {
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -57092,8 +57092,8 @@ public class CheckPaymentScript_${#TestSuite#index} extends Script {
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -58183,8 +58183,8 @@ select
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -58225,8 +58225,8 @@ select
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -58267,8 +58267,8 @@ select
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -58315,8 +58315,8 @@ select
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -58363,8 +58363,8 @@ select
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -58411,8 +58411,8 @@ select
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -61157,8 +61157,8 @@ rkJggg==
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -61254,8 +61254,8 @@ rkJggg==
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -61303,8 +61303,8 @@ rkJggg==
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -61352,8 +61352,8 @@ rkJggg==
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -61401,8 +61401,8 @@ rkJggg==
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -61488,8 +61488,8 @@ rkJggg==
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -61531,8 +61531,8 @@ rkJggg==
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -61580,8 +61580,8 @@ rkJggg==
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -61629,8 +61629,8 @@ rkJggg==
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
+              <con:username>opencell.admin</con:username>
+              <con:password>opencell.admin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
