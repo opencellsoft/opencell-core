@@ -354,12 +354,11 @@
 
                     <p:tab title="#{messages['counterPeriod.title']}" id="tab#{3+userAccountBean.entity.prepaidWallets.size()}" rendered="#{userAccountBean.entity.id!=null}">
                         <hftl:formPanel formId="counterAccountInfo" backingBean="#{userAccountBean}" showFormButtons="false" edit="false" showMessages="false">
-                            <hftl:formField label="#{messages['businessEntity.code']}" field="code" />
-                            <hftl:formField label="#{messages['billingAccount.status']}" field="status" />
-                            <hftl:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" />
-                            <hftl:formField id="customerAccountSelectId" label="#{messages['userAccount.billingAccount']}" field="billingAccount" valueLabelField="code" />
-                            <hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
-                            <hftl:formField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
+                            <hftl:formField label="#{messages['businessEntity.code']}" field="code" componentWidth="40" />
+                            <hftl:formField label="#{messages['billingAccount.status']}" field="status" componentWidth="10" />
+                            <hftl:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" componentWidth="10" />
+                            <hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" componentWidth="20" />
+                            <hftl:formField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" componentWidth="20" />
                         </hftl:formPanel>
 
                         <hftl:decorateFormPanel formId="counters" edit="false" showMessages="false">
