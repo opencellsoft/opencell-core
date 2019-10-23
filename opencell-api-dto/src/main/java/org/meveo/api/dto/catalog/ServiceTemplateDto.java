@@ -87,6 +87,11 @@ public class ServiceTemplateDto extends EnableBusinessDto {
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
      */
     private String minimumLabelElSpark;
+    
+    /**
+     * Corresponding to minimum invoice subcategory
+     */
+    private String minimumInvoiceSubCategory;
 
     private Boolean autoEndOfEngagement;
 
@@ -117,6 +122,10 @@ public class ServiceTemplateDto extends EnableBusinessDto {
         minimumAmountElSpark = serviceTemplate.getMinimumAmountElSpark();
         minimumLabelEl = serviceTemplate.getMinimumLabelEl();
         minimumLabelElSpark = serviceTemplate.getMinimumLabelElSpark();
+        
+        if(serviceTemplate.getMinimumInvoiceSubCategory() != null) {
+            minimumInvoiceSubCategory = serviceTemplate.getMinimumInvoiceSubCategory().getCode();
+        }
 
         if (serviceTemplate.getBusinessServiceModel() != null) {
             somCode = serviceTemplate.getBusinessServiceModel().getCode();
@@ -502,5 +511,19 @@ public class ServiceTemplateDto extends EnableBusinessDto {
      */
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
+    }
+
+    /**
+     * @return the minimumInvoiceSubCategory
+     */
+    public String getMinimumInvoiceSubCategory() {
+        return minimumInvoiceSubCategory;
+    }
+
+    /**
+     * @param minimumInvoiceSubCategory the minimumInvoiceSubCategory to set
+     */
+    public void setMinimumInvoiceSubCategory(String minimumInvoiceSubCategory) {
+        this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
     }
 }
