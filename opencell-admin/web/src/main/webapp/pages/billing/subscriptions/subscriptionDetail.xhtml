@@ -294,30 +294,16 @@
 
 				<p:tabView id="subscriptionTab" styleClass="tab-parent" activeIndex="#{subscriptionBean.activeMainTab}">
 
-					<p:tab id="serviceTab"
-						title="#{messages['subscription.tab.services']}"
-						rendered="#{not empty subscriptionBean.entity.id}">
-						<hftl:formPanel formId="headerInfo1"
-							edit="false" backingBean="#{subscriptionBean}"
-							showFormButtons="false">
+					<p:tab id="serviceTab" title="#{messages['subscription.tab.services']}"	rendered="#{not empty subscriptionBean.entity.id}">
 
-							<hftl:formField label="#{messages['businessEntity.code']}"
-								field="code" required="true" />
-							<hftl:formField label="#{messages['serviceInstance.status']}"
-								field="status" />
-							<hftl:formField label="#{messages['serviceInstance.statusDate']}"
-								field="statusDate" />
+                        <hftl:formPanel formId="headerInfo1" edit="false" backingBean="#{subscriptionBean}" showFormButtons="false">
+                            <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" componentWidth="40" />
+                            <hftl:formField label="#{messages['serviceInstance.status']}" field="status" componentWidth="10" />
+                            <hftl:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" componentWidth="10" />
+                            <hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" componentWidth="20" />
+                            <hftl:formField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" componentWidth="20" />
 
-							<hftl:formField id="offerSelectId1"
-								label="#{messages['subscription.offer']}" field="offer"
-								valueLabelField="code" newLine="true" />
-							<hftl:formField
-								label="#{messages['billingAccount.subscriptionDate']}"
-								field="subscriptionDate" />
-							<hftl:formField
-								label="#{messages['billingAccount.terminationDate']}"
-								field="terminationDate" />
-
+                            <hftl:formField id="offerSelectId1" label="#{messages['subscription.offer']}" field="offer" valueLabelField="code" newLine="true" popup="true"/>                                
 						</hftl:formPanel>
 
 						<h:panelGroup id="terminableServicesGroup"
