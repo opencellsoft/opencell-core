@@ -632,14 +632,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             
             Map<String, Amounts> createdAmountSubscription = null;
             if (instantiateMinRtsForSubscription && !StringUtils.isBlank(((Subscription) billableEntity).getMinimumAmountEl())) {
-<<<<<<< HEAD
                 CreateMinAmountsResult createMinAmountsResultSubscription = createMinRTForSubscriptions(billableEntity, billingAccount, lastTransactionDate, minRatingDate, createdAmountServices);
                 createdAmountSubscription = createMinAmountsResultSubscription.getCreatedAmountSubscription();
                 minAmountTransactions.addAll(createMinAmountsResultSubscription.getMinAmountTransactions());
-=======
-                createdAmountSubscription = createMinRTForSubscriptions(billableEntity, billingAccount, lastTransactionDate, minRatingDate, minAmountTransactions,
-                createdAmountServices);
->>>>>>> integration
             }
             
             if (calculateAndUpdateTotalAmounts) {
@@ -648,17 +643,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                 // Sum up
                 if (createdAmountServices != null) {
-                for (Map<String, Amounts> amountInfo : createdAmountServices.values()) {
-                    for (Amounts amounts : amountInfo.values()) {
+                    for (Map<String, Amounts> amountInfo : createdAmountServices.values()) {
+                        for (Amounts amounts : amountInfo.values()) {
+                            totalInvoiceableAmounts.addAmounts(amounts);
+                        }
+                    }
+                }
+                if (createdAmountSubscription != null) {
+                    for (Amounts amounts : createdAmountSubscription.values()) {
                         totalInvoiceableAmounts.addAmounts(amounts);
                     }
                 }
-                }
-                if (createdAmountSubscription != null) {
-                for (Amounts amounts : createdAmountSubscription.values()) {
-                    totalInvoiceableAmounts.addAmounts(amounts);
-                }
-            }
             }
 
         } else if (billableEntity instanceof BillingAccount) {
@@ -674,14 +669,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             
             Map<String, Amounts> createdAmountSubscription = null;
             if (instantiateMinRtsForSubscription) {
-<<<<<<< HEAD
                 CreateMinAmountsResult createMinAmountsResultSubscription = createMinRTForSubscriptions(billableEntity, billingAccount, lastTransactionDate, minRatingDate, createdAmountServices);
                 createdAmountSubscription = createMinAmountsResultSubscription.getCreatedAmountSubscription();
                 minAmountTransactions.addAll(createMinAmountsResultSubscription.getMinAmountTransactions());
-=======
-                createdAmountSubscription = createMinRTForSubscriptions(billableEntity, billingAccount, lastTransactionDate, minRatingDate, minAmountTransactions,
-                createdAmountServices);
->>>>>>> integration
             }
 
             if (calculateAndUpdateTotalAmounts || (instantiateMinRtsForBA && isAppliesMinRTForBA(billingAccount, null))) {
@@ -690,17 +680,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                 // Sum up
                 if (createdAmountServices != null) {
-                for (Map<String, Amounts> serviceAmountInfo : createdAmountServices.values()) {
-                    for (Amounts amounts : serviceAmountInfo.values()) {
-                        totalInvoiceableAmounts.addAmounts(amounts);
+                    for (Map<String, Amounts> serviceAmountInfo : createdAmountServices.values()) {
+                        for (Amounts amounts : serviceAmountInfo.values()) {
+                            totalInvoiceableAmounts.addAmounts(amounts);
+                        }
                     }
-                }
                 }
 
                 if (createdAmountSubscription != null) {
-                for (Amounts amounts : createdAmountSubscription.values()) {
-                    totalInvoiceableAmounts.addAmounts(amounts);
-                }
+                    for (Amounts amounts : createdAmountSubscription.values()) {
+                        totalInvoiceableAmounts.addAmounts(amounts);
+                    }
                 }
 
                 if (instantiateMinRtsForBA && isAppliesMinRTForBA(billingAccount, totalInvoiceableAmounts)) {
@@ -1701,7 +1691,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Delete min RT associated to a billing run
-     * 
+     *
      * @param billingRun Billing run
      */
     public void deleteMinRTs(BillingRun billingRun) {
@@ -1715,7 +1705,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public void uninvoiceRTs(Invoice invoice) {
         getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoice").setParameter("invoice", invoice).executeUpdate();
-                    }
+    }
 
     /**
      * Mark open RTs associated to a billing run
@@ -1724,7 +1714,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public void uninvoiceRTs(BillingRun billingRun) {
         getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByBR").setParameter("billingRun", billingRun).executeUpdate();
-                }
+    }
 
     /**
      * Retrieve rated transactions associated to an invoice
@@ -1735,14 +1725,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public List<RatedTransaction> getRatedTransactionsByInvoice(Invoice invoice, boolean includeFree) {
         if (invoice.getId() == null) {
             return new ArrayList<>();
-            }
+        }
 
         if (includeFree) {
             return getEntityManager().createNamedQuery("RatedTransaction.listByInvoice", RatedTransaction.class).setParameter("invoice", invoice).getResultList();
-                            } else {
+        } else {
             return getEntityManager().createNamedQuery("RatedTransaction.listByInvoiceNotFree", RatedTransaction.class).setParameter("invoice", invoice).getResultList();
-                            }
-                            }
+        }
+    }
 
     /**
      * Retrieve rated transactions associated to an invoice aggregate
@@ -1754,9 +1744,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         if (subCategoryInvoiceAgregate.getId() == null) {
             return new ArrayList<>();
-                    }
+        }
 
         return getEntityManager().createNamedQuery("RatedTransaction.listByInvoiceSubCategoryAggr", RatedTransaction.class)
             .setParameter("invoice", subCategoryInvoiceAgregate.getInvoice()).setParameter("invoiceAgregateF", subCategoryInvoiceAgregate).getResultList();
-                }
+    }
 }

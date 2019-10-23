@@ -267,51 +267,51 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     private void addDetailedInvoiceLines(InvoiceSubCategory selectInvoiceSubCat) {
 
-            if (entity.getBillingAccount() == null) {
-                messages.error("BillingAccount is required");
+        if (entity.getBillingAccount() == null) {
+            messages.error("BillingAccount is required");
+            return;
+        }
+        if (selectInvoiceSubCat == null) {
+            messages.error("Invoice sub category is required.");
+            return;
+        }
+        if (StringUtils.isBlank(description)) {
+            messages.error("Description is required.");
+            return;
+        }
+        if (StringUtils.isBlank(quantity)) {
+            messages.error("Quantity is required.");
+            return;
+        }
+        if (StringUtils.isBlank(selectedCharge)) {
+            messages.error("Charge is required.");
+            return;
+        }
+        if (StringUtils.isBlank(usageDate)) {
+            messages.error("UsageDate is required.");
+            return;
+        }
+        if (appProvider.isEntreprise()) {
+            if (StringUtils.isBlank(unitAmountWithoutTax)) {
+                messages.error("UnitAmountWithoutTax is required.");
                 return;
-            }
-            if (selectInvoiceSubCat == null) {
-                messages.error("Invoice sub category is required.");
-                return;
-            }
-            if (StringUtils.isBlank(description)) {
-                messages.error("Description is required.");
-                return;
-            }
-            if (StringUtils.isBlank(quantity)) {
-                messages.error("Quantity is required.");
-                return;
-            }
-            if (StringUtils.isBlank(selectedCharge)) {
-                messages.error("Charge is required.");
-                return;
-            }
-            if (StringUtils.isBlank(usageDate)) {
-                messages.error("UsageDate is required.");
-                return;
-            }
-            if (appProvider.isEntreprise()) {
-                if (StringUtils.isBlank(unitAmountWithoutTax)) {
-                    messages.error("UnitAmountWithoutTax is required.");
-                    return;
-                }
-
-            } else {
-                if (StringUtils.isBlank(unitAmountWithTax)) {
-                    messages.error("UnitAmountWithTax is required.");
-                    return;
-                }
             }
 
-            selectInvoiceSubCat = invoiceSubCategoryService.retrieveIfNotManaged(selectInvoiceSubCat);
+        } else {
+            if (StringUtils.isBlank(unitAmountWithTax)) {
+                messages.error("UnitAmountWithTax is required.");
+                return;
+            }
+        }
+
+        selectInvoiceSubCat = invoiceSubCategoryService.retrieveIfNotManaged(selectInvoiceSubCat);
 
         UserAccount ua = getFreshUA();
 
         Seller seller = entity.getSeller();
         if (seller == null) {
             seller = ua.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-            }
+        }
 
         // AKK check what happens with tax
         RatedTransaction ratedTransaction = new RatedTransaction(usageDate, unitAmountWithoutTax, unitAmountWithTax, null, quantity, null, null, null,
@@ -321,7 +321,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         ratedTransaction.setInvoice(entity);
 
         aggregateHandler.addRT(ratedTransaction, selectInvoiceSubCat.getDescription(), ua);
-            updateAmountsAndLines(getFreshBA());
+        updateAmountsAndLines(getFreshBA());
 
     }
 
@@ -563,15 +563,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     RatedTransaction rtCopy = new RatedTransaction();
                     BeanUtils.copyProperties(rtCopy, rt);
                     rtCopy.setId(null);
-<<<<<<< HEAD
                     rtCopy.setTax(subCatInvAggr.getTax());
                     rtCopy.setTaxPercent(subCatInvAggr.getTaxPercent());
-=======
-                    rtCopy.setTax(subcat.getTax());
-                    rtCopy.setTaxPercent(subcat.getTaxPercent());
-                    rtCopy.setTax(subcat.getTax());
-                    rtCopy.setTaxPercent(subcat.getTaxPercent());
->>>>>>> integration
                     rtCopy.setBillingAccount(billingAccount);
                     rtCopy.changeStatus(RatedTransactionStatusEnum.BILLED);
                     rtCopy.setInvoice(invoiceCopy);
@@ -664,21 +657,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
             super.saveOrUpdate(false);
 
-<<<<<<< HEAD
             for (RatedTransaction rt : rts) {
-=======
-            for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
-                for (RatedTransaction rt : subcat.getRatedtransactionsToAssociate()) {
-                    rt = ratedTransactionService.refreshOrRetrieve(rt);
-                	rt.setTax(subcat.getTax());
-                	rt.setTaxPercent(subcat.getTaxPercent());
-                	rt.setTax(subcat.getTax());
-                	rt.setTaxPercent(subcat.getTaxPercent());
-                    rt.setInvoice(entity);
-                    rt.changeStatus(RatedTransactionStatusEnum.BILLED);
-                    ratedTransactionService.refreshOrRetrieve(rt);
-                    if (rt.isTransient()) {
->>>>>>> integration
                         ratedTransactionService.create(rt);
                     }
 
