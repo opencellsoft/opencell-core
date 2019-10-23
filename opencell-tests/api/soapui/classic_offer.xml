@@ -15600,8 +15600,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="38269539-d373-42cf-9eee-c7cde1d8d5ba"/>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -15643,8 +15643,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="38269539-d373-42cf-9eee-c7cde1d8d5ba"/>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -25438,8 +25438,8 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -25486,8 +25486,8 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -25756,8 +25756,8 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -25804,8 +25804,8 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -39492,8 +39492,8 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -40398,8 +40398,8 @@ public class ForgotPassword extends ModuleScript{
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -40923,7 +40923,7 @@ public class ForgotPassword extends ModuleScript{
           <con:operation>createUser</con:operation>
           <con:request name="Create User PC_ADMIN Reseller 1" id="2d7c5c5f-ab8a-46d7-8db9-f81834a652cf">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
@@ -40957,8 +40957,8 @@ public class ForgotPassword extends ModuleScript{
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -41065,8 +41065,8 @@ public class ForgotPassword extends ModuleScript{
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -41310,8 +41310,8 @@ public class ForgotPassword extends ModuleScript{
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -41418,8 +41418,8 @@ public class ForgotPassword extends ModuleScript{
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -41512,8 +41512,8 @@ public class ForgotPassword extends ModuleScript{
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -41976,8 +41976,8 @@ public class ForgotPassword extends ModuleScript{
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -42481,8 +42481,8 @@ public class ForgotPassword extends ModuleScript{
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -43172,8 +43172,8 @@ public class ForgotPassword extends ModuleScript{
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -44652,8 +44652,8 @@ public class ForgotPassword extends ModuleScript{
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -50192,8 +50192,8 @@ MFBG0AAAAABJRU5ErkJggg==
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
             <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
               <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
               <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
@@ -54566,7 +54566,7 @@ MFBG0AAAAABJRU5ErkJggg==
           <con:operation>removeBillingCycle</con:operation>
           <con:request name="setProperty1" id="4649de98-1de4-44f8-a6d5-e7ebf77738d7">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
@@ -54588,8 +54588,12 @@ MFBG0AAAAABJRU5ErkJggg==
               </con:configuration>
             </con:assertion>
             <con:credentials>
+              <con:username>opencell.superadmin</con:username>
+              <con:password>opencell.superadmin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
+              <con:authType>Preemptive</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
