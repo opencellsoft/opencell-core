@@ -93,7 +93,10 @@ import org.meveo.model.shared.DateUtils;
 @NamedQueries({
         @NamedQuery(name = "ServiceInstance.getExpired", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
         @NamedQuery(name = "ServiceInstance.getToNotifyExpiration", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
-        @NamedQuery(name = "ServiceInstance.getMimimumRTUsed", query = "select s.minimumAmountEl from ServiceInstance s where s.minimumAmountEl is not null") })
+        @NamedQuery(name = "ServiceInstance.getMimimumRTUsed", query = "select s.minimumAmountEl from ServiceInstance s where s.minimumAmountEl is not null"),
+        @NamedQuery(name = "ServiceInstance.getServicesWithMinAmountBySubscription", query = "select s from ServiceInstance s where s.minimumAmountEl is not null AND s.status = org.meveo.model.billing.InstanceStatusEnum.ACTIVE AND s.subscription=:subscription"),
+        @NamedQuery(name = "ServiceInstance.getServicesWithMinAmountByBA", query = "select s from ServiceInstance s where s.minimumAmountEl is not null AND s.status = org.meveo.model.billing.InstanceStatusEnum.ACTIVE AND s.subscription.userAccount.billingAccount=:billingAccount")
+})
 public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICounterEntity {
 
     /** The Constant serialVersionUID. */
@@ -201,6 +204,11 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @Column(name = "minimum_label_el_sp", length = 2000)
     @Size(max = 2000)
     private String minimumLabelElSpark;
+    
+    /** Corresponding to minimum invoice subcategory */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_invoice_sub_category_id")
+    private InvoiceSubCategory minimumInvoiceSubCategory;
 
     /** The order histories. */
     @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -1050,6 +1058,22 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
      */
     public void setCounters(Map<String, CounterInstance> counters) {
         this.counters = counters;
+    }
+
+    
+    
+    /**
+     * @return the minimumInvoiceSubCategory
+     */
+    public InvoiceSubCategory getMinimumInvoiceSubCategory() {
+        return minimumInvoiceSubCategory;
+    }
+
+    /**
+     * @param minimumInvoiceSubCategory the minimumInvoiceSubCategory to set
+     */
+    public void setMinimumInvoiceSubCategory(InvoiceSubCategory minimumInvoiceSubCategory) {
+        this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
     }
 
     /**
