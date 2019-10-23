@@ -15427,7 +15427,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 	          log.info("AUTH for ["+testSuiteItem.getLabel()+"/"+testCaseItem.getName()+"/"+testStep.getName()+"]");
 
 		    	testStep.getTestRequest().setPreemptive(true);
-		    	if ("Create Provider".equals(testCaseItem.getName())) {
+		    	if ("setProperty1".equals(testStep.getTestRequest().getName())) {
+		    		testStep.getTestRequest().setRequestHeaders(headersForSuper);
+		    	} else if ("Create Provider".equals(testCaseItem.getName())) {
+		    		testStep.getTestRequest().setRequestHeaders(headersForSuper);
+		    	} else if ("Create resellers".equals(testSuiteItem.getName())) {
 		    		testStep.getTestRequest().setRequestHeaders(headersForSuper);
 		    	} else if(testCaseItem.getName().contains("AUTHORIZATION_SUPERADMIN") || testStep.getName().contains("AUTHORIZATION_SUPERADMIN")) {
 		    		testStep.getTestRequest().setRequestHeaders(headersForSuper);
@@ -40842,7 +40846,7 @@ public class ForgotPassword extends ModuleScript{
           <con:operation>installModule</con:operation>
           <con:request name="Install Module" id="ae71f5ba-1494-4691-99b6-9c8c742f05b9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/ModuleWs</con:endpoint>
@@ -40881,7 +40885,7 @@ public class ForgotPassword extends ModuleScript{
           <con:operation>createOrUpdateRole</con:operation>
           <con:request name="Create CC User Role" id="bd3a6001-b766-4873-bd66-cfabe4265f66">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
@@ -40923,7 +40927,7 @@ public class ForgotPassword extends ModuleScript{
           <con:operation>createUser</con:operation>
           <con:request name="Create User PC_ADMIN Reseller 1" id="2d7c5c5f-ab8a-46d7-8db9-f81834a652cf">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
@@ -40978,7 +40982,7 @@ public class ForgotPassword extends ModuleScript{
           <con:operation>createOrUpdateOneShotChargeTemplate</con:operation>
           <con:request name="Create Rebate Charge" id="51765fb4-8e9c-4741-89f6-5befe809d58a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
@@ -41031,7 +41035,7 @@ public class ForgotPassword extends ModuleScript{
           <con:operation>createUser</con:operation>
           <con:request name="Create User PC_LEVEL2 Reseller 1" id="2d7c5c5f-ab8a-46d7-8db9-f81834a652cf">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
@@ -41091,7 +41095,7 @@ public class ForgotPassword extends ModuleScript{
           <con:operation>createOrUpdate</con:operation>
           <con:request name="ForgotPasswordModule" id="5d0a2b39-396c-4504-9039-0f33da90177c">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/ModuleWs</con:endpoint>
@@ -41195,7 +41199,7 @@ public class ForgotPassword extends ModuleScript{
           <con:operation>installModule</con:operation>
           <con:request name="Install Module" id="ae71f5ba-1494-4691-99b6-9c8c742f05b9">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/ModuleWs</con:endpoint>
@@ -41234,7 +41238,7 @@ public class ForgotPassword extends ModuleScript{
           <con:operation>createOrUpdateRole</con:operation>
           <con:request name="Create CC User Role" id="bd3a6001-b766-4873-bd66-cfabe4265f66">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
@@ -41276,7 +41280,7 @@ public class ForgotPassword extends ModuleScript{
           <con:operation>createUser</con:operation>
           <con:request name="Create User PC_ADMIN Reseller 2" id="2d7c5c5f-ab8a-46d7-8db9-f81834a652cf">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
@@ -41331,7 +41335,7 @@ public class ForgotPassword extends ModuleScript{
           <con:operation>createOrUpdateOneShotChargeTemplate</con:operation>
           <con:request name="Create Rebate Charge" id="51765fb4-8e9c-4741-89f6-5befe809d58a">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
@@ -41384,7 +41388,7 @@ public class ForgotPassword extends ModuleScript{
           <con:operation>createUser</con:operation>
           <con:request name="Create User PC_LEVEL2 Reseller 2" id="2d7c5c5f-ab8a-46d7-8db9-f81834a652cf">
             <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
@@ -54565,9 +54569,7 @@ MFBG0AAAAABJRU5ErkJggg==
           <con:interface>SettingsWsSoapBinding</con:interface>
           <con:operation>removeBillingCycle</con:operation>
           <con:request name="setProperty1" id="4649de98-1de4-44f8-a6d5-e7ebf77738d7">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
-            </con:settings>
+            <con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
