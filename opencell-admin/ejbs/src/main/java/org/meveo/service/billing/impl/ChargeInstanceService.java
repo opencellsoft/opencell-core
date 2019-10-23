@@ -86,22 +86,24 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
      */
 
     public ServiceInstance getServiceInstanceFromChargeInstance(ChargeInstance chargeInstance) {
-        RecurringChargeInstance recurringChargeInstance = recurringChargeInstanceService.findById(chargeInstance.getId());
-        if (recurringChargeInstance != null) {
-            return recurringChargeInstance.getServiceInstance();
-        }
-        UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(chargeInstance.getId());
-        if (usageChargeInstance != null) {
-            return usageChargeInstance.getServiceInstance();
-        }
-        OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findById(chargeInstance.getId());
-        if (oneShotChargeInstance != null) {
-            ServiceInstance serviceInstance = null;
-            serviceInstance = oneShotChargeInstance.getSubscriptionServiceInstance();
-            if (serviceInstance == null) {
-                serviceInstance = oneShotChargeInstance.getTerminationServiceInstance();
+
+        if (chargeInstance instanceof RecurringChargeInstance) {
+            RecurringChargeInstance recurringChargeInstance = recurringChargeInstanceService.findById(chargeInstance.getId());
+            if (recurringChargeInstance != null) {
+                return recurringChargeInstance.getServiceInstance();
             }
-            return serviceInstance;
+
+        } else if (chargeInstance instanceof UsageChargeInstance) {
+            UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(chargeInstance.getId());
+            if (usageChargeInstance != null) {
+                return usageChargeInstance.getServiceInstance();
+            }
+
+        } else if (chargeInstance instanceof OneShotChargeInstance) {
+            OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findById(chargeInstance.getId());
+            if (oneShotChargeInstance != null) {
+                return oneShotChargeInstance.getServiceInstance();
+            }
         }
         return null;
     }

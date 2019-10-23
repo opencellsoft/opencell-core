@@ -28,6 +28,7 @@ import java.util.Map;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -83,6 +84,7 @@ import org.meveo.model.shared.DateUtils;
 @Entity
 @WorkflowedEntity
 @ObservableEntity
+@Cacheable
 @CustomFieldEntity(cftCodePrefix = "ServiceInstance", inheritCFValuesFrom = "serviceTemplate")
 @Table(name = "billing_service_instance")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
@@ -149,21 +151,11 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
-    /** Associated recurring charges. */
+    /**
+     * Charges instances associated with a service instance
+     */
     @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<RecurringChargeInstance> recurringChargeInstances = new ArrayList<>();
-
-    /** Associated subscription charges. */
-    @OneToMany(mappedBy = "subscriptionServiceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<OneShotChargeInstance> subscriptionChargeInstances = new ArrayList<>();
-
-    /** Associated termination charges. */
-    @OneToMany(mappedBy = "terminationServiceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<OneShotChargeInstance> terminationChargeInstances = new ArrayList<>();
-
-    /** Associated usage charges. */
-    @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<UsageChargeInstance> usageChargeInstances = new ArrayList<>();
+    private List<ChargeInstance> chargeInstances = new ArrayList<>();
 
     /** Termination reason. */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -282,6 +274,12 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
 
     /**
+     * Initial service renewal configuration
+     */
+    @Column(name = "initial_renewal", columnDefinition = "text")
+    private String initialServiceRenewal;
+
+    /**
      * PK of OrderItem.id.
      */
     @Transient
@@ -291,11 +289,17 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @Transient
     private OrderItemActionEnum orderItemAction;
 
-    /**
-     * Initial service renewal configuration
-     */
-    @Column(name = "initial_renewal", columnDefinition = "text")
-    private String initialServiceRenewal;
+    @Transient
+    private List<RecurringChargeInstance> recurringChargeInstances;
+
+    @Transient
+    private List<SubscriptionChargeInstance> subscriptionChargeInstances;
+
+    @Transient
+    private List<TerminationChargeInstance> terminationChargeInstances;
+
+    @Transient
+    private List<UsageChargeInstance> usageChargeInstances;
 
     /**
      * Gets the end agreement date.
@@ -446,75 +450,58 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     }
 
     /**
-     * Gets the recurring charge instances.
+     * Gets the recurring charge instances associated to a service. NOTE: this is a derived list from chargeInstances field and should not be modified directly.
      *
-     * @return the recurring charge instances
+     * @return Recurring type charge instances
      */
     public List<RecurringChargeInstance> getRecurringChargeInstances() {
+
+        if (recurringChargeInstances == null) {
+            splitChargeInstances();
+        }
+
         return recurringChargeInstances;
     }
 
     /**
-     * Sets the recurring charge instances.
+     * Gets the subscription charge instances associated to a service. NOTE: this is a derived list from chargeInstances field and should not be modified directly.
      *
-     * @param recurringChargeInstances the new recurring charge instances
+     * @return Subscription type charge instances
      */
-    public void setRecurringChargeInstances(List<RecurringChargeInstance> recurringChargeInstances) {
-        this.recurringChargeInstances = recurringChargeInstances;
-    }
+    public List<SubscriptionChargeInstance> getSubscriptionChargeInstances() {
 
-    /**
-     * Gets the subscription charge instances.
-     *
-     * @return the subscription charge instances
-     */
-    public List<OneShotChargeInstance> getSubscriptionChargeInstances() {
+        if (subscriptionChargeInstances == null) {
+            splitChargeInstances();
+        }
         return subscriptionChargeInstances;
     }
 
     /**
-     * Sets the subscription charge instances.
+     * Gets the termination charge instances associated to a service. NOTE: this is a derived list from chargeInstances field and should not be modified directly.
      *
-     * @param subscriptionChargeInstances the new subscription charge instances
+     * @return Termination type charge instances
      */
-    public void setSubscriptionChargeInstances(List<OneShotChargeInstance> subscriptionChargeInstances) {
-        this.subscriptionChargeInstances = subscriptionChargeInstances;
-    }
+    public List<TerminationChargeInstance> getTerminationChargeInstances() {
 
-    /**
-     * Gets the termination charge instances.
-     *
-     * @return the termination charge instances
-     */
-    public List<OneShotChargeInstance> getTerminationChargeInstances() {
+        if (terminationChargeInstances == null) {
+            splitChargeInstances();
+        }
+
         return terminationChargeInstances;
     }
 
     /**
-     * Sets the termination charge instances.
+     * Gets the usage charge instances associated to a service. NOTE: this is a derived list from chargeInstances field and should not be modified directly.
      *
-     * @param terminationChargeInstances the new termination charge instances
-     */
-    public void setTerminationChargeInstances(List<OneShotChargeInstance> terminationChargeInstances) {
-        this.terminationChargeInstances = terminationChargeInstances;
-    }
-
-    /**
-     * Gets the usage charge instances.
-     *
-     * @return the usage charge instances
+     * @return Usage type charge instances
      */
     public List<UsageChargeInstance> getUsageChargeInstances() {
-        return usageChargeInstances;
-    }
 
-    /**
-     * Sets the usage charge instances.
-     *
-     * @param usageChargeInstances the new usage charge instances
-     */
-    public void setUsageChargeInstances(List<UsageChargeInstance> usageChargeInstances) {
-        this.usageChargeInstances = usageChargeInstances;
+        if (usageChargeInstances == null) {
+            splitChargeInstances();
+        }
+
+        return usageChargeInstances;
     }
 
     /**
@@ -1073,6 +1060,8 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
         this.counters = counters;
     }
 
+    
+    
     /**
      * @return the minimumInvoiceSubCategory
      */
@@ -1086,6 +1075,42 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     public void setMinimumInvoiceSubCategory(InvoiceSubCategory minimumInvoiceSubCategory) {
         this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
     }
-    
-    
+
+    /**
+     * @return Charge instances associated with a service instance
+     */
+    public List<ChargeInstance> getChargeInstances() {
+        return chargeInstances;
+    }
+
+    /**
+     * @param chargeInstances Charges instances associated with a service instance
+     */
+    public void setChargeInstances(List<ChargeInstance> chargeInstances) {
+        this.chargeInstances = chargeInstances;
+    }
+
+    /**
+     * Sort out charge instances by their type
+     */
+    private void splitChargeInstances() {
+
+        recurringChargeInstances = new ArrayList<>();
+        subscriptionChargeInstances = new ArrayList<>();
+        terminationChargeInstances = new ArrayList<>();
+        usageChargeInstances = new ArrayList<>();
+
+        for (ChargeInstance chargeInstance : getChargeInstances()) {
+
+            if (chargeInstance instanceof RecurringChargeInstance) {
+                recurringChargeInstances.add((RecurringChargeInstance) chargeInstance);
+            } else if (chargeInstance instanceof SubscriptionChargeInstance) {
+                subscriptionChargeInstances.add((SubscriptionChargeInstance) chargeInstance);
+            } else if (chargeInstance instanceof TerminationChargeInstance) {
+                terminationChargeInstances.add((TerminationChargeInstance) chargeInstance);
+            } else if (chargeInstance instanceof UsageChargeInstance) {
+                usageChargeInstances.add((UsageChargeInstance) chargeInstance);
+            }
+        }
+    }
 }

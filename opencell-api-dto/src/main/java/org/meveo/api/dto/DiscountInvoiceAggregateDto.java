@@ -45,24 +45,6 @@ public class DiscountInvoiceAggregateDto extends SubCategoryInvoiceAgregateDto {
     private BigDecimal discountPercent;
 
     /**
-     * Instantiates a new sub category invoice aggregate dto.
-     *
-     * @param subCategoryInvoiceAgregate the SubCategoryInvoiceAgregate entity
-     */
-    public DiscountInvoiceAggregateDto(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
-        super(subCategoryInvoiceAgregate, false);
-        discountPlanItemCode = subCategoryInvoiceAgregate.getDiscountPlanItem().getCode();
-        discountPercent = subCategoryInvoiceAgregate.getDiscountPercent();
-    }
-
-    /**
-     * Instantiates a new discount invoice aggregate dto.
-     */
-    public DiscountInvoiceAggregateDto() {
-
-    }
-
-    /**
      * Gets the discount plan item code
      *
      * @return Discount plan item code

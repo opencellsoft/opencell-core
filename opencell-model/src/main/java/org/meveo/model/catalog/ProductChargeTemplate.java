@@ -21,15 +21,12 @@ package org.meveo.model.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.Size;
 
 /**
  * Product charge template
@@ -38,23 +35,15 @@ import javax.validation.constraints.Size;
  * @lastModifiedVersion 5.1
  */
 @Entity
-@Table(name = "cat_product_charge_templ")
+@DiscriminatorValue("P")
 @NamedQueries({
         @NamedQuery(name = "productChargeTemplate.getNbrProductWithNotPricePlan", query = "select count (*) from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
         @NamedQuery(name = "productChargeTemplate.getProductWithNotPricePlan", query = "from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "), })
 public class ProductChargeTemplate extends ChargeTemplate {
 
-    @Transient
     public static final String CHARGE_TYPE = "PRODUCT";
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Expression to determine if charge applies
-     */
-    @Column(name = "filter_expression", length = 2000)
-    @Size(max = 2000)
-    private String filterExpression = null;
 
     /**
      * Product templates the charge applies to
@@ -70,16 +59,8 @@ public class ProductChargeTemplate extends ChargeTemplate {
         this.productTemplates = productTemplates;
     }
 
+    @Override
     public String getChargeType() {
         return CHARGE_TYPE;
     }
-
-    public String getFilterExpression() {
-        return filterExpression;
-    }
-
-    public void setFilterExpression(String filterExpression) {
-        this.filterExpression = filterExpression;
-    }
-
 }
