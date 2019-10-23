@@ -243,7 +243,7 @@ public class ParserSwagger {
         try {
             fr = new FileReader(filePath);
             lnr = new BufferedReader(fr);
-            System.out.println(className);
+            System.out.println("[INFO] Adding annotation to "+className);
             //The case if the annotation are not present in the file
             while ((str = lnr.readLine()) != null && !annotationHere) {
                 //This line for retrieving the return value for the next return and threfore find it when it arrive
@@ -457,7 +457,7 @@ public class ParserSwagger {
             if (change.contains(",")) {//Multiple parameter for the method. We will split
                 String[] methodArray = change.split(",");
                 for (int j = 0; j < methodArray.length; j++) {
-                    String tmp = database.get(j).replace("param", "");
+                        String tmp = database.get(j).replace("param", "");
                     if (j < methodArray.length - 1) {
                         param = param + "@Parameter(description=\"" + tmp + "\")" + methodArray[j] + " , ";
                     } else {

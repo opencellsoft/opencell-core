@@ -1,16 +1,5 @@
 package org.meveo.admin.util;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.io.FilenameUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.parsers.FileParserBeanio;
@@ -27,6 +16,16 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.bi.impl.FlatFileService;
 import org.slf4j.Logger;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Flat file validator
@@ -57,7 +56,7 @@ public class FlatFileValidator {
     /**
      * Get property value. Return a default value if value was not set previously.
      *
-     * @param key Property key
+     * @param key          Property key
      * @param defaultValue Default value
      * @return Value of property, or a default value if it is not set yet
      */
@@ -111,14 +110,16 @@ public class FlatFileValidator {
     /**
      * Move file.
      *
-     * @param file the file
-     * @param flatFile the flat file
+     * @param file        the file
+     * @param flatFile    the flat file
      * @param destination the destination
+     * @return the file current name.
      */
-    private void moveFile(File file, FlatFile flatFile, String destination) {
+    private String moveFile(File file, FlatFile flatFile, String destination) {
+        String destName = null;
         if (file != null && flatFile != null && !StringUtils.isBlank(destination)) {
-            String destName = flatFile.getFileName();
-            if ((new File(destination + File.separator + flatFile.getFileName())).exists()) {
+            destName = flatFile.getFileOriginalName();
+            if ((new File(destination + File.separator + flatFile.getFileOriginalName())).exists()) {
                 destName += "_COPY_" + DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT);
             }
             if (!StringUtils.isBlank(flatFile.getCode())) {
@@ -126,19 +127,26 @@ public class FlatFileValidator {
             }
             FileUtils.moveFile(destination, file, destName);
         }
+        return destName;
     }
 
-    private String getFileManagementDirectory(String subdirectory) {
-        // StringBuilder reportDir = new StringBuilder(ParamBean.getInstance().getChrootDir(provider.getCode()));
+    /**
+     * Get absolute path
+     *
+     * @param path directory path
+     * @return absolute path
+     */
+    private String getDirectory(String path) {
+        //StringBuilder reportDir = new StringBuilder(ParamBean.getInstance().getChrootDir(provider.getCode()));
         StringBuilder reportDir = new StringBuilder(ParamBean.getInstance().getChrootDir(""));
-        reportDir.append(File.separator).append(subdirectory);
+        reportDir.append(File.separator).append(path);
         return reportDir.toString();
     }
 
     /**
      * Get input directory
      *
-     * @param fileFormat the file format
+     * @param fileFormat        the file format
      * @param newInputDirectory the new input directory
      * @return the new input directory if it is provided else the return the fileFormat input directory
      * @throws BusinessException the business exception
@@ -147,7 +155,7 @@ public class FlatFileValidator {
         String inputDirectory = newInputDirectory;
         if (StringUtils.isBlank(inputDirectory)) {
             if (fileFormat != null && !StringUtils.isBlank(fileFormat.getInputDirectory())) {
-                inputDirectory = getFileManagementDirectory(fileFormat.getInputDirectory());
+                inputDirectory = getDirectory(fileFormat.getInputDirectory());
             }
         }
         if (StringUtils.isBlank(inputDirectory)) {
@@ -159,7 +167,7 @@ public class FlatFileValidator {
     /**
      * Get reject directory
      *
-     * @param fileFormat the file format
+     * @param fileFormat        the file format
      * @param newInputDirectory the new input directory
      * @return the reject directory
      */
@@ -167,7 +175,7 @@ public class FlatFileValidator {
         String rejectDirectory = null;
         if (StringUtils.isBlank(newInputDirectory)) {
             if (fileFormat != null && !StringUtils.isBlank(fileFormat.getRejectDirectory())) {
-                rejectDirectory = getFileManagementDirectory(fileFormat.getRejectDirectory());
+                rejectDirectory = getDirectory(fileFormat.getRejectDirectory());
             }
         }
         if (StringUtils.isBlank(rejectDirectory)) {
@@ -175,7 +183,8 @@ public class FlatFileValidator {
             if (rejectDirectory.endsWith(File.separator)) {
                 rejectDirectory = rejectDirectory.substring(0, rejectDirectory.lastIndexOf(File.separator));
             }
-            rejectDirectory = rejectDirectory.substring(0, rejectDirectory.lastIndexOf(File.separator)) + File.separator + "reject";
+            //rejectDirectory = rejectDirectory.substring(0, rejectDirectory.lastIndexOf(File.separator)) + File.separator + "reject";
+            rejectDirectory = rejectDirectory + File.separator + "reject";
         }
         return rejectDirectory;
     }
@@ -183,25 +192,27 @@ public class FlatFileValidator {
     /**
      * Move the file in input directory or reject directory
      *
-     * @param file the file
-     * @param flatFile the flat file
-     * @param inputDirectory the input directory
+     * @param file            the file
+     * @param flatFile        the flat file
+     * @param inputDirectory  the input directory
      * @param rejectDirectory the reject directory
+     * @return the file current name
      */
-    private void moveFile(File file, FlatFile flatFile, String inputDirectory, String rejectDirectory) {
-
+    private String moveFile(File file, FlatFile flatFile, String inputDirectory, String rejectDirectory) {
+        String fileCurrentName = null;
         if (file != null && flatFile != null && !StringUtils.isBlank(inputDirectory)) {
             if (flatFile.getStatus() == FileStatusEnum.BAD_FORMED) {
-                log.info("the file {} is bad formed", flatFile.getFileName());
-                moveFile(file, flatFile, rejectDirectory);
+                log.info("the file {} is bad formed", flatFile.getFileOriginalName());
+                fileCurrentName = moveFile(file, flatFile, rejectDirectory);
             } else {
-                log.info("the file {} is well formed", flatFile.getFileName());
+                log.info("the file {} is well formed", flatFile.getFileOriginalName());
                 if (!new File(inputDirectory).exists()) {
                     new File(inputDirectory).mkdirs();
                 }
-                moveFile(file, flatFile, inputDirectory);
+                fileCurrentName = moveFile(file, flatFile, inputDirectory);
             }
         }
+        return fileCurrentName;
     }
 
     /**
@@ -249,9 +260,9 @@ public class FlatFileValidator {
     /**
      * Validate the file by its format
      *
-     * @param file the file
-     * @param fileName the file name
-     * @param fileFormat the file format
+     * @param file           the file
+     * @param fileName       the file name
+     * @param fileFormat     the file format
      * @param inputDirectory the input directory
      * @return errors if the file is not valid
      * @throws BusinessException
@@ -295,7 +306,8 @@ public class FlatFileValidator {
                 errors.append(e.getMessage());
             }
         } else { // Default validation (with extension).
-            if (!FilenameUtils.getExtension(fileName.toLowerCase()).equals(fileFormat.getFileType())) {
+            if (fileFormat.getFileTypes() != null && !fileFormat.getFileTypes().isEmpty() && !fileFormat.getFileTypes()
+                    .contains(FilenameUtils.getExtension(fileName.toLowerCase()))) {
                 log.info("The file type is invalid");
                 errors.append("The file type is invalid");
             }
@@ -307,24 +319,35 @@ public class FlatFileValidator {
     /**
      * Validate and log the file by its format
      *
-     * @param file the file
-     * @param fileFormat the faile format
-     * @param fileName the file name
-     * @param inputDirectory the input directory
+     * @param file            the file
+     * @param fileFormat      the faile format
+     * @param fileName        the file name
+     * @param inputDirectory  the input directory
      * @param rejectDirectory the reject directory
      * @return the flat file
      * @throws BusinessException the business exception
      */
     private FlatFile validateAndLogFile(File file, FileFormat fileFormat, String fileName, String inputDirectory, String rejectDirectory) throws BusinessException {
 
-        // Validate the input file
+        //Validate the input file
         StringBuilder errors = validate(file, fileName, fileFormat, inputDirectory);
 
-        // Log in database the input file.
-        FlatFile flatFile = flatFileService.create(fileName, fileFormat, errors.toString(), errors.length() > 0 ? FileStatusEnum.BAD_FORMED : FileStatusEnum.WELL_FORMED);
+        FileStatusEnum status = FileStatusEnum.WELL_FORMED;
+        String currentDirectory = inputDirectory;
+        if (errors.length() > 0) {
+            status = FileStatusEnum.BAD_FORMED;
+            currentDirectory = rejectDirectory;
+        }
 
-        // Move the file to the corresponding directory
-        moveFile(file, flatFile, inputDirectory, rejectDirectory);
+        //Log in database the input file.
+        FlatFile flatFile = flatFileService.create(fileName, fileName, currentDirectory, fileFormat, errors.toString(), status, null, null, null, null);
+
+        //Move the file to the corresponding directory
+        String fileCurrentName = moveFile(file, flatFile, inputDirectory, rejectDirectory);
+
+        flatFile.setFileCurrentName(fileCurrentName);
+        flatFile.setCurrentDirectory(currentDirectory);
+        flatFileService.update(flatFile);
 
         return flatFile;
     }
@@ -332,9 +355,9 @@ public class FlatFileValidator {
     /**
      * Validate and log the file by its format
      *
-     * @param file the file
-     * @param fileName the file name
-     * @param fileFormatCode the faile format code
+     * @param file              the file
+     * @param fileName          the file name
+     * @param fileFormatCode    the faile format code
      * @param newInputDirectory the new input directory
      * @return the flat file
      * @throws BusinessException the business exception
@@ -343,19 +366,19 @@ public class FlatFileValidator {
 
         if (!StringUtils.isBlank(fileFormatCode)) {
             FileFormat fileFormat = fileFormatService.findByCode(fileFormatCode);
-            String inputDirectory = getInputDirectory(fileFormat, newInputDirectory);
-            String rejectDirectory = getRejectDirectory(fileFormat, newInputDirectory);
             if (fileFormat == null) {
                 log.error("The file format " + fileFormatCode + " is not found");
                 throw new BusinessException("The file format " + fileFormatCode + " is not found");
             }
+            String inputDirectory = getInputDirectory(fileFormat, newInputDirectory);
+            String rejectDirectory = getRejectDirectory(fileFormat, newInputDirectory);
             validateAndLogFile(file, fileFormat, fileName, inputDirectory, rejectDirectory);
         }
     }
 
     /**
-     * @param files the files list
-     * @param fileFormatCode the file format code
+     * @param files             the files list
+     * @param fileFormatCode    the file format code
      * @param newInputDirectory the new input directory
      * @return the messages
      * @throws BusinessException the business exception

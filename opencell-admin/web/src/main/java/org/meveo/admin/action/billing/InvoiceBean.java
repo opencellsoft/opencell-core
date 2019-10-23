@@ -281,10 +281,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
             InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
             InvoiceCategoryDTO headerCat = new InvoiceCategoryDTO();
-            headerCat.setDescription(invoiceCategory.getDescription());
-            headerCat.setCode(invoiceCategory.getCode());
-            headerCat.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
-            headerCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
+                headerCat.setDescription(invoiceCategory.getDescription());
+                headerCat.setCode(invoiceCategory.getCode());
+                headerCat.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
+                headerCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
             headerCategories.add(headerCat);
 
             Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
@@ -293,10 +293,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                 InvoiceSubCategory invoiceSubCategory = subCatInvoiceAgregate.getInvoiceSubCategory();
                 InvoiceSubCategoryDTO headerSubCat = new InvoiceSubCategoryDTO();
                 headerSubCat.setId(subCatInvoiceAgregate.getId());
-                headerSubCat.setDescription(invoiceSubCategory.getDescription());
-                headerSubCat.setCode(invoiceSubCategory.getCode());
-                headerSubCat.setAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
-                headerSubCat.setAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
+                    headerSubCat.setDescription(invoiceSubCategory.getDescription());
+                    headerSubCat.setCode(invoiceSubCategory.getCode());
+                    headerSubCat.setAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
+                    headerSubCat.setAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
                 headerSubCategories.put(invoiceSubCategory.getId().toString(), headerSubCat);
 
                 ServiceBasedLazyDataModel<RatedTransaction> rtDM = new ServiceBasedLazyDataModel<RatedTransaction>() {
@@ -310,17 +310,17 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                         filters.put("invoice", entity);
                         filters.put("invoiceAgregateF", subCatInvoiceAgregate);
                         return filters;
-                    }
+                }
 
                     @Override
                     protected String getDefaultSortImpl() {
                         return "usageDate";
-                    }
+            }
 
                     @Override
                     protected IPersistenceService<RatedTransaction> getPersistenceServiceImpl() {
                         return ratedTransactionService;
-                    }
+        }
 
                     @Override
                     protected ElasticClient getElasticClientImpl() {
@@ -330,8 +330,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
                 ratedTransactionsDM.put(subCatInvoiceAgregate.getId(), rtDM);
 
+                }
             }
-        }
 
         return headerCategories;
     }
@@ -485,6 +485,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public boolean isPdfInvoiceAlreadyGenerated() {
+
         if (!pdfGenerated.containsKey(entity.getId())) {
             pdfGenerated.put(entity.getId(), invoiceService.isInvoicePdfExist(entity));
         }
@@ -866,7 +867,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public LazyDataModel<RatedTransaction> getRatedTransactions(InvoiceSubCategoryDTO invoiceSubCategoryDTO) {
         return ratedTransactionsDM.get(invoiceSubCategoryDTO.getId());
-    }
+        }
 
     /**
      * Activate/deactivate New aggregated invoice adjustment

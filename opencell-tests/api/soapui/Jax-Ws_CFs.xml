@@ -13132,7 +13132,7 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1"]</path>
                 <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  <auditable created="*" creator="opencell.admin"/>
+  <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>STRING</fieldType>
   <accountLevel>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</accountLevel>
@@ -13141,6 +13141,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>true</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -13165,6 +13166,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -13524,6 +13526,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -13548,6 +13551,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -31063,6 +31067,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>true</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -31089,6 +31094,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -31166,6 +31172,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>MATRIX</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -31194,6 +31201,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>MATRIX</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -31224,6 +31232,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>MATRIX</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>true</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -31372,6 +31381,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>true</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -31398,6 +31408,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -31602,6 +31613,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>true</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>false</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -31628,6 +31640,7 @@ public class Action1 extends Script {
   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
   <storageType>SINGLE</storageType>
   <valueRequired>true</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
   <versionable>true</versionable>
   <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
   <allowEdit>true</allowEdit>
@@ -38537,7 +38550,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>86</con:value>
+        <con:value>87</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

@@ -41,6 +41,8 @@ import org.slf4j.Logger;
  * FlatFile processing
  * 
  * @author Abdelhadi
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  */
 @Stateless
 public class FlatFileProcessing {
@@ -217,13 +219,19 @@ public class FlatFileProcessing {
     /**
      * Update flat file record with information on errors
      *
-     * @param errors processed flat file errors
+     * @param fileOriginalName file original name that was processed
+     * @param fileCurrentName file current name that was processed
+     * @param currentDirectory current directory
+     * @param errors Processed flat file errors
+     * @param processSuccess Number of items processed successfully
+     * @param processedError Number of items processed with failure
+     * @param jobCode Job code that processed the file
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void updateFlatFile(String fileName, List<String> errors) {
+    public void updateFlatFile(String fileOriginalName, String fileCurrentName, String currentDirectory, List<String> errors, long processSuccess, long processedError, String jobCode) {
         try {
-            String[] param = fileName.split("_");
+            String[] param = fileOriginalName.split("_");
             String code = param.length > 0 ? param[0] : null;
 
             FileStatusEnum status = FileStatusEnum.VALID;
@@ -235,14 +243,21 @@ public class FlatFileProcessing {
             }
             FlatFile flatFile = flatFileService.findByCode(code);
             if (flatFile == null) {
-                flatFileService.create(fileName, null, errorMessage, status);
+                flatFileService.create(fileOriginalName, fileCurrentName, currentDirectory, null, errorMessage, status, jobCode, 1, new Long(processSuccess).intValue(),
+                        new Long(processedError).intValue());
             } else {
+                flatFile.setFileCurrentName(fileCurrentName);
+                flatFile.setCurrentDirectory(currentDirectory);
+                flatFile.setFlatFileJobCode(jobCode);
+                flatFile.setProcessingAttempts(flatFile.getProcessingAttempts() != null ? flatFile.getProcessingAttempts() + 1 : 1);
+                flatFile.setLinesInSuccess(new Long(processSuccess).intValue());
+                flatFile.setLinesInError(new Long(processedError).intValue());
                 flatFile.setStatus(status);
                 flatFile.setErrorMessage(errorMessage);
                 flatFileService.update(flatFile);
             }
         } catch (BusinessException e) {
-            log.error("Failed to update flat file {}", fileName, e);
+            log.error("Failed to update flat file {}", fileOriginalName, e);
         }
     }
 }

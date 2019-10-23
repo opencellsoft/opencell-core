@@ -462,13 +462,8 @@
 									field="amountWithTax" converterParam="4digits"/>
 								<hftl:column label="#{messages['invoice.paymentMethod']}"
 									field="paymentMethodType.label" isMessage="true" />
-								<p:column width="100">
-									<f:facet name="header">
-										<h:outputText value="#{messages['billingAccount.status']}" />
-									</f:facet>
-									<h:outputText
-										value="#{messages[entity.billingRun.status.label]}" />
-								</p:column>
+								<hftl:column label="#{messages['invoice.status']}"
+									field="status" />
 								<hftl:column label="#{messages['invoice.invoiceType']}"
 										field="invoiceType.code"  />
 

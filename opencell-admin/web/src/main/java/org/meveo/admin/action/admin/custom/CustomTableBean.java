@@ -1,9 +1,8 @@
 package org.meveo.admin.action.admin.custom;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -14,7 +13,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Future;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.faces.view.ViewScoped;
@@ -28,7 +26,10 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.custom.CustomTableRecordDto;
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.NativePersistenceService;
@@ -375,15 +376,45 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
     List<CustomTableRecordDto> loadFromBusinessEntity(CustomFieldTemplate field) {
         try {
             Class entityClass = Class.forName(field.getEntityClazz());
-            PersistenceService<BusinessEntity> persistenceService = getPersistenceServiceByClass(entityClass);
-            return persistenceService.list().stream().filter(Objects::nonNull).map(mapToMap()).map(CustomTableRecordDto::new).collect(Collectors.toList());
+            PersistenceService<BaseEntity> persistenceService = getPersistenceServiceByClass(entityClass);
+            return persistenceService.list().stream()
+                    .filter(Objects::nonNull)
+                    .map(this::mapToMap)
+                    .map(CustomTableRecordDto::new)
+                    .collect(Collectors.toList());
         } catch (ClassNotFoundException e) {
             return Collections.EMPTY_LIST;
         }
     }
 
-    Function<BusinessEntity, HashMap<String, Object>> mapToMap() {
-        return e -> new HashMap<String, Object>() {{
+    HashMap<String, Object> mapToMap(Object entity) {
+        if (entity instanceof BusinessEntity) {
+            return convertBusinessEntity((BusinessEntity) entity);
+        }
+        return convertIdAndIdentifiers((BaseEntity) entity);
+    }
+
+    HashMap<String, Object> convertIdAndIdentifiers(BaseEntity baseEntity) {
+        HashMap<String, Object> convertedValues = new HashMap<>();
+        convertedValues.put("id", baseEntity.getId());
+        addExternalIdentifiers(baseEntity, convertedValues);
+        return convertedValues;
+    }
+
+    private void addExternalIdentifiers(BaseEntity baseEntity, HashMap<String, Object> convertedValues) {
+        if (baseEntity.getClass().isAnnotationPresent(ExportIdentifier.class)) {
+            Arrays.asList(baseEntity.getClass().getAnnotation(ExportIdentifier.class).value()).forEach(v -> {
+                try {
+                    convertedValues.put(v, ReflectionUtils.getPropertyValue(baseEntity, v));
+                } catch (IllegalAccessException ex) {
+                    ex.printStackTrace();
+                }
+            });
+        }
+    }
+
+    private HashMap<String, Object> convertBusinessEntity(BusinessEntity e) {
+        return new HashMap<String, Object>() {{
             put("id", e.getId());
             put("code", e.getCode());
             put("description", e.getDescription());

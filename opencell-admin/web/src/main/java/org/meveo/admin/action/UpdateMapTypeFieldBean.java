@@ -18,7 +18,7 @@ public abstract class UpdateMapTypeFieldBean<T extends IEntity> extends CustomFi
     private static final long serialVersionUID = 1L;
 
     /** Helper field to enter values for HashMap&lt;String,String&gt; type fields */
-    protected Map<String, List<HashMap<String, String>>> mapTypeFieldValues = new HashMap<String, List<HashMap<String, String>>>();
+    protected Map<String, List<HashMap<String, String>>> mapTypeFieldValues = new HashMap<>();
 
 
     public UpdateMapTypeFieldBean(){
@@ -57,9 +57,9 @@ public abstract class UpdateMapTypeFieldBean<T extends IEntity> extends CustomFi
      */
     public void addMapTypeFieldValue(String fieldName) {
         if (!mapTypeFieldValues.containsKey(fieldName)) {
-            mapTypeFieldValues.put(fieldName, new ArrayList<HashMap<String, String>>());
+            mapTypeFieldValues.put(fieldName, new ArrayList<>());
         }
-        mapTypeFieldValues.get(fieldName).add(new HashMap<String, String>());
+        mapTypeFieldValues.get(fieldName).add(new HashMap<>());
     }
 
 

@@ -24,6 +24,11 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -49,6 +54,7 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
     @Column(name = "code", nullable = false, length = 255)
     @Size(max = 255, min = 1)
     @NotNull
+    @JsonProperty
     protected String code;
 
     /**
@@ -62,6 +68,7 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
      */
     @Column(name = "description", nullable = true, length = 255)
     @Size(max = 255)
+    @JsonProperty
     protected String description;
 
     /**

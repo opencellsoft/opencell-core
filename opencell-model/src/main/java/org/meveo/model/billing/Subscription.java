@@ -726,6 +726,15 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
             } else {
                 setSubscribedTillDate(null);
             }
+        } else if (getSubscriptionRenewal().getInitialTermType().equals(SubscriptionRenewal.InitialTermTypeEnum.CALENDAR)) {
+            if (getSubscriptionDate() != null && getSubscriptionRenewal() != null && getSubscriptionRenewal().getCalendarInitialyActiveFor() != null) {
+                org.meveo.model.catalog.Calendar calendar = getSubscriptionRenewal().getCalendarInitialyActiveFor();
+                calendar.setInitDate(getSubscriptionDate());
+                Date date = calendar.nextCalendarDate(getSubscriptionDate());
+                setSubscribedTillDate(date);
+            } else {
+                setSubscribedTillDate(null);
+            }
         }
 
         if (getSubscribedTillDate() != null && getSubscriptionRenewal().isAutoRenew() && getSubscriptionRenewal().getDaysNotifyRenewal() != null) {

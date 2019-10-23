@@ -49,7 +49,8 @@ public class MethodParameter implements Serializable {
 
 	@Override
 	public String toString() {
-		return getName().concat("$").concat(getType()).concat(":").concat(getValue().toString());
+		String value = getValue() == null ? "" : getValue().toString();
+		return getName().concat("$").concat(getType()).concat(":").concat(value);
 	}
 
 }

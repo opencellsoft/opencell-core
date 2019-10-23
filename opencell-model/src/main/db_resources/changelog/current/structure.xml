@@ -15,16 +15,6 @@
         </sql>
 	</changeSet>
 
-	<changeSet id="#4127_10042019" author="AbdelmounaimAkadid">
-		<addColumn tableName="dwh_report_extract">
-            <column name="output_dir" type="varchar(255)" />
-        </addColumn>
-        <sql>update ${db.schema.adapted}dwh_report_extract set output_dir = concat('reports/', category) where category is not null or category != ''
-        </sql>
-        <sql>update ${db.schema.adapted}dwh_report_extract set output_dir = 'reports' where category is null or category = ''
-        </sql>
-	</changeSet>
-
     <changeSet id="#4089_20190404" author="AbdellatifBARI">
         <sql>update ${db.schema.adapted}crm_custom_field_tmpl set applies_to = case
 
@@ -198,15 +188,12 @@
       </changeSet>
       
       <changeSet id="#4207_2019042903" author="MohamedElYoussoufi" dbms="mysql">
-      
       	<sql>
         	 update ${db.schema.adapted}billing_rated_transaction rt join ${db.schema.adapted}billing_subscription s on s.id=rt.subscription_id  set rt.offer_id = s.offer_id where rt.subscription_id is not null
         </sql>
-        
         <sql>
         	update ${db.schema.adapted}billing_wallet_operation wo join ${db.schema.adapted}billing_subscription s on s.id=wo.subscription_id  set wo.offer_id = s.offer_id where wo.subscription_id is not null
 		</sql>
-      
       </changeSet>
       
       <changeSet id="#4207_2019042904" author="MohamedElYoussoufi">
@@ -240,20 +227,64 @@
         <addDefaultValue tableName="meveo_job_instance" columnName="exclude_inv_without_amount" defaultValueNumeric="0" />
         <sql>update ${db.schema.adapted}meveo_job_instance set exclude_inv_without_amount = 0 where exclude_inv_without_amount is null</sql>
     </changeSet>
-    
+
 
     <changeSet id="#4282_20190520" author="AndriusKarpavicius">
-       <addColumn tableName="billing_rated_transaction">
-           <column name="service_instance_id" type="bigInt"/>
-       </addColumn>
-       <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_service_instance" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
-       <sql>CREATE INDEX rt_subscription_index ON ${db.schema.adapted}billing_rated_transaction  (subscription_id, invoice_id, usage_date)</sql>
-       <sql>CREATE INDEX rt_ba_invoice_index ON ${db.schema.adapted}billing_rated_transaction  (billing_account__id, invoice_id, usage_date)</sql>
+        <addColumn tableName="billing_rated_transaction">
+            <column name="service_instance_id" type="bigInt"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_service_instance" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+        <sql>CREATE INDEX rt_subscription_index ON ${db.schema.adapted}billing_rated_transaction  (subscription_id, invoice_id, usage_date)</sql>
+        <sql>CREATE INDEX rt_ba_invoice_index ON ${db.schema.adapted}billing_rated_transaction  (billing_account__id, invoice_id, usage_date)</sql>
         <sql dbms="postgres">CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
         <sql dbms="mysql">CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el)</sql>
         <sql dbms="postgres">CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
         <sql dbms="mysql">CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el)</sql>
+    </changeSet>
+
+    <changeSet id="#39262_20190604" author="TonyAlejandro">
+        <addColumn tableName="billing_service_instance">
+            <column name="calendar_init_active_id" type="bigint" />
+            <column name="calendar_renew_for_id" type="bigint" />
+            <column name="renewal_term_type" type="varchar(20)" />
+        </addColumn>
+        <addColumn tableName="cat_service_template">
+            <column name="calendar_init_active_id" type="bigint" />
+            <column name="calendar_renew_for_id" type="bigint" />
+            <column name="renewal_term_type" type="varchar(20)" />
+        </addColumn>
+        <addColumn tableName="cat_offer_template">
+            <column name="calendar_init_active_id" type="bigint" />
+            <column name="calendar_renew_for_id" type="bigint" />
+            <column name="renewal_term_type" type="varchar(20)" />
+        </addColumn>
+        <addColumn tableName="billing_subscription">
+            <column name="calendar_init_active_id" type="bigint" />
+            <column name="calendar_renew_for_id" type="bigint" />
+            <column name="renewal_term_type" type="varchar(20)" />
+        </addColumn>
+        <addDefaultValue tableName="billing_service_instance" columnName="initial_term_type" defaultValue="RECURRING" />
+        <addDefaultValue tableName="cat_service_template" columnName="initial_term_type" defaultValue="RECURRING" />
+        <addDefaultValue tableName="cat_offer_template" columnName="initial_term_type" defaultValue="RECURRING" />
+        <addDefaultValue tableName="billing_subscription" columnName="initial_term_type" defaultValue="RECURRING" />
+        <addForeignKeyConstraint baseColumnNames="calendar_init_active_id" baseTableName="billing_service_instance" constraintName="fk_si_init_active" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_renew_for_id" baseTableName="billing_service_instance" constraintName="fk_si_renew_for" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_init_active_id" baseTableName="cat_service_template" constraintName="fk_st_init_active" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_renew_for_id" baseTableName="cat_service_template" constraintName="fk_st_renew_for" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_init_active_id" baseTableName="cat_offer_template" constraintName="fk_ot_init_active" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_renew_for_id" baseTableName="cat_offer_template" constraintName="fk_ot_renew_for" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_init_active_id" baseTableName="billing_subscription" constraintName="fk_bs_init_active" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_renew_for_id" baseTableName="billing_subscription" constraintName="fk_bs_renew_for" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+
     </changeSet>
 
     <changeSet id="#4282_20190524" author="AndriusKarpavicius" dbms="postgres">
@@ -1285,9 +1316,93 @@
         <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="ar_account_operation" constraintName="fk_billing_invoice" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
     	<sql>
-            UPDATE ${db.schema.adapted}ar_account_operation AO SET recorded_invoice_id=(SELECT id FROM ${db.schema.adapted}billing_invoice BI WHERE BI.invoice_number=AO.reference)
+            UPDATE ${db.schema.adapted}ar_account_operation AO SET invoice_id=(SELECT id FROM ${db.schema.adapted}billing_invoice BI WHERE BI.invoice_number=AO.reference)
             WHERE AO.transaction_type='I'
         </sql>   
+    </changeSet>
+
+    <changeSet id="#4372_20190715" author="RedaDebbache">
+    	<addColumn tableName="crm_custom_field_tmpl">
+        	<column name="unique_constraint" type="${type.boolean}" defaultValue="0"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#4372_20190723" author="RedaDebbache">
+    	<addColumn tableName="cust_cet">
+        	<column name="unique_constraint_name" type="varchar(100)" defaultValue="0"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#4458_20190626_1" author="AbdellatifBARI">
+        <dropUniqueConstraint constraintName="uk_9fnf93rp352nkw2kpdbari5xp8" tableName="adm_file_format"/>
+        <dropColumn tableName="adm_file_format">
+            <column name="code"></column>
+        </dropColumn>
+        <dropColumn tableName="adm_file_format">
+            <column name="file_type"></column>
+        </dropColumn>
+
+        <addColumn tableName="adm_file_format">
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+        </addColumn>
+        <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari4xp9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_file_format" />
+    </changeSet>
+
+    <changeSet id="#4458_20190626_2" author="AbdellatifBARI">
+        <createTable tableName="adm_file_format_file_type">
+            <column name="file_format_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="file_type_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="file_format_id, file_type_id" constraintName="adm_file_format_file_type_pkey" tableName="adm_file_format_file_type" />
+        <addForeignKeyConstraint baseColumnNames="file_format_id" baseTableName="adm_file_format_file_type" constraintName="fk_4au8lqa3bc46gks4dmpbbari4h4l6" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_format" />
+    </changeSet>
+
+    <changeSet id="#4458_20190626_3" author="AbdellatifBARI" dbms="mysql">
+        <createTable tableName="adm_file_type_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_file_type_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}adm_file_type_seq values(1)</sql>
+    </changeSet>
+
+    <changeSet id="#4458_20190626_4" author="AbdellatifBARI">
+        <createSequence sequenceName="adm_file_type_seq" startValue="1" />
+        <createTable tableName="adm_file_type">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_file_type_pkey" />
+            </column>
+
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari5yr8" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_file_type" />
+        <addForeignKeyConstraint baseColumnNames="file_type_id" baseTableName="adm_file_format_file_type" constraintName="fk_s1wxui3m4sv9x5mbyi8gpbari77hu" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_type" />
+        <sql>CREATE INDEX adm_file_type_code_index ON ${db.schema.adapted}adm_file_type(code)</sql>
+    </changeSet>
+
+    <changeSet id="#4468_20190631_1" author="AbdellatifBARI">
+        <addColumn tableName="flat_file">
+            <column name="lines_in_success" type="int4" />
+            <column name="lines_in_warning" type="int4" />
+            <column name="lines_in_error" type="int4" />
+            <column name="processing_attempts" type="int4" />
+            <column name="flat_file_job_code" type="varchar(255)" />
+        </addColumn>
     </changeSet>
     
     <changeSet id="#4326_20190709" author="AndriusKarpavicius" failOnError="false"> 
@@ -1322,7 +1437,7 @@
         <sql>ALTER TABLE ${db.schema.adapted}meveo_script_instance MODIFY is_error INT NOT NULL DEFAULT 0</sql>
         <sql>ALTER TABLE ${db.schema.adapted}adm_notification MODIFY run_async INT NOT NULL DEFAULT 0;</sql>
     </changeSet>
-
+    
     <changeSet id="#4326_20190811" author="AndriusKarpavicius"> 
     	<addColumn tableName="billing_invoice">
     		<column name="prepaid" type="${type.boolean}" defaultValueNumeric="0">
@@ -1330,12 +1445,61 @@
             </column>
     	</addColumn>
     </changeSet>
+   
+
+    <changeSet id="#4512_20190819" author="AbdellatifBARI">
+        <dropColumn tableName="flat_file">
+            <column name="file_name"></column>
+        </dropColumn>
+
+        <addColumn tableName="flat_file">
+            <column name="file_original_name" type="varchar(255)" />
+            <column name="file_current_name" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
     
+ 	<changeSet id="#4480_250919" author="MohammedElAzzouzi">
+		<sql>UPDATE ${db.schema.adapted}billing_invoice SET payment_method_id=null WHERE payment_method_id IS NOT NULL AND payment_method_id NOT IN (SELECT APT.id FROM ${db.schema.adapted}ar_payment_token APT)</sql>
+    </changeSet>
     <changeSet id="#4480_210819" author="SaidRamli">
         <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="billing_invoice"
                                  constraintName="fk_invoice_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="ar_payment_token" />
     </changeSet>                          
+
+    <changeSet id="#4538_20190829" author="AbdellatifBARI">
+        <addColumn tableName="flat_file">
+            <column name="current_directory" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="#4550_20190904" author="AbdellatifBARI">
+        <dropColumn tableName="billing_trading_country">
+            <column name="pr_description"></column>
+        </dropColumn>
+        <addColumn tableName="billing_trading_country">
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" defaultValue="Trading_Country_US">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#4313_17062019" author="mohamed.el.youssoufi">
+		<addColumn tableName="wf_generic_workflow">
+			<column name="cf_values_accum" type="${type.json}"></column>
+			<column name="cf_values" type="${type.json}"></column>
+			<column name="uuid" type="varchar(60)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="#4064_11092019" author="AbdelmounaimAkadid">
+		<addColumn tableName="billing_invoice">
+			<column name="status" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 
    	<changeSet id="#4606_260919" author="AbdelmounaimAkadid"> 	
      	<addColumn tableName="billing_subscription">
@@ -1372,7 +1536,7 @@
     <changeSet id="#4555_20190903" author="AndriusKarpavicius">
         <addColumn tableName="cat_charge_template">        
             <column name="charge_type" type="varchar(5)" />
-            
+
             <column name="filter_expression" type="varchar(2000)" />
             <column name="filter_param_1" type="varchar(255)" />
             <column name="filter_param_2" type="varchar(255)" />

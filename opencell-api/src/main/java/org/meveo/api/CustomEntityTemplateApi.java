@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -103,7 +105,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
                 if (cftDto.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || (cftDto.getFieldType() != CustomFieldTypeEnum.DATE
                         && cftDto.getFieldType() != CustomFieldTypeEnum.DOUBLE && cftDto.getFieldType() != CustomFieldTypeEnum.LIST
                         && cftDto.getFieldType() != CustomFieldTypeEnum.LONG && cftDto.getFieldType() != CustomFieldTypeEnum.STRING
-                        && cftDto.getFieldType() != CustomFieldTypeEnum.BOOLEAN)
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.BOOLEAN && cftDto.getFieldType() != CustomFieldTypeEnum.ENTITY)
                         || (cftDto.isVersionable() != null && cftDto.isVersionable())) {
                     throw new InvalidParameterException("Custom table supports only unversioned and simple Date, Double, Long, Boolean, String and Select from list type fields");
                 }
@@ -115,10 +117,13 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         if (dto.getFields() != null) {
             for (CustomFieldTemplateDto cftDto : dto.getFields()) {
-
                 cftDto.setDisabled(dto.isDisabled());
-                customFieldTemplateApi.createOrUpdate(cftDto, cet.getAppliesTo());
+                customFieldTemplateApi.createWithoutUniqueConstraint(cftDto, cet.getAppliesTo());
             }
+			String columnNames = dto.getFields().stream().filter(x->x.getUniqueConstraint()!= null && x.getUniqueConstraint()).map(x-> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
+			if(!StringUtils.isEmpty(columnNames)) {
+				customFieldTemplateService.addConstraintByColumnsName(cet, columnNames);
+				}
         }
 
         if (dto.getActions() != null) {
@@ -169,7 +174,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
                 if (cftDto.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || (cftDto.getFieldType() != CustomFieldTypeEnum.DATE
                         && cftDto.getFieldType() != CustomFieldTypeEnum.DOUBLE && cftDto.getFieldType() != CustomFieldTypeEnum.LIST
                         && cftDto.getFieldType() != CustomFieldTypeEnum.LONG && cftDto.getFieldType() != CustomFieldTypeEnum.STRING
-                        && cftDto.getFieldType() != CustomFieldTypeEnum.BOOLEAN)
+                        && cftDto.getFieldType() != CustomFieldTypeEnum.BOOLEAN && cftDto.getFieldType() != CustomFieldTypeEnum.ENTITY)
                         || (cftDto.isVersionable() != null && cftDto.isVersionable())) {
                     throw new InvalidParameterException("Custom table supports only unversioned and simple Date, Double, Long, Boolean, String and Select from list type fields");
                 }
@@ -344,7 +349,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
     }
 
     public List<BusinessEntityDto> listBusinessEntityForCFVByCode(String code, String wildcode)
-            throws MeveoApiException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+            throws MeveoApiException, ClassNotFoundException {
         List<BusinessEntityDto> result = new ArrayList<>();
 
         if (StringUtils.isBlank(code)) {

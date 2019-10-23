@@ -18,11 +18,17 @@
  */
 package org.meveo.model.billing;
 
-import java.util.List;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.listeners.TradingCountryListener;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -33,28 +39,26 @@ import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ObservableEntity;
+import java.util.List;
 
 /**
  * Country enabled in application
  * 
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  */
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "country.countryCode" })
+@ExportIdentifier({ "code" })
+@EntityListeners({ TradingCountryListener.class })
 @Cacheable
 @Table(name = "billing_trading_country")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_trading_country_seq"), })
 @NamedQueries({ @NamedQuery(name = "TradingCountry.getByCode", query = "from TradingCountry tr where tr.country.countryCode = :tradingCountryCode) ", hints = {
         @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
-public class TradingCountry extends EnableEntity {
+public class TradingCountry extends EnableBusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -70,28 +74,6 @@ public class TradingCountry extends EnableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id")
     private Country country;
-
-    /**
-     * Description. Deprecated in 5.3 for not use.
-     */
-    @Deprecated
-    @Column(name = "pr_description", length = 255)
-    @Size(max = 255)
-    private String prDescription;
-
-    /**
-     * Country code
-     */
-    @Transient
-    String countryCode;
-
-    public String getPrDescription() {
-        return prDescription;
-    }
-
-    public void setPrDescription(String prDescription) {
-        this.prDescription = prDescription;
-    }
 
     public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
         return invoiceSubcategoryCountries;

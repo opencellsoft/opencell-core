@@ -57,7 +57,8 @@ import java.util.Optional;
  *
  * @author Edward P. Legaspi
  * @author anasseh
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.0.0
  */
 @Stateless
 public class CustomerAccountService extends AccountService<CustomerAccount> {
@@ -416,10 +417,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @param toCustomerAccount the to customer account
      * @param amount the amount
      * @throws BusinessException the business exception
-     * @throws Exception the exception
      */
     @MeveoAudit
-    public void transferAccount(CustomerAccount fromCustomerAccount, CustomerAccount toCustomerAccount, BigDecimal amount) throws BusinessException, Exception {
+    public void transferAccount(CustomerAccount fromCustomerAccount, CustomerAccount toCustomerAccount, BigDecimal amount) throws BusinessException {
         log.info("transfertAccount fromCustomerAccount {} toCustomerAccount {} amount {}", (fromCustomerAccount == null ? "null" : fromCustomerAccount.getCode()),
             (toCustomerAccount == null ? "null" : toCustomerAccount.getCode()), amount);
 
@@ -461,10 +461,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      * @param toCustomerAccountCode customer account code of transfer's destination
      * @param amount transfer's amount
      * @throws BusinessException business exception
-     * @throws Exception general exception.
      */
     public void transferAccount(Long fromCustomerAccountId, String fromCustomerAccountCode, Long toCustomerAccountId, String toCustomerAccountCode, BigDecimal amount)
-            throws BusinessException, Exception {
+            throws BusinessException {
         log.info("transfertAccount fromCustomerAccountCode {} fromCustomerAccountId {} toCustomerAccountCode {} toCustomerAccountId {}, amount {}", fromCustomerAccountCode,
             fromCustomerAccountId, toCustomerAccountCode, +toCustomerAccountId, amount);
         transferAccount(findCustomerAccount(fromCustomerAccountId, fromCustomerAccountCode), findCustomerAccount(toCustomerAccountId, toCustomerAccountCode), amount);
@@ -820,5 +819,28 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    /**
+     * Transfer amount from a customer account to an other.
+     *
+     * @param fromCustomerAccountCode customer account code
+     * @param toCustomerAccountCode   customer account code of transfer's destination
+     * @param amount                  transfer's amount
+     * @throws BusinessException business exception
+     */
+    public void transferAccount(String fromCustomerAccountCode, String toCustomerAccountCode, BigDecimal amount) throws BusinessException {
+        log.info("transfer an amount {} from account {} to the account {} ", fromCustomerAccountCode, toCustomerAccountCode, amount);
+
+        CustomerAccount fromCustomerAccount = findByCode(fromCustomerAccountCode);
+        if (fromCustomerAccount == null) {
+            throw new BusinessException("The source customer account with code : " + fromCustomerAccountCode + " is not found");
+        }
+
+        CustomerAccount toCustomerAccount = findByCode(toCustomerAccountCode);
+        if (toCustomerAccount == null) {
+            throw new BusinessException("The recipient customer account with code : " + toCustomerAccountCode + " is not found");
+        }
+        transferAccount(fromCustomerAccount, toCustomerAccount, amount);
     }
 }

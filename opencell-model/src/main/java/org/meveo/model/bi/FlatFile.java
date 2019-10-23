@@ -32,7 +32,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -50,11 +49,25 @@ public class FlatFile extends BusinessEntity {
     private static final long serialVersionUID = -4989724064567423956L;
 
     /**
-     * File name.
+     * File original name.
      */
-    @Column(name = "file_name", length = 255)
+    @Column(name = "file_original_name", length = 255)
     @Size(max = 255)
-    private String fileName;
+    private String fileOriginalName;
+
+    /**
+     * File current name.
+     */
+    @Column(name = "file_current_name", length = 255)
+    @Size(max = 255)
+    private String fileCurrentName;
+
+    /**
+     * Current directory.
+     */
+    @Column(name = "current_directory", length = 255)
+    @Size(max = 255)
+    private String currentDirectory;
 
     /**
      * File status
@@ -77,21 +90,88 @@ public class FlatFile extends BusinessEntity {
     private String errorMessage;
 
     /**
-     * Gets the fileName
-     *
-     * @return the fileName
+     * Number of lines in success
      */
-    public String getFileName() {
-        return fileName;
+    @Column(name = "lines_in_success")
+    protected Integer linesInSuccess;
+
+    /**
+     * Number of lines in warning
+     */
+    @Column(name = "lines_in_warning")
+    protected Integer linesInWarning;
+
+    /**
+     * Number of lines in error
+     */
+    @Column(name = "lines_in_error")
+    protected Integer linesInError;
+
+    /**
+     * Number of processing attempts
+     */
+    @Column(name = "processing_attempts")
+    protected Integer processingAttempts;
+
+    /**
+     * Flat file job name (e.g : CDR_job).
+     */
+    @Column(name = "flat_file_job_code", length = 255)
+    @Size(max = 255)
+    private String flatFileJobCode;
+
+    /**
+     * Gets the fileOriginalName
+     *
+     * @return the fileOriginalName
+     */
+    public String getFileOriginalName() {
+        return fileOriginalName;
     }
 
     /**
-     * Sets the fileName.
+     * Sets the fileOriginalName.
      *
-     * @param fileName the new fileName
+     * @param fileOriginalName the new fileOriginalName
      */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFileOriginalName(String fileOriginalName) {
+        this.fileOriginalName = fileOriginalName;
+    }
+
+    /**
+     * Gets the fileCurrentName
+     *
+     * @return the fileCurrentName
+     */
+    public String getFileCurrentName() {
+        return fileCurrentName;
+    }
+
+    /**
+     * Sets the fileCurrentName.
+     *
+     * @param fileCurrentName the new fileCurrentName
+     */
+    public void setFileCurrentName(String fileCurrentName) {
+        this.fileCurrentName = fileCurrentName;
+    }
+
+    /**
+     * Gets the currentDirectory
+     *
+     * @return the currentDirectory
+     */
+    public String getCurrentDirectory() {
+        return currentDirectory;
+    }
+
+    /**
+     * Sets the currentDirectory.
+     *
+     * @param currentDirectory the new currentDirectory
+     */
+    public void setCurrentDirectory(String currentDirectory) {
+        this.currentDirectory = currentDirectory;
     }
 
     /**
@@ -146,5 +226,95 @@ public class FlatFile extends BusinessEntity {
      */
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    /**
+     * Gets the linesInSuccess
+     *
+     * @return the linesInSuccess
+     */
+    public Integer getLinesInSuccess() {
+        return linesInSuccess;
+    }
+
+    /**
+     * Sets the linesInSuccess.
+     *
+     * @param linesInSuccess the new linesInSuccess
+     */
+    public void setLinesInSuccess(Integer linesInSuccess) {
+        this.linesInSuccess = linesInSuccess;
+    }
+
+    /**
+     * Gets the linesInWarning
+     *
+     * @return the linesInWarning
+     */
+    public Integer getLinesInWarning() {
+        return linesInWarning;
+    }
+
+    /**
+     * Sets the linesInWarning.
+     *
+     * @param linesInWarning the new linesInWarning
+     */
+    public void setLinesInWarning(Integer linesInWarning) {
+        this.linesInWarning = linesInWarning;
+    }
+
+    /**
+     * Gets the linesInError
+     *
+     * @return the linesInError
+     */
+    public Integer getLinesInError() {
+        return linesInError;
+    }
+
+    /**
+     * Sets the linesInError.
+     *
+     * @param linesInError the new linesInError
+     */
+    public void setLinesInError(Integer linesInError) {
+        this.linesInError = linesInError;
+    }
+
+    /**
+     * Gets the processingAttempts
+     *
+     * @return the processingAttempts
+     */
+    public Integer getProcessingAttempts() {
+        return processingAttempts;
+    }
+
+    /**
+     * Sets the processingAttempts.
+     *
+     * @param processingAttempts the new processingAttempts
+     */
+    public void setProcessingAttempts(Integer processingAttempts) {
+        this.processingAttempts = processingAttempts;
+    }
+
+    /**
+     * Gets the flatFileJobCode
+     *
+     * @return the flatFileJobCode
+     */
+    public String getFlatFileJobCode() {
+        return flatFileJobCode;
+    }
+
+    /**
+     * Sets the flatFileJobCode.
+     *
+     * @param flatFileJobCode the new flatFileJobCode
+     */
+    public void setFlatFileJobCode(String flatFileJobCode) {
+        this.flatFileJobCode = flatFileJobCode;
     }
 }

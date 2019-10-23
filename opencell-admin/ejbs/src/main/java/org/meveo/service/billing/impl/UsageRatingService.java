@@ -198,18 +198,18 @@ public class UsageRatingService implements Serializable {
             tax = taxService.getZeroTax();
         } else {
             tax = invoiceSubCategoryCountryService.determineTax(chargeInstance, edr.getEventDate());
-        }
+            }
 
         WalletOperation walletOperation = null;
 
         if (isReservation) {
             walletOperation = new WalletReservation(chargeInstance, quantityToCharge, null, edr.getEventDate(), chargeInstance.getOrderNumber(), edr.getParameter1(),
                 edr.getParameter2(), edr.getParameter3(), edr.getParameter4(), tax, null, null);
-        } else {
+            } else {
             // we set here the wallet to the principal wallet but it will later be overridden by charging algorithm
             walletOperation = new WalletOperation(chargeInstance, quantityToCharge, null, edr.getEventDate(), chargeInstance.getOrderNumber(), edr.getParameter1(),
                 edr.getParameter2(), edr.getParameter3(), edr.getParameter4(), tax, null, null);
-        }
+            }
 
         walletOperation.setEdr(edr);
 
@@ -276,7 +276,7 @@ public class UsageRatingService implements Serializable {
             chargeTemplate.getUnitMultiplicator(), quantityToDeduce);
 
         // synchronized (this) {// cachedCounterPeriod) { TODO how to ensure one at a time update?
-        counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterPeriod, quantityToDeduce, isVirtual);
+            counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterPeriod, quantityToDeduce, isVirtual);
         // }
         // Quantity is not tracked in counter (no initial value)
         if (counterValueChangeInfo == null) {
@@ -343,7 +343,7 @@ public class UsageRatingService implements Serializable {
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
     private RatedEDRResult rateEDRonChargeAndCounters(EDR edr, UsageChargeInstance usageChargeInstance, boolean isVirtual) throws BusinessException, RatingException {
-        // boolean stopEDRRating_fullyRated = false;
+        //boolean stopEDRRating_fullyRated = false;
         RatedEDRResult ratedEDRResult = new RatedEDRResult();
         BigDecimal deducedQuantity = null;
 
@@ -397,7 +397,7 @@ public class UsageRatingService implements Serializable {
      * @param chargeTemplate template charge
      * @param walletOperation the wallet operation
      * @param edr the event record
-     * @param isVirtual do not persist EDR if isVirtual = true
+     * @param isVirtual  do not persist EDR if isVirtual  = true
      * @return an EDR
      * @throws BusinessException business exception
      * @throws ChargingEdrOnRemoteInstanceErrorException Failure to communicate with a remote Opencell instance
@@ -423,7 +423,7 @@ public class UsageRatingService implements Serializable {
                 }
 
                 log.debug("Will trigger EDR {} for EDR {} / WO {}", triggeredEDRTemplate.getCode(), edr.getId(), walletOperation.getId());
-
+                
                 if (meveoInstance == null) {
                     EDR newEdr = new EDR();
                     newEdr.setCreated(new Date());
@@ -562,7 +562,7 @@ public class UsageRatingService implements Serializable {
             log.error("Failed to rate EDR {}: {}", edrId, e.getMessage(), e);
             usageRatingServiceNewTX.rejectEDR(edrId, e);
             throw e;
-        }
+    }
     }
 
     /**
@@ -616,25 +616,25 @@ public class UsageRatingService implements Serializable {
         List<WalletOperation> walletOperations = new ArrayList<>();
 
         try {
-            if (edr.getQuantity() == null) {
+        if (edr.getQuantity() == null) {
                 throw new RatingException(EDRRejectReasonEnum.QUANTITY_IS_NULL);
-            }
+        }
 
-            if (edr.getSubscription() == null) {
+        if (edr.getSubscription() == null) {
                 throw new RatingException(EDRRejectReasonEnum.SUBSCRIPTION_IS_NULL);
-            }
+        }
 
             // edr.setLastUpdate(new Date());
 
-            RatedEDRResult ratedEDRResult = new RatedEDRResult();
+        RatedEDRResult ratedEDRResult = new RatedEDRResult();
 
             List<UsageChargeInstance> usageChargeInstances = null;
 
             // Charges should be already ordered by priority and id (why id??)
-            usageChargeInstances = usageChargeInstanceService.getActiveUsageChargeInstancesBySubscriptionId(edr.getSubscription().getId());
-            if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
+                usageChargeInstances = usageChargeInstanceService.getActiveUsageChargeInstancesBySubscriptionId(edr.getSubscription().getId());
+                if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
                 throw new NoChargeException("No active usage charges are associated with subscription " + edr.getSubscription().getId());
-            }
+                }
 
             boolean foundPricePlan = true;
 
@@ -657,8 +657,10 @@ public class UsageRatingService implements Serializable {
                 log.debug("Will apply matching charge instance id={} for EDR {}", usageChargeInstance.getId(), edr.getId());
 
                 ratedEDRResult = rateEDRonChargeAndCounters(edr, usageChargeInstance, isVirtual);
-                walletOperations.add(ratedEDRResult.getWalletOperation());
-
+                if (ratedEDRResult.getWalletOperation() != null) {
+                    walletOperations.add(ratedEDRResult.getWalletOperation());
+                }
+                
                 if (rateTriggeredEdr && !ratedEDRResult.getTriggeredEDRs().isEmpty()) {
                     walletOperations.addAll(rateTriggeredEDRs(isVirtual, rateTriggeredEdr, maxDeep, currentRatingDepth, ratedEDRResult.getTriggeredEDRs()));
                 }
@@ -688,7 +690,7 @@ public class UsageRatingService implements Serializable {
             } else {
                 throw new NoChargeException(EDRRejectReasonEnum.NO_MATCHING_CHARGE, "No charge matched for EDR " + edr.getId());
             }
-
+            
         } catch (RatingException e) {
             log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
             throw e;
@@ -696,14 +698,14 @@ public class UsageRatingService implements Serializable {
         } catch (BusinessException e) {
             log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
             throw e;
-        }
+            }
         return walletOperations;
     }
 
     /**
      * Rate Triggered EDR.
      *
-     * @param isVirtual rate EDR virtually (no persisting in DB)
+     * @param isVirtual        rate EDR virtually (no persisting in DB)
      * @param rateTriggeredEdr check whether the rating for triggered EDR is enabled or not.
      * @param maxDeep The max level of triggered EDR rating depth
      * @param currentRatingDepth Tracks the current triggered EDR rating depth
@@ -715,7 +717,7 @@ public class UsageRatingService implements Serializable {
             throws BusinessException {
         List<WalletOperation> triggeredWOs = new ArrayList<>();
         if (rateTriggeredEdr && currentRatingDepth < maxDeep) {
-            for (EDR edr : triggeredEDRs) {
+            for(EDR edr :triggeredEDRs) {
                 // Ignore errors, as triggered EDR was saved already, and will be rated again later ?? AKK? Is this valid assumption?
                 try {
                     triggeredWOs.addAll(rateUsageWithinTransaction(edr, isVirtual, true, maxDeep, currentRatingDepth + 1));
@@ -724,8 +726,8 @@ public class UsageRatingService implements Serializable {
 
                 } catch (BusinessException e) {
                     log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
-                }
             }
+        }
         }
         return triggeredWOs;
     }
@@ -807,46 +809,46 @@ public class UsageRatingService implements Serializable {
             return null;
         }
 
-        boolean edrIsRated = false;
+            boolean edrIsRated = false;
 
-        // Charges are ordered by priority and id
-        List<UsageChargeInstance> charges = usageChargeInstanceService.getActiveUsageChargeInstancesBySubscriptionId(edr.getSubscription().getId());
+                // Charges are ordered by priority and id
+                List<UsageChargeInstance> charges = usageChargeInstanceService.getActiveUsageChargeInstancesBySubscriptionId(edr.getSubscription().getId());
         if (charges == null || charges.isEmpty()) {
             edr.setRatingRejectionReason(EDRRejectReasonEnum.SUBSCRIPTION_HAS_NO_CHARGE.getCode());
         }
-        reservation = new Reservation();
-        reservation.setReservationDate(edr.getEventDate());
-        reservation.setExpiryDate(new Date(time + appProvider.getPrepaidReservationExpirationDelayinMillisec()));
-        reservation.setStatus(ReservationStatus.OPEN);
-        reservation.updateAudit(currentUser);
-        reservation.setOriginEdr(edr);
-        reservation.setQuantity(edr.getQuantity());
+                    reservation = new Reservation();
+                    reservation.setReservationDate(edr.getEventDate());
+                    reservation.setExpiryDate(new Date(time + appProvider.getPrepaidReservationExpirationDelayinMillisec()));
+                    reservation.setStatus(ReservationStatus.OPEN);
+                    reservation.updateAudit(currentUser);
+                    reservation.setOriginEdr(edr);
+                    reservation.setQuantity(edr.getQuantity());
 
-        reservationService.create(reservation);
+                    reservationService.create(reservation);
 
-        UsageChargeTemplate chargeTemplate = null;
-        for (UsageChargeInstance usageChargeInstance : charges) {
+                    UsageChargeTemplate chargeTemplate = null;
+                    for (UsageChargeInstance usageChargeInstance : charges) {
 
-            chargeTemplate = (UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
-            log.trace("Try  templateCache {}", chargeTemplate.getCode());
+                        chargeTemplate = (UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
+                        log.trace("Try  templateCache {}", chargeTemplate.getCode());
             try {
-                if (isChargeMatch(usageChargeInstance, edr, true)) {
+                        if (isChargeMatch(usageChargeInstance, edr, true)) {
 
-                    log.debug("found matching charge inst : id {}", usageChargeInstance.getId());
-                    edrIsRated = reserveEDRonChargeAndCounters(reservation, edr, usageChargeInstance);
-                    if (edrIsRated) {
+                            log.debug("found matching charge inst : id {}", usageChargeInstance.getId());
+                            edrIsRated = reserveEDRonChargeAndCounters(reservation, edr, usageChargeInstance);
+                            if (edrIsRated) {
                         edr.changeStatus(EDRStatusEnum.RATED);
-                        break;
-                    }
-                }
+                                break;
+                            }
+                        }
             } catch (NoPricePlanException e) {
                 continue;
-            }
+                    }
         }
 
-        if (!edrIsRated) {
+                    if (!edrIsRated) {
             edr.setRatingRejectionReason(EDRRejectReasonEnum.NO_MATCHING_CHARGE.getCode());
-        }
+                    }
 
         return reservation;
     }
@@ -871,7 +873,7 @@ public class UsageRatingService implements Serializable {
         }
         if (expression.indexOf("serviceInstance") >= 0) {
             userMap.put("serviceInstance", walletOperation.getServiceInstance());
-        }
+            }
 
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         try {
@@ -901,7 +903,7 @@ public class UsageRatingService implements Serializable {
         }
         if (expression.indexOf("serviceInstance") >= 0) {
             userMap.put("serviceInstance", walletOperation.getServiceInstance());
-        }
+            }
 
         String result = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
         return result;
@@ -924,7 +926,7 @@ public class UsageRatingService implements Serializable {
         }
         if (expression.indexOf("serviceInstance") >= 0) {
             userMap.put("serviceInstance", walletOperation.getServiceInstance());
-        }
+            }
 
         Double result = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
         return result;

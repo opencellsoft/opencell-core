@@ -1,10 +1,9 @@
 package org.meveo.model.billing;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.hibernate.annotations.Type;
-import org.meveo.commons.utils.CustomDateSerializer;
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -15,10 +14,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Objects;
+
+import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.CustomDateSerializer;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * Embeddable set of renewal fields. Use in ServiceTemplate and Subscription.
@@ -92,10 +94,25 @@ public class SubscriptionRenewal implements Serializable {
          */
         RECURRING,
 
+        CALENDAR,
+
         /**
          * Uses date picker.
          */
         FIXED;
+
+        public String getLabel() {
+            return this.getClass().getSimpleName() + "." + this.name();
+        }
+    }
+
+    public enum RenewalTermTypeEnum {
+        /**
+         * Uses RenewalPeriodUnitEnum.
+         */
+        RECURRING,
+
+        CALENDAR;
 
         public String getLabel() {
             return this.getClass().getSimpleName() + "." + this.name();
@@ -152,6 +169,10 @@ public class SubscriptionRenewal implements Serializable {
     @Column(name = "init_active")
     private Integer initialyActiveFor;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "calendar_init_active_id")
+    private org.meveo.model.catalog.Calendar calendarInitialyActiveFor;
+
     /**
      * Whether end of agreement date should be matched to the active till date
      */
@@ -172,12 +193,20 @@ public class SubscriptionRenewal implements Serializable {
     @Column(name = "renew_for")
     private Integer renewFor;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "calendar_renew_for_id")
+    private org.meveo.model.catalog.Calendar calendarRenewFor;
+
     /**
      * The instance of InitialTermTypeEnum for this subscription.
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "initial_term_type")
     private InitialTermTypeEnum initialTermType = InitialTermTypeEnum.RECURRING;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "renewal_term_type")
+    private RenewalTermTypeEnum renewalTermType = RenewalTermTypeEnum.RECURRING;
 
     public boolean isAutoRenew() {
         return autoRenew;
@@ -293,6 +322,30 @@ public class SubscriptionRenewal implements Serializable {
         this.autoRenewDate = autoRenewDate;
     }
 
+    public org.meveo.model.catalog.Calendar getCalendarInitialyActiveFor() {
+        return calendarInitialyActiveFor;
+    }
+
+    public void setCalendarInitialyActiveFor(org.meveo.model.catalog.Calendar calendarInitialyActiveFor) {
+        this.calendarInitialyActiveFor = calendarInitialyActiveFor;
+    }
+
+    public org.meveo.model.catalog.Calendar getCalendarRenewFor() {
+        return calendarRenewFor;
+    }
+
+    public void setCalendarRenewFor(org.meveo.model.catalog.Calendar calendarRenewFor) {
+        this.calendarRenewFor = calendarRenewFor;
+    }
+
+    public RenewalTermTypeEnum getRenewalTermType() {
+        return renewalTermType;
+    }
+
+    public void setRenewalTermType(RenewalTermTypeEnum renewalTermType) {
+        this.renewalTermType = renewalTermType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -327,6 +380,9 @@ public class SubscriptionRenewal implements Serializable {
         copy.setRenewForUnit(this.getRenewForUnit());
         copy.setRenewFor(this.getRenewFor());
         copy.setInitialTermType(this.getInitialTermType());
+        copy.setCalendarInitialyActiveFor(this.getCalendarInitialyActiveFor());
+        copy.setCalendarRenewFor(this.getCalendarRenewFor());
+        copy.setRenewalTermType(this.getRenewalTermType());
 
         return copy;
     }

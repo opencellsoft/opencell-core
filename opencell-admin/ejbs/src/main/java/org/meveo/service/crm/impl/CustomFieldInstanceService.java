@@ -1,6 +1,7 @@
 package org.meveo.service.crm.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.Optional;
 import java.util.Set;
 
@@ -30,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.PersistenceUtils;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.CFEndPeriodEvent;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
@@ -46,6 +49,7 @@ import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -121,9 +125,16 @@ public class CustomFieldInstanceService extends BaseService {
 
         if (classNameAndCode.startsWith(CustomEntityTemplate.class.getName())) {
             String cetCode = CustomFieldTemplate.retrieveCetCode(classNameAndCode);
-            query = getEntityManager().createQuery("select e from CustomEntityInstance e where cetCode=:cetCode and lower(e.code) like :code");
-            query.setParameter("cetCode", cetCode.toLowerCase());
-
+            CustomEntityTemplate cet = customEntityTemplateService.findByCode(cetCode);
+            if(!cet.isStoreAsTable()) {
+	            query = getEntityManager().createQuery("select e from CustomEntityInstance e where e.cetCode=:cetCode or e.cetCode=:lowerCode and lower(e.code) like :code");
+	            query.setParameter("cetCode", cetCode);
+	            query.setParameter("lowerCode", cetCode.toLowerCase());
+            } else {
+                    QueryBuilder queryBuilder = new QueryBuilder("select id from " + cet.getDbTablename() + " e where cast(e.id as varchar(100)) like :id", "e");
+                    List<Map<String,BigInteger>> result = queryBuilder.getNativeQuery(getEntityManager(), true).setParameter("id", "%" + wildcode.toLowerCase() + "%").list();
+            	return result.stream().map(record-> initTempEntityInstance(record.get("id"),cet.getDbTablename())).collect(Collectors.toList());
+            }
         } else if (clazz.isInstance(BusinessEntity.class)) {
             query = getEntityManager().createQuery("select e from " + classNameAndCode + " e where lower(e.code) like :code");
 
@@ -148,7 +159,16 @@ public class CustomFieldInstanceService extends BaseService {
         return entities;
     }
 
-     Class<?> trimTableNameAndGetClass(String className) throws ClassNotFoundException {
+     private CustomEntityInstance initTempEntityInstance(BigInteger id, String tableName) {
+    	 CustomEntityInstance cet= new CustomEntityInstance();
+    	 cet.setReferenceCode(""+id);
+ 		cet.setDescription("CUSTOM TABLE : "+tableName);
+ 		cet.setCetCode(tableName);
+		return cet;
+	}
+
+
+	Class<?> trimTableNameAndGetClass(String className) throws ClassNotFoundException {
         String classNameToConvert = Optional.ofNullable(className).filter(c -> c.contains(" - ")).map(c -> c.split(" - ")[0]).orElse(className);
         return Class.forName(classNameToConvert);
     }
