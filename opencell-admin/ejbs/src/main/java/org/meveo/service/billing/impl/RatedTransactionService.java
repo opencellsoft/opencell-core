@@ -64,6 +64,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.CreateMinAmountsResult;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.RatedTransaction;
@@ -307,7 +308,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * Check if Order has any not yet billed Rated transactions
      * 
-     * @param billingAccount billing account
      * @param orderNumber order number.
      * @param firstTransactionDate firstTransactionDate.
      * @param lastTransactionDate lastTransactionDate.
@@ -323,7 +323,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * This method is only for generating Xml invoice {@link org.meveo.service.billing.impl.XMLInvoiceCreator #createXMLInvoice(Long, java.io.File, boolean, boolean)
+     * This method is only for generating Xml invoice {@link org.meveo.service.billing.impl.XMLInvoiceCreator #createXMLInvoice(Invoice, boolean)
      * createXMLInvoice}
      * <p>
      * If the provider's displayFreeTransacInInvoice of the current invoice is <tt>false</tt>, RatedTransaction with amount=0 don't show up in the XML.
@@ -896,11 +896,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             BillingAccount billingAccount = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
 
-            Map<Long, Map<String, Amounts>> createdAmountServices = createMinRTForServices(billableEntity, billingAccount, lastTransactionDate, minRatingDate,
-                minAmountTransactions);
-
-            Map<String, Amounts> createdAmountSubscription = createMinRTForSubscriptions(billableEntity, billingAccount, lastTransactionDate, minRatingDate, minAmountTransactions,
-                createdAmountServices);
+            CreateMinAmountsResult createMinAmountsResultServices = createMinRTForServices(billableEntity, billingAccount, lastTransactionDate, minRatingDate);
+            Map<Long, Map<String, Amounts>> createdAmountServices = createMinAmountsResultServices.getCreatedAmountServices();
+            minAmountTransactions.addAll(createMinAmountsResultServices.getMinAmountTransactions());
+            
+            CreateMinAmountsResult createMinAmountsResultSubscription = createMinRTForSubscriptions(billableEntity, billingAccount, lastTransactionDate, minRatingDate, createdAmountServices);
+            Map<String, Amounts> createdAmountSubscription = createMinAmountsResultSubscription.getCreatedAmountSubscription();
+            minAmountTransactions.addAll(createMinAmountsResultSubscription.getMinAmountTransactions());
 
             if (calculateAndUpdateTotalAmounts) {
                 // Get total invoiceable amount for subscription and add created amounts during min RT creation
@@ -921,11 +923,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             BillingAccount billingAccount = (BillingAccount) billableEntity;
 
-            Map<Long, Map<String, Amounts>> createdAmountServices = createMinRTForServices(billableEntity, billingAccount, lastTransactionDate, minRatingDate,
-                minAmountTransactions);
+            CreateMinAmountsResult createMinAmountsResultServices = createMinRTForServices(billableEntity, billingAccount, lastTransactionDate, minRatingDate);
+            Map<Long, Map<String, Amounts>> createdAmountServices = createMinAmountsResultServices.getCreatedAmountServices();
+            minAmountTransactions.addAll(createMinAmountsResultServices.getMinAmountTransactions());
 
-            Map<String, Amounts> createdAmountSubscription = createMinRTForSubscriptions(billableEntity, billingAccount, lastTransactionDate, minRatingDate, minAmountTransactions,
-                createdAmountServices);
+            CreateMinAmountsResult createMinAmountsResultSubscription = createMinRTForSubscriptions(billableEntity, billingAccount, lastTransactionDate, minRatingDate, createdAmountServices);
+            Map<String, Amounts> createdAmountSubscription = createMinAmountsResultSubscription.getCreatedAmountSubscription();
+            minAmountTransactions.addAll(createMinAmountsResultSubscription.getMinAmountTransactions());
+
 
             if (calculateAndUpdateTotalAmounts || isAppliesMinRTForBA(billingAccount, null)) {
                 // Get total invoiceable amount for billing account and add created amounts during min RT creation for service and subscription
@@ -985,19 +990,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param billingAccount Billing account to associate new minimum amount Rated transactions with
      * @param lastTransactionDate Last transaction date
      * @param minRatingDate Date to assign to newly created minimum amount Rated transactions
-     * @param minAmountTransactions Newly created minimum amount Rated transactions. ARE UPDATED by this method. Rated transactions created in this method are appended.
-     * @return A map of amounts created with subscription id as a main key and a secondary map of "&lt;seller.id&gt;_&lt;invoiceSubCategory.id&gt; as a key a and amounts as values"
-     *         as a value
+     * @return CreateMinAmountsResult Contains createMinRTForServices result
      * @throws BusinessException General business exception
      */
     @SuppressWarnings("unchecked")
-    private Map<Long, Map<String, Amounts>> createMinRTForServices(IBillableEntity billableEntity, BillingAccount billingAccount, Date lastTransactionDate, Date minRatingDate,
-            List<RatedTransaction> minAmountTransactions) throws BusinessException {
+    private CreateMinAmountsResult createMinRTForServices(IBillableEntity billableEntity, BillingAccount billingAccount, Date lastTransactionDate, Date minRatingDate) throws BusinessException {
 
         EntityManager em = getEntityManager();
 
+        CreateMinAmountsResult createMinAmountsResult = new CreateMinAmountsResult();
+        
         // Service id as a key and array of <min amount>, <min amount label>, <total amounts>, map of <Invoice subCategory id, amounts], serviceInstance>
         Map<Long, Object[]> serviceInstanceToMinAmount = new HashMap<>();
+        
+        Subscription billingSubscription = null;
+        if(billableEntity instanceof Subscription) {
+            billingSubscription = (Subscription) billableEntity;
+        }
 
         
         // Only interested in services with minAmount condition
@@ -1048,7 +1057,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     amountMap.put(invoiceSubCategory.getId(), serviceAmounts);
                     serviceInstanceToMinAmount.put(serviceWithMinAmount.getId(), new Object[] { minAmount, minAmountLabel, serviceAmounts, amountMap, serviceWithMinAmount });
                 } else {
-                    throw new BusinessException("minAmountInvoiceSubCategory not defined for service id="+ serviceWithMinAmount.getId());
+                    throw new BusinessException("minAmountInvoiceSubCategory not defined for service code="+ serviceWithMinAmount.getCode());
                 }
             } else {
                 // Service amount exceed the minimum amount per service
@@ -1116,11 +1125,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     appProvider.getRoundingMode().getRoundingMode());
 
                 RatedTransaction ratedTransaction = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1],
-                    amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, null, null,
+                    amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, billingSubscription, null, null, null, null, null,
                     RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode() + "_" + serviceInstance.getCode(), minAmountLabel, null, null, seller, tax, tax.getPercent(),
                     serviceInstance);
-
-                minAmountTransactions.add(ratedTransaction);
+                
+                createMinAmountsResult.addMinAmountRT(ratedTransaction);
 
                 // Remember newly "created" transaction amounts, as they are not persisted yet to DB
                 minRTAmountSubscriptionMap.put(mapKey, new Amounts(amounts[0], amounts[1], amounts[2]));
@@ -1129,7 +1138,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
         }
         
-        return minRTAmountMap;
+        createMinAmountsResult.setCreatedAmountServices(minRTAmountMap);
+        return createMinAmountsResult;
     }
 
     /**
@@ -1140,20 +1150,26 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param billingAccount Billing account to associate new minimum amount Rated transactions with
      * @param lastTransactionDate Last transaction date
      * @param minRatingDate Date to assign to newly created minimum amount Rated transactions
-     * @param minAmountTransactions Newly created minimum amount Rated transactions. ARE UPDATED by this method. Rated trancastions created in this method are appended.
      * @param extraAmountsPerSubscription Additional Rated transaction amounts created to reach minimum invoicing amount per service. A map of amounts created with subscription id
      *        as a main key and a secondary map of "&lt;seller.id&gt;_&lt;invoiceSubCategory.id&gt; as a key a and amounts as values" as a value
-     * @return Additional Rated transaction amounts created to reach minimum invoicing amount per subscription. A map of &lt;seller.id&gt;_&lt;invoiceSubCategory.id&gt; as a key a
-     *         and amounts as values
+     * @return CreateMinAmountsResult Contains createMinRTForSubscriptions result
      * @throws BusinessException General Business exception
      */
     @SuppressWarnings("unchecked")
-    private Map<String, Amounts> createMinRTForSubscriptions(IBillableEntity billableEntity, BillingAccount billingAccount, Date lastTransactionDate, Date minRatingDate,
-            List<RatedTransaction> minAmountTransactions, Map<Long, Map<String, Amounts>> extraAmountsPerSubscription) throws BusinessException {
+    private CreateMinAmountsResult createMinRTForSubscriptions(IBillableEntity billableEntity, BillingAccount billingAccount, Date lastTransactionDate, Date minRatingDate,
+             Map<Long, Map<String, Amounts>> extraAmountsPerSubscription) throws BusinessException {
+        
+        CreateMinAmountsResult createMinAmountsResult = new CreateMinAmountsResult();
+
         EntityManager em = getEntityManager();
 
         // Subscription id as a key and array of <min amount>, <min amount label>, <total amounts>, map of <Invoice subCategory id, amounts], subscription>
         Map<Long, Object[]> subscriptionToMinAmount = new HashMap<>();
+        
+        Subscription billingSubscription = null;
+        if(billableEntity instanceof Subscription) {
+            billingSubscription = (Subscription) billableEntity;
+        }
         
         
         // Only interested in subscriptions with minAmount condition
@@ -1220,7 +1236,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     amountMap.put(invoiceSubCategory.getId(), subscriptionAmounts);
                     subscriptionToMinAmount.put(subscriptionWithMinAmount.getId(), new Object[] { minAmount, minAmountLabel, subscriptionAmounts, amountMap, subscriptionWithMinAmount });
                 } else {
-                    throw new BusinessException("minAmountInvoiceSubCategory not defined for subscription id="+subscriptionWithMinAmount.getId());
+                    throw new BusinessException("minAmountInvoiceSubCategory not defined for subscription code="+subscriptionWithMinAmount.getCode());
                 }
             } else {
                 // Service amount exceed the minimum amount per service
@@ -1281,11 +1297,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     appProvider.getRoundingMode().getRoundingMode());
 
                 RatedTransaction ratedTransaction = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1],
-                    amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, subscription, null, null, null, null,
+                    amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, billingSubscription, null, null, null, null,
                     null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode() + "_" + subscription.getCode(), minAmountLabel, null, null, seller, tax, tax.getPercent(),
                     null);
-
-                minAmountTransactions.add(ratedTransaction);
+                
+                createMinAmountsResult.addMinAmountRT(ratedTransaction);
 
                 // Remember newly "created" transaction amounts, as they are not persisted yet to DB
                 minRTAmountMap.put(mapKey, new Amounts(amounts[0], amounts[1], amounts[2]));
@@ -1294,7 +1310,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
         }
 
-        return minRTAmountMap;
+        createMinAmountsResult.setCreatedAmountSubscription(minRTAmountMap);
+        return createMinAmountsResult;
     }
 
     /**
