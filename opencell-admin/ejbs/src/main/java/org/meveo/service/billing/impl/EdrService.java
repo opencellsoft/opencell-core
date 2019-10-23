@@ -85,7 +85,7 @@ public class EdrService extends PersistenceService<EDR> {
         if (deduplicateEdrs) {
             useInMemoryDeduplication = EdrService.DeduplicateEDRTypeEnum.MEMORY.name().equalsIgnoreCase(deduplicateType);
             inMemoryDeduplicationPrepopulated = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "true").equals("true");
-        }
+    }
     }
 
     /**
@@ -114,7 +114,7 @@ public class EdrService extends PersistenceService<EDR> {
                 .setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve).getResultList();
         }
 
-    }
+        }
 
     /**
      * Check if EDR exits matching an origin batch and record numbers
@@ -190,7 +190,7 @@ public class EdrService extends PersistenceService<EDR> {
      */
     public void reopenRejectedEDRS(List<Long> ids) {
         getEntityManager().createNamedQuery("EDR.reopenByIds").setParameter("ids", ids).executeUpdate();
-    }
+        }
 
     /**
      * Get EDRs that are unprocessed. Sorted in descending order by event date, so older items will be added first and thus expire first from the cache, limited to a number of
@@ -211,31 +211,31 @@ public class EdrService extends PersistenceService<EDR> {
      * Gets All not open EDR between two Date.
      *
      * @param firstTransactionDate first Transaction Date
-     * @param lastTransactionDate last Transaction Date
+     * @param lastTransactionDate  last Transaction Date
      * @return All open EDR between two Date
      */
     public List<EDR> getNotOpenedEdrsBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
         return getEntityManager().createNamedQuery("EDR.getNotOpenedEdrBetweenTwoDate", EDR.class).setParameter("firstTransactionDate", firstTransactionDate)
-            .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+                .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
     }
 
     /**
      * Remove All open EDR between two Date.
      *
      * @param firstTransactionDate first Transaction Date
-     * @param lastTransactionDate last Transaction Date
+     * @param lastTransactionDate  last Transaction Date
      * @return the number of deleted entities
      */
     public long purge(Date firstTransactionDate, Date lastTransactionDate) {
 
         getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate)
-            .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
 
         getEntityManager().createNamedQuery("EDR.updateRatedTransactionForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate)
             .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
 
         return getEntityManager().createNamedQuery("EDR.deleteNotOpenEdrBetweenTwoDate").setParameter("firstTransactionDate", firstTransactionDate)
-            .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
 
     }
 

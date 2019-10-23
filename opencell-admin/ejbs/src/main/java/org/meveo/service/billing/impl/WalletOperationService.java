@@ -928,7 +928,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         }
 
         return new ArrayList<>();
-    }
+        }
 
     /**
      * Get a list of wallet operations to be invoiced/converted to rated transactions up to a given date. WalletOperation.invoiceDate< date
@@ -1163,7 +1163,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
             // set selected wo to rerate and ratedTx.id=null
             walletsOpToRerate = getEntityManager().createNamedQuery("WalletOperation.setStatusToRerate").setParameter("now", new Date())
-                .setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
+					.setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
 
             // cancelled selected rts
             getEntityManager().createNamedQuery("RatedTransaction.cancelByWOIds").setParameter("now", new Date()).setParameter("notBilledWalletIdList", walletIdList)
@@ -1356,7 +1356,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      */
     public long purge(Date firstTransactionDate, Date lastTransactionDate) {
 
-        return getEntityManager().createNamedQuery("WalletOperation.deleteNotOpenWObetweenTwoDates").setParameter("firstTransactionDate", firstTransactionDate)
+        return getEntityManager().createNamedQuery("WalletOperation.deleteNotOpenWObetweenTwoDates").setParameter("firstTransactionDate",firstTransactionDate)
             .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
     }
 
@@ -1401,15 +1401,15 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     offer = offerTemplateService.findByCode(dto.getOfferCode());
                 }
 
-                if (dto.getSeller() != null) {
+            if (dto.getSeller() != null) {
                     seller = sellerService.findByCode(dto.getSeller());
-                }
-                if (dto.getWalletId() != null) {
+            }
+            if (dto.getWalletId() != null) {
                     wallet = walletService.findById(dto.getWalletId());
-                }
-                if (dto.getCurrency() != null) {
+            }
+            if (dto.getCurrency() != null) {
                     currency = currencyService.findByCode(dto.getCurrency());
-                }
+            }
                 wo = new WalletOperation(dto.getCode(), "description", wallet, dto.getOperationDate(), null, dto.getType(), currency, tax, dto.getUnitAmountWithoutTax(),
                     dto.getUnitAmountWithTax(), dto.getUnitAmountTax(), dto.getQuantity(), dto.getAmountWithoutTax(), dto.getAmountWithTax(), dto.getAmountTax(),
                     dto.getParameter1(), dto.getParameter2(), dto.getParameter3(), dto.getParameterExtra(), dto.getStartDate(), dto.getEndDate(), dto.getSubscriptionDate(), offer,
@@ -1417,8 +1417,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             }
 
             create(wo);
-        }
-    }
+            }
+            }
 
     /**
      * Mark wallet operations, that were invoiced by a given billing run, to be rerated

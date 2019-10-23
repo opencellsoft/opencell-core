@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 public class RatedTransactionsJobAggregationSetting implements Serializable {
 
-	/**
+    /**
      * 
      */
     private static final long serialVersionUID = 1L;

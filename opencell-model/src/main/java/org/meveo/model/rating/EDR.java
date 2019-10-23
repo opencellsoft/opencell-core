@@ -580,7 +580,7 @@ public class EDR extends BaseEntity {
 
         if (quantityLeftToRate == null) {
             quantityLeftToRate = quantity == null ? BigDecimal.ZERO : quantity;
-        }
+}
         return quantityLeftToRate;
     }
 

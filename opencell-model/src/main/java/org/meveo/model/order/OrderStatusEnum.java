@@ -34,7 +34,6 @@ public enum OrderStatusEnum {
      * business rules for ordering.
      */
     REJECTED("Rejected"),
-
     /**
      * The Pending state is used when an order is currently in a waiting stage for an action/activity to be completed before the order can progress further, pending order amend or
      * cancel assessment. In situations where Access Seeker action is required, an “information required” notification will be issued on transition into this state.
