@@ -430,29 +430,25 @@ public class UserAccountApi extends AccountEntityApi {
 
         List<WalletOperation> walletOperations = null;
 
+        ProductInstance productInstance = new ProductInstance(userAccount, null, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
+            postData.getDescription(), null, seller);
+
+        // Validate and populate customFields
         try {
-            ProductInstance productInstance = new ProductInstance(userAccount, null, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
-                postData.getDescription(), null, seller);
+            populateCustomFields(postData.getCustomFields(), productInstance, true, false);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
-            // Validate and populate customFields
-            try {
-                populateCustomFields(postData.getCustomFields(), productInstance, true, false);
-            } catch (MissingParameterException | InvalidParameterException e) {
-                log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-                throw e;
-            } catch (Exception e) {
-                log.error("Failed to associate custom field instance to an entity", e);
-                throw e;
-            }
+        productInstanceService.instantiateProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), false);
 
-            productInstanceService.instantiateProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), false);
-
-            walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), true, false);
-            for (WalletOperation walletOperation : walletOperations) {
-                result.add(new WalletOperationDto(walletOperation));
-            }
-        } catch (BusinessException e) {
-            throw new MeveoApiException(e.getMessage());
+        walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), true, false);
+        for (WalletOperation walletOperation : walletOperations) {
+            result.add(new WalletOperationDto(walletOperation));
         }
 
         return result;
