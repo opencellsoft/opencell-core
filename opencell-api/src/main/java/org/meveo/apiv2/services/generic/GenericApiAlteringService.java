@@ -23,7 +23,7 @@ import static org.meveo.apiv2.ValidationUtils.checkEntityName;
 
 public class GenericApiAlteringService extends GenericApiService {
     private static final Logger logger = LoggerFactory.getLogger(GenericApiAlteringService.class);
-    private List<String> forbiddenFieldsToUpdate = Arrays.asList("id", "code", "uuid", "auditable",  "status");
+    private List<String> forbiddenFieldsToUpdate = Arrays.asList("id", "uuid", "auditable",  "status");
 
     
     public Optional<String> update(String entityName, Long id, String jsonDto) {
@@ -31,12 +31,12 @@ public class GenericApiAlteringService extends GenericApiService {
         Class entityClass = entitiesByName.get(entityName.toLowerCase());
         checkEntityClass(entityClass);
         BaseEntity entityById = find(entityClass, id);
-        refreshEntityWithDotFields(jsonDto, entityById, new JsonGenericMapper().parseFromJson(jsonDto, entityClass));
+        refreshEntityWithDotFields(jsonDto, entityById, new JsonGenericMapper(null).parseFromJson(jsonDto, entityClass));
         PersistenceService service = getPersistenceService(entityClass);
         service.enable(entityById);
         service.update(entityById);
 
-        return Optional.ofNullable(new JsonGenericMapper().toJson(null, entityClass, entityById));
+        return Optional.ofNullable(new JsonGenericMapper(null).toJson(null, entityClass, entityById));
     }
 
 
@@ -44,7 +44,7 @@ public class GenericApiAlteringService extends GenericApiService {
         checkEntityName(entityName).checkDto(jsonDto);
         Class entityClass = entitiesByName.get(entityName.toLowerCase());
         checkEntityClass(entityClass);
-        BaseEntity entityToCreate = new JsonGenericMapper().parseFromJson(jsonDto, entityClass);
+        BaseEntity entityToCreate = new JsonGenericMapper(null).parseFromJson(jsonDto, entityClass);
         refreshEntityWithDotFields(jsonDto, entityToCreate, entityToCreate);
         PersistenceService service = getPersistenceService(entityClass);
         service.create(entityToCreate);
@@ -58,7 +58,7 @@ public class GenericApiAlteringService extends GenericApiService {
         BaseEntity entity = find(entityClass, id);
         PersistenceService service = getPersistenceService(entityClass);
         service.remove(entity);
-        return Optional.ofNullable(new JsonGenericMapper().toJson(null, entityClass, entity));
+        return Optional.ofNullable(new JsonGenericMapper(null).toJson(null, entityClass, entity));
     }
 
     private void refreshEntityWithDotFields(String dto, BaseEntity fetchedEntity, BaseEntity parsedEntity) {
@@ -73,7 +73,7 @@ public class GenericApiAlteringService extends GenericApiService {
             Object newValue = updatedField.get(parsedEntity);
             if(updatedField.getType().isAssignableFrom(List.class)){
                 newValue = ((List<? extends BaseEntity>) newValue)
-                        .parallelStream()
+                        .stream()
                         .map(o -> o.getId() == null ? o : entityManagerWrapper.getEntityManager().getReference(o.getClass(), o.getId()))
                         .collect(Collectors.toCollection(ArrayList::new));
             } else if(updatedField.getType().isAnnotationPresent(Entity.class) && ((BaseEntity) newValue).getId() != null){
