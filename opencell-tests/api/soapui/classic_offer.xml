@@ -15427,7 +15427,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 	          log.info("AUTH for ["+testSuiteItem.getLabel()+"/"+testCaseItem.getName()+"/"+testStep.getName()+"]");
 
 		    	testStep.getTestRequest().setPreemptive(true);
-		    	if ("setProperty1".equals(testStep.getTestRequest().getName())) {
+		    	if ("Setup data".equals(testCaseItem.getName())) {
 		    		testStep.getTestRequest().setRequestHeaders(headersForSuper);
 		    	} else if ("Create Provider".equals(testCaseItem.getName())) {
 		    		testStep.getTestRequest().setRequestHeaders(headersForSuper);
