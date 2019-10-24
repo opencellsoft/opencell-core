@@ -15,16 +15,6 @@
         </sql>
 	</changeSet>
 
-	<changeSet id="#4127_10042019" author="AbdelmounaimAkadid">
-		<addColumn tableName="dwh_report_extract">
-            <column name="output_dir" type="varchar(255)" />
-        </addColumn>
-        <sql>update ${db.schema.adapted}dwh_report_extract set output_dir = concat('reports/', category) where category is not null or category != ''
-        </sql>
-        <sql>update ${db.schema.adapted}dwh_report_extract set output_dir = 'reports' where category is null or category = ''
-        </sql>
-	</changeSet>
-
     <changeSet id="#4089_20190404" author="AbdellatifBARI">
         <sql>update ${db.schema.adapted}crm_custom_field_tmpl set applies_to = case
 
@@ -1455,6 +1445,7 @@
             </column>
     	</addColumn>
     </changeSet>
+   
 
     <changeSet id="#4512_20190819" author="AbdellatifBARI">
         <dropColumn tableName="flat_file">
@@ -1474,8 +1465,8 @@
         <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="billing_invoice"
                                  constraintName="fk_invoice_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="ar_payment_token" />
+    </changeSet>                          
 
-    </changeSet>
     <changeSet id="#4538_20190829" author="AbdellatifBARI">
         <addColumn tableName="flat_file">
             <column name="current_directory" type="varchar(255)" />
@@ -1503,8 +1494,45 @@
 			<column name="uuid" type="varchar(60)" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="#4064_11092019" author="AbdelmounaimAkadid">
+		<addColumn tableName="billing_invoice">
+			<column name="status" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 
-
+   	<changeSet id="#4606_260919" author="AbdelmounaimAkadid"> 	
+     	<addColumn tableName="billing_subscription">
+            <column name="minimum_invoice_sub_category_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="billing_subscription" constraintName="fk_billing_subscription_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+            
+        <addColumn tableName="cat_offer_template">
+            <column name="minimum_invoice_sub_category_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="cat_offer_template" constraintName="fk_billing_cat_offer_template_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+      
+        <addColumn tableName="billing_billing_account">
+            <column name="minimum_invoice_sub_category_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="billing_billing_account" constraintName="fk_billing_billing_account_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+          
+        <addColumn tableName="billing_service_instance">
+            <column name="minimum_invoice_sub_category_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="billing_service_instance" constraintName="fk_billing_service_instance_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+            
+        <addColumn tableName="cat_service_template">
+            <column name="minimum_invoice_sub_category_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="cat_service_template" constraintName="fk_billing_cat_service_template_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+    </changeSet>
+    
     <changeSet id="#4555_20190903" author="AndriusKarpavicius">
         <addColumn tableName="cat_charge_template">        
             <column name="charge_type" type="varchar(5)" />
@@ -2068,5 +2096,5 @@
         <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}switch_rating_edr_to_partition</sql>       
         
     </changeSet>
-
+    
 </databaseChangeLog>

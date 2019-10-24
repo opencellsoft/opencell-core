@@ -131,7 +131,7 @@ public class MediationApi extends BaseApi {
             List<WalletOperation> walletOperations = new ArrayList<>();
             for (EDR edr : edrs) {
                 log.debug("edr={}", edr);
-                edr.setSubscription(subscriptionService.findById(edr.getSubscription().getId()));
+                edr.setSubscription(edr.getSubscription());
                 if (!chargeCDRDto.isVirtual()) {
                     edrService.create(edr);
                 }
