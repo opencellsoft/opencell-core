@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BusinessEntityDto;
@@ -320,11 +321,14 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         for (EntityCustomAction action : actionsToRemove) {
             entityActionScriptService.remove(action.getId());
         }
-        
- 		String oldConstraintColumns = cetFields.values().stream().filter(x-> x.isUniqueConstraint()).map(x-> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
- 		String newConstraintColumns = fields.stream().filter(x->x.getUniqueConstraint()!= null && x.getUniqueConstraint()).map(x-> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
- 		customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns);
-
+        if(cet !=null) {
+			String oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint())
+					.map(x -> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
+			String newConstraintColumns = CollectionUtils.isEmpty(fields) ? ""
+					: fields.stream().filter(x -> x.getUniqueConstraint() != null && x.getUniqueConstraint())
+							.map(x -> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
+			customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns);
+        }
     }
 
     @SuppressWarnings("rawtypes")
