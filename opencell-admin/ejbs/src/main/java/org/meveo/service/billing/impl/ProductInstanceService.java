@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -117,9 +118,9 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
 
 	public List<WalletOperation> saveAndApplyProductInstance(ProductInstance productInstance, String criteria1,
 			String criteria2, String criteria3, boolean persist) throws BusinessException {
-		create(productInstance);
-		return applyProductInstance(productInstance, criteria1, criteria2, criteria3, persist);
-	}
+        create(productInstance);
+        return applyProductInstance(productInstance, criteria1, criteria2, criteria3, persist);
+    }
 
     public List<WalletOperation> applyProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, boolean persist)
             throws BusinessException {
@@ -135,7 +136,17 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
 
         List<WalletOperation> walletOperations = new ArrayList<>();
         for (ProductChargeInstance productChargeInstance : productInstance.getProductChargeInstances()) {
-            walletOperations.addAll(productChargeInstanceService.applyProductChargeInstance(productChargeInstance, !persist));
+            try {
+                walletOperations.addAll(productChargeInstanceService.applyProductChargeInstance(productChargeInstance, !persist));
+
+            } catch (RatingException e) {
+                log.trace("Failed to apply a product charge {}: {}", productChargeInstance, e.getRejectionReason());
+                throw e; // e.getBusinessException();
+
+            } catch (BusinessException e) {
+                log.error("Failed to apply a product charge {}: {}", productChargeInstance, e.getMessage(), e);
+                throw e;
+            }
         }
 
         return walletOperations;
@@ -152,10 +163,10 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
             productChargeInstance.setCriteria1(criteria1);
             productChargeInstance.setCriteria2(criteria2);
             productChargeInstance.setCriteria3(criteria3);
-            if(productChargeInstance.getSeller() == null && productChargeInstance.getSubscription() != null) {
-            	productChargeInstance.setSeller(productChargeInstance.getSubscription().getSeller());
+            if (productChargeInstance.getSeller() == null && productChargeInstance.getSubscription() != null) {
+                productChargeInstance.setSeller(productChargeInstance.getSubscription().getSeller());
             }
-            
+
             productChargeInstance.setOrderNumber(productInstance.getOrderNumber());
             if (!isVirtual) {
                 productChargeInstanceService.create(productChargeInstance);

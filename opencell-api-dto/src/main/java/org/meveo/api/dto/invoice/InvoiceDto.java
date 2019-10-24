@@ -21,6 +21,7 @@ import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceModeEnum;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.payments.PaymentMethodEnum;
 
@@ -61,6 +62,9 @@ public class InvoiceDto extends AuditableEntityDto {
      * Order number
      */
     protected String orderNumber;
+    
+    /** The invoice status. */
+    private InvoiceStatusEnum status;
 
     /** The due date. */
     @XmlElement(required = true)
@@ -174,71 +178,6 @@ public class InvoiceDto extends AuditableEntityDto {
      */
     protected boolean sentByEmail;
 
-
-    /**
-     * Instantiates a new invoice dto.
-     */
-    public InvoiceDto() {
-    }
-
-    /**
-     * Instantiates a new invoice dto. Note: does not fill in XML and PDF information
-     * 
-     * @param invoice Invoice
-     * @param includeTransactions Should Rated transactions be detailed in subcategory aggregate level
-     */
-    public InvoiceDto(Invoice invoice, boolean includeTransactions) {
-
-        this.setAuditable(invoice);
-        this.setInvoiceId(invoice.getId());
-        this.setBillingAccountCode(invoice.getBillingAccount().getCode());
-        if (invoice.getSubscription() != null) {
-            this.subscriptionCode = invoice.getSubscription().getCode();
-        }
-        if (invoice.getOrder() != null) {
-            this.orderNumber = invoice.getOrder().getOrderNumber();
-        }
-        if (invoice.getSeller() != null) {
-            this.sellerCode = invoice.getSeller().getCode();
-        }
-        this.setInvoiceDate(invoice.getInvoiceDate());
-        this.setDueDate(invoice.getDueDate());
-
-        this.setAmountWithoutTax(invoice.getAmountWithoutTax());
-        this.setAmountTax(invoice.getAmountTax());
-        this.setAmountWithTax(invoice.getAmountWithTax());
-        this.setInvoiceNumber(invoice.getInvoiceNumber());
-        this.setPaymentMethod(invoice.getPaymentMethodType());
-        this.setInvoiceType(invoice.getInvoiceType().getCode());
-        this.setDueBalance(invoice.getDueBalance());
-        this.setXmlFilename(invoice.getXmlFilename());
-        this.setPdfFilename(invoice.getPdfFilename());
-        this.discount = invoice.getDiscount();
-        this.setCheckAlreadySent(invoice.isAlreadySent());
-        this.setSentByEmail(invoice.isDontSend());
-
-        for (InvoiceAgregate invoiceAggregate : invoice.getInvoiceAgregates()) {
-            if (invoiceAggregate instanceof CategoryInvoiceAgregate) {
-                categoryInvoiceAgregates.add(new CategoryInvoiceAgregateDto((CategoryInvoiceAgregate) invoiceAggregate, includeTransactions));
-            } else if (invoiceAggregate instanceof TaxInvoiceAgregate) {
-                taxAggregates.add(new TaxInvoiceAggregateDto((TaxInvoiceAgregate) invoiceAggregate));
-            }
-        }
-
-        categoryInvoiceAgregates.sort(Comparator.comparing(CategoryInvoiceAgregateDto::getCategoryInvoiceCode));
-        taxAggregates.sort(Comparator.comparing(TaxInvoiceAggregateDto::getTaxCode));
-
-        for (Invoice inv : invoice.getLinkedInvoices()) {
-            getListInvoiceIdToLink().add(inv.getId());
-        }
-
-        if (invoice.getRecordedInvoice() != null) {
-            RecordedInvoiceDto recordedInvoiceDto = new RecordedInvoiceDto(invoice.getRecordedInvoice());
-            setRecordedInvoiceDto(recordedInvoiceDto);
-        }
-
-        setNetToPay(invoice.getNetToPay());
-    }
 
     /**
      * Gets the list invoice id to link.
@@ -750,6 +689,20 @@ public class InvoiceDto extends AuditableEntityDto {
      */
     public void setSellerCode(String sellerCode) {
         this.sellerCode = sellerCode;
+    }
+    
+    /**
+     * @return the status
+     */
+    public InvoiceStatusEnum getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(InvoiceStatusEnum status) {
+        this.status = status;
     }
 
     public Boolean isDraft() {

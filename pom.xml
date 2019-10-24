@@ -4,7 +4,7 @@
     <groupId>com.opencellsoft</groupId>
     <artifactId>opencell</artifactId>
     <packaging>pom</packaging>
-    <version>8.0.0-SNAPSHOT</version>
+    <version>8.1.2-SNAPSHOT</version>
     <name>Opencell Parent Project</name>
     
     <modules>
@@ -768,6 +768,8 @@
                 <db.schema>public</db.schema>
                 <db.username>meveo</db.username>
                 <db.password>meveo</db.password>
+                <db.alternative.url>jdbc:postgresql://localhost/postgres</db.alternative.url>
+                <db.name>meveo</db.name>
             </properties>
             <dependencies>
                 <!-- Dependency for liquibase plugin -->

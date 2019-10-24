@@ -57,6 +57,12 @@ public interface SubscriptionRs extends IBaseRs {
     @Path("/")
     ActionStatus update(SubscriptionDto postData);
 
+    /**
+     * Instantiate a Service subscription 
+     * 
+     * @param postData Subscription's data
+     * @return Request processing status
+     */
     @POST
     @Path("/instantiateServices")
     ActionStatus instantiateServices(InstantiateServicesRequestDto postData);
@@ -114,6 +120,7 @@ public interface SubscriptionRs extends IBaseRs {
      * @param limit Pagination - number of records to retrieve
      * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      * @param sortOrder Sorting - sort order.
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
      * @return List of subscriptions
      */
     @GET
@@ -144,6 +151,7 @@ public interface SubscriptionRs extends IBaseRs {
      * @return list of all subscriptions.
      */
     @GET
+    @Deprecated
     @Path("/listAll")
     SubscriptionsListResponseDto listAll(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
             @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
@@ -153,7 +161,8 @@ public interface SubscriptionRs extends IBaseRs {
      * 
      * @param subscriptionCode The subscription's code
      * @param mergedCF true if merge inherited custom fields.
-     * @return A subscription
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @return Request processing status
      */
     @GET
     @Path("/")
@@ -162,7 +171,13 @@ public interface SubscriptionRs extends IBaseRs {
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
 
-
+    /**
+     * Search for a subscription with a given code.
+     * 
+     * @param subscriptionCode The subscription's code
+     * @param oneshotChargeCode one shot Charge Code
+     * @return A subscription
+     */
     @DELETE
     @Path("/oneShotCharge/{subscriptionCode}/{oneshotChargeCode}")
     ActionStatus terminateOneShotCharge(@PathParam("subscriptionCode") String subscriptionCode, @PathParam("oneshotChargeCode") String oneshotChargeCode);
@@ -298,10 +313,22 @@ public interface SubscriptionRs extends IBaseRs {
     GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("invoiceNumber") String invoiceNumber,
             @QueryParam("invoiceTypeCode") String invoiceTypeCode, @QueryParam("orderCode") String orderCode);
     
+    /**
+     * Give a rate data for subscription
+     * 
+     * @param postData post data
+     * @return list of service instances
+     */
     @POST
     @Path("/rate")
     RateSubscriptionResponseDto rate(RateSubscriptionRequestDto postData);
     
+    /**
+     * Activate a given Subscription.
+     * 
+     * @param subscriptionCode subscription code
+     * @return Request processing status
+     */
     @POST
     @Path("/activate")
     ActionStatus activate(String subscriptionCode);

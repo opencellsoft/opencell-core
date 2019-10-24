@@ -40,10 +40,10 @@ public interface MediationRs extends IBaseRs {
      * Same as registerCdrList, but at the same process rate the EDR created
      *
      * @param cdr String of CDR
-     * @param isVirtual isVirtual
-     * @param rateTriggeredEdr rateTriggeredEdr
-     * @param returnWalletOperations returnWalletOperations
-     * @param maxDepth maxDepth
+     * @param isVirtual Boolean for the virtual option
+     * @param rateTriggeredEdr Boolean for rate Triggered Edr
+     * @param returnWalletOperations return Wallet Operations option
+     * @param maxDepth Interger of the max Depth
      * @return Request processing status
      */
     @POST

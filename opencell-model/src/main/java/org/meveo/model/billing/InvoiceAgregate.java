@@ -33,6 +33,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.AuditableEntity;
 
 /**
