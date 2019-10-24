@@ -51,6 +51,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>sql-maven-plugin</artifactId>
+                <version>1.5</version>
                 <dependencies>
                     <!-- specify the dependent jdbc driver here -->
                     <dependency>
@@ -66,33 +67,21 @@
                     <url>${db.url}</url>
                     <username>${db.username}</username>
                     <password>${db.password}</password>
-                    <settingsKey>sensibleKey</settingsKey>
                 </configuration>
 
                 <executions>
                     <execution>
-                        <id>drop-db</id>
+                        <id>reset-db</id>
                         <goals>
                             <goal>execute</goal>
                         </goals>
                         <configuration>
-                            <url>${db.alternative.url}</url>
                             <autocommit>true</autocommit>
-                            <sqlCommand>DROP DATABASE IF EXISTS ${db.name}</sqlCommand>
-                            <!-- ignore error when database is not avaiable -->
-                            <onError>continue</onError>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>create-db</id>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                        <configuration>
-                            <url>${db.alternative.url}</url>
-                            <autocommit>true</autocommit>
-                            <sqlCommand>CREATE DATABASE ${db.name}</sqlCommand>
+                            <!-- drop schema instead of database to avoid restarting wildfly -->
+                            <sqlCommand>
+                                drop schema IF EXISTS ${db.schema} cascade;
+                                create schema ${db.schema} AUTHORIZATION ${db.username};
+                            </sqlCommand>
                         </configuration>
                     </execution>
                 </executions>
@@ -236,11 +225,6 @@
             <version>23.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
-        </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
