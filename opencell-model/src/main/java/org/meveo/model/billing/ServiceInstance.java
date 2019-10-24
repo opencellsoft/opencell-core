@@ -18,27 +18,13 @@
  */
 package org.meveo.model.billing;
 
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.model.ICounterEntity;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.IWFEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.WorkflowedEntity;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.audit.AuditChangeTypeEnum;
-import org.meveo.model.audit.AuditTarget;
-import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.order.OrderHistory;
-import org.meveo.model.order.OrderItemActionEnum;
-import org.meveo.model.payments.PaymentScheduleInstance;
-import org.meveo.model.shared.DateUtils;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -63,13 +49,28 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICounterEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditTarget;
+import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.order.OrderHistory;
+import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.payments.PaymentScheduleInstance;
+import org.meveo.model.shared.DateUtils;
 
 /**
  * Service subscribed to.
@@ -90,7 +91,10 @@ import java.util.HashMap;
 @NamedQueries({
         @NamedQuery(name = "ServiceInstance.getExpired", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
         @NamedQuery(name = "ServiceInstance.getToNotifyExpiration", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
-        @NamedQuery(name = "ServiceInstance.getMimimumRTUsed", query = "select s.minimumAmountEl from ServiceInstance s where s.minimumAmountEl is not null") })
+        @NamedQuery(name = "ServiceInstance.getMimimumRTUsed", query = "select s.minimumAmountEl from ServiceInstance s where s.minimumAmountEl is not null"),
+        @NamedQuery(name = "ServiceInstance.getServicesWithMinAmountBySubscription", query = "select s from ServiceInstance s where s.minimumAmountEl is not null AND s.status = org.meveo.model.billing.InstanceStatusEnum.ACTIVE AND s.subscription=:subscription"),
+        @NamedQuery(name = "ServiceInstance.getServicesWithMinAmountByBA", query = "select s from ServiceInstance s where s.minimumAmountEl is not null AND s.status = org.meveo.model.billing.InstanceStatusEnum.ACTIVE AND s.subscription.userAccount.billingAccount=:billingAccount")
+})
 public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICounterEntity {
 
     /** The Constant serialVersionUID. */
@@ -208,6 +212,11 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @Column(name = "minimum_label_el_sp", length = 2000)
     @Size(max = 2000)
     private String minimumLabelElSpark;
+    
+    /** Corresponding to minimum invoice subcategory */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_invoice_sub_category_id")
+    private InvoiceSubCategory minimumInvoiceSubCategory;
 
     /** The order histories. */
     @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -1063,4 +1072,20 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     public void setCounters(Map<String, CounterInstance> counters) {
         this.counters = counters;
     }
+
+    /**
+     * @return the minimumInvoiceSubCategory
+     */
+    public InvoiceSubCategory getMinimumInvoiceSubCategory() {
+        return minimumInvoiceSubCategory;
+    }
+
+    /**
+     * @param minimumInvoiceSubCategory the minimumInvoiceSubCategory to set
+     */
+    public void setMinimumInvoiceSubCategory(InvoiceSubCategory minimumInvoiceSubCategory) {
+        this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
+    }
+    
+    
 }
