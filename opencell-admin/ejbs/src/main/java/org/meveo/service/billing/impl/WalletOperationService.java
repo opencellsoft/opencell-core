@@ -279,7 +279,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         cal.setInitDate(chargeInstance.getSubscriptionDate());
 
         Date chargeDate = cal.truncateDateTime(chargeInstance.getSubscriptionDate());
-        chargeInstance.setChargeDate(chargeDate);
         Date nextChargeDate = cal.nextCalendarDate(chargeDate);
 
         return nextChargeDate;
