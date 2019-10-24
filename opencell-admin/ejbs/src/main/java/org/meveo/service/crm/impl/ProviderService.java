@@ -164,6 +164,7 @@ public class ProviderService extends PersistenceService<Provider> {
      * @param provider New provider data to refresh with
      */
     private void refreshAppProvider(Provider provider) {
+
         try {
             BeanUtils.copyProperties(appProvider, provider);
 

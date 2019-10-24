@@ -18,22 +18,15 @@
  */
 package org.meveo.model;
 
-import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.RatedTransaction;
 
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public interface ICounterEntity {
-
     /**
      * Gets counters
      *
      * @return a map of counters
      */
-     Map<String, CounterInstance> getCounters();
-
+    Map<String, CounterInstance> getCounters();
 }

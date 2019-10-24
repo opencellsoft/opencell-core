@@ -50,16 +50,18 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
  * Access point linked to Subscription
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "ACC", inheritCFValuesFrom = "subscription")
+@CustomFieldEntity(cftCodePrefix = "Access", inheritCFValuesFrom = "subscription")
 @ExportIdentifier({ "accessUserId", "subscription.code" })
 @Table(name = "medina_access", uniqueConstraints = { @UniqueConstraint(columnNames = { "acces_user_id", "subscription_id" }) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "medina_access_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "Access.getAccessesByUserId", query = "SELECT a from Access a left join fetch a.subscription where a.disabled=false and a.accessUserId=:accessUserId", hints = {
+        @NamedQuery(name = "Access.getAccessesByUserId", query = "SELECT a from Access a where a.disabled=false and a.accessUserId=:accessUserId", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class Access extends EnableEntity implements ICustomFieldEntity {
 

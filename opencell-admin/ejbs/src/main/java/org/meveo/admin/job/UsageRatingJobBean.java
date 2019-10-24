@@ -12,13 +12,10 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.async.UsageRatingAsync;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.event.qualifier.Rejected;
-import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
@@ -28,6 +25,11 @@ import org.slf4j.Logger;
 
 @Stateless
 public class UsageRatingJobBean extends BaseJobBean {
+
+    /**
+     * Number of EDRS to process in a single job run
+     */
+    private static int PROCESS_NR_IN_JOB_RUN = 2000000;
 
     @Inject
     private Logger log;
@@ -46,41 +48,37 @@ public class UsageRatingJobBean extends BaseJobBean {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    @SuppressWarnings("unchecked")
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        log.debug("Running with parameter={}", jobInstance.getParametres());
+
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
 
         try {
-            Long nbRuns = new Long(1);
-            Long waitingMillis = new Long(0);
             Date rateUntilDate = null;
             String ratingGroup = null;
             try {
-                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
-                if (nbRuns == -1) {
-                    nbRuns = (long) Runtime.getRuntime().availableProcessors();
-                }
                 rateUntilDate = (Date) this.getParamOrCFValue(jobInstance, "rateUntilDate");
                 ratingGroup = (String) this.getParamOrCFValue(jobInstance, "ratingGroup");
             } catch (Exception e) {
-                nbRuns = 1L;
-                waitingMillis = 0L;
                 log.warn("Cant get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
             }
-            List<Long> ids = edrService.getEDRidsToRate(rateUntilDate, ratingGroup);
-            log.debug("edr to rate={}", ids.size());
-            result.setNbItemsToProcess(ids.size());
+
+            List<Long> edrIds = edrService.getEDRsToRate(rateUntilDate, ratingGroup, PROCESS_NR_IN_JOB_RUN);
+
+            result.setNbItemsToProcess(edrIds.size());
+
             List<Future<String>> futures = new ArrayList<>();
-            SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
-            log.debug("block to run={}", subListCreator.getBlocToRun());
-            log.debug("nbThreads={}", nbRuns);
+            SubListCreator<Long> subListCreator = new SubListCreator(edrIds, nbRuns.intValue());
+            log.info("Will rate {} EDRS", edrIds.size());
 
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                futures.add(usageRatingAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
+                futures.add(usageRatingAsync.launchAndForget(subListCreator.getNextWorkSet(), result, lastCurrentUser));
 
                 if (subListCreator.isHasNext()) {
                     try {
@@ -105,6 +103,11 @@ public class UsageRatingJobBean extends BaseJobBean {
                     log.error("Failed to execute async method", cause);
                 }
             }
+
+            // Check if there are any more EDRS to process and mark job as completed if there are none
+            edrIds = edrService.getEDRsToRate(rateUntilDate, ratingGroup, 1);
+            result.setDone(edrIds.isEmpty());
+
         } catch (Exception e) {
             log.error("Failed to run usage rating job", e);
             result.registerError(e.getMessage());

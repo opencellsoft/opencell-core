@@ -21,11 +21,16 @@ package org.meveo.service.base;
 import javax.ejb.Stateless;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.generic.wf.WorkflowInstance;
 
 @Stateless
-public class BusinessEntityService extends BusinessService<BusinessEntity>{
+public class BusinessEntityService extends BusinessService<BusinessEntity> {
 
     public void setEntityClass(Class<BusinessEntity> clazz) {
         this.entityClass = (Class<BusinessEntity>) clazz;
+    }
+
+    public BusinessEntity findByWorkflowInstance(WorkflowInstance workflowInstance) {
+        return findById(workflowInstance.getEntityInstanceId(), true);
     }
 }

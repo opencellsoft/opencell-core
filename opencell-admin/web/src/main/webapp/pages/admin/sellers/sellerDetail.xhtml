@@ -1,185 +1,458 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:of="http://omnifaces.org/functions" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-    xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-    <ui:define name="metadata">
-        <f:metadata>
-            <f:viewParam name="objectId" value="#{sellerBean.objectId}" />
-        </f:metadata>
-    </ui:define>
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{sellerBean.preRenderView}" />	
+            <f:viewParam name="mainTab" value="#{sellerBean.activeMainTab}" />	
+            <f:viewParam name="tab" value="#{sellerBean.activeTab}" />
+			<f:viewParam name="objectId" value="#{sellerBean.objectId}" />
+		</f:metadata>
+	</ui:define>
 
-    <ui:define name="body">
-    
-    	<hftl:entityPopup id="searchInvoiceSequencePopup" header="#{messages['invoiceTypeSellerSequence.invoiceSequence']}"
-            updateField=":sellerFormId:tabView:invoiceSequenceSelectedId :sellerFormId:tabView:invoiceSequenceSelectedId_text" selection="#{sellerBean.invoiceSequence}"
-            backingBean="#{invoiceSequenceListBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
-            column2Label="#{messages['businessEntity.description']}" column2="description">
-        </hftl:entityPopup>
-        <hftl:entityPopup id="searchInvoiceTypePopup" header="#{messages['invoiceTypeSellerSequence.invoiceType']}"
-            updateField=":sellerFormId:tabView:invoiceTypeSelectedId :sellerFormId:tabView:invoiceTypeSelectedId_text" selection="#{sellerBean.invoiceType}"
-            backingBean="#{invoiceTypeListBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
-            column2Label="#{messages['businessEntity.description']}" column2="description">
-        </hftl:entityPopup>
-        
-        <h:form id="crumbmenuForm">
-            <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
-                <p:menuitem outcome="sellers" value="#{messages['menu.sellers']}" />
-                <p:menuitem value="#{messages['commons.new']} #{messages['seller']}" disabled="true" rendered="#{sellerBean.entity.transient}" />
-                <p:menuitem value="#{messages['seller']} - #{sellerBean.entity.code}" disabled="true" rendered="#{!sellerBean.entity.transient}" />
-            </p:breadCrumb>
-        </h:form>
+	<ui:define name="body">
 
-        <hftl:formPanel formId="sellerFormId" ajaxSubmit="true" submitPartialProcess=":sellerFormId:tabView" label="#{messages['seller.title']}" backingBean="#{sellerBean}">
-            <p:tabView id="tabView">
-                <p:tab title="#{messages['seller.tab.seller']}" id="tab0">
-                    <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" />
-                    <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description" />
-                    <hftl:formField id="trCurrencySelectId" label="#{messages['currency.codeCurrency']}" field="tradingCurrency" valueLabelField="currencyCode" listBean="#{tradingCurrencyBean}" />
-                    <hftl:formField id="trCountrySelectId" label="#{messages['tradingCountry.tradingCountry']}" field="tradingCountry" valueLabelField="countryCode" listBean="#{tradingCountryBean}" />
-                    <hftl:formField id="trLanguageSelectId" label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage" valueLabelField="languageCode"
-                        listBean="#{tradingLanguageBean}" />
-                    <hftl:formField id="parentSelectId" label="#{messages['seller.parent']}" field="seller" valueLabelField="code" listBean="#{sellerBean}" listenerUpdate="@this" />
-                    <hftl:formField label="#{messages['seller.vatNo']}" field="vatNo" id="vatNo"/>
-                    <hftl:formField label="#{messages['seller.registrationNo']}" field="registrationNo" id="registrationNo"/>
-                    <hftl:formField label="#{messages['seller.legalText']}" textArea="true" rows="1" field="legalText" id="legalText"/>
-                    <hftl:formField label="#{messages['seller.legalType']}" field="legalType" id="legalType"/>
-                    <h:panelGroup>
-                        <p:dataTable id="sellerSequenceTable" label="#{messages['inboundRequest.responseHeaders']}" value="#{sellerBean.entity.invoiceTypeSequence}"
-                            var="invoiceTypeSeq" paginator="false" resizableColumns="true">
-                            <f:facet name="header">#{messages['seller.invoiceTypeSequences']}</f:facet>
-                            <p:column headerText="#{messages['invoiceType.panel']}">
-                                <h:outputText value="#{invoiceTypeSeq.invoiceType.descriptionAndCode}" />
-                            </p:column>
-                            <p:column headerText="#{messages['seller.invoiceSequence']}">
-                                <h:outputText value="#{invoiceTypeSeq.invoiceSequence.descriptionAndCode}" />
-                            </p:column>
-                            <p:column headerText="#{messages['invoiceType.sequence.prefixEl']}">
-                                <h:outputText value="#{invoiceTypeSeq.prefixEL}" />
-                            </p:column>
-                            <p:column width="60px;" headerText="#{messages['commons.actions']}">
-                                <p:commandButton action="#{sellerBean.getSequenceSelected(invoiceTypeSeq)}" update=":sellerFormId:tabView:invoiceTypeSellerSequenceServiceDetails"
-                                    icon="ui-icon-document" immediate="true" />
-                                <p:commandButton action="#{sellerBean.deleteSellerSequence(invoiceTypeSeq.invoiceType)}" icon="ui-icon-trash" update="@form" />
-                            </p:column>
-                        </p:dataTable>
-                        <p:commandButton value="#{messages['commons.addNew']}" update=":sellerFormId:tabView:invoiceTypeSellerSequenceServiceDetails"
-                            action="#{sellerBean.newInvoiceTypeSellerSequence}">
-                        </p:commandButton>
-                    </h:panelGroup>
-                    
-                    <h:panelGroup id="invoiceTypeSellerSequenceServiceDetails">
-			        	 <p:panel header="#{messages['seller.newInvoiceTypeSellerSequence']}" rendered="#{sellerBean.selectedInvoiceTypeSellerSequence!=null}">
-			                <p:outputPanel styleClass="form-panel-fields #{sellerBean.edit ? '' : ' form-panel-fields-view'}">
-			                   	<hftl:formField label="#{messages['invoiceType.sequence.prefixEl']}" textArea="true" size="2000" entity="#{sellerBean}" field="prefixEl" required="true" />
-			                   	<hftl:formField label="#{messages['invoiceTypeSellerSequence.invoiceSequence']}" id="invoiceSequenceSelectedId" entity="#{sellerBean}" field="invoiceSequence" valueLabelField="code" popup="true" popupId="searchInvoiceSequencePopup"
-			                required="true" />
-			                	<hftl:formField label="#{messages['invoiceTypeSellerSequence.invoiceType']}" id="invoiceTypeSelectedId" entity="#{sellerBean}" field="invoiceType" valueLabelField="code" popup="true" popupId="searchInvoiceTypePopup"
-			                required="true" />
-			                </p:outputPanel>
-			                <h:panelGroup layout="block" styleClass="form-panel-actions">
-			                    <p:commandButton action="#{sellerBean.saveOrUpdateSequence}" value="#{messages['action.save']}" update="@form :sellerFormId:tabView:sellerSequenceTable :sellerFormId:messages" />
-			                	<p:commandButton action="#{sellerBean.resetSequenceField}" value="#{messages['action.cancel']}" update="@form :sellerFormId:tabView:sellerSequenceTable" immediate="true" />
-			                </h:panelGroup>
-			        	</p:panel>
-			        </h:panelGroup>
-                    
-                    <h:panelGroup>
-                        <p:dataTable id="customerSequenceTable" value="#{sellerBean.entity.customerSequences}"
-                            var="customerSeq" paginator="false" resizableColumns="true">
-                            <f:facet name="header">#{messages['customerSequence.list']}</f:facet>
-                            <p:column headerText="#{messages['businessEntity.code']}">
-                                <h:outputText value="#{customerSeq.code}" />
-                            </p:column>
-                            <p:column headerText="#{messages['businessEntity.description']}">
-                                <h:outputText value="#{customerseq.description}" />
-                            </p:column>
-                            <p:column headerText="#{messages['customerSequence.prefix']}">
-                                <h:outputText value="#{customerSeq.genericSequence.prefix}" />
-                            </p:column>
-                            <p:column headerText="#{messages['customerSequence.sequenceSize']}">
-                                <h:outputText value="#{customerSeq.genericSequence.sequenceSize}" />
-                            </p:column>
-                            <p:column headerText="#{messages['customerSequence.currentSequenceNb']}">
-                                <h:outputText value="#{customerSeq.genericSequence.currentSequenceNb}" />
-                            </p:column>
-                            <p:column width="60px;" headerText="#{messages['commons.actions']}">
-                                <p:commandButton action="#{sellerBean.selectCustomerSequence(customerSeq)}" update=":sellerFormId:tabView:customerSequenceDetails" icon="ui-icon-document" immediate="true" />
-                                <p:commandButton action="#{sellerBean.deleteCustomerSequence(customerSeq)}" icon="ui-icon-trash" update="@form" />
-                            </p:column>
-                        </p:dataTable>
-                        <p:commandButton value="#{messages['commons.addNew']}" update=":sellerFormId:tabView:customerSequenceDetails" action="#{sellerBean.newCustomerSequence}">
-                        </p:commandButton>
-                    </h:panelGroup>
-                    
-                    <h:panelGroup id="customerSequenceDetails">
-			        	 <p:panel header="#{messages['customerSequence']}" rendered="#{sellerBean.selectedCustomerSequence != null}">
-			                <p:outputPanel styleClass="form-panel-fields #{sellerBean.edit ? '' : ' form-panel-fields-view'}">
-			                	<hftl:decorateFormField label="#{messages['businessEntity.code']}" fieldId="csCode">
-									<p:inputText id="csCode" value="#{sellerBean.selectedCustomerSequence.code}">
-									</p:inputText>
-								</hftl:decorateFormField>
-								<hftl:decorateFormField label="#{messages['businessEntity.description']}" fieldId="csDescription">
-									<p:inputText id="csDescription" value="#{sellerBean.selectedCustomerSequence.description}">
-									</p:inputText>
-								</hftl:decorateFormField>
-								<hftl:decorateFormField label="#{messages['customerSequence.prefix']}" fieldId="csPrefix">
-									<p:inputText id="csPrefix" value="#{sellerBean.selectedCustomerSequence.genericSequence.prefix}">
-									</p:inputText>
-								</hftl:decorateFormField>
-								<hftl:decorateFormField label="#{messages['customerSequence.sequenceSize']}" fieldId="csSequenceSize">
-									<p:spinner id="csSequenceSize" value="#{sellerBean.selectedCustomerSequence.genericSequence.sequenceSize}">
-									</p:spinner>
-								</hftl:decorateFormField>
-								<hftl:decorateFormField label="#{messages['customerSequence.currentSequenceNb']}" fieldId="csCurrentSequenceNb">
-									<p:inputText readonly="true" id="csCurrentSequenceNb" value="#{sellerBean.selectedCustomerSequence.genericSequence.currentSequenceNb}">
-									</p:inputText>
-								</hftl:decorateFormField>
-			                </p:outputPanel>
-			                <h:panelGroup layout="block" styleClass="form-panel-actions">
-			                    <p:commandButton action="#{sellerBean.saveOrUpdateCustomerSequence}" value="#{messages['action.save']}" update="@form :sellerFormId:tabView:customerSequenceTable :sellerFormId:messages" />
-			                	<p:commandButton action="#{sellerBean.resetCustomerSequence}" value="#{messages['action.cancel']}" update="@form :sellerFormId:tabView:customerSequenceTable" immediate="true" />
-			                </h:panelGroup>
-			        	</p:panel>
-			        </h:panelGroup>
+		<hftl:entityPopup id="searchInvoiceSequencePopup"
+			header="#{messages['invoiceTypeSellerSequence.invoiceSequence']}"
+			updateField=":parentTab:sellerFormId:tabView:invoiceSequenceSelectedId :parentTab:sellerFormId:tabView:invoiceSequenceSelectedId_text"
+			selection="#{sellerBean.invoiceSequence}"
+			backingBean="#{invoiceSequenceListBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+		<hftl:entityPopup id="searchInvoiceTypePopup"
+			header="#{messages['invoiceTypeSellerSequence.invoiceType']}"
+			updateField=":parentTab:sellerFormId:tabView:invoiceTypeSelectedId :parentTab:sellerFormId:tabView:invoiceTypeSelectedId_text"
+			selection="#{sellerBean.invoiceType}"
+			backingBean="#{invoiceTypeListBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+		<hftl:entityPopup id="accountingCodePopup"
+			header="#{messages['accountingCode']}"
+			backingBean="#{accountingCodeListBean}"
+			selection="#{accountOperationBean.filters['accountingCode']}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}"
+			searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description"
+			updateField=":parentTab:searchForm:cAaccountingCodeId">
+		</hftl:entityPopup>
 
-                </p:tab>
-                
-                <p:tab title="#{messages['seller.tab.information']}" id="tab1">
-					<p:fieldset legend="#{messages['commons.contacts']}">
-						<hftl:formField label="#{messages['contactInformation.email']}"
-							field="contactInformation" childField="email" popup="false"
-							required="false" id="email" validateEmail="true" />
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.configuration']}"
+					disabled="true" />
+				<p:menuitem outcome="sellers" value="#{messages['menu.sellers']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['seller']}"
+					disabled="true" rendered="#{sellerBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['seller']} - #{sellerBean.entity.code}"
+					disabled="true" rendered="#{!sellerBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
-						<hftl:formField label="#{messages['contactInformation.phone']}"
-							field="contactInformation" childField="phone" maxlength="50" popup="false" />
-						<hftl:formField label="#{messages['contactInformation.mobile']}"
-							field="contactInformation" childField="mobile" maxlength="50" popup="false" />
-					</p:fieldset>
-					<p:fieldset legend="#{messages['commons.address']}">
-						<hftl:formField label="#{messages['address.address1']}"
-							field="address" id="address1" childField="address1"
-							popup="false" />
-						<hftl:formField label="#{messages['address.address2']}"
-							field="address" id="address2" childField="address2"
-							popup="false" />
-						<hftl:formField label="#{messages['address.address3']}"
-							field="address" id="address3" childField="address3"
-							popup="false" />
-						<hftl:formField label="#{messages['address.zipCode']}"
-							id="zipCode" field="address" childField="zipCode"
-							popup="false" newLine="true" />
-						<hftl:formField label="#{messages['address.city']}" id="city"
-							field="address" childField="city" popup="false" />
-						<hftl:formField id="countryID" label="#{messages['address.country']}" fkToEntity="false" field="address" childField="country" valueLabelField="description" listBean="#{countryBean}"/>
-					</p:fieldset>
-				</p:tab>
+		<h:panelGroup styleClass="col2-set">
+			<h:panelGroup styleClass="width: 90%;float:center;">
+				<p:tabView id="parentTab" styleClass="tab-parent" activeIndex="#{sellerBean.activeMainTab}">
+					<p:tab id="seller" title="#{messages['seller.tab.seller']}">
+						<hftl:formPanel formId="sellerFormId" ajaxSubmit="true"
+							submitPartialProcess=":parentTab:sellerFormId:tabView"
+							label="#{messages['seller.title']}" backingBean="#{sellerBean}">
+							<p:tabView id="tabView"
+								activeIndex="#{sellerBean.activeTab}">
+								<p:tab title="#{messages['seller.tab.seller']}" id="tab0">
+									<hftl:formField label="#{messages['businessEntity.code']}"
+										field="code" required="true" />
+									<hftl:formField
+										label="#{messages['businessEntity.description']}"
+										field="description" id="description" />
+									<hftl:formField id="trCurrencySelectId"
+										label="#{messages['currency.codeCurrency']}"
+										field="tradingCurrency" valueLabelField="currencyCode"
+										listBean="#{tradingCurrencyBean}" />
+									<hftl:formField id="trCountrySelectId"
+										label="#{messages['tradingCountry.tradingCountry']}"
+										field="tradingCountry" valueLabelField="countryCode"
+										listBean="#{tradingCountryBean}" />
+									<hftl:formField id="trLanguageSelectId"
+										label="#{messages['tradingLanguage.tradingLanguage']}"
+										field="tradingLanguage" valueLabelField="languageCode"
+										listBean="#{tradingLanguageBean}" />
+									<hftl:formField id="parentSelectId"
+										label="#{messages['seller.parent']}" field="seller"
+										valueLabelField="code" listBean="#{sellerBean}"
+										listenerUpdate="@this" />
+									<hftl:formField label="#{messages['seller.vatNo']}"
+										field="vatNo" id="vatNo" />
+									<hftl:formField label="#{messages['seller.registrationNo']}"
+										field="registrationNo" id="registrationNo" />
+									<hftl:formField label="#{messages['seller.legalText']}"
+										textArea="true" rows="1" field="legalText" id="legalText" />
+									<hftl:formField label="#{messages['seller.legalType']}"
+										field="legalType" id="legalType" />
+									<h:panelGroup>
+										<p:dataTable id="sellerSequenceTable"
+											label="#{messages['inboundRequest.responseHeaders']}"
+											value="#{sellerBean.entity.invoiceTypeSequence}"
+											var="invoiceTypeSeq" paginator="false"
+											resizableColumns="true">
+											<f:facet name="header">#{messages['seller.invoiceTypeSequences']}</f:facet>
+											<p:column headerText="#{messages['invoiceType.panel']}">
+												<h:outputText
+													value="#{invoiceTypeSeq.invoiceType.descriptionAndCode}" />
+											</p:column>
+											<p:column headerText="#{messages['seller.invoiceSequence']}">
+												<h:outputText
+													value="#{invoiceTypeSeq.invoiceSequence.descriptionAndCode}" />
+											</p:column>
+											<p:column
+												headerText="#{messages['invoiceType.sequence.prefixEl']}">
+												<h:outputText value="#{invoiceTypeSeq.prefixEL}" />
+											</p:column>
+											<p:column width="60px;"
+												headerText="#{messages['commons.actions']}">
+												<p:commandButton
+													action="#{sellerBean.getSequenceSelected(invoiceTypeSeq)}"
+													update=":parentTab:sellerFormId:tabView:invoiceTypeSellerSequenceServiceDetails"
+													icon="ui-icon-document" immediate="true" />
+												<p:commandButton
+													action="#{sellerBean.deleteSellerSequence(invoiceTypeSeq.invoiceType)}"
+													icon="ui-icon-trash" update="@form" />
+											</p:column>
+										</p:dataTable>
+										<p:commandButton value="#{messages['commons.addNew']}"
+											update=":parentTab:sellerFormId:tabView:invoiceTypeSellerSequenceServiceDetails"
+											action="#{sellerBean.newInvoiceTypeSellerSequence}">
+										</p:commandButton>
+									</h:panelGroup>
 
-                <hftl:customFields backingBean="#{sellerBean}" messagesId=":sellerFormId:messages" />
+									<h:panelGroup id="invoiceTypeSellerSequenceServiceDetails">
+										<p:panel
+											header="#{messages['seller.newInvoiceTypeSellerSequence']}"
+											rendered="#{sellerBean.selectedInvoiceTypeSellerSequence!=null}">
+											<p:outputPanel
+												styleClass="form-panel-fields #{sellerBean.edit ? '' : ' form-panel-fields-view'}">
+												<hftl:formField
+													label="#{messages['invoiceType.sequence.prefixEl']}"
+													textArea="true" size="2000" entity="#{sellerBean}"
+													field="prefixEl" required="true" />
+												<hftl:formField
+													label="#{messages['invoiceTypeSellerSequence.invoiceSequence']}"
+													id="invoiceSequenceSelectedId" entity="#{sellerBean}"
+													field="invoiceSequence" valueLabelField="code" popup="true"
+													popupId="searchInvoiceSequencePopup" required="true" />
+												<hftl:formField
+													label="#{messages['invoiceTypeSellerSequence.invoiceType']}"
+													id="invoiceTypeSelectedId" entity="#{sellerBean}"
+													field="invoiceType" valueLabelField="code" popup="true"
+													popupId="searchInvoiceTypePopup" required="true" />
+											</p:outputPanel>
+											<h:panelGroup layout="block" styleClass="form-panel-actions">
+												<p:commandButton action="#{sellerBean.saveOrUpdateSequence}"
+													value="#{messages['action.save']}"
+													update="@form :parentTab:sellerFormId:tabView:sellerSequenceTable :parentTab:sellerFormId:messages" />
+												<p:commandButton action="#{sellerBean.resetSequenceField}"
+													value="#{messages['action.cancel']}"
+													update="@form :parentTab:sellerFormId:tabView:sellerSequenceTable"
+													immediate="true" />
+											</h:panelGroup>
+										</p:panel>
+									</h:panelGroup>
 
-            </p:tabView>
-        </hftl:formPanel>
+									<h:panelGroup>
+										<p:dataTable id="customerSequenceTable"
+											value="#{sellerBean.entity.customerSequences}"
+											var="customerSeq" paginator="false" resizableColumns="true">
+											<f:facet name="header">#{messages['customerSequence.list']}</f:facet>
+											<p:column headerText="#{messages['businessEntity.code']}">
+												<h:outputText value="#{customerSeq.code}" />
+											</p:column>
+											<p:column
+												headerText="#{messages['businessEntity.description']}">
+												<h:outputText value="#{customerseq.description}" />
+											</p:column>
+											<p:column headerText="#{messages['customerSequence.prefix']}">
+												<h:outputText value="#{customerSeq.genericSequence.prefix}" />
+											</p:column>
+											<p:column
+												headerText="#{messages['customerSequence.sequenceSize']}">
+												<h:outputText
+													value="#{customerSeq.genericSequence.sequenceSize}" />
+											</p:column>
+											<p:column
+												headerText="#{messages['customerSequence.currentSequenceNb']}">
+												<h:outputText
+													value="#{customerSeq.genericSequence.currentSequenceNb}" />
+											</p:column>
+											<p:column width="60px;"
+												headerText="#{messages['commons.actions']}">
+												<p:commandButton
+													action="#{sellerBean.selectCustomerSequence(customerSeq)}"
+													update=":parentTab:sellerFormId:tabView:customerSequenceDetails"
+													icon="ui-icon-document" immediate="true" />
+												<p:commandButton
+													action="#{sellerBean.deleteCustomerSequence(customerSeq)}"
+													icon="ui-icon-trash" update="@form" />
+											</p:column>
+										</p:dataTable>
+										<p:commandButton value="#{messages['commons.addNew']}"
+											update=":parentTab:sellerFormId:tabView:customerSequenceDetails"
+											action="#{sellerBean.newCustomerSequence}">
+										</p:commandButton>
+									</h:panelGroup>
 
-    </ui:define>
+									<h:panelGroup id="customerSequenceDetails">
+										<p:panel header="#{messages['customerSequence']}"
+											rendered="#{sellerBean.selectedCustomerSequence != null}">
+											<p:outputPanel
+												styleClass="form-panel-fields #{sellerBean.edit ? '' : ' form-panel-fields-view'}">
+												<hftl:decorateFormField
+													label="#{messages['businessEntity.code']}" fieldId="csCode">
+													<p:inputText id="csCode"
+														value="#{sellerBean.selectedCustomerSequence.code}">
+													</p:inputText>
+												</hftl:decorateFormField>
+												<hftl:decorateFormField
+													label="#{messages['businessEntity.description']}"
+													fieldId="csDescription">
+													<p:inputText id="csDescription"
+														value="#{sellerBean.selectedCustomerSequence.description}">
+													</p:inputText>
+												</hftl:decorateFormField>
+												<hftl:decorateFormField
+													label="#{messages['customerSequence.prefix']}"
+													fieldId="csPrefix">
+													<p:inputText id="csPrefix"
+														value="#{sellerBean.selectedCustomerSequence.genericSequence.prefix}">
+													</p:inputText>
+												</hftl:decorateFormField>
+												<hftl:decorateFormField
+													label="#{messages['customerSequence.sequenceSize']}"
+													fieldId="csSequenceSize">
+													<p:spinner id="csSequenceSize"
+														value="#{sellerBean.selectedCustomerSequence.genericSequence.sequenceSize}">
+													</p:spinner>
+												</hftl:decorateFormField>
+												<hftl:decorateFormField
+													label="#{messages['customerSequence.currentSequenceNb']}"
+													fieldId="csCurrentSequenceNb">
+													<p:inputText readonly="true" id="csCurrentSequenceNb"
+														value="#{sellerBean.selectedCustomerSequence.genericSequence.currentSequenceNb}">
+													</p:inputText>
+												</hftl:decorateFormField>
+											</p:outputPanel>
+											<h:panelGroup layout="block" styleClass="form-panel-actions">
+												<p:commandButton
+													action="#{sellerBean.saveOrUpdateCustomerSequence}"
+													value="#{messages['action.save']}"
+													update="@form :parentTab:sellerFormId:tabView:customerSequenceTable :parentTab:sellerFormId:messages" />
+												<p:commandButton
+													action="#{sellerBean.resetCustomerSequence}"
+													value="#{messages['action.cancel']}"
+													update="@form :parentTab:sellerFormId:tabView:customerSequenceTable"
+													immediate="true" />
+											</h:panelGroup>
+										</p:panel>
+									</h:panelGroup>
+
+								</p:tab>
+
+
+								<p:tab title="#{messages['seller.tab.information']}" id="tab1">
+									<p:fieldset legend="#{messages['commons.contacts']}">
+										<hftl:formField
+											label="#{messages['contactInformation.email']}"
+											field="contactInformation" childField="email" popup="false"
+											required="false" id="email" validateEmail="true" />
+
+										<hftl:formField
+											label="#{messages['contactInformation.phone']}"
+											field="contactInformation" childField="phone" maxlength="50"
+											popup="false" />
+										<hftl:formField
+											label="#{messages['contactInformation.mobile']}"
+											field="contactInformation" childField="mobile" maxlength="50"
+											popup="false" />
+									</p:fieldset>
+									<p:fieldset legend="#{messages['commons.address']}">
+										<hftl:formField label="#{messages['address.address1']}"
+											field="address" id="address1" childField="address1"
+											popup="false" />
+										<hftl:formField label="#{messages['address.address2']}"
+											field="address" id="address2" childField="address2"
+											popup="false" />
+										<hftl:formField label="#{messages['address.address3']}"
+											field="address" id="address3" childField="address3"
+											popup="false" />
+										<hftl:formField label="#{messages['address.zipCode']}"
+											id="zipCode" field="address" childField="zipCode"
+											popup="false" newLine="true" />
+										<hftl:formField label="#{messages['address.city']}" id="city"
+											field="address" childField="city" popup="false" />
+										<hftl:formField id="countryID"
+											label="#{messages['address.country']}" fkToEntity="false"
+											field="address" childField="country"
+											valueLabelField="description" listBean="#{countryBean}" />
+									</p:fieldset>
+								</p:tab>
+								<hftl:customFields backingBean="#{sellerBean}"
+									messagesId=":parentTab:sellerFormId:messages" />
+								<hftl:displayGenericWFsHistory backingBean="#{sellerBean}" />
+							</p:tabView>
+						</hftl:formPanel>
+					</p:tab>
+
+
+					<p:tab id="ops" title="#{messages['seller.tab.generalLedger']}"
+						rendered="#{not empty sellerBean.entity.generalLedger}">
+						<hftl:searchPanel renderNewButton="false"
+							label="#{messages['otherTransaction.search']}" columns="1"
+							backingBean="#{otherTransactionBean}" ajax="true"
+							ajaxUpdateIds=":parentTab:results_panel">
+							<hftl:searchField
+								label="#{messages['otherTransaction.transactionCategory']}"
+								field="transactionCategory" />
+							<hftl:searchField
+								label="#{messages['otherTransaction.matchingStatus']}"
+								field="matchingStatus" />
+							<hftl:searchField label="#{messages['otherTransaction.occCode']}"
+								field="occCode" />
+
+							<hftl:searchField id="cAaccountingCodeId"
+								label="#{messages['invoiceSubCategory.accountingCode']}"
+								field="accountingCode" valueLabelField="code" popup="true"
+								popupId="accountingCodePopup" showResetButton="true" />
+
+							<hftl:searchField
+								label="#{messages['otherTransaction.transactionDate']}"
+								field="transactionDate" />
+							<hftl:searchField label="#{messages['otherTransaction.dueDate']}"
+								field="dueDate" />
+							<ui:param name="buttons" value="true" />
+							<ui:define name="buttons">								
+								<p:button value="#{messages['action.back']}"
+									outcome="#{sellerBean.back()}" includeViewParams="true">
+									<f:param name="cid"
+										value="#{javax.enterprise.context.conversation.id}" />
+								</p:button>
+							</ui:define>
+						</hftl:searchPanel>
+
+						<hftl:dataList backingBean="#{otherTransactionBean}" edit="#{true}" checkMany="#{false}"
+							dataModel="#{otherTransactionBean.getOtherTransactions(sellerBean.entity)}"
+							label="#{messages['otherTransaction.title']}" disabled="true"
+							deleteManyButton="false" exportToXml="false">
+							
+							<p:column width="10%">
+								<f:facet name="header">
+									<h:outputText value="#{messages['otherTransaction.generalLedger']}" />
+								</f:facet>
+								<h:outputText value="#{entity.generalLedger.code}" />
+							</p:column>
+
+							<p:column width="10%">
+								<f:facet name="header">
+									<h:outputText value="#{messages['otherTransaction.type']}" />
+								</f:facet>
+								<h:outputText value="#{entity.type}" />
+							</p:column>
+							
+							<p:column width="15%">
+								<f:facet name="header">
+									<h:outputText value="#{messages['otherTransaction.occCode']}" />
+								</f:facet>
+								<h:outputText value="#{entity.occCode}" />
+							</p:column>
+
+							<p:column width="20%">
+								<f:facet name="header">
+									<h:outputText
+										value="#{messages['otherTransaction.occDescription']}" />
+								</f:facet>
+								<h:outputText value="#{entity.occDescription}" />
+							</p:column>
+
+							<hftl:column
+								label="#{messages['otherTransaction.transactionDate']}"
+								field="transactionDate" isDate="true" width="10%" />
+							<hftl:column label="#{messages['otherTransaction.dueDate']}"
+								field="dueDate" isDate="true" width="10%" />
+							<p:column headerText="#{messages['otherTransaction.debit']}"
+								width="10%">
+								<h:outputText value="#{entity.amount}"
+									rendered="#{entity.transactionCategory eq 'DEBIT'}">
+									<f:converter converterId="bigDecimal4DigitsConverter" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="#{messages['otherTransaction.credit']}"
+								width="10%">
+								<h:outputText value="#{entity.amount}"
+									rendered="#{entity.transactionCategory eq 'CREDIT'}">
+									<f:converter converterId="bigDecimal4DigitsConverter" />
+								</h:outputText>
+							</p:column>
+
+							<hftl:column
+								label="#{messages['otherTransaction.unMatchingAmount']}"
+								field="unMatchingAmount" converterParam="4digits" width="10%" />
+
+							<hftl:column
+								label="#{messages['otherTransaction.matchingStatus']}"
+								field="matchingStatus.label" isMessage="true" width="10%" />
+								
+							<p:column exportable="false" toggleable="false" width="15%">
+						        <f:facet name="header">
+						            <h:outputText value="#{messages['commons.actions']}"/>
+						        </f:facet>
+						
+						        <p:button id="#{resultsId}viewlink" outcome="/pages/payments/otherTransactions/showOT.xhtml"
+						                  icon="ui-icon-search" rendered="true">
+						            <f:param name="objectId" value="#{entity.id}"/>
+						            <f:param name="edit" value="false"/>
+						            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+						            <f:param name="backView" value="backToSellerFromOT"/>
+						            <f:param name="backEntityId" value="#{sellerBean.objectId}"/>
+						            <f:param name="backTab" value="0"/>
+						            <f:param name="backMainTab" value="1"/>
+						        </p:button>
+						
+						        
+						        <p:button id="#{resultsId}ventilate" outcome="/pages/payments/otherTransactions/ventilateTransaction.xhtml"
+						                  value="#{messages['paymentVentilation.buttonVentilate']}" rendered="#{entity.type eq 'OTG' and entity.transactionCategory eq 'CREDIT'}">
+						            <f:param name="otgId" value="#{entity.id}"/>
+						            <f:param name="edit" value="true"/>
+						            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+						            <f:param name="backView" value="backToSellerFromOT"/>
+						            <f:param name="backEntityId" value="#{sellerBean.objectId}"/>
+						            <f:param name="backTab" value="0"/>
+						            <f:param name="backMainTab" value="1"/>
+						        </p:button>
+   						 </p:column>
+
+						</hftl:dataList>
+
+					</p:tab>
+
+				</p:tabView>
+			</h:panelGroup>
+		</h:panelGroup>
+	</ui:define>
 
 </ui:composition>

@@ -30,7 +30,7 @@ import org.meveo.service.finance.RevenueRecognitionRuleService;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 6.0
+ * @lastModifiedVersion 7.0
  **/
 @Stateless
 public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, UsageChargeTemplateDto> {
@@ -239,12 +239,17 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
             missingParameters.add("usageChargeTemplateCode");
             handleMissingParameters();
         }
+
+        UsageChargeTemplateDto result;
+
         // check if code already exists
         UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(code, Arrays.asList("invoiceSubCategory"));
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
         }
 
-        return new UsageChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+        result = new UsageChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+
+        return result;
     }
 }

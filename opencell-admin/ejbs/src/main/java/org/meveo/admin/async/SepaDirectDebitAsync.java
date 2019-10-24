@@ -56,7 +56,6 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Name;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.AccountOperationService;
-import org.meveo.service.payments.impl.DDRequestBuilderInterface;
 import org.meveo.service.payments.impl.DDRequestItemService;
 import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.meveo.service.payments.impl.PaymentGatewayService;

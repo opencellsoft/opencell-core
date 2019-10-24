@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -16,214 +17,227 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.ObservableEntity;
+import org.meveo.model.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
- * Instance of {@link DiscountPlan}. It basically just contains the effectivity
- * date per BA.
+ * Instance of {@link DiscountPlan}. It basically just contains the effectivity date per BA.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.3
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
 @Table(name = "billing_discount_plan_instance")
-@CustomFieldEntity(cftCodePrefix = "DISCOUNT_PLAN_INSTANCE", inheritCFValuesFrom = { "discountPlan" })
+@CustomFieldEntity(cftCodePrefix = "DiscountPlanInstance", inheritCFValuesFrom = { "discountPlan" })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-		@Parameter(name = "sequence_name", value = "billing_discount_plan_instance_seq"), })
+        @Parameter(name = "sequence_name", value = "billing_discount_plan_instance_seq"), })
 public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEntity {
 
-	private static final long serialVersionUID = -3794502716655922498L;
+    private static final long serialVersionUID = -3794502716655922498L;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "discount_plan_id", nullable = false, updatable = false)
-	private DiscountPlan discountPlan;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_id", nullable = false, updatable = false)
+    private DiscountPlan discountPlan;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "billing_account_id", nullable = false, updatable = false)
-	private BillingAccount billingAccount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_account_id")
+    private BillingAccount billingAccount;
 
-	/**
-	 * Effectivity start date
-	 */
-	@Temporal(TemporalType.DATE)
-	@Column(name = "start_date")
-	private Date startDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
 
-	/**
-	 * Effectivity end date
-	 */
-	@Temporal(TemporalType.DATE)
-	@Column(name = "end_date")
-	private Date endDate;
+    /**
+     * Effectivity start date
+     */
+    @Temporal(TemporalType.DATE)
+    @Column(name = "start_date")
+    private Date startDate;
 
-	/**
-	 * Unique identifier UUID
-	 */
-	@Column(name = "uuid", nullable = false, updatable = false, length = 60)
-	@Size(max = 60)
-	@NotNull
-	protected String uuid = UUID.randomUUID().toString();
+    /**
+     * Effectivity end date
+     */
+    @Temporal(TemporalType.DATE)
+    @Column(name = "end_date")
+    private Date endDate;
 
-	/**
-	 * Custom field values in JSON format
-	 */
-	@Type(type = "cfjson")
-	@Column(name = "cf_values", columnDefinition = "text")
-	protected CustomFieldValues cfValues;
+    /**
+     * Unique identifier UUID
+     */
+    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
+    @Size(max = 60)
+    @NotNull
+    protected String uuid = UUID.randomUUID().toString();
 
-	/**
-	 * Accumulated custom field values in JSON format
-	 */
-	@Type(type = "cfjson")
-	@Column(name = "cf_values_accum", columnDefinition = "text")
-	protected CustomFieldValues cfAccumulatedValues;
+    /**
+     * Custom field values in JSON format
+     */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values", columnDefinition = "text")
+    protected CustomFieldValues cfValues;
 
-	public boolean isValid() {
-		return (startDate == null || endDate == null || startDate.before(endDate));
-	}
+    /**
+     * Accumulated custom field values in JSON format
+     */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    protected CustomFieldValues cfAccumulatedValues;
 
-	/**
-	 * Check if a date is within this Discount's effective date. Exclusive of the
-	 * endDate. If startDate is null, it returns true. If startDate is not null and
-	 * endDate is null, endDate is computed from the given duration.
-	 * 
-	 * @param date
-	 *            the given date
-	 * @return returns true if this DiscountItem is to be applied
-	 */
-	public boolean isEffective(Date date) {
-		if (startDate == null && endDate == null) {
-			return true;
-		}
-		if (startDate != null && endDate == null) {
-			return date.compareTo(startDate) >= 0;
-		}
-		if (startDate == null) {
-			return date.before(endDate);
-		}
-		return (date.compareTo(startDate) >= 0) && (date.before(endDate));
-	}
+    public boolean isValid() {
+        return (startDate == null || endDate == null || startDate.before(endDate));
+    }
 
-	public void copyEffectivityDates(DiscountPlan dp) {
-		setStartDate(dp.getStartDate());
-		setEndDate(dp.getEndDate());
-	}
+    /**
+     * Check if a date is within this Discount's effective date. Exclusive of the endDate. If startDate is null, it returns true. If startDate is not null and endDate is null,
+     * endDate is computed from the given duration.
+     * 
+     * @param date the given date
+     * @return returns true if this DiscountItem is to be applied
+     */
+    public boolean isEffective(Date date) {
+        if (startDate == null && endDate == null) {
+            return true;
+        }
+        if (startDate != null && endDate == null) {
+            return date.compareTo(startDate) >= 0;
+        }
+        if (startDate == null) {
+            return date.before(endDate);
+        }
+        return (date.compareTo(startDate) >= 0) && (date.before(endDate));
+    }
 
-	public DiscountPlan getDiscountPlan() {
-		return discountPlan;
-	}
+    public void copyEffectivityDates(DiscountPlan dp) {
+        setStartDate(dp.getStartDate());
+        setEndDate(dp.getEndDate());
+    }
 
-	public void setDiscountPlan(DiscountPlan discountPlan) {
-		this.discountPlan = discountPlan;
-	}
+    public DiscountPlan getDiscountPlan() {
+        return discountPlan;
+    }
 
-	public Date getStartDate() {
-		return startDate;
-	}
+    public void setDiscountPlan(DiscountPlan discountPlan) {
+        this.discountPlan = discountPlan;
+    }
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	public Date getEndDate() {
-		return endDate;
-	}
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    public Date getEndDate() {
+        return endDate;
+    }
 
-	public BillingAccount getBillingAccount() {
-		return billingAccount;
-	}
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	public void setBillingAccount(BillingAccount billingAccount) {
-		this.billingAccount = billingAccount;
-	}
+    public BillingAccount getBillingAccount() {
+        return billingAccount;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((billingAccount == null) ? 0 : billingAccount.hashCode());
-		result = prime * result + ((discountPlan == null) ? 0 : discountPlan.hashCode());
-		return result;
-	}
+    public void setBillingAccount(BillingAccount billingAccount) {
+        this.billingAccount = billingAccount;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
-		DiscountPlanInstance other = (DiscountPlanInstance) obj;
-		if (billingAccount == null) {
-			if (other.billingAccount != null)
-				return false;
-		} else if (!billingAccount.equals(other.billingAccount))
-			return false;
-		if (discountPlan == null) {
-			if (other.discountPlan != null)
-				return false;
-		} else if (!discountPlan.equals(other.discountPlan))
-			return false;
-		return true;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((billingAccount == null) ? 0 : billingAccount.hashCode());
+        result = prime * result + ((discountPlan == null) ? 0 : discountPlan.hashCode());
+        return result;
+    }
 
-	@Override
-	public String getUuid() {
-		return uuid;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (getClass() != obj.getClass())
+            return false;
+        DiscountPlanInstance other = (DiscountPlanInstance) obj;
+        if (billingAccount == null) {
+            if (other.billingAccount != null)
+                return false;
+        } else if (!billingAccount.equals(other.billingAccount))
+            return false;
+        if (discountPlan == null) {
+            if (other.discountPlan != null)
+                return false;
+        } else if (!discountPlan.equals(other.discountPlan))
+            return false;
+        return true;
+    }
 
-	/**
-	 * @param uuid
-	 *            Unique identifier
-	 */
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
 
-	/**
-	 * Change UUID value. Return old value
-	 * 
-	 * @return Old UUID value
-	 */
-	@Override
-	public String clearUuid() {
-		String oldUuid = uuid;
-		uuid = UUID.randomUUID().toString();
-		return oldUuid;
-	}
+    /**
+     * @param uuid Unique identifier
+     */
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
-	@Override
-	public ICustomFieldEntity[] getParentCFEntities() {
-		return discountPlan != null ? new ICustomFieldEntity[] { discountPlan } : null;
-	}
+    /**
+     * Change UUID value. Return old value
+     * 
+     * @return Old UUID value
+     */
+    @Override
+    public String clearUuid() {
+        String oldUuid = uuid;
+        uuid = UUID.randomUUID().toString();
+        return oldUuid;
+    }
 
-	@Override
-	public CustomFieldValues getCfValues() {
-		return cfValues;
-	}
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return discountPlan != null ? new ICustomFieldEntity[] { discountPlan } : null;
+    }
 
-	@Override
-	public void setCfValues(CustomFieldValues cfValues) {
-		this.cfValues = cfValues;
-	}
+    @Override
+    public CustomFieldValues getCfValues() {
+        return cfValues;
+    }
 
-	@Override
-	public CustomFieldValues getCfAccumulatedValues() {
-		return cfAccumulatedValues;
-	}
+    @Override
+    public void setCfValues(CustomFieldValues cfValues) {
+        this.cfValues = cfValues;
+    }
 
-	@Override
-	public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
-		this.cfAccumulatedValues = cfAccumulatedValues;
-	}
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
 
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
+    }
+
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
+
+    public void assignEntityToDiscountPlanInstances(IDiscountable entity) {
+        if (entity instanceof BillingAccount) {
+            this.setBillingAccount((BillingAccount) entity);
+        } else {
+            this.setSubscription((Subscription) entity);
+        }
+    }
 }

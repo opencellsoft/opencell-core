@@ -24,7 +24,9 @@ import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 public class BillingCycleApi extends BaseApi {
 
@@ -37,6 +39,9 @@ public class BillingCycleApi extends BaseApi {
     @Inject
     private InvoiceTypeService invoiceTypeService;
     
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
+
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
@@ -74,6 +79,14 @@ public class BillingCycleApi extends BaseApi {
             }
         }
 
+        ScriptInstance scriptInstance = null;
+        if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+            }
+        }
+
         BillingCycle billingCycle = new BillingCycle();
         billingCycle.setCode(postData.getCode());
         billingCycle.setDescription(postData.getDescription());
@@ -88,8 +101,10 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingCycle.setInvoiceType(invoiceType);
+        billingCycle.setScriptInstance(scriptInstance);
         billingCycle.setInvoiceTypeEl(postData.getInvoiceTypeEl());
         billingCycle.setInvoiceTypeElSpark(postData.getInvoiceTypeElSpark());
+        billingCycle.setReferenceDate(postData.getReferenceDate());
 
         if (postData.getType() == null) {
             billingCycle.setType(BillingEntityTypeEnum.BILLINGACCOUNT);
@@ -147,6 +162,14 @@ public class BillingCycleApi extends BaseApi {
             billingCycle.setInvoiceType(invoiceType);
         }
 
+        if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
+            }
+            billingCycle.setScriptInstance(scriptInstance);
+        }
+
         billingCycle.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 
         if (postData.getDescription() != null) {
@@ -185,8 +208,9 @@ public class BillingCycleApi extends BaseApi {
         if (postData.getInvoicingThreshold() != null) {
             billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
         }
-
-
+        if (postData.getReferenceDate() != null) {
+            billingCycle.setReferenceDate(postData.getReferenceDate());
+        }
         if (postData.getType() != null) {
             billingCycle.setType(postData.getType());
         }

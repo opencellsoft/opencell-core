@@ -45,11 +45,14 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.*;
+import org.meveo.model.AuditableEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IReferenceEntity;
+import org.meveo.model.ReferenceIdentifierQuery;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -58,15 +61,17 @@ import org.meveo.model.crm.custom.CustomFieldValues;
  * Billing run
  * 
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ReferenceIdentifierQuery("BillingRun.findByIdAndBCCode")
-@CustomFieldEntity(cftCodePrefix = "BILLING_RUN")
+@CustomFieldEntity(cftCodePrefix = "BillingRun")
 @Table(name = "billing_billing_run")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_billing_run_seq") })
 @NamedQueries({
-        @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') order by br.id asc"),
+        @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC') order by br.id asc"),
         @NamedQuery(name = "BillingRun.findByIdAndBCCode", query = "from BillingRun br join fetch br.billingCycle bc where lower(concat(br.id,'/',bc.code)) like :code ") })
 
 public class BillingRun extends AuditableEntity implements ICustomFieldEntity, IReferenceEntity {
@@ -185,12 +190,6 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     private List<BillingAccount> billableBillingAccounts = new ArrayList<BillingAccount>();
 
     /**
-     * Rated transactions included in this billing run
-     */
-    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private Set<RatedTransaction> ratedTransactions = new HashSet<RatedTransaction>();
-
-    /**
      * Billing run processing type
      */
     @Enumerated(value = EnumType.STRING)
@@ -298,6 +297,13 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Size(max = 60)
     @NotNull
     private String uuid;
+
+    /**
+     * Reference date
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "reference_date")
+    private ReferenceDateEnum referenceDate = ReferenceDateEnum.TODAY;
 
     public Date getProcessDate() {
         return processDate;
@@ -477,14 +483,6 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
         this.billableBillingAccounts = selectedBillingAccounts;
     }
 
-    public Set<RatedTransaction> getRatedTransactions() {
-        return ratedTransactions;
-    }
-
-    public void setRatedTransactions(Set<RatedTransaction> ratedTransactions) {
-        this.ratedTransactions = ratedTransactions;
-    }
-
     public String getRejectionReason() {
         return rejectionReason;
     }
@@ -575,11 +573,11 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      */
     @PrePersist
     public void setUUIDIfNull() {
-    	if (uuid == null) {
-    		uuid = UUID.randomUUID().toString();
-    	}
+        if (uuid == null) {
+            uuid = UUID.randomUUID().toString();
+        }
     }
-    
+
     @Override
     public CustomFieldValues getCfAccumulatedValues() {
         return cfAccumulatedValues;
@@ -592,7 +590,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     @Override
     public String getUuid() {
-    	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
+        setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
         return uuid;
     }
 
@@ -669,5 +667,21 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
         return billingCycle.getDescription();
     }
 
+    /**
+     * Gets the reference date
+     *
+     * @return the reference date
+     */
+    public ReferenceDateEnum getReferenceDate() {
+        return referenceDate;
+    }
 
+    /**
+     * Sets the reference date.
+     *
+     * @param referenceDate the new reference date
+     */
+    public void setReferenceDate(ReferenceDateEnum referenceDate) {
+        this.referenceDate = referenceDate;
+    }
 }

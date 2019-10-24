@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.enterprise.inject.Produces;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
@@ -48,13 +47,11 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.ProductInstance;
-import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
@@ -63,7 +60,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
-import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletReservationService;
@@ -98,9 +94,6 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     private UserAccountService userAccountService;
 
     @Inject
-    private RatedTransactionService ratedTransactionService;
-
-    @Inject
     private BillingAccountService billingAccountService;
 
     @Inject
@@ -114,7 +107,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
     @Inject
     private ProductTemplateService productTemplateService;
-    
+
     @Inject
     private SellerService sellerService;
 
@@ -170,8 +163,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         this.initNestedFields(entity);
         return entity;
     }
-    
-    
+
     @Override
     public UserAccount getEntity() {
         UserAccount ua = super.getEntity();
@@ -250,15 +242,15 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public String terminateAccount() {
         log.debug("resiliateAccount userAccountId:" + entity.getId());
         try {
-            
+
             Date terminationDate = entity.getTerminationDate();
             SubscriptionTerminationReason terminationReason = entity.getTerminationReason();
-            
+
             entity = userAccountService.refreshOrRetrieve(entity);
 
             entity.setTerminationDate(terminationDate);
             entity.setTerminationReason(terminationReason);
-           
+
             entity = userAccountService.userAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason());
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
@@ -317,22 +309,17 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         return result;
     }
 
-    public LazyDataModel<WalletOperation> getWalletOperations(String walletCode) {   	
-   	 HashMap<String, Object> filters = new HashMap<String, Object>();
-   	 filters.put("wallet.code", walletCode);
-   	 filters.put("wallet.userAccount", entity);
-   	 
-		if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
-			log.debug("getWalletOperations {}", walletCode);
-			walletOperations.put(walletCode,walletOperationBean.getLazyDataModel(filters, true));
-		}		 
-		return walletOperations.get(walletCode);
-   }
+    public LazyDataModel<WalletOperation> getWalletOperations(String walletCode) {
 
-    @Produces
-    @Named("getRatedTransactionsInvoiced")
-    public List<RatedTransaction> getRatedTransactionsInvoiced() {
-        return ratedTransactionService.getRatedTransactionsInvoiced(entity);
+        HashMap<String, Object> filters = new HashMap<String, Object>();
+        filters.put("wallet.code", walletCode);
+        filters.put("wallet.userAccount", entity);
+
+        if (entity != null && !entity.isTransient() && !walletOperations.containsKey(walletCode)) {
+            log.debug("getWalletOperations {}", walletCode);
+            walletOperations.put(walletCode, walletOperationBean.getLazyDataModel(filters, true));
+        }
+        return walletOperations.get(walletCode);
     }
 
     public void populateAccounts(BillingAccount billingAccount) {
@@ -388,13 +375,12 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         reloadOperation.setWallet(entity.getWalletInstance(selectedWalletCode));
         reloadOperation.setDescription("reload");
         reloadOperation.setSeller(entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
-        reloadOperation.setStatus(WalletOperationStatusEnum.TREATED);
         reloadOperation.setType(OperationTypeEnum.CREDIT);
     }
 
     public void reload() throws BusinessException {
+        reloadOperation.setStatus(WalletOperationStatusEnum.TREATED);
         walletOperationService.create(reloadOperation);
-        reloadOperation = null;
     }
 
     public String getCachedOpenBalance(WalletInstance wallet) {
@@ -495,11 +481,12 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public List<SelectItem> getWalletOperationStatusList() {
         ResourceBundle resourceBundle = ResourceBundle.getBundle("messages", Faces.getLocale());
 
-        List<SelectItem> filterLockedOptions = new ArrayList<SelectItem>(Arrays.asList(new SelectItem(WalletOperationStatusEnum.OPEN, resourceBundle.getString("walletOperationStatus.open")),
-            new SelectItem(WalletOperationStatusEnum.TREATED, resourceBundle.getString("walletOperationStatus.treated")),
-            new SelectItem(WalletOperationStatusEnum.CANCELED, resourceBundle.getString("walletOperationStatus.canceled")),
-            new SelectItem(WalletOperationStatusEnum.RESERVED, resourceBundle.getString("walletOperationStatus.reserved")),
-            new SelectItem(WalletOperationStatusEnum.TO_RERATE, resourceBundle.getString("walletOperationStatus.to_rerate"))));
+        List<SelectItem> filterLockedOptions = new ArrayList<SelectItem>(
+            Arrays.asList(new SelectItem(WalletOperationStatusEnum.OPEN, resourceBundle.getString("walletOperationStatus.open")),
+                new SelectItem(WalletOperationStatusEnum.TREATED, resourceBundle.getString("walletOperationStatus.treated")),
+                new SelectItem(WalletOperationStatusEnum.CANCELED, resourceBundle.getString("walletOperationStatus.canceled")),
+                new SelectItem(WalletOperationStatusEnum.RESERVED, resourceBundle.getString("walletOperationStatus.reserved")),
+                new SelectItem(WalletOperationStatusEnum.TO_RERATE, resourceBundle.getString("walletOperationStatus.to_rerate"))));
 
         return filterLockedOptions;
     }
@@ -601,10 +588,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
             messages.info(new BundleKey("messages", "productInstance.saved.ok"));
         }
     }
-    
+
     public List<Seller> listSellers() {
-        if(productInstance!= null && productInstance.getProductTemplate() != null) {
-            if(productInstance.getProductTemplate().getSellers().size() > 0) {
+        if (productInstance != null && productInstance.getProductTemplate() != null) {
+            if (productInstance.getProductTemplate().getSellers().size() > 0) {
                 return productInstance.getProductTemplate().getSellers();
             } else {
                 return sellerService.list();

@@ -24,8 +24,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -52,6 +60,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -61,7 +70,9 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
+import org.meveo.service.index.ElasticClient;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.omnifaces.cdi.Param;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
@@ -70,11 +81,11 @@ import org.primefaces.model.LazyDataModel;
 /**
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
- *  
+ *
  * @author anasseh
  * @author Edward P. Legaspi
  * @author Khalid HORRI
- * @lastModifiedVersion 6.1
+ * @lastModifiedVersion 7.0
  */
 @Named
 @ViewScoped
@@ -108,11 +119,11 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     private Long adjustedInvoiceIdParam;
 
     @Inject
-    @Param
-    private Boolean detailedParam;
+    private ServiceSingleton serviceSingleton;
 
     @Inject
-    private ServiceSingleton serviceSingleton;
+    @Param
+    private Boolean detailedParam;
 
     private Boolean detailedInvoiceAdjustment;
 
@@ -127,6 +138,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     private Boolean xmlGenerated;
 
+    private Map<Long, ServiceBasedLazyDataModel<RatedTransaction>> ratedTransactionsDM = new HashMap<>();
+
+    private List<InvoiceCategoryDTO> categoryDTOs;
+
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -136,7 +151,12 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     @Override
     public Invoice initEntity() {
-        return super.initEntity();
+        entity = super.initEntity();
+        if (categoryDTOs == null) {
+            categoryDTOs = initInvoiceCategories();
+        }
+
+        return entity;
     }
 
     /**
@@ -210,11 +230,14 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @param billingAccounts a billing accounts list
      * @return return true if BillingAccounts list is null or empty
      */
+    @SuppressWarnings("rawtypes")
     private boolean isNullOrEmpty(Object billingAccounts) {
-        if (billingAccounts == null)
+        if (billingAccounts == null) {
             return true;
-        if (billingAccounts instanceof List && ((List) billingAccounts).isEmpty())
+        }
+        if (billingAccounts instanceof List && ((List) billingAccounts).isEmpty()) {
             return true;
+        }
         return false;
     }
 
@@ -232,8 +255,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public List<InvoiceCategoryDTO> getInvoiceCategories() {
-        entity = invoiceService.refreshOrRetrieve(entity);
-        LinkedHashMap<String, InvoiceCategoryDTO> headerCategories = new LinkedHashMap<String, InvoiceCategoryDTO>();
+        return categoryDTOs;
+    }
+
+    public List<InvoiceCategoryDTO> initInvoiceCategories() {
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
         for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
             if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
@@ -251,69 +276,64 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             }
         });
 
+        List<InvoiceCategoryDTO> headerCategories = new ArrayList<>();
+
         for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
             InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
-            InvoiceCategoryDTO headerCat = null;
-            if (headerCategories.containsKey(invoiceCategory.getCode())) {
-                headerCat = headerCategories.get(invoiceCategory.getCode());
-                headerCat.addAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
-                headerCat.addAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
-            } else {
-                headerCat = new InvoiceCategoryDTO();
+            InvoiceCategoryDTO headerCat = new InvoiceCategoryDTO();
                 headerCat.setDescription(invoiceCategory.getDescription());
                 headerCat.setCode(invoiceCategory.getCode());
                 headerCat.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
                 headerCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
-                headerCategories.put(invoiceCategory.getCode(), headerCat);
-            }
+            headerCategories.add(headerCat);
 
             Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
             LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = headerCat.getInvoiceSubCategoryDTOMap();
             for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
                 InvoiceSubCategory invoiceSubCategory = subCatInvoiceAgregate.getInvoiceSubCategory();
-                InvoiceSubCategoryDTO headerSubCat = null;
-                if (headerSubCategories.containsKey(invoiceSubCategory.getCode())) {
-                    headerSubCat = headerSubCategories.get(invoiceSubCategory.getCode());
-                    headerSubCat.addAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
-                    headerSubCat.addAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
-                } else {
-                    headerSubCat = new InvoiceSubCategoryDTO();
+                InvoiceSubCategoryDTO headerSubCat = new InvoiceSubCategoryDTO();
+                headerSubCat.setId(subCatInvoiceAgregate.getId());
                     headerSubCat.setDescription(invoiceSubCategory.getDescription());
                     headerSubCat.setCode(invoiceSubCategory.getCode());
                     headerSubCat.setAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
                     headerSubCat.setAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
-                    headerSubCat.setRatedTransactions(ratedTransactionService.getListByInvoiceAndSubCategory(entity, invoiceSubCategory));
-                    headerSubCategories.put(invoiceSubCategory.getCode(), headerSubCat);
+                headerSubCategories.put(invoiceSubCategory.getId().toString(), headerSubCat);
+
+                ServiceBasedLazyDataModel<RatedTransaction> rtDM = new ServiceBasedLazyDataModel<RatedTransaction>() {
+
+                    private static final long serialVersionUID = 8879L;
+
+                    @Override
+                    protected Map<String, Object> getSearchCriteria() {
+
+                        Map<String, Object> filters = new HashMap<>();
+                        filters.put("invoice", entity);
+                        filters.put("invoiceAgregateF", subCatInvoiceAgregate);
+                        return filters;
                 }
+
+                    @Override
+                    protected String getDefaultSortImpl() {
+                        return "usageDate";
             }
+
+                    @Override
+                    protected IPersistenceService<RatedTransaction> getPersistenceServiceImpl() {
+                        return ratedTransactionService;
         }
 
-        // build sub categories for min amounts
-        InvoiceCategoryDTO headerCat = new InvoiceCategoryDTO();
-        headerCat.setDescription("-");
-        headerCat.setCode("min_amount");
+                    @Override
+                    protected ElasticClient getElasticClientImpl() {
+                        return null;
+                    }
+                };
 
-        LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = new LinkedHashMap<String, InvoiceSubCategoryDTO>();
-        for (RatedTransaction ratedTransaction : entity.getRatedTransactions()) {
-            if (ratedTransaction.getWallet() == null) {
-                InvoiceSubCategoryDTO headerSubCat = null;
-                if (headerSubCategories.containsKey(ratedTransaction.getCode())) {
-                    headerSubCat = headerSubCategories.get(ratedTransaction.getCode());
-                } else {
-                    headerSubCat = new InvoiceSubCategoryDTO();
-                    headerSubCat.setDescription(ratedTransaction.getDescription());
-                    headerSubCat.setCode(ratedTransaction.getCode());
+                ratedTransactionsDM.put(subCatInvoiceAgregate.getId(), rtDM);
+
                 }
-                headerSubCat.getRatedTransactions().add(ratedTransaction);
-                headerSubCat.setAmountWithoutTax(headerSubCat.getAmountWithoutTax().add(ratedTransaction.getAmountWithoutTax()));
-                headerSubCat.setAmountWithTax(headerSubCat.getAmountWithTax().add(ratedTransaction.getAmountWithTax()));
-                headerSubCategories.put(ratedTransaction.getCode(), headerSubCat);
             }
-        }
-        headerCat.setInvoiceSubCategoryDTOMap(headerSubCategories);
-        headerCategories.put("min_amount", headerCat);
 
-        return new ArrayList<InvoiceCategoryDTO>(headerCategories.values());
+        return headerCategories;
     }
 
     public void deletePdfInvoice() {
@@ -465,6 +485,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public boolean isPdfInvoiceAlreadyGenerated() {
+
         if (!pdfGenerated.containsKey(entity.getId())) {
             pdfGenerated.put(entity.getId(), invoiceService.isInvoicePdfExist(entity));
         }
@@ -474,12 +495,11 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public boolean isPdfInvoiceAlreadyGenerated(Long invoiceId) {
 
-        Invoice invoice = invoiceService.findById(invoiceId);
-        if (!pdfGenerated.containsKey(invoice.getId())) {
-            pdfGenerated.put(invoice.getId(), invoiceService.isInvoicePdfExist(invoice));
+        if (!pdfGenerated.containsKey(invoiceId)) {
+            Invoice invoice = invoiceService.findById(invoiceId);
+            pdfGenerated.put(invoiceId, invoiceService.isInvoicePdfExist(invoice));
         }
-
-        return pdfGenerated.get(invoice.getId());
+        return pdfGenerated.get(invoiceId);
     }
 
     public void excludeBillingAccounts(BillingRun billingrun) {
@@ -696,7 +716,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             super.saveOrUpdate(false);
         }
         if (isDetailed()) {
-            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, new Date());
+            invoiceService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, new Date());
             entity = invoiceService.update(entity);
 
         } else {
@@ -741,7 +761,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
         return detailedInvoiceAdjustment;
     }
-    
+
     /**
      * Checks if list of selectedEntities is empty to disable or not the exclude button
      *
@@ -800,6 +820,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGeneratePdfBtnActive() {
+        if (entity.isPrepaid()) {
+            return false;
+        }
         String value = ParamBean.getInstance().getProperty("billing.activateGenaratePdfBtn", "true");
         if ("false".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
             return Boolean.valueOf(value);
@@ -813,6 +836,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      * @return
      */
     public boolean getGenerateXmlBtnActive() {
+        if (entity.isPrepaid()) {
+            return false;
+        }
         String value = ParamBean.getInstance().getProperty("billing.activateGenarateXmlBtn", "true");
         if ("false".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
             return Boolean.valueOf(value);
@@ -820,5 +846,44 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         return true;
     }
 
+    /**
+     * Activate/deactivate Send by Email button
+     *
+     * @return true if the invoice is not a prepaid report
+     */
+    public boolean getSendByEmailBtnActive() {
+        return !entity.isPrepaid();
+    }
 
+    public void sendInvoiceByEmail() throws BusinessException {
+        entity = invoiceService.refreshOrRetrieve(entity);
+        if (invoiceService.sendByEmail(entity, MailingTypeEnum.MANUAL, null)) {
+            messages.info(new BundleKey("messages", "invoice.send.success"));
+        } else {
+            messages.error(new BundleKey("messages", "invoice.send.error"));
+        }
+
+    }
+
+    public LazyDataModel<RatedTransaction> getRatedTransactions(InvoiceSubCategoryDTO invoiceSubCategoryDTO) {
+        return ratedTransactionsDM.get(invoiceSubCategoryDTO.getId());
+        }
+
+    /**
+     * Activate/deactivate New aggregated invoice adjustment
+     *
+     * @return true if the invoice is not a prepaid report
+     */
+    public boolean getShowBtnNewIAAggregateds() {
+        return !entity.isPrepaid();
+    }
+
+    /**
+     * Activate/deactivate New detailed invoice adjustment
+     *
+     * @return true if the invoice is not a prepaid report
+     */
+    public boolean getShowBtnNewIADetailed() {
+        return !entity.isPrepaid();
+    }
 }

@@ -9,12 +9,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.ReferenceDateEnum;
 
 /**
  * The Class BillingCycleDto.
  *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 6.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @XmlRootElement(name = "BillingCycle")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,7 +86,10 @@ public class BillingCycleDto extends BusinessEntityDto {
     /** The billing cycle type. */
     @XmlElement
     private BillingEntityTypeEnum type;
-  
+
+    /** The reference date. */
+    private ReferenceDateEnum referenceDate;
+
     /**
      * Code of the script instance.
      */
@@ -107,6 +112,7 @@ public class BillingCycleDto extends BusinessEntityDto {
         super(billingCycleEntity);
 
         if (billingCycleEntity != null) {
+            id = billingCycleEntity.getId();
             billingTemplateName = billingCycleEntity.getBillingTemplateName();
             billingTemplateNameEL = billingCycleEntity.getBillingTemplateNameEL();
             invoiceDateDelay = billingCycleEntity.getInvoiceDateDelay();
@@ -119,16 +125,17 @@ public class BillingCycleDto extends BusinessEntityDto {
             type = billingCycleEntity.getType();
             invoiceTypeEl = billingCycleEntity.getInvoiceTypeEl();
             invoiceTypeElSpark = billingCycleEntity.getInvoiceTypeElSpark();
+            referenceDate = billingCycleEntity.getReferenceDate();
+			if (billingCycleEntity.getScriptInstance() != null) {
+				scriptInstanceCode = billingCycleEntity.getScriptInstance().getCode();
+			}
 
             if (billingCycleEntity.getInvoiceType() != null) {
                 invoiceTypeCode = billingCycleEntity.getInvoiceType().getCode();
             }
             if (billingCycleEntity.getCalendar() != null) {
                 calendar = billingCycleEntity.getCalendar().getCode();
-			}
-			if (billingCycleEntity.getScriptInstance() != null) {
-				scriptInstanceCode = billingCycleEntity.getScriptInstance().getCode();
-			}
+            }
             customFields = customFieldInstances;
         }
     }
@@ -333,7 +340,7 @@ public class BillingCycleDto extends BusinessEntityDto {
         return "BillingCycleDto [code=" + getCode() + ", description=" + getDescription() + ", billingTemplateName=" + billingTemplateName + ", invoiceDateDelay="
                 + invoiceDateDelay + ", dueDateDelay=" + dueDateDelay + ", dueDateDelayEL=" + dueDateDelayEL + ", invoiceDateProductionDelay=" + invoiceDateProductionDelay
                 + ", transactionDateDelay=" + transactionDateDelay + ", calendar=" + calendar + ", invoicingThreshold=" + invoicingThreshold + ", invoiceTypeCode="
-                + invoiceTypeCode + ", customFields=" + customFields + "]";
+                + invoiceTypeCode + ", customFields=" + customFields + ", referenceDate=" + referenceDate + "]";
     }
 
     /**
@@ -409,17 +416,35 @@ public class BillingCycleDto extends BusinessEntityDto {
     }
 
     /**
-     * Gets the script instance code.
-     * @return script instance code
+     * Gets the referenceDate
+     *
+     * @return the referenceDate
+     */
+    public ReferenceDateEnum getReferenceDate() {
+        return referenceDate;
+    }
+
+    /**
+     * Sets the referenceDate.
+     *
+     * @param referenceDate the new referenceDate
+     */
+    public void setReferenceDate(ReferenceDateEnum referenceDate) {
+        this.referenceDate = referenceDate;
+    }
+
+    /**
+     * Gets the scriptInstanceCode.
+     * @return code of script instance
      */
 	public String getScriptInstanceCode() {
 		return scriptInstanceCode;
 	}
 
 	/**
-     * Sets the script instance code.
-     * @param scriptInstance script instance code
-     */
+	 * Sets the scriptInstanceCode.
+	 * @param scriptInstanceCode code of script instance
+	 */
 	public void setScriptInstanceCode(String scriptInstanceCode) {
 		this.scriptInstanceCode = scriptInstanceCode;
 	}

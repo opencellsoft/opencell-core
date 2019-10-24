@@ -13,11 +13,14 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.communication.MeveoInstance;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
+import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 6.0
  **/
 @Stateless
 public class TriggeredEdrApi extends BaseApi {
@@ -27,6 +30,9 @@ public class TriggeredEdrApi extends BaseApi {
 
     @Inject
     private MeveoInstanceService meveoInstanceService;
+    
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     public void create(TriggeredEdrTemplateDto postData) throws MeveoApiException, BusinessException {
 
@@ -67,6 +73,14 @@ public class TriggeredEdrApi extends BaseApi {
         edrTemplate.setParam3ElSpark(postData.getParam3ElSpark());
         edrTemplate.setParam4El(postData.getParam4El());
         edrTemplate.setParam4ElSpark(postData.getParam4ElSpark());
+        edrTemplate.setOpencellInstanceEL(postData.getOpencellInstanceEL());
+        if (!StringUtils.isBlank(postData.getTriggeredEdrScript())) {
+            ScriptInstance si = scriptInstanceService.findByCode(postData.getTriggeredEdrScript());
+            if (si == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getTriggeredEdrScript());
+            }
+            edrTemplate.setTriggeredEdrScript(si);
+        }
 
         triggeredEDRTemplateService.create(edrTemplate);
     }
@@ -140,6 +154,20 @@ public class TriggeredEdrApi extends BaseApi {
         if (postData.getParam4ElSpark() != null) {
             edrTemplate.setParam4ElSpark(postData.getParam4ElSpark());
         }
+        if(postData.getOpencellInstanceEL() != null) {
+            edrTemplate.setOpencellInstanceEL(postData.getOpencellInstanceEL());
+        }
+        if (postData.getTriggeredEdrScript() != null) {
+            if (!StringUtils.isBlank(postData.getTriggeredEdrScript())) {
+                ScriptInstance si = scriptInstanceService.findByCode(postData.getTriggeredEdrScript());
+                if (si == null) {
+                    throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getTriggeredEdrScript());
+                }
+                edrTemplate.setTriggeredEdrScript(si);
+            } else {
+                edrTemplate.setTriggeredEdrScript(null);
+            }
+        }
 
         triggeredEDRTemplateService.update(edrTemplate);
     }
@@ -170,8 +198,7 @@ public class TriggeredEdrApi extends BaseApi {
             throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrCode);
         }
 
-        TriggeredEdrTemplateDto edrTemplateDto = new TriggeredEdrTemplateDto(edrTemplate);
-        return edrTemplateDto;
+        return new TriggeredEdrTemplateDto(edrTemplate);
     }
 
     public void createOrUpdate(TriggeredEdrTemplateDto postData) throws MeveoApiException, BusinessException {

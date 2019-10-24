@@ -1,5 +1,20 @@
 package org.meveo.api.admin;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.meveo.admin.util.FlatFileValidator;
+import org.meveo.api.BaseApi;
+import org.meveo.api.dto.admin.FileDto;
+import org.meveo.api.dto.admin.FileRequestDto;
+import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.commons.utils.FileUtils;
+import org.meveo.commons.utils.StringUtils;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -10,25 +25,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipOutputStream;
 
-import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.meveo.api.BaseApi;
-import org.meveo.api.dto.admin.FileDto;
-import org.meveo.api.exception.BusinessApiException;
-import org.meveo.commons.utils.FileUtils;
-import org.meveo.commons.utils.StringUtils;
-
 /**
  * @author Edward P. Legaspi
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
- * 
+ * @author Youssef IZEM
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.3.0
  */
 @Stateless
 public class FilesApi extends BaseApi {
+
+    @Inject
+    private FlatFileValidator flatFileValidator;
 
     public String getProviderRootDir() {
         return paramBeanFactory.getChrootDir();
@@ -92,7 +100,7 @@ public class FilesApi extends BaseApi {
         }
 
         try (FileOutputStream fos = new FileOutputStream(new File(FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip"));
-            ZipOutputStream zos = new ZipOutputStream(fos)) {
+                ZipOutputStream zos = new ZipOutputStream(fos)) {
             FileUtils.addDirToArchive(getProviderRootDir(), file.getPath(), zos);
             fos.flush();
         } catch (IOException e) {
@@ -103,9 +111,10 @@ public class FilesApi extends BaseApi {
     /**
      * @param data array of bytes as data uploaded
      * @param filename file name
+     * @param fileFormat file format
      * @throws BusinessApiException business api exeption.
      */
-    public void uploadFile(byte[] data, String filename) throws BusinessApiException {
+    public void uploadFile(byte[] data, String filename, String fileFormat) throws BusinessApiException {
         File file = new File(getProviderRootDir() + File.separator + filename);
         FileOutputStream fop = null;
         try {
@@ -125,12 +134,85 @@ public class FilesApi extends BaseApi {
                 FileUtils.unzipFile(parentDir, new FileInputStream(file));
             }
 
+            if (!StringUtils.isBlank(fileFormat)) {
+                flatFileValidator.validateAndLogFile(file, filename, fileFormat, null);
+            }
+
         } catch (Exception e) {
             throw new BusinessApiException("Error uploading file: " + filename + ". " + e.getMessage());
         } finally {
             IOUtils.closeQuietly(fop);
         }
     }
+
+    /**
+     * Allows to upload a base64 file
+     * 
+     * @param postData contains filename and the base64 data to upload
+     * @throws MeveoApiException
+     */
+    public void uploadFileBase64(FileRequestDto postData) throws MeveoApiException {
+        if (postData == null || StringUtils.isBlank(postData.getFilepath())) {
+            missingParameters.add("filepath");
+        }
+        if (postData == null || StringUtils.isBlank(postData.getContent())) {
+            missingParameters.add("content");
+        }
+
+        handleMissingParametersAndValidate(postData);
+
+        String filepath = getProviderRootDir() + File.separator + postData.getFilepath();
+        File file = new File(filepath);
+        FileOutputStream fop = null;
+        try {
+
+            File parent = file.getParentFile();
+            if (parent == null) {
+                throw new BusinessApiException("Invalid path : " + filepath);
+            }
+
+            parent.mkdirs();
+            file.createNewFile();
+            fop = new FileOutputStream(file);
+            fop.write(Base64.decodeBase64(postData.getContent()));
+            fop.flush();
+
+        } catch (Exception e) {
+            throw new BusinessApiException("Error uploading file: " + postData.getFilepath() + ". " + e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(fop);
+        }
+    }
+
+    /**
+     * Allows to unzip a file
+     * 
+     * @param filePath
+     * @param deleteOnError
+     * @throws MeveoApiException
+     */
+    public void unzipFile(String filePath, boolean deleteOnError) throws MeveoApiException {
+        if (filePath == null || StringUtils.isBlank(filePath)) {
+            throw new BusinessApiException("filePath is required ! ");
+        }
+
+        File file = new File(getProviderRootDir() + File.separator + filePath);
+        if (!FileUtils.isValidZip(file)) {
+            suppressFile(filePath);
+            throw new BusinessApiException("The zipped file is invalid ! ");
+        }
+
+        try {
+            String parentDir = file.getParent();
+            FileUtils.unzipFile(parentDir, new FileInputStream(file));
+        } catch (Exception e) {
+            if (deleteOnError) {
+                suppressFile(filePath);
+            }
+            throw new BusinessApiException("Error unziping file: " + filePath + ". " + e.getMessage());
+        }
+    }
+    
 
     public void suppressFile(String filePath) throws BusinessApiException {
         String filename = getProviderRootDir() + File.separator + filePath;
@@ -173,7 +255,7 @@ public class FilesApi extends BaseApi {
             throw new BusinessApiException("File does not exists: " + file.getPath());
         }
 
-        try (FileInputStream fis = new FileInputStream(file)){
+        try (FileInputStream fis = new FileInputStream(file)) {
             response.setContentType(Files.probeContentType(file.toPath()));
             response.setContentLength((int) file.length());
             response.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");

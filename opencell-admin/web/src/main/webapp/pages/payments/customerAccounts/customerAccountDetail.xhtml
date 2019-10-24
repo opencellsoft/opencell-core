@@ -93,7 +93,7 @@
                                         </h:panelGroup>
 
 
-                                        <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" required="false" listBean="#{titleBean}"
+                                        <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" valueLabelField2="descriptionNotNull" required="false" listBean="#{titleBean}"
                                             listenerUpdate=":parentTab:formCustomerAccount:childTab:userNamePanel" styleClass="clearLeft" />
                                             
                                         <h:panelGroup id="userNamePanel" layout="block">
@@ -201,7 +201,7 @@
 
                                             <p:panel id="paymentMethodPanelId"  header="#{messages['customerAccount.paymentMethod']}" rendered="#{customerAccountBean.selectedPaymentMethod!=null}">
                                                 <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
-                                                    <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.alias']}" field="alias" required="true" />
+                                                    <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.alias']}" field="alias" />
 
                                                     <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.CARD}">
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.cardType']}" field="cardType"
@@ -260,7 +260,8 @@
                                 </p:tab>
 
                                 <hftl:customFields backingBean="#{customerAccountBean}" messagesId=":parentTab:formCustomerAccount:messages" />
-                                <hftl:displayWorkflowsHistory entity="#{customerAccountBean.entity}" />
+                                <!-- <hftl:displayWorkflowsHistory entity="#{customerAccountBean.entity}" /> -->
+                                <hftl:displayGenericWFsHistory backingBean="#{customerAccountBean}" />
 
                             </p:tabView>
                             <ui:param name="buttons" value="true"/>
@@ -288,7 +289,7 @@
                             ajaxUpdateIds=":parentTab:results_panel">
                             <hftl:searchField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" />
                             <hftl:searchField label="#{messages['accountOperation.matchingStatus']}" field="matchingStatus" />
-                            <hftl:searchField label="#{messages['accountOperation.occCode']}" field="occCode" />
+                            <hftl:searchField label="#{messages['accountOperation.occCode']}" field="code" />
 							
 						    <hftl:searchField id="cAaccountingCodeId" label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" valueLabelField="code"  popup="true"
 							popupId="accountingCodePopup" showResetButton="true" />
@@ -328,14 +329,14 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{messages['accountOperation.occCode']}" />
                                 </f:facet>
-                                <h:outputText value="#{entity.occCode}" />
+                                <h:outputText value="#{entity.code}" />
                             </p:column>
 
                             <p:column width="20%">
                                 <f:facet name="header">
                                     <h:outputText value="#{messages['accountOperation.occDescription']}" />
                                 </f:facet>
-                                <h:outputText value="#{entity.occDescription}" />
+                                <h:outputText value="#{entity.description}" />
                             </p:column>
 
                             <p:column width="10%">
@@ -384,6 +385,53 @@
                             </ui:define>
                         </hftl:dataList>
 
+                    </p:tab>
+                    <p:tab id="dunningDocs" title="#{messages['customerAccount.dunning.documents']}" rendered="#{not empty customerAccountBean.entity.id}">
+                        <hftl:dataList resultsId="dunningDocs"  backingBean="#{dunningDocumentBean}" dataModel="#{dunningDocumentBean.getDunningDocuments(customerAccountBean.entity)}"
+                                       label="#{messages['accountOperation.title']}" disabled="true" deleteManyButton="false" exportToXml="false">
+                            <p:column width="19%">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['customerAccount.dunning.documents.creation']}" />
+                                </f:facet>
+                                <h:outputText value="#{entity.auditable.created}">
+                                	<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
+								</h:outputText>
+                            </p:column>
+
+                            <p:column width="19%">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['customerAccount.dunning.documents.update']}" />
+                                </f:facet>
+                                <h:outputText value="#{entity.auditable.updated}">
+									<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
+								</h:outputText>
+                            </p:column>
+
+                            <p:column width="19%">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['customerAccount.dunning.nbr.dueinvoices']}" />
+                                </f:facet>
+                                <h:outputText value="#{entity.dueInvoices.size()}" />
+                            </p:column>
+                            <p:column width="19%">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['customerAccount.dunning.amountWithTax']}" />
+                                </f:facet>
+                                <h:outputText value="#{entity.amountWithTax}" converter="bigDecimal4DigitsConverter"/>
+                            </p:column>
+                            <p:column width="19%">
+                                <f:facet name="header">
+                                    <h:outputText value="#{messages['customerAccount.dunning.paidAmount']}" />
+                                </f:facet>
+                                <h:outputText value="#{entity.paidAmount}" converter="bigDecimal4DigitsConverter"/>
+                            </p:column>
+                            <hftl:actionsColumn renderViewLink="true"
+                                                editView="/pages/payments/customerAccounts/dunningDocumentDetail.xhtml"
+                                                renderEditLink="false" renderDeleteLink="false"
+                                                backView="backToBaFromInvoice" backEntityId="#{entity.id}"
+                                                backTab="0" backMainTab="2">
+                            </hftl:actionsColumn>
+                        </hftl:dataList>
                     </p:tab>
                 </p:tabView>
 

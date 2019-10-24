@@ -31,7 +31,8 @@ import org.meveo.api.rest.IBaseRs;
  * 
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 5.1
+ * @author Khalid HORRI
+ * @lastModifiedVersion 7.0
  **/
 @Path("/invoice")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -191,10 +192,16 @@ public interface InvoiceRs extends IBaseRs {
      * @return List of invoices
      */
     @GET
-    @Path("/listPresentInAR")
     @Deprecated
+    @Path("/listPresentInAR")
     CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("includePdf") boolean includePdf);
-
+    
+    /**
+     * Generate a Draft invoice
+     * 
+     * @param generateInvoiceRequestDto Post data
+     * @return action status.
+     */
     @POST
     @Path("/generateDraftInvoice")
     GenerateInvoiceResponseDto generateDraftInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto);
@@ -224,5 +231,14 @@ public interface InvoiceRs extends IBaseRs {
     @POST
     @Path("/list")
     InvoicesDto listPost(PagingAndFiltering pagingAndFiltering);
+
+    /**
+     * Send invoice by Email.
+     * @param invoiceDto  the invoice DTO
+     * @return "SUCCESS" if sent, "FAIL" else
+     */
+    @POST
+    @Path("/sendByEmail")
+    ActionStatus sendByEmail(InvoiceDto invoiceDto);
 
 }

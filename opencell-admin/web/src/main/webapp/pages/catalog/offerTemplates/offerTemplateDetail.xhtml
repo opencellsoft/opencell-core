@@ -14,6 +14,8 @@
         <o:importFunctions type="org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean" var="cfde" />
         <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$EndOfTermActionEnum" var="EndOfTermActionEnum" />
         <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$RenewalPeriodUnitEnum" var="RenewalPeriodUnitEnum" />
+        <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$InitialTermTypeEnum" var="InitialTermTypeEnum" />
+        <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$RenewalTermTypeEnum" var="RenewalTermTypeEnum" />
         
         	<hftl:entityPopup id="offerTemplateScriptPopup"
 			header="#{messages['scriptInstance.popup.header']}"
@@ -25,8 +27,6 @@
 			column2="description" eventBackingBean="#{offerTemplateBean}"
 			updateField=":offerForm:tabView:offerInfo:scriptSelectId :offerForm:tabView:offerInfo:scriptSelectId_text">
 		</hftl:entityPopup>
-        
-        
 
         <hftl:entityPopup id="searchServiceTemplatePopup" header="#{messages['offerServiceTemplate.serviceTemplate']}"
             updateField=":offerForm:tabView:serviceTemplateCode :offerForm:tabView:serviceTemplateCode_text" selection="#{offerTemplateBean.offerServiceTemplate.serviceTemplate}"
@@ -76,7 +76,8 @@
                                         maxlength="2000" componentWidth="50" newLine="true" />
                                     <hftl:formField label="#{messages[appProvider.entreprise?'offerTemplate.minimumAmountWithoutTaxElSpark':'offerTemplate.minimumAmountWithTaxElSpark']}"
                                         field="minimumAmountElSpark" id="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
-
+								    <hftl:formField label="#{messages['offerTemplate.minimumInvoiceSubCategory']}" id="invoiceSubCategoryId" field="minimumInvoiceSubCategory" valueLabelField="code" listBean="#{invoiceSubCategoryBean}" /> 
+								
 
                                     <o:validateMultiple components=":offerForm:tabView:offerInfo:code_txt :offerForm:tabView:offerInfo:validity_date :offerForm:tabView:offerInfo:validity_date_toRange"
                                         validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists.short']}" />
@@ -91,7 +92,6 @@
                                     valueLabelField="descriptionOrCode" listBean="#{customerCategoryListBean}" componentWidth="30" />
                                 <hftl:formField id="sellers" label="#{messages['offerTemplate.seller']}" field="sellers" listType="selectCheckbox"
                                     valueLabelField="descriptionOrCode" listBean="#{sellerListBean}" componentWidth="100" />  
-                                    <hftl:formField  label="#{messages['subscription.autoEndOfEngagement']}" field="autoEndOfEngagement" newLine="true" />  
                             </h:panelGrid>
                         </p:panelGrid>
 
@@ -100,20 +100,31 @@
 
                         <p:fieldset legend="#{messages['subscription.renewal']}" styleClass="clearLeft">
                             <h:panelGroup id="subscriptionRenewal">
+                                <hftl:formField label="#{messages['subscription.initialTermType']}" field="subscriptionRenewal" childField="initialTermType" listenerUpdate="subscriptionRenewal" />
+                                <hftl:formField id="calendarInitialyActiveForId" label="#{messages['subscription.initialyActiveFor']}" field="subscriptionRenewal" childField="calendarInitialyActiveFor"
+                                                rendered="#{offerTemplateBean.entity.subscriptionRenewal.initialTermType eq InitialTermTypeEnum.CALENDAR}"
+                                                listenerUpdate="subscriptionRenewal" actionListenerBean="#{offerTemplateBean.entity.subscriptionRenewal}"
+                                                actionListenerMethod="setDefaultInitialyActiveForUnit"
+                                                valueLabelField="code" popup="false" listBean="#{calendarBean}"/>
                                 <hftl:formField label="#{messages['subscription.initialyActiveFor']}" field="subscriptionRenewal" childField="initialyActiveFor" size="2" minValue="1"
                                     componentWidth="15" listenerUpdate="subscriptionRenewal" actionListenerBean="#{offerTemplateBean.entity.subscriptionRenewal}"
-                                    actionListenerMethod="setDefaultInitialyActiveForUnit" />
+                                    actionListenerMethod="setDefaultInitialyActiveForUnit" rendered="#{offerTemplateBean.entity.subscriptionRenewal.initialTermType eq InitialTermTypeEnum.RECURRING}"/>
                                 <hftl:formField label="#{messages['subscription.initialyActiveForUnit']}" field="subscriptionRenewal" childField="initialyActiveForUnit"
                                     required="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor!=null}"
-                                    disabled="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor==null}" listenerUpdate="subscriptionRenewal" />
-                                <h:panelGroup rendered="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor!=null}">
+                                    disabled="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor==null}" listenerUpdate="subscriptionRenewal" rendered="#{offerTemplateBean.entity.subscriptionRenewal.initialTermType eq InitialTermTypeEnum.RECURRING}"/>
+                                <hftl:formField  label="#{messages['subscription.autoEndOfEngagement']}" field="autoEndOfEngagement" />
+                                <h:panelGroup rendered="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor!=null or offerTemplateBean.entity.subscriptionRenewal.calendarInitialyActiveFor!=null}">
                                     <hftl:formField label="#{messages['subscription.autoRenew']}" field="subscriptionRenewal" childField="autoRenew" required="true"
                                         listenerUpdate="subscriptionRenewal" newLine="true" />
+                                    <hftl:formField label="#{messages['subscription.renewalTermType']}" field="subscriptionRenewal" childField="renewalTermType" rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" listenerUpdate="subscriptionRenewal" />
+                                    <hftl:formField id="calendarRenewForId" label="#{messages['subscription.renewFor']}" field="subscriptionRenewal" childField="calendarRenewFor"
+                                                    rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew and offerTemplateBean.entity.subscriptionRenewal.renewalTermType eq RenewalTermTypeEnum.CALENDAR}" listenerUpdate="subscriptionRenewal"
+                                                    valueLabelField="code" popup="false" listBean="#{calendarBean}"/>
                                     <hftl:formField label="#{messages['subscription.renewFor']}" field="subscriptionRenewal" childField="renewFor" size="2" required="true"
-                                        rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" listenerUpdate="subscriptionRenewal"
+                                        rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew and offerTemplateBean.entity.subscriptionRenewal.renewalTermType eq RenewalTermTypeEnum.RECURRING}" listenerUpdate="subscriptionRenewal"
                                         actionListenerBean="#{offerTemplateBean.entity.subscriptionRenewal}" actionListenerMethod="setDefaultRenewForUnit" />
                                     <hftl:formField label="#{messages['subscription.renewForUnit']}" field="subscriptionRenewal" childField="renewForUnit" required="true"
-                                        rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" listenerUpdate="subscriptionRenewal" />
+                                        rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew and offerTemplateBean.entity.subscriptionRenewal.renewalTermType eq RenewalTermTypeEnum.RECURRING}" listenerUpdate="subscriptionRenewal" />
                                     <hftl:formField label="#{messages['subscription.renewNotifyBefore']}" field="subscriptionRenewal" childField="daysNotifyRenewal" size="2" minValue="1"
                                         rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" />
                                     <hftl:formField label="#{messages['subscription.extendAgreementPeriod']}" field="subscriptionRenewal" childField="extendAgreementPeriodToSubscribedTillDate"
@@ -139,6 +150,7 @@
                 </p:tab>
 
                 <hftl:customFields backingBean="#{offerTemplateBean}" messagesId="offerForm:messages" />
+                <hftl:displayGenericWFsHistory backingBean="#{offerTemplateBean}" />
 
                 <p:tab title="#{messages['menu.serviceTemplates']}" id="tab1">
 
@@ -197,6 +209,13 @@
 
                 <p:tab title="#{messages['menu.productTemplates']}">
                     <ui:include src="productTemplateTab.xhtml">
+                        <ui:param name="backingBean" value="#{offerTemplateBean}" />
+                        <ui:param name="formId" value=":offerForm" />
+                    </ui:include>
+                </p:tab>
+
+                <p:tab title="#{messages['menu.discountPlans']}">
+                    <ui:include src="allowedDiscountPlansTab.xhtml">
                         <ui:param name="backingBean" value="#{offerTemplateBean}" />
                         <ui:param name="formId" value=":offerForm" />
                     </ui:include>

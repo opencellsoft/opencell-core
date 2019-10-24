@@ -56,6 +56,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -71,36 +72,42 @@ import org.meveo.model.shared.DateUtils;
  * 
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
 @Table(name = "billing_invoice", uniqueConstraints = @UniqueConstraint(columnNames = { "invoice_number", "invoice_type_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_seq"), })
-@CustomFieldEntity(cftCodePrefix = "INVOICE")
+@CustomFieldEntity(cftCodePrefix = "Invoice")
 @NamedQueries({
         @NamedQuery(name = "Invoice.validatedByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
         @NamedQuery(name = "Invoice.draftByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NULL and inv.temporaryInvoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
         @NamedQuery(name = "Invoice.allByBRNoXml", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
-        
+
         @NamedQuery(name = "Invoice.validatedNoXml", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL and inv.invoiceNumber IS NOT NULL"),
         @NamedQuery(name = "Invoice.draftNoXml", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL  and inv.invoiceNumber IS NULL and inv.temporaryInvoiceNumber IS NOT NULL"),
         @NamedQuery(name = "Invoice.allNoXml", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL"),
-        
+
         @NamedQuery(name = "Invoice.validatedNoPdf", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL"),
         @NamedQuery(name = "Invoice.draftNoPdf", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NULL and inv.temporaryInvoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL"),
         @NamedQuery(name = "Invoice.allNoPdf", query = "select inv.id from Invoice inv where inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL"),
-        
+
         @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.draftNoPdfByBR", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NULL and inv.temporaryInvoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.allNoPdfByBR", query = "select inv.id from Invoice inv where inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL and inv.billingRun.id=:billingRunId"),
-        
+
         @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.seller.id, inv.invoiceDate"),
         @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
         @NamedQuery(name = "Invoice.nullifyInvoiceFileNames", query = "update Invoice inv set inv.pdfFilename = null , inv.xmlFilename = null where inv.billingRun = :billingRun"),
-        @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId") })
-public class Invoice extends AuditableEntity implements ICustomFieldEntity {
+        @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId"), 
+        @NamedQuery(name = "Invoice.deleteByBR", query = "delete from Invoice inv where inv.billingRun.id=:billingRunId"),
+        @NamedQuery(name = "Invoice.updateUnpaidInvoicesStatus", query = "UPDATE Invoice inv set inv.status = org.meveo.model.billing.InvoiceStatusEnum.UNPAID"
+                + " WHERE inv.dueDate <= NOW() AND inv.status IN (org.meveo.model.billing.InvoiceStatusEnum.CREATED, org.meveo.model.billing.InvoiceStatusEnum.GENERATED, org.meveo.model.billing.InvoiceStatusEnum.SENT)")
+
+})
+public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
 
@@ -157,6 +164,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
      */
     @Column(name = "invoice_date")
     private Date invoiceDate;
+    
+    /**
+     * Invoice status
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 25)
+    private InvoiceStatusEnum status;
 
     /**
      * Payment due date
@@ -244,12 +258,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_language_id")
     private TradingLanguage tradingLanguage;
-
-    /**
-     * Rated transactions that were included in invoice
-     */
-    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
-    private List<RatedTransaction> ratedTransactions = new ArrayList<>();
 
     /**
      * Comment
@@ -364,11 +372,33 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     private BigDecimal dueBalance;
 
     /**
+     * Check if the invoice already sent
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "already_sent")
+    private boolean alreadySent;
+
+    /**
+     * Dont send the invoice if true.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "dont_send")
+    private boolean dontSend;
+
+    /**
      * Seller that invoice was issued to
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
+
+    /**
+     * Is this a prepaid invoice
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "prepaid", nullable = false)
+    @NotNull
+    protected boolean prepaid;
 
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
@@ -389,6 +419,17 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     private Boolean draft;
 
     /**
+     * Code
+     */
+    @Transient
+    private String code;
+    /**
+     * Description
+     */
+    @Transient
+    private String description;
+
+    /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
      */
     @PrePersist
@@ -397,14 +438,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
         this.dueDate = DateUtils.truncateTime(this.dueDate);
         this.invoiceDate = DateUtils.truncateTime(this.invoiceDate);
         setUUIDIfNull();
-    }
-
-    public List<RatedTransaction> getRatedTransactions() {
-        return ratedTransactions;
-    }
-
-    public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
-        this.ratedTransactions = ratedTransactions;
     }
 
     public String getInvoiceNumber() {
@@ -649,6 +682,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
     public void setInvoiceAdjustmentCurrentProviderNb(Long invoiceAdjustmentCurrentProviderNb) {
         this.invoiceAdjustmentCurrentProviderNb = invoiceAdjustmentCurrentProviderNb;
     }
+    
+    public InvoiceStatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(InvoiceStatusEnum status) {
+        this.status = status;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -706,14 +747,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
      * setting uuid if null
      */
     public void setUUIDIfNull() {
-    	if (uuid == null) {
-    		uuid = UUID.randomUUID().toString();
-    	}
+        if (uuid == null) {
+            uuid = UUID.randomUUID().toString();
+        }
     }
-    
+
     @Override
     public String getUuid() {
-    	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
+        setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
         return uuid;
     }
 
@@ -782,19 +823,19 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
 
         return aggregates;
     }
-
-    public List<RatedTransaction> getRatedTransactionsForCategory(WalletInstance wallet, InvoiceSubCategory invoiceSubCategory) {
-
-        List<RatedTransaction> ratedTransactionsMatched = new ArrayList<>();
-
-        for (RatedTransaction ratedTransaction : ratedTransactions) {
-            if (ratedTransaction.getWallet().equals(wallet) && ratedTransaction.getInvoiceSubCategory().equals(invoiceSubCategory)) {
-                ratedTransactionsMatched.add(ratedTransaction);
-            }
-
-        }
-        return ratedTransactionsMatched;
-    }
+//
+//    public List<RatedTransaction> getRatedTransactionsForCategory(WalletInstance wallet, InvoiceSubCategory invoiceSubCategory) {
+//
+//        List<RatedTransaction> ratedTransactionsMatched = new ArrayList<>();
+//
+//        for (RatedTransaction ratedTransaction : ratedTransactions) {
+//            if (ratedTransaction.getWallet().equals(wallet) && ratedTransaction.getInvoiceSubCategory().equals(invoiceSubCategory)) {
+//                ratedTransactionsMatched.add(ratedTransaction);
+//            }
+//
+//        }
+//        return ratedTransactionsMatched;
+//    }
 
     /**
      * @return Quote that invoice was produced for
@@ -969,5 +1010,60 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity {
      */
     public void setDraft(Boolean draft) {
         this.draft = draft;
+    }
+
+    public boolean isAlreadySent() {
+        return alreadySent;
+    }
+
+    public void setAlreadySent(boolean alreadySent) {
+        this.alreadySent = alreadySent;
+    }
+
+    public boolean isDontSend() {
+        return dontSend;
+    }
+
+    public void setDontSend(boolean dontSend) {
+        this.dontSend = dontSend;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s[%s, invoiceNumber=%s, invoiceType=%s]", this.getClass().getSimpleName(), super.toString(), invoiceNumber, invoiceType);
+    }
+
+    @Override
+    public String getCode() {
+        return invoiceNumber;
+    }
+
+    @Override
+    public void setCode(String code) {
+
+    }
+
+    @Override
+    public String getDescription() {
+        return alias;
+    }
+
+    @Override
+    public void setDescription(String description) {
+
+    }
+
+    /**
+     * @return Is this a prepaid invoice report
+     */
+    public boolean isPrepaid() {
+        return prepaid;
+    }
+
+    /**
+     * @param prepaid Is this a prepaid invoice report
+     */
+    public void setPrepaid(boolean prepaid) {
+        this.prepaid = prepaid;
     }
 }

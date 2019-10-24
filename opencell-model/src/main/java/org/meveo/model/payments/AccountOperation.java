@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -34,67 +34,72 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
+import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldValues;
-
-
+import org.meveo.model.finance.AccountingWriting;
 
 /**
  * Account operation
  *
  * @author Edward P. Legaspi
  * @author Said Ramli
- * @lastModifiedVersion 6.0
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
+@WorkflowedEntity
 @ObservableEntity
 @Table(name = "ar_account_operation")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "transaction_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
-@CustomFieldEntity(cftCodePrefix = "ACC_OP")
+@CustomFieldEntity(cftCodePrefix = "AccountOperation")
 @NamedQueries({
-        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" + 
-                "                               ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
-                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),  
+        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCA", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" +
+                "                               ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
+                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
         @NamedQuery(name = "AccountOperation.listAoToPayOrRefund", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory=:opCatToProcessIN and ao.customerAccount.id=:caIdIN and ao.type  "
-                + "                             in ('I','OCC') and ao.transactionCategory='DEBIT' and " + 
-                "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
-                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),   
-        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCAbySeller", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.seller =:sellerIN and ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" + 
-                "                               ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
-                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),  
+                + "                             in ('I','OCC')  and " +
+                "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
+                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
+        @NamedQuery(name = "AccountOperation.listAoToPayOrRefundWithoutCAbySeller", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.seller =:sellerIN and ao.transactionCategory=:opCatToProcessIN and ao.type  in ('I','OCC') and" +
+                "                               ao.matchingStatus ='O' and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
+                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
         @NamedQuery(name = "AccountOperation.listAoToPayOrRefundBySeller", query = "Select ao  from AccountOperation as ao,PaymentMethod as pm  where ao.seller =:sellerIN and ao.transactionCategory=:opCatToProcessIN and ao.customerAccount.id=:caIdIN and ao.type  "
-                + "                             in ('I','OCC') and ao.transactionCategory='DEBIT' and " + 
-                "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " + 
-                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),          
-        @NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao.customerAccount=:customerAccount")
+                + "                             in ('I','OCC')  and " +
+                "                               (ao.matchingStatus ='O' or ao.matchingStatus ='P') and ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:paymentMethodIN  and " +
+                "                               ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  "),
+        @NamedQuery(name = "AccountOperation.countUnmatchedAOByCA", query = "Select count(*) from AccountOperation as ao where ao.unMatchingAmount <> 0 and ao"
+                + ".customerAccount=:customerAccount")
 })
-public class AccountOperation extends AuditableEntity implements ICustomFieldEntity, ISearchable {
+public class AccountOperation extends BusinessEntity implements ICustomFieldEntity, ISearchable, IWFEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -139,6 +144,12 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
+
+    /**
+     * List of associated accounting writing
+     */
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accountOperations")
+    private List<AccountingWriting> accountingWritings = new ArrayList<>();
 
     /**
      * Deprecated in 5.2. Use accountingCode instead
@@ -197,20 +208,6 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
      */
     @OneToMany(mappedBy = "accountOperation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MatchingAmount> matchingAmounts = new ArrayList<>();
-
-    /**
-     * OCC code
-     */
-    @Column(name = "occ_code", length = 255)
-    @Size(max = 255)
-    private String occCode;
-
-    /**
-     * OCC description
-     */
-    @Column(name = "occ_description", length = 255)
-    @Size(max = 255)
-    private String occDescription;
 
     /**
      * Associated order number. Multiple orders separated by '|'.
@@ -281,18 +278,6 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     private List<Invoice> invoices;
 
     /**
-     * Code
-     */
-    @Transient
-    private String code;
-
-    /**
-     * Description
-     */
-    @Transient
-    private String description;
-
-    /**
      * Additional payment information - // IBAN for direct debit
      */
     @Column(name = "payment_info", length = 255)
@@ -355,15 +340,25 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     @JoinColumn(name = "ddrequest_item_id")
     private DDRequestItem ddRequestItem;
 
-   
+
     @ManyToOne(optional = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "rejected_payment_id")
     private RejectedPayment rejectedPayment;
-    
+
     @ManyToOne(optional = true)
     @JoinColumn(name = "seller_id")
     private Seller seller;
-    
+
+    @OneToOne(mappedBy = "accountOperation")
+    private PaymentVentilation paymentVentilation;
+
+    /**
+     * Associated Subscription
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
+
 
     public Date getDueDate() {
         return dueDate;
@@ -454,25 +449,17 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
         this.matchingStatus = matchingStatus;
     }
 
-    public String getOccCode() {
-        return occCode;
+    public PaymentVentilation getPaymentVentilation() {
+        return paymentVentilation;
     }
 
-    public void setOccCode(String occCode) {
-        this.occCode = occCode;
-    }
-
-    public String getOccDescription() {
-        return occDescription;
-    }
-
-    public void setOccDescription(String occDescription) {
-        this.occDescription = occDescription;
+    public void setPaymentVentilation(PaymentVentilation paymentVentilation) {
+        this.paymentVentilation = paymentVentilation;
     }
 
     @Override
     public int hashCode() {
-        return 961 + ("AccountOperation" + occCode).hashCode();
+        return 961 + ("AccountOperation" + code).hashCode();
     }
 
     @Override
@@ -490,10 +477,10 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }
-        if (occCode == null) {
-            if (other.occCode != null)
+        if (code == null) {
+            if (other.code != null)
                 return false;
-        } else if (!occCode.equals(other.occCode))
+        } else if (!code.equals(other.code))
             return false;
         return true;
     }
@@ -523,7 +510,7 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     		uuid = UUID.randomUUID().toString();
     	}
     }
-    
+
     @Override
     public String getUuid() {
     	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
@@ -620,6 +607,14 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
         this.accountingCode = accountingCode;
     }
 
+    public List<AccountingWriting> getAccountingWritings() {
+		return accountingWritings;
+	}
+
+	public void setAccountingWritings(List<AccountingWriting> accountingWritings) {
+		this.accountingWritings = accountingWritings;
+	}
+
     /**
      * @return the amountWithoutTax
      */
@@ -660,22 +655,6 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
      */
     public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
         this.paymentMethod = paymentMethod;
-    }
-
-    public String getCode() {
-        return occCode;
-    }
-
-    public void setCode(String code) {
-        this.occCode = code;
-    }
-
-    public String getDescription() {
-        return occDescription;
-    }
-
-    public void setDescription(String description) {
-        this.occDescription = description;
     }
 
     public List<Invoice> getInvoices() {
@@ -839,5 +818,12 @@ public class AccountOperation extends AuditableEntity implements ICustomFieldEnt
     public void setSeller(Seller seller) {
         this.seller = seller;
     }
-    
+
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
 }

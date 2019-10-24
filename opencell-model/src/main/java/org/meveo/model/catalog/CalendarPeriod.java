@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -27,6 +27,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+/**
+ * The CalendarPeriod class.
+ *
+ * @author Andrius Karpavicius
+ * @author Mounir Bahije
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @DiscriminatorValue("PERIOD")
 public class CalendarPeriod extends Calendar {
@@ -43,7 +50,7 @@ public class CalendarPeriod extends Calendar {
     private Integer periodUnit = java.util.Calendar.DAY_OF_MONTH;
 
     public static List<Integer> VALID_PERIOD_UNITS = Arrays.asList(java.util.Calendar.MONTH, java.util.Calendar.DAY_OF_MONTH, java.util.Calendar.HOUR_OF_DAY,
-        java.util.Calendar.MINUTE, java.util.Calendar.SECOND);
+            java.util.Calendar.MINUTE, java.util.Calendar.SECOND);
 
     @Column(name = "nb_periods")
     private Integer nbPeriods = 0;
@@ -88,7 +95,7 @@ public class CalendarPeriod extends Calendar {
 
     /**
      * Checks for next calendar date by adding number of days in a period to a starting date. Date being checked must fall within a period timeframe or null is returned
-     * 
+     *
      * @param date Date being checked
      * @return Next calendar date.
      */
@@ -137,7 +144,7 @@ public class CalendarPeriod extends Calendar {
 
     /**
      * Checks for previous calendar date by adding number of days in a period to a starting date. Date being checked must fall within a period timeframe or null is returned
-     * 
+     *
      * @param date Current date.
      * @return Previous calendar date.
      */
@@ -202,7 +209,7 @@ public class CalendarPeriod extends Calendar {
 
     /**
      * Truncates day and time portion of a date based on truncation unit set
-     * 
+     *
      * @param calendar Date as calendar to truncate
      */
     private void truncateDateTime(GregorianCalendar calendar) {

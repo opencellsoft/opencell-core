@@ -85,7 +85,7 @@ public class Role extends BaseEntity {
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "adm_role_role", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "child_role_id"))
     private Set<Role> roles = new HashSet<>();
-    
+
     /**
      * Accessible entities
      */

@@ -3,17 +3,6 @@
  */
 package org.meveo.model.payments;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.ModuleItem;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BankCoordinates;
-import org.meveo.model.billing.Country;
-import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.scripts.ScriptInstance;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -29,6 +18,18 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.ISearchable;
+import org.meveo.model.ModuleItem;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BankCoordinates;
+import org.meveo.model.billing.Country;
+import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.scripts.ScriptInstance;
+
 /**
  * The PaymentGateway on opencell exists in 2 types {@link org.meveo.model.payments.PaymentGatewayTypeEnum PaymentGatewayTypeEnum}: &lt;ul&gt; &lt;li&gt;Custom: The administrator
  * can define the implementation in a script.&lt;/li&gt; &lt;li&gt;Native: The business implementation code is available on the opencell core, currently the available PSP are
@@ -37,17 +38,18 @@ import javax.validation.constraints.Size;
  *
  * @author anasseh
  * @author Mounir Bahije
+ * @author Abdellatif BARI
  * @since Opencell 4.8
- * @lastModifiedVersion 5.3
+ * @lastModifiedVersion 7.0
  */
 
 @Entity
 @ModuleItem
-@CustomFieldEntity(cftCodePrefix = "PAYMENT_GW")
+@CustomFieldEntity(cftCodePrefix = "PaymentGateway")
 @Table(name = "ar_payment_gateway", uniqueConstraints = @UniqueConstraint(columnNames = { "payment_method", "country_id", "trading_currency_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_payment_gateway_seq"), })
-public class PaymentGateway extends EnableBusinessCFEntity {
+public class PaymentGateway extends EnableBusinessCFEntity implements ISearchable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 697688141736383814L;
@@ -169,13 +171,14 @@ public class PaymentGateway extends EnableBusinessCFEntity {
      */
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
+    
 
-
+    /**
+     * Seller associated to a customer
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private Seller seller;
-
-    
     
     /**
      * Instantiates a new payment gateway

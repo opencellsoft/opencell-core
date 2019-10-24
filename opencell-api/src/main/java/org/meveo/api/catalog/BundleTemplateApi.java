@@ -48,8 +48,8 @@ import org.primefaces.model.SortOrder;
 /**
  * @author Edward P. Legaspi
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
- *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -116,10 +116,6 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
     @Override
     public BundleTemplate create(BundleTemplateDto postData) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
 
         List<BundleProductTemplateDto> bundleProductTemplates = postData.getBundleProductTemplates();
         if (bundleProductTemplates == null || bundleProductTemplates.isEmpty()) {

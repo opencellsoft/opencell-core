@@ -145,13 +145,13 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         List<SecuredEntity> allSecuredEntities = new ArrayList<>();
         User user = userService.findByUsername(currentUser.getUserName());
         allSecuredEntities.addAll(user.getSecuredEntities());
-        
+
         List<Role> rolesWithSecuredEntities = roleService.getEntityManager().createNamedQuery("Role.getRolesWithSecuredEntities", Role.class)
         		.setParameter("currentUserRoles", currentUser.getRoles())
         		.getResultList();
         allSecuredEntities.addAll(rolesWithSecuredEntities.stream().map(Role::getSecuredEntities).flatMap(List::stream).collect(Collectors.toList()));
 
-        
+
         // group secured entites by types into Map
         Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap = new HashMap<>();
         Set<SecuredEntity> securedEntitySet = null;

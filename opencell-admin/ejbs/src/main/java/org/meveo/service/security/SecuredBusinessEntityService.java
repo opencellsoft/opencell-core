@@ -53,7 +53,7 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
             Class<?> entityClass = getEntityRealClass(entity);
             securedEntities = allSecuredEntitiesMap.get(entityClass);
         }
-        
+
         // Doing this check first allows verification without going to DB.
         if (entityFoundInSecuredEntities(entity, securedEntities)) {
             // Match was found authorization successful
@@ -106,7 +106,7 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
         }
         return found;
     }
-    
+
     public static Class<?> getEntityRealClass(Object entity) {
         if (entity instanceof HibernateProxy) {
 			LazyInitializer lazyInitializer = ((HibernateProxy) entity).getHibernateLazyInitializer();

@@ -31,6 +31,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -49,7 +50,8 @@ import org.meveo.model.payments.OCCTemplate;
  * Invoice category
  * 
  * @author anasseh
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @Cacheable
@@ -58,9 +60,10 @@ import org.meveo.model.payments.OCCTemplate;
 @Table(name = "billing_invoice_cat", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_cat_seq"), })
-@CustomFieldEntity(cftCodePrefix = "INV_CAT")
+@CustomFieldEntity(cftCodePrefix = "InvoiceCategory")
 @NamedQueries({
-        @NamedQuery(name = "invoiceCategory.getNbrInvoiceCatNotAssociated", query = "select count(*) from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null)"),
+        @NamedQuery(name = "invoiceCategory.getNbrInvoiceCatNotAssociated", query = "select count(*) from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null)", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
 
         @NamedQuery(name = "invoiceCategory.getInvoiceCatNotAssociated", query = "from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null) ") })
 public class InvoiceCategory extends BusinessCFEntity {

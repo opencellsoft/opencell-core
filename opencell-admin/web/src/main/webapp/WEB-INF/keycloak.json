@@ -9,5 +9,9 @@
 	"use-resource-role-mappings": true,
 	"enable-basic-auth": "${opencell.keycloak.basic-auth:true}",
 	"principal-attribute": "preferred_username",
-    "proxy-url":"${opencell.keycloak.proxy-url:}"
+	"proxy-url":"${opencell.keycloak.proxy-url:}",
+	"enable-cors" : "${opencell.keycloak.enable-cors:false}",
+	"cors-allowed-methods" : "${opencell.keycloak.cors-allowed-methods:POST, PUT, DELETE, GET}",
+	"register-node-at-startup": "${opencell.keycloak.register-node-at-startup:false}",
+	"register-node-period": 600
 }

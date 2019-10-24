@@ -34,6 +34,8 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.script.payment.AccountOperationFilterScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class PaymentAsync.
@@ -61,6 +63,8 @@ public class PaymentAsync {
     /** The account operation service. */
     @Inject
     private AccountOperationService accountOperationService;
+    
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Process card payments for a list of given account operation ids. One account operation at a time in a separate transaction.
@@ -88,18 +92,24 @@ public class PaymentAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         BigDecimal oneHundred = new BigDecimal("100");
+        int i = 0;
         for (Long caID : caIds) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            i++;
+            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
            
             List<AccountOperation> listAoToPayOrRefund = null;
             if (operationCategory == OperationCategoryEnum.CREDIT) {
                 List<AccountOperation> listAoToPay = accountOperationService.getAOsToPayOrRefund(paymentMethodType, fromDueDate,toDueDate,OperationCategoryEnum.DEBIT, caID);
+                log.info("listAoToPay size before filter :"+(listAoToPayOrRefund==null?"null":listAoToPayOrRefund.size()));
                 listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToPay, paymentMethodType, OperationCategoryEnum.DEBIT);
+                log.info("listAoToPay size after filter :"+(listAoToPayOrRefund==null?"null":listAoToPayOrRefund.size()));
             } else {
                 List<AccountOperation> listAoToRefund = accountOperationService.getAOsToPayOrRefund(paymentMethodType, fromDueDate,toDueDate,OperationCategoryEnum.CREDIT, caID);
+                log.info("listAoToRefund size before filter :"+(listAoToPayOrRefund==null?"null":listAoToPayOrRefund.size()));
                 listAoToPayOrRefund = this.filterAoToPayOrRefund(aoFilterScript, listAoToRefund, paymentMethodType, OperationCategoryEnum.CREDIT);
+                log.info("listAoToRefund size after filter :"+(listAoToPayOrRefund==null?"null":listAoToPayOrRefund.size()));
             }
             if ("CA".equals(paymentPerAOorCA)) {
                 List<Long> aoIds = new ArrayList<Long>();

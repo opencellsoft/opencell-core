@@ -7,6 +7,8 @@ import org.jboss.resteasy.annotations.providers.multipart.PartType;
 
 /**
  * @author Edward P. Legaspi 7 Aug 2017
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.3.0
  */
 public class FileUploadForm {
 
@@ -17,6 +19,10 @@ public class FileUploadForm {
 	@FormParam("filename")
 	@PartType(MediaType.TEXT_PLAIN)
 	private String filename;
+
+	@FormParam("fileFormat")
+	@PartType(MediaType.TEXT_PLAIN)
+	private String fileFormat;
 
 	public String getFilename() {
 		return filename;
@@ -34,4 +40,21 @@ public class FileUploadForm {
 		this.data = data;
 	}
 
+	/**
+	 * Gets the fileFormat
+	 *
+	 * @return the fileFormat
+	 */
+	public String getFileFormat() {
+		return fileFormat;
+	}
+
+	/**
+	 * Sets the fileFormat.
+	 *
+	 * @param fileFormat the new fileFormat
+	 */
+	public void setFileFormat(String fileFormat) {
+		this.fileFormat = fileFormat;
+	}
 }

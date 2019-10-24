@@ -62,6 +62,11 @@ public class GenerateInvoiceRequestDto {
     
     /** The custom fields. */
     private CustomFieldsDto customFields;
+    
+    /**
+     * Includes rated transactions in the return value
+     */
+    private Boolean includeRatedTransactions;
 
     /**
      * Instantiates a new generate invoice request dto.
@@ -283,4 +288,28 @@ public class GenerateInvoiceRequestDto {
         return "GenerateInvoiceRequestDto [targetCode=" + targetCode + ", targetType=" + targetType + ", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate
                 + ", filter=" + filter + ", orderNumber=" + orderNumber + ", generateXML=" + generateXML + ", generatePDF=" + generatePDF + ", generateAO=" + generateAO + "]";
     }
+
+	/**
+	 * Whether to include ratedTransactions in the return object or not
+	 * @return boolean value
+	 */
+	public Boolean getIncludeRatedTransactions() {
+		return includeRatedTransactions;
+	}
+
+	/**
+	 * Whether to include ratedTransactions in the return object or not
+	 * @param includeRatedTransactions boolean value
+	 */
+	public void setIncludeRatedTransactions(Boolean includeRatedTransactions) {
+		this.includeRatedTransactions = includeRatedTransactions;
+	}
+	
+	/**
+	 * Whether to include ratedTransactions in the return object or not
+	 * @return boolean value
+	 */
+	public boolean isIncludeRatedTransactions() {
+		return getIncludeRatedTransactions() != null ? getIncludeRatedTransactions() : false;
+	}
 }

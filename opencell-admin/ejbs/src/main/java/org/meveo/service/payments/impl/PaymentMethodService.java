@@ -35,6 +35,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -178,7 +179,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             log.warn("Cant find payment gateway");
         }
 
-        if (gatewayPaymentInterface != null) {
+        if (gatewayPaymentInterface != null && cardPaymentMethod.getMonthExpiration() != null && cardPaymentMethod.getYearExpiration() != null) {
             String tockenID = gatewayPaymentInterface.createCardToken(customerAccount, cardPaymentMethod.getAlias(), cardNumber, cardPaymentMethod.getOwner(),
                 StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
                 cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType());
@@ -242,6 +243,20 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if ( ( customerAccount.getAddress() != null ) && ( customerAccount.getAddress().getCountry() != null ) && (!StringUtils.isBlank(customerAccount.getAddress().getCountry().getCountryCode()))) {
             hostedCheckoutInput.setCountryCode(customerAccount.getAddress().getCountry().getCountryCode().toLowerCase());
         }
+        
+        boolean hasCardPaymentMethod = false;
+        for(PaymentMethod paymentMethod : customerAccount.getPaymentMethods()) {
+            if(paymentMethod.getPaymentType() == PaymentMethodEnum.CARD) {
+                hasCardPaymentMethod = true;
+            }
+        }
+        
+        if(!hasCardPaymentMethod) {
+            CardPaymentMethod paymentMethod = new CardPaymentMethod();
+            paymentMethod.setCustomerAccount(customerAccount);
+            super.create(paymentMethod);
+        }
+        
         GatewayPaymentInterface gatewayPaymentInterface = null;
         gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount);
         hostedCheckoutInput.setCustomerAccountId(customerAccount.getId());

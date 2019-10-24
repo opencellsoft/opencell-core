@@ -1,946 +1,71 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-        <changeSet id="#3773_20181130" author="abdelkader.bouazza">
-            <modifyDataType tableName="dwh_report_extract" columnName="sql_query" newDataType="${type.text}"/>
-            <modifyDataType tableName="dwh_report_extract" columnName="sql_query" newDataType="${type.text}"/>
 
-            <modifyDataType tableName="rating_edr" columnName="reject_reason" newDataType="${type.text}"/>
-
-            <modifyDataType tableName="cat_triggered_edr" columnName="param_1_el" newDataType="${type.text}"/>
-            <modifyDataType tableName="cat_triggered_edr" columnName="param_2_el" newDataType="${type.text}"/>
-            <modifyDataType tableName="cat_triggered_edr" columnName="param_3_el" newDataType="${type.text}"/>
-            <modifyDataType tableName="cat_triggered_edr" columnName="param_4_el" newDataType="${type.text}"/>
-            <modifyDataType tableName="cat_triggered_edr" columnName="quantity_el" newDataType="${type.text}"/>
-            <modifyDataType tableName="cat_triggered_edr" columnName="subscription_el" newDataType="${type.text}"/>
-
-            <modifyDataType tableName="cat_price_plan_matrix" columnName="invoice_subcategory_el" newDataType="${type.text}"/>
-            <modifyDataType tableName="cat_price_plan_matrix" columnName="minimum_amount_with_tax_el" newDataType="${type.text}"/>
-            <modifyDataType tableName="cat_price_plan_matrix" columnName="minimum_amount_without_tax_el" newDataType="${type.text}"/>
-            <modifyDataType tableName="cat_price_plan_matrix" columnName="rating_el_with_tax" newDataType="${type.text}"/>
-            <modifyDataType tableName="cat_price_plan_matrix" columnName="wo_description_el" newDataType="${type.text}"/>
-            <modifyDataType tableName="cat_price_plan_matrix" columnName="amount_with_tax_el" newDataType="${type.text}"/>
-            <modifyDataType tableName="cat_price_plan_matrix" columnName="amount_without_tax_el" newDataType="${type.text}"/>
-
-            <modifyDataType tableName="ar_ddrequest_lot" columnName="file_name" newDataType="${type.text}"/>
-            <modifyDataType tableName="ar_account_operation" columnName="bank_lot" newDataType="${type.text}"/>
-        </changeSet>
-
-        <changeSet id="#3680 - Extend FtpAdapterJob to support file export and SFTP-P" author="mboukayoua" dbms="postgresql">
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_localDirectory')" />
-        </update>
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_removeOriginalFile')" />
-        </update>
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_ftpInputDirectory', 'FtpAdapterJob_remoteDirectory')" />
-        </update>
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, '}]}', '}],&quot;FtpAdapterJob_operation&quot;:[{&quot;string&quot;:&quot;IMPORT&quot;}]}')" />
-        </update>
-        <renameColumn tableName="ftp_imported_file" oldColumnName="import_date" newColumnName="transfer_date" columnDataType="datetime"/>
-        <addColumn tableName="ftp_imported_file">
-            <column name="operation" type="varchar(100)" value="IMPORT" defaultValue="IMPORT" />
-        </addColumn>
-        <renameTable oldTableName="ftp_imported_file" newTableName="ftp_transferred_file" />
-        <sql><![CDATA[
-            ALTER INDEX IF EXISTS ftp_imported_file_pkey RENAME TO ftp_transferred_file_pkey;
-            ALTER SEQUENCE IF EXISTS ftp_imported_file_seq RENAME TO ftp_transferred_file_seq;
-        ]]>
-        </sql>
-        <sql><![CDATA[
-            DELETE FROM crm_custom_field_tmpl_val WHERE customfieldtemplate_id IN (SELECT id FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
-        ]]>
-        </sql>
-        
-        <delete tableName="crm_custom_field_tmpl">
-            <where>applies_to='JOB_FtpAdapterJob' AND
-                code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory')
-            </where>
-        </delete>
-    </changeSet>
-
-    <changeSet id="#3680 - Extend FtpAdapterJob to support file export and SFTP-M" author="mboukayoua" dbms="mysql">
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_localDirectory')" />
-        </update>
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_removeOriginalFile')" />
-        </update>
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, 'FtpAdapterJob_ftpInputDirectory', 'FtpAdapterJob_remoteDirectory')" />
-        </update>
-        <update tableName="meveo_job_instance">
-            <column name="cf_values" valueComputed="replace(cf_values, '}]}', '}],&quot;FtpAdapterJob_operation&quot;:[{&quot;string&quot;:&quot;IMPORT&quot;}]}')" />
-        </update>
-        <renameColumn tableName="ftp_imported_file" oldColumnName="import_date" newColumnName="transfer_date" columnDataType="datetime"/>
-        <addColumn tableName="ftp_imported_file">
-            <column name="operation" type="varchar(100)" value="IMPORT" defaultValue="IMPORT" />
-        </addColumn>
-        <renameTable oldTableName="ftp_imported_file" newTableName="ftp_transferred_file" />
-        <createIndex tableName="ftp_transferred_file" indexName="ftp_transferred_file_pkey">
-            <column name="id" type="bigint"/>
-        </createIndex>
-        <createSequence sequenceName="ftp_transferred_file_seq" startValue="1"/>
-        <dropSequence sequenceName="ftp_imported_file_seq"/>
-        <sql><![CDATA[
-            DELETE FROM crm_custom_field_tmpl_val WHERE customfieldtemplate_id IN (SELECT id FROM crm_custom_field_tmpl WHERE applies_to='JOB_FtpAdapterJob' AND code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory'));
-        ]]>
-        </sql>
-        <delete tableName="crm_custom_field_tmpl">
-            <where>applies_to='JOB_FtpAdapterJob' AND
-                code IN ('FtpAdapterJob_removeDistantFile', 'FtpAdapterJob_distDirectory', 'FtpAdapterJob_ftpInputDirectory')
-            </where>
-        </delete>
-    </changeSet>
-
-    <changeSet id="#3644_04102018" author="AbdellatifBari">
-        <addColumn tableName="crm_custom_field_tmpl">
-            <column name="display_format" type="varchar(80)" />
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="#3735_20181031_add_legal_information_seller" author="Khalid HORRI">
-        <addColumn tableName="crm_seller">
-            <column name="vat_no" type="varchar(100)"></column>
-            <column name="registration_no" type="varchar(100)"></column>
-            <column name="legal_text" type="text"></column>
-            <column name="legal_type" type="varchar(255)"></column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="#3464_20180522" author="AndriusKarpavicius">
-        <addColumn tableName="crm_provider">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="account_entity">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="adm_user">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="ar_account_operation">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="billing_cycle">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="billing_invoice">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="billing_invoice_cat">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="billing_invoice_sub_cat">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="billing_service_instance">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="billing_subscription">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="billing_tax">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="cat_charge_template">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="cat_offer_template">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="cat_price_plan_matrix">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="cat_service_template">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="crm_seller">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="medina_access">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="meveo_job_instance">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="meveo_filter">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="cust_cei">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="cat_offer_template_category">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="billing_product_instance">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="ord_order">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="ord_quote">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="ar_payment_gateway">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="billing_billing_run">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="dwh_report_extract">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="billing_invoice_type">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="ar_ddrequest_builder">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="ar_payment_schedule_tmpl">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-
-        <sql>update ${db.schema.adapted}crm_provider set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}account_entity set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}adm_user set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}ar_account_operation set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}billing_cycle set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}billing_invoice set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}billing_invoice_cat set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}billing_invoice_sub_cat set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}billing_service_instance set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}billing_subscription set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}billing_tax set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}cat_charge_template set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}cat_offer_template set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}cat_price_plan_matrix set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}cat_service_template set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}crm_seller set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}medina_access set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}meveo_job_instance set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}meveo_filter set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}cust_cei set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}cat_offer_template_category set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}billing_product_instance set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}ord_order set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}ord_quote set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}ar_payment_gateway set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}billing_billing_run set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}dwh_report_extract set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}billing_invoice_type set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}ar_ddrequest_builder set cf_values_accum=cf_values</sql>
-        <sql>update ${db.schema.adapted}ar_payment_schedule_tmpl set cf_values_accum=cf_values</sql>
-    </changeSet>
-
-     <changeSet id="#3841_20181228" author="SaidRamli">
-        <addColumn tableName="crm_customer_category">
-            <column name="cf_values_accum" type="${type.json}"></column>
-            <column name="cf_values" type="${type.json}"></column>
-            <column name="uuid" type="varchar(60)" />
-        </addColumn>
-        <sql>update ${db.schema.adapted}crm_customer_category set uuid = concat('customer_cat_', id)</sql>
-     </changeSet>
-
-    <changeSet id="#3464_20180701" author="AndriusKarpavicius">
-        <addColumn tableName="cat_usage_charge_template">
-            <column name="filter_el_sp" type="varchar(2000)" />
-        </addColumn>
-        <addColumn tableName="cat_triggered_edr">
-            <column name="condition_el_sp" type="${type.text}" />
-            <column name="subscription_el_sp" type="${type.text}" />
-            <column name="param_1_el_sp" type="${type.text}" />
-            <column name="param_2_el_sp" type="${type.text}" />
-            <column name="param_3_el_sp" type="${type.text}" />
-            <column name="param_4_el_sp" type="${type.text}" />
-            <column name="quantity_el_sp" type="${type.text}" />
-        </addColumn>
-        <addColumn tableName="cat_price_plan_matrix">
-            <column name="criteria_el_sp" type="varchar(2000)" />
-            <column name="rating_el_with_tax_sp" type="${type.text}" />
-            <column name="rating_el_without_tax_sp" type="varchar(2000)" />
-            <column name="minimum_amount_without_tax_el_sp" type="${type.text}" />
-            <column name="minimum_amount_with_tax_el_sp" type="${type.text}" />
-            <column name="amount_without_tax_el_sp" type="${type.text}" />
-            <column name="amount_with_tax_el_sp" type="${type.text}" />
-            <column name="wo_description_el_sp" type="${type.text}" />
-        </addColumn>
-        <addColumn tableName="crm_customer_category">
-            <column name="exoneration_tax_el_sp" type="varchar(2000)" />
-        </addColumn>
-        <addColumn tableName="billing_inv_sub_cat_country">
-            <column name="tax_code_el_sp" type="varchar(2000)" />
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="#3577_20180727" author="AndriusKarpavicius">
-        <addColumn tableName="ord_order">
-            <column name="order_number " type="varchar(255)" />
-            <column name="due_date_delay_el_sp" type="varchar(2000)" />
-        </addColumn>
-        <sql>update ${db.schema.adapted}ord_order set order_number = case when external_id is not null then external_id else code end where order_number is null</sql>
-        <addColumn tableName="billing_billing_account">
-            <column name="minimum_amount_el_sp" type="varchar(2000)" />
-            <column name="minimum_label_el_sp" type="varchar(2000)" />
-        </addColumn>
-        <addColumn tableName="billing_subscription">
-            <column name="minimum_amount_el_sp" type="varchar(2000)" />
-            <column name="minimum_label_el_sp" type="varchar(2000)" />
-        </addColumn>
-        <addColumn tableName="billing_service_instance">
-            <column name="minimum_amount_el_sp" type="varchar(2000)" />
-            <column name="minimum_label_el_sp" type="varchar(2000)" />
-        </addColumn>
-        <addColumn tableName="cat_service_template">
-            <column name="minimum_amount_el_sp" type="varchar(2000)" />
-            <column name="minimum_label_el_sp" type="varchar(2000)" />
-        </addColumn>
-        <addColumn tableName="billing_rated_transaction">
-            <column name="charge_instance_id" type="bigint" />
-            <column name="tax_id" type="bigint" />
-            <column name="tax_percent" type="numeric(23, 12)" />
-            <column name="user_account_id" type="bigint" />
-        </addColumn>
-        <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_wallet_operation" constraintName="fk_rt_charge" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
-        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_tax" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
-        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_ua" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="account_entity" />
-        <addColumn tableName="billing_wallet_operation">
-            <column name="tax_id" type="bigint" />
-        </addColumn>
-        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_wallet_operation" constraintName="fk_wo_tax" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
-        <addColumn tableName="billing_cycle">
-            <column name="due_date_delay_el_sp" type="varchar(2000)" />
-            <column name="invoice_type_el_sp" type="varchar(2000)" />
-        </addColumn>
-        <addColumn tableName="ar_customer_account">
-            <column name="due_date_delay_el_sp" type="varchar(2000)" />
-        </addColumn>
-        <addColumn tableName="billing_invoice">
-            <column name="order_id" type="bigint" />
-        </addColumn>
-        <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="billing_invoice" constraintName="fk_inv_subscription" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
-        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="billing_invoice" constraintName="fk_inv_order" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_order" />
-        <addColumn tableName="cat_discount_plan_item">
-            <column name="expression_el_sp" type="varchar(2000)" />
-            <column name="discount_percent_el_sp" type="varchar(2000)" />
-        </addColumn>
-        <addColumn tableName="billing_invoice_agregate">
-            <column name="discount_plan_item_id" type="bigint" />
-        </addColumn>
-        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="billing_invoice_agregate" constraintName="fk_ia_dpi" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan_item" />
-        <addDefaultValue columnName="rounding_mode" tableName="crm_provider" defaultValue="NEAREST" />
-        <addDefaultValue columnName="invoice_rounding_mode" tableName="crm_provider" defaultValue="NEAREST" />
-        <sql>update ${db.schema.adapted}crm_provider set rounding_mode='NEAREST' where rounding_mode is null</sql>
-        <sql>update ${db.schema.adapted}crm_provider set invoice_rounding_mode='NEAREST' where invoice_rounding_mode is null</sql>
-        <sql>update ${db.schema.adapted}crm_provider set rating_rounding=2 where rating_rounding is null</sql>
-        <sql>update ${db.schema.adapted}crm_provider set invoice_rounding=2 where invoice_rounding is null</sql>
-        <addNotNullConstraint tableName="crm_provider" columnName="rounding_mode" columnDataType="varchar(50)" />
-        <addNotNullConstraint tableName="crm_provider" columnName="invoice_rounding_mode" columnDataType="varchar(50)" />
-        <addNotNullConstraint tableName="crm_provider" columnName="rating_rounding" columnDataType="int4" />
-        <addNotNullConstraint tableName="crm_provider" columnName="invoice_rounding" columnDataType="int4" />
-    </changeSet>
-
-    <changeSet id="#3577_20180727_migration_P" author="AndriusKarpavicius" dbms="postgresql">
-        <sql>update ${db.schema.adapted}billing_rated_transaction set charge_instance_id = billing_wallet_operation.charge_instance_id, seller_id = billing_wallet_operation.seller_id from
-            ${db.schema.adapted}billing_wallet_operation where
-            billing_rated_transaction.wallet_operation_id=billing_wallet_operation.id and
-            billing_rated_transaction.wallet_operation_id is not null
-        </sql>
-        <sql>update ${db.schema.adapted}billing_invoice_agregate set discount_plan_item_id = cat_discount_plan_item.id from ${db.schema.adapted}cat_discount_plan_item where
-            cat_discount_plan_item.code=billing_invoice_agregate.discount_plan_item_code and
-            billing_invoice_agregate.discount_plan_item_code is not null
-        </sql>
-        <sql>update ${db.schema.adapted}billing_invoice_agregate set tax_id = billing_invoice_agregate_taxes.tax_id from ${db.schema.adapted}billing_invoice_agregate_taxes where
-            billing_invoice_agregate.id=billing_invoice_agregate_taxes.sub_cat_invoice_aggregat_id and billing_invoice_agregate.tax_id is null
-        </sql>
-
-        <sql>update ${db.schema.adapted}billing_rated_transaction set user_account_id = billing_wallet.user_account_id from ${db.schema.adapted}billing_wallet where
-            billing_rated_transaction.wallet_id=billing_wallet.id
-            and
-            billing_rated_transaction.wallet_id is not null and billing_rated_transaction.user_account_id is null
-        </sql>
-        <sql>update ${db.schema.adapted}billing_rated_transaction set user_account_id = billing_subscription.user_account_id from ${db.schema.adapted}billing_subscription where
-            billing_rated_transaction.subscription_id=billing_subscription.id and
-            billing_rated_transaction.subscription_id is not null and billing_rated_transaction.user_account_id is null
-        </sql>
-        <sql>update ${db.schema.adapted}billing_rated_transaction set user_account_id = billing_charge_instance.user_account_id from ${db.schema.adapted}billing_charge_instance where
-            billing_rated_transaction.charge_instance_id=billing_charge_instance.id and
-            billing_rated_transaction.charge_instance_id is not null and billing_rated_transaction.user_account_id is null
-        </sql>
-    </changeSet>
-
-    <changeSet id="#3577_20180727_migration_M" author="AndriusKarpavicius" dbms="mysql">
-        <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_wallet_operation
-            on billing_rated_transaction.wallet_operation_id=billing_wallet_operation.id
-            set billing_rated_transaction.charge_instance_id = billing_wallet_operation.charge_instance_id,
-            billing_rated_transaction.seller_id = billing_wallet_operation.seller_id
-            where billing_rated_transaction.wallet_operation_id is not null</sql>
-        <sql>update ${db.schema.adapted}billing_invoice_agregate join ${db.schema.adapted}cat_discount_plan_item
-            on cat_discount_plan_item.code=billing_invoice_agregate.discount_plan_item_code
-            set billing_invoice_agregate.discount_plan_item_id = cat_discount_plan_item.id
-            where billing_invoice_agregate.discount_plan_item_code is not null</sql>
-
-        <sql>update ${db.schema.adapted}billing_invoice_agregate join ${db.schema.adapted}billing_invoice_agregate_taxes
-            on billing_invoice_agregate.id=billing_invoice_agregate_taxes.sub_cat_invoice_aggregat_id set
-            billing_invoice_agregate.tax_id = billing_invoice_agregate_taxes.tax_id where billing_invoice_agregate.tax_id is null</sql>
-
-        <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_wallet
-            on billing_rated_transaction.wallet_id=billing_wallet.id
-            set billing_rated_transaction.user_account_id = billing_wallet.user_account_id
-            where billing_rated_transaction.wallet_id is not null and billing_rated_transaction.user_account_id is null </sql>
-
-        <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_charge_instance
-            on billing_rated_transaction.charge_instance_id=billing_charge_instance.id
-            set billing_rated_transaction.user_account_id = billing_charge_instance.user_account_id
-            where billing_rated_transaction.charge_instance_id is not null and billing_rated_transaction.user_account_id is null </sql>
-
-        <sql>update ${db.schema.adapted}billing_rated_transaction join ${db.schema.adapted}billing_subscription
-            on billing_rated_transaction.subscription_id=billing_subscription.id
-            set billing_rated_transaction.user_account_id = billing_subscription.user_account_id
-            where billing_rated_transaction.subscription_id is not null and billing_rated_transaction.user_account_id is null </sql>
-    </changeSet>
-
-    <changeSet id="#3577_20180827" author="AndriusKarpavicius">
-        <addNotNullConstraint tableName="billing_rated_transaction" columnName="seller_id" columnDataType="bigint" />
-        <addNotNullConstraint tableName="billing_wallet_operation" columnName="seller_id" columnDataType="bigint" />
-        <dropTable tableName="billing_invoice_agregate_taxes" />
-    </changeSet>
-
-    <changeSet id="spark_P" author="AndriusKarpavicius" dbms="postgresql">
-        <addDefaultValue tableName="job_execution" columnName="id" defaultValueSequenceNext="job_execution_seq" />
-        <addDefaultValue tableName="rating_edr" columnName="id" defaultValueSequenceNext="rating_edr_seq" />
-        <addDefaultValue tableName="billing_rated_transaction" columnName="id" defaultValueSequenceNext="billing_rated_transaction_seq" />
-        <addDefaultValue tableName="billing_invoice" columnName="id" defaultValueSequenceNext="billing_invoice_seq" />
-        <addDefaultValue tableName="billing_invoice_agregate" columnName="id" defaultValueSequenceNext="billing_invoice_agregate_seq" />
-    </changeSet>
-
-    <changeSet id="#3755_20181031" author="MounirBahije">
-        <addColumn tableName="ar_payment_gateway">
-            <column name="webhooks_secret_key" type="varchar(255)" />
-        </addColumn>
-        <addColumn tableName="ar_payment_gateway">
-            <column name="webhooks_key_id" type="varchar(255)" />
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="#3705_20181019 - Create discount plan bridge table" author="EdwardPLegaspi">
-        <dropUniqueConstraint tableName="cat_discount_plan_item" constraintName="uk_1q0ayvmttpoo254r1v8hl0kjn" />
-        <addUniqueConstraint columnNames="discount_plan_id, code" constraintName="uk_1q0ayvmttpoo254r1v8hl0kjn" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_discount_plan_item" />
-
-        <addColumn tableName="cat_discount_plan_item">
-            <column name="discount_plan_item_type" type="varchar(25)" />
-            <column name="discount_amount" type="numeric(23, 12)" />
-            <column name="start_date" type="date" />
-            <column name="end_date" type="date" />
-            <column name="default_duration" type="int4" />
-            <column name="duration_unit" type="varchar(50)" />
-        </addColumn>
-
-        <update tableName="cat_discount_plan_item">
-            <column name="discount_plan_item_type" value="PERCENTAGE"></column>
-        </update>
-
-        <createTable tableName="billing_discount_plan">
-            <column name="billing_account_id" type="bigint"></column>
-            <column name="discount_plan_id" type="bigint"></column>
-        </createTable>
-
-        <addForeignKeyConstraint constraintName="fk_billing_discount_plan_ba" referencedTableName="billing_billing_account" baseColumnNames="billing_account_id" baseTableName="billing_discount_plan"
-            referencedColumnNames="id" />
-        <addForeignKeyConstraint constraintName="fk_billing_discount_plan_dp" referencedTableName="cat_discount_plan" baseColumnNames="discount_plan_id" baseTableName="billing_discount_plan"
-            referencedColumnNames="id" />
-    </changeSet>
-
-    <changeSet id="#3705_20181019 - Migrate discount plan from ba to new table" author="EdwardPLegaspi" dbms="postgresql">
-        <sql>INSERT INTO billing_discount_plan (billing_account_id, discount_plan_id) SELECT id, discount_plan_id FROM billing_billing_account;</sql>
-    </changeSet>
-
-    <changeSet id="#3705_20181019 - Migrate discount plan from ba to new table" author="EdwardPLegaspi" dbms="mysql">
-        <sql>INSERT INTO ${db.schema.adapted}billing_discount_plan (billing_account_id, discount_plan_id) SELECT id, discount_plan_id FROM ${db.schema.adapted}billing_billing_account;</sql>
-    </changeSet>
-
-    <changeSet id="#3705_20181019 - Set the discount plan to null" author="EdwardPLegaspi">
-        <update tableName="billing_billing_account">
-            <column name="discount_plan_id"></column>
-        </update>
-    </changeSet>
-
-
-    <changeSet id="#3765_20181106" author="AndriusKarpavicius">
-        <addColumn tableName="crm_provider">
-            <column name="invoice_config_id" type="bigint" />
-            <column name="gdpr_config_id" type="bigint" />
-        </addColumn>
-        <addForeignKeyConstraint constraintName="fk_provider_invoice_config" referencedTableName="billing_invoice_configuration" baseColumnNames="invoice_config_id" baseTableName="crm_provider"
-            referencedColumnNames="id" />
-        <addForeignKeyConstraint constraintName="fk_provider_gdpr_config" referencedTableName="adm_gdpr_configuration" baseColumnNames="gdpr_config_id" baseTableName="crm_provider"
-            referencedColumnNames="id" />
-    </changeSet>
-
-    <changeSet id="#3765_20181106-migration-P" author="AndriusKarpavicius" dbms="postgresql">
-        <sql>update ${db.schema.adapted}crm_provider set invoice_config_id = billing_invoice_configuration.id from ${db.schema.adapted}billing_invoice_configuration where
-            crm_provider.id=billing_invoice_configuration.provider_id
-        </sql>
-        <sql>update ${db.schema.adapted}crm_provider set gdpr_config_id = adm_gdpr_configuration.id from ${db.schema.adapted}adm_gdpr_configuration where
-            crm_provider.id=adm_gdpr_configuration.provider_id
-        </sql>
-    </changeSet>
-
-    <changeSet id="#3765_20181106-migration-M" author="AndriusKarpavicius" dbms="mysql">
-        <sql>update ${db.schema.adapted}crm_provider join ${db.schema.adapted}billing_invoice_configuration on crm_provider.id=billing_invoice_configuration.provider_id set crm_provider.invoice_config_id =
-            billing_invoice_configuration.id
-        </sql>
-        <sql>update ${db.schema.adapted}crm_provider join ${db.schema.adapted}adm_gdpr_configuration on crm_provider.id=adm_gdpr_configuration.provider_id set crm_provider.gdpr_config_id =
-            adm_gdpr_configuration.id
-        </sql>
-        <dropForeignKeyConstraint baseTableName="billing_invoice_configuration" constraintName="provider_invoice_configuration_fk" />
-        <!-- does't exist
-            <dropIndex tableName="billing_invoice_configuration" indexName="provider_invoice_configuration_fk" />
-        -->
-        <dropUniqueConstraint tableName="billing_invoice_configuration" constraintName="uk_billing_invoice_configuration" />
-        <dropForeignKeyConstraint baseTableName="adm_gdpr_configuration" constraintName="fk_crm_provider_adm_gdpr_conf" />
-        <dropIndex tableName="adm_gdpr_configuration" indexName="fk_crm_provider_adm_gdpr_conf" />
-    </changeSet>
-
-    <changeSet id="#3765_20181106-end" author="AndriusKarpavicius">
-        <dropColumn tableName="billing_invoice_configuration" columnName="provider_id" />
-        <dropColumn tableName="adm_gdpr_configuration" columnName="provider_id" />
-    </changeSet>
-
-    <changeSet id="#3770_20181108" author="AmineBenAicha">
-        <addColumn tableName="ar_payment_schedule_tmpl">
-    		<column name="script_instance_id" type="bigint" />
-    	</addColumn>
-    	<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_payment_schedule_tmpl" constraintName="fk_ps_script_instance" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
-    </changeSet>
-    
-    <changeSet id="#3731_20181113" author="EdwardPLegaspi">
-    	<dropForeignKeyConstraint baseTableName="billing_invoice_agregate" constraintName="fk_icmfsev8m5n386ifttcgelv40"/>
-    	<addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="billing_invoice_agregate" constraintName="fk_icmfsev8m5n386ifttcgelv40" deferrable="false" initiallyDeferred="false"
-            onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="billing_invoice" />
-    </changeSet>
-    
-    <changeSet author="SaidRamli" id="#3791_20181119">
-        <modifyDataType columnName="sync_status"
-                        newDataType="VARCHAR(255)"
-                        tableName="ar_payment_history"/>
-        <modifyDataType columnName="async_status"
-                        newDataType="VARCHAR(255)"
-                        tableName="ar_payment_history"/>
-        <modifyDataType columnName="error_type"
-                        newDataType="VARCHAR(255)"
-                        tableName="ar_payment_history"/>
-        <modifyDataType columnName="operation_category"
-                        newDataType="VARCHAR(255)"
-                        tableName="ar_payment_history"/>
-        <modifyDataType columnName="payment_method_type"
-                        newDataType="VARCHAR(255)"
-                        tableName="ar_payment_history"/>
-        <modifyDataType columnName="payment_method_name"
-                        newDataType="VARCHAR(255)"
-                        tableName="ar_payment_history"/>
-    </changeSet>
-
-    <changeSet id="#3823_20181125 - the invoice(s) that was paid when the payment are rejected" author="anasseh">
-    		<addColumn tableName="ar_account_operation">
-            <column name="rejected_payment_id" type="bigint" />
-        </addColumn>
-         <addForeignKeyConstraint constraintName="fk_ao_rejected_payment_id" referencedTableName="ar_account_operation" baseColumnNames="rejected_payment_id" baseTableName="ar_account_operation" referencedColumnNames="id"/>
-    </changeSet>
-	<changeSet author="hznibar" id="#3699_20181109_2" dbms="mysql">
-        <createTable tableName="cat_calendar_holiday_seq">
-            <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_calendar_holiday_seq_pk" />
-            </column>
-        </createTable>
-        <sql>insert into ${db.schema.adapted}cat_calendar_holiday_seq values(1)</sql>
-    </changeSet>
-    <changeSet author="hznibar" id="#3699_20181109">
-    	<createSequence sequenceName="cat_calendar_holiday_seq" />
-        <createTable tableName="cat_calendar_holiday">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_calendar_holiday_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="holiday_begin" type="int4">
-                <constraints nullable="false" />
-            </column>
-            <column name="holiday_end" type="int4">
-                <constraints nullable="false" />
-            </column>
-            <column name="calendar_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addColumn tableName="cat_calendar">
-        	<column name="start_date" type="date" />
-            <column name="end_date" type="date" />     
-            <column name="weekend_begin" type="int4" />
-            <column name="weekend_end" type="int4" />
-        </addColumn>
-    </changeSet>
-    
-    
-    <changeSet id="#3607_20181125" author="AndriusKarpavicius">
-        <modifyDataType tableName="crm_custom_field_tmpl" columnName="index_type" newDataType="varchar(17)"/>
-    </changeSet>
-    
-     <changeSet id="#3711_20181112" author="anasseh">
-        <addColumn tableName="ar_payment_schedule_inst">
-            <column name="cf_values_accum" type="${type.json}"></column>
-        </addColumn>
-        <addColumn tableName="ar_payment_schedule_inst">
-            <column name="cf_values" type="${type.json}"></column>
-        </addColumn>   
-        <addColumn tableName="ar_payment_schedule_inst">
-             <column name="uuid" type="varchar(60)" />
-        </addColumn>
-        <sql>update ${db.schema.adapted}ar_payment_schedule_inst set uuid = id</sql>
-        <addNotNullConstraint columnName="uuid" columnDataType="varchar(60)" tableName="ar_payment_schedule_inst"/>
-        <addColumn tableName="ar_payment_schedule_tmpl">
-            <column name="amount_el" type="varchar(2000)" />
-        </addColumn>  
-        <addColumn tableName="ar_payment_schedule_tmpl">
-            <column name="filter_el" type="varchar(2000)" />
-        </addColumn>          
-    </changeSet>   
-    
-    <changeSet id="#3793_20181119" author="anasseh">
-     	<renameColumn newColumnName="payment_day_in_month" oldColumnName="due_date_days" columnDataType="int" tableName="ar_payment_schedule_inst"/>
-     	<renameColumn newColumnName="payment_day_in_month" oldColumnName="due_date_days" columnDataType="int" tableName="ar_payment_schedule_tmpl"/>
-     	<renameColumn newColumnName="payment_day_in_month_ps" oldColumnName="due_date_days_ps" columnDataType="int" tableName="billing_service_instance"/>
-    </changeSet>
-    
-    <changeSet id="#3577_20181128" author="AndriusKarpavicius">
-        <addColumn tableName="cat_offer_template">
-            <column name="minimum_amount_el_sp" type="varchar(2000)" />
-            <column name="minimum_label_el_sp" type="varchar(2000)" />
-        </addColumn>
-    </changeSet>
-    
-    <changeSet id="#3767_20181112 - Discount fields refactor -" author="EdwardPLegaspi">
-    	<sql>UPDATE ${db.schema.adapted}cat_discount_plan_item SET discount_percent=discount_amount WHERE discount_percent is null;</sql>
-    </changeSet>
-    
-   <changeSet id="#3767_20181112 - Discount fields refactor_pg" author="EdwardPLegaspi" dbms="postgresql">
-        <sql><![CDATA[ALTER TABLE ${db.schema.adapted}cat_discount_plan_item DROP CONSTRAINT cat_discount_plan_item_discount_percent_check;]]></sql>
-  </changeSet>
-    
-    <changeSet id="#3767_20181112 - Discount fields refactor" author="EdwardPLegaspi">
-        <renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent" newColumnName="discount_value" columnDataType="numeric(23, 12)"/>
-    	<dropColumn tableName="cat_discount_plan_item">
-    		<column name="discount_amount"></column>
-    	</dropColumn>
-	    <renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el" newColumnName="discount_value_el" columnDataType="varchar(2000)"/>
-	    <renameColumn tableName="cat_discount_plan_item" oldColumnName="discount_percent_el_sp" newColumnName="discount_value_el_sp" columnDataType="varchar(2000)"/>    	
-    </changeSet>
-    
-    <changeSet id="#3769_20181116 - Refactor discount effectivity dates" author="EdwardPLegaspi">
-    	<dropColumn tableName="cat_discount_plan_item">
-    		<column name="start_date"></column>
-    		<column name="end_date"></column>
-    		<column name="default_duration"></column>
-    		<column name="duration_unit"></column>
-    	</dropColumn>
-    	<addColumn tableName="cat_discount_plan">
-    		<column name="start_date" type="date" />
-            <column name="end_date" type="date" />
-            <column name="default_duration" type="int4" />
-            <column name="duration_unit" type="varchar(50)" />
-   		</addColumn>
-    </changeSet>
-    <changeSet id="#3792_20181116 - Convert discount tables to CF entity" author="EdwardPLegaspi">
-    	<addColumn tableName="cat_discount_plan">
-    		<column name="uuid" type="varchar(60)">
-			</column>
-			<column name="cf_values" type="${type.json}" />
-			<column name="cf_values_accum" type="${type.json}"></column>
-    	</addColumn>
-    	<addColumn tableName="cat_discount_plan_item">
-    		<column name="uuid" type="varchar(60)">
-			</column>
-			<column name="cf_values" type="${type.json}" />
-			<column name="cf_values_accum" type="${type.json}"></column>
-    	</addColumn>
-    </changeSet>
-    <changeSet id="#3792_20181116 - Convert discount tables to CF entity - add constraints" author="EdwardPLegaspi">
-    	<sql>UPDATE ${db.schema.adapted}cat_discount_plan SET uuid=concat(code, '_', id)</sql>
-    	<sql>UPDATE ${db.schema.adapted}cat_discount_plan_item SET uuid=concat(code, '_', id)</sql>
-    	<addNotNullConstraint tableName="cat_discount_plan" columnName="uuid" columnDataType="varchar(60)" />
-    	<addNotNullConstraint tableName="cat_discount_plan_item" columnName="uuid" columnDataType="varchar(60)" />
-    </changeSet>
-    <changeSet id="#3799_20181119 - Create discount plan instance table" author="EdwardPLegaspi">    
-    	<createTable tableName="billing_discount_plan_instance">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_discount_plan_instance_pkey" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="discount_plan_id" type="bigint">
-            	<constraints nullable="false"/>
-            </column>
-            <column name="billing_account_id" type="bigint">
-            	<constraints nullable="false"/>
-            </column>
-            <column name="start_date" type="date" />
-            <column name="end_date" type="date" />
-		</createTable>
-		<createSequence sequenceName="billing_discount_plan_instance_seq" />
-		<addForeignKeyConstraint constraintName="billing_discount_plan_instance_dp_fk" referencedTableName="cat_discount_plan" baseColumnNames="discount_plan_id" baseTableName="billing_discount_plan_instance" referencedColumnNames="id"/>
-		<addForeignKeyConstraint constraintName="billing_discount_plan_instance_ba_fk" referencedTableName="billing_billing_account" baseColumnNames="billing_account_id" baseTableName="billing_discount_plan_instance" referencedColumnNames="id"/>
-    	<dropTable tableName="billing_discount_plan"/>
-    	<dropForeignKeyConstraint baseTableName="billing_billing_account" constraintName="fk_l94b1bb8vfvkotp95by0j2amg"/>
-    	<dropColumn tableName="billing_billing_account">
-    		<column name="discount_plan_id"></column>
-    	</dropColumn>
-    </changeSet>
-    <changeSet author="EdwardPLegaspi" id="#3799_20181119 - Sequence for mysql - M" dbms="mysql">
-    	<createTable tableName="billing_discount_plan_instance_seq">
-            <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_discount_plan_instance_seq_pk" />
-            </column>
-        </createTable>
-        <sql>insert into ${db.schema.adapted}billing_discount_plan_instance_seq values(1)</sql>
-	</changeSet>
-    
-    <changeSet author="EdwardPLegaspi" id="20181126_3630 - RUM Sequence for PaymentGateway">
-        <createTable tableName="ar_payment_gateway_rum_sequence">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_payment_gateway_rum_sequence" />
-            </column>
-            <column name="version" type="int4" />
-            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="varchar(255)" />
-            <column name="prefix" type="varchar(255)" />
-            <column name="sequence_size" type="bigint" />
-            <column name="current_sequence_nb" type="bigint" />
-            <column name="payment_gateway_id" type="bigint" />
-        </createTable>
-        <createSequence sequenceName="ar_payment_gateway_rum_sequence_seq" />
-        <addForeignKeyConstraint constraintName="fk_ar_payment_gateway_rum_sequence" referencedTableName="ar_payment_gateway" baseColumnNames="payment_gateway_id" baseTableName="ar_payment_gateway_rum_sequence" referencedColumnNames="id"/>
-    </changeSet>
-    <changeSet author="EdwardPLegaspi" id="#20181126_3630 - RUM Sequence for PaymentGateway in case Mysql" dbms="mysql">
-    	<createTable tableName="ar_payment_gateway_rum_sequence_seq">
-            <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_gateway_rum_sequence_seq_pk" />
-            </column>
-        </createTable>
-        <sql>insert into ${db.schema.adapted}ar_payment_gateway_rum_sequence_seq values(1)</sql>
-	</changeSet>
-    <changeSet id="#3790_20181128 - Subscription rating group" author="EdwardPLegaspi">
-    	<addColumn tableName="billing_subscription">
-    		<column name="rating_group" type="varchar(50)"></column>
-    	</addColumn>
-    	<createIndex tableName="billing_subscription" indexName="idx_subscription_rating_group">
-    		<column name="rating_group"></column>
-    	</createIndex>
-    </changeSet>
-    <changeSet id="20181204 - Add multilingual description field to measurable quantity entity" author="abdelkader.bouazza">
-        <addColumn tableName="dwh_measurable_quant">
-            <column name="description_i18n" type="${type.json}"/>
-        </addColumn>
-    </changeSet>
-    
-    <changeSet id="#3543_27092018" author="AbdellatifBari">
-        <addColumn tableName="cat_serv_rec_charge_template">
-            <column name="counter_template_id" type="bigint" />
-        </addColumn>
-        <addColumn tableName="billing_recurring_charge_inst">
-            <column name="counter_id" type="bigint" />
-        </addColumn>
-        <addForeignKeyConstraint baseColumnNames="counter_template_id" baseTableName="cat_serv_rec_charge_template" constraintName="fk_serv_rec_charge_template_counter_template" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template" />
-        <addForeignKeyConstraint baseColumnNames="counter_id" baseTableName="billing_recurring_charge_inst" constraintName="fk_serv_rec_charge_template_billing_counter" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_counter" />
-     </changeSet>
-    <changeSet id="#3898_20181214 - auto_renew_date" author="MounirBahije">
-        <addColumn tableName="cat_service_template">
-            <column name="auto_renew_date" type="datetime"/>
-        </addColumn>
-        <addColumn tableName="billing_service_instance">
-            <column name="auto_renew_date" type="datetime"/>
-        </addColumn>
-        <addColumn tableName="billing_subscription">
-            <column name="auto_renew_date" type="datetime"/>
-        </addColumn>
-        <addColumn tableName="cat_offer_template">
-            <column name="auto_renew_date" type="datetime"/>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="#3896_13122018" author="abdelkader.bouazza">
-        <renameColumn tableName="wf_workflow" oldColumnName="enable_hostory" newColumnName="enable_history" columnDataType="${type.boolean}"/>
-    </changeSet>
-    <changeSet id="#3850_20181206" author="EdwardPLegaspi">
-		<addColumn tableName="billing_discount_plan_instance">
-    		<column name="uuid" type="varchar(60)">
-			</column>
-			<column name="cf_values" type="${type.json}" />
-			<column name="cf_values_accum" type="${type.json}"></column>
-    	</addColumn>
-	</changeSet>
-	
-	<changeSet id="#3652_26112018" author="anasseh">
-        <addColumn tableName="ar_ddrequest_lot_op">
-            <column name="payment_or_refund" type="varchar(30)" />
-        </addColumn>
-        <sql>update ${db.schema.adapted}ar_ddrequest_lot_op set payment_or_refund='PAYMENT'</sql>
-        <addColumn tableName="ar_ddrequest_lot">
-            <column name="payment_or_refund" type="varchar(30)" />
-        </addColumn>
-        <sql>update ${db.schema.adapted}ar_ddrequest_lot set payment_or_refund='PAYMENT'</sql>   
-        <addColumn tableName="ar_ddrequest_item">
-            <column name="refund_id" type="bigint" />
-        </addColumn>
-         <addForeignKeyConstraint constraintName="fk_dd_item_refund_id" referencedTableName="ar_account_operation" baseColumnNames="refund_id" baseTableName="ar_ddrequest_item" referencedColumnNames="id"/>     
-    </changeSet>
-  
-	<changeSet id="#3673_29112018" author="anasseh">
-	     <addColumn tableName="ar_ddrequest_lot_op"> 
-	      	<column name="seller_id" type="bigint" />
-         </addColumn>
-         <addForeignKeyConstraint constraintName="fk_dd_item_sell_id" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="ar_ddrequest_lot_op" referencedColumnNames="id"/>     
-   
-        <addColumn tableName="ar_payment_gateway">            
-            <column name="account_number" type="varchar(11)" />
-            <column name="account_owner" type="varchar(50)" />
-            <column name="bank_code" type="varchar(5)" />
-            <column name="bank_id" type="varchar(50)" />
-            <column name="bank_name" type="varchar(50)" />
-            <column name="bic" type="varchar(11)" />
-            <column name="branch_code" type="varchar(5)" />
-            <column name="iban" type="varchar(34)" />
-            <column name="ics" type="varchar(35)" />
-            <column name="issuer_name" type="varchar(50)" />
-            <column name="issuer_number" type="varchar(50)" /> 
-            <column name="hash_key" type="varchar(2)" />
-        </addColumn>
-        	<addColumn tableName="ar_payment_gateway"> 
-	      	<column name="seller_id" type="bigint" />
-         </addColumn>
-         <addForeignKeyConstraint constraintName="fk_sell_id_pg" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="ar_payment_gateway" referencedColumnNames="id"/>     
-      	<addColumn tableName="ar_account_operation"> 
-	      	<column name="seller_id" type="bigint" />
-         </addColumn>
-         <addForeignKeyConstraint constraintName="fk_sell_id_ao" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="ar_account_operation" referencedColumnNames="id"/>     
-   <addColumn tableName="ar_ddrequest_lot"> 
-	      	<column name="seller_id" type="bigint" />
-         </addColumn>
-         <addForeignKeyConstraint constraintName="fk_sell_id_dd_lot" referencedTableName="crm_seller" baseColumnNames="seller_id" baseTableName="ar_ddrequest_lot" referencedColumnNames="id"/>     
-   
-   
-   
-    </changeSet>
-
-	<changeSet id="#3629_20181210 - Price plan el vars" author="EdwardPLegaspi">
-    	<addColumn tableName="cat_price_plan_matrix">
-    		<column name="total_amount_el" type="${type.text}" />
-    		<column name="minimum_amount_el" type="${type.text}" />
-    		<column name="total_amount_el_sp" type="${type.text}" />
-    		<column name="minimum_amount_el_sp" type="${type.text}" />
-    	</addColumn>
-
-    	<sql>
-    		<![CDATA[
-			update cat_price_plan_matrix set total_amount_el=coalesce(rating_el_without_tax, rating_el_with_tax);
-			update cat_price_plan_matrix set total_amount_el_sp=coalesce(rating_el_without_tax_sp, rating_el_with_tax_sp);
-			update cat_price_plan_matrix set minimum_amount_el=coalesce(minimum_amount_without_tax_el, minimum_amount_with_tax_el);
-			update cat_price_plan_matrix set minimum_amount_el_sp=coalesce(minimum_amount_without_tax_el_sp, minimum_amount_with_tax_el_sp);
-			]]>
-    	</sql>
-
-    	<dropColumn tableName="cat_price_plan_matrix" columnName="rating_el_with_tax"></dropColumn>
-    	<dropColumn tableName="cat_price_plan_matrix" columnName="rating_el_with_tax_sp"></dropColumn>
-    	<dropColumn tableName="cat_price_plan_matrix" columnName="rating_el_without_tax"></dropColumn>
-    	<dropColumn tableName="cat_price_plan_matrix" columnName="rating_el_without_tax_sp"></dropColumn>
-    	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_without_tax_el"></dropColumn>
-    	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_without_tax_el_sp"></dropColumn>
-    	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_with_tax_el"></dropColumn>
-    	<dropColumn tableName="cat_price_plan_matrix" columnName="minimum_amount_with_tax_el_sp"></dropColumn>
-    </changeSet>
-    <changeSet id="#3840_27122018" author="abdelkader.bouazza">
-        <addColumn tableName="crm_customer_category">
-            <column name="accounting_code_id" type="bigint"/>
-        </addColumn>
-        <addForeignKeyConstraint constraintName="fk_crm_customer_category_accounting_code" referencedTableName="billing_accounting_code"
-                                 baseColumnNames="accounting_code_id" baseTableName="crm_customer_category" referencedColumnNames="id" />
-    </changeSet>
-
-    <changeSet id="#3970 - Change of RT description database field from varchar to text" author="mounir.boukayoua">
-        <modifyDataType tableName="billing_rated_transaction" columnName="description" newDataType="${type.text}"/>
-    </changeSet>
-
-    <changeSet id="#3863_14012019 - Allow to have a CFT of type reference to an AccountingCode" author="abdelkader.bouazza">
-        <addColumn tableName="billing_accounting_code">
-            <column name="uuid" type="varchar(60)"/>
-            <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}"/>
-        </addColumn>
-    </changeSet>
-    
-    <changeSet id="#3842_20190111 - Trigger next charge" author="EdwardPLegaspi">
-        <addColumn tableName="cat_usage_charge_template">
-            <column name="trigger_next_charge" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="trigger_next_charge_el" type="${type.text}"/>
-        </addColumn>
-    </changeSet>
     <changeSet id="#4140_08042019" author="hznibar">
 			<modifyDataType tableName="wf_history_action" columnName="result" newDataType="varchar(2000)" />
 	</changeSet>
 	
-	<changeSet id="#4010_20190206" author="anasseh">
-            <modifyDataType tableName="wf_history_action" columnName="result" newDataType="${type.text}"/>
-   </changeSet>
-   
-   <changeSet id="#4164_21042019" author="SaidRamli">
-        <modifyDataType columnName="iban" newDataType="varchar(80)" tableName="crm_provider"/>
-    </changeSet>
-    
-    <changeSet id="#4156_20190423" author="EdwardPLegaspi">
-    	<addColumn tableName="meveo_job_instance">
-    		<column name="verbose_report" type="${type.boolean}" defaultValueNumeric="1"/>
-    	</addColumn>
-    	
-    	<update tableName="meveo_job_instance">
-    		<column name="verbose_report" valueNumeric="1"></column>
-    	</update>
-    </changeSet>
-    <changeSet id="#4192_20190506 - add counter for subscription and service" author="KhalidHorri">
-        <addColumn tableName="billing_counter">
-            <column name="subscription_id" type="bigint"/>
+	<changeSet id="#4127_10042019" author="AbdelmounaimAkadid">
+		<addColumn tableName="dwh_report_extract">
+            <column name="output_dir" type="varchar(255)" />
         </addColumn>
-        <addColumn tableName="billing_counter">
-            <column name="service_instance_id" type="bigint"/>
-        </addColumn>
-        <addForeignKeyConstraint constraintName="fk_billing_counter_subscription_id" referencedTableName="billing_subscription"
-                                 baseColumnNames="subscription_id" baseTableName="billing_counter" referencedColumnNames="id"/>
-        <addForeignKeyConstraint constraintName="fk_billing_counter_service_instance_id" referencedTableName="billing_service_instance"
-                                 baseColumnNames="service_instance_id" baseTableName="billing_counter" referencedColumnNames="id"/>
-    </changeSet>
-    
+        <sql>update ${db.schema.adapted}dwh_report_extract set output_dir = concat('reports/', category) where category is not null or category != ''
+        </sql>
+        <sql>update ${db.schema.adapted}dwh_report_extract set output_dir = 'reports' where category is null or category = ''
+        </sql>
+	</changeSet>
 
-    <changeSet id="#3607_20190123" author="andrius.karpavicius">
-        <addColumn tableName="cust_cet">
-            <column name="store_as_table" type="${type.boolean}" defaultValueNumeric="0"/>
-        </addColumn>        
+    <changeSet id="#4089_20190404" author="AbdellatifBARI">
+        <sql>update ${db.schema.adapted}crm_custom_field_tmpl set applies_to = case
+
+            when applies_to = 'PROVIDER'                then 'Provider'
+            when applies_to = 'PRODUCT'                 then 'ProductTemplate'
+            when applies_to = 'PRODUCT_INSTANCE'        then 'ProductInstance'
+            when applies_to = 'OFFER'                   then 'OfferTemplate'
+            when applies_to = 'SELLER'                  then 'Seller'
+            when applies_to = 'CUST'                    then 'Customer'
+            when applies_to = 'CA'                      then 'CustomerAccount'
+            when applies_to = 'BA'                      then 'BillingAccount'
+            when applies_to = 'UA'                      then 'UserAccount'
+            when applies_to = 'SERVICE'                 then 'ServiceTemplate'
+            when applies_to = 'SERVICE_INSTANCE'        then 'ServiceInstance'
+            when applies_to = 'SUB'                     then 'Subscription'
+            when applies_to = 'ACC'                     then 'Access'
+            when applies_to = 'CHARGE'                  then 'ChargeTemplate'
+            when applies_to = 'PRICEPLAN'               then 'PricePlanMatrix'
+
+            when applies_to = 'BILLING_CYCLE'           then 'BillingCycle'
+            when applies_to = 'TAX'                     then 'Tax'
+            when applies_to = 'INV_CAT'                 then 'InvoiceCategory'
+            when applies_to = 'INVOICE'                 then 'Invoice'
+            when applies_to = 'ACCT_CODE'               then 'AccountingCode'
+            when applies_to = 'FILTER'                  then 'Filter'
+            when applies_to = 'QUOTE'                   then 'Quote'
+            when applies_to = 'ORDER'                   then 'Order'
+            when applies_to = 'USER'                    then 'User'
+            when applies_to = 'JOB'                     then 'JobInstance'
+            when applies_to = 'DISCOUNT_PLAN_INSTANCE'  then 'DiscountPlanInstance'
+            when applies_to = 'DISCOUNT_PLAN'           then 'DiscountPlan'
+            when applies_to = 'OFFER_CATEGORY'          then 'OfferTemplateCategory'
+            when applies_to = 'INV_SUB_CAT'             then 'InvoiceSubCategory'
+            when applies_to = 'ACC_OP'                  then 'AccountOperation'
+
+            when applies_to = 'BILLING_RUN'             then 'BillingRun'
+            when applies_to = 'INVOICE_TYPE'            then 'InvoiceType'
+            when applies_to = 'DISCOUNT_PLAN_ITEM'      then 'DiscountPlanItem'
+            when applies_to = 'OTH_TR'                  then 'OtherTransaction'
+            when applies_to = 'REPORT'                  then 'ReportExtract'
+            when applies_to = 'BUNDLE'                  then 'BundleTemplate'
+            when applies_to = 'PAYMENT_SCH_INSTANCE'    then 'PaymentScheduleInstance'
+            when applies_to = 'DDREQ_BUILDER'           then 'DDRequestBuilder'
+            when applies_to = 'PAYMENT_SCH'             then 'PaymentScheduleTemplate'
+
+            when applies_to like 'JOB_%'                then  concat('JobInstance_', substring(applies_to, length('JOB_')+1, length(applies_to)))
+
+            else applies_to
+
+            end where applies_to is not null
+        </sql>
     </changeSet>
 
 	<changeSet id="#4107_20190515" author="EdwardPLegaspi">
@@ -960,7 +85,1050 @@
 			tableName="adm_role_secured_entity" />
 	</changeSet>
     
-    <changeSet id="#4054_20191405 - Encryption" author="MohamedElYoussoufi" dbms="postgresql">
+    <changeSet id="#4117_20190405" author="AmineBENAICHA">
+    	<addColumn tableName="wf_instance">
+            <column name="entity_instance_id" type="bigint" >
+            	<constraints nullable="false" />
+            </column>
+        </addColumn>
+        <createIndex tableName="wf_instance" indexName="wf_instance_entity_id_idx">
+            <column name="entity_instance_id" type="bigint"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="#4179_20190417" author="AndriusKarpavicius">
+        <addColumn tableName="meveo_script_instance">
+            <column name="reuse" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#4148_20190418 - Add runAsync on notification" author="EdwardPLegaspi">
+    	<addColumn tableName="adm_notification">
+            <column name="run_async" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#3683_20190415" author="YoussefIZEM">
+         <addColumn tableName="adm_notif_email">
+            <column name="email_template_id" type="bigint"></column>
+        </addColumn>
+         <addColumn tableName="adm_notification">
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}adm_notification set uuid = id</sql>
+        <sql dbms="postgres">update ${db.schema.adapted}adm_notif_email set email_template_id=NEXTVAL('${db.schema.adapted}com_msg_tmpl_seq')</sql>
+        <sql dbms="mysql">update ${db.schema.adapted}adm_notif_email set email_template_id = (select max(next_val) from ${db.schema.adapted}com_msg_tmpl_seq);</sql>
+        <sql>
+            INSERT INTO ${db.schema.adapted}com_message_template(id, version, created, code, subject, textcontent, htmlcontent, media)   
+            SELECT email_template_id, 0, now(), notif.code, email_subject, email_body, email_html_body, 'EMAIL' as media
+            FROM ${db.schema.adapted}adm_notif_email email
+            LEFT JOIN ${db.schema.adapted}adm_notification notif  on notif.id = email.id
+        </sql>
+        <addForeignKeyConstraint baseColumnNames="email_template_id" baseTableName="adm_notif_email" constraintName="fk_com_message_template" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_message_template" />
+                    
+        <dropColumn tableName="adm_notif_email">
+            <column name="email_body"></column>
+            <column name="email_html_body"></column>
+            <column name="email_subject"></column>
+        </dropColumn>
+     </changeSet>
+     
+     <changeSet id="#4208_2019042601" author="MohamedElYoussoufi" dbms="postgresql" >
+     	
+        <sql>CREATE INDEX cust_cei_cet_and_code_index ON ${db.schema.adapted}cust_cei((lower(cet_code)),(lower(code)));</sql>
+        
+     </changeSet>
+     
+     <changeSet id="#4208_2019042602" author="MohamedElYoussoufi" dbms="mysql">
+     	
+        <sql>CREATE INDEX cust_cei_cet_and_code_index ON ${db.schema.adapted}cust_cei(cet_code,code);</sql>
+     	
+     </changeSet>
+     
+     
+     <changeSet id="#3692_20190426" author="AndriusKarpavicius">
+        <modifyDataType tableName="ar_payment_gateway" columnName="iban" newDataType="varchar(80)" />
+    </changeSet>
+    
+    <changeSet id="#4207_2019042901" author="MohamedElYoussoufi">
+     	
+     	<addColumn tableName="billing_rated_transaction">
+            <column name="offer_id" type="bigint"></column>
+        </addColumn>
+        
+        <addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_offer_template" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+            
+        <addColumn tableName="billing_wallet_operation">
+            <column name="offer_id" type="bigint"></column>
+        </addColumn>
+        
+        <addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_offer_template" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+            
+        <sql>
+        	update ${db.schema.adapted}billing_wallet_operation set offer_code = null where offer_code = 'NO_OFFER';
+        </sql>
+          
+      </changeSet>
+      
+      <changeSet id="#4207_2019042902" author="MohamedElYoussoufi" dbms="postgresql">
+      
+        <sql>
+        	 	update ${db.schema.adapted}billing_rated_transaction rt set offer_id = (select s.offer_id from ${db.schema.adapted}billing_subscription s where s.id=rt.subscription_id and rt.subscription_id is not null)
+        </sql>
+        
+        <sql>
+        		update ${db.schema.adapted}billing_wallet_operation wo set offer_id = (select s.offer_id from ${db.schema.adapted}billing_subscription s where s.id=wo.subscription_id and wo.subscription_id is not null)
+        </sql>
+      
+      </changeSet>
+      
+      <changeSet id="#4207_2019042903" author="MohamedElYoussoufi" dbms="mysql">
+      	<sql>
+        	 update ${db.schema.adapted}billing_rated_transaction rt join ${db.schema.adapted}billing_subscription s on s.id=rt.subscription_id  set rt.offer_id = s.offer_id where rt.subscription_id is not null
+        </sql>
+        <sql>
+        	update ${db.schema.adapted}billing_wallet_operation wo join ${db.schema.adapted}billing_subscription s on s.id=wo.subscription_id  set wo.offer_id = s.offer_id where wo.subscription_id is not null
+		</sql>
+      </changeSet>
+      
+      <changeSet id="#4207_2019042904" author="MohamedElYoussoufi">
+      	<dropColumn tableName="billing_rated_transaction">
+            <column name="offer_code"></column>
+        </dropColumn>
+      </changeSet>
+
+	<changeSet id="#4156_20190423" author="EdwardPLegaspi">
+		<addColumn tableName="meveo_job_instance">
+			<column name="verbose_report" type="${type.boolean}"
+				defaultValueNumeric="1" />
+		</addColumn>
+
+		<update tableName="meveo_job_instance">
+			<column name="verbose_report" valueNumeric="1"></column>
+		</update>
+	</changeSet>
+    
+    <changeSet id="#4198_03052019" author="SaidRamli">
+       <addColumn tableName="billing_invoice_type">
+           <column name="invoice_accountable" type="${type.boolean}" defaultValueNumeric="1">
+		        <constraints nullable="false" />
+		    </column>
+       </addColumn>
+        <sql>update ${db.schema.adapted}billing_invoice_type set invoice_accountable = 1 where code not in ('QUOTE','DRAFT','PREPAID')</sql>
+        <sql>update ${db.schema.adapted}billing_invoice_type set invoice_accountable = 0 where code in ('QUOTE','DRAFT','PREPAID')</sql>
+    </changeSet>
+
+    <changeSet id="#4156_08052019" author="AndriusKarpavicius">
+        <addDefaultValue tableName="meveo_job_instance" columnName="exclude_inv_without_amount" defaultValueNumeric="0" />
+        <sql>update ${db.schema.adapted}meveo_job_instance set exclude_inv_without_amount = 0 where exclude_inv_without_amount is null</sql>
+    </changeSet>
+
+
+    <changeSet id="#4282_20190520" author="AndriusKarpavicius">
+        <addColumn tableName="billing_rated_transaction">
+            <column name="service_instance_id" type="bigInt"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_service_instance" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+        <sql>CREATE INDEX rt_subscription_index ON ${db.schema.adapted}billing_rated_transaction  (subscription_id, invoice_id, usage_date)</sql>
+        <sql>CREATE INDEX rt_ba_invoice_index ON ${db.schema.adapted}billing_rated_transaction  (billing_account__id, invoice_id, usage_date)</sql>
+        <sql dbms="postgres">CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
+        <sql dbms="mysql">CREATE INDEX billing_service_instance_min_index ON ${db.schema.adapted}billing_service_instance  (minimum_amount_el)</sql>
+        <sql dbms="postgres">CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el) WHERE minimum_amount_el IS NOT NULL</sql>
+        <sql dbms="mysql">CREATE INDEX billing_subscription_min_index ON ${db.schema.adapted}billing_subscription  (minimum_amount_el)</sql>
+    </changeSet>
+
+    <changeSet id="#39262_20190604" author="TonyAlejandro">
+        <addColumn tableName="billing_service_instance">
+            <column name="calendar_init_active_id" type="bigint" />
+            <column name="calendar_renew_for_id" type="bigint" />
+            <column name="renewal_term_type" type="varchar(20)" />
+        </addColumn>
+        <addColumn tableName="cat_service_template">
+            <column name="calendar_init_active_id" type="bigint" />
+            <column name="calendar_renew_for_id" type="bigint" />
+            <column name="renewal_term_type" type="varchar(20)" />
+        </addColumn>
+        <addColumn tableName="cat_offer_template">
+            <column name="calendar_init_active_id" type="bigint" />
+            <column name="calendar_renew_for_id" type="bigint" />
+            <column name="renewal_term_type" type="varchar(20)" />
+        </addColumn>
+        <addColumn tableName="billing_subscription">
+            <column name="calendar_init_active_id" type="bigint" />
+            <column name="calendar_renew_for_id" type="bigint" />
+            <column name="renewal_term_type" type="varchar(20)" />
+        </addColumn>
+        <addDefaultValue tableName="billing_service_instance" columnName="initial_term_type" defaultValue="RECURRING" />
+        <addDefaultValue tableName="cat_service_template" columnName="initial_term_type" defaultValue="RECURRING" />
+        <addDefaultValue tableName="cat_offer_template" columnName="initial_term_type" defaultValue="RECURRING" />
+        <addDefaultValue tableName="billing_subscription" columnName="initial_term_type" defaultValue="RECURRING" />
+        <addForeignKeyConstraint baseColumnNames="calendar_init_active_id" baseTableName="billing_service_instance" constraintName="fk_si_init_active" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_renew_for_id" baseTableName="billing_service_instance" constraintName="fk_si_renew_for" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_init_active_id" baseTableName="cat_service_template" constraintName="fk_st_init_active" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_renew_for_id" baseTableName="cat_service_template" constraintName="fk_st_renew_for" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_init_active_id" baseTableName="cat_offer_template" constraintName="fk_ot_init_active" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_renew_for_id" baseTableName="cat_offer_template" constraintName="fk_ot_renew_for" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_init_active_id" baseTableName="billing_subscription" constraintName="fk_bs_init_active" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="calendar_renew_for_id" baseTableName="billing_subscription" constraintName="fk_bs_renew_for" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+
+    </changeSet>
+
+    <changeSet id="#4282_20190524" author="AndriusKarpavicius" dbms="postgres">
+        <sql>DROP INDEX rt_ba_invoice_index</sql>
+        <sql>DROP INDEX rt_subscription_index</sql>
+        <sql>DROP INDEX transaction_billing_index</sql>
+        <sql>DROP INDEX rated_transaction_number</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON billing_rated_transaction (billing_account__id, usage_date, service_instance_id) where status='OPEN' and service_instance_id is not null</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON billing_rated_transaction (billing_account__id, usage_date, subscription_id) where status='OPEN'</sql>
+        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON billing_rated_transaction (subscription_id, usage_date, service_instance_id) where status='OPEN' and subscription_id is not null</sql>
+        <sql>CREATE INDEX rt_invoice_index ON billing_rated_transaction (invoice_id, invoice_sub_category_id, wallet_id) where status='BILLED'</sql>
+        <sql>CREATE INDEX rt_order_index ON billing_rated_transaction (order_number, status, usage_date) where order_number is not null</sql>
+    </changeSet>
+    <!-- MySQL currently doesn't support conditional indexes -->
+    <changeSet id="#4282_20190524-MS" author="MohamedSTITANE" dbms="mysql">
+        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON billing_rated_transaction (billing_account__id, usage_date, service_instance_id)</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON billing_rated_transaction (billing_account__id, usage_date, subscription_id)</sql>
+        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON billing_rated_transaction (subscription_id, usage_date, service_instance_id)</sql>
+        <sql>CREATE INDEX rt_invoice_index ON billing_rated_transaction (invoice_id, invoice_sub_category_id, wallet_id)</sql>
+        <sql>CREATE INDEX rt_order_index ON billing_rated_transaction (order_number, status, usage_date)</sql>
+    </changeSet>
+
+<!-- Takes many hours on 30M RT
+    <changeSet id="#4282_20190520-P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}billing_rated_transaction set service_instance_id = wo.service_instance_id from ${db.schema.adapted}billing_wallet_operation wo where
+               wo.rated_transaction_id=billing_rated_transaction.id
+        </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction set service_instance_id =null where billing_rated_transaction.id in (select rated_transaction_id from ${db.schema.adapted}billing_wallet_operation where rated_transaction_id is not null group by rated_transaction_id having count(*)>1 ) </sql>
+    </changeSet>
+
+    <changeSet id="#4282_20190520-M" author="AndriusKarpavicius" dbms="mysql">
+        <sql>update ${db.schema.adapted}billing_rated_transaction rt join ${db.schema.adapted}billing_wallet_operation wo on wo.rated_transaction_id=rt.id set rt.service_instance_id = wo.service_instance_id where wo.service_instance_id is not null
+        </sql>
+    </changeSet>
+ -->
+
+
+    <changeSet id="#4290_20190520-P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}billing_service_instance set minimum_amount_el = st.minimum_amount_el, minimum_label_el = st.minimum_label_el from ${db.schema.adapted}cat_service_template st where
+               service_template_id = st.id and billing_service_instance.minimum_amount_el is not null
+        </sql>
+        <sql>update ${db.schema.adapted}billing_service_instance set minimum_amount_el_sp = st.minimum_amount_el_sp, minimum_label_el_sp = st.minimum_label_el_sp from ${db.schema.adapted}cat_service_template st where
+               service_template_id = st.id and billing_service_instance.minimum_amount_el_sp is not null
+        </sql>
+    </changeSet>
+
+    <changeSet id="#4290_20190520-M" author="AndriusKarpavicius" dbms="mysql">
+        <sql>update ${db.schema.adapted}billing_service_instance si join ${db.schema.adapted}cat_service_template st on si.service_template_id = st.id
+                set si.minimum_amount_el = st.minimum_amount_el, si.minimum_label_el = st.minimum_label_el where si.minimum_amount_el is not null
+        </sql>
+        <sql>update ${db.schema.adapted}billing_service_instance si join ${db.schema.adapted}cat_service_template st on si.service_template_id = st.id
+                set si.minimum_amount_el_sp = st.minimum_amount_el_sp, si.minimum_label_el_sp = st.minimum_label_el_sp where si.minimum_amount_el_sp is not null
+        </sql>
+    </changeSet>
+    
+    <changeSet id="#4326_20190530-P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update ${db.schema.adapted}billing_wallet_operation set tax_id = t.id from ${db.schema.adapted}billing_tax t where
+               tax_percent = t.tax_percentage and tax_id is null and tax_percent is not null
+        </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction set tax_id = t.id from ${db.schema.adapted}billing_tax t where
+               tax_percent = t.tax_percentage and tax_id is null and tax_percent is not null
+        </sql>        
+    </changeSet>
+    
+    <changeSet id="#4326_20190530-M" author="AndriusKarpavicius" dbms="mysql">
+       <sql>update ${db.schema.adapted}billing_wallet_operation wo join ${db.schema.adapted}billing_tax t on wo.tax_percent = t.tax_percentage set wo.tax_id = t.id  where
+               wo.tax_id is null and wo.tax_percent is not null
+        </sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction rt join ${db.schema.adapted}billing_tax t on rt.tax_percent = t.tax_percentage set rt.tax_id = t.id  where
+               rt.tax_id is null and rt.tax_percent is not null
+        </sql> 
+    </changeSet>
+    
+    <changeSet id="#4326_20190530" author="AndriusKarpavicius">
+        <addNotNullConstraint tableName="billing_tax" columnName="tax_percentage" columnDataType="numeric(23, 12)"/>
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="tax_id" columnDataType="bigInt"/>
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="tax_percent" columnDataType="numeric(23, 12)"/>
+        <addNotNullConstraint tableName="billing_rated_transaction" columnName="tax_id" columnDataType="bigInt"/>
+        <addNotNullConstraint tableName="billing_rated_transaction" columnName="tax_percent" columnDataType="numeric(23, 12)"/>    
+    </changeSet>
+    
+    <changeSet id="#4278_20190520_partitions" author="mohamed.el.youssoufi" dbms="postgresql">
+    
+    	<createProcedure><![CDATA[
+		
+			DROP FUNCTION IF EXISTS create_partitions(text,text,text,integer);
+            
+			CREATE OR REPLACE FUNCTION create_partitions(table_name text, start_date text, frequency text, partitions_number int) RETURNS void AS $$
+            -- Function to create partition tables for a given table
+            -- Param1 : table_name => name of the table to be partitonned. Can include a schema name
+            -- Param2 : start_date => date of the beginning of partitonning (input format YYYY_MM_DD)
+            -- Param3 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks)
+            -- Param4 : partitions_number : number of partitions to create starting form param start_date
+
+            -- Call Example : create_partitions('public.rating_edr','2019_03_01','M',5);
+
+            DECLARE
+                partition_date DATE;
+                query text;
+            BEGIN
+
+                partition_date := to_date(start_date,'YYYY_MM_DD');
+    
+                FOR counter IN 1..partitions_number LOOP
+    
+                    query := 'CREATE TABLE ' || table_name || '_' || to_char(partition_date,'YYYY_MM_DD') || ' PARTITION OF ' || table_name || ' FOR VALUES FROM (''' || to_char(partition_date,'YYYY_MM_DD') || ''') TO (''';
+        
+                    IF frequency = 'M' THEN
+                        partition_date := partition_date + interval '1 month';
+                    END IF;
+        
+                    IF frequency = 'Y' THEN
+                        partition_date := partition_date + interval '1 year';
+                    END IF;
+        
+                    IF frequency = 'W' THEN
+                        partition_date := partition_date + interval '1 week';
+                    END IF;
+        
+                    query := query || to_char(partition_date,'YYYY_MM_DD') || ''');';
+        
+                    EXECUTE query;
+        
+                    --partition_date := partition_date + interval '1 day';
+        
+                    RAISE NOTICE 'partition created : %', table_name || '_' || to_char(partition_date,'YYYY_MM_DD');
+    
+                END LOOP;
+            END;
+            $$ LANGUAGE plpgsql;
+			
+			-- function detach all child partitions from parent
+			-- param table_name = parent table name
+			-- ------------------------------------------------
+
+			CREATE OR REPLACE FUNCTION detach_partitions(table_name TEXT) RETURNS void AS $$
+
+			DECLARE
+
+			 partitions CURSOR(table_name TEXT) FOR SELECT distinct child.relname AS child FROM pg_inherits JOIN pg_class parent ON pg_inherits.inhparent = parent.oid JOIN pg_class child ON pg_inherits.inhrelid = child.oid JOIN pg_namespace nmsp_parent ON nmsp_parent.oid = parent.relnamespace JOIN pg_namespace nmsp_child ON nmsp_child.oid = child.relnamespace WHERE parent.relname=table_name;
+			 query text;
+			 
+			BEGIN
+				 
+			   FOR row IN partitions(table_name) LOOP
+
+					query := 'ALTER TABLE IF EXISTS ' || table_name || ' DETACH PARTITION ' || row.child;
+					EXECUTE query;
+					RAISE NOTICE 'partition % is detached', row.child;
+
+				END LOOP;
+			 
+			END;
+			$$ LANGUAGE plpgsql;
+			
+			-- function to drop all table indexes
+			-- param table_name = target table name
+			-- ------------------------------------
+
+			CREATE OR REPLACE FUNCTION drop_all_table_indexes(table_name TEXT) RETURNS void AS $$
+
+			DECLARE
+
+			 cur_indexes CURSOR(table_name TEXT) FOR select indexname from pg_indexes where tablename = table_name and indexname not like '%_pkey' and indexname not like '%_pk';
+			 query text;
+			 
+			BEGIN
+				 
+			   FOR row IN cur_indexes(table_name) LOOP
+
+					query := 'DROP INDEX IF EXISTS ' || row.indexname || ' CASCADE';
+					EXECUTE query;
+					RAISE NOTICE 'index : %', row.indexname || ' is deleted';
+
+				END LOOP;
+			 
+			END;
+			$$ LANGUAGE plpgsql;
+
+			-- function to rename all table pks (add _tmp to pk keys)
+			-- param table_name = target table name
+			-- ------------------------------------------------------
+
+			CREATE OR REPLACE FUNCTION rename_all_table_pks(table_name TEXT) RETURNS void AS $$
+
+			DECLARE
+
+			 cur_indexes CURSOR(table_name TEXT) FOR select indexname from pg_indexes where tablename = table_name and (indexname like '%_pkey' or indexname  like '%_pk');
+			 query text;
+			 
+			BEGIN
+				 
+			   FOR row IN cur_indexes(table_name) LOOP
+
+					query := 'ALTER INDEX IF EXISTS ' || row.indexname || ' RENAME TO ' || row.indexname || '_tmp';
+					EXECUTE query;
+					RAISE NOTICE 'index : %', row.indexname || ' is renamed';
+
+				END LOOP;
+			 
+			END;
+			$$ LANGUAGE plpgsql;
+
+			-- function to create all table indexes, from scripts stored in tmp_table_indexes table
+			-- param table_name = target table name
+			-- ------------------------------------------------------------------------------------
+
+			CREATE OR REPLACE FUNCTION create_all_table_indexes(tablename TEXT) RETURNS void AS $$
+
+			DECLARE
+
+			 cur_indexes CURSOR(tablename TEXT) FOR select index_def from tmp_table_indexes where table_name = tablename;
+			 query text;
+			 
+			BEGIN
+				 
+			   FOR row IN cur_indexes(tablename) LOOP
+
+					query := row.index_def;
+					RAISE NOTICE 'index is created';
+					EXECUTE query;
+
+				END LOOP;
+			 
+			END;
+			$$ LANGUAGE plpgsql;
+
+            ]]>
+			
+        </createProcedure>
+    
+		<createProcedure><![CDATA[
+			CREATE OR REPLACE FUNCTION switch_billing_rated_transaction_to_partition(schema_owner text, schema_name text, frequency text, from_date date, to_date date) RETURNS void AS $$
+			
+			-- Function to replace billing_rated_transaction table with a partitioned table. Preserves existing data.
+	        -- Param1 : schema_owner => name of the owner of the schema where table is located.
+	        -- Param2 : schema_name => name of the schema where table is located.
+	        -- Param3 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in a table
+            -- Param4 : span of partitions - start date. DOES NOT filter the existing data. If not provided will use min and max usage_date field value as partition span start and end range.
+            -- Param5 : span of partitions - end date. DOES NOT filter the existing data.
+			
+            DECLARE
+			  _min_date date;
+			  _max_date date;
+			  _seq_value bigint;
+			  _partitions_number int;
+			
+			BEGIN
+			
+			-- Find values for partition creation and sequence recreation                       
+            
+            IF from_date IS NULL THEN
+                execute 'select min(usage_date), max(usage_date) from ' || schema_name || '.billing_rated_transaction ' into _min_date, _max_date;
+            ELSE 
+                _min_date := from_date;
+                _max_date := CASE WHEN to_date IS NULL THEN now() ELSE to_date END;                
+            END IF;
+            
+			execute 'select nextval(''' || schema_name || '.billing_rated_transaction_seq'')' into _seq_value;
+			
+			RAISE NOTICE 'min date is % max date is %', _min_date, _max_date;
+
+			-- 1: Indexes : keep indexes creation scripts in a temporary table (tmp_table_indexes) before droping or renaming the target table :
+			-------------------------------------------------------------------------------------------------------------------------------------
+			
+			-- create the temporary table for indexes scripts
+			
+			execute 'create table if not exists ' || schema_name || '.tmp_table_indexes (table_name text not null,index_name text not null,index_def text not null ) with (oids = false ) tablespace pg_default;';
+			
+			execute 'alter table ' || schema_name || '.tmp_table_indexes owner to ' || schema_owner || ';';
+			
+			execute 'truncate table ' || schema_name || '.tmp_table_indexes;';
+			
+			-- save indexes scripts in the temporary table
+			
+			execute 'insert into ' || schema_name || '.tmp_table_indexes (table_name, index_name, index_def) select tablename, indexname, indexdef from pg_indexes where indexname not like ''%_pk%'' and tablename = ''billing_rated_transaction'';';
+			
+			-- 2: Rename billing_rated_transaction to billing_rated_transaction_tmp to avoid data loss :
+			--------------------------------------------------------------------------------------------
+			
+			execute 'alter table '||schema_name||'.billing_rated_transaction rename to billing_rated_transaction_tmp;';
+			
+			-- 3: Drop old table indexes :
+			------------------------------
+			
+			execute 'select drop_all_table_indexes(''billing_rated_transaction_tmp'');';
+			
+			-- 4: Rename old table primary keys :
+			-------------------------------------
+			
+			execute 'select rename_all_table_pks(''billing_rated_transaction_tmp'');';
+			
+			-- 5: Create the new table :
+			----------------------------
+			
+			execute 'create table '||schema_name||'.billing_rated_transaction (
+						  id bigint not null default nextval('''||schema_name||'.billing_rated_transaction_seq''::regclass),
+						  version integer,
+						  amount_tax numeric(23,12),
+						  amount_with_tax numeric(23,12),
+						  amount_without_tax numeric(23,12),
+						  code character varying(255),
+						  description text,
+						  do_not_trigger_invoicing integer NOT NULL DEFAULT 0,
+						  parameter_1 character varying(255),
+						  parameter_2 character varying(255),
+						  parameter_3 character varying(255),
+						  quantity numeric(23,12),
+						  status character varying(255),
+						  unit_amount_tax numeric(23,12),
+						  unit_amount_with_tax numeric(23,12),
+						  unit_amount_without_tax numeric(23,12),
+						  unity_description character varying(20),
+						  usage_date timestamp without time zone,
+						  billing_account__id bigint,
+						  billing_run_id bigint,
+						  invoice_id bigint,
+						  aggregate_id_f bigint,
+						  aggregate_id_r bigint,
+						  aggregate_id_t bigint,
+						  invoice_sub_category_id bigint,
+						  priceplan_id bigint,
+						  wallet_id bigint,
+						  edr_id bigint,
+						  adjusted_rated_tx bigint,
+						  order_number character varying(100),
+						  rating_unit_description character varying(20),
+						  parameter_extra text,
+						  start_date timestamp without time zone,
+						  end_date timestamp without time zone,
+						  subscription_id bigint,
+						  seller_id bigint NOT NULL,
+						  charge_instance_id bigint,
+						  tax_id bigint NOT NULL,
+						  tax_percent numeric(23,12) NOT NULL,
+						  user_account_id bigint,
+						  offer_id bigint,
+                          service_instance_id bigint,
+						  constraint billing_rated_transaction_pkey primary key (id, usage_date),
+						  constraint fk_8g8jlmakt1wyw73oxs5yltlsd foreign key (aggregate_id_t)
+							  references '||schema_name||'.billing_invoice_agregate (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_amwacie0nqfumpd1sc7y9nv0p foreign key (aggregate_id_r)
+							  references '||schema_name||'.billing_invoice_agregate (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_anslvrbm465ossqx8surjyu22 foreign key (wallet_id)
+							  references '||schema_name||'.billing_wallet (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_bbnhg8vn7jkttghphr65iwug5 foreign key (billing_account__id)
+							  references '||schema_name||'.billing_billing_account (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_billing_rated_transaction_crm_seller foreign key (seller_id)
+							  references '||schema_name||'.crm_seller (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_billing_rated_transaction_offer_template foreign key (offer_id)
+							  references '||schema_name||'.cat_offer_template (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_eucl7of9ovyut1c4r2jkf01u6 foreign key (priceplan_id)
+							  references '||schema_name||'.cat_price_plan_matrix (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_gq86s178gc3orumcl8symk4nn foreign key (invoice_id)
+							  references '||schema_name||'.billing_invoice (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_o2mp1mqcyi2l7q2b1p88h20dw foreign key (billing_run_id)
+							  references '||schema_name||'.billing_billing_run (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_o5yu3c0bnac626w755w5f0voc foreign key (invoice_sub_category_id)
+							  references '||schema_name||'.billing_invoice_sub_cat (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_rjpm9k6xsumg297fxefffyryh foreign key (aggregate_id_f)
+							  references '||schema_name||'.billing_invoice_agregate (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_rt_tax foreign key (tax_id)
+							  references '||schema_name||'.billing_tax (id) match simple
+							  on update no action on delete no action,
+						  constraint fk_rt_ua foreign key (user_account_id)
+							  references '||schema_name||'.account_entity (id) match simple
+							  on update no action on delete no action,
+                          constraint fk_rt_service_instance foreign key (service_instance_id)
+                              references '||schema_name||'.billing_service_instance (id) match simple
+                              on update no action on delete no action
+				) partition by range (usage_date)';
+			
+			execute 'ALTER TABLE ' ||schema_name|| '.billing_rated_transaction OWNER to ' || schema_owner || ';';
+			
+			-- 6: Change sequence owner to the new table :
+			----------------------------------------------
+			execute 'ALTER SEQUENCE ' ||schema_name|| '.billing_rated_transaction_seq OWNED BY ' ||schema_name|| '.billing_rated_transaction.id;';
+			
+			-- 7: Create index on partition column (will be automatically created for child partitions on pg 11) :
+			------------------------------------------------------------------------------------------------------
+			execute 'CREATE INDEX ON ' ||schema_name|| '.billing_rated_transaction (usage_date);';
+			
+			-- 8: create others indexes from stored scripts:
+			------------------------------------------------
+			execute 'select create_all_table_indexes(''billing_rated_transaction'');';
+			
+			-- 9: Create required partitions. Number of partitions is calculated between min and max partition date based on a frequency
+			IF _min_date IS NOT NULL and frequency IS NOT NULL THEN
+			
+			  _partitions_number := _max_date - _min_date;
+			  
+			  IF frequency = 'M' THEN
+				_partitions_number := _partitions_number/30;
+			  END IF;
+						
+			  IF frequency = 'Y' THEN
+				_partitions_number := _partitions_number/365;
+			  END IF;
+					
+			  IF frequency = 'W' THEN
+				_partitions_number := _partitions_number/7;
+			  END IF;
+			
+			  PERFORM create_partitions(schema_name || '.billing_rated_transaction', to_char(_min_date,'YYYY_MM_DD'), frequency, _partitions_number+1);
+			END IF;
+			
+			-- 10: create a default partition table:
+			----------------------------------------
+			execute 'create table '||schema_name||'.billing_rated_transaction_default partition of '||schema_name||'.billing_rated_transaction default;';
+			execute 'ALTER TABLE ' ||schema_name||'.billing_rated_transaction_default OWNER to ' || schema_owner || ';';
+				
+			-- 11: populate the new table from old table:
+			---------------------------------------------
+			execute 'insert into '||schema_name||'.billing_rated_transaction select * from ' ||schema_name||'.billing_rated_transaction_tmp;';
+			
+			-- 12: Drop unused objects;
+			
+			execute 'drop table '||schema_name||'.tmp_table_indexes cascade;';
+			execute 'drop table '||schema_name||'.billing_rated_transaction_tmp cascade;';
+			
+			    END;
+			$$ LANGUAGE plpgsql;
+			    
+			        ]]>
+        </createProcedure>
+        
+        <createProcedure><![CDATA[
+			CREATE OR REPLACE FUNCTION switch_billing_wallet_operation_to_partition(schema_owner text, schema_name text, frequency text, from_date date, to_date date) RETURNS void AS $$
+			
+			-- Function to replace billing_wallet_operation table with a partitioned table. Preserves existing data.
+            -- Param1 : schema_owner => name of the owner of the schema where table is located.
+	        -- Param2 : schema_name => name of the schema where table is located.
+	        -- Param3 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in a table
+            -- Param4 : span of partitions - start date. DOES NOT filter the existing data. If not provided will use min and max operation_date field value as partition span start and end range.
+            -- Param5 : span of partitions - end date. DOES NOT filter the existing data.
+			
+			DECLARE
+			  _min_date date;
+			  _max_date date;
+			  _seq_value bigint;
+			  _partitions_number int;
+			
+			BEGIN
+			
+			-- Find values for partition creation and sequence recreation
+            IF from_date IS NULL THEN
+    			execute 'select min(operation_date), max(operation_date) from ' || schema_name || '.billing_wallet_operation ' into _min_date, _max_date;
+            ELSE 
+                _min_date := from_date;
+                _max_date := CASE WHEN to_date IS NULL THEN now() ELSE to_date END;                
+            END IF;
+	
+    		execute 'select nextval(''' || schema_name || '.billing_wallet_operation_seq'')' into _seq_value;
+			
+			RAISE NOTICE 'min date is % max date is %', _min_date, _max_date;
+
+			-- 1: Indexes : keep indexes creation scripts in a temporary table (tmp_table_indexes) before droping or renaming the target table :
+			-------------------------------------------------------------------------------------------------------------------------------------
+			
+			-- create the temporary table for indexes scripts
+			
+			execute 'create table if not exists ' || schema_name || '.tmp_table_indexes (table_name text not null,index_name text not null,index_def text not null ) with (oids = false ) tablespace pg_default;';
+			
+			execute 'alter table ' || schema_name || '.tmp_table_indexes owner to ' || schema_owner || ';';
+			
+			execute 'truncate table ' || schema_name || '.tmp_table_indexes;';
+			
+			-- save indexes scripts in the temporary table
+			
+			execute 'insert into ' || schema_name || '.tmp_table_indexes (table_name, index_name, index_def) select tablename, indexname, indexdef from pg_indexes where indexname not like ''%_pk%'' and tablename = ''billing_wallet_operation'';';
+			
+			-- 2: Rename billing_wallet_operation to billing_wallet_operation_tmp to avoid data loss :
+			--------------------------------------------------------------------------------------------
+			
+			execute 'alter table '||schema_name||'.billing_wallet_operation rename to billing_wallet_operation_tmp;';
+			
+			-- 3: Drop old table indexes :
+			------------------------------
+			
+			execute 'select drop_all_table_indexes(''billing_wallet_operation_tmp'');';
+			
+			-- 4: Rename old table primary keys :
+			-------------------------------------
+			
+			execute 'select rename_all_table_pks(''billing_wallet_operation_tmp'');';
+			
+			-- 5: Create the new table :
+			----------------------------
+			
+			execute 'create table '||schema_name||'.billing_wallet_operation (
+			operation_type character varying(31) NOT NULL,
+			  id bigint NOT NULL,
+			  version integer,
+			  created timestamp without time zone NOT NULL,
+			  updated timestamp without time zone,
+			  code character varying(255) NOT NULL,
+			  description character varying(255),
+			  amount_tax numeric(23,12),
+			  amount_with_tax numeric(23,12),
+			  amount_without_tax numeric(23,12),
+			  end_date timestamp without time zone,
+			  offer_code character varying(255),
+			  operation_date timestamp without time zone,
+			  parameter_1 character varying(255),
+			  parameter_2 character varying(255),
+			  parameter_3 character varying(255),
+			  quantity numeric(23,12),
+			  start_date timestamp without time zone,
+			  status character varying(255),
+			  subscription_date timestamp without time zone,
+			  tax_percent numeric(23,12) NOT NULL,
+			  credit_debit_flag character varying(255),
+			  unit_amount_tax numeric(23,12),
+			  unit_amount_with_tax numeric(23,12),
+			  unit_amount_without_tax numeric(23,12),
+			  creator character varying(100),
+			  updater character varying(100),
+			  aggregate_serv_id bigint,
+			  charge_instance_id bigint NOT NULL,
+			  counter_id bigint,
+			  currency_id bigint,
+			  priceplan_id bigint,
+			  reratedwalletoperation_id bigint,
+			  seller_id bigint NOT NULL,
+			  wallet_id bigint,
+			  reservation_id bigint,
+			  invoicing_date timestamp without time zone,
+			  input_quantity numeric(23,12),
+			  input_unit_description character varying(20),
+			  rating_unit_description character varying(20),
+			  edr_id bigint,
+			  order_number character varying(100),
+			  parameter_extra text,
+			  raw_amount_without_tax numeric(23,12),
+			  raw_amount_with_tax numeric(23,12),
+			  invoice_sub_category_id bigint,
+			  subscription_id bigint,
+			  tax_id bigint NOT NULL,
+			  rated_transaction_id bigint,
+			  service_instance_id bigint,
+			  offer_id bigint,
+			  constraint billing_wallet_operation_pkey primary key (id, operation_date),
+			  constraint fk_32r2ed0015tnd2pp5196vcqpy foreign key (reservation_id)
+				  references '||schema_name||'.billing_reservation (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_5htics7k9v44an8ap11wivraf foreign key (wallet_id)
+				  references '||schema_name||'.billing_wallet (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_60qrdadyj5wvmyii1einfb2lo foreign key (counter_id)
+				  references '||schema_name||'.billing_counter (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_75hyldnus6ti0y40vwcl49ued foreign key (charge_instance_id)
+				  references '||schema_name||'.billing_charge_instance (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_awekpkm39bhaqrf2k2gwvd4p5 foreign key (aggregate_serv_id)
+				  references '||schema_name||'.billing_service_instance (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_billing_wallet_operation_billing_invoice_sub_cat foreign key (invoice_sub_category_id)
+				  references '||schema_name||'.billing_invoice_sub_cat (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_billing_wallet_operation_offer_template foreign key (offer_id)
+				  references '||schema_name||'.cat_offer_template (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_f0v21kf4sbdcq1wwqsxmb5tsk foreign key (priceplan_id)
+				  references '||schema_name||'.cat_price_plan_matrix (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_hg1a5impet68w8a37dehlnib0 foreign key (seller_id)
+				  references '||schema_name||'.crm_seller (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_rt_charge foreign key (charge_instance_id)
+				  references '||schema_name||'.billing_charge_instance (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_t98kqb1prnfw6scvudimx1u0q foreign key (currency_id)
+				  references '||schema_name||'.adm_currency (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_wallet_operation_service_instance foreign key (service_instance_id)
+				  references '||schema_name||'.billing_service_instance (id) match simple
+				  on update no action on delete no action,
+			  constraint fk_wo_tax foreign key (tax_id)
+				  references '||schema_name||'.billing_tax (id) match simple
+				  on update no action on delete no action
+				) partition by range (operation_date)';
+			
+			execute 'ALTER TABLE ' ||schema_name|| '.billing_wallet_operation OWNER to ' || schema_owner || ';';
+			
+			-- 6: Change sequence owner to the new table :
+			----------------------------------------------
+			execute 'ALTER SEQUENCE ' ||schema_name|| '.billing_wallet_operation_seq OWNED BY ' ||schema_name|| '.billing_wallet_operation.id;';
+			
+			-- 7: Create index on partition column (will be automatically created for child partitions on pg 11) :
+			------------------------------------------------------------------------------------------------------
+			execute 'CREATE INDEX ON ' ||schema_name|| '.billing_wallet_operation (operation_date);';
+			
+			-- 8: create others indexes from stored scripts:
+			------------------------------------------------
+			execute 'select create_all_table_indexes(''billing_wallet_operation'');';
+			
+			-- 9: Create required partitions. Number of partitions is calculated between min and max partition date based on a frequency
+			IF _min_date IS NOT NULL and frequency IS NOT NULL THEN
+			
+			  _partitions_number := _max_date - _min_date;
+			  
+			  IF frequency = 'M' THEN
+				_partitions_number := _partitions_number/30;
+			  END IF;
+						
+			  IF frequency = 'Y' THEN
+				_partitions_number := _partitions_number/365;
+			  END IF;
+					
+			  IF frequency = 'W' THEN
+				_partitions_number := _partitions_number/7;
+			  END IF;
+			
+			  PERFORM create_partitions(schema_name || '.billing_wallet_operation', to_char(_min_date,'YYYY_MM_DD'), frequency, _partitions_number+1);
+			END IF;
+			
+			-- 10: create a default partition table:
+			----------------------------------------
+			execute 'create table '||schema_name||'.billing_wallet_operation_default partition of '||schema_name||'.billing_wallet_operation default;';
+			execute 'ALTER TABLE ' ||schema_name||'.billing_wallet_operation_default OWNER to ' || schema_owner || ';';
+				
+			-- 11: populate the new table from old table:
+			---------------------------------------------
+			execute 'insert into '||schema_name||'.billing_wallet_operation select * from ' ||schema_name||'.billing_wallet_operation_tmp;';
+			
+			-- 12: Drop unused objects;
+			
+			execute 'drop table '||schema_name||'.tmp_table_indexes cascade;';
+			execute 'drop table '||schema_name||'.billing_wallet_operation_tmp cascade;';
+			
+			    END;
+			$$ LANGUAGE plpgsql;
+			    
+			        ]]>
+        </createProcedure>
+        
+        <createProcedure><![CDATA[
+			CREATE OR REPLACE FUNCTION switch_rating_edr_to_partition(schema_owner text, schema_name text, frequency text, from_date date, to_date date) RETURNS void AS $$
+			
+			-- Function to replace rating_edr table with a partitioned table. Preserves existing data.
+			-- Param1 : schema_owner => name of the owner of the schema where table is located.
+            -- Param2 : schema_name => name of the schema where table is located.
+	        -- Param3 : frequency => interval of partionning ( Y for years, M for monthes, W for weeks). If provided, partitions will be created to span the current data in a table
+            -- Param4 : span of partitions - start date. DOES NOT filter the existing data. If not provided will use min and max event_date field value as partition span start and end range.
+            -- Param5 : span of partitions - end date. DOES NOT filter the existing data.
+			
+			DECLARE
+			  _min_date date;
+			  _max_date date;
+			  _seq_value bigint;
+			  _partitions_number int;
+			
+			BEGIN
+			
+			-- Find values for partition creation and sequence recreation
+            IF from_date IS NULL THEN
+	            execute 'select min(event_date), max(event_date) from ' || schema_name || '.rating_edr ' into _min_date, _max_date;
+            ELSE 
+                _min_date := from_date;
+                _max_date := CASE WHEN to_date IS NULL THEN now() ELSE to_date END;                
+            END IF;
+
+			execute 'select nextval(''' || schema_name || '.rating_edr_seq'')' into _seq_value;
+			
+			RAISE NOTICE 'min date is % max date is %', _min_date, _max_date;
+
+			-- 1: Indexes : keep indexes creation scripts in a temporary table (tmp_table_indexes) before droping or renaming the target table :
+			-------------------------------------------------------------------------------------------------------------------------------------
+			
+			-- create the temporary table for indexes scripts
+			
+			execute 'create table if not exists ' || schema_name || '.tmp_table_indexes (table_name text not null,index_name text not null,index_def text not null ) with (oids = false ) tablespace pg_default;';
+			
+			execute 'alter table ' || schema_name || '.tmp_table_indexes owner to ' || schema_owner || ';';
+			
+			execute 'truncate table ' || schema_name || '.tmp_table_indexes;';
+			
+			-- save indexes scripts in the temporary table
+			
+			execute 'insert into ' || schema_name || '.tmp_table_indexes (table_name, index_name, index_def) select tablename, indexname, indexdef from pg_indexes where indexname not like ''%_pk%'' and tablename = ''rating_edr'';';
+			
+			-- 2: Rename rating_edr to rating_edr_tmp to avoid data loss :
+			--------------------------------------------------------------------------------------------
+			
+			execute 'alter table '||schema_name||'.rating_edr rename to rating_edr_tmp;';
+			
+			-- 3: Drop old table indexes :
+			------------------------------
+			
+			execute 'select drop_all_table_indexes(''rating_edr_tmp'');';
+			
+			-- 4: Rename old table primary keys :
+			-------------------------------------
+			
+			execute 'select rename_all_table_pks(''rating_edr_tmp'');';
+			
+			-- 5: Create the new table :
+			----------------------------
+			
+			execute 'create table '||schema_name||'.rating_edr (
+			  id bigint not null default nextval('''||schema_name||'.rating_edr_seq''::regclass),
+			  version integer,
+			  created timestamp without time zone,
+			  event_date timestamp without time zone,
+			  last_updated timestamp without time zone,
+			  origin_batch character varying(255),
+			  origin_record character varying(255),
+			  parameter_1 character varying(255),
+			  parameter_2 character varying(255),
+			  parameter_3 character varying(255),
+			  parameter_4 character varying(255),
+			  quantity numeric(23,12),
+			  reject_reason text,
+			  status character varying(255),
+			  subscription_id bigint NOT NULL,
+			  parameter_5 character varying(255),
+			  parameter_6 character varying(255),
+			  parameter_7 character varying(255),
+			  parameter_8 character varying(255),
+			  parameter_9 character varying(255),
+			  date_parameter_1 timestamp without time zone,
+			  date_parameter_2 timestamp without time zone,
+			  date_parameter_3 timestamp without time zone,
+			  date_parameter_4 timestamp without time zone,
+			  date_parameter_5 timestamp without time zone,
+			  decimal_parameter_1 numeric(23,12),
+			  decimal_parameter_2 numeric(23,12),
+			  decimal_parameter_3 numeric(23,12),
+			  decimal_parameter_4 numeric(23,12),
+			  decimal_parameter_5 numeric(23,12),
+			  access_code character varying(255),
+			  header_edr_id bigint,
+			  extra_parameter text,
+			  CONSTRAINT rating_edr_pkey PRIMARY KEY (id, event_date),
+			  CONSTRAINT fk_f5tulmo519cm4il45bhborgq1 FOREIGN KEY (subscription_id)
+				  REFERENCES public.billing_subscription (id) MATCH SIMPLE
+				  ON UPDATE NO ACTION ON DELETE NO ACTION
+			) partition by range (event_date)'; 
+			
+			execute 'ALTER TABLE ' ||schema_name|| '.rating_edr OWNER to ' || schema_owner || ';';
+			
+			-- 6: Change sequence owner to the new table :
+			----------------------------------------------
+			execute 'ALTER SEQUENCE ' ||schema_name|| '.rating_edr_seq OWNED BY ' ||schema_name|| '.rating_edr.id;';
+			
+			-- 7: Create index on partition column (will be automatically created for child partitions on pg 11) :
+			------------------------------------------------------------------------------------------------------
+			execute 'CREATE INDEX ON ' ||schema_name|| '.rating_edr (event_date);';
+			
+			-- 8: create others indexes from stored scripts:
+			------------------------------------------------
+			execute 'select create_all_table_indexes(''rating_edr'');';
+			
+			-- 9: Create required partitions. Number of partitions is calculated between min and max partition date based on a frequency
+			IF _min_date IS NOT NULL and frequency IS NOT NULL THEN
+			
+			  _partitions_number := _max_date - _min_date;
+			  
+			  IF frequency = 'M' THEN
+				_partitions_number := _partitions_number/30;
+			  END IF;
+						
+			  IF frequency = 'Y' THEN
+				_partitions_number := _partitions_number/365;
+			  END IF;
+					
+			  IF frequency = 'W' THEN
+				_partitions_number := _partitions_number/7;
+			  END IF;
+			
+			  PERFORM create_partitions(schema_name || '.rating_edr', to_char(_min_date,'YYYY_MM_DD'), frequency, _partitions_number+1);
+			END IF;
+			
+			-- 10: create a default partition table:
+			----------------------------------------
+			execute 'create table '||schema_name||'.rating_edr_default partition of '||schema_name||'.rating_edr default;';
+			execute 'ALTER TABLE ' ||schema_name||'.rating_edr_default OWNER to ' || schema_owner || ';';
+				
+			-- 11: populate the new table from old table:
+			---------------------------------------------
+			execute 'insert into '||schema_name||'.rating_edr select * from ' ||schema_name||'.rating_edr_tmp;';
+			
+			-- 12: Drop unused objects;
+			
+			execute 'drop table '||schema_name||'.tmp_table_indexes cascade;';
+			execute 'drop table '||schema_name||'.rating_edr_tmp cascade;';
+			
+			    END;
+			$$ LANGUAGE plpgsql;
+			    
+			        ]]>
+        </createProcedure>
+    
+    </changeSet>
+
+    <changeSet author="mohamed.el.youssoufi" id="#4301_23052019 - empty tax amount">
+    	<sql>update ${db.schema.adapted}billing_invoice set amount_tax = (amount_with_tax - amount_without_tax), pdf_filename = null, xml_filename = null where amount_tax = 0 and amount_with_tax != amount_without_tax and amount_tax != (amount_with_tax - amount_without_tax);</sql>
+    </changeSet>
+
+    <changeSet author="abdelkader.bouazza" id="#4026-Order-validation-enhancement">
+        <dropNotNullConstraint tableName="ord_order_item" columnName="user_account_id" columnDataType="bigint" />
+    </changeSet>
+    <changeSet id="#4192_20190506 - add counter for subscription and service" author="KhalidHorri">
+        <addColumn tableName="billing_counter">
+            <column name="subscription_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_counter">
+            <column name="service_instance_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_billing_counter_subscription_id" referencedTableName="billing_subscription"
+                                 baseColumnNames="subscription_id" baseTableName="billing_counter" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="fk_billing_counter_service_instance_id" referencedTableName="billing_service_instance"
+                                 baseColumnNames="service_instance_id" baseTableName="billing_counter" referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#4303_300520191" author="mohamed.el.youssoufi" dbms="postgresql">
+		<sql>ALTER TABLE ${db.schema.adapted}ar_account_operation RENAME COLUMN occ_code TO code;</sql>
+		<sql>ALTER TABLE ${db.schema.adapted}ar_account_operation RENAME COLUMN occ_description TO description;</sql>
+    </changeSet>
+    
+    <changeSet id="#4303_300520192" author="mohamed.el.youssoufi" dbms="mysql">
+	    <sql>ALTER TABLE ${db.schema.adapted}ar_account_operation CHANGE occ_code code varchar(255);</sql>
+	    <sql>ALTER TABLE ${db.schema.adapted}ar_account_operation CHANGE occ_description description varchar(255);</sql>
+	</changeSet>
+
+    <changeSet id="#4322_20190612 - Add a filter to GenericWorkflow" author="MounirBahije">
+        <addColumn tableName="wf_generic_workflow">
+            <column name="filter_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+    
+        <changeSet id="#4054_201917061 - Encryption" author="MohamedElYoussoufi" dbms="postgresql">
     	<sql>
 			alter table ${db.schema.adapted}crm_provider alter column bic type character varying(100);
 			alter table ${db.schema.adapted}crm_provider alter column iban type character varying(100);
@@ -985,11 +1153,7 @@
     	</sql>
     </changeSet>
     
-    <changeSet author="mohamed.el.youssoufi" id="#4301_22052019 - empty tax amount">
-    	<sql>update ${db.schema.adapted}billing_invoice set amount_tax = (amount_with_tax - amount_without_tax), pdf_filename = null, xml_filename = null where amount_tax = 0 and amount_with_tax != amount_without_tax and amount_tax != (amount_with_tax - amount_without_tax);</sql>
-    </changeSet>
-    
-    <changeSet id="#4054_23052019 - Encryption" author="mohamed.el.youssoufi" dbms="mysql">
+    <changeSet id="#4054_201917062 - Encryption" author="mohamed.el.youssoufi" dbms="mysql">
     		<sql> alter table ${db.schema.adapted}crm_provider modify bic varchar(100);
 			alter table ${db.schema.adapted}crm_provider modify iban varchar(100);
 			
@@ -1011,28 +1175,926 @@
 			alter table ${db.schema.adapted}account_entity modify firstname varchar(100);
 			alter table ${db.schema.adapted}account_entity modify lastname varchar(100); </sql>
     </changeSet>
-    
-    <changeSet id="#4198_03052019" author="SaidRamli">
-       <addColumn tableName="billing_invoice_type">
-           <column name="invoice_accountable" type="${type.boolean}" defaultValueNumeric="1">
-		        <constraints nullable="false" />
-		    </column>
-       </addColumn>
-        <sql>update ${db.schema.adapted}billing_invoice_type set invoice_accountable = 1 where code not in ('QUOTE','DRAFT','PREPAID')</sql>
-        <sql>update ${db.schema.adapted}billing_invoice_type set invoice_accountable = 0 where code in ('QUOTE','DRAFT','PREPAID')</sql>
+
+
+    <changeSet id="#4371_20190620_1" author="AbdellatifBARI" dbms="mysql">
+        <createTable tableName="adm_file_format_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_file_format_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}adm_file_format_seq values(1)</sql>
     </changeSet>
-    
-    <changeSet id="#4434_21082018" author="anasseh">
-        <addColumn tableName="ar_ddrequest_item">
-            <column name="rejected_file_name" type="varchar(1000)" />
+
+    <changeSet id="#4371_20190620_2" author="AbdellatifBARI">
+        <createSequence sequenceName="adm_file_format_seq" startValue="1" />
+        <createTable tableName="adm_file_format">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_file_format_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(10)">
+                <constraints nullable="false" />
+            </column>
+            <column name="file_name_pattern" type="varchar(255)" />
+            <column name="file_type" type="varchar(255)" />
+            <column name="configuration_template" type="text" />
+            <column name="record_name" type="varchar(255)" />
+            <column name="input_directory" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="output_directory" type="varchar(255)" />
+            <column name="reject_directory" type="varchar(255)" />
+            <column name="archive_directory" type="varchar(255)" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari5xp8" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_file_format" />
+    </changeSet>
+
+
+    <changeSet id="#4371_20190620_3" author="AbdellatifBARI" dbms="mysql">
+        <createTable tableName="flat_file_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="flat_file_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}flat_file_seq values(1)</sql>
+    </changeSet>
+
+    <changeSet id="#4371_20190620_4" author="AbdellatifBARI">
+        <createSequence sequenceName="flat_file_seq" startValue="1" />
+        <createTable tableName="flat_file">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="flat_file_pkey" />
+            </column>
+
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="file_name" type="varchar(255)" />
+            <column name="status" type="varchar(255)" />
+            <column name="file_format_id" type="bigint" />
+            <column name="error_message" type="text" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari6yr9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="flat_file" />
+        <addForeignKeyConstraint baseColumnNames="file_format_id" baseTableName="flat_file" constraintName="fk_d4iavkklx1qg1ani36bari5o5i" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_format" />
+        <sql dbms="mysql">CREATE INDEX flat_file_code_index ON ${db.schema.adapted}flat_file(code)</sql>
+    </changeSet>
+    <changeSet id="#4371_20190620_5" author="AbdellatifBARI" dbms="postgresql">
+        <sql>CREATE INDEX flat_file_code_index ON ${db.schema.adapted} flat_file(lower(code))</sql>
+    </changeSet>
+
+    <changeSet id="#4160_20190105 - Accounting Writing" author="MounirBOUKAYOUA">
+        <createTable tableName="ar_accounting_writing">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_ar_accounting_writing_seq" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="origin_writing_id" type="bigint" />
+            <column name="tax_id" type="bigint" />
+            <column name="invoice_category_id" type="bigint" />
+            <column name="accounting_code_id" type="bigint" />
+            <column name="event_date" type="date" />
+            <column name="export_date" type="date" />
+            <column name="amount" type="numeric(23, 12)" />
+            <column name="event_type" type="varchar(255)" />
+            <column name="extra_param_1" type="varchar(255)" />
+            <column name="extra_param_2" type="varchar(255)" />
+            <column name="extra_param_3" type="varchar(255)" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="origin_writing_id" baseTableName="ar_accounting_writing"
+                                 constraintName="fk_accounting_writing_origin_writing" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_accounting_writing" />
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="ar_accounting_writing"
+                                 constraintName="fk_accounting_writing_tax" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
+        <addForeignKeyConstraint baseColumnNames="invoice_category_id" baseTableName="ar_accounting_writing"
+                                 constraintName="fk_accounting_writing_invoice_category" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_cat" />
+        <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="ar_accounting_writing"
+                                 constraintName="fk_accounting_writing_accounting_code" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+        <createSequence sequenceName="ar_accounting_writing_seq"/>
+
+        <createTable tableName="ar_accounting_writing_acc_operations">
+            <column name="accounting_writing_id" type="bigint" />
+            <column name="account_operation_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey columnNames="accounting_writing_id, account_operation_id" constraintName="ar_accounting_writing_acc_operations_pkey" tableName="ar_accounting_writing_acc_operations" />
+    </changeSet>
+    <changeSet id="##4160_20190105 - Accounting Writing - MYSQL sequence" author="MounirBOUKAYOUA" dbms="mysql">
+        <createTable tableName="ar_accounting_writing_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_accounting_writing_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}ar_accounting_writing_seq values(1)</sql>
+    </changeSet>
+
+    <changeSet id="#4337_20190710" author="MohammedELAZZOUZI">
+    	<addColumn tableName="ar_account_operation">
+        	<column name="invoice_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="ar_account_operation" constraintName="fk_billing_invoice" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+    	<sql>
+            UPDATE ${db.schema.adapted}ar_account_operation AO SET invoice_id=(SELECT id FROM ${db.schema.adapted}billing_invoice BI WHERE BI.invoice_number=AO.reference)
+            WHERE AO.transaction_type='I'
+        </sql>   
+    </changeSet>
+
+    <changeSet id="#4372_20190715" author="RedaDebbache">
+    	<addColumn tableName="crm_custom_field_tmpl">
+        	<column name="unique_constraint" type="${type.boolean}" defaultValue="0"></column>
         </addColumn>
     </changeSet>
 
+    <changeSet id="#4372_20190723" author="RedaDebbache">
+    	<addColumn tableName="cust_cet">
+        	<column name="unique_constraint_name" type="varchar(100)" defaultValue="0"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#4458_20190626_1" author="AbdellatifBARI">
+        <dropUniqueConstraint constraintName="uk_9fnf93rp352nkw2kpdbari5xp8" tableName="adm_file_format"/>
+        <dropColumn tableName="adm_file_format">
+            <column name="code"></column>
+        </dropColumn>
+        <dropColumn tableName="adm_file_format">
+            <column name="file_type"></column>
+        </dropColumn>
+
+        <addColumn tableName="adm_file_format">
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+        </addColumn>
+        <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari4xp9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_file_format" />
+    </changeSet>
+
+    <changeSet id="#4458_20190626_2" author="AbdellatifBARI">
+        <createTable tableName="adm_file_format_file_type">
+            <column name="file_format_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="file_type_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="file_format_id, file_type_id" constraintName="adm_file_format_file_type_pkey" tableName="adm_file_format_file_type" />
+        <addForeignKeyConstraint baseColumnNames="file_format_id" baseTableName="adm_file_format_file_type" constraintName="fk_4au8lqa3bc46gks4dmpbbari4h4l6" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_format" />
+    </changeSet>
+
+    <changeSet id="#4458_20190626_3" author="AbdellatifBARI" dbms="mysql">
+        <createTable tableName="adm_file_type_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_file_type_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}adm_file_type_seq values(1)</sql>
+    </changeSet>
+
+    <changeSet id="#4458_20190626_4" author="AbdellatifBARI">
+        <createSequence sequenceName="adm_file_type_seq" startValue="1" />
+        <createTable tableName="adm_file_type">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_file_type_pkey" />
+            </column>
+
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari5yr8" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_file_type" />
+        <addForeignKeyConstraint baseColumnNames="file_type_id" baseTableName="adm_file_format_file_type" constraintName="fk_s1wxui3m4sv9x5mbyi8gpbari77hu" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_type" />
+        <sql>CREATE INDEX adm_file_type_code_index ON ${db.schema.adapted}adm_file_type(code)</sql>
+    </changeSet>
+
+    <changeSet id="#4468_20190631_1" author="AbdellatifBARI">
+        <addColumn tableName="flat_file">
+            <column name="lines_in_success" type="int4" />
+            <column name="lines_in_warning" type="int4" />
+            <column name="lines_in_error" type="int4" />
+            <column name="processing_attempts" type="int4" />
+            <column name="flat_file_job_code" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#4326_20190709" author="AndriusKarpavicius" failOnError="false"> 
+        <dropForeignKeyConstraint baseTableName="billing_wallet_operation" constraintName="fk_wallet_operation_rated_transaction"/>
+        <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_rated_transaction"/>
+    </changeSet>
+
+    <changeSet id="#4457_20190728" author="AndriusKarpavicius">
+        <sql>update ${db.schema.adapted}crm_custom_field_tmpl_val set listvalues='Rollback', listvalues_key='ROLLBACK' where listvalues_key='ROLLBBACK'</sql>    
+    </changeSet> 
+
+	<changeSet id="#4472_20190807" author="AndriusKarpavicius">
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_MediationJob'</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob')</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_mcols where cft_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob')</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob'</sql>           
+    </changeSet> 
+    <changeSet id="#4392_20190625" author="AndriusKarpavicius" dbms="postgres">
+        <sql>update ${db.schema.adapted}meveo_script_instance set reuse=0 where reuse is null</sql>
+        <sql>update ${db.schema.adapted}meveo_script_instance set is_error=0 where is_error is null</sql>
+        <sql>update ${db.schema.adapted}adm_notification set run_async=0 where run_async is null</sql>
+        <addNotNullConstraint tableName="meveo_script_instance" columnName="reuse" columnDataType="${type.boolean}"/>
+        <addNotNullConstraint tableName="meveo_script_instance" columnName="is_error" columnDataType="${type.boolean}"/>
+        <addNotNullConstraint tableName="adm_notification" columnName="run_async" columnDataType="${type.boolean}"/>
+    </changeSet>
+    <!-- addNotNullConstraint generates SQL with the default numeric value missing, which blocks the insertions-->
+    <changeSet id="#4392_20190625-UPDATED-20190827" author="MohamedSTITANE" dbms="mysql">
+        <sql>update ${db.schema.adapted}meveo_script_instance set reuse=0 where reuse is null</sql>
+        <sql>update ${db.schema.adapted}meveo_script_instance set is_error=0 where is_error is null</sql>
+        <sql>update ${db.schema.adapted}adm_notification set run_async=0 where run_async is null</sql>
+        <sql>ALTER TABLE ${db.schema.adapted}meveo_script_instance MODIFY `reuse` INT NOT NULL DEFAULT 0</sql>
+        <sql>ALTER TABLE ${db.schema.adapted}meveo_script_instance MODIFY is_error INT NOT NULL DEFAULT 0</sql>
+        <sql>ALTER TABLE ${db.schema.adapted}adm_notification MODIFY run_async INT NOT NULL DEFAULT 0;</sql>
+    </changeSet>
+
+    <changeSet id="#4326_20190811" author="AndriusKarpavicius"> 
+    	<addColumn tableName="billing_invoice">
+    		<column name="prepaid" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+    	</addColumn>
+    </changeSet>
+   
+
+    <changeSet id="#4512_20190819" author="AbdellatifBARI">
+        <dropColumn tableName="flat_file">
+            <column name="file_name"></column>
+        </dropColumn>
+
+        <addColumn tableName="flat_file">
+            <column name="file_original_name" type="varchar(255)" />
+            <column name="file_current_name" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+    
+ 	<changeSet id="#4480_250919" author="MohammedElAzzouzi">
+		<sql>UPDATE ${db.schema.adapted}billing_invoice SET payment_method_id=null WHERE payment_method_id IS NOT NULL AND payment_method_id NOT IN (SELECT APT.id FROM ${db.schema.adapted}ar_payment_token APT)</sql>
+    </changeSet>
     <changeSet id="#4480_210819" author="SaidRamli">
         <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="billing_invoice"
                                  constraintName="fk_invoice_pm" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="ar_payment_token" />
+    </changeSet>                          
 
+    <changeSet id="#4538_20190829" author="AbdellatifBARI">
+        <addColumn tableName="flat_file">
+            <column name="current_directory" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="#4550_20190904" author="AbdellatifBARI">
+        <dropColumn tableName="billing_trading_country">
+            <column name="pr_description"></column>
+        </dropColumn>
+        <addColumn tableName="billing_trading_country">
+            <column name="code" type="varchar(255)" />
+            <column name="description" type="varchar(255)" />
+            <column name="cf_values_accum" type="${type.json}"></column>
+            <column name="cf_values" type="${type.json}"></column>
+            <column name="uuid" type="varchar(60)" defaultValue="Trading_Country_US">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#4313_17062019" author="mohamed.el.youssoufi">
+		<addColumn tableName="wf_generic_workflow">
+			<column name="cf_values_accum" type="${type.json}"></column>
+			<column name="cf_values" type="${type.json}"></column>
+			<column name="uuid" type="varchar(60)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="#4064_11092019" author="AbdelmounaimAkadid">
+		<addColumn tableName="billing_invoice">
+			<column name="status" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+   	<changeSet id="#4606_260919" author="AbdelmounaimAkadid"> 	
+     	<addColumn tableName="billing_subscription">
+            <column name="minimum_invoice_sub_category_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="billing_subscription" constraintName="fk_billing_subscription_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+            
+        <addColumn tableName="cat_offer_template">
+            <column name="minimum_invoice_sub_category_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="cat_offer_template" constraintName="fk_billing_cat_offer_template_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+      
+        <addColumn tableName="billing_billing_account">
+            <column name="minimum_invoice_sub_category_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="billing_billing_account" constraintName="fk_billing_billing_account_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+          
+        <addColumn tableName="billing_service_instance">
+            <column name="minimum_invoice_sub_category_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="billing_service_instance" constraintName="fk_billing_service_instance_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+            
+        <addColumn tableName="cat_service_template">
+            <column name="minimum_invoice_sub_category_id" type="bigint"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_invoice_sub_category_id" baseTableName="cat_service_template" constraintName="fk_billing_cat_service_template_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+    </changeSet>
+    
+    <changeSet id="#4555_20190903" author="AndriusKarpavicius">
+        <addColumn tableName="cat_charge_template">        
+            <column name="charge_type" type="varchar(5)" />
+
+            <column name="filter_expression" type="varchar(2000)" />
+            <column name="filter_param_1" type="varchar(255)" />
+            <column name="filter_param_2" type="varchar(255)" />
+            <column name="filter_param_3" type="varchar(255)" />
+            <column name="filter_param_4" type="varchar(255)" />
+            <column name="filter_el_sp" type="varchar(2000)" />
+            <column  name="priority" type="int4" defaultValueNumeric="1" />
+            <column name="trigger_next_charge" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="trigger_next_charge_el" type="varchar(2000)" />
+
+            <column name="apply_in_advance" type="${type.boolean}" />
+            <column name="duration_term_in_month" type="int4" />
+            <column name="recurrence_type" type="varchar(255)" />
+            <column name="share_level" type="varchar(20)" />
+            <column name="subscription_prorata" type="${type.boolean}" />
+            <column name="termination_prorata" type="${type.boolean}" />
+            <column name="calendar_id" type="bigint" />
+            <column name="subscription_prorata_el" type="varchar(2000)" />
+            <column name="termination_prorata_el" type="varchar(2000)" />
+            <column name="apply_in_advance_el" type="varchar(2000)" />
+            <column name="duration_term_in_month_el" type="varchar(2000)" />
+            <column name="calendar_code_el" type="varchar(2000)" />             
+        
+            <column name="immediate_invoicing" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="type" type="varchar(255)" />
+        </addColumn>
+    
+        <sql dbms="postgresql">update ${db.schema.adapted}cat_charge_template set charge_type='U', filter_expression = cat_usage_charge_template.filter_expression, filter_param_1 = cat_usage_charge_template.filter_param_1,
+            filter_param_2 = cat_usage_charge_template.filter_param_2, filter_param_3 = cat_usage_charge_template.filter_param_3, filter_param_4 = cat_usage_charge_template.filter_param_4,
+            filter_el_sp = cat_usage_charge_template.filter_el_sp, priority = cat_usage_charge_template.priority, trigger_next_charge = cat_usage_charge_template.trigger_next_charge, trigger_next_charge_el =
+            cat_usage_charge_template.trigger_next_charge_el
+            from ${db.schema.adapted}cat_usage_charge_template where cat_charge_template.id=cat_usage_charge_template.id
+        </sql>
+    
+        <sql dbms="postgresql">update ${db.schema.adapted}cat_charge_template set charge_type='R', filter_expression = cat_recurring_charge_templ.filter_expression,
+            apply_in_advance = cat_recurring_charge_templ.apply_in_advance, duration_term_in_month = cat_recurring_charge_templ.duration_term_in_month, recurrence_type = cat_recurring_charge_templ.recurrence_type, share_level = cat_recurring_charge_templ.share_level, 
+            subscription_prorata = cat_recurring_charge_templ.subscription_prorata, termination_prorata = cat_recurring_charge_templ.termination_prorata, calendar_id = cat_recurring_charge_templ.calendar_id, subscription_prorata_el = cat_recurring_charge_templ.subscription_prorata_el, 
+            termination_prorata_el = cat_recurring_charge_templ.termination_prorata_el, apply_in_advance_el = cat_recurring_charge_templ.apply_in_advance_el, duration_term_in_month_el = cat_recurring_charge_templ.duration_term_in_month_el, 
+            calendar_code_el = cat_recurring_charge_templ.calendar_code_el
+            from ${db.schema.adapted}cat_recurring_charge_templ where cat_charge_template.id=cat_recurring_charge_templ.id
+        </sql>
+        
+        <sql dbms="postgresql">update ${db.schema.adapted}cat_charge_template set charge_type='P', filter_expression = cat_product_charge_templ.filter_expression
+            from ${db.schema.adapted}cat_product_charge_templ where cat_charge_template.id=cat_product_charge_templ.id
+        </sql>
+        
+        <sql dbms="postgresql">update ${db.schema.adapted}cat_charge_template set charge_type='O', filter_expression = cat_one_shot_charge_templ.filter_expression,
+            immediate_invoicing = cat_one_shot_charge_templ.immediate_invoicing, type = cat_one_shot_charge_templ.type
+            from ${db.schema.adapted}cat_one_shot_charge_templ where cat_charge_template.id=cat_one_shot_charge_templ.id
+        </sql>
+        
+        <sql dbms="mysql">
+            update ${db.schema.adapted}cat_charge_template ct join ${db.schema.adapted}cat_usage_charge_template on ct.id=cat_usage_charge_template.id set charge_type='U', filter_expression = cat_usage_charge_template.filter_expression, filter_param_1 = cat_usage_charge_template.filter_param_1,
+            filter_param_2 = cat_usage_charge_template.filter_param_2, filter_param_3 = cat_usage_charge_template.filter_param_3, filter_param_4 = cat_usage_charge_template.filter_param_4,
+            filter_el_sp = cat_usage_charge_template.filter_el_sp, priority = cat_usage_charge_template.priority, trigger_next_charge = cat_usage_charge_template.trigger_next_charge, trigger_next_charge_el =
+            cat_usage_charge_template.trigger_next_charge_el
+        </sql>        
+        
+        <sql dbms="mysql">
+            update ${db.schema.adapted}cat_charge_template ct join ${db.schema.adapted}cat_recurring_charge_templ on ct.id=cat_recurring_charge_templ.id set charge_type='R', filter_expression = cat_recurring_charge_templ.filter_expression,
+            apply_in_advance = cat_recurring_charge_templ.apply_in_advance, duration_term_in_month = cat_recurring_charge_templ.duration_term_in_month, recurrence_type = cat_recurring_charge_templ.recurrence_type, share_level = cat_recurring_charge_templ.share_level, 
+            subscription_prorata = cat_recurring_charge_templ.subscription_prorata, termination_prorata = cat_recurring_charge_templ.termination_prorata, calendar_id = cat_recurring_charge_templ.calendar_id, subscription_prorata_el = cat_recurring_charge_templ.subscription_prorata_el, 
+            termination_prorata_el = cat_recurring_charge_templ.termination_prorata_el, apply_in_advance_el = cat_recurring_charge_templ.apply_in_advance_el, duration_term_in_month_el = cat_recurring_charge_templ.duration_term_in_month_el, 
+            calendar_code_el = cat_recurring_charge_templ.calendar_code_el
+        </sql>
+        
+        <sql dbms="mysql">
+            update ${db.schema.adapted}cat_charge_template ct join ${db.schema.adapted}cat_product_charge_templ on ct.id=cat_product_charge_templ.id set
+            charge_type='P', filter_expression = cat_product_charge_templ.filter_expression
+        </sql>        
+        
+        <sql dbms="mysql">
+            update ${db.schema.adapted}cat_charge_template ct join ${db.schema.adapted}cat_one_shot_charge_templ on ct.id=cat_one_shot_charge_templ.id set
+            charge_type='O', filter_expression = cat_one_shot_charge_templ.filter_expression,
+            immediate_invoicing = cat_one_shot_charge_templ.immediate_invoicing, type = cat_one_shot_charge_templ.type
+        </sql> 
+        
+        <dropForeignKeyConstraint baseTableName="cat_serv_usage_charge_template" constraintName="fk_443th9siwouj4fg746sgyfqtv"/>
+        <dropForeignKeyConstraint baseTableName="cat_usage_charge_template" constraintName="fk_8x4c8il5glegqu0g1scpi469h"/>
+        <dropForeignKeyConstraint baseTableName="cat_recurring_charge_templ" constraintName="fk_ailcl9mls5y7bjr9yur52767h" />
+        <dropForeignKeyConstraint baseTableName="cat_serv_rec_charge_template" constraintName="fk_foohp8o0xupxmxcwblexcfqpp"/>
+        <dropForeignKeyConstraint baseTableName="billing_recurring_charge_inst" constraintName="fk_nsieq8n0po08c1fflr5l0xwxl"/>
+        <dropForeignKeyConstraint baseTableName="billing_product_charge_inst" constraintName="fk_productci_prodchrgtempl"/>
+        <dropForeignKeyConstraint baseTableName="cat_offer_template" constraintName="fk_cat_off_tpl_prod_chrg_tpl"/>
+        <dropForeignKeyConstraint baseTableName="cat_product_templ_charge_templ" constraintName="fk_prd_templ_ct_pct_id"/>
+        <dropForeignKeyConstraint baseTableName="cat_serv_sub_charge_template" constraintName="fk_3yhjbdockv9jvyw9iqmqlha63"/>
+        <dropForeignKeyConstraint baseTableName="cat_serv_trm_charge_template" constraintName="fk_5ehn1daxca6x6t7pvdpuo4n6m"/>
+        
+    </changeSet>         
+        
+    <changeSet id="#4555_20190903-M" author="AndriusKarpavicius" dbms="mysql">
+    
+        <dropIndex tableName="cat_serv_usage_charge_template" indexName="fk_443th9siwouj4fg746sgyfqtv"/>
+        <dropIndex tableName="cat_usage_charge_template" indexName="fk_8x4c8il5glegqu0g1scpi469h"/>
+        <dropIndex tableName="cat_recurring_charge_templ" indexName="fk_ailcl9mls5y7bjr9yur52767h" />
+        <dropIndex tableName="cat_serv_rec_charge_template" indexName="fk_foohp8o0xupxmxcwblexcfqpp"/>
+        <dropIndex tableName="billing_recurring_charge_inst" indexName="fk_nsieq8n0po08c1fflr5l0xwxl"/>
+        <dropIndex tableName="billing_product_charge_inst" indexName="fk_productci_prodchrgtempl"/>
+        <dropIndex tableName="cat_offer_template" indexName="fk_cat_off_tpl_prod_chrg_tpl"/>
+        <dropIndex tableName="cat_product_templ_charge_templ" indexName="fk_prd_templ_ct_pct_id"/>
+        <dropIndex tableName="cat_serv_sub_charge_template" indexName="fk_3yhjbdockv9jvyw9iqmqlha63"/>
+        <dropIndex tableName="cat_serv_trm_charge_template" indexName="fk_5ehn1daxca6x6t7pvdpuo4n6m"/>
+       
+    </changeSet>
+    
+    <changeSet id="#4555_20190903-end" author="AndriusKarpavicius">        
+        <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_serv_usage_charge_template" constraintName="fk_443th9siwouj4fg746sgyfqtv" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
+        <addForeignKeyConstraint baseColumnNames="calendar_id" baseTableName="cat_charge_template" constraintName="fk_ailcl9mls5y7bjr9yur52767h" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+        <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_serv_rec_charge_template" constraintName="fk_foohp8o0xupxmxcwblexcfqpp" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />            
+        <addForeignKeyConstraint baseColumnNames="recurring_chrg_tmpl_id" baseTableName="billing_recurring_charge_inst" constraintName="fk_nsieq8n0po08c1fflr5l0xwxl" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />        
+        <addForeignKeyConstraint baseColumnNames="product_chrg_tmpl_id" baseTableName="billing_product_charge_inst" constraintName="fk_productci_prodchrgtempl" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />            
+        <addForeignKeyConstraint baseColumnNames="product_charge_tmpl_id" baseTableName="cat_offer_template" constraintName="fk_cat_off_tpl_prod_chrg_tpl" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
+        <addForeignKeyConstraint baseColumnNames="product_charge_template_id" baseTableName="cat_product_templ_charge_templ" constraintName="fk_prd_templ_ct_pct_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
+        <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_serv_sub_charge_template" constraintName="fk_3yhjbdockv9jvyw9iqmqlha63" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
+        <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cat_serv_trm_charge_template" constraintName="fk_5ehn1daxca6x6t7pvdpuo4n6m" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
+                        
+        <dropTable tableName="cat_usage_charge_template"/>
+        <dropTable tableName="cat_recurring_charge_templ"/>
+        <dropTable tableName="cat_product_charge_templ"/>
+        <dropTable tableName="cat_one_shot_charge_templ"/>
+        
+    </changeSet> 
+    
+    <changeSet id="#4555_20190905" author="AndriusKarpavicius"> 
+    
+        <addColumn tableName="billing_charge_instance">        
+            <column name="charge_type" type="varchar(5)" />    
+    
+            <column name="quantity" type="numeric(23, 12)"/>
+            <column name="product_instance_id" type="bigint" />
+            <column name="next_charge_date" type="datetime" />
+            <column name="subscription_date" type="datetime" />
+            <column name="service_instance_id" type="bigint" />
+            <column name="counter_id" type="bigint" />
+            <column name="rating_unit_description" type="varchar(20)" />
+            <column name="priority" type="int4" defaultValueNumeric="1"/>
+        </addColumn>
+        
+        <dropColumn tableName="billing_charge_instance" columnName="pr_description"/>
+                
+        <sql dbms="postgresql">update ${db.schema.adapted}billing_charge_instance set charge_type='S', service_instance_id = billing_one_shot_charge_inst.subs_serv_inst_id,
+            quantity = billing_one_shot_charge_inst.quantity
+            from ${db.schema.adapted}billing_one_shot_charge_inst where billing_charge_instance.id=billing_one_shot_charge_inst.id and billing_one_shot_charge_inst.subs_serv_inst_id is not null
+        </sql>
+        <sql dbms="postgresql">update ${db.schema.adapted}billing_charge_instance set charge_type='T', service_instance_id = billing_one_shot_charge_inst.term_serv_inst_id,
+            quantity = billing_one_shot_charge_inst.quantity
+            from ${db.schema.adapted}billing_one_shot_charge_inst where billing_charge_instance.id=billing_one_shot_charge_inst.id and billing_one_shot_charge_inst.term_serv_inst_id is not null
+        </sql>
+        <sql dbms="postgresql">update ${db.schema.adapted}billing_charge_instance set charge_type='O', quantity = billing_one_shot_charge_inst.quantity
+            from ${db.schema.adapted}billing_one_shot_charge_inst where billing_charge_instance.id=billing_one_shot_charge_inst.id and billing_one_shot_charge_inst.subs_serv_inst_id is null and billing_one_shot_charge_inst.term_serv_inst_id is null
+        </sql>        
+        <sql dbms="postgresql">update ${db.schema.adapted}billing_charge_instance set charge_type='P', product_instance_id = billing_product_charge_inst.product_instance_id,
+            quantity = billing_product_charge_inst.quantity, charge_template_id = billing_product_charge_inst.product_chrg_tmpl_id
+            from ${db.schema.adapted}billing_product_charge_inst where billing_charge_instance.id=billing_product_charge_inst.id
+        </sql>
+        <sql dbms="postgresql">update ${db.schema.adapted}billing_charge_instance set charge_type='R',  
+            next_charge_date = billing_recurring_charge_inst.next_charge_date, subscription_date = billing_recurring_charge_inst.subscription_date, charge_template_id = billing_recurring_charge_inst.recurring_chrg_tmpl_id, 
+            service_instance_id = billing_recurring_charge_inst.service_instance_id, quantity = billing_recurring_charge_inst.quantity, counter_id = billing_recurring_charge_inst.counter_id
+            from ${db.schema.adapted}billing_recurring_charge_inst where billing_charge_instance.id=billing_recurring_charge_inst.id
+        </sql>
+        <sql dbms="postgresql">update ${db.schema.adapted}billing_charge_instance set charge_type='U',
+            counter_id = billing_usage_charge_inst.counter_id, service_instance_id = billing_usage_charge_inst.service_instance_id,
+            rating_unit_description = billing_usage_charge_inst.rating_unit_description, priority = billing_usage_charge_inst.priority 
+            from ${db.schema.adapted}billing_usage_charge_inst where billing_charge_instance.id=billing_usage_charge_inst.id
+        </sql> 
+                
+        <sql dbms="mysql">
+            update ${db.schema.adapted}billing_charge_instance ci join ${db.schema.adapted}billing_one_shot_charge_inst on ci.id=billing_one_shot_charge_inst.id set
+            charge_type='S', service_instance_id = billing_one_shot_charge_inst.subs_serv_inst_id, quantity = billing_one_shot_charge_inst.quantity where billing_one_shot_charge_inst.subs_serv_inst_id is not null
+        </sql>
+        <sql dbms="mysql">
+            update ${db.schema.adapted}billing_charge_instance ci join ${db.schema.adapted}billing_one_shot_charge_inst on ci.id=billing_one_shot_charge_inst.id set
+            charge_type='T', service_instance_id = billing_one_shot_charge_inst.term_serv_inst_id, quantity = billing_one_shot_charge_inst.quantity where billing_one_shot_charge_inst.term_serv_inst_id is not null
+        </sql>
+        <sql dbms="mysql">
+            update ${db.schema.adapted}billing_charge_instance ci join ${db.schema.adapted}billing_one_shot_charge_inst on ci.id=billing_one_shot_charge_inst.id set
+            charge_type='O', service_instance_id = billing_one_shot_charge_inst.term_serv_inst_id, quantity = billing_one_shot_charge_inst.quantity where billing_one_shot_charge_inst.term_serv_inst_id is null and  billing_one_shot_charge_inst.subs_serv_inst_id is null
+        </sql>
+        <sql dbms="mysql">
+            update ${db.schema.adapted}billing_charge_instance ci join ${db.schema.adapted}billing_product_charge_inst on ci.id=billing_product_charge_inst.id set
+            charge_type='P', product_instance_id = billing_product_charge_inst.product_instance_id,
+            quantity = billing_product_charge_inst.quantity, charge_template_id = billing_product_charge_inst.product_chrg_tmpl_id
+        </sql>
+        <sql dbms="mysql">
+            update ${db.schema.adapted}billing_charge_instance ci join ${db.schema.adapted}billing_recurring_charge_inst on ci.id=billing_recurring_charge_inst.id set
+            charge_type='R', next_charge_date = billing_recurring_charge_inst.next_charge_date, subscription_date = billing_recurring_charge_inst.subscription_date, charge_template_id = billing_recurring_charge_inst.recurring_chrg_tmpl_id, 
+            service_instance_id = billing_recurring_charge_inst.service_instance_id, quantity = billing_recurring_charge_inst.quantity, counter_id = billing_recurring_charge_inst.counter_id
+        </sql>
+        <sql dbms="mysql">
+            update ${db.schema.adapted}billing_charge_instance ci join ${db.schema.adapted}billing_usage_charge_inst on ci.id=billing_usage_charge_inst.id set
+            charge_type='U', counter_id = billing_usage_charge_inst.counter_id, service_instance_id = billing_usage_charge_inst.service_instance_id,
+            rating_unit_description = billing_usage_charge_inst.rating_unit_description, priority = billing_usage_charge_inst.priority 
+        </sql>    
+        
+        
+        <dropForeignKeyConstraint baseTableName="billing_usage_charge_inst" constraintName="fk_5q5wxh2nq7gbd9bcds59egh3e"/>
+        <dropForeignKeyConstraint baseTableName="billing_one_shot_charge_inst" constraintName="fk_c1v9rho8f7dl45kbmexjh0fkf"/>
+        <dropForeignKeyConstraint baseTableName="billing_recurring_charge_inst" constraintName="fk_c9rnk3vjujvmqe8j13yxoq70g"/>
+        <dropForeignKeyConstraint baseTableName="billing_one_shot_charge_inst" constraintName="fk_eht7f5na7vthrcu8pdbhwn4hi"/>
+        <dropForeignKeyConstraint baseTableName="billing_usage_charge_inst" constraintName="fk_j1o935sww9tme69o1t5yqgce6"/>
+        <dropForeignKeyConstraint baseTableName="billing_recurring_charge_inst" constraintName="fk_jsatpdoxjhluj5mbgg19c8vpa"/>
+        <dropForeignKeyConstraint baseTableName="billing_usage_charge_inst" constraintName="fk_n5h6xvrtm2a2av5jik9vr0cp5"/>
+        <dropForeignKeyConstraint baseTableName="billing_recurring_charge_inst" constraintName="fk_serv_rec_charge_template_billing_counter"/>
+        <dropForeignKeyConstraint baseTableName="billing_recurring_charge_inst" constraintName="fk_nsieq8n0po08c1fflr5l0xwxl"/>
+        <dropForeignKeyConstraint baseTableName="billing_one_shot_charge_inst" constraintName="fk_ofm7i3gubvpf3qu8hh03kkpxo"/>
+        <dropForeignKeyConstraint baseTableName="billing_product_charge_inst" constraintName="fk_productci_prodins"/>
+        <dropForeignKeyConstraint baseTableName="billing_product_charge_inst" constraintName="fk_productci_prodchrgtempl"/>        
+        
+        <dropIndex tableName="billing_recurring_charge_inst" indexName="billing_recurring_charge_inst_index"/>
+        <dropIndex tableName="billing_one_shot_charge_inst" indexName="billing_one_shot_charge_inst_subs_serv_inst_id"/>
+        <dropIndex tableName="billing_one_shot_charge_inst" indexName="term_serv_inst_id_index"/>
+        <dropIndex tableName="billing_usage_charge_inst" indexName="billing_usage_charge_inst_index"/>        
+        
+    </changeSet>
+    
+    
+    <changeSet id="#4555_20190905-M" author="AndriusKarpavicius" dbms="mysql">
+    
+        <dropIndex tableName="billing_usage_charge_inst" indexName="fk_5q5wxh2nq7gbd9bcds59egh3e"/>
+        <dropIndex tableName="billing_one_shot_charge_inst" indexName="fk_c1v9rho8f7dl45kbmexjh0fkf"/>
+        <dropIndex tableName="billing_recurring_charge_inst" indexName="fk_c9rnk3vjujvmqe8j13yxoq70g"/>
+        <dropIndex tableName="billing_one_shot_charge_inst" indexName="fk_eht7f5na7vthrcu8pdbhwn4hi"/>
+        <dropIndex tableName="billing_usage_charge_inst" indexName="fk_j1o935sww9tme69o1t5yqgce6"/>
+        <dropIndex tableName="billing_recurring_charge_inst" indexName="fk_jsatpdoxjhluj5mbgg19c8vpa"/>
+        <dropIndex tableName="billing_usage_charge_inst" indexName="fk_n5h6xvrtm2a2av5jik9vr0cp5"/>
+        <dropIndex tableName="billing_recurring_charge_inst" indexName="fk_serv_rec_charge_template_billing_counter"/>
+        <dropIndex tableName="billing_recurring_charge_inst" indexName="fk_nsieq8n0po08c1fflr5l0xwxl"/>
+        <dropIndex tableName="billing_one_shot_charge_inst" indexName="fk_ofm7i3gubvpf3qu8hh03kkpxo"/>
+        <dropIndex tableName="billing_product_charge_inst" indexName="fk_productci_prodins"/>
+        <dropIndex tableName="billing_product_charge_inst" indexName="fk_productci_prodchrgtempl"/>        
+        
+    </changeSet>
+    
+    <changeSet id="#4555_20190905-end" author="AndriusKarpavicius">        
+    
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_charge_instance" constraintName="fk_5q5wxh2nq7gbd9bcds59egh3e" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+        <addForeignKeyConstraint baseColumnNames="counter_id" baseTableName="billing_charge_instance" constraintName="fk_n5h6xvrtm2a2av5jik9vr0cp5" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_counter" />
+        <addForeignKeyConstraint baseColumnNames="product_instance_id" baseTableName="billing_charge_instance" constraintName="fk_productci_prodins" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_product_instance" />
+        
+        <sql>CREATE INDEX billing_charge_serv_inst_index ON ${db.schema.adapted}billing_charge_instance(service_instance_id)</sql>
+        
+        <dropTable tableName="billing_one_shot_charge_inst"/>
+        <dropTable tableName="billing_product_charge_inst"/>
+        <dropTable tableName="billing_recurring_charge_inst"/>
+        <dropTable tableName="billing_usage_charge_inst"/>    
+    
+    </changeSet>    
+    
+    <changeSet id="#4511_20190919-M" author="AndriusKarpavicius" dbms="mysql"> 
+    
+        <dropColumn tableName="billing_wallet_operation" columnName="created"/>
+        <dropColumn tableName="billing_wallet_operation" columnName="creator"/>
+        <dropColumn tableName="billing_wallet_operation" columnName="updater"/>
+        <dropColumn tableName="billing_wallet_operation" columnName="aggregate_serv_id"/>
+    
+        <dropColumn tableName="billing_rated_transaction" columnName="aggregate_id_r"/>
+        <dropColumn tableName="billing_rated_transaction" columnName="aggregate_id_t"/>
+        
+        <addColumn tableName="billing_rated_transaction">
+            <column name="updated" type="datetime" />
+        </addColumn>
+    
+        <dropIndex tableName="billing_rated_transaction" indexName="rt_ba_invoice_open_serv_index"/>
+        <dropIndex tableName="billing_rated_transaction" indexName="rt_ba_invoice_open_sub_index"/>
+        <dropIndex tableName="billing_rated_transaction" indexName="rt_sub_invoice_open_serv_index"/>
+        <dropIndex tableName="billing_rated_transaction" indexName="rt_invoice_index"/>
+        <dropIndex tableName="billing_rated_transaction" indexName="rt_order_index"/>
+        
+        <sql>CREATE INDEX rating_edr_sub_id_index ON ${db.schema.adapted}rating_edr (subscription_id, id)</sql>
+                
+        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, service_instance_id)</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON ${db.schema.adapted}billing_rated_transaction (billing_account__id, subscription_id)</sql>
+        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON ${db.schema.adapted}billing_rated_transaction (subscription_id, service_instance_id)</sql>
+        <sql>CREATE INDEX rt_invoice_index ON ${db.schema.adapted}billing_rated_transaction (invoice_id)</sql>
+        <sql>CREATE INDEX rt_order_index ON ${db.schema.adapted}billing_rated_transaction (order_number, status)</sql>
+    </changeSet>
+        
+    <changeSet id="#4511_20190919-P" author="AndriusKarpavicius" dbms="postgresql"> 
+        
+        <sql>alter table ${db.schema.adapted}rating_edr alter column id drop default</sql>
+        <sql>alter table ${db.schema.adapted}billing_wallet_operation alter column id drop default</sql>
+        <sql>alter table ${db.schema.adapted}billing_rated_transaction alter column id drop default</sql>
+        
+        <sql>alter table ${db.schema.adapted}rating_edr rename to rating_edr_tmp</sql>
+        <sql>alter table ${db.schema.adapted}billing_wallet_operation rename to billing_wallet_operation_tmp</sql>
+        <sql>alter table ${db.schema.adapted}billing_rated_transaction rename to billing_rated_transaction_tmp</sql>    
+    
+        <sql>
+            CREATE TABLE ${db.schema.adapted}rating_edr (
+              id bigint NOT NULL DEFAULT nextval('rating_edr_seq'),
+              version integer,
+              created timestamp without time zone,
+              event_date timestamp without time zone,
+              last_updated timestamp without time zone,
+              origin_batch character varying(255),
+              origin_record character varying(255),
+              parameter_1 character varying(255),
+              parameter_2 character varying(255),
+              parameter_3 character varying(255),
+              parameter_4 character varying(255),
+              quantity numeric(23,12),
+              reject_reason text,
+              status character varying(255),
+              subscription_id bigint NOT NULL,
+              parameter_5 character varying(255),
+              parameter_6 character varying(255),
+              parameter_7 character varying(255),
+              parameter_8 character varying(255),
+              parameter_9 character varying(255),
+              date_parameter_1 timestamp without time zone,
+              date_parameter_2 timestamp without time zone,
+              date_parameter_3 timestamp without time zone,
+              date_parameter_4 timestamp without time zone,
+              date_parameter_5 timestamp without time zone,
+              decimal_parameter_1 numeric(23,12),
+              decimal_parameter_2 numeric(23,12),
+              decimal_parameter_3 numeric(23,12),
+              decimal_parameter_4 numeric(23,12),
+              decimal_parameter_5 numeric(23,12),
+              access_code character varying(255),
+              header_edr_id bigint,
+              extra_parameter text,
+              CONSTRAINT rating_edr_p_pkey PRIMARY KEY (id, status)
+            ) partition by list (status)
+        </sql>
+    
+        <sql>
+            CREATE TABLE ${db.schema.adapted}billing_wallet_operation (
+              id bigint NOT NULL DEFAULT nextval('billing_wallet_operation_seq'),
+              operation_type character varying(31) NOT NULL,
+              version integer,
+              updated timestamp without time zone,
+              code character varying(255) NOT NULL,
+              description character varying(255),
+              amount_tax numeric(23,12),
+              amount_with_tax numeric(23,12),
+              amount_without_tax numeric(23,12),
+              end_date timestamp without time zone,
+              offer_code character varying(255),
+              operation_date timestamp without time zone,
+              parameter_1 character varying(255),
+              parameter_2 character varying(255),
+              parameter_3 character varying(255),
+              quantity numeric(23,12),
+              start_date timestamp without time zone,
+              status character varying(255),
+              subscription_date timestamp without time zone,
+              tax_percent numeric(23,12) NOT NULL,
+              credit_debit_flag character varying(255),
+              unit_amount_tax numeric(23,12),
+              unit_amount_with_tax numeric(23,12),
+              unit_amount_without_tax numeric(23,12),
+              charge_instance_id bigint NOT NULL,
+              counter_id bigint,
+              currency_id bigint,
+              priceplan_id bigint,
+              reratedwalletoperation_id bigint,
+              seller_id bigint NOT NULL,
+              wallet_id bigint,
+              reservation_id bigint,
+              invoicing_date timestamp without time zone,
+              input_quantity numeric(23,12),
+              input_unit_description character varying(20),
+              rating_unit_description character varying(20),
+              edr_id bigint,
+              order_number character varying(100),
+              parameter_extra text,
+              raw_amount_without_tax numeric(23,12),
+              raw_amount_with_tax numeric(23,12),
+              invoice_sub_category_id bigint,
+              subscription_id bigint,
+              tax_id bigint NOT NULL,
+              rated_transaction_id bigint,
+              service_instance_id bigint,
+              offer_id bigint,
+              CONSTRAINT billing_wallet_operation_p_pkey PRIMARY KEY (id, status)
+            ) partition by list (status)
+        </sql>       
+        
+        <sql>
+            CREATE TABLE ${db.schema.adapted}billing_rated_transaction (
+              id bigint NOT NULL DEFAULT nextval('billing_rated_transaction_seq'),
+              version integer,
+              amount_tax numeric(23,12),
+              amount_with_tax numeric(23,12),
+              amount_without_tax numeric(23,12),
+              code character varying(255),
+              description text,
+              do_not_trigger_invoicing integer NOT NULL DEFAULT 0,
+              parameter_1 character varying(255),
+              parameter_2 character varying(255),
+              parameter_3 character varying(255),
+              quantity numeric(23,12),
+              status character varying(255),
+              unit_amount_tax numeric(23,12),
+              unit_amount_with_tax numeric(23,12),
+              unit_amount_without_tax numeric(23,12),
+              unity_description character varying(20),
+              usage_date timestamp without time zone,
+              billing_account__id bigint,
+              billing_run_id bigint,
+              invoice_id bigint,
+              aggregate_id_f bigint,
+              invoice_sub_category_id bigint,
+              priceplan_id bigint,
+              wallet_id bigint,
+              edr_id bigint,
+              adjusted_rated_tx bigint,
+              order_number character varying(100),
+              rating_unit_description character varying(20),
+              parameter_extra text,
+              start_date timestamp without time zone,
+              end_date timestamp without time zone,
+              subscription_id bigint,
+              seller_id bigint NOT NULL,
+              charge_instance_id bigint,
+              tax_id bigint NOT NULL,
+              tax_percent numeric(23,12) NOT NULL,
+              user_account_id bigint,
+              offer_id bigint,
+              service_instance_id bigint,
+              updated timestamp without time zone,              
+              CONSTRAINT billing_rated_transaction_p_pkey PRIMARY KEY (id, status)
+            ) partition by list (status)
+        </sql>
+        
+        <sql>create table ${db.schema.adapted}rating_edr_open partition of ${db.schema.adapted}rating_edr for values in('OPEN')</sql>
+        <sql>create table ${db.schema.adapted}rating_edr_other partition of ${db.schema.adapted}rating_edr default</sql>
+
+        <sql>create table ${db.schema.adapted}billing_wallet_operation_open partition of ${db.schema.adapted}billing_wallet_operation for values in('OPEN')</sql>
+        <sql>create table ${db.schema.adapted}billing_wallet_operation_other partition of ${db.schema.adapted}billing_wallet_operation default</sql>
+
+        <sql>create table ${db.schema.adapted}billing_rated_transaction_open  partition of ${db.schema.adapted}billing_rated_transaction for values in('OPEN')</sql>
+        <sql>create table ${db.schema.adapted}billing_rated_transaction_other partition of ${db.schema.adapted}billing_rated_transaction default</sql>
+
+        <sql>insert into ${db.schema.adapted}rating_edr (id,version,created,event_date,last_updated,origin_batch,origin_record,parameter_1,parameter_2,parameter_3,parameter_4,quantity,reject_reason,status,subscription_id,parameter_5,parameter_6,parameter_7,parameter_8,parameter_9,date_parameter_1,date_parameter_2,date_parameter_3,date_parameter_4,date_parameter_5,decimal_parameter_1,decimal_parameter_2,decimal_parameter_3,decimal_parameter_4,decimal_parameter_5,access_code,header_edr_id,extra_parameter) 
+                (select id,version,created,event_date,last_updated,origin_batch,origin_record,parameter_1,parameter_2,parameter_3,parameter_4,quantity,reject_reason,status,subscription_id,parameter_5,parameter_6,parameter_7,parameter_8,parameter_9,date_parameter_1,date_parameter_2,date_parameter_3,date_parameter_4,date_parameter_5,decimal_parameter_1,decimal_parameter_2,decimal_parameter_3,decimal_parameter_4,decimal_parameter_5,access_code,header_edr_id,extra_parameter from ${db.schema.adapted}rating_edr_tmp) </sql>       
+        <sql>insert into ${db.schema.adapted}billing_wallet_operation (id,operation_type,version,updated,code,description,amount_tax,amount_with_tax,amount_without_tax,end_date,offer_code,operation_date,parameter_1,parameter_2,parameter_3,quantity,start_date,status,subscription_date,tax_percent,credit_debit_flag,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,charge_instance_id,counter_id,currency_id,priceplan_id,reratedwalletoperation_id,seller_id,wallet_id,reservation_id,invoicing_date,input_quantity,input_unit_description,rating_unit_description,edr_id,order_number,parameter_extra,raw_amount_without_tax,raw_amount_with_tax,invoice_sub_category_id,subscription_id,tax_id,rated_transaction_id,service_instance_id,offer_id) 
+                (select id,operation_type,version,updated,code,description,amount_tax,amount_with_tax,amount_without_tax,end_date,offer_code,operation_date,parameter_1,parameter_2,parameter_3,quantity,start_date,status,subscription_date,tax_percent,credit_debit_flag,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,charge_instance_id,counter_id,currency_id,priceplan_id,reratedwalletoperation_id,seller_id,wallet_id,reservation_id,invoicing_date,input_quantity,input_unit_description,rating_unit_description,edr_id,order_number,parameter_extra,raw_amount_without_tax,raw_amount_with_tax,invoice_sub_category_id,subscription_id,tax_id,rated_transaction_id,service_instance_id,offer_id from ${db.schema.adapted}billing_wallet_operation_tmp)</sql>
+        <sql>insert into ${db.schema.adapted}billing_rated_transaction (id,version,amount_tax,amount_with_tax,amount_without_tax,code,description,do_not_trigger_invoicing,parameter_1,parameter_2,parameter_3,quantity,status,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,unity_description,usage_date,billing_account__id,billing_run_id,invoice_id,aggregate_id_f,invoice_sub_category_id,priceplan_id,wallet_id,edr_id,adjusted_rated_tx,order_number,rating_unit_description,parameter_extra,start_date,end_date,subscription_id,seller_id,charge_instance_id,tax_id,tax_percent,user_account_id,offer_id,service_instance_id, updated) 
+                (select id,version,amount_tax,amount_with_tax,amount_without_tax,code,description,do_not_trigger_invoicing,parameter_1,parameter_2,parameter_3,quantity,status,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,unity_description,usage_date,billing_account__id,billing_run_id,invoice_id,aggregate_id_f,invoice_sub_category_id,priceplan_id,wallet_id,edr_id,adjusted_rated_tx,order_number,rating_unit_description,parameter_extra,start_date,end_date,subscription_id,seller_id,charge_instance_id,tax_id,tax_percent,user_account_id,offer_id,service_instance_id, now() from ${db.schema.adapted}billing_rated_transaction_tmp)</sql>
+    
+    </changeSet>
+    
+    <changeSet id="#4511_20190919-P-end" author="AndriusKarpavicius" dbms="postgresql">       
+        
+
+        <sql>ALTER SEQUENCE ${db.schema.adapted}rating_edr_seq OWNED BY ${db.schema.adapted}rating_edr.id</sql>
+        <sql>ALTER SEQUENCE ${db.schema.adapted}billing_wallet_operation_seq OWNED BY ${db.schema.adapted}billing_wallet_operation.id</sql>
+        <sql>ALTER SEQUENCE ${db.schema.adapted}billing_rated_transaction_seq OWNED BY ${db.schema.adapted}billing_rated_transaction.id</sql>
+
+        <dropForeignKeyConstraint baseTableName="billing_reservation" constraintName="fk_reservation_edr"/>
+<!--         <addForeignKeyConstraint baseColumnNames="origin_edr_id" baseTableName="billing_reservation" constraintName="fk_reservation_edr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" -->
+<!--             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="rating_edr" /> -->
+
+        <dropTable tableName="billing_wallet_operation_tmp"/>
+        <dropTable tableName="billing_rated_transaction_tmp"/>
+        <dropTable tableName="rating_edr_tmp"/>
+        
+        <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="rating_edr" constraintName="fk_f5tulmo519cm4il45bhborgq1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscription" />
+<!--         <addForeignKeyConstraint baseColumnNames="header_edr_id" baseTableName="rating_edr" constraintName="fk_headeredrid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" -->
+<!--             referencedColumnNames="id" referencedTableName="rating_edr" />               -->
+            
+        <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_batch, origin_record)</sql>                  
+<!--         <sql>CREATE INDEX rating_edr_status_index ON ${db.schema.adapted}rating_edr(status)</sql> -->
+        <sql>CREATE INDEX rating_edr_sub_id_index ON ${db.schema.adapted}rating_edr_open (subscription_id, id)</sql>
+               
+        
+        <addForeignKeyConstraint baseColumnNames="reservation_id" baseTableName="billing_wallet_operation" constraintName="fk_32r2ed0015tnd2pp5196vcqpy" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_reservation" />
+        <addForeignKeyConstraint baseColumnNames="wallet_id" baseTableName="billing_wallet_operation" constraintName="fk_5htics7k9v44an8ap11wivraf" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_wallet" />
+        <addForeignKeyConstraint baseColumnNames="counter_id" baseTableName="billing_wallet_operation" constraintName="fk_60qrdadyj5wvmyii1einfb2lo" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_counter" />
+        <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_wallet_operation" constraintName="fk_75hyldnus6ti0y40vwcl49ued" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
+        <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_billing_invoice_sub_cat" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />       
+        <addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_offer_template" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+        <addForeignKeyConstraint baseColumnNames="priceplan_id" baseTableName="billing_wallet_operation" constraintName="fk_f0v21kf4sbdcq1wwqsxmb5tsk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_wallet_operation" constraintName="fk_hg1a5impet68w8a37dehlnib0" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />            
+<!--         <addForeignKeyConstraint baseColumnNames="reratedwalletoperation_id" baseTableName="billing_wallet_operation" constraintName="fk_j3ntuqkj79m0fgdwa3anib1nk" deferrable="false" initiallyDeferred="false" -->
+<!--             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_wallet_operation" /> -->
+        <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_wallet_operation" constraintName="fk_rt_charge" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
+        <addForeignKeyConstraint baseColumnNames="currency_id" baseTableName="billing_wallet_operation" constraintName="fk_t98kqb1prnfw6scvudimx1u0q" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_currency" />
+        <addForeignKeyConstraint constraintName="fk_wallet_operation_service_instance" baseColumnNames="service_instance_id" baseTableName="billing_wallet_operation"
+            referencedColumnNames="id" referencedTableName="billing_service_instance" />
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_wallet_operation" constraintName="fk_wo_tax" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+            referencedColumnNames="id" referencedTableName="billing_tax" />
+<!--         <addForeignKeyConstraint baseColumnNames="edr_id" baseTableName="billing_wallet_operation" constraintName="fk_wopedrid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" -->
+<!--             referencedColumnNames="id" referencedTableName="rating_edr" /> -->
+            
+        <sql>CREATE INDEX billing_wallet_operation_index ON ${db.schema.adapted}billing_wallet_operation(wallet_id, charge_instance_id)</sql>            
+<!--         <sql>CREATE INDEX billing_wallet_operation_status_index ON ${db.schema.adapted}billing_wallet_operation(status)</sql> -->
+                
+        <addForeignKeyConstraint baseColumnNames="wallet_id" baseTableName="billing_rated_transaction" constraintName="fk_anslvrbm465ossqx8surjyu22" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_wallet" />
+        <addForeignKeyConstraint baseColumnNames="billing_account__id" baseTableName="billing_rated_transaction" constraintName="fk_bbnhg8vn7jkttghphr65iwug5" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_crm_seller" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+        <addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_offer_template" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+        <addForeignKeyConstraint baseColumnNames="priceplan_id" baseTableName="billing_rated_transaction" constraintName="fk_eucl7of9ovyut1c4r2jkf01u6" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />
+        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="billing_rated_transaction" constraintName="fk_gq86s178gc3orumcl8symk4nn" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+        <addForeignKeyConstraint baseColumnNames="billing_run_id" baseTableName="billing_rated_transaction" constraintName="fk_o2mp1mqcyi2l7q2b1p88h20dw" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_run" />
+        <addForeignKeyConstraint baseColumnNames="invoice_sub_category_id" baseTableName="billing_rated_transaction" constraintName="fk_o5yu3c0bnac626w755w5f0voc" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+        <addForeignKeyConstraint baseColumnNames="aggregate_id_f" baseTableName="billing_rated_transaction" constraintName="fk_rjpm9k6xsumg297fxefffyryh" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
+<!--         <addForeignKeyConstraint baseColumnNames="edr_id" baseTableName="billing_rated_transaction" constraintName="fk_ropedrid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" -->
+<!--             referencedColumnNames="id" referencedTableName="rating_edr" /> -->
+        <addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_service_instance" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_tax" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+            referencedColumnNames="id" referencedTableName="billing_tax" />
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_rated_transaction" constraintName="fk_rt_ua" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="account_entity" />        
+        
+        <sql>CREATE INDEX rt_ba_invoice_open_serv_index ON ${db.schema.adapted}billing_rated_transaction_open (billing_account__id, service_instance_id) where service_instance_id is not null</sql>
+        <sql>CREATE INDEX rt_ba_invoice_open_sub_index ON ${db.schema.adapted}billing_rated_transaction_open (billing_account__id, subscription_id)</sql>
+        <sql>CREATE INDEX rt_sub_invoice_open_serv_index ON ${db.schema.adapted}billing_rated_transaction_open (subscription_id, service_instance_id) where subscription_id is not null</sql>
+        <sql>CREATE INDEX rt_invoice_index ON ${db.schema.adapted}billing_rated_transaction_other (invoice_id)</sql>
+        <sql>CREATE INDEX rt_order_index ON ${db.schema.adapted}billing_rated_transaction (order_number) where order_number is not null</sql>
+        
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}create_partitions</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}detach_partitions</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}drop_all_table_indexes</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}rename_all_table_pks</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}create_all_table_indexes</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}switch_billing_rated_transaction_to_partition(text,text,text,date,date)</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}switch_billing_rated_transaction_to_partition</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}switch_billing_wallet_operation_to_partition(text,text,text,date,date)</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}switch_billing_wallet_operation_to_partition</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}switch_rating_edr_to_partition(text,text,text,date,date)</sql>
+        <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}switch_rating_edr_to_partition</sql>       
+        
     </changeSet>
     
 </databaseChangeLog>

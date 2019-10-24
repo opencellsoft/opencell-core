@@ -21,7 +21,12 @@ import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.finance.RevenueRecognitionRuleService;
 import org.meveo.service.script.ScriptInstanceService;
-
+import org.meveo.service.script.ScriptUtils;
+/**
+ * @author Abdellatif BARI
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
+ */
 @Stateless
 public class RevenueRecognitionRuleApi extends BaseCrudApi<RevenueRecognitionRule, RevenueRecognitionRuleDto> {
 
@@ -36,9 +41,6 @@ public class RevenueRecognitionRuleApi extends BaseCrudApi<RevenueRecognitionRul
 
     @Override
     public RevenueRecognitionRule create(RevenueRecognitionRuleDto postData) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
 
         if (StringUtils.isBlank(postData.getScript())) {
             missingParameters.add("script");
@@ -50,7 +52,7 @@ public class RevenueRecognitionRuleApi extends BaseCrudApi<RevenueRecognitionRul
 
                 // Otherwise code is calculated from script source by combining package and classname
             } else if (!StringUtils.isBlank(postData.getScript().getScript())) {
-                String fullClassname = ScriptInstanceService.getFullClassname(postData.getScript().getScript());
+                String fullClassname = ScriptUtils.getFullClassname(postData.getScript().getScript());
                 if (!StringUtils.isBlank(postData.getScript().getCode()) && !postData.getScript().getCode().equals(fullClassname)) {
                     throw new BusinessApiException("The code and the canonical script class name must be identical");
                 }
@@ -84,7 +86,7 @@ public class RevenueRecognitionRuleApi extends BaseCrudApi<RevenueRecognitionRul
 
                 // Otherwise code is calculated from script source by combining package and classname
             } else if (!StringUtils.isBlank(postData.getScript().getScript())) {
-                String fullClassname = ScriptInstanceService.getFullClassname(postData.getScript().getScript());
+                String fullClassname = ScriptUtils.getFullClassname(postData.getScript().getScript());
                 if (!StringUtils.isBlank(postData.getScript().getCode()) && !postData.getScript().getCode().equals(fullClassname)) {
                     throw new BusinessApiException("The code and the canonical script class name must be identical");
                 }

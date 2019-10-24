@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -44,6 +45,7 @@ import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
@@ -56,11 +58,12 @@ import org.meveo.model.shared.DateUtils;
 
 /**
  * Custom field template
- * 
+ *
  * @author Andrius Karpavicius
+ * @author Khalid HORRI
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
- **/
+ * @lastModifiedVersion 7.0
+ */
 @Entity
 @ModuleItem
 @Cacheable
@@ -75,7 +78,8 @@ import org.meveo.model.shared.DateUtils;
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
         @NamedQuery(name = "CustomFieldTemplate.getCFTByAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo=:appliesTo order by cft.code", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-        @NamedQuery(name = "CustomFieldTemplate.getCFTsForAccumulation", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo='SELLER' or cft.code in (SELECT cftu.code from CustomFieldTemplate cftu where cftu.appliesTo in :appliesTo group by cftu.code having count(cftu.code)>1) order by cft.code") })
+        @NamedQuery(name = "CustomFieldTemplate.getCFTsForAccumulation", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo='Seller' or cft.code in (SELECT cftu.code from CustomFieldTemplate cftu where cftu.appliesTo in :appliesTo group by cftu.code having count(cftu.code)>1) order by cft.code"),
+        @NamedQuery(name = "CustomFieldTemplate.getUniqueFromTable", query = "SELECT cft from CustomFieldTemplate cft where cft.uniqueConstraint = true and lower(cft.appliesTo) = :appliesTo") })
 public class CustomFieldTemplate extends EnableBusinessEntity implements Comparable<CustomFieldTemplate> {
 
     private static final long serialVersionUID = -1403961759495272885L;
@@ -83,6 +87,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     public static long DEFAULT_MAX_LENGTH_STRING = 50L;
 
     public static String ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR = " - ";
+    private static final String CUSTOM_TABLE_STRUCTURE_REGEX = "org.meveo.model.customEntities.CustomEntityTemplate - [a-zA-Z\\S]{1,}$";
 
     public enum GroupedCustomFieldTreeItemType {
 
@@ -117,11 +122,17 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Type(type = "numeric_boolean")
     @Column(name = "value_required")
     private boolean valueRequired;
+    /**
+     * Is value part of unique constraint
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "unique_constraint")
+    private boolean uniqueConstraint;
 
     /**
      * Values for selection from a picklist
      */
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "crm_custom_field_tmpl_val")
     private Map<String, String> listValues;
 
@@ -303,6 +314,18 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Column(name = "display_format", length = 80)
     @Size(max = 80)
     private String displayFormat;
+    /**
+     * Number of digits in decimal part, if the fieldType is double.
+     */
+    @Column(name = "nb_decimal")
+    private Integer nbDecimal;
+
+    /**
+     * Rounding mode, Possible values {@link RoundingModeEnum}.
+     */
+    @Column(name = "rounding_mode", length = 50)
+    @Enumerated(EnumType.STRING)
+    private RoundingModeEnum roundingMode;
 
     /**
      * Should field be not manageable in GUI, irrelevant of any other settings
@@ -346,7 +369,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * create a Map of attribute from sorted List
-     * 
+     *
      * @return a sorted LinkedHashMap values
      */
     public Map<String, String> getListValuesSorted() {
@@ -569,7 +592,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Parse GUIPosition field value e.g. 'tab:Configuration:0;fieldGroup:Price:5;field:0' and return 'tab', 'fieldGroup' and 'field' item values as a map
-     * 
+     *
      * @return A map with 'tab_pos', 'tab_name', 'fieldGroup_pos', 'fieldGroup_name' and 'field_pos' as keys
      */
     public Map<String, String> getGuiPositionParsed() {
@@ -599,7 +622,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     /**
      * Get GUI 'field' position value in a GUIPosition value as in e.g. "tab:Configuration:0;fieldGroup:Purge counter periods:1;field:0"
-     * 
+     *
      * @return GUI 'field' position value
      */
     public int getGUIFieldPosition() {
@@ -633,6 +656,10 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
 
     public Long getMaxValue() {
         return maxValue;
+    }
+    
+    public Long getMaxValueOrDefault(Long defaultValue) {
+        return Optional.ofNullable(maxValue).orElse(defaultValue);
     }
 
     public void setMaxValue(Long maxValue) {
@@ -998,15 +1025,25 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     public boolean isHideInGUI() {
         return hideInGUI;
     }
+
     /**
      * @param hideInGUI Should field be not manageable in GUI, irrelevant of any other settings
      */
     public void setHideInGUI(boolean hideInGUI) {
         this.hideInGUI = hideInGUI;
     }
+
+    public boolean isUniqueConstraint() {
+        return uniqueConstraint;
+    }
+
+    public void setUniqueConstraint(boolean uniqueConstraint) {
+        this.uniqueConstraint = uniqueConstraint;
+    }
+
     /**
      * Get a database field name derived from a code value. Lowercase and spaces replaced by "_".
-     * 
+     *
      * @return Database field name
      */
     public String getDbFieldname() {
@@ -1017,14 +1054,50 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     }
 
 
-
     /**
      * Get a database field name derived from a code value. Lowercase and spaces replaced by "_".
-     * 
+     *
      * @param code Field code
      * @return Database field name
      */
     public static String getDbFieldname(String code) {
         return BaseEntity.cleanUpAndLowercaseCodeOrId(code);
+    }
+
+    /**
+     * Gets the number of digits in decimal part.
+     * @return number of digits.
+     */
+    public Integer getNbDecimal() {
+        return nbDecimal;
+    }
+
+    /**
+     * Sets number of digits in decimal part.
+     * @param nbDecimal the number of digits.
+     */
+    public void setNbDecimal(Integer nbDecimal) {
+        this.nbDecimal = nbDecimal;
+    }
+
+    /**
+     * Gets the rounding mode.
+     * @return the rounding mode.
+     */
+    public RoundingModeEnum getRoundingMode() {
+        return roundingMode;
+    }
+
+    /**
+     * Sets the rounding mode.
+     * @param roundingMode rounding mode.
+     */
+    public void setRoundingMode(RoundingModeEnum roundingMode) {
+        this.roundingMode = roundingMode;
+    }
+
+    public String tableName() {
+        return Optional.ofNullable(this.entityClazz).filter(entityClazz -> entityClazz.matches(CUSTOM_TABLE_STRUCTURE_REGEX))
+                .map(tableName -> tableName.split(ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR)[1]).orElse(null);
     }
 }

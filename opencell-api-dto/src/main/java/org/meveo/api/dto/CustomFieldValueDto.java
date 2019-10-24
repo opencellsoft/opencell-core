@@ -17,6 +17,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Represents a single CF simple value inside a more complex CF value (list, map, matrix).
  *
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 7.0
  */
 @XmlRootElement(name = "CustomFieldValue")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -26,10 +28,14 @@ public class CustomFieldValueDto implements Serializable {
     private static final long serialVersionUID = -6551785257592739335L;
 
     /** The value. */
-    @XmlElements({ @XmlElement(name = "dateValue", type = Date.class), @XmlElement(name = "doubleValue", type = Double.class), @XmlElement(name = "longValue", type = Long.class),
-            @XmlElement(name = "stringValue", type = String.class), @XmlElement(name = "entityReferenceValue", type = EntityReferenceDto.class),
-            @XmlElement(name = "childEntityValue", type = CustomEntityInstanceDto.class) })
-    protected Object value;
+	@XmlElements({ @XmlElement(name = "dateValue", type = Date.class), //
+			@XmlElement(name = "doubleValue", type = Double.class), //
+			@XmlElement(name = "longValue", type = Long.class), //
+			@XmlElement(name = "stringValue", type = String.class), //
+			@XmlElement(name = "entityReferenceValue", type = EntityReferenceDto.class), //
+			@XmlElement(name = "childEntityValue", type = CustomEntityInstanceDto.class), //
+			@XmlElement(name = "booleanValue", type = Boolean.class) })
+	protected Object value;
 
     /**
      * Instantiates a new custom field value dto.

@@ -10,9 +10,9 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.InsufficientBalanceException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.ValidationException;
-import org.meveo.model.admin.Seller;
+import org.meveo.admin.parse.csv.CDR;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
@@ -30,7 +30,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.rating.EDR;
-import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -42,6 +41,7 @@ import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
+import org.meveo.service.medina.impl.CSVCDRParser;
 
 @Stateless
 public class QuoteService extends BusinessService<Quote> {
@@ -72,9 +72,10 @@ public class QuoteService extends BusinessService<Quote> {
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
-    
+
     /**
      * Create a simulated invoice for quote.
+     * 
      * @param quoteInvoiceInfos map of quote invoice info
      * @return list of invoice
      * @throws BusinessException business exception
@@ -92,7 +93,7 @@ public class QuoteService extends BusinessService<Quote> {
      * @throws BusinessException business exception
      */
     @SuppressWarnings("unused")
-    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos, boolean generatePdf) throws BusinessException {    	
+    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos, boolean generatePdf) throws BusinessException {
         log.info("Creating simulated invoice for {}", quoteInvoiceInfos);
 
         List<Invoice> invoices = new ArrayList<>();
@@ -115,13 +116,23 @@ public class QuoteService extends BusinessService<Quote> {
                         }
                         List<ProductChargeInstance> productChargeInstances = productInstance.getProductChargeInstances();
                         for (ProductChargeInstance productChargeInstance : productChargeInstances) {
-                            walletOperations.addAll(productChargeInstanceService.applyProductChargeInstance(productChargeInstance, true));
+                            try {
+                                walletOperations.addAll(productChargeInstanceService.applyProductChargeInstance(productChargeInstance, true));
+
+                            } catch (RatingException e) {
+                                log.trace("Failed to apply a product charge {}: {}", productChargeInstance, e.getRejectionReason());
+                                throw e; // e.getBusinessException();
+
+                            } catch (BusinessException e) {
+                                log.error("Failed to apply a product charge {}: {}", productChargeInstance, e.getMessage(), e);
+                                throw e;
+                            }
                         }
                     }
                 }
 
                 Subscription subscription = quoteInvoiceInfo.getSubscription();
-				if (subscription != null) {
+                if (subscription != null) {
 
                     billingAccount = subscription.getUserAccount().getBillingAccount();
 
@@ -130,30 +141,60 @@ public class QuoteService extends BusinessService<Quote> {
 
                         // Add subscription charges
                         for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
-                            WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, subscriptionCharge,
-                                serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
-                            if(wo != null) {
-                                walletOperations.add(wo);
+                            try {
+                                WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, subscriptionCharge,
+                                    serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
+                                if (wo != null) {
+                                    walletOperations.add(wo);
+                                }
+
+                            } catch (RatingException e) {
+                                log.trace("Failed to apply a subscription charge {}: {}", subscriptionCharge, e.getRejectionReason());
+                                throw e; // e.getBusinessException();
+
+                            } catch (BusinessException e) {
+                                log.error("Failed to apply a subscription charge {}: {}", subscriptionCharge, e.getMessage(), e);
+                                throw e;
                             }
                         }
 
                         // Add termination charges
                         if (serviceInstance.getTerminationDate() != null && serviceInstance.getSubscriptionTerminationReason().isApplyTerminationCharges()) {
                             for (OneShotChargeInstance terminationCharge : serviceInstance.getTerminationChargeInstances()) {
-                                WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, terminationCharge,
-                                    serviceInstance.getTerminationDate(), serviceInstance.getQuantity());
-                                if(wo != null) {
-                                    walletOperations.add(wo);
+                                try {
+                                    WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, terminationCharge,
+                                        serviceInstance.getTerminationDate(), serviceInstance.getQuantity());
+                                    if (wo != null) {
+                                        walletOperations.add(wo);
+                                    }
+
+                                } catch (RatingException e) {
+                                    log.trace("Failed to apply a termination charge {}: {}", terminationCharge, e.getRejectionReason());
+                                    throw e; // e.getBusinessException();
+
+                                } catch (BusinessException e) {
+                                    log.error("Failed to apply a termination charge {}: {}", terminationCharge, e.getMessage(), e);
+                                    throw e;
                                 }
                             }
                         }
 
                         // Add recurring charges
                         for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
-                            List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, quoteInvoiceInfo.getFromDate(),
-                                quoteInvoiceInfo.getToDate());
-                            if (walletOperations != null && walletOps != null) {
-                                walletOperations.addAll(walletOps);
+                            try {
+                                List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, quoteInvoiceInfo.getFromDate(),
+                                    quoteInvoiceInfo.getToDate());
+                                if (walletOperations != null && walletOps != null) {
+                                    walletOperations.addAll(walletOps);
+                                }
+
+                            } catch (RatingException e) {
+                                log.trace("Failed to apply a recurring charge {}: {}", recurringCharge, e.getRejectionReason());
+                                throw e; // e.getBusinessException();
+
+                            } catch (BusinessException e) {
+                                log.error("Failed to apply a recurring charge {}: {}", recurringCharge, e.getMessage(), e);
+                                throw e;
                             }
                         }
                     }
@@ -161,14 +202,15 @@ public class QuoteService extends BusinessService<Quote> {
                     // Process CDRS
                     if (quoteInvoiceInfo.getCdrs() != null && !quoteInvoiceInfo.getCdrs().isEmpty() && subscription != null) {
 
-                        cdrParsingService.initByApi(currentUser.getUserName(), "quote");
+                        CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), "quote");
 
                         List<EDR> edrs = new ArrayList<>();
 
                         // Parse CDRs to Edrs
                         try {
-                            for (String cdr : quoteInvoiceInfo.getCdrs()) {
-                                edrs.add(cdrParsingService.getEDRForVirtual(cdr, CDRParsingService.CDR_ORIGIN_API, subscription));
+                            for (String cdrLine : quoteInvoiceInfo.getCdrs()) {
+                                CDR cdr = cdrParser.parseCDR(cdrLine);
+                                edrs.add(cdrParsingService.getEDRForVirtual(cdr, subscription));
                             }
 
                         } catch (CDRParsingException e) {
@@ -180,44 +222,34 @@ public class QuoteService extends BusinessService<Quote> {
                         for (EDR edr : edrs) {
                             log.debug("edr={}", edr);
                             try {
-                                List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateUsageDontChangeTransaction(edr, true);
-                                if (edr.getStatus() == EDRStatusEnum.REJECTED) {
-                                    log.error("edr rejected={}", edr.getRejectReason());
-                                    throw new BusinessException(edr.getRejectReason());
-                                }
+                                List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateVirtualEDR(edr);
                                 walletOperations.addAll(walletOperationsFromEdr);
 
+                            } catch (RatingException e) {
+                                log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+                                throw e; // e.getBusinessException();
+
                             } catch (BusinessException e) {
-                                if (e instanceof InsufficientBalanceException) {
-                                    log.error("edr rejected={}", edr.getRejectReason());
-                                } else {
-                                    log.error("Exception rating edr={}", e);
-                                }
+                                log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
                                 throw e;
                             }
                         }
                     }
                 }
-            }            
-            // Create rated transactions from wallet operations
-            Seller seller = null;
-            for (WalletOperation walletOperation : walletOperations) {
-                RatedTransaction createdRatedTransaction = ratedTransactionService.createRatedTransaction(walletOperation, true);
-                ratedTransactions.add(createdRatedTransaction);
-                if(walletOperation.getSeller() != null) {
-                	seller = walletOperation.getSeller();
-                }
             }
-            Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote(),seller);
+            // Create rated transactions from wallet operations
+            for (WalletOperation walletOperation : walletOperations) {
+                ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true));
+            }
+            Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote());
             File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
-            
-            if(generatePdf) {
+
+            if (generatePdf) {
                 invoiceService.produceInvoicePdfNoUpdate(invoice);
             }
-            
+
             // Clean up data (left only the methods that remove FK data that would fail to persist in case of virtual operations)
             // invoice.setBillingAccount(null);
-            invoice.setRatedTransactions(null);
             for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
                 log.debug("Invoice aggregate class {}", invoiceAgregate.getClass().getName());
                 // invoiceAgregate.setBillingAccount(null);
@@ -237,7 +269,7 @@ public class QuoteService extends BusinessService<Quote> {
                     // ((SubCategoryInvoiceAgregate)invoiceAgregate).setSubCategoryTaxes(null);
                     // ((SubCategoryInvoiceAgregate)invoiceAgregate).setCategoryInvoiceAgregate(null);
                     ((SubCategoryInvoiceAgregate) invoiceAgregate).setWallet(null);
-                    ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactions(null);
+                    ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactionsToAssociate(null);
                 }
             }
             invoiceService.create(invoice);

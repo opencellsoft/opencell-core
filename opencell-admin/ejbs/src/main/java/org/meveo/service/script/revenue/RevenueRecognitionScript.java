@@ -19,7 +19,9 @@ import org.meveo.service.script.Script;
 public abstract class RevenueRecognitionScript extends Script implements RevenueRecognitionScriptInterface{
 
 	
-	RevenueScheduleService revenueScheduleService= (RevenueScheduleService)getServiceInterface("RevenueScheduleService");
+    private static final long serialVersionUID = -7845233582698212807L;
+    
+    RevenueScheduleService revenueScheduleService= (RevenueScheduleService)getServiceInterface("RevenueScheduleService");
 
     public void createRevenueSchedule(ChargeInstance chargeInstance) throws BusinessException{
 		List<WalletOperation> woList = new ArrayList<WalletOperation>(chargeInstance.getWalletOperations());
@@ -86,6 +88,6 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
 			} else {
 				log.debug("createRevenueSchedule no schedule created for chargeInstance {}",chargeInstance.getId());
 			}
-		}
-	}
+        }
+    }
 }

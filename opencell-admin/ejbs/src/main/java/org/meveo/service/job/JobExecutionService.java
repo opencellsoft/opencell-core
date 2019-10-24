@@ -53,6 +53,21 @@ import org.meveo.service.base.PersistenceService;
 public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
 
     /**
+     * Check if job is still running (or is stopped) every 25 records being processed (per thread). Value to be used in jobs that run slow.
+     */
+    public static int CHECK_IS_JOB_RUNNING_EVERY_NR_SLOW = 25;
+
+    /**
+     * Check if job is still running (or is stopped) every 50 records being processed (per thread). Value to be in jobs that run slower.
+     */
+    public static int CHECK_IS_JOB_RUNNING_EVERY_NR = 50;
+
+    /**
+     * Check if job is still running (or is stopped) every 100 records being processed (per thread). Value to be used in jobs that run faster.
+     */
+    public static int CHECK_IS_JOB_RUNNING_EVERY_NR_FAST = 100;
+
+    /**
      * job instance service.
      */
     @Inject
@@ -81,10 +96,10 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
             boolean isPersistResult = false;
 
             if ((resultToPersist.getNbItemsCorrectlyProcessed() + resultToPersist.getNbItemsProcessedWithError() + resultToPersist.getNbItemsProcessedWithWarning()) > 0) {
-                log.info(job.getClass().getName() + resultToPersist.toString());
+                log.info(job.getClass().getName() + " " + resultToPersist.toString());
                 isPersistResult = true;
             } else {
-                log.info(job.getClass().getName() + ": nothing to do");
+                log.info("{}/{}: No items were found to process", job.getClass().getName(), jobInstance.getCode());
                 isPersistResult = "true".equals(paramBeanFactory.getInstance().getProperty("meveo.job.persistResult", "true"));
             }
             if (isPersistResult) {
@@ -115,30 +130,24 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * 
      * @param job Job implementation
      * @param jobInstance Job instance
-     * @param continueSameJob Continue executing same job
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void executeNextJob(Job job, JobInstance jobInstance, boolean continueSameJob, MeveoUser lastCurrentUser) {
+    public void executeNextJob(Job job, JobInstance jobInstance, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         try {
-            if (continueSameJob) {
-                log.debug("Continue executing job {}", jobInstance);
-                executeJobWithParameters(jobInstance, null);
-
-            } else if (jobInstance.getFollowingJob() != null) {
+            if (jobInstance.getFollowingJob() != null) {
                 JobInstance nextJob = jobInstanceService.retrieveIfNotManaged(jobInstance.getFollowingJob());
-                log.debug("Executing next job {}", nextJob.getCode());
+                log.info("Executing next job {} for {}", nextJob.getCode(), jobInstance.getCode());
                 executeJobWithParameters(nextJob, null);
             }
-        } catch (Exception e) { // FIXME:BusinessException e) {
-            log.error("Failed to execute next job or continue same job", e);
+        } catch (BusinessException e) {
+            log.error("Failed to execute next job", e);
         }
-        log.info("JobExecutionService executeNextJob End");
     }
 
     /**

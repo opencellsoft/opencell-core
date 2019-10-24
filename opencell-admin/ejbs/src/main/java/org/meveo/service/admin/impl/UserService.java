@@ -48,7 +48,7 @@ public class UserService extends PersistenceService<User> {
     @RolesAllowed({ "userManagement", "userSelfManagement" })
     public void create(User user) throws UsernameAlreadyExistsException, BusinessException {
 
-        if (isUsernameExists(user.getUserName())) {
+        if (findByUsername(user.getUserName()) != null) {
             throw new UsernameAlreadyExistsException(user.getUserName());
         }
 
@@ -102,6 +102,7 @@ public class UserService extends PersistenceService<User> {
         return ((Long) query.getSingleResult()).intValue() != 0;
     }
 
+
     public User findByUsername(String username) {
         try {
             return getEntityManager().createNamedQuery("User.getByUsername", User.class).setParameter("username", username.toLowerCase()).getSingleResult();
@@ -146,6 +147,7 @@ public class UserService extends PersistenceService<User> {
             query.executeUpdate();
         }
     }
+
 
     public User findByUsernameWithFetch(String username, List<String> fetchFields) {
         QueryBuilder qb = new QueryBuilder(User.class, "u", fetchFields);

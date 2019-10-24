@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -37,6 +38,9 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class InvoicingJob launch invoicing for the available BillingRuns.
+ * @author HORRI Khalid
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class InvoicingJob extends Job {
@@ -64,17 +68,17 @@ public class InvoicingJob extends Job {
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode("nbRuns");
-        customFieldNbRuns.setAppliesTo("JOB_InvoicingJob");
+        customFieldNbRuns.setAppliesTo("JobInstance_InvoicingJob");
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbRuns.setValueRequired(false);
-        customFieldNbRuns.setDefaultValue("1");
+        customFieldNbRuns.setDefaultValue("-1");
         result.put("nbRuns", customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode("waitingMillis");
-        customFieldNbWaiting.setAppliesTo("JOB_InvoicingJob");
+        customFieldNbWaiting.setAppliesTo("JobInstance_InvoicingJob");
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
@@ -82,6 +86,16 @@ public class InvoicingJob extends Job {
         customFieldNbWaiting.setValueRequired(false);
         result.put("waitingMillis", customFieldNbWaiting);
 
+        CustomFieldTemplate customFieldBR = new CustomFieldTemplate();
+        customFieldBR.setCode("billingRuns");
+        customFieldBR.setAppliesTo("JobInstance_InvoicingJob");
+        customFieldBR.setActive(true);
+        customFieldBR.setDescription(resourceMessages.getString("jobExecution.billingRuns"));
+        customFieldBR.setFieldType(CustomFieldTypeEnum.ENTITY);
+        customFieldBR.setStorageType(CustomFieldStorageTypeEnum.LIST);
+        customFieldBR.setEntityClazz("org.meveo.model.billing.BillingRun");
+        customFieldBR.setValueRequired(false);
+        result.put("billingRuns", customFieldBR);
         return result;
     }
 }

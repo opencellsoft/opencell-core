@@ -71,14 +71,17 @@ import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
+import org.meveo.model.ISearchable;
 
 /**
  * Application user
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
 @Cacheable
-@CustomFieldEntity(cftCodePrefix = "USER")
+@CustomFieldEntity(cftCodePrefix = "User")
 @ExportIdentifier({ "userName" })
 @ReferenceIdentifierCode("userName")
 @ReferenceIdentifierDescription("email")
@@ -88,7 +91,7 @@ import org.meveo.model.shared.Name;
 @NamedQueries({ @NamedQuery(name = "User.listUsersInMM", query = "SELECT u FROM User u LEFT JOIN u.roles as role WHERE role.name IN (:roleNames)"),
         @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u WHERE lower(u.userName)=:username", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
-public class User extends AuditableEntity implements ICustomFieldEntity, IReferenceEntity {
+public class User extends AuditableEntity implements ICustomFieldEntity, IReferenceEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
 
@@ -171,6 +174,18 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_login_date")
     private Date lastLoginDate;
+
+    /**
+     * Code
+     */
+    @Transient
+    private String code;
+
+    /**
+     * Description
+     */
+    @Transient
+    private String description;
 
     public User() {
     }
@@ -281,7 +296,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     public void setSecuredEntities(List<SecuredEntity> securedEntities) {
         this.securedEntities = securedEntities;
     }
-    
+
     /**
      * Returns all the secured entities associated with this user's roles.
      * @return list of secured entities
@@ -315,7 +330,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
 
         return userName;
     }
-    
+
     /**
      * setting uuid if null
      */
@@ -325,7 +340,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     		uuid = UUID.randomUUID().toString();
     	}
     }
-    
+
     @Override
     public String getUuid() {
     	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
@@ -394,4 +409,23 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
         return getNameOrUsername();
     }
 
+    @Override
+    public String getCode() {
+        return getUserName();
+    }
+
+    @Override
+    public void setCode(String code) {
+
+    }
+
+    @Override
+    public String getDescription() {
+        return "User " + getCode();
+    }
+
+    @Override
+    public void setDescription(String description) {
+
+    }
 }

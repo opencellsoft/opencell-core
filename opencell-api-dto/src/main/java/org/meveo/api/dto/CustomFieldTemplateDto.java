@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
@@ -46,9 +47,9 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
     protected String accountLevel;
 
     /**
-     * PROVIDER - Provider, SELLER - Seller, CUST - customer, CA - Customer account, BA - Billing Account, UA - User account, SUB - subscription, ACC - access, CHARGE - charge
-     * template, SERVICE - service template or service instance, OFFER_CATEGORY - Offer template category, OFFER - Offer template, JOB_XX - Job instance, CE_ - Custom entity
-     * instance.
+     * PROVIDER - Provider, Seller - Seller, Customer - customer, CustomerAccount - Customer account, BillingAccount - Billing Account, UserAccount - User account, Subscription - subscription, Access - access,
+     * ChargeTemplate - charge template, ServiceInstance - service instance, ServiceTemplate - service template, OfferTemplateCategory - Offer template category, OfferTemplate - Offer template,
+     * JOB_XX - Job instance, CE_ - Custom entity instance.
      */
     @XmlElement(required = false)
     protected String appliesTo;
@@ -68,6 +69,10 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
     /** Is value required. */
     @XmlElement
     protected Boolean valueRequired;
+
+    /** Is value is part of unique constraint. */
+    @XmlElement
+    protected Boolean uniqueConstraint;
 
     /** Is value versionable. */
     @XmlElement
@@ -124,6 +129,18 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
     @XmlElement
     @Deprecated
     protected Boolean cacheValue;
+
+    /**
+     * The digit's number of a decimal for a double type.
+     */
+    @XmlElement
+    protected Integer nbDecimal;
+
+    /**
+     * The rounding mode.
+     */
+    @XmlElement
+    protected RoundingModeEnum roundingMode;
 
     /**
      * Where field should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;fieldGroup:&lt;fieldgroup name&gt;:&lt;fieldgroup relative
@@ -232,6 +249,7 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
         if (cf.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && cf.getChildEntityFields() != null) {
             childEntityFieldsForSummary = Arrays.asList(cf.getChildEntityFieldsAsList());
         }
+        this.uniqueConstraint = cf.isUniqueConstraint();
 
     }
 
@@ -750,5 +768,44 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
     public void setDisplayFormat(String displayFormat) {
         this.displayFormat = displayFormat;
     }
-    
+
+    /**
+     * Gets the number of decimal digits.
+     * @return the number of decimal digits.
+     */
+    public Integer getNbDecimal() {
+        return nbDecimal;
+    }
+
+    /**
+     * Sets the number of decimal digits.
+     * @param nbDecimal the number of decimal digits.
+     */
+    public void setNbDecimal(Integer nbDecimal) {
+        this.nbDecimal = nbDecimal;
+    }
+
+    /**
+     * Gets the rounding Mode
+     * @return the rounding Mode
+     */
+    public RoundingModeEnum getRoundingMode() {
+        return roundingMode;
+    }
+
+    /**
+     * Sets the rounding Mode
+     * @param roundingMode the rounding Mode
+     */
+    public void setRoundingMode(RoundingModeEnum roundingMode) {
+        this.roundingMode = roundingMode;
+    }
+
+    public Boolean getUniqueConstraint() {
+        return uniqueConstraint;
+    }
+
+    public void setUniqueConstraint(Boolean uniqueConstraint) {
+        this.uniqueConstraint = uniqueConstraint;
+    }
 }

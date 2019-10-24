@@ -20,7 +20,6 @@ package org.meveo.service.billing.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
@@ -30,10 +29,10 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.billing.EDRDto;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.RatedTransactionGroup;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.rating.EDR;
@@ -50,14 +49,43 @@ public class EdrService extends PersistenceService<EDR> {
     @Inject
     private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
 
-    static boolean useInMemoryDeduplication = true;
+    @Inject
+    private SubscriptionService subscriptionService;
+
+    /**
+     * Ways to check for EDR duplicates
+     */
+    public enum DeduplicateEDRTypeEnum {
+        /**
+         * Do not check for EDR duplicates
+         */
+        NONE,
+
+        /**
+         * Use cache to deduplicate EDRs
+         */
+        MEMORY,
+
+        /**
+         * Use database to deduplicate EDRS
+         */
+        DB;
+    }
+
+    static boolean deduplicateEdrs = false;
+    static boolean useInMemoryDeduplication = false;
     static boolean inMemoryDeduplicationPrepopulated = false;
 
     @PostConstruct
     private void init() {
         ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
-        useInMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
-        inMemoryDeduplicationPrepopulated = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "false").equals("true");
+
+        String deduplicateType = paramBean.getProperty("mediation.deduplicate", EdrService.DeduplicateEDRTypeEnum.MEMORY.name());
+        deduplicateEdrs = !EdrService.DeduplicateEDRTypeEnum.NONE.name().equalsIgnoreCase(deduplicateType);
+        if (deduplicateEdrs) {
+            useInMemoryDeduplication = EdrService.DeduplicateEDRTypeEnum.MEMORY.name().equalsIgnoreCase(deduplicateType);
+            inMemoryDeduplicationPrepopulated = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "true").equals("true");
+    }
     }
 
     /**
@@ -65,25 +93,28 @@ public class EdrService extends PersistenceService<EDR> {
      * 
      * @param rateUntilDate date until we still rate
      * @param ratingGroup group of ratedTransaction. {@link RatedTransactionGroup}
-     * @return list of EDR'sId we can rate until a given date.
+     * @param nbToRetrieve Number of items to retrieve for processing
+     * @return List of EDR's we can rate until a given date.
      */
-    public List<Long> getEDRidsToRate(Date rateUntilDate, String ratingGroup) {
-        QueryBuilder qb = new QueryBuilder(EDR.class, "c");
-        qb.addCriterion("c.status", "=", EDRStatusEnum.OPEN, true);
-        if (rateUntilDate != null) {
-            qb.addCriterion("c.eventDate", "<", rateUntilDate, false);
-        }
-		if (ratingGroup != null) {
-			qb.addCriterion("subscription.ratingGroup", "=", ratingGroup, false);
-		}
-        qb.addOrderMultiCriterion("c.subscription", true, "c.id", true);
+    public List<Long> getEDRsToRate(Date rateUntilDate, String ratingGroup, int nbToRetrieve) {
 
-        try {
-            return qb.getIdQuery(getEntityManager()).getResultList();
-        } catch (NoResultException e) {
-            return null;
+        if (rateUntilDate == null && ratingGroup == null) {
+            return getEntityManager().createNamedQuery("EDR.listToRateIds", Long.class).setMaxResults(nbToRetrieve).getResultList();
+
+        } else if (rateUntilDate != null && ratingGroup == null) {
+            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByDate", Long.class).setParameter("rateUntilDate", rateUntilDate).setMaxResults(nbToRetrieve)
+                .getResultList();
+
+        } else if (rateUntilDate == null && ratingGroup != null) {
+            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByRG", Long.class).setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve)
+                .getResultList();
+
+        } else {
+            return getEntityManager().createNamedQuery("EDR.listToRateIdsLimitByDateAndRG", Long.class).setParameter("rateUntilDate", rateUntilDate)
+                .setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve).getResultList();
         }
-    }
+
+        }
 
     /**
      * Check if EDR exits matching an origin batch and record numbers
@@ -124,6 +155,9 @@ public class EdrService extends PersistenceService<EDR> {
      * @return true/false
      */
     public boolean isDuplicateFound(String originBatch, String originRecord) {
+        if (!deduplicateEdrs) {
+            return false;
+        }
         Boolean isDuplicate = null;
         if (useInMemoryDeduplication) {
             isDuplicate = cdrEdrProcessingCacheContainerProvider.getEdrDuplicationStatus(originBatch, originRecord);
@@ -143,45 +177,20 @@ public class EdrService extends PersistenceService<EDR> {
     @Override
     public void create(EDR edr) throws BusinessException {
         super.create(edr);
-        if (useInMemoryDeduplication) {
+
+        if (deduplicateEdrs && useInMemoryDeduplication) {
             cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(edr.getOriginBatch(), edr.getOriginRecord());
         }
     }
 
     /**
-     * @param status EDR status
-     * @param subscription subscription in which EDR is updating.
+     * Reopen EDRs that were rejected
+     * 
+     * @param ids List of EDRs to reopen
      */
-    public void massUpdate(EDRStatusEnum status, Subscription subscription) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("UPDATE " + EDR.class.getSimpleName() + " e SET e.status=:newStatus, e.lastUpdate=:lastUpdate WHERE e.status=:oldStatus AND e.subscription=:subscription");
-
-        try {
-            getEntityManager().createQuery(sb.toString()).setParameter("newStatus", status).setParameter("subscription", subscription)
-                .setParameter("oldStatus", EDRStatusEnum.REJECTED).setParameter("lastUpdate", new Date()).executeUpdate();
-
-        } catch (Exception e) {
-            log.error("error while updating edr", e);
+    public void reopenRejectedEDRS(List<Long> ids) {
+        getEntityManager().createNamedQuery("EDR.reopenByIds").setParameter("ids", ids).executeUpdate();
         }
-    }
-
-    /**
-     * @param status EDR status
-     * @param selectedIds list of selected EDR ids
-     */
-    public void massUpdate(EDRStatusEnum status, Set<Long> selectedIds) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("UPDATE " + EDR.class.getSimpleName() + " e SET e.status=:newStatus, e.lastUpdate=:lastUpdate WHERE e.status=:oldStatus AND e.id IN :selectedIds ");
-
-        try {
-            log.debug("{} rows updated", getEntityManager().createQuery(sb.toString()).setParameter("newStatus", status).setParameter("selectedIds", selectedIds)
-                .setParameter("oldStatus", EDRStatusEnum.REJECTED).setParameter("lastUpdate", new Date()).executeUpdate());
-        } catch (Exception e) {
-            log.error("failed to updating edr", e);
-        }
-    }
 
     /**
      * Get EDRs that are unprocessed. Sorted in descending order by event date, so older items will be added first and thus expire first from the cache, limited to a number of
@@ -196,5 +205,79 @@ public class EdrService extends PersistenceService<EDR> {
         List<String> edrCacheKeys = getEntityManager().createNamedQuery("EDR.getEdrsForCache", String.class).setFirstResult(from).setMaxResults(pageSize).getResultList();
 
         return edrCacheKeys;
+    }
+
+    /**
+     * Gets All not open EDR between two Date.
+     *
+     * @param firstTransactionDate first Transaction Date
+     * @param lastTransactionDate  last Transaction Date
+     * @return All open EDR between two Date
+     */
+    public List<EDR> getNotOpenedEdrsBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
+        return getEntityManager().createNamedQuery("EDR.getNotOpenedEdrBetweenTwoDate", EDR.class).setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+    }
+
+    /**
+     * Remove All open EDR between two Date.
+     *
+     * @param firstTransactionDate first Transaction Date
+     * @param lastTransactionDate  last Transaction Date
+     * @return the number of deleted entities
+     */
+    public long purge(Date firstTransactionDate, Date lastTransactionDate) {
+
+        getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+
+        getEntityManager().createNamedQuery("EDR.updateRatedTransactionForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate)
+            .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+
+        return getEntityManager().createNamedQuery("EDR.deleteNotOpenEdrBetweenTwoDate").setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+
+    }
+
+    public void importEdrs(List<EDRDto> edrs) throws BusinessException {
+        for (EDRDto dto : edrs) {
+            EDR edr = new EDR();
+            if (dto.getSubscriptionCode() != null) {
+                Subscription subscription = subscriptionService.findByCode(dto.getSubscriptionCode());
+                edr.setSubscription(subscription);
+            }
+
+            edr.setOriginBatch(dto.getOriginBatch());
+            edr.setOriginRecord(dto.getOriginRecord());
+            edr.setEventDate(dto.getEventDate());
+            edr.setQuantity(dto.getQuantity());
+            edr.setParameter1(dto.getParameter1());
+            edr.setParameter2(dto.getParameter2());
+            edr.setParameter3(dto.getParameter3());
+            edr.setParameter4(dto.getParameter4());
+            edr.setParameter5(dto.getParameter5());
+            edr.setParameter6(dto.getParameter6());
+            edr.setParameter7(dto.getParameter7());
+            edr.setParameter8(dto.getParameter8());
+            edr.setParameter9(dto.getParameter9());
+            edr.setDateParam1(dto.getDateParam1());
+            edr.setDateParam2(dto.getDateParam2());
+            edr.setDateParam3(dto.getDateParam3());
+            edr.setDateParam4(dto.getDateParam4());
+            edr.setDateParam5(dto.getDateParam5());
+            edr.setDecimalParam1(dto.getDecimalParam1());
+            edr.setDecimalParam2(dto.getDecimalParam2());
+            edr.setDecimalParam3(dto.getDecimalParam3());
+            edr.setDecimalParam4(dto.getDecimalParam4());
+            edr.setDecimalParam5(dto.getDecimalParam5());
+            edr.setCreated(dto.getCreated());
+            edr.setUpdated(dto.getLastUpdate());
+            edr.setAccessCode(dto.getAccessCode());
+            edr.setExtraParameter(dto.getExtraParameter());
+            if (dto.getStatus() != null && dto.getStatus() != EDRStatusEnum.OPEN) {
+                edr.setStatus(dto.getStatus());
+            }
+            create(edr);
+        }
     }
 }

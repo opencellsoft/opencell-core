@@ -38,6 +38,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
@@ -45,7 +46,6 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.CustomerCategory;
-import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -272,7 +272,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startdate, Date endDate) {
         try {
             QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b", null);
-            qb.addCriterionEntity("b.billingCycle", billingCycle);
+            qb.addCriterionEntity("b.billingCycle.id", billingCycle.getId());
 
             if (startdate != null) {
                 qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
@@ -282,6 +282,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                 qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate);
             }
 
+            qb.addOrderCriterionAsIs("id", true);
+
             return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {
             log.error("failed to find billing accounts", ex);
@@ -290,48 +292,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Subscription> findSubscriptions(BillingCycle billingCycle, Date startdate, Date endDate) {
-        try {
-            QueryBuilder qb = new QueryBuilder(Subscription.class, "s", null);
-            qb.addCriterionEntity("s.billingCycle", billingCycle);
-
-            if (startdate != null) {
-                qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
-            }
-
-            if (endDate != null) {
-                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false);
-            }
-
-            return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
-        } catch (Exception ex) {
-            log.error("failed to find billing accounts", ex);
-        }
-
-        return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Order> findOrders(BillingCycle billingCycle, Date startdate, Date endDate) {
-        try {
-            QueryBuilder qb = new QueryBuilder(Order.class, "o", null);
-            qb.addCriterionEntity("o.billingCycle", billingCycle);
-
-            if (startdate != null) {
-                qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
-            }
-
-            if (endDate != null) {
-                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false);
-            }
-
-            return (List<Order>) qb.getQuery(getEntityManager()).getResultList();
-        } catch (Exception ex) {
-            log.error("failed to find billing accounts", ex);
-        }
-
-        return null;
+    /**
+     * List billing accounts that are associated with a given billing run
+     * 
+     * @param billingRun Billing run
+     * @return A list of Billing accounts
+     */
+    public List<BillingAccount> findBillingAccounts(BillingRun billingRun) {
+        return getEntityManager().createNamedQuery("BillingAccount.listByBillingRun", BillingAccount.class).setParameter("billingRunId", billingRun.getId()).getResultList();
     }
 
     /**
@@ -345,7 +313,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public List<Long> findBillingAccountIds(BillingCycle billingCycle, Date startdate, Date endDate) {
         try {
             QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b", null);
-            qb.addCriterionEntity("b.billingCycle", billingCycle);
+            qb.addCriterionEntity("b.billingCycle.id", billingCycle.getId());
 
             if (startdate != null) {
                 qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
@@ -417,81 +385,45 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public List<Long> findBillingAccountIdsByBillingRun(Long billingRunId) {
         return getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRunId).getResultList();
     }
-    
+
     public BillingAccount instantiateDiscountPlans(BillingAccount entity, List<DiscountPlan> discountPlans) throws BusinessException {
-		List<DiscountPlanInstance> toAdd = new ArrayList<>();
-		for (DiscountPlan dp : discountPlans) {
-			instantiateDiscountPlan(entity, dp, toAdd);
-		}
-		
-		if (!toAdd.isEmpty()) {
-			entity.getDiscountPlanInstances().addAll(toAdd);
-		}
-		
-		return entity;
-	}
-	
-	public BillingAccount instantiateDiscountPlan(BillingAccount entity, DiscountPlan dp, List<DiscountPlanInstance> toAdd) throws BusinessException {
-		if (entity.getDiscountPlanInstances() == null || entity.getDiscountPlanInstances().isEmpty()) {
-			// add
-			entity.setDiscountPlanInstances(new ArrayList<>());
-			DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
-			discountPlanInstance.setBillingAccount(entity);
-			discountPlanInstance.setDiscountPlan(dp);
-			discountPlanInstance.copyEffectivityDates(dp);
-			discountPlanInstance.setCfValues(dp.getCfValues());
-			discountPlanInstanceService.create(discountPlanInstance, dp);
-			entity.getDiscountPlanInstances().add(discountPlanInstance);
-			
-		} else {
-			boolean found = false;
-			DiscountPlanInstance dpiMatched = null;
-			for (DiscountPlanInstance dpi : entity.getDiscountPlanInstances()) {
-				dpi.setCfValues(dp.getCfValues());
-				if (dp.equals(dpi.getDiscountPlan())) {
-					found = true;
-					dpiMatched = dpi;
-					break;
-				}
-			}
-			
-			if (found && dpiMatched != null) {
-				// update effectivity dates
-				dpiMatched.copyEffectivityDates(dp);
-				discountPlanInstanceService.update(dpiMatched, dp);
-				
-			} else {
-				// add
-				DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
-				discountPlanInstance.setBillingAccount(entity);
-				discountPlanInstance.setDiscountPlan(dp);
-				discountPlanInstance.copyEffectivityDates(dp);
-				discountPlanInstanceService.create(discountPlanInstance, dp);
-				if (toAdd != null) {
-					toAdd.add(discountPlanInstance);
-				} else {
-					entity.getDiscountPlanInstances().add(discountPlanInstance);
-				}
-			}
-		}
-		
-		return entity;
-	}
-	
-	public void terminateDiscountPlans(BillingAccount entity, List<DiscountPlanInstance> dpis)
-			throws BusinessException {
-		if (dpis == null) {
-			return;
-		}
+        List<DiscountPlanInstance> toAdd = new ArrayList<>();
+        for (DiscountPlan dp : discountPlans) {
+            instantiateDiscountPlan(entity, dp);
+        }
 
-		for (DiscountPlanInstance dpi : dpis) {
-			terminateDiscountPlan(entity, dpi);
-		}
-	}
+        if (!toAdd.isEmpty()) {
+            entity.getAllDiscountPlanInstances().addAll(toAdd);
+        }
 
-	public void terminateDiscountPlan(BillingAccount entity, DiscountPlanInstance dpi) throws BusinessException {
-		discountPlanInstanceService.remove(dpi);
-		entity.getDiscountPlanInstances().remove(dpi);
-	}
+        return entity;
+    }
 
+    public void terminateDiscountPlans(BillingAccount entity, List<DiscountPlanInstance> dpis) throws BusinessException {
+        if (dpis == null) {
+            return;
+        }
+
+        for (DiscountPlanInstance dpi : dpis) {
+            terminateDiscountPlan(entity, dpi);
+        }
+    }
+
+    public BillingAccount instantiateDiscountPlan(BillingAccount entity, DiscountPlan dp) throws BusinessException {
+        for (UserAccount userAccount : entity.getUsersAccounts()) {
+            UserAccount userAccountById = userAccountService.findById(userAccount.getId());
+            for (Subscription subscription : userAccountById.getSubscriptions()) {
+                for (DiscountPlanInstance discountPlanInstance : subscription.getDiscountPlanInstances()) {
+                    if (dp.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {
+                        throw new BusinessException("DiscountPlan " + dp.getCode() + " is already instantiated in subscription " + subscription.getCode() + ".");
+                    }
+                }
+            }
+        }
+        return (BillingAccount) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null);
+    }
+
+    public void terminateDiscountPlan(BillingAccount entity, DiscountPlanInstance dpi) throws BusinessException {
+        discountPlanInstanceService.terminateDiscountPlan(entity, dpi);
+    }
 }

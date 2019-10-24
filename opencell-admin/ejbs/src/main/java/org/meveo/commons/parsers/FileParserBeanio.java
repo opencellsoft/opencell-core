@@ -6,9 +6,12 @@ import java.nio.charset.StandardCharsets;
 
 import org.beanio.BeanReader;
 import org.beanio.StreamFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 6.0
+ */
 public class FileParserBeanio implements IFileParser {
 
     private StreamFactory factory = null;
@@ -16,9 +19,6 @@ public class FileParserBeanio implements IFileParser {
     private BeanReader beanReader = null;
     private String mappingDescriptor = null;
     private String streamName = null;
-    private RecordContext recordContext = new RecordContext();
-    private RecordRejectedException recordRejectedException = null;
-    private static final Logger log = LoggerFactory.getLogger(FileParserBeanio.class);
 
     public FileParserBeanio() {
         this.factory = StreamFactory.newInstance();
@@ -46,48 +46,32 @@ public class FileParserBeanio implements IFileParser {
     }
 
     @Override
-    public boolean hasNext() throws Exception {
+    public synchronized RecordContext getNextRecord() {
+
         if (beanReader == null) {
-            return false;
+            return null;
         }
-        recordContext.setRecord(null);
+
+        RecordContext recordContext = new RecordContext();
+
         try {
             recordContext.setRecord(beanReader.read());
+            if (recordContext.getRecord() == null) {
+                return null; // end of file reached
+            }
             recordContext.setLineContent(beanReader.getRecordContext(0).getRecordText());
             recordContext.setLineNumber(beanReader.getLineNumber());
 
         } catch (Exception e) {
-            log.warn("cant parse record:", e.getMessage());
-            recordRejectedException = new RecordRejectedException(e.getMessage());
-            boolean isEndFile = true;
             try {
                 recordContext.setLineContent(beanReader.getRecordContext(0).getRecordText());
             } catch (Exception e2) {
                 recordContext.setLineContent("unparseable line");
-                isEndFile = false;
             }
             recordContext.setLineNumber(beanReader.getLineNumber());
-            recordContext.setReason(e.getMessage()); 
-            
-            if(isEndFile) {
-                return true;
-            }else {
-                return false;
-            }            
+            recordContext.setRejectReason(e);
         }
 
-        if (recordContext.getRecord() != null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public RecordContext getNextRecord() throws RecordRejectedException {
-        if (recordContext == null) {
-            throw recordRejectedException;
-        }
         return recordContext;
     }
 

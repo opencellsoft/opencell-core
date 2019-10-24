@@ -32,7 +32,6 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.service.admin.impl.TradingCurrencyService;
@@ -42,15 +41,17 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.primefaces.model.LazyDataModel;
 
-
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Named
 @ViewScoped
 public class WalletOperationBean extends BaseBean<WalletOperation> {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Injected @{link WalletOperation} service. Extends
-	 * {@link PersistenceService}.
+     * Injected @{link WalletOperation} service. Extends {@link PersistenceService}.
 	 */
 	@Inject
 	private WalletOperationService walletOperationService;
@@ -62,18 +63,16 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 	private RatedTransactionService ratedTransactionService;
    private Map<String, Currency> listCurrency = new HashMap<String, Currency>();
 
-
 	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
 	 */
 	public WalletOperationBean() {
 		super(WalletOperation.class);
 	}
 
 	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
 	 * @return wallet operation.
 	 */
 	@Produces
@@ -90,16 +89,15 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 		return walletOperationService;
 	}
 
-
 	public Map<String, Currency> getListCurrency() {
 		listCurrency.clear();
 		if(tradingCurrencyService.list().size()>0 && tradingCurrencyService.list()!=null){
 			for(TradingCurrency trading :tradingCurrencyService.list() ){
 				listCurrency.put(trading.getCurrency().getCurrencyCode(),trading.getCurrency());
-				}}
+            }
+        }
 		return listCurrency;
 	}
-	
 	
 	@Override
 	public LazyDataModel<WalletOperation> getLazyDataModel() {
@@ -115,60 +113,15 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 	
 	@Override
 	public Map<String, Object> getFilters() {
-		
-        super.getFilters();
-		
-		if (filters.containsKey("chargeInstance")) {
-			filters.put("chargeInstance.chargeTemplate", filters.get("chargeInstance")); 
-			filters.remove("chargeInstance");
-		}
-		if (filters.containsKey("wallet")) {
-			filters.put("wallet.walletTemplate", filters.get("wallet")); 
-			filters.remove("wallet");
-		}
-		if (filters.containsKey("counter")) {
-			filters.put("counter.counterTemplate", filters.get("counter"));
-			filters.remove("counter");
-		}
-		if (filters.containsKey("billingAccount")) {
-			filters.put("wallet.userAccount.billingAccount", filters.get("billingAccount"));
-			filters.remove("billingAccount");
-		}
-		if (filters.containsKey("invoiceSubCategory")) {
-			filters.put("chargeInstance.chargeTemplate.invoiceSubCategory", filters.get("invoiceSubCategory"));
-			filters.remove("invoiceSubCategory");
-		}
-		if (filters.containsKey("offerTemplate")) {
-			filters.put("priceplan.offerTemplate", filters.get("offerTemplate"));
-			filters.remove("offerTemplate");
-		}
-		
 		return super.getFilters();
 	}
 	
 	private LazyDataModel<WalletOperation> filterDataModelByBillingRun(boolean forceReload) {
 		if (filters.containsKey("billingRun")) {
-			List<Long> walletOperationIds = new ArrayList<Long>();
 			BillingRun br = (BillingRun) filters.get("billingRun");
-			List<RatedTransaction> listRated = ratedTransactionService.getRatedTransactionsByBillingRun(br);
-			if (listRated.size() > 0 && !listRated.isEmpty()) {
-				for (RatedTransaction rated : listRated) {
-					walletOperationIds.add(rated.getWalletOperationId());
-				}
-				StringBuffer wpIds = new StringBuffer();
-				String sep = "";
-				for (Long ids : walletOperationIds) {
-					wpIds.append(sep);
-					wpIds.append(ids.toString());
-					sep = ",";
-				}
-				filters.put("inList id", wpIds);
-			} else {
-				return null; 
-			}
+            filters.put("ratedTransaction.billingRun", br);
 			filters.remove("billingRun");
 		}
-		
 		return super.getLazyDataModel(filters, forceReload);
 	}
 
@@ -206,6 +159,4 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 		conversation.end();
 		return "walletOperations";
 	}
-
-} 
-
+}

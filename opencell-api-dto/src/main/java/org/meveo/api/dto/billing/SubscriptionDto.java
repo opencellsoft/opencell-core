@@ -13,9 +13,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessesDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.model.billing.UserAccount;
 
 /**
  * The Class SubscriptionDto.
@@ -34,7 +35,7 @@ public class SubscriptionDto extends BusinessEntityDto {
     /** The user account. */
     @XmlElement(required = true)
     private String userAccount;
-    
+
     /** The offer template. */
     @XmlElement(required = true)
     private String offerTemplate;
@@ -86,17 +87,30 @@ public class SubscriptionDto extends BusinessEntityDto {
     /** The order number. */
     private String orderNumber;
 
-    /** Expression to determine minimum amount value. */
+    /**
+     * Expression to determine minimum amount value
+     */
     private String minimumAmountEl;
 
-    /** Expression to determine minimum amount value - for Spark. */
+    /**
+     * Expression to determine minimum amount value - for Spark
+     */
     private String minimumAmountElSpark;
 
-    /** Expression to determine rated transaction description to reach minimum amount value. */
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
     private String minimumLabelEl;
 
-    /** Expression to determine rated transaction description to reach minimum amount value - for Spark. */
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
     private String minimumLabelElSpark;
+    
+    /**
+     * Corresponding to minimum invoice subcategory
+     */
+    private String minimumInvoiceSubCategory;
 
     /**
      * A date till which subscription is subscribed. After this date it will either be extended or terminated
@@ -127,7 +141,46 @@ public class SubscriptionDto extends BusinessEntityDto {
      */
     private String ratingGroup;
 
-	/**
+    /** The electronic billing. */
+    private Boolean electronicBilling;
+
+    /** The email. */
+    private String email;
+    /**
+     * Mailing type
+     */
+    private String mailingType;
+
+    /**
+     * Email Template code
+     */
+    private String emailTemplate;
+
+    /**
+     * A list of emails separated by comma
+     */
+    private String ccedEmails;
+
+
+
+    /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
+    @XmlElementWrapper(name = "discountPlansForInstantiation")
+    @XmlElement(name = "discountPlanForInstantiation")
+    private List<DiscountPlanDto> discountPlansForInstantiation;
+
+    /** List of discount plans to be disassociated from subscription */
+    @XmlElementWrapper(name = "discountPlansForTermination")
+    @XmlElement(name = "discountPlanForTermination")
+    private List<String> discountPlansForTermination;
+
+    /**
+     * Use to return the active discount plans for this entity.
+     */
+    @XmlElementWrapper(name = "discountPlanInstances")
+    @XmlElement(name = "discountPlanInstance")
+    private List<DiscountPlanInstanceDto> discountPlanInstances;
+
+    /**
      * Instantiates a new subscription dto.
      */
     public SubscriptionDto() {
@@ -146,10 +199,9 @@ public class SubscriptionDto extends BusinessEntityDto {
         setStatusDate(e.getStatusDate());
         setOrderNumber(e.getOrderNumber());
 
-        UserAccount userAccountBO = e.getUserAccount();
-		if (userAccountBO != null) {
-			setUserAccount(userAccountBO.getCode());
-		}
+        if (e.getUserAccount() != null) {
+            setUserAccount(e.getUserAccount().getCode());
+        }
 
         if (e.getOffer() != null) {
             setOfferTemplate(e.getOffer().getCode());
@@ -173,6 +225,14 @@ public class SubscriptionDto extends BusinessEntityDto {
         	setSeller(e.getSeller().getCode());
         }
 		setRatingGroup(e.getRatingGroup());
+		setMailingType(e.getMailingType() != null ? e.getMailingType().getLabel() : null);
+        setEmailTemplate(e.getEmailTemplate() != null ? e.getEmailTemplate().getCode() : null);
+        setCcedEmails(e.getCcedEmails());
+        setEmail(e.getEmail());
+        setElectronicBilling(e.getElectronicBilling());
+        if(e.getMinimumInvoiceSubCategory() != null) {
+            setMinimumInvoiceSubCategory(e.getMinimumInvoiceSubCategory().getCode());
+        }
     }
 
     /**
@@ -500,8 +560,6 @@ public class SubscriptionDto extends BusinessEntityDto {
     }
 
     /**
-     * Gets the minimum amount el.
-     *
      * @return Expression to determine minimum amount value
      */
     public String getMinimumAmountEl() {
@@ -509,8 +567,6 @@ public class SubscriptionDto extends BusinessEntityDto {
     }
 
     /**
-     * Sets the minimum amount el.
-     *
      * @param minimumAmountEl Expression to determine minimum amount value
      */
     public void setMinimumAmountEl(String minimumAmountEl) {
@@ -518,8 +574,6 @@ public class SubscriptionDto extends BusinessEntityDto {
     }
 
     /**
-     * Gets the minimum amount el spark.
-     *
      * @return Expression to determine minimum amount value - for Spark
      */
     public String getMinimumAmountElSpark() {
@@ -527,8 +581,6 @@ public class SubscriptionDto extends BusinessEntityDto {
     }
 
     /**
-     * Sets the minimum amount el spark.
-     *
      * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
      */
     public void setMinimumAmountElSpark(String minimumAmountElSpark) {
@@ -536,8 +588,6 @@ public class SubscriptionDto extends BusinessEntityDto {
     }
 
     /**
-     * Gets the minimum label el.
-     *
      * @return Expression to determine rated transaction description to reach minimum amount value
      */
     public String getMinimumLabelEl() {
@@ -545,8 +595,6 @@ public class SubscriptionDto extends BusinessEntityDto {
     }
 
     /**
-     * Sets the minimum label el.
-     *
      * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
      */
     public void setMinimumLabelEl(String minimumLabelEl) {
@@ -554,8 +602,6 @@ public class SubscriptionDto extends BusinessEntityDto {
     }
 
     /**
-     * Gets the minimum label el spark.
-     *
      * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
      */
     public String getMinimumLabelElSpark() {
@@ -563,8 +609,6 @@ public class SubscriptionDto extends BusinessEntityDto {
     }
 
     /**
-     * Sets the minimum label el spark.
-     *
      * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
      */
     public void setMinimumLabelElSpark(String minimumLabelElSpark) {
@@ -590,8 +634,6 @@ public class SubscriptionDto extends BusinessEntityDto {
     }
 
     /**
-     * Gets the auto end of engagement.
-     *
      * @return the autoEndOfEngagement
      */
     public Boolean getAutoEndOfEngagement() {
@@ -599,8 +641,6 @@ public class SubscriptionDto extends BusinessEntityDto {
     }
 
     /**
-     * Sets the auto end of engagement.
-     *
      * @param autoEndOfEngagement the autoEndOfEngagement to set
      */
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
@@ -609,23 +649,79 @@ public class SubscriptionDto extends BusinessEntityDto {
 
     
     /**
-     * Gets the seller.
-     *
-     * @return the seller
-     */
+	 * @return the seller
+	 */
 	public String getSeller() {
 		return seller;
 	}
 
 	/**
-	 * Sets the seller.
-	 *
 	 * @param seller the seller to set
 	 */
 	public void setSeller(String seller) {
 		this.seller = seller;
 	}
+    /**
+     * Gets the code of discount plans.
+     * @return codes of discount plan
+     */
+    public List<DiscountPlanDto> getDiscountPlansForInstantiation() {
+        return discountPlansForInstantiation;
+    }
 
+    /**
+     * Sets the code of the discount plans.
+     * @param discountPlansForInstantiation codes of the discount plans
+     */
+    public void setDiscountPlansForInstantiation(List<DiscountPlanDto> discountPlansForInstantiation) {
+        this.discountPlansForInstantiation = discountPlansForInstantiation;
+    }
+
+    /**
+     * Gets the list of active discount plan instance.
+     * @return list of active discount plan instance
+     */
+    public List<DiscountPlanInstanceDto> getDiscountPlanInstances() {
+        return discountPlanInstances;
+    }
+
+    /**
+     * Sets the list of active discount plan instance.
+     * @param discountPlanInstances list of active discount plan instance
+     */
+    public void setDiscountPlanInstances(List<DiscountPlanInstanceDto> discountPlanInstances) {
+        this.discountPlanInstances = discountPlanInstances;
+    }
+
+    /**
+     * Gets the list of discount plan codes for termination.
+     * @return discount plan codes
+     */
+    public List<String> getDiscountPlansForTermination() {
+        return discountPlansForTermination;
+    }
+
+    /**
+     * Sets the list of discount plan codes for termination.
+     * @param discountPlansForTermination discount plan codes
+     */
+    public void setDiscountPlansForTermination(List<String> discountPlansForTermination) {
+        this.discountPlansForTermination = discountPlansForTermination;
+    }
+    
+    /**
+     * @return the minimumInvoiceSubCategory
+     */
+    public String getMinimumInvoiceSubCategory() {
+        return minimumInvoiceSubCategory;
+    }
+
+    /**
+     * @param minimumInvoiceSubCategory the minimumInvoiceSubCategory to set
+     */
+    public void setMinimumInvoiceSubCategory(String minimumInvoiceSubCategory) {
+        this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
+    }
 
     @Override
     public String toString() {
@@ -636,22 +732,51 @@ public class SubscriptionDto extends BusinessEntityDto {
                 + renewalNotifiedDate + ", renewalRule=" + renewalRule + "]";
     }
 
-	/**
-	 * Gets the rating group.
-	 *
-	 * @return the rating group
-	 */
 	public String getRatingGroup() {
 		return ratingGroup;
 	}
 
-	/**
-	 * Sets the rating group.
-	 *
-	 * @param ratingGroup the new rating group
-	 */
 	public void setRatingGroup(String ratingGroup) {
 		this.ratingGroup = ratingGroup;
 	}
 
+    public Boolean getElectronicBilling() {
+        return electronicBilling;
+    }
+
+    public void setElectronicBilling(Boolean electronicBilling) {
+        this.electronicBilling = electronicBilling;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMailingType() {
+        return mailingType;
+    }
+
+    public void setMailingType(String mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    public String getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    public void setEmailTemplate(String emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
+    public String getCcedEmails() {
+        return ccedEmails;
+    }
+
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
 }

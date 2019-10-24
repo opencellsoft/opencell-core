@@ -30,8 +30,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -46,20 +48,24 @@ import org.meveo.model.ObservableEntity;
  * Tax
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
 @Cacheable
-@CustomFieldEntity(cftCodePrefix = "TAX")
+@CustomFieldEntity(cftCodePrefix = "Tax")
 @ExportIdentifier({ "code" })
 @Table(name = "billing_tax", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_tax_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "Tax.getNbTaxesNotAssociated", query = "select count(*) from Tax t where t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)"),
+        @NamedQuery(name = "Tax.getNbTaxesNotAssociated", query = "select count(*) from Tax t where t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
         @NamedQuery(name = "Tax.getTaxesNotAssociated", query = "from Tax t where t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)"),
-        @NamedQuery(name = "Tax.getZeroTax", query = "from Tax t where t.percent=0 ") })
+        @NamedQuery(name = "Tax.getZeroTax", query = "from Tax t where t.percent=0 ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
+        @NamedQuery(name = "Tax.getTaxByCode", query = "from Tax t where t.code=:code ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
+        @NamedQuery(name = "Tax.getTaxByPercent", query = "from Tax t where t.percent=:percent ") })
 public class Tax extends BusinessCFEntity {
     private static final long serialVersionUID = 1L;
 
@@ -74,6 +80,7 @@ public class Tax extends BusinessCFEntity {
      * Tax percent
      */
     @Column(name = "tax_percentage", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @NotNull
     private BigDecimal percent;
 
     /**

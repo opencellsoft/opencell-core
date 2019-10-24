@@ -51,11 +51,12 @@ import org.meveo.model.catalog.ProductTemplate;
  * Purchased product
  * 
  * @author Andrius Karpavicius
- *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
 @ObservableEntity
-@CustomFieldEntity(cftCodePrefix = "PRODUCT_INSTANCE", inheritCFValuesFrom = "productTemplate")
+@CustomFieldEntity(cftCodePrefix = "ProductInstance", inheritCFValuesFrom = "productTemplate")
 @ExportIdentifier({ "code" })
 @Table(name = "billing_product_instance")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
@@ -156,7 +157,6 @@ public class ProductInstance extends BusinessCFEntity {
             this.userAccount = subscription.getUserAccount();
             this.seller = subscription.getSeller();
         }
-             
         if(this.seller == null) {
             this.seller = this.userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
         }

@@ -68,6 +68,7 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
         if (invoice != null) {
             this.billingRun = invoice.getBillingRun();
         }
+        resetAmounts();
     }
 
     /**

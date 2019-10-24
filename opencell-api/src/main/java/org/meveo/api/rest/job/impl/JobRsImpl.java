@@ -10,8 +10,11 @@ import org.meveo.api.dto.job.JobExecutionResultDto;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.job.JobCategoriesResponseDto;
 import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
+import org.meveo.api.dto.response.job.JobInstanceListResponseDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.dto.response.job.TimerEntityResponseDto;
 import org.meveo.api.job.JobApi;
@@ -24,6 +27,7 @@ import org.meveo.model.jobs.JobCategoryEnum;
 
 /**
  * @author Edward P. Legaspi
+ * @author Adnane Boubia
  * @lastModifiedVersion 5.0
  **/
 @RequestScoped
@@ -215,5 +219,18 @@ public class JobRsImpl extends BaseRs implements JobRs {
         }
         return result;
     }
+    
+    @Override
+	public JobInstanceListResponseDto list(Integer offset, Integer limit, boolean mergedCF, String sortBy, SortOrder sortOrder) {
+		JobInstanceListResponseDto result = new JobInstanceListResponseDto();
+
+        try {
+            result = jobInstanceApi.list(mergedCF, new PagingAndFiltering(null, null, offset, limit, sortBy, sortOrder));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+	}    
     
 }

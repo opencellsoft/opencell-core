@@ -23,39 +23,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ISearchable;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 
 /**
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "OFFER")
+@WorkflowedEntity
+@CustomFieldEntity(cftCodePrefix = "OfferTemplate")
 @DiscriminatorValue("OFFER")
 @NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE businessOfferModel is not null and lifeCycleStatus='ACTIVE'"),
         @NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE businessOfferModel is not null and lifeCycleStatus<>'ACTIVE'"),
         @NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinusXDay<validity.to and validity.to<=NOW() and businessOfferModel is not null") })
-public class OfferTemplate extends ProductOffering {
+public class OfferTemplate extends ProductOffering implements IWFEntity, ISearchable {
     private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -92,12 +86,25 @@ public class OfferTemplate extends ProductOffering {
     @Size(max = 2000)
     private String minimumAmountElSpark;
 
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name="cat_offer_tmpl_discount_plan",
+            joinColumns=@JoinColumn(name="offer_tmpl_id", referencedColumnName="id"),
+            inverseJoinColumns=@JoinColumn(name="discount_plan_id", referencedColumnName="id"))
+    private List<DiscountPlan> allowedDiscountPlans;
+
     /**
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
      */
     @Column(name = "minimum_label_el_sp", length = 2000)
     @Size(max = 2000)
     private String minimumLabelElSpark;
+    
+    /** Corresponding invoice subcategory */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_invoice_sub_category_id")
+    private InvoiceSubCategory minimumInvoiceSubCategory;
 
     @Embedded
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
@@ -358,5 +365,34 @@ public class OfferTemplate extends ProductOffering {
      */
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
+    }
+
+    public List<DiscountPlan> getAllowedDiscountPlans() {
+        return allowedDiscountPlans;
+    }
+
+    public void setAllowedDiscountPlans(List<DiscountPlan> allowedDiscountPlans) {
+        this.allowedDiscountPlans = allowedDiscountPlans;
+    }
+
+    public void addAnAllowedDiscountPlan(DiscountPlan allowedDiscountPlan) {
+        if (getAllowedDiscountPlans() == null) {
+            this.allowedDiscountPlans = new ArrayList<DiscountPlan>();
+        }
+        this.allowedDiscountPlans.add(allowedDiscountPlan);
+    }
+
+    /**
+     * @return the minimumInvoiceSubCategory
+     */
+    public InvoiceSubCategory getMinimumInvoiceSubCategory() {
+        return minimumInvoiceSubCategory;
+    }
+
+    /**
+     * @param minimumInvoiceSubCategory the minimumInvoiceSubCategory to set
+     */
+    public void setMinimumInvoiceSubCategory(InvoiceSubCategory minimumInvoiceSubCategory) {
+        this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
     }
 }

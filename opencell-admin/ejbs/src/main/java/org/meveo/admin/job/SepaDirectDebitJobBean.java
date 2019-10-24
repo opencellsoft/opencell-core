@@ -107,7 +107,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        log.debug("Running for parameter={}", jobInstance.getParametres());
+        
         try {
 			Long nbRuns = new Long(1);
 			Long waitingMillis = new Long(0);
@@ -163,7 +163,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
                 if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
-                try {
+                try {                	
                     DateRangeScript dateRangeScript = this.getDueDateRangeScript(ddrequestLotOp);
                     if (dateRangeScript != null) { // computing custom due date range :
                         this.updateOperationDateRange(ddrequestLotOp, dateRangeScript);
@@ -307,11 +307,12 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
             methodContext.put(LIST_AO_TO_PAY, listAoToPay);
             listAoToPay = aoFilterScript.filterAoToPay(methodContext);
         }
+        Seller ddReqOpSeller = sellerService.refreshOrRetrieve(ddRequestLotOp.getSeller());
         if (CollectionUtils.isNotEmpty(listAoToPay)) {
             listAoToPay =  listAoToPay.stream()
                 .filter((ao) -> (ao.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT && ao.getTransactionCategory() == ddRequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess()
                         && (ao.getMatchingStatus() == MatchingStatusEnum.O || ao.getMatchingStatus() == MatchingStatusEnum.P)
-                        && (ddRequestLotOp.getSeller() == null || ao.getSeller().equals(ddRequestLotOp.getSeller()))))
+                        && (ddReqOpSeller == null || ao.getSeller().equals(ddReqOpSeller))))
                 .collect(Collectors.toList());
         }       
         return listAoToPay;

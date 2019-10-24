@@ -27,6 +27,10 @@ public class ComponentResources implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Locale locale = Locale.ENGLISH;
+    
+    @Inject
+    @Client
+    private Event<Locale> currentLocaleEventProducer;
 
     @Inject
     @Client

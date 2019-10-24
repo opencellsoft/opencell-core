@@ -18,6 +18,10 @@
  */
 package org.meveo.service.billing.impl;
 
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +30,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
@@ -33,20 +38,35 @@ import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditableFieldNameEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.Renewal;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionRenewal;
-import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
-import org.meveo.model.billing.SubscriptionRenewal.InitialTermTypeEnum;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
@@ -58,7 +78,8 @@ import org.primefaces.model.SortOrder;
  * @author Edward P. Legaspi
  * @author khalid HORRI
  * @author Mounir BAHIJE
- * @lastModifiedVersion 5.3
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class SubscriptionService extends BusinessService<Subscription> {
@@ -77,7 +98,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     @Inject
     private OfferTemplateService offerTemplateService;
-    
+
+    @Inject
+    private DiscountPlanInstanceService discountPlanInstanceService;
+
+    @Inject
+    private AuditableFieldService auditableFieldService;
+
     @MeveoAudit
     @Override
     public void create(Subscription subscription) throws BusinessException {
@@ -87,6 +114,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.createAutoRenewDate();
 
         super.create(subscription);
+
+        // Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
+        auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "",
+            String.valueOf(subscription.getStatus()));
 
         // execute subscription script
         OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
@@ -258,22 +289,29 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
     }
 
-    private Subscription terminateSubscriptionWithFutureDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason) throws BusinessException {
-    	subscription.setSubscribedTillDate(terminationDate);
-		subscription.getSubscriptionRenewal().setTerminationReason(terminationReason);
-		subscription.getSubscriptionRenewal().setInitialTermType(InitialTermTypeEnum.FIXED);
-		subscription.getSubscriptionRenewal().setAutoRenew(false);		
-		subscription.getSubscriptionRenewal().setEndOfTermAction(EndOfTermActionEnum.TERMINATE);
-		
-		subscription = update(subscription);
-		
-		return subscription;
-	}
+    private Subscription terminateSubscriptionWithFutureDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason)
+            throws BusinessException {
+
+        SubscriptionRenewal subscriptionRenewal = subscription.getSubscriptionRenewal();
+        subscriptionRenewal.setTerminationReason(PersistenceUtils.initializeAndUnproxy(subscriptionRenewal.getTerminationReason()));
+        Renewal renewal = new Renewal(subscriptionRenewal, subscription.getSubscribedTillDate());
+        subscription.setInitialSubscriptionRenewal(JacksonUtil.toString(renewal));
+
+        subscription.setSubscribedTillDate(terminationDate);
+        subscriptionRenewal.setTerminationReason(terminationReason);
+        subscriptionRenewal.setInitialTermType(SubscriptionRenewal.InitialTermTypeEnum.FIXED);
+        subscriptionRenewal.setAutoRenew(false);
+        subscriptionRenewal.setEndOfTermAction(SubscriptionRenewal.EndOfTermActionEnum.TERMINATE);
+
+        subscription = update(subscription);
+
+        return subscription;
+    }
 
     @MeveoAudit
     private Subscription terminateSubscriptionWithPastDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber,
             Long orderItemId, OrderItemActionEnum orderItemAction) throws BusinessException {
-	    
+
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
             if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus()) || InstanceStatusEnum.SUSPENDED.equals(serviceInstance.getStatus())) {
@@ -336,6 +374,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * Get a list of subscription ids that are about to expire or have expired already
+     * 
      * @return A list of subscription ids
      */
     public List<Long> getSubscriptionsToRenewOrNotify() {
@@ -345,6 +384,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     /**
      * Get a list of subscription ids that are about to expire or have expired already
+     * 
      * @param untillDate the subscription till date
      * @return A list of subscription ids
      */
@@ -370,43 +410,357 @@ public class SubscriptionService extends BusinessService<Subscription> {
             return null;
         }
     }
-    
-	public void activateInstantiatedService(Subscription sub) throws BusinessException {
-		for (ServiceInstance si : sub.getServiceInstances()) {
-			if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
-				serviceInstanceService.serviceActivation(si, null, null);
-			}
-		}
-	}
- 
+
+    public void activateInstantiatedService(Subscription sub) throws BusinessException {
+        // using a new ArrayList (cloning the original one) to avoid ConcurrentModificationException
+        for (ServiceInstance si : new ArrayList<>(emptyIfNull(sub.getServiceInstances()))) {
+            if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
+                serviceInstanceService.serviceActivation(si, null, null);
+            }
+        }
+    }
+
     /**
      * Return all subscriptions with status not equal to CREATED or ACTIVE and now - initialAgreement date &gt; n years.
+     * 
      * @param nYear age of the subscription
      * @return Filtered list of subscriptions
      */
     @SuppressWarnings("unchecked")
-	public List<Subscription> listInactiveSubscriptions(int nYear) {
-    	QueryBuilder qb = new QueryBuilder(Subscription.class, "e");
-    	Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
-    	
-    	qb.addCriterionDateRangeToTruncatedToDay("subscriptionDate", higherBound);
-    	qb.addCriterionEnum("status", SubscriptionStatusEnum.CREATED, "<>");
-    	qb.addCriterionEnum("status", SubscriptionStatusEnum.ACTIVE, "<>");
-    	
-    	return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
+    public List<Subscription> listInactiveSubscriptions(int nYear) {
+        QueryBuilder qb = new QueryBuilder(Subscription.class, "e");
+        Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+
+        qb.addCriterionDateRangeToTruncatedToDay("subscriptionDate", higherBound);
+        qb.addCriterionEnum("status", SubscriptionStatusEnum.CREATED, "<>");
+        qb.addCriterionEnum("status", SubscriptionStatusEnum.ACTIVE, "<>");
+
+        return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
     }
 
-	public void bulkDelete(List<Subscription> inactiveSubscriptions) throws BusinessException {
-		for (Subscription e : inactiveSubscriptions) {
-			remove(e);
-		}
-	}
+    public void bulkDelete(List<Subscription> inactiveSubscriptions) throws BusinessException {
+        for (Subscription e : inactiveSubscriptions) {
+            remove(e);
+        }
+    }
 
-	public void cancelSubscriptionRenewal(Subscription entity) throws BusinessException {
-		entity.setSubscribedTillDate(null);
-		entity.setSubscriptionTerminationReason(null);
-		entity.getSubscriptionRenewal().setInitialyActiveFor(null);
-		entity.setSubscriptionRenewal(new SubscriptionRenewal());
-	}
+    public void cancelSubscriptionRenewal(Subscription entity) throws BusinessException {
+        entity.setSubscribedTillDate(null);
+        entity.setSubscriptionTerminationReason(null);
+        entity.getSubscriptionRenewal().setInitialyActiveFor(null);
+        entity.setSubscriptionRenewal(new SubscriptionRenewal());
+    }
 
+    /**
+     * Subscription balance due.
+     *
+     * @param subscription the Subscription
+     * @param to the to
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
+    public BigDecimal subscriptionBalanceDue(Subscription subscription, Date to) throws BusinessException {
+        return computeBalance(subscription, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+    }
+
+    /**
+     * Subscription balance exigible without litigation.
+     *
+     * @param subscription the Subscription
+     * @param to the to
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
+    public BigDecimal subscriptionBalanceExigibleWithoutLitigation(Subscription subscription, Date to) throws BusinessException {
+        return computeBalance(subscription, to, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
+    }
+
+    /**
+     * Compute balance.
+     *
+     * @param subscription the Subscription
+     * @param to the to
+     * @param isDue the is due
+     * @param status the status
+     * @return the big decimal
+     * @throws BusinessException the business exception
+     */
+    private BigDecimal computeBalance(Subscription subscription, Date to, boolean isDue, MatchingStatusEnum... status) throws BusinessException {
+        return computeBalance(subscription, to, false, isDue, status);
+    }
+
+    /**
+     * Computes a balance given a subscription. to and isDue parameters are ignored when isFuture is true.
+     * 
+     * @param subscription of the customer
+     * @param to compare the invoice due or transaction date here
+     * @param isFuture includes the future due or transaction date
+     * @param isDue if true filter via dueDate else transactionDate
+     * @param status can be a list of MatchingStatusEnum
+     * @return the computed balance
+     * @throws BusinessException when an error in computation is encoutered
+     */
+    private BigDecimal computeBalance(Subscription subscription, Date to, boolean isFuture, boolean isDue, MatchingStatusEnum... status) throws BusinessException {
+        log.trace("start computeBalance subscription:{}, toDate:{}, isDue:{}", (subscription == null ? "null" : subscription.getCode()), to, isDue);
+        if (subscription == null) {
+            log.warn("Error when subscription is null!");
+            throw new BusinessException("subscription is null");
+        }
+        if (!isFuture && to == null) {
+            log.warn("Error when toDate is null!");
+            throw new BusinessException("toDate is null");
+        }
+        BigDecimal balance = null, balanceDebit = null, balanceCredit = null;
+        try {
+            balanceDebit = computeOccAmount(subscription, OperationCategoryEnum.DEBIT, isFuture, isDue, to, status);
+            balanceCredit = computeOccAmount(subscription, OperationCategoryEnum.CREDIT, isFuture, isDue, to, status);
+            if (balanceDebit == null) {
+                balanceDebit = BigDecimal.ZERO;
+            }
+            if (balanceCredit == null) {
+                balanceCredit = BigDecimal.ZERO;
+            }
+            balance = balanceDebit.subtract(balanceCredit);
+            ParamBean param = paramBeanFactory.getInstance();
+            int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
+            balance = balance.multiply(new BigDecimal(balanceFlag));
+            log.debug("computeBalance subscription code:{} , balance:{}", subscription.getCode(), balance);
+        } catch (Exception e) {
+            throw new BusinessException("Internal error");
+        }
+        return balance;
+
+    }
+
+    /**
+     * Compute occ amount.
+     *
+     * @param subscription the Subscription
+     * @param operationCategoryEnum the operation category enum
+     * @param isFuture the is future
+     * @param isDue the is due
+     * @param to the to
+     * @param status the status
+     * @return the big decimal
+     * @throws Exception the exception
+     */
+    private BigDecimal computeOccAmount(Subscription subscription, OperationCategoryEnum operationCategoryEnum, boolean isFuture, boolean isDue, Date to,
+            MatchingStatusEnum... status) throws Exception {
+        BigDecimal balance = null;
+        QueryBuilder queryBuilder = new QueryBuilder("select sum(unMatchingAmount) from AccountOperation");
+        queryBuilder.addCriterionEnum("transactionCategory", operationCategoryEnum);
+
+        if (!isFuture) {
+            if (isDue) {
+                queryBuilder.addCriterion("dueDate", "<=", to, false);
+
+            } else {
+                queryBuilder.addCriterion("transactionDate", "<=", to, false);
+            }
+        }
+
+        queryBuilder.addCriterionEntity("subscription", subscription);
+        if (status.length == 1) {
+            queryBuilder.addCriterionEnum("matchingStatus", status[0]);
+        } else {
+            queryBuilder.startOrClause();
+            for (MatchingStatusEnum st : status) {
+                queryBuilder.addCriterionEnum("matchingStatus", st);
+            }
+            queryBuilder.endOrClause();
+        }
+        Query query = queryBuilder.getQuery(getEntityManager());
+        balance = (BigDecimal) query.getSingleResult();
+        return balance;
+    }
+
+    /**
+     * Returns all subscriptions to the given offer by code
+     *
+     * @param offerCode code of the Offer to search
+     * @param sortBy sort criteria
+     * @param sortOrder sort order
+     * @return list of Subscription
+     */
+    @SuppressWarnings("unchecked")
+    public List<Subscription> listByOffer(String offerCode, String sortBy, SortOrder sortOrder) {
+        QueryBuilder qb = new QueryBuilder(Subscription.class, "c");
+        qb.addCriterionEntity("offer.code", offerCode);
+
+        boolean ascending = true;
+        if (sortOrder != null) {
+            ascending = sortOrder.equals(SortOrder.ASCENDING);
+        }
+        qb.addOrderCriterion(sortBy, ascending);
+
+        try {
+            return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            log.trace("No subscription found for offer code " + offerCode, e);
+            return null;
+        }
+    }
+
+    public Subscription instantiateDiscountPlan(Subscription entity, DiscountPlan dp) throws BusinessException {
+        if (!entity.getOffer().getAllowedDiscountPlans().contains(dp)) {
+            throw new BusinessException("DiscountPlan " + dp.getCode() + " is not allowed in this offer.");
+        }
+        BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
+        for (DiscountPlanInstance discountPlanInstance : billingAccount.getDiscountPlanInstances()) {
+            if (dp.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {
+                throw new BusinessException("DiscountPlan " + dp.getCode() + " is already instantiated in Billing Account " + billingAccount.getCode() + ".");
+            }
+        }
+        return (Subscription) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null);
+    }
+
+    public void terminateDiscountPlan(Subscription entity, DiscountPlanInstance dpi) throws BusinessException {
+        discountPlanInstanceService.terminateDiscountPlan(entity, dpi);
+    }
+
+    /**
+     * check if the subscription will be terminated in future
+     *
+     * @param subscription the subscription
+     * @return true is the subscription will be terminated in future.
+     */
+    public boolean willBeTerminatedInFuture(Subscription subscription) {
+        SubscriptionRenewal subscriptionRenewal = subscription != null ? subscription.getSubscriptionRenewal() : null;
+        return (subscription != null && (subscription.getStatus() == SubscriptionStatusEnum.CREATED || subscription.getStatus() == SubscriptionStatusEnum.ACTIVE)
+                && subscription.getSubscribedTillDate() != null && subscription.getSubscribedTillDate().compareTo(new Date()) > 0 && subscriptionRenewal != null
+                && !subscriptionRenewal.isAutoRenew() && subscriptionRenewal.getTerminationReason() != null
+                && subscriptionRenewal.getEndOfTermAction() == SubscriptionRenewal.EndOfTermActionEnum.TERMINATE);
+    }
+
+    /**
+     * cancel subscription termination
+     *
+     * @param subscription the subscription
+     * @throws BusinessException business exception
+     */
+    public void cancelSubscriptionTermination(Subscription subscription) throws BusinessException {
+        SubscriptionRenewal subscriptionRenewal = null;
+        Date subscribedTillDate = null;
+
+        String initialRenewal = subscription.getInitialSubscriptionRenewal();
+        if (!StringUtils.isBlank(initialRenewal)) {
+
+            Renewal renewal = JacksonUtil.fromString(initialRenewal, Renewal.class);
+            subscriptionRenewal = renewal.getValue();
+            subscriptionRenewal.setTerminationReason(
+                subscriptionRenewal.getTerminationReason() != null && subscriptionRenewal.getTerminationReason().getId() != null ? subscriptionRenewal.getTerminationReason()
+                        : null);
+            subscribedTillDate = renewal.getSubscribedTillDate();
+
+        }
+        subscription.setSubscriptionRenewal(subscriptionRenewal);
+        subscription.setSubscribedTillDate(subscribedTillDate);
+        update(subscription);
+    }
+
+    /**
+     * check compatibility of services before instantiation
+     *
+     * @param subscription
+     * @param selectedItemsAsList
+     * @throws BusinessException
+     */
+    public void checkCompatibilityOfferServices(Subscription subscription, List<ServiceTemplate> selectedItemsAsList) throws BusinessException {
+
+        if (subscription == null) {
+            throw new BusinessException("subscription is Null in checkCompatibilityOfferServices ");
+        }
+        List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
+        OfferTemplate offerTemplate = subscription.getOffer();
+
+        // loop in selected Available services for subscription
+        for (ServiceTemplate serviceTemplate : selectedItemsAsList) {
+            OfferServiceTemplate offerServiceTemplate = getOfferServiceTemplate(serviceTemplate.getCode(), offerTemplate);
+            if (offerServiceTemplate == null) {
+                throw new BusinessException("No offerServiceTemplate corresponds to " + serviceTemplate.getCode());
+            }
+
+            // list of incompatible services of an element of current Available services selected
+            List<ServiceTemplate> serviceTemplateIncompatibles = offerServiceTemplate.getIncompatibleServices();
+
+            // check if other selected Available services are part of incompatible services
+            for (ServiceTemplate serviceTemplateOther : selectedItemsAsList) {
+                if (!serviceTemplateOther.getCode().equals(serviceTemplate.getCode())) {
+                    for (ServiceTemplate serviceTemplateIncompatible : serviceTemplateIncompatibles) {
+                        if (serviceTemplateOther.getCode().equals(serviceTemplateIncompatible.getCode())) {
+                            throw new BusinessException("Services Incompatibility between " + serviceTemplateIncompatible.getCode() + " and " + serviceTemplate.getCode());
+                        }
+                    }
+                }
+            }
+
+            // check if subscribed service's are part of incompatible services of selected available services
+            for (ServiceInstance subscribedService : serviceInstances) {
+                for (ServiceTemplate serviceTemplateIncompatible : serviceTemplateIncompatibles) {
+                    if (subscribedService.getCode().equals(serviceTemplateIncompatible.getCode())) {
+                        throw new BusinessException("Services Incompatibility between " + serviceTemplateIncompatible.getCode() + " and " + serviceTemplate.getCode());
+                    }
+                }
+            }
+        }
+
+        // check if selected available services are part of incompatible services of subscribed service's
+        for (ServiceInstance subscribedService : serviceInstances) {
+            OfferServiceTemplate offerServiceTemplateSubscribedService = getOfferServiceTemplate(subscribedService.getCode(), offerTemplate);
+            // list of incompatible services of an element of current subscribed service's
+            List<ServiceTemplate> serviceTemplateSubscribedServiceIncompatibles = offerServiceTemplateSubscribedService.getIncompatibleServices();
+
+            for (ServiceTemplate serviceTemplateSelectedItem : selectedItemsAsList) {
+                for (ServiceTemplate serviceTemplateSubscribedServiceIncompatible : serviceTemplateSubscribedServiceIncompatibles) {
+                    if (serviceTemplateSelectedItem.getCode().equals(serviceTemplateSubscribedServiceIncompatible.getCode())) {
+                        throw new BusinessException("Services Incompatibility between " + serviceTemplateSelectedItem.getCode() + " and " + subscribedService.getCode());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Get OfferServiceTemplate which corresponds to serviceCode and offerTemplate
+     * 
+     * @param serviceCode
+     * @param offerTemplate
+     * @return offerServiceTemplate
+     */
+    public OfferServiceTemplate getOfferServiceTemplate(String serviceCode, OfferTemplate offerTemplate) {
+        OfferServiceTemplate offerServiceTemplateResult = null;
+        List<OfferServiceTemplate> offerServiceTemplates = offerTemplate.getOfferServiceTemplates();
+        for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
+            List<ServiceTemplate> serviceTemplates = offerServiceTemplate.getIncompatibleServices();
+            if (serviceCode.equals(offerServiceTemplate.getServiceTemplate().getCode())) {
+                offerServiceTemplateResult = offerServiceTemplate;
+            }
+        }
+        return offerServiceTemplateResult;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Subscription> findSubscriptions(BillingCycle billingCycle, Date startdate, Date endDate) {
+        try {
+            QueryBuilder qb = new QueryBuilder(Subscription.class, "s", null);
+            qb.addCriterionEntity("s.billingCycle.id", billingCycle.getId());
+            qb.addOrderCriterionAsIs("id", true);
+
+            return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (Exception ex) {
+            log.error("failed to find subscriptions", ex);
+        }
+
+        return null;
+    }
+
+    /**
+     * List subscriptions that are associated with a given billing run
+     * 
+     * @param billingRun Billing run
+     * @return A list of Subscriptions
+     */
+    public List<Subscription> findSubscriptions(BillingRun billingRun) {
+        return getEntityManager().createNamedQuery("Subscription.listByBillingRun", Subscription.class).setParameter("billingRunId", billingRun.getId()).getResultList();
+    }
 }

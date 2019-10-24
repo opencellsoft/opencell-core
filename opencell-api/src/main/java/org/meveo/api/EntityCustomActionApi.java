@@ -30,11 +30,14 @@ import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.service.custom.EntityCustomActionService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptUtils;
 
 /**
  * @author Edward P. Legaspi
- **/
-
+ * @author Abdellatif BARI
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.2.0
+ */
 @Stateless
 public class EntityCustomActionApi extends BaseApi {
 
@@ -62,7 +65,7 @@ public class EntityCustomActionApi extends BaseApi {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         ScriptInstance scriptInstance = action.getScript();
-        if (scriptInstance.isError() != null && scriptInstance.isError().booleanValue()) {
+        if (scriptInstance.isError()) {
             for (ScriptInstanceError error : scriptInstance.getScriptErrors()) {
                 ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
                 result.add(errorDto);
@@ -87,7 +90,7 @@ public class EntityCustomActionApi extends BaseApi {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         ScriptInstance scriptInstance = action.getScript();
-        if (scriptInstance.isError() != null && scriptInstance.isError().booleanValue()) {
+        if (scriptInstance.isError()) {
             for (ScriptInstanceError error : scriptInstance.getScriptErrors()) {
                 ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
                 result.add(errorDto);
@@ -243,7 +246,7 @@ public class EntityCustomActionApi extends BaseApi {
 
                 // Otherwise code is calculated from script source by combining package and classname
             } else if (!StringUtils.isBlank(dto.getScript().getScript())) {
-                String fullClassname = ScriptInstanceService.getFullClassname(dto.getScript().getScript());
+                String fullClassname = ScriptUtils.getFullClassname(dto.getScript().getScript());
                 if (!StringUtils.isBlank(dto.getScript().getCode()) && !dto.getScript().getCode().equals(fullClassname)) {
                     throw new BusinessApiException("The code and the canonical script class name must be identical");
                 }
@@ -313,7 +316,7 @@ public class EntityCustomActionApi extends BaseApi {
 
     /**
      * @param actionCode Entity custom action code.
-     * @param appliesTo the type of entity to which the CFT applies. eg OFFER, SERVICE.
+     * @param appliesTo the type of entity to which the CFT applies. eg OfferTemplate, ServiceTemplate.
      * @param entityCode Entity code to execute action on.
      * @return GUI redirection or null.
      * @throws MeveoApiException General API exception.

@@ -14,6 +14,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -22,6 +24,8 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
  * Web service for managing {@link org.meveo.model.catalog.ServiceTemplate}.
  * 
  * @author Edward P. Legaspi
+ * @author Youssef IZEM
+ * @lastModifiedVersion 5.4
  **/
 @Path("/catalog/serviceTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -35,8 +39,8 @@ public interface ServiceTemplateRs extends IBaseRs {
      * @param postData The service template's data
      * @return Request processing status
      */
-    @Path("/")
     @POST
+    @Path("/")
     ActionStatus create(ServiceTemplateDto postData);
 
     /**
@@ -45,8 +49,8 @@ public interface ServiceTemplateRs extends IBaseRs {
      * @param postData The service template's data
      * @return Request processing status
      */
-    @Path("/")
     @PUT
+    @Path("/")
     ActionStatus update(ServiceTemplateDto postData);
 
     /**
@@ -56,8 +60,8 @@ public interface ServiceTemplateRs extends IBaseRs {
      * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
      * @return Return serviceTemplate
      */
-    @Path("/")
     @GET
+    @Path("/")
     GetServiceTemplateResponseDto find(@QueryParam("serviceTemplateCode") String serviceTemplateCode,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
@@ -67,8 +71,8 @@ public interface ServiceTemplateRs extends IBaseRs {
      * @param serviceTemplateCode The service template's code
      * @return Request processing status
      */
-    @Path("/{serviceTemplateCode}")
     @DELETE
+    @Path("/{serviceTemplateCode}")
     ActionStatus remove(@PathParam("serviceTemplateCode") String serviceTemplateCode);
 
     /**
@@ -77,8 +81,8 @@ public interface ServiceTemplateRs extends IBaseRs {
      * @param postData The service template's data
      * @return Request processing status
      */
-    @Path("/createOrUpdate")
     @POST
+    @Path("/createOrUpdate")
     ActionStatus createOrUpdate(ServiceTemplateDto postData);
 
     /**
@@ -100,4 +104,14 @@ public interface ServiceTemplateRs extends IBaseRs {
     @POST
     @Path("/{code}/disable")
     ActionStatus disable(@PathParam("code") String code);
+    
+    /**
+     * Gets a service template list widh .
+     * 
+     * @param pagingAndFiltering PagingAndFiltering config.
+     * @return Return serviceTemplate list
+     */
+    @GET
+    @Path("/list")
+    GetListServiceTemplateResponseDto list(PagingAndFiltering pagingAndFiltering);
 }

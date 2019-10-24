@@ -33,6 +33,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -193,6 +194,14 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 
     public void setItemNumber(Integer itemNumber) {
         this.itemNumber = itemNumber;
+    }
+
+    public void addItemNumber(Integer numberToAdd) {
+        if (itemNumber == null) {
+            itemNumber = numberToAdd;
+        } else {
+            itemNumber = itemNumber.intValue() + numberToAdd.intValue();
+        }
     }
 
     public String getDescription() {

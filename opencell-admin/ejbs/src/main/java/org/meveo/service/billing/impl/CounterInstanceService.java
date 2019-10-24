@@ -48,7 +48,6 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.ICounterEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
@@ -71,7 +70,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
  * @author Said Ramli
  * @author Abdellatif BARI
  * @author Khalid HORRI
- * @lastModifiedVersion 6.3
+ * @lastModifiedVersion 6.1
  */
 @Stateless
 public class CounterInstanceService extends PersistenceService<CounterInstance> {
@@ -79,7 +78,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
-    
+
     @Inject
     private UserAccountService userAccountService;
 
@@ -97,7 +96,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
     @EJB
     private UsageChargeInstanceService usageChargeInstanceService;
-    
+
     @Inject
     private Event<CounterPeriodEvent> counterPeriodEvent;
 
@@ -132,7 +131,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     /**
      * @param serviceInstance a service instance
      * @param counterTemplate a counter template
-     * @param isVirtual       is virtual
+     * @param isVirtual is virtual
      * @return a counter instance
      * @throws BusinessException
      * @throws NoSuchMethodException
@@ -152,7 +151,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     /**
      * @param serviceInstance a service instance
      * @param counterTemplate a counter template
-     * @param isVirtual       is virtual
+     * @param isVirtual is vertual
      * @return a counter instance
      * @throws BusinessException
      * @throws NoSuchMethodException
@@ -172,7 +171,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     /**
      * @param serviceInstance a service instance
      * @param counterTemplate a counter template
-     * @param isVirtual       is virtual
+     * @param isVirtual is vertual
      * @return a counter instance
      * @throws BusinessException
      * @throws NoSuchMethodException
@@ -188,7 +187,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     /**
      * @param serviceInstance a service instance
      * @param counterTemplate a counter template
-     * @param isVirtual       is virtual
+     * @param isVirtual is vertual
      * @return a counter instance
      * @throws BusinessException
      * @throws NoSuchMethodException
@@ -202,11 +201,11 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     }
 
     /**
-     * @param service         the business service
-     * @param entity          the business entity
-     * @param clazz           the class of the business entity
+     * @param service the business service
+     * @param entity the business entity
+     * @param clazz the class of the business entity
      * @param counterTemplate the counter template
-     * @param isVirtual       is virtual
+     * @param isVirtual is virtual
      * @return a counter instance
      * @throws BusinessException
      * @throws NoSuchMethodException
@@ -320,12 +319,12 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         cal.setInitDate(initDate);
         Date startDate = cal.previousCalendarDate(chargeDate);
         if (startDate == null) {
-            log.info("cannot create counter for the date {} (not in calendar)", chargeDate);
+            log.warn("cannot create counter for the date {} (not in calendar)", chargeDate);
             return null;
         }
         Date endDate = cal.nextCalendarDate(startDate);
         BigDecimal initialValue = counterTemplate.getCeiling();
-        log.info("create counter period from {} to {}", startDate, endDate);
+        log.debug("create counter period from {} to {}", startDate, endDate);
         if (!StringUtils.isBlank(counterTemplate.getCeilingExpressionEl()) && chargeInstance != null) {
             initialValue = evaluateCeilingElExpression(counterTemplate.getCeilingExpressionEl(), chargeInstance, serviceInstance,
                 chargeInstance.getSubscription());
@@ -343,7 +342,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
         return counterPeriod;
     }
-    
+
     /**
      * trigger counter period event
      * 
@@ -363,7 +362,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             }
         }
     }
-    
+
     /**
      * trigger counter period event
      * 
@@ -381,7 +380,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             }
         }
     }
-    
+
     private CounterPeriod getCounterPeriodByDate(CounterInstance counterInstance, Date date)
             throws NoResultException {
         Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
@@ -390,7 +389,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
         return (CounterPeriod) query.getSingleResult();
     }
-    
+
     /**
      * Find a counter period for a given date.
      * 
@@ -410,7 +409,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             return null;
         }
     }
-    
 
     /**
      * Find or create a counter period for a given date.
@@ -529,11 +527,10 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             counterValueInfo = new CounterValueChangeInfo(previousValue, deducedQuantity, counterPeriod.getValue());
 
             if (!isVirtual) {
+                log.debug("Counter period {} was changed {}", counterPeriod.getId(), counterValueInfo);
                 counterPeriod = counterPeriodService.update(counterPeriod);
             }
         }
-
-        log.debug("Counter period {} was changed {}", counterPeriod.getId(), counterValueInfo);
 
         return counterValueInfo;
     }
@@ -563,7 +560,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         if (expression.indexOf("sub") >= 0) {
             userMap.put("sub", subscription);
         }
-        
+
         BigDecimal result = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
         result = result.setScale(chargeInstance.getChargeTemplate().getUnitNbDecimal(), chargeInstance.getChargeTemplate().getRoundingMode().getRoundingMode());
 

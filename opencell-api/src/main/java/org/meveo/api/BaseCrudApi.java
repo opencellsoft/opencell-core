@@ -18,7 +18,9 @@ import org.meveo.service.base.BusinessService;
  * 
  * @author Andrius Karpavicius
  * @author Edward P. Legaspi
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ *
  * @param <E> Entity class
  * @param <T> Dto class
  */
@@ -70,10 +72,6 @@ public abstract class BaseCrudApi<E extends BusinessEntity, T extends BusinessEn
 
     @Override
     public E createOrUpdate(T dataDto) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(dataDto.getCode())) {
-            missingParameters.add("code");
-        }
 
         if (ps.findByCode(dataDto.getCode()) == null) {
             return create(dataDto);

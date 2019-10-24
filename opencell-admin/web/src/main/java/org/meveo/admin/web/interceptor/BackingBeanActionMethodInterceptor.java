@@ -17,6 +17,8 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.model.audit.ChangeOriginEnum;
+import org.meveo.service.audit.AuditOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +26,8 @@ import org.slf4j.LoggerFactory;
  * Handles exceptions of backing bean action methods
  *
  * @author Andrius Karpavicius
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @ActionMethod
 @Interceptor
@@ -36,11 +40,18 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
     @Inject
     protected Messages messages;
 
+    @Inject
+    private AuditOrigin auditOrigin;
+
     @AroundInvoke
     public Object aroundInvoke(InvocationContext invocationContext) throws Exception {
 
         Object result = null;
         try {
+
+            auditOrigin.setAuditOrigin(ChangeOriginEnum.GUI);
+            auditOrigin.setAuditOriginName(FacesContext.getCurrentInstance().getViewRoot().getViewId());
+
             // Call a backing bean method
             result = invocationContext.proceed();
             return result;
@@ -78,7 +89,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
 
                 } else if (cause instanceof org.hibernate.exception.ConstraintViolationException) {
                     log.error("Delete was unsuccessful because entity is already in use.");
-                    messageKey = "error.delete.entityUsed";
+                    messageKey = "error.operation.forbidden";
                     break;
                 }
                 cause = cause.getCause();

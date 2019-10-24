@@ -18,7 +18,7 @@ import org.meveo.api.dto.wf.WorkflowResponseDto;
 import org.meveo.api.dto.wf.WorkflowsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
-@Path("/admin/workflow")
+//@Path("/admin/workflow")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -48,7 +48,7 @@ public interface WorkflowRs extends IBaseRs {
      * Find a workflow with a given code
      * 
      * @param code The workflow's code
-     * @return
+     * @return Work flow Response 
      */
     @GET
     @Path("/")

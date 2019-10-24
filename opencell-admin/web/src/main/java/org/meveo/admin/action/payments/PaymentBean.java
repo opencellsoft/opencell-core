@@ -26,12 +26,14 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.Payment;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.PaymentService;
+import org.primefaces.model.LazyDataModel;
 
 /**
  * Standard backing bean for {@link AutomatedPayment} (extends {@link BaseBean}
@@ -82,5 +84,16 @@ public class PaymentBean extends CustomFieldBean<Payment> {
 	@Override
 	protected IPersistenceService<Payment> getPersistenceService() {
 		return paymentService;
+	}
+
+
+
+	public LazyDataModel<Payment> getDunningPayments(DunningDocument dunningDocument){
+		if (!dunningDocument.isTransient()) {
+			filters.put("dunningDocument", dunningDocument);
+			return getLazyDataModel();
+		} else {
+			return null;
+		}
 	}
 }

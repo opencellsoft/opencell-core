@@ -1,0 +1,44 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+	
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{otherTransactionBean.objectId}" />
+            <f:viewParam name="tab" value="#{otherTransactionBean.activeTab}" />
+        </f:metadata>
+    </ui:define>
+	
+    <ui:define name="body">
+	
+        <hftl:formPanel edit="#{true}" label="#{messages['otherTransaction.form']}" backingBean="#{otherTransactionBean}" showDeleteButton="false" showEditButton="true" showBackButton="true"
+            formId="showOccFormId" submitPartialProcess=":showOccFormId:tabView">
+            
+            <p:tabView id="tabView" activeIndex="#{otherTransactionBean.activeTab}">
+				<p:tab title="#{messages['customer.tab.information']}">
+            <hftl:formField label="#{messages['otherTransaction.type']}" field="type" edit="false"/>
+  			<hftl:formField label="#{messages['otherTransaction.generalLedger']}" field="generalLedger" childField="code" edit="false" />
+	       	<hftl:formField label="#{messages['otherTransaction.occCode']}" field="occCode" edit="false" />
+	      	<hftl:formField label="#{messages['otherTransaction.accountCode']}" field="accountCode" edit="false" />			       
+	      	<hftl:formField label="#{messages['otherTransaction.occDescription']}" field="occDescription" edit="false" useConverter="false" size="45" />         						      
+  			<hftl:formField label="#{messages['otherTransaction.transactionCategory']}" field="transactionCategory" edit="false" />
+  			<hftl:formField label="#{messages['otherTransaction.reference']}" field="reference" edit="false" />
+  			<hftl:formField label="#{messages['otherTransaction.amount']}" field="amount" converter="bigDecimal4DigitsConverter" edit="false" />
+   			<hftl:formField label="#{messages['otherTransaction.transactionDate']}" field="transactionDate" edit="false" />
+  			<hftl:formField label="#{messages['otherTransaction.dueDate']}" required="true" field="dueDate" edit="false" />
+  			<hftl:formField label="#{messages['otherTransaction.unMatchingAmount']}" converter="bigDecimal4DigitsConverter" field="unMatchingAmount" edit="false" />
+   			<hftl:formField label="#{messages['otherTransaction.matchingStatus']}" field="matchingStatus" fieldValueLabel="label" edit="false" />
+   			<hftl:formField label="#{messages['otherTransaction.excludedFromDunning']}" field="excludedFromDunning" edit="false" isMessage="true"/>
+			</p:tab>
+				<hftl:customFields backingBean="#{otherTransactionBean}" messagesId=":showOccFormId:messages" />
+			</p:tabView>
+
+		</hftl:formPanel>  
+        
+    </ui:define>
+</ui:composition>

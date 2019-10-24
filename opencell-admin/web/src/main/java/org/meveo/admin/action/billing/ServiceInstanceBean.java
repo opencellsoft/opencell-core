@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.model.DataModel;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,10 +31,13 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.EntityListDataModelPF;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.order.OrderHistory;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -42,6 +46,9 @@ import org.omnifaces.cdi.Param;
 /**
  * Standard backing bean for {@link ServiceInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ *
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Named
 @ViewScoped
@@ -55,6 +62,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     @Inject
     private CounterInstanceService counterInstanceService;
 
+    private DataModel<OrderHistory> orderHistoryModel;
 
     /**
      * Offer Id passed as a parameter. Used when creating new Service from Offer window, so default offer will be set on newly created service.
@@ -178,7 +186,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
         }
         return null;
     }
-    
+
     public String suspendService() {
         log.info("suspendService serviceInstanceId:" + entity.getId());
 
@@ -198,7 +206,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     }
 
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("recurringChargeInstances");
+        return Arrays.asList("chargeInstances");
     }
 
     @Override
@@ -215,19 +223,41 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
         return outcome;
     }
-    
+
     /**
      * Update subscribedTillDate field in service
      */
     public void updateSubscribedTillDate() {
         entity.updateSubscribedTillAndRenewalNotifyDates();
     }
-    
+
     /**
      * Auto update end of engagement date.
      */
-    public void  autoUpdateEndOfEngagementDate() {
+    public void autoUpdateEndOfEngagementDate() {
         entity.autoUpdateEndOfEngagementDate();
+    }
+
+    /**
+     * Check is terminated service
+     *
+     * @return true is the service is terminated
+     */
+    public boolean isTerminatedService() {
+        return serviceInstanceService.willBeTerminatedInFuture(entity);
+    }
+
+    /**
+     * cancel subscription termination.
+     */
+    @ActionMethod
+    public void cancelServiceTermination() throws BusinessException {
+        log.debug("cancelTermination...");
+        entity = serviceInstanceService.refreshOrRetrieve(entity);
+        serviceInstanceService.cancelServiceTermination(entity);
+        serviceInstanceService.refresh(entity);
+        messages.info(new BundleKey("messages", "termination.cancelTerminationSuccessful"));
+
     }
 
     public CounterInstance getSelectedCounterInstance() {
@@ -243,5 +273,19 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
         } else {
             this.selectedCounterInstance = null;
         }
+    }
+
+    /**
+     * Get a data model for order history information
+     * 
+     * @return Data model for order history information
+     */
+    public DataModel<OrderHistory> getOrderHistoryModel() {
+
+        if (orderHistoryModel == null) {
+            orderHistoryModel = new EntityListDataModelPF<OrderHistory>(entity.getOrderHistories());
+        }
+
+        return orderHistoryModel;
     }
 }

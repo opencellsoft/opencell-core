@@ -13,12 +13,16 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.ReferenceDateEnum;
+
+import io.swagger.v3.oas.annotations.Hidden;
 
 /**
  * The Class BillingRunDto.
  * 
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.1
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @XmlRootElement(name = "BillingRun")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -85,6 +89,9 @@ public class BillingRunDto extends AuditableEntityDto {
      * Include in invoice Rated transactions up to that date
      */
     private Date lastTransactionDate;
+
+    /** The reference date. */
+    private ReferenceDateEnum referenceDate;
 
     /** The rejection reason. */
     private String rejectionReason;
@@ -452,6 +459,24 @@ public class BillingRunDto extends AuditableEntityDto {
     }
 
     /**
+     * Gets the referenceDate
+     *
+     * @return the referenceDate
+     */
+    public ReferenceDateEnum getReferenceDate() {
+        return referenceDate;
+    }
+
+    /**
+     * Sets the referenceDate.
+     *
+     * @param referenceDate the new referenceDate
+     */
+    public void setReferenceDate(ReferenceDateEnum referenceDate) {
+        this.referenceDate = referenceDate;
+    }
+
+    /**
      * Gets the rejection reason.
      *
      * @return the rejectionReason
@@ -564,6 +589,7 @@ public class BillingRunDto extends AuditableEntityDto {
      *
      * @param billingRunEntity the new from entity
      */
+    @Hidden
     public void setFromEntity(BillingRun billingRunEntity) {
         setAuditable(billingRunEntity);
         setProcessDate(billingRunEntity.getProcessDate());
@@ -585,6 +611,7 @@ public class BillingRunDto extends AuditableEntityDto {
         setEndDate(billingRunEntity.getEndDate());
         setInvoiceDate(billingRunEntity.getInvoiceDate());
         setLastTransactionDate(billingRunEntity.getLastTransactionDate());
+        setReferenceDate(billingRunEntity.getReferenceDate());
         setRejectionReason(billingRunEntity.getRejectionReason());
         setCurrencyCode(billingRunEntity.getCurrency() == null ? null : billingRunEntity.getCurrency().getCurrencyCode());
         setCountryCode(billingRunEntity.getCountry() == null ? null : billingRunEntity.getCountry().getCountryCode());
@@ -595,12 +622,33 @@ public class BillingRunDto extends AuditableEntityDto {
 
     @Override
     public String toString() {
-        return "BillingRunDto [processDate=" + processDate + ", status=" + status + ", statusDate=" + statusDate + ", billingCycle=" + billingCycle + ", billingAccountNumber="
-                + billingAccountNumber + ", billableBillingAcountNumber=" + billableBillingAcountNumber + ", producibleInvoiceNumber=" + producibleInvoiceNumber
-                + ", producibleAmountWithoutTax=" + producibleAmountWithoutTax + ", producibleAmountTax=" + producibleAmountTax + ", InvoiceNumber=" + InvoiceNumber
-                + ", producibleAmountWithTax=" + producibleAmountWithTax + ", prAmountWithoutTax=" + prAmountWithoutTax + ", prAmountWithTax=" + prAmountWithTax + ", prAmountTax="
-                + prAmountTax + ", processType=" + processType + ", startDate=" + startDate + ", endDate=" + endDate + ", invoiceDate=" + invoiceDate + ", lastTransactionDate="
-                + lastTransactionDate + ", rejectionReason=" + rejectionReason + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode="
-                + languageCode + ", selectedBillingAccounts=" + selectedBillingAccounts + "]";
+        return "BillingRunDto{" +
+                "processDate=" + processDate +
+                ", status=" + status +
+                ", statusDate=" + statusDate +
+                ", billingCycle=" + billingCycle +
+                ", billingAccountNumber=" + billingAccountNumber +
+                ", billableBillingAcountNumber=" + billableBillingAcountNumber +
+                ", producibleInvoiceNumber=" + producibleInvoiceNumber +
+                ", producibleAmountWithoutTax=" + producibleAmountWithoutTax +
+                ", producibleAmountTax=" + producibleAmountTax +
+                ", InvoiceNumber=" + InvoiceNumber +
+                ", producibleAmountWithTax=" + producibleAmountWithTax +
+                ", prAmountWithoutTax=" + prAmountWithoutTax +
+                ", prAmountWithTax=" + prAmountWithTax +
+                ", prAmountTax=" + prAmountTax +
+                ", processType=" + processType +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", invoiceDate=" + invoiceDate +
+                ", lastTransactionDate=" + lastTransactionDate +
+                ", referenceDate=" + referenceDate +
+                ", rejectionReason='" + rejectionReason + '\'' +
+                ", currencyCode='" + currencyCode + '\'' +
+                ", countryCode='" + countryCode + '\'' +
+                ", languageCode='" + languageCode + '\'' +
+                ", selectedBillingAccounts='" + selectedBillingAccounts + '\'' +
+                ", customFields=" + customFields +
+                '}';
     }
 }

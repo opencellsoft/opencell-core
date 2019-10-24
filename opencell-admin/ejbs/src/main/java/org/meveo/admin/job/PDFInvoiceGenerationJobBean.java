@@ -42,14 +42,18 @@ public class PDFInvoiceGenerationJobBean extends BaseJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        log.debug("Running with parameter={}", jobInstance.getParametres());
+
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
 
         try {
 
             InvoicesToProcessEnum invoicesToProcessEnum = InvoicesToProcessEnum.valueOf((String) this.getParamOrCFValue(jobInstance, "invoicesToProcess", "FinalOnly"));
-
             String parameter = jobInstance.getParametres();
-            
+
             Long billingRunId = null;
             if (parameter != null && parameter.trim().length() > 0) {
                 try {
@@ -59,25 +63,11 @@ public class PDFInvoiceGenerationJobBean extends BaseJobBean {
                     result.registerError(e.getMessage());
                 }
             }
-            
+
             List<Long> invoiceIds = this.fetchInvoiceIdsToProcess(invoicesToProcessEnum, billingRunId);
 
             result.setNbItemsToProcess(invoiceIds.size());
             log.info("PDFInvoiceGenerationJob number of invoices to process=" + invoiceIds.size());
-
-            Long nbRuns = new Long(1);
-            Long waitingMillis = new Long(0);
-            try {
-                nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns");
-                waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis");
-                if (nbRuns == -1) {
-                    nbRuns = (long) Runtime.getRuntime().availableProcessors();
-                }
-            } catch (Exception e) {
-                nbRuns = new Long(1);
-                waitingMillis = new Long(0);
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
-            }
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
             SubListCreator subListCreator = new SubListCreator(invoiceIds, nbRuns.intValue());
@@ -113,27 +103,25 @@ public class PDFInvoiceGenerationJobBean extends BaseJobBean {
         }
     }
 
-	private List<Long> fetchInvoiceIdsToProcess(InvoicesToProcessEnum invoicesToProcessEnum, Long billingRunId) {
-		
+    private List<Long> fetchInvoiceIdsToProcess(InvoicesToProcessEnum invoicesToProcessEnum, Long billingRunId) {
 
-		
-		log.debug(" fetchInvoiceIdsToProcess for invoicesToProcessEnum = {} and billingRunId = {} ",invoicesToProcessEnum  ,billingRunId);
-		List<Long> invoiceIds = null;
-		
-		switch (invoicesToProcessEnum) {
-		case FinalOnly:
-			  invoiceIds = invoiceService.getInvoicesIdsValidatedWithNoPdf(billingRunId);
-			break;
-			
-		case DraftOnly:
-			  invoiceIds = invoiceService.getDraftInvoiceIdsByBRWithNoPdf(billingRunId);
-			break;
+        log.debug(" fetchInvoiceIdsToProcess for invoicesToProcessEnum = {} and billingRunId = {} ", invoicesToProcessEnum, billingRunId);
+        List<Long> invoiceIds = null;
 
-		case All:
-			  invoiceIds = invoiceService.getInvoiceIdsIncludeDraftByBRWithNoPdf(billingRunId);
-			break;
-		}
-		return invoiceIds;
-		
-	}
+        switch (invoicesToProcessEnum) {
+        case FinalOnly:
+            invoiceIds = invoiceService.getInvoicesIdsValidatedWithNoPdf(billingRunId);
+            break;
+
+        case DraftOnly:
+            invoiceIds = invoiceService.getDraftInvoiceIdsByBRWithNoPdf(billingRunId);
+            break;
+
+        case All:
+            invoiceIds = invoiceService.getInvoiceIdsIncludeDraftByBRWithNoPdf(billingRunId);
+            break;
+        }
+        return invoiceIds;
+
+    }
 }

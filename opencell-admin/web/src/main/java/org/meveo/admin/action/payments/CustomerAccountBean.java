@@ -65,8 +65,7 @@ import org.meveo.service.payments.impl.PaymentMethodService;
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Edward P. Legaspi
- * @author Said Ramli
- * @lastModifiedVersion 6.1.X
+ * @lastModifiedVersion 5.0
  */
 @Named
 @ViewScoped
@@ -144,7 +143,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     @Override
     public CustomerAccount getEntity() {
         CustomerAccount ca = super.getEntity();
-        this.initNestedFields(ca);
+       this.initNestedFields(ca);
         return ca;
     }
 
@@ -245,10 +244,8 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     public BigDecimal getBalanceDue() throws BusinessException {
         if (entity.getId() == null) {
             return new BigDecimal(0);
-        
-        } else {
+        } else
             return customerAccountService.customerAccountBalanceDue(entity, new Date());
-        }
     }
 
     /**

@@ -15,6 +15,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.BillingAccount;
@@ -52,8 +53,8 @@ import org.meveo.util.ApplicationProvider;
  * The Class PaymentScheduleInstanceItemService.
  *
  * @author anasseh
- * @since 5.2
- * @lastModifiedVersion 5.3
+ * @author melyoussoufi
+ * @lastModifiedVersion 7.3.0
  */
 @Stateless
 public class PaymentScheduleInstanceItemService extends PersistenceService<PaymentScheduleInstanceItem> {
@@ -86,6 +87,9 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
     @Inject
     private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 
+    @Inject
+    private ServiceSingleton serviceSingleton;
+    
     /** The Constant HUNDRED. */
     private static final BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -93,9 +97,6 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
-
-    @Inject
-    private ServiceSingleton serviceSingleton;
 
     /**
      * Gets the items to process.
@@ -193,11 +194,12 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             invoice.setAmountTax(amounts[1]);
             invoice.setAmountWithTax(amounts[2]);
             invoice.setNetToPay(amounts[2]);
-
-            invoiceService.create(invoice);
+           
+            invoiceService.create(invoice);            
             invoiceService.postCreate(invoice);
-            invoice = serviceSingleton.assignInvoiceNumber(invoice);
 
+            invoice = serviceSingleton.assignInvoiceNumber(invoice);
+            
             paymentScheduleInstanceItem.setInvoice(invoice);
         }
         recordedInvoicePS = createRecordedInvoicePS(amounts, customerAccount, invoiceType, preferredMethod.getPaymentType(), invoice, aoIdsToPay, paymentScheduleInstanceItem);
@@ -253,9 +255,19 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         String paymentlabel = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getPaymentLabel();
         OneShotChargeTemplate oneShot = createOneShotCharge(invoiceSubCat, paymentlabel);
 
-        oneShotChargeInstanceService.oneShotChargeApplication(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), oneShot, null,
-            new Date(), new BigDecimal((isPaymentRejected ? "" : "-") + amounts[0]), null, new BigDecimal(1), null, null, null,
-            paymentlabel + (isPaymentRejected ? " (Rejected)" : ""), null, true);
+        try {
+            oneShotChargeInstanceService.oneShotChargeApplication(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), oneShot, null,
+                new Date(), new BigDecimal((isPaymentRejected ? "" : "-") + amounts[0]), null, new BigDecimal(1), null, null, null,
+                paymentlabel + (isPaymentRejected ? " (Rejected)" : ""), null, true);
+
+        } catch (RatingException e) {
+            log.trace("Failed to apply a one shot charge {}: {}", oneShot, e.getRejectionReason());
+            throw e; // e.getBusinessException();
+
+        } catch (BusinessException e) {
+            log.error("Failed to apply a one shot charge {}: {}", oneShot, e.getMessage(), e);
+            throw e;
+        }
     }
 
     /**
@@ -314,8 +326,8 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         recordedInvoicePS.setUnMatchingAmount(recordedInvoicePS.getAmount());
         recordedInvoicePS.setMatchingAmount(BigDecimal.ZERO);
         recordedInvoicePS.setAccountingCode(occTemplate.getAccountingCode());
-        recordedInvoicePS.setOccCode(occTemplate.getCode());
-        recordedInvoicePS.setOccDescription(occTemplate.getDescription());
+        recordedInvoicePS.setCode(occTemplate.getCode());
+        recordedInvoicePS.setDescription(occTemplate.getDescription());
         recordedInvoicePS.setTransactionCategory(occTemplate.getOccCategory());
         recordedInvoicePS.setCustomerAccount(customerAccount);
         recordedInvoicePS.setReference(invoice == null ? "psItemID:" + paymentScheduleInstanceItem.getId() : invoice.getInvoiceNumber());

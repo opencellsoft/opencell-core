@@ -44,10 +44,17 @@ public class CustomFieldTemplateApi extends BaseApi {
 
     @Inject
     private CustomizedEntityService customizedEntityService;
-
+    
     public void create(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {
+        create(postData, appliesTo, true);
+    }
 
-        if (StringUtils.isBlank(postData.getCode())) {
+    public void createWithoutUniqueConstraint(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {
+        create(postData, appliesTo, false);
+    }
+
+	private void create(CustomFieldTemplateDto postData, String appliesTo, Boolean updateUniqueConstraint) {
+		if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
         if (StringUtils.isBlank(postData.getDescription())) {
@@ -101,6 +108,10 @@ public class CustomFieldTemplateApi extends BaseApi {
             }
         }
 
+        // Support for old names
+        appliesTo = updateAppliesToToNewValue(appliesTo);
+        postData.setAppliesTo(appliesTo);
+
         if (!getCustomizedEntitiesAppliesTo().contains(appliesTo)) {
             throw new InvalidParameterException("appliesTo", appliesTo);
         }
@@ -110,9 +121,8 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         CustomFieldTemplate cft = fromDTO(postData, appliesTo, null);
-        customFieldTemplateService.create(cft);
-
-    }
+        customFieldTemplateService.create(cft, updateUniqueConstraint);
+	}
 
     public void update(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {
 
@@ -151,6 +161,10 @@ public class CustomFieldTemplateApi extends BaseApi {
             }
         }
 
+        // Support for old names
+        appliesTo = updateAppliesToToNewValue(appliesTo);
+        postData.setAppliesTo(appliesTo);
+
         if (!getCustomizedEntitiesAppliesTo().contains(appliesTo)) {
             throw new InvalidParameterException("appliesTo", appliesTo);
         }
@@ -182,6 +196,9 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         handleMissingParameters();
+
+        // Support for old names
+        appliesTo = updateAppliesToToNewValue(appliesTo);
 
         if (!getCustomizedEntitiesAppliesTo().contains(appliesTo)) {
             throw new InvalidParameterException("appliesTo", appliesTo);
@@ -216,6 +233,9 @@ public class CustomFieldTemplateApi extends BaseApi {
 
         handleMissingParameters();
 
+        // Support for old names
+        appliesTo = updateAppliesToToNewValue(appliesTo);
+
         CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo);
         if (cft == null) {
             throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code);
@@ -246,6 +266,9 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         handleMissingParameters();
+
+        // Support for old names
+        appliesTo = updateAppliesToToNewValue(appliesTo);
 
         if (!getCustomizedEntitiesAppliesTo().contains(appliesTo)) {
             throw new InvalidParameterException("appliesTo", appliesTo);
@@ -299,6 +322,9 @@ public class CustomFieldTemplateApi extends BaseApi {
             }
         }
 
+        // Support for old names
+        appliesTo = updateAppliesToToNewValue(appliesTo);
+
         CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo);
 
         if (customFieldTemplate == null) {
@@ -321,6 +347,7 @@ public class CustomFieldTemplateApi extends BaseApi {
             cft.setCode(dto.getCode());
             cft.setFieldType(dto.getFieldType());
             cft.setStorageType(dto.getStorageType());
+            cft.setGuiPosition(dto.getGuiPosition());
             if (appliesTo == null) {
 
                 // Support for old API
@@ -336,7 +363,7 @@ public class CustomFieldTemplateApi extends BaseApi {
                 cft.setDisabled(dto.isDisabled());
             }
         }
-        
+
         if (dto.getDisplayFormat() != null) {
             cft.setDisplayFormat(dto.getDisplayFormat());
         }
@@ -439,6 +466,17 @@ public class CustomFieldTemplateApi extends BaseApi {
             cft.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getLanguageDescriptions(), cft.getDescriptionI18n()));
         }
 
+        if (dto.getNbDecimal() != null) {
+            cft.setNbDecimal(dto.getNbDecimal());
+        }
+        if (dto.getRoundingMode() != null) {
+            cft.setRoundingMode(dto.getRoundingMode());
+        }
+
+        if(dto.getUniqueConstraint() != null){
+            cft.setUniqueConstraint(dto.getUniqueConstraint());
+        }
+
         return cft;
     }
 
@@ -449,5 +487,102 @@ public class CustomFieldTemplateApi extends BaseApi {
             cftAppliesto.add(EntityCustomizationUtils.getAppliesTo(customizedEntity.getEntityClass(), customizedEntity.getEntityCode()));
         }
         return cftAppliesto;
+    }
+
+    /**
+     * Change old appliesTo value to a new one
+     * 
+     * @param appliesTo Old appliesTo value
+     * @return New appliesTo value
+     */
+    private String updateAppliesToToNewValue(String appliesTo) {
+
+        if (appliesTo == null) {
+            return null;
+        }
+
+        if (appliesTo.equals("PROVIDER")) {
+            return "Provider";
+        } else if (appliesTo.equals("PRODUCT")) {
+            return "ProductTemplate";
+        } else if (appliesTo.equals("PRODUCT_INSTANCE")) {
+            return "ProductInstance";
+        } else if (appliesTo.equals("OFFER")) {
+            return "OfferTemplate";
+        } else if (appliesTo.equals("SELLER")) {
+            return "Seller";
+        } else if (appliesTo.equals("CUST")) {
+            return "Customer";
+        } else if (appliesTo.equals("CA")) {
+            return "CustomerAccount";
+        } else if (appliesTo.equals("BA")) {
+            return "BillingAccount";
+        } else if (appliesTo.equals("UA")) {
+            return "UserAccount";
+        } else if (appliesTo.equals("SERVICE")) {
+            return "ServiceTemplate";
+        } else if (appliesTo.equals("SERVICE_INSTANCE")) {
+            return "ServiceInstance";
+        } else if (appliesTo.equals("SUB")) {
+            return "Subscription";
+        } else if (appliesTo.equals("ACC")) {
+            return "Access";
+        } else if (appliesTo.equals("CHARGE")) {
+            return "ChargeTemplate";
+        } else if (appliesTo.equals("PRICEPLAN")) {
+            return "PricePlanMatrix";
+        } else if (appliesTo.equals("BILLING_CYCLE")) {
+            return "BillingCycle";
+        } else if (appliesTo.equals("TAX")) {
+            return "Tax";
+        } else if (appliesTo.equals("INV_CAT")) {
+            return "InvoiceCategory";
+        } else if (appliesTo.equals("INVOICE")) {
+            return "Invoice";
+        } else if (appliesTo.equals("ACCT_CODE")) {
+            return "AccountingCode";
+        } else if (appliesTo.equals("FILTER")) {
+            return "Filter";
+        } else if (appliesTo.equals("QUOTE")) {
+            return "Quote";
+        } else if (appliesTo.equals("ORDER")) {
+            return "Order";
+        } else if (appliesTo.equals("USER")) {
+            return "User";
+        } else if (appliesTo.equals("JOB")) {
+            return "JobInstance";
+        } else if (appliesTo.equals("DISCOUNT_PLAN_INSTANCE")) {
+            return "DiscountPlanInstance";
+        } else if (appliesTo.equals("DISCOUNT_PLAN")) {
+            return "DiscountPlan";
+        } else if (appliesTo.equals("OFFER_CATEGORY")) {
+            return "OfferTemplateCategory";
+        } else if (appliesTo.equals("INV_SUB_CAT")) {
+            return "InvoiceSubCategory";
+        } else if (appliesTo.equals("ACC_OP")) {
+            return "AccountOperation";
+        } else if (appliesTo.equals("BILLING_RUN")) {
+            return "BillingRun";
+        } else if (appliesTo.equals("INVOICE_TYPE")) {
+            return "InvoiceType";
+        } else if (appliesTo.equals("DISCOUNT_PLAN_ITEM")) {
+            return "DiscountPlanItem";
+        } else if (appliesTo.equals("OTH_TR")) {
+            return "OtherTransaction";
+        } else if (appliesTo.equals("REPORT")) {
+            return "ReportExtract";
+        } else if (appliesTo.equals("BUNDLE")) {
+            return "BundleTemplate";
+        } else if (appliesTo.equals("PAYMENT_SCH_INSTANCE")) {
+            return "PaymentScheduleInstance";
+        } else if (appliesTo.equals("DDREQ_BUILDER")) {
+            return "DDRequestBuilder";
+        } else if (appliesTo.equals("PAYMENT_SCH")) {
+            return "PaymentScheduleTemplate";
+        } else if (appliesTo.startsWith("JOB_")) {
+            return "JobInstance_" + appliesTo.substring(4);
+        }
+        return appliesTo;
+
     }
 }

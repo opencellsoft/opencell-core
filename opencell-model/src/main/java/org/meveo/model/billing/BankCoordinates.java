@@ -25,9 +25,11 @@ import javax.persistence.Convert;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Size;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.commons.encryption.BankDataEncryptor;
 import org.meveo.commons.utils.AesEncrypt;
-import org.meveo.commons.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Bank account information
@@ -70,17 +72,17 @@ public class BankCoordinates implements Serializable, Cloneable {
     /**
      * IBAN number
      */
+    @Convert(converter=BankDataEncryptor.class)
     @Column(name = "iban", length = 100)
     @Size(max = 100)
-    @Convert(converter=BankDataEncryptor.class)
     private String iban;
 
     /**
      * BIC number
      */
+    @Convert(converter=BankDataEncryptor.class)
     @Column(name = "bic", length = 100)
     @Size(max = 100)
-    @Convert(converter=BankDataEncryptor.class)
     private String bic;
 
     /**
@@ -178,11 +180,22 @@ public class BankCoordinates implements Serializable, Cloneable {
     }
 
     public String getIban() {
-    	return iban;
+    	try {
+			return decryptIban(iban);
+		} catch (Exception e) {
+			Logger log = LoggerFactory.getLogger(BankCoordinates.class);
+			log.error("Error when decrypting Iban", e);
+			return null;
+    }
     }
 
     public void setIban(String iban) {
-    	this.iban=iban;
+    	try {
+			this.iban = encryptIban(encryptIban(iban));
+		} catch (Exception e) {
+			Logger log = LoggerFactory.getLogger(BankCoordinates.class);
+			log.error("Error when encrypting Iban", e);
+    }
     }
 
     public String getBic() {

@@ -28,7 +28,7 @@ import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.index.ElasticSearchIndexPopulationService;
 import org.meveo.service.job.JobInstanceService;
-import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptCompilerService;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 
@@ -53,7 +53,7 @@ public class ApplicationInitializer {
     private JobInstanceService jobInstanceService;
 
     @Inject
-    private ScriptInstanceService scriptInstanceService;
+    private ScriptCompilerService scriptCompilerService;
 
     @Inject
     private EntityManagerProvider entityManagerProvider;
@@ -140,7 +140,7 @@ public class ApplicationInitializer {
         jobInstanceService.registerJobs();
 
         // Initialize scripts
-        scriptInstanceService.compileAll();
+        scriptCompilerService.compileAll();
 
         // Initialize caches
         walletCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));

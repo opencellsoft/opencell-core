@@ -1,6 +1,7 @@
 package org.meveo.api.billing;
 
-import java.util.Arrays;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,28 +17,34 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.parse.csv.CDR;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.billing.CdrListDto;
+import org.meveo.api.dto.billing.ChargeCDRDto;
+import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
+import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.rating.EDR;
-import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
+import org.meveo.service.medina.impl.CSVCDRParser;
 import org.meveo.service.notification.DefaultObserver;
 
 /**
  * API for CDR processing and mediation handling in general
+ * 
  * @lastModifiedVersion willBeSetLater
  * 
  * @author Andrius Karpavicius
@@ -70,91 +77,100 @@ public class MediationApi extends BaseApi {
     Map<Long, Timer> timers = new HashMap<Long, Timer>();
 
     /**
-     * Accepts a list of CDR line. This CDR is parsed and created as EDR. CDR is same format use in mediation job
+     * Register EDRS
      * 
-     * @param postData String of CDRs
+     * @param postData String of CDRs. This CDR is parsed and created as EDR. CDR is same format use in mediation job
      * @throws MeveoApiException Meveo api exception
      * @throws BusinessException business exception.
      */
     public void registerCdrList(CdrListDto postData) throws MeveoApiException, BusinessException {
 
-        List<String> cdr = postData.getCdr();
-        if (cdr != null && cdr.size() > 0) {
-            try {
-                cdrParsingService.initByApi(currentUser.getUserName(), postData.getIpAddress());
-            } catch (BusinessException e1) {
-                log.error("failed to init by api ");
-                throw new MeveoApiException(e1.getMessage());
-            }
+        List<String> cdrLines = postData.getCdr();
 
-            try {
-                for (String line : cdr) {
-                    List<EDR> edrs = cdrParsingService.getEDRList(line, CDRParsingService.CDR_ORIGIN_API);
-                    for (EDR edr : edrs) {
-                        log.debug("edr={}", edr);
-                        edrService.create(edr);
-                    }
-                }
-            } catch (CDRParsingException e) {
-                log.error("Error parsing cdr={}", e);
-                throw new MeveoApiException(e.getMessage());
-            }
-        } else {
-            if (cdr == null || cdr.size() == 0) {
-                missingParameters.add("cdr");
-            }
+        if (cdrLines == null || cdrLines.size() == 0) {
+            missingParameters.add("cdr");
+        }
 
-            handleMissingParameters();
+        handleMissingParameters();
+
+        CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), postData.getIpAddress());
+
+        try {
+            for (String line : cdrLines) {
+                CDR cdr = cdrParser.parseCDR(line);
+                cdrParsingService.createEdrs(cdr);
+            }
+        } catch (CDRParsingException e) {
+            log.error("Error parsing cdr={}", e);
+            throw new MeveoApiException(e.getMessage());
         }
     }
 
     /**
-     * Same as registerCdrList, but at the same process rate the EDR created
-     * 
-     * @param ip where request came from
-     * @param cdr String of CDR
+     * Register and rate EDRS
+     *
      * @throws MeveoApiException Meveo api exception
      * @throws BusinessException business exception.
      */
-    public void chargeCdr(String cdr, String ip) throws MeveoApiException, BusinessException {
-        if (!StringUtils.isBlank(cdr)) {
-            try {
-                cdrParsingService.initByApi(currentUser.getUserName(), ip);
-            } catch (BusinessException e1) {
-                log.error("failed to init by api");
-                throw new MeveoApiException(e1.getMessage());
-            }
-            List<EDR> edrs;
-            try {
-                edrs = cdrParsingService.getEDRList(cdr, CDRParsingService.CDR_ORIGIN_API);
-                for (EDR edr : edrs) {
-                    log.debug("edr={}", edr);
-                    edr.setSubscription(subscriptionService.findById(edr.getSubscription().getId(), Arrays.asList("offer")));
-                    edrService.create(edr);
-                    try {
-                        usageRatingService.rateUsageWithinTransaction(edr, false);
-                        if (edr.getStatus() == EDRStatusEnum.REJECTED) {
-                            log.error("edr rejected={}", edr.getRejectReason());
-                            throw new MeveoApiException(edr.getRejectReason());
-                        }
-                    } catch (BusinessException e) {
-                        if (e instanceof InsufficientBalanceException) {
-                            log.error("edr rejected={}", edr.getRejectReason());
-                            throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
-                        } else {
-                            log.error("Exception rating edr={}", e);
-                            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
-                        }
-                    }
-                }
-            } catch (CDRParsingException e) {
-                log.error("Error parsing cdr={}", e.getRejectionCause());
-                throw new MeveoApiException(e.getRejectionCause().toString());
-            }
-        } else {
+    public ChargeCDRResponseDto chargeCdr(ChargeCDRDto chargeCDRDto) throws MeveoApiException, BusinessException {
+        String cdrLine = chargeCDRDto.getCdr();
+
+        if (StringUtils.isBlank(cdrLine)) {
             missingParameters.add("cdr");
-            handleMissingParameters();
         }
+
+        handleMissingParameters();
+
+        CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), null);
+
+        try {
+
+            CDR cdr = cdrParser.parseCDR(cdrLine);
+
+            List<EDR> edrs = cdrParsingService.getEDRList(cdr);
+            List<WalletOperation> walletOperations = new ArrayList<>();
+            for (EDR edr : edrs) {
+                log.debug("edr={}", edr);
+                edr.setSubscription(edr.getSubscription());
+                if (!chargeCDRDto.isVirtual()) {
+                    edrService.create(edr);
+                }
+                List<WalletOperation> wo = rateUsage(edr, chargeCDRDto);
+                if (wo != null) {
+                    walletOperations.addAll(wo);
+                }
+            }
+
+            return createChargeCDRResultDto(walletOperations, chargeCDRDto.isReturnWalletOperations());
+
+        } catch (CDRParsingException e) {
+            log.error("Error parsing cdr={}", e.getRejectionCause());
+            throw new MeveoApiException(e.getRejectionCause().toString());
+        }
+    }
+
+    private ChargeCDRResponseDto createChargeCDRResultDto(List<WalletOperation> walletOperations, boolean returnWalletOperations) {
+
+        ChargeCDRResponseDto result = new ChargeCDRResponseDto();
+        BigDecimal amountWithTax = BigDecimal.ZERO;
+        BigDecimal amountWithoutTax = BigDecimal.ZERO;
+        BigDecimal amountTax = BigDecimal.ZERO;
+        for (WalletOperation walletOperation : walletOperations) {
+            if (returnWalletOperations) {
+                WalletOperationDto walletOperationDto = new WalletOperationDto(walletOperation);
+                result.getWalletOperations().add(walletOperationDto);
+            }
+            amountWithTax = amountWithTax.add(walletOperation.getAmountWithTax() != null ? walletOperation.getAmountWithTax() : BigDecimal.ZERO);
+            amountWithoutTax = amountWithoutTax.add(walletOperation.getAmountWithoutTax() != null ? walletOperation.getAmountWithoutTax() : BigDecimal.ZERO);
+            amountTax = amountTax.add(walletOperation.getAmountTax() != null ? walletOperation.getAmountTax() : BigDecimal.ZERO);
+        }
+        if (returnWalletOperations) {
+            result.setWalletOperationCount(result.getWalletOperations().size());
+        }
+        result.setAmountTax(amountTax);
+        result.setAmountWithoutTax(amountWithoutTax);
+        result.setAmountWithTax(amountWithTax);
+        return result;
     }
 
     @Timeout
@@ -172,59 +188,63 @@ public class MediationApi extends BaseApi {
      * Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity
      * (PREPAID_RESRV_DELAY_MS)
      * 
-     * @param cdr String of CDR
+     * @param cdrLine String of CDR
      * @param ip where request came from
      * @return Available quantity and reservationID is returned. if the reservation succeed then returns -1, else returns the available quantity for this cdr
      * @throws MeveoApiException Meveo api exception
      * @throws BusinessException business exception.
      */
-    public CdrReservationResponseDto reserveCdr(String cdr, String ip) throws MeveoApiException, BusinessException {
+    public CdrReservationResponseDto reserveCdr(String cdrLine, String ip) throws MeveoApiException, BusinessException {
         CdrReservationResponseDto result = new CdrReservationResponseDto();
         // TODO: if insufficient balance retry with lower quantity
         result.setAvailableQuantity(-1);
-        if (!StringUtils.isBlank(cdr)) {
-            try {
-                cdrParsingService.initByApi(currentUser.getUserName(), ip);
-            } catch (BusinessException e1) {
-                log.error("failed to init by api");
-                throw new MeveoApiException(e1.getMessage());
-            }
-            List<EDR> edrs;
-            try {
-                edrs = cdrParsingService.getEDRList(cdr, CDRParsingService.CDR_ORIGIN_API);
-                for (EDR edr : edrs) {
-                    log.debug("edr={}", edr);
-                    edrService.create(edr);
-                    try {
-                        Reservation reservation = usageRatingService.reserveUsageWithinTransaction(edr);
-                        if (edr.getStatus() == EDRStatusEnum.REJECTED) {
-                            log.error("edr rejected={}", edr.getRejectReason());
-                            throw new MeveoApiException(edr.getRejectReason());
-                        }
-                        result.setReservationId(reservation.getId());
-                        // schedule cancellation at expiry
-                        TimerConfig timerConfig = new TimerConfig();
-                        Object[] objs = { reservation.getId(), currentUser };
-                        timerConfig.setInfo(objs);
-                        Timer timer = timerService.createSingleActionTimer(appProvider.getPrepaidReservationExpirationDelayinMillisec(), timerConfig);
-                        timers.put(reservation.getId(), timer);
-                    } catch (BusinessException e) {
-                        log.error("Exception rating edr={}", e);
-                        if ("INSUFFICIENT_BALANCE".equals(e.getMessage())) {
-                            throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
-                        } else {
-                            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
-                        }
 
-                    }
-                }
-            } catch (CDRParsingException e) {
-                log.error("Error parsing cdr={}", e.getRejectionCause());
-                throw new MeveoApiException(e.getRejectionCause().toString());
-            }
-        } else {
+        if (StringUtils.isBlank(cdrLine)) {
             missingParameters.add("cdr");
-            handleMissingParameters();
+        }
+
+        handleMissingParameters();
+
+        CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), ip);
+
+        List<EDR> edrs;
+        try {
+
+            CDR cdr = cdrParser.parseCDR(cdrLine);
+
+            edrs = cdrParsingService.getEDRList(cdr);
+            for (EDR edr : edrs) {
+                edrService.create(edr);
+                try {
+                    Reservation reservation = usageRatingService.reserveUsageWithinTransaction(edr);
+                    if (edr.getRatingRejectionReason() != null) {
+                        throw new MeveoApiException(edr.getRatingRejectionReason());
+                    }
+                    result.setReservationId(reservation.getId());
+                    // schedule cancellation at expiry
+                    TimerConfig timerConfig = new TimerConfig();
+                    Object[] objs = { reservation.getId(), currentUser };
+                    timerConfig.setInfo(objs);
+                    Timer timer = timerService.createSingleActionTimer(appProvider.getPrepaidReservationExpirationDelayinMillisec(), timerConfig);
+                    timers.put(reservation.getId(), timer);
+
+                } catch (InsufficientBalanceException e) {
+                    log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+                    throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
+
+                } catch (RatingException e) {
+                    log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+                    throw new MeveoApiException(MeveoApiErrorCodeEnum.RATING_REJECT, e.getMessage());
+
+                } catch (BusinessException e) {
+                    log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
+                    throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
+                }
+
+            }
+        } catch (CDRParsingException e) {
+            log.error("Error parsing cdr={}", e.getRejectionCause());
+            throw new MeveoApiException(e.getRejectionCause().toString());
         }
         return result;
     }
@@ -253,21 +273,7 @@ public class MediationApi extends BaseApi {
                     reservationService.cancelPrepaidReservation(reservation);
                     EDR edr = reservation.getOriginEdr();
                     edr.setQuantity(reservationDto.getConsumedQuantity());
-                    try {
-                        usageRatingService.rateUsageWithinTransaction(edr, false);
-                        if (edr.getStatus() == EDRStatusEnum.REJECTED) {
-                            log.error("edr rejected={}", edr.getRejectReason());
-                            throw new MeveoApiException(edr.getRejectReason());
-                        }
-                    } catch (BusinessException e) {
-                        if (e instanceof InsufficientBalanceException) {
-                            log.error("edr rejected={}", edr.getRejectReason());
-                            throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
-                        } else {
-                            log.error("Exception rating edr={}", e);
-                            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
-                        }
-                    }
+                    rateUsage(edr, new ChargeCDRDto());
                 } else {
                     throw new BusinessException("CONSUMPTION_OVER_QUANTITY_RESERVED");
                 }
@@ -288,6 +294,28 @@ public class MediationApi extends BaseApi {
             missingParameters.add("reservation");
             handleMissingParameters();
         }
+    }
+
+    private List<WalletOperation> rateUsage(EDR edr, ChargeCDRDto chargeCDRDto) throws MeveoApiException {
+
+        List<WalletOperation> walletOperations = null;
+        try {
+            walletOperations = usageRatingService.rateUsageWithinTransaction(edr, chargeCDRDto.isVirtual(), chargeCDRDto.isRateTriggeredEdr(), chargeCDRDto.getMaxDepth(), 0);
+
+        } catch (InsufficientBalanceException e) {
+            log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.INSUFFICIENT_BALANCE, e.getMessage());
+
+        } catch (RatingException e) {
+            log.trace("Failed to rate EDR {}: {}", edr, e.getRejectionReason());
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.RATING_REJECT, e.getMessage());
+
+        } catch (BusinessException e) {
+            log.error("Failed to rate EDR {}: {}", edr, e.getMessage(), e);
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, e.getMessage());
+        }
+
+        return walletOperations;
     }
 
     /**

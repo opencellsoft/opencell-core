@@ -27,13 +27,18 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.RoundingModeEnum;
 
 /**
+ * @author Edward P. Legaspi
  * @author R.AITYAAZZA
  * @author Said Ramli
  * @lastModifiedVersion 5.1
  */
 public class NumberUtils {
 
-    private static final BigDecimal HUNDRED = new BigDecimal("100");
+    public static final BigDecimal HUNDRED = new BigDecimal("100");
+
+    public static final Integer DEFAULT_NUMBER_DIGITS_DECIMAL_UI = 2;
+
+    public static final Integer DEFAULT_NUMBER_DIGITS_DECIMAL = 12;
 
     public static BigDecimal round(BigDecimal what, int howmuch, RoundingModeEnum roundingModeEnum) {
         if (what == null) {
@@ -110,7 +115,17 @@ public class NumberUtils {
     }
 
     /**
-     * Compute derived amounts amountWithoutTax/amountWithTax/amountTax
+     * Get BigDecimal as a string
+     * @param bigDecimal
+     * @return A null-safe Plain String value of the bigDecimal
+     */
+    public static String toPlainString(BigDecimal bigDecimal) {
+        return bigDecimal != null ? bigDecimal.toPlainString() : BigDecimal.ZERO.toPlainString();
+    }
+
+    /**
+     * Compute derived amounts amountWithoutTax/amountWithTax/amountTax. If taxPercent is null, or ZERO returned amountWithoutTax and amountWithTax values will be the same (which
+     * one, depending on isEnterprise value)
      * 
      * @param amountWithoutTax Amount without tax
      * @param amountWithTax Amount with tax
@@ -145,5 +160,13 @@ public class NumberUtils {
         BigDecimal amountTax = amountWithTax.subtract(amountWithoutTax);
 
         return new BigDecimal[] { amountWithoutTax, amountWithTax, amountTax };
+    }
+
+    public static long parseLongDefault(String value, long defaultValue) {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return  defaultValue;
+        }
     }
 }

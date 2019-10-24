@@ -12,7 +12,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
  * The Class UsageChargeTemplateDto.
  *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 6.0
+ * @lastModifiedVersion 7.0
  */
 @XmlRootElement(name = "UsageChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -212,20 +212,20 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
                 + ", description=" + description + ", updatedCode=" + updatedCode + "]";
     }
 
-    public Boolean getTriggerNextCharge() {
-        return triggerNextCharge;
-    }
+	public Boolean getTriggerNextCharge() {
+		return triggerNextCharge;
+	}
 
-    public void setTriggerNextCharge(Boolean triggerNextCharge) {
-        this.triggerNextCharge = triggerNextCharge;
-    }
+	public void setTriggerNextCharge(Boolean triggerNextCharge) {
+		this.triggerNextCharge = triggerNextCharge;
+	}
 
-    public String getTriggerNextChargeEL() {
-        return triggerNextChargeEL;
-    }
+	public String getTriggerNextChargeEL() {
+		return triggerNextChargeEL;
+	}
 
-    public void setTriggerNextChargeEL(String triggerNextChargeEL) {
-        this.triggerNextChargeEL = triggerNextChargeEL;
-    }
+	public void setTriggerNextChargeEL(String triggerNextChargeEL) {
+		this.triggerNextChargeEL = triggerNextChargeEL;
+	}
 
 }

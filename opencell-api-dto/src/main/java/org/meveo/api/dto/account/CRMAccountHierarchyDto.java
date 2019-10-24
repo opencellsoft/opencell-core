@@ -201,6 +201,21 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
     private List<String> discountPlansForTermination;
 
     /**
+     * Mailing type.
+     */
+    private String mailingType;
+
+    /**
+     * Email Template code.
+     */
+    private String emailTemplate;
+
+    /**
+     * a list of emails separated by comma.
+     */
+    private String ccedEmails;
+
+    /**
      * Gets the crm account type.
      *
      * @return the crm account type
@@ -993,4 +1008,52 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
 	public void setDiscountPlansForInstantiation(List<DiscountPlanDto> discountPlansForInstantiation) {
 		this.discountPlansForInstantiation = discountPlansForInstantiation;
 	}
+
+    /**
+     * Gets the mailing type
+     * @return mailing type
+     */
+    public String getMailingType() {
+        return mailingType;
+    }
+
+    /**
+     * Sets the mailing type.
+     * @param mailingType mailing type
+     */
+    public void setMailingType(String mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    /**
+     * Gets the Email template code.
+     * @return Email template code
+     */
+    public String getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    /**
+     * Sets Email template code.
+     * @param emailTemplate
+     */
+    public void setEmailTemplate(String emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
+    /**
+     * Gets cc emails.
+     * @return cc emails
+     */
+    public String getCcedEmails() {
+        return ccedEmails;
+    }
+
+    /**
+     * Sets cc Emails.
+     * @param ccedEmails
+     */
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
 }

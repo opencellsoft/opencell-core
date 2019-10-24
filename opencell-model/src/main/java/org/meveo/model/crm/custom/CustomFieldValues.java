@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,9 +12,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ICustomFieldEntity;
@@ -24,13 +34,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 
 /**
  * Represents custom field values held by an ICustomFieldEntity entity
@@ -65,7 +68,7 @@ public class CustomFieldValues implements Serializable {
      */
     @Transient
     private Set<String> dirtyCfPeriods = new HashSet<>();
-
+    
     /**
      * indicates if customFieldValues will be encrypted
      */
@@ -948,7 +951,14 @@ public class CustomFieldValues implements Serializable {
 	public boolean isEncrypted() {
 		return encrypted;
 	}
-	
-	
+
+    public boolean containsCfValue(String code, String className) {
+        return Optional.ofNullable(this.getValuesByCode()).map(Map::values)
+                .map(l -> l.stream().flatMap(Collection::stream).map(CustomFieldValue::getAllEntities).flatMap(Collection::stream).anyMatch(referenceWrapper ->
+                        (className.toLowerCase().contains(
+                                referenceWrapper.getClassnameCode() == null ? referenceWrapper.getClassname().toLowerCase() : referenceWrapper.getClassnameCode().toLowerCase())
+                                || Objects.equals(referenceWrapper.getClassname(), className)) && Objects.equals(referenceWrapper.getCode(), code))).orElse(false);
+
+    }
 	
 }

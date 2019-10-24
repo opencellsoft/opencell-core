@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -407,7 +408,7 @@ public class ElasticClient {
         }
 
         if (queuedChanges.isNoChange()) {
-            log.trace("Nothing to flush to ES");
+//          log.trace("Nothing to flush to ES");
             return;
         }
         RestHighLevelClient client = esConnection.getClient();
@@ -503,7 +504,7 @@ public class ElasticClient {
      * @param sortFields - Fields to sort by. If omitted, will sort by score.
      * @param sortOrders Sorting orders
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
-     * @param classInfo Entity classes to match. If not provided will look in all indices of a current provider.
+     * @param classnamesOrCetCodes Entity classes or Custom entity template codes to match. If not provided will look in all indices of a current provider.
      * @return Search result
      * @throws BusinessException General business exception
      */
@@ -662,7 +663,7 @@ public class ElasticClient {
      *        with a corresponding field and descending order, unless sorting included valid_xxx fields, in which case they will be given priority first.
      * @param sortOrders Sorting orders
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
-     * @param classInfo Entity classes to match. If not provided will look in all indices of a current provider.
+     * @param classnamesOrCetCodes Entity classes or Custom entity template codes to match. If not provided will look in all indices of a current provider.
      * @return Search result
      * @throws BusinessException General business exception
      */
@@ -875,7 +876,9 @@ public class ElasticClient {
                     }
 
                 } else {
+                    filterValue = Optional.ofNullable(filterValue).orElse(queryValues.get("id"));
                     queryBuilder = QueryBuilders.matchQuery(fieldName, filterValue);
+
                 }
 
                 if (condition != null && condition.startsWith("filter")) {

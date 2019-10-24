@@ -37,11 +37,14 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -57,15 +60,17 @@ import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0.1
- **/
-
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class BillingAccountApi extends AccountEntityApi {
@@ -112,8 +117,14 @@ public class BillingAccountApi extends AccountEntityApi {
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
 
-    public void create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
-        create(postData, true);
+    @Inject
+    private EmailTemplateService emailTemplateService;
+    
+    @Inject
+    private InvoiceSubCategoryService invoiceSubCategoryService;
+
+    public BillingAccount create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
+        return create(postData, true);
     }
 
     public BillingAccount create(BillingAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
@@ -122,9 +133,6 @@ public class BillingAccountApi extends AccountEntityApi {
 
     public BillingAccount create(BillingAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
         if (StringUtils.isBlank(postData.getCustomerAccount())) {
             missingParameters.add("customerAccount");
         }
@@ -141,9 +149,12 @@ public class BillingAccountApi extends AccountEntityApi {
             if (StringUtils.isBlank(postData.getEmail())) {
                 missingParameters.add("email");
             }
+            if (postData.getMailingType()!=null && StringUtils.isBlank(postData.getEmailTemplate())) {
+                missingParameters.add("emailTemplate");
+            }
         }
 
-        handleMissingParametersAndValidate(postData);
+        handleMissingParameters(postData);
 
         if (billingAccountService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(BillingAccount.class, postData.getCode());
@@ -168,8 +179,29 @@ public class BillingAccountApi extends AccountEntityApi {
         if (tradingLanguage == null) {
             throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
         }
+        
+        MailingTypeEnum mailingType = null;
+        if (postData.getMailingType() != null) {
+            mailingType = MailingTypeEnum.getByLabel(postData.getMailingType());
+        }
+
+        EmailTemplate emailTemplate = null;
+        if (postData.getEmailTemplate() != null) {
+            emailTemplate = emailTemplateService.findByCode(postData.getEmailTemplate());
+            if (emailTemplate == null) {
+                throw new EntityDoesNotExistsException(EmailTemplate.class, postData.getEmailTemplate());
+            }
+        }
 
         BillingAccount billingAccount = new BillingAccount();
+        
+        if(postData.getMinimumInvoiceSubCategory() != null) {
+            InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
+            if (minimumInvoiceSubCategory == null) {
+                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
+            }
+            billingAccount.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
+        }
         
         if (!StringUtils.isBlank(postData.getPhone())) {
         	postData.getContactInformation().setPhone(postData.getPhone());
@@ -178,7 +210,6 @@ public class BillingAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getEmail())) {
         	postData.getContactInformation().setEmail(postData.getEmail());
         }
-        
         populate(postData, billingAccount);
 
         billingAccount.setCustomerAccount(customerAccount);
@@ -199,6 +230,9 @@ public class BillingAccountApi extends AccountEntityApi {
         } else {
             billingAccount.setElectronicBilling(postData.getElectronicBilling());
         }
+        billingAccount.setMailingType(mailingType);
+        billingAccount.setEmailTemplate(emailTemplate);
+        billingAccount.setCcedEmails(postData.getCcedEmails());
         billingAccount.setExternalRef1(postData.getExternalRef1());
         billingAccount.setExternalRef2(postData.getExternalRef2());
 
@@ -233,7 +267,7 @@ public class BillingAccountApi extends AccountEntityApi {
 				}
 				
 				discountPlanService.detach(dp);
-				dp = copyFromDto(discountPlanDto, dp);
+				dp = DiscountPlanDto.copyFromDto(discountPlanDto, dp);
 				
 				// populate customFields
 	            try {
@@ -255,8 +289,8 @@ public class BillingAccountApi extends AccountEntityApi {
         return billingAccount;
     }
 
-    public void update(BillingAccountDto postData) throws MeveoApiException, BusinessException {
-        update(postData, true);
+    public BillingAccount update(BillingAccountDto postData) throws MeveoApiException, BusinessException {
+        return update(postData, true);
     }
 
     public BillingAccount update(BillingAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
@@ -274,6 +308,26 @@ public class BillingAccountApi extends AccountEntityApi {
         BillingAccount billingAccount = billingAccountService.findByCode(postData.getCode());
         if (billingAccount == null) {
             throw new EntityDoesNotExistsException(BillingAccount.class, postData.getCode());
+        }
+
+        MailingTypeEnum mailingType = null;
+        if (postData.getMailingType() != null) {
+            mailingType = MailingTypeEnum.getByLabel(postData.getMailingType());
+        }
+
+        EmailTemplate emailTemplate = null;
+        if (postData.getEmailTemplate() != null) {
+            emailTemplate = emailTemplateService.findByCode(postData.getEmailTemplate());
+            if (emailTemplate == null) {
+                throw new EntityDoesNotExistsException(EmailTemplate.class, postData.getEmailTemplate());
+            }
+        }
+        
+        if(postData.getMinimumInvoiceSubCategory() != null) {
+            InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
+            if (invoiceSubCategory == null) {
+                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
+            }
         }
 
         if (postData.getCustomerAccount() != null) {
@@ -317,6 +371,14 @@ public class BillingAccountApi extends AccountEntityApi {
             }
             billingAccount.setTradingLanguage(tradingLanguage);
         }
+        
+        if(postData.getMinimumInvoiceSubCategory() != null) {
+            InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
+            if (minimumInvoiceSubCategory == null) {
+                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
+            }
+            billingAccount.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
+        }
 
         if (postData.getExternalRef1() != null) {
             billingAccount.setExternalRef1(postData.getExternalRef1());
@@ -349,9 +411,20 @@ public class BillingAccountApi extends AccountEntityApi {
         if (postData.getEmail() != null) {
             billingAccount.getContactInformation().setEmail(postData.getEmail());
         }
-
+        if (mailingType != null) {
+            billingAccount.setMailingType(mailingType);
+        }
+        if (emailTemplate != null) {
+            billingAccount.setEmailTemplate(emailTemplate);
+        }
+        if (postData.getCcedEmails() != null) {
+            billingAccount.setCcedEmails(postData.getCcedEmails());
+        }
         if (billingAccount.getElectronicBilling() && billingAccount.getContactInformation().getEmail() == null) {
             missingParameters.add("email");
+            if (billingAccount.getMailingType() != null && billingAccount.getEmailTemplate() == null) {
+                missingParameters.add("emailTemplate");
+            }
             handleMissingParameters();
         }
 
@@ -427,7 +500,7 @@ public class BillingAccountApi extends AccountEntityApi {
 				}
 				
 				discountPlanService.detach(dp);
-				dp = copyFromDto(discountPlanDto, dp);
+				dp = DiscountPlanDto.copyFromDto(discountPlanDto, dp);
 				
 				// populate customFields
 	            try {
@@ -448,23 +521,6 @@ public class BillingAccountApi extends AccountEntityApi {
 
         return billingAccount;
     }
-    
-	public DiscountPlan copyFromDto(DiscountPlanDto source, DiscountPlan target) {
-		if (source.getStartDate() != null) {
-			target.setStartDate(source.getStartDate());
-		}
-		if (source.getEndDate() != null) {
-			target.setEndDate(source.getEndDate());
-		}		
-		if (source.getDurationUnit() != null) {
-			target.setDurationUnit(source.getDurationUnit());
-		}
-		if (source.getDefaultDuration() != null) {
-			target.setDefaultDuration(source.getDefaultDuration());
-		}
-
-		return target;
-	}
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
     public BillingAccountDto find(String billingAccountCode) throws MeveoApiException {
@@ -558,16 +614,18 @@ public class BillingAccountApi extends AccountEntityApi {
      * Create or update Billing Account based on Billing Account Code
      * 
      * @param postData posted data to API
-     * 
+     * @return the billing account
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
-    public void createOrUpdate(BillingAccountDto postData) throws MeveoApiException, BusinessException {
-        if (billingAccountService.findByCode(postData.getCode()) == null) {
-            create(postData);
+    public BillingAccount createOrUpdate(BillingAccountDto postData) throws MeveoApiException, BusinessException {
+        BillingAccount billingAccount = billingAccountService.findByCode(postData.getCode());
+        if (billingAccount == null) {
+            billingAccount = create(postData);
         } else {
-            update(postData);
+            billingAccount = update(postData);
         }
+        return billingAccount;
     }
 
     public BillingAccount terminate(BillingAccountDto postData) throws MeveoApiException {

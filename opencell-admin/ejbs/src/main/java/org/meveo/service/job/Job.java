@@ -1,7 +1,24 @@
 package org.meveo.service.job;
 
-import java.util.Collection;
-import java.util.Map;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
+import org.meveo.cache.JobCacheContainerProvider;
+import org.meveo.cache.JobRunningStatusEnum;
+import org.meveo.event.qualifier.Processed;
+import org.meveo.model.audit.ChangeOriginEnum;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.audit.AuditOrigin;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.util.ApplicationProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
@@ -15,35 +32,20 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.ResourceBundle;
-import org.meveo.cache.JobCacheContainerProvider;
-import org.meveo.cache.JobRunningStatusEnum;
-import org.meveo.event.qualifier.Processed;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
-import org.meveo.model.jobs.JobCategoryEnum;
-import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.admin.impl.UserService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.util.ApplicationProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Interface that must implement all jobs that are managed in meveo application by the JobService bean. The implementation must be a session EJB and must statically register itself
  * (through its jndi name) to the JobService.
  * 
  * @author seb
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 public abstract class Job {
 
-    public static String CFT_PREFIX = "JOB";
+    public static String CFT_PREFIX = "JobInstance";
 
     @Resource
     protected TimerService timerService;
@@ -81,6 +83,9 @@ public abstract class Job {
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
 
+    @Inject
+    private AuditOrigin auditOrigin;
+
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -93,6 +98,9 @@ public abstract class Job {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void execute(JobInstance jobInstance, JobExecutionResultImpl executionResult) throws BusinessException {
 
+        auditOrigin.setAuditOrigin(ChangeOriginEnum.JOB);
+        auditOrigin.setAuditOriginName(jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
+
         if (executionResult == null) {
             executionResult = new JobExecutionResultImpl();
             executionResult.setJobInstance(jobInstance);
@@ -100,9 +108,9 @@ public abstract class Job {
 
         JobRunningStatusEnum isRunning = jobCacheContainerProvider.markJobAsRunning(jobInstance.getId(), jobInstance.isLimitToSingleNode());
         if (isRunning == JobRunningStatusEnum.NOT_RUNNING || (isRunning == JobRunningStatusEnum.RUNNING_OTHER && !jobInstance.isLimitToSingleNode())) {
-            log.debug("Starting Job {} of type {} with currentUser {}. Processors available {}, paralel procesors requested {}", jobInstance.getCode(),
-                jobInstance.getJobTemplate(), currentUser.toStringShort(), Runtime.getRuntime().availableProcessors(),
-                customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false));
+            log.info("Starting Job {} of type {}  with currentUser {}. Processors available {}, paralel procesors requested {}. Job parameters {}", jobInstance.getCode(),
+                jobInstance.getJobTemplate(), currentUser.toString(), Runtime.getRuntime().availableProcessors(),
+                customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false), jobInstance.getParametres());
 
             try {
                 execute(executionResult, jobInstance);
@@ -111,12 +119,19 @@ public abstract class Job {
                 log.trace("Job {} of type {} executed. Persisting job execution results", jobInstance.getCode(), jobInstance.getJobTemplate());
 
                 Boolean jobCompleted = jobExecutionService.persistResult(this, executionResult, jobInstance);
-                log.debug("Job {} of type {} execution finished. Job completed {}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobCompleted);
+                log.info("Job {} of type {} execution finished. Job completed {}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobCompleted);
                 eventJobProcessed.fire(executionResult);
 
-                if (jobCompleted != null) {
-                    MeveoUser lastCurrentUser = currentUser.unProxy();
-                    jobExecutionService.executeNextJob(this, jobInstance, !jobCompleted, lastCurrentUser);
+                if (jobCompleted != null && jobExecutionService.isJobRunningOnThis(jobInstance)) {
+                    jobCacheContainerProvider.markJobAsNotRunning(jobInstance.getId());
+
+                    if (!jobCompleted) {
+                        execute(jobInstance, null);
+
+                    } else if (jobInstance.getFollowingJob() != null) {
+                        MeveoUser lastCurrentUser = currentUser.unProxy();
+                        jobExecutionService.executeNextJob(this, jobInstance, lastCurrentUser);
+                    }
                 }
 
             } catch (Exception e) {
@@ -127,7 +142,7 @@ public abstract class Job {
             }
 
         } else {
-            log.trace("Job {} of type {} execution will be skipped. Reason: isRunning={}", jobInstance.getCode(), jobInstance.getJobTemplate(), isRunning);
+            log.info("Job {} of type {} execution will be skipped. Reason: isRunning={}", jobInstance.getCode(), jobInstance.getJobTemplate(), isRunning);
 
             // Mark job a finished. Applies in cases where execution result was already saved to db - like when executing job from API
             if (!executionResult.isTransient()) {
@@ -232,7 +247,23 @@ public abstract class Job {
 
         return null;
     }
-    
+
+    /**
+     * Gets the parameter CF value if found, otherwise return CF value from job definition
+     *
+     * @param jobInstance the job instance
+     * @param cfCode Custom field code
+     * @param defaultValue Default value if no value found
+     * @return Parameter or custom field value
+     */
+    protected Object getParamOrCFValue(JobInstance jobInstance, String cfCode, Object defaultValue) {
+        Object value = getParamOrCFValue(jobInstance, cfCode);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value;
+    }
+
     /**
      * Gets the parameter CF value if found , otherwise return CF value from customFieldInstanceService
      *

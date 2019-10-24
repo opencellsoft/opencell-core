@@ -19,6 +19,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -29,7 +30,8 @@ import org.slf4j.Logger;
 
 /**
  * @author HORRI Khalid
- * @lastModifiedVersion 6.0
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Stateless
 public class SubscriptionStatusJobBean extends BaseJobBean {
@@ -69,10 +71,18 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 				if (subscription.getSubscriptionRenewal().isAutoRenew()) {
 					Date subscribedTillDate = subscription.getSubscribedTillDate();
 					while (subscribedTillDate.before(untillDate)) {
+						Date calendarDate = new Date();
 						Calendar calendar = new GregorianCalendar();
-						calendar.setTime(subscription.getSubscribedTillDate());
-						calendar.add(subscription.getSubscriptionRenewal().getRenewForUnit().getCalendarField(), subscription.getSubscriptionRenewal().getRenewFor());
-						subscription.setSubscribedTillDate(calendar.getTime());
+						if (subscription.getSubscriptionRenewal().getRenewalTermType() == SubscriptionRenewal.RenewalTermTypeEnum.CALENDAR){
+							org.meveo.model.catalog.Calendar calendarRenew = subscription.getSubscriptionRenewal().getCalendarRenewFor();
+							calendarRenew.setInitDate(subscription.getSubscribedTillDate());
+							calendarDate = calendarRenew.nextCalendarDate(subscription.getSubscribedTillDate());
+						} else {
+							calendar.setTime(subscription.getSubscribedTillDate());
+							calendar.add(subscription.getSubscriptionRenewal().getRenewForUnit().getCalendarField(), subscription.getSubscriptionRenewal().getRenewFor());
+							calendarDate = calendar.getTime();
+						}
+						subscription.setSubscribedTillDate(calendarDate);
 						subscription.setRenewed(true);
 						subscription.setRenewalNotifiedDate(null);
 
@@ -115,25 +125,36 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void updateServiceInstanceStatus(JobExecutionResultImpl result, Long serviceId) {
+	public void updateServiceInstanceStatus(JobExecutionResultImpl result, Long serviceId, Date untillDate) {
 		try {
 			ServiceInstance serviceInstance = serviceInstanceService.findById(serviceId);
 			// Handle subscription renewal or termination
 			if (serviceInstance.isSubscriptionExpired() && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
 
 				if (serviceInstance.getServiceRenewal().isAutoRenew()) {
-					Calendar calendar = new GregorianCalendar();
-					calendar.setTime(serviceInstance.getSubscribedTillDate());
-					calendar.add(serviceInstance.getServiceRenewal().getRenewForUnit().getCalendarField(),
-							serviceInstance.getServiceRenewal().getRenewFor());
-					serviceInstance.setSubscribedTillDate(calendar.getTime());
+
+					while (serviceInstance.getSubscribedTillDate() != null && serviceInstance.getSubscribedTillDate().before(untillDate)) {
+						Date calendarDate = new Date();
+						Calendar calendar = new GregorianCalendar();
+						if (serviceInstance.getServiceRenewal().getRenewalTermType() == SubscriptionRenewal.RenewalTermTypeEnum.CALENDAR) {
+							org.meveo.model.catalog.Calendar calendarRenew = serviceInstance.getServiceRenewal().getCalendarRenewFor();
+							calendarRenew.setInitDate(serviceInstance.getSubscribedTillDate());
+							calendarDate = calendarRenew.nextCalendarDate(serviceInstance.getSubscribedTillDate());
+						} else {
+							calendar.setTime(serviceInstance.getSubscribedTillDate());
+							calendar.add(serviceInstance.getServiceRenewal().getRenewForUnit().getCalendarField(),
+									serviceInstance.getServiceRenewal().getRenewFor());
+							calendarDate = calendar.getTime();
+						}
+
+						serviceInstance.setSubscribedTillDate(calendarDate);
+					}
+
 					serviceInstance.setRenewed(true);
 					serviceInstance.setRenewalNotifiedDate(null);
-
 					if (serviceInstance.getServiceRenewal().isExtendAgreementPeriodToSubscribedTillDate()) {
 						serviceInstance.setEndAgreementDate(serviceInstance.getSubscribedTillDate());
 					}
-
 					serviceInstance = serviceInstanceService.update(serviceInstance);
 
 					log.debug("ServiceInstance {} has beed renewed to date {} with end agreement date of {}",

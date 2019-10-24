@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -38,6 +38,8 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
@@ -45,16 +47,18 @@ import org.meveo.model.payments.CustomerAccount;
 
 /**
  * Customer
- * 
+ *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "CUST", inheritCFValuesFrom = "seller")
+@WorkflowedEntity
+@CustomFieldEntity(cftCodePrefix = "Customer", inheritCFValuesFrom = "seller")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "crm_customer")
-public class Customer extends AccountEntity {
+public class Customer extends AccountEntity implements IWFEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Customer.class.getAnnotation(DiscriminatorValue.class)).value();
 
@@ -175,8 +179,8 @@ public class Customer extends AccountEntity {
     public void anonymize(String code) {
         super.anonymize(code);
         if (isNotEmpty(this.customerAccounts)) {
-			this.customerAccounts.forEach(ca -> ca.anonymize(code));
-		}
+            this.customerAccounts.forEach(ca -> ca.anonymize(code));
+        }
     }
 
 }

@@ -92,8 +92,8 @@ import org.slf4j.Logger;
  * @author Andrius Karpavicius
  * @author Tony Alejandro
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
- * 
+ * @author Khalid HORRI
+ * @lastModifiedVersion 8.0
  */
 @Stateless
 public class ElasticSearchIndexPopulationService implements Serializable {
@@ -141,9 +141,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     /**
      * Populate index with data of a given entity class
      *
-     * @param classname Entity full classname
-     * @param fromId Populate starting record id
-     * @param pageSize Number of records to retrieve
+     * @param classname  Entity full classname
+     * @param fromId     Populate starting record id
+     * @param pageSize   Number of records to retrieve
      * @param statistics Statistics to add progress info to
      * @return An array consisting of: Number of items added and last identifier processed
      * @throws BusinessException Communication with ES/bulk request execution exception
@@ -188,24 +188,27 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
         // Convert entities to map of values and supplement it with custom field values if applicable and add to a bulk request
         for (ISearchable entity : entities) {
+            if (getIndexAndType(entity) != null) {
+                if (isCEI) {
+                    indexAndType = getIndexAndType(entity);
 
-            if (isCEI) {
-                indexAndType = getIndexAndType(entity);
-                indexName = indexAndType.getIndexName();
-            }
-            lastId = entity.getId();
-            idForES = ElasticSearchIndexPopulationService.buildId(entity);
-            if (indexAndType.getType() != null) {
-                idForES = indexAndType.getType() + "_" + idForES;
-            }
+                    indexName = indexAndType.getIndexName();
 
-            Map<String, Object> valueMap = convertEntityToJson(entity, cftIndexable, cftNotIndexable, indexAndType.getType());
+                }
+                lastId = entity.getId();
+                idForES = ElasticSearchIndexPopulationService.buildId(entity);
+                if (indexAndType.getType() != null) {
+                    idForES = indexAndType.getType() + "_" + idForES;
+                }
 
-            try {
-                bulkRequest.add(new IndexRequest(indexName, ElasticSearchConfiguration.MAPPING_DOC_TYPE, idForES).source(valueMap));
-            } catch (Exception e) {
-                log.error("Failed to prepare data for index operation {}/{} values:{}", indexName, idForES, valueMap);
-                throw new BusinessException(e);
+                Map<String, Object> valueMap = convertEntityToJson(entity, cftIndexable, cftNotIndexable, indexAndType.getType());
+
+                try {
+                    bulkRequest.add(new IndexRequest(indexName, ElasticSearchConfiguration.MAPPING_DOC_TYPE, idForES).source(valueMap));
+                } catch (Exception e) {
+                    log.error("Failed to prepare data for index operation {}/{} values:{}", indexName, idForES, valueMap);
+                    throw new BusinessException(e);
+                }
             }
         }
 
@@ -222,7 +225,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         for (BulkItemResponse bulkItemResponse : bulkResponse.getItems()) {
             if (bulkItemResponse.getFailureMessage() != null) {
                 log.error("Failed to add document to Elastic Search for {}/{} reason: {}", bulkItemResponse.getIndex(), bulkItemResponse.getId(),
-                    bulkItemResponse.getFailureMessage(), bulkItemResponse.getFailure().getCause());
+                        bulkItemResponse.getFailureMessage(), bulkItemResponse.getFailure().getCause());
                 failedRequests++;
             }
         }
@@ -237,11 +240,11 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Convert entity to a map of values that is accepted by Elastic Search as document to be stored and indexed.
-     * 
-     * @param entity Entity to store in Elastic Search
-     * @param cftIndexable Sets to track CFTs that are indexable. Used in massive initial ES population.
+     *
+     * @param entity          Entity to store in Elastic Search
+     * @param cftIndexable    Sets to track CFTs that are indexable. Used in massive initial ES population.
      * @param cftNotIndexable Sets to track CFTs that are not indexable. Used in massive initial ES population.
-     * @param type Index type used to distinguish one entity type from another inside the same index. Optional, 'entityType' value wont be set if not provided.
+     * @param type            Index type used to distinguish one entity type from another inside the same index. Optional, 'entityType' value wont be set if not provided.
      * @return A map of values
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -421,7 +424,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Convert object to a map of fields (recursively).
-     * 
+     *
      * @param valueToConvert Object to convert
      * @return A map of fieldnames and values
      * @throws IllegalAccessException illegal access exception.
@@ -460,7 +463,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Make a REST call to drop absolutely <b>ALL</b> indexes (all providers).
-     * 
+     *
      * @throws BusinessException business exception
      */
     public void dropAllIndexes() throws BusinessException {
@@ -479,7 +482,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             log.error("Failed to delete all indexes in URL {}. Response {}", target.getUri(), deleteIndexResponse);
 
             throw new BusinessException(
-                "Failed to communicate or process data in Elastic Search. Http status " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
+                    "Failed to communicate or process data in Elastic Search. Http status " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
         }
     }
 
@@ -504,8 +507,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest(indexName);
 
             try {
-                @SuppressWarnings("unused")
-                AcknowledgedResponse responseResponse = client.indices().delete(deleteIndexRequest, RequestOptions.DEFAULT);
+                @SuppressWarnings("unused") AcknowledgedResponse responseResponse = client.indices().delete(deleteIndexRequest, RequestOptions.DEFAULT);
             } catch (IOException e) {
                 throw new BusinessException("Failed to delete index " + indexName + " in Elastic Search.", e);
             } catch (ElasticsearchStatusException e) {
@@ -519,7 +521,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Recreate indexes for a <b>current provider</b>. Index names are prefixed by provider code (removed spaces and lowercase).
-     * 
+     *
      * @throws BusinessException Failure to create index in ES exception.
      */
     @JpaAmpNewTx
@@ -546,8 +548,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             createIndexRequest.source(modelJson, XContentType.JSON);
 
             try {
-                @SuppressWarnings("unused")
-                CreateIndexResponse createResponse = client.indices().create(createIndexRequest, RequestOptions.DEFAULT);
+                @SuppressWarnings("unused") CreateIndexResponse createResponse = client.indices().create(createIndexRequest, RequestOptions.DEFAULT);
             } catch (IOException e) {
                 throw new BusinessException("Failed to create index " + indexName + " in Elastic Search.", e);
             }
@@ -573,7 +574,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Repopulate cache for a <b>current provider</b>, that stores index and type mapping to class and custom entity template code.
-     * 
+     *
      * @param populateCets Should custom entity templates be included
      */
     public void repopulateIndexAndTypeCache(boolean populateCets) {
@@ -609,7 +610,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Update Elastic Search model with custom entity template definitions - depending on the configuration might create new index for each CET
-     * 
+     *
      * @param cet Custom entity template
      * @throws BusinessException business exception
      */
@@ -666,8 +667,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             createIndexRequest.source(modelJson, XContentType.JSON);
 
             try {
-                @SuppressWarnings("unused")
-                CreateIndexResponse createResponse = esConnection.getClient().indices().create(createIndexRequest, RequestOptions.DEFAULT);
+                @SuppressWarnings("unused") CreateIndexResponse createResponse = esConnection.getClient().indices().create(createIndexRequest, RequestOptions.DEFAULT);
             } catch (IOException e) {
                 throw new BusinessException("Failed to create index " + realIndexName + "/" + indexName + " in Elastic Search.", e);
             }
@@ -679,7 +679,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Update Elastic Search model with custom field definition.
-     * 
+     *
      * @param cft Custom field template
      * @throws BusinessException business exception
      */
@@ -748,8 +748,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         putMappingRequest.source(fieldMappingJson, XContentType.JSON);
 
         try {
-            @SuppressWarnings("unused")
-            AcknowledgedResponse response = esConnection.getClient().indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
+            @SuppressWarnings("unused") AcknowledgedResponse response = esConnection.getClient().indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new BusinessException("Failed to update index " + indexName + " mapping in Elastic Search.", e);
         }
@@ -757,7 +756,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Get a number of records in a given db table
-     * 
+     *
      * @param tableName Native table name
      * @return Number of records
      */
@@ -777,9 +776,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     /**
      * Populate index with data of a given db table
      *
-     * @param tableName Native table name
-     * @param fromId Populate starting record id
-     * @param pageSize Number of records to retrieve. Value of -1 will retrieve all remaining records
+     * @param tableName  Native table name
+     * @param fromId     Populate starting record id
+     * @param pageSize   Number of records to retrieve. Value of -1 will retrieve all remaining records
      * @param statistics Statistics to add progress info to
      * @return An array consisting of: Number of items added and last identifier processed
      * @throws BusinessException Communication with ES/bulk request execution exception
@@ -858,7 +857,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             for (BulkItemResponse bulkItemResponse : bulkResponse.getItems()) {
                 if (bulkItemResponse.getFailureMessage() != null) {
                     log.error("Failed to add document to Elastic Search for {}/{} reason: {}", bulkItemResponse.getIndex(), bulkItemResponse.getId(),
-                        bulkItemResponse.getFailureMessage(), bulkItemResponse.getFailure().getCause());
+                            bulkItemResponse.getFailureMessage(), bulkItemResponse.getFailure().getCause());
                     failedRequests++;
                 }
             }
@@ -870,7 +869,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Remove custom entity template definition from Elastic Search model. Applies only for cases where each custom entity template has its own index - that is no type is used.
-     * 
+     *
      * @param cet Custom entity template
      * @throws BusinessException business exception
      */
@@ -928,7 +927,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     /**
      * Get all full index names as defined in Elastic search for a <b>current provider</b>, that is those indexes which name starts with a provider code (removed spaces and ). For
      * a mian provider a string value of 'null' is used.
-     * 
+     *
      * @return A list of full index names
      * @throws BusinessException Elastic search mapping can not be accessed
      */
@@ -947,8 +946,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         Response response = target.request().get();
         if (response.getStatus() == HttpURLConnection.HTTP_OK) {
 
-            @SuppressWarnings("rawtypes")
-            Map indexMappings = response.readEntity(Map.class);
+            @SuppressWarnings("rawtypes") Map indexMappings = response.readEntity(Map.class);
             for (Object indexName : indexMappings.keySet()) {
                 if (((String) indexName).startsWith(indexPrefix)) {
                     indexNames.add((String) indexName);
@@ -964,7 +962,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Get a unique list of indexes and type for given entity classes. All indexes of a <b>current provider</b> will be returned if no class information is provided.
-     * 
+     *
      * @param classesInfo A list of entity class information
      * @return A set of Full index name and type information. Index names are prefixed by provider code (removed spaces and lowercase).
      */
@@ -993,11 +991,11 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Determine index and type value for Elastic Search for a given class. Index names are prefixed by provider code (removed spaces and lowercase).
-     * 
+     *
      * @param clazzToConvert Entity class that extends ISearchable interface
-     * @param cetCode Custom entity template/custom table code
+     * @param cetCode        Custom entity template/custom table code
      * @return A full index name and type. Or null if no match was found e.g. not interested in storing in ES. Index names are prefixed by provider code (removed spaces and
-     *         lowercase).
+     * lowercase).
      */
     public ESIndexNameAndType getIndexAndType(Class<? extends ISearchable> clazzToConvert, String cetCode) {
 
@@ -1008,7 +1006,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Determine index and type value for Elastic Search for a given entity. Index names are prefixed by provider code (removed spaces and lowercase).
-     * 
+     *
      * @param entity ISearchable entity to be stored/indexed in Elastic Search
      * @return A full index name and type. Index names are prefixed by provider code (removed spaces and lowercase).
      */
@@ -1024,8 +1022,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Determine index and type value for Elastic Search for a given class and store it in indices cache
-     * 
-     * @param clazz Entity class that extends ISearchable interface
+     *
+     * @param clazz   Entity class that extends ISearchable interface
      * @param cetCode Custom entity template/custom table code
      * @return A full index name and type
      */
@@ -1037,9 +1035,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Determine index and type value for Elastic Search for a given class and store it in indices cache
-     * 
+     *
      * @param clazzToConvert Entity class that extends ISearchable interface
-     * @param cetCode Custom entity template/custom table code
+     * @param cetCode        Custom entity template/custom table code
      * @return A full index name and type
      */
     private ESIndexNameAndType addToIndexAndTypeCache(String classname, String cetCode) {
@@ -1072,9 +1070,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Remove index and type value mapping for a given class from indices cache
-     * 
+     *
      * @param clazzToConvert Entity class that extends ISearchable interface
-     * @param cetCode Custom entity template/custom table code
+     * @param cetCode        Custom entity template/custom table code
      */
     private void removeFromIndexAndTypeCache(Class<? extends ISearchable> clazzToConvert, String cetCode) {
 
@@ -1084,10 +1082,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Determine a classname and a Custom entity template code from index name and entity type
-     * 
+     *
      * @param fullIndexName Full index name
-     * @param type Entity type value as stored in Elastic search datatable value
-     * @param Entity type as stored in Elastic search index
+     * @param type          Entity type value as stored in Elastic search index data
      * @return An array with a full classname and a Custom entity code (when applicable). OR null if no match was found.
      */
     public String[] getClassnameAndCETCodeFromIndex(String fullIndexName, String type) {
@@ -1105,9 +1102,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Construct identifier for Elastic search for a given entity.
-     * 
+     *
      * @param entity Entity to construct ID for
-     * @return Identifier value. Its either code, id or <code>_<id> of an entity
+     * @return Identifier value. Its either code, id or &lt;code&gt;_&lt;id&gt; of an entity
      */
     protected static String buildId(ISearchable entity) {
         if (entity instanceof BusinessEntity) {
@@ -1121,7 +1118,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Get a summary of cached information.
-     * 
+     *
      * @return A list of a map containing cache information with cache name as a key and cache as a value
      */
     // @Override
@@ -1135,7 +1132,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Refresh cache by name. Removes <b>current provider's</b> data from cache and populates it again
-     * 
+     *
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
     // @Override
@@ -1149,7 +1146,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Populate cache by name
-     * 
+     *
      * @param cacheName Name of cache to populate or null to populate all caches
      */
     // @Override

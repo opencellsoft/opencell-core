@@ -11,6 +11,7 @@ import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
+import org.meveo.api.dto.billing.SubscriptionAndServicesToActivateRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionForCustomerRequestDto;
 import org.meveo.api.dto.billing.SubscriptionForCustomerResponseDto;
@@ -18,7 +19,6 @@ import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.dto.response.RawResponseDto;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
@@ -65,7 +65,7 @@ public interface SubscriptionWs extends IBaseWs {
      */
     @WebMethod
     SubscriptionForCustomerResponseDto activateForCustomer(@WebParam(name = "subscription") SubscriptionForCustomerRequestDto postData);
-    
+
     /**
      * Cancels the renewal term of an active subscription.
      * 
@@ -174,5 +174,14 @@ public interface SubscriptionWs extends IBaseWs {
     @WebMethod
     GetListServiceInstanceResponseDto listServiceInstance(@WebParam(name = "subscriptionCode") String subscriptionCode,
             @WebParam(name = "serviceInstanceCode") String serviceInstanceCode);
+
+    /**
+     * Create a subscription and activate services in a single transaction.
+     * 
+     * @param postData Subscription and services to activate data
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus subscribeAndActivateServices(@WebParam(name = "subscribeAndActivateServices") SubscriptionAndServicesToActivateRequestDto postData);
 
 }

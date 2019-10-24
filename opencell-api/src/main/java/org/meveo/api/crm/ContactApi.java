@@ -41,6 +41,10 @@ import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.intcrm.impl.ContactService;
 import org.primefaces.model.SortOrder;
 
+/**
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
+ */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class ContactApi extends AccountEntityApi {
@@ -71,7 +75,23 @@ public class ContactApi extends AccountEntityApi {
 
 
 	public Contact create(ContactDto postData) throws MeveoApiException, BusinessException {
-		checkAndHandleMissingParameters(postData);
+		if (StringUtils.isBlank(postData.getName().getFirstName())) {
+			missingParameters.add("firstName");
+		}
+
+		if (StringUtils.isBlank(postData.getName().getLastName())) {
+			missingParameters.add("lastName");
+		}
+
+		if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
+			missingParameters.add("email");
+			//missingParameters.add("code");
+		}
+		else if(StringUtils.isBlank(postData.getEmail())) {
+			missingParameters.add("email");
+		}
+
+		handleMissingParameters();
 
 		Contact contact = new Contact();
 		populate(postData, contact);
@@ -240,7 +260,20 @@ public class ContactApi extends AccountEntityApi {
 	}
 
 	public Contact createOrUpdate(ContactDto postData) throws MeveoApiException, BusinessException {
-		checkAndHandleMissingParameters(postData);
+		if (StringUtils.isBlank(postData.getName().getFirstName())) {
+			missingParameters.add("firstName");
+		}
+
+		if (StringUtils.isBlank(postData.getName().getLastName())) {
+			missingParameters.add("lastName");
+		}
+
+		if (StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
+			missingParameters.add("email");
+			//missingParameters.add("code");
+		}
+
+		handleMissingParameters();
 
 		String code = null;
 		if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
@@ -290,7 +323,7 @@ public class ContactApi extends AccountEntityApi {
 
 	@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
 	@FilterResults(propertyToFilter = "contacts.contact", itemPropertiesToFilter = {
-			@FilterProperty(property = "code", entityClass = Contact.class) })
+			@FilterProperty(property = "code", entityClass = Contact.class) }, totalRecords = "contacts.totalNumberOfRecords")
 	public ContactsResponseDto list(ContactDto postData, PagingAndFiltering pagingAndFiltering)
 			throws MeveoApiException {
 		return list(postData, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
@@ -298,7 +331,7 @@ public class ContactApi extends AccountEntityApi {
 
 	@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
 	@FilterResults(propertyToFilter = "contacts.contact", itemPropertiesToFilter = {
-			@FilterProperty(property = "code", entityClass = Contact.class) })
+			@FilterProperty(property = "code", entityClass = Contact.class) }, totalRecords = "contacts.totalNumberOfRecords")
 	public ContactsResponseDto list(ContactDto postData, PagingAndFiltering pagingAndFiltering,
 			CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 

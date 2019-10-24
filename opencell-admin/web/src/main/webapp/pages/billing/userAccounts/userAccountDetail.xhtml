@@ -148,7 +148,7 @@
                                         <hftl:formField label="#{messages['accountEntity.externalRef1']}" field="externalRef1" validateUnique="false" newLine="true" />
                                         <hftl:formField label="#{messages['accountEntity.externalRef2']}" field="externalRef2" />
 
-                                        <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" required="false"
+                                        <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" valueLabelField2="descriptionNotNull" required="false"
                                             listBean="#{titleBean}" listenerUpdate=":parentTab:userAccountFormId:userAccountTab:userNamePanel" styleClass="clearLeft" />
 
                                         <h:panelGroup id="userNamePanel" layout="block">
@@ -195,7 +195,8 @@
                                 </p:tab>
 
                                 <hftl:customFields backingBean="#{userAccountBean}" messagesId=":parentTab:userAccountFormId:messages" prefix="ua" />                                
-                                <hftl:displayWorkflowsHistory entity="#{userAccountBean.entity}" />
+                                <!-- <hftl:displayWorkflowsHistory entity="#{userAccountBean.entity}" /> -->
+                                <hftl:displayGenericWFsHistory backingBean="#{userAccountBean}" />
                             </p:tabView>
 
                             <ui:param name="buttons" value="true" />
@@ -296,6 +297,7 @@
                                     </p:fieldset>
                                 </h:panelGroup>
                                <h:form>
+
                                 <p:dataTable id="wallet#{wallet.key}datatable" var="e" paginator="true" lazy="true" resizableColumns="true"
                                     value="#{userAccountBean.getWalletOperations(wallet.key)}" rows="10" rowKey="#{e.id}" widget="walletOperationsTable" widgetVar="walletOperationsTable"
                                     styleClass="verticalSpaceSmall custom-grid">
@@ -341,7 +343,7 @@
                                     </p:column>
                                 </p:dataTable>
 								</h:form>
-                             <!--     <p:commandButton rendered="#{wallet.key!='PRINCIPAL'}"
+                                <!-- <p:commandButton rendered="#{wallet.key!='PRINCIPAL'}"
 											value="#{messages['action.reload']}"
 											update=":#{p:component('reloadPopup')}"
 											actionListener="#{userAccountBean.setSelectedWalletCode(wallet.key)}"

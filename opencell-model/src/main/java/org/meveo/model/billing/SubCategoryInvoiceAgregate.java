@@ -19,6 +19,7 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,12 +32,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.catalog.DiscountPlanItem;
 
 /**
@@ -71,9 +72,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
-
-    @OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY)
-    private List<RatedTransaction> ratedtransactions = new ArrayList<>();
 
     /** The discount plan code. */
     @Column(name = "discount_plan_code", length = 50)
@@ -132,6 +130,9 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @Transient
     private BigDecimal oldAmountWithTax;
 
+    @Transient
+    private List<RatedTransaction> ratedtransactionsToAssociate = new ArrayList<>();
+
     /**
      * Instantiates a new sub category invoice aggregate.
      */
@@ -147,19 +148,20 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      * @param userAccount User account
      * @param wallet Wallet instance
      * @param tax Tax applied
-     * @param taxPercent Tax percent applied
      * @param invoice Invoice
      * @param accountingCode Accounting code
      */
     public SubCategoryInvoiceAgregate(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, WalletInstance wallet, Tax tax,
-            BigDecimal taxPercent, Invoice invoice, AccountingCode accountingCode) {
+            Invoice invoice, AccountingCode accountingCode) {
         super();
         this.invoiceSubCategory = invoiceSubCategory;
         this.billingAccount = billingAccount;
         this.userAccount = userAccount;
         this.wallet = wallet;
         this.tax = tax;
-        this.taxPercent = taxPercent;
+        if (tax != null) {
+            this.taxPercent = tax.getPercent();
+        }
         this.invoice = invoice;
         if (invoice != null) {
             this.billingRun = invoice.getBillingRun();
@@ -227,22 +229,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     }
 
     /**
-     * @return Associated Rated transactions
-     */
-    public List<RatedTransaction> getRatedtransactions() {
-        return ratedtransactions;
-    }
-
-    /**
-     * Associated Rated transactions
-     *
-     * @param ratedtransactions Associated Rated transactions
-     */
-    public void setRatedtransactions(List<RatedTransaction> ratedtransactions) {
-        this.ratedtransactions = ratedtransactions;
-    }
-
-    /**
      * Associate Rated transaction to an aggregate and increment the itemNumber field value.
      * 
      * @param ratedTransaction Rated transaction to associate
@@ -252,8 +238,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
             this.itemNumber = 0;
         }
         this.itemNumber++;
-        this.ratedtransactions.add(ratedTransaction);
-        ratedTransaction.setInvoiceAgregateF(this);
+        this.ratedtransactionsToAssociate.add(ratedTransaction);
     }
 
     /**
@@ -556,5 +541,42 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      */
     public void setDiscountPlanItem(DiscountPlanItem discountPlanItem) {
         this.discountPlanItem = discountPlanItem;
+    }
+
+    public BigDecimal getIsEnterpriseAmount(boolean isEnterprise) {
+        return isEnterprise ? getAmountWithoutTax() : getAmountWithTax();
+    }
+
+    /**
+     * A transient method.
+     * 
+     * @return A list of rated transactions to associate with an invoice subcategory aggregate.
+     */
+    public List<RatedTransaction> getRatedtransactionsToAssociate() {
+        return ratedtransactionsToAssociate;
+    }
+
+    /**
+     * A transient method.
+     * 
+     * @param ratedtransactionsToAssociate A list of rated transactions to associate with an invoice subcategory aggregate
+     */
+    public void setRatedtransactionsToAssociate(List<RatedTransaction> ratedtransactionsToAssociate) {
+        this.ratedtransactionsToAssociate = ratedtransactionsToAssociate;
+    }
+
+    /**
+     * Compute derived amounts amountWithoutTax/amountWithTax/amountTax. If taxPercent is null, or ZERO returned amountWithoutTax and amountWithTax values will be the same
+     * (whichone, depending on isEnterprise value)
+     * 
+     * @param isEnterprise Is application used used in B2B (base prices are without tax) or B2C mode (base prices are with tax)
+     * @param rounding Rounding precision to apply
+     * @param roundingMode Rounding mode to apply
+     */
+    public void computeDerivedAmounts(boolean isEnterprise, int invoiceRounding, RoundingMode roundingMode) {
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(getAmountWithoutTax(), getAmountWithTax(), getTaxPercent(), isEnterprise, invoiceRounding, roundingMode);
+        setAmountWithoutTax(amounts[0]);
+        setAmountWithTax(amounts[1]);
+        setAmountTax(amounts[2]);
     }
 }

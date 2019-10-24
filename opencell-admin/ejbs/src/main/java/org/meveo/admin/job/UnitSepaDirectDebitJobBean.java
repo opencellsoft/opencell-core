@@ -211,8 +211,8 @@ public class UnitSepaDirectDebitJobBean {
 		automatedPayment.setUnMatchingAmount(amount);
 		automatedPayment.setMatchingAmount(BigDecimal.ZERO);
 		automatedPayment.setAccountingCode(occTemplate.getAccountingCode());
-		automatedPayment.setOccCode(occTemplate.getCode());
-		automatedPayment.setOccDescription(occTemplate.getDescription());
+		automatedPayment.setCode(occTemplate.getCode());
+		automatedPayment.setDescription(occTemplate.getDescription());
 		automatedPayment.setTransactionCategory(occTemplate.getOccCategory());
 		automatedPayment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
 		automatedPayment.setCustomerAccount(customerAccount);

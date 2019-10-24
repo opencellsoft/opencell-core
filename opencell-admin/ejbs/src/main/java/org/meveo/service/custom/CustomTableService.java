@@ -1,5 +1,8 @@
 package org.meveo.service.custom;
 
+import static java.util.stream.Collectors.toList;
+import static org.meveo.service.base.NativePersistenceService.FIELD_ID;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -7,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,8 +24,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -34,16 +42,23 @@ import org.apache.commons.collections4.MapUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.search.sort.SortOrder;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.custom.CustomTableRecordDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.customEntities.CustomTableRecord;
 import org.meveo.model.shared.DateUtils;
@@ -70,6 +85,8 @@ public class CustomTableService extends NativePersistenceService {
      */
     public static final String FILE_APPEND = "_append";
 
+    public static final String ONLY_DIGIT_REGEX = "^-{0,1}[0-9]*$";
+    
     @Inject
     private ElasticClient elasticClient;
 
@@ -82,42 +99,12 @@ public class CustomTableService extends NativePersistenceService {
     @Inject
     protected ParamBeanFactory paramBeanFactory;
 
-    // public void createClass(String customTableName) {
-    //
-    // ClassPool pool = ClassPool.getDefault();
-    // ClassClassPath classPath = new ClassClassPath(this.getClass());
-    // pool.insertClassPath(classPath);
-    // log.error("AKK inserted classpath {}", classPath);
-    // CtClass cc = pool.makeClass("org.meveo." + customTableName);
-    //
-    // try {
-    // CtField f = new CtField(CtClass.intType, "z", cc);
-    // cc.addField(f);
-    //
-    // cc.addMethod(CtNewMethod.getter("getZ", f));
-    // cc.addMethod(CtNewMethod.setter("setZ", f));
-    // cc.addMethod(CtNewMethod.make("public String toString() {return \" \"+z;}", cc));
-    //
-    // cc.writeFile("C:\\andrius\\programs\\wildfly-10.1.0.Final\\standalone\\deployments\\opencell.war\\WEB-INF\\classes");
-    //
-    // Class clazz = cc.toClass();
-    // Object instance = clazz.newInstance();
-    // Field field = ReflectionUtils.getField(clazz, "z");
-    // field.setAccessible(true);
-    // field.set(instance, 10);
-    // log.error("AKK field value is {}", field.get(instance));
-    //
-    // Object value = getEntityManager().createNativeQuery("select id from cust_cet", CustomTableRecord.class).getSingleResult();
-    //
-    // log.error("AKK Value from DB is {} {}", value);// , field.get(value));
-    //
-    // } catch (
-    //
-    // Exception e) {
-    // log.error("AKK Failed to create a new Class {}", customTableName, e);
-    // }
-    //
-    // }
+    @Inject
+    private CustomEntityInstanceService customEntityInstanceService;
+
+    @Inject
+    private CustomEntityTemplateService customEntityTemplateService;
+
 
     @Override
     public Long create(String tableName, Map<String, Object> values) throws BusinessException {
@@ -130,7 +117,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Insert multiple values into table
-     * 
+     *
      * @param tableName Table name to insert values to
      * @param values A list of values to insert
      * @throws BusinessException General exception
@@ -147,7 +134,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Insert multiple values into table with optionally not updating ES. Will execute in a new transaction
-     * 
+     *
      * @param tableName Table name to insert values to
      * @param values Values to insert
      * @param updateES Should Elastic search be updated during record creation. If false, ES population must be done outside this call.
@@ -155,7 +142,7 @@ public class CustomTableService extends NativePersistenceService {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void createInNewTx(String tableName, List<Map<String, Object>> values, boolean updateES) throws BusinessException {
+    public void createInNewTx(String tableName, String code , List<Map<String, Object>> values, boolean updateES) throws BusinessException {
 
         // Insert record to db, with ID returned, but flush to ES after the values are processed
         if (updateES) {
@@ -163,7 +150,7 @@ public class CustomTableService extends NativePersistenceService {
             create(tableName, values);
 
         } else {
-            super.create(tableName, values);
+            super.create(tableName, code, values);
         }
     }
 
@@ -175,7 +162,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Update multiple values in a table. Record is identified by an "id" field value.
-     * 
+     *
      * @param tableName Table name to update values
      * @param values Values to update. Must contain an 'id' field.
      * @throws BusinessException General exception
@@ -228,12 +215,14 @@ public class CustomTableService extends NativePersistenceService {
     @Override
     public void remove(String tableName, Long id) throws BusinessException {
         super.remove(tableName, id);
+        customEntityInstanceService.remove(tableName, id);
         elasticClient.remove(CustomTableRecord.class, tableName, id, true);
     }
 
     @Override
     public void remove(String tableName, Set<Long> ids) throws BusinessException {
         super.remove(tableName, ids);
+        customEntityInstanceService.remove(tableName, ids);
         elasticClient.remove(CustomTableRecord.class, tableName, ids, true);
     }
 
@@ -245,7 +234,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Export data into a file into exports directory. Filename is in the following format: &lt;db table name&gt;_id_&lt;formated date&gt;.csv
-     * 
+     *
      * @param customEntityTemplate Custom table definition
      * @param config Pagination and search criteria
      * @return A future with a file name where the data will be exported to or an exception occurred
@@ -324,7 +313,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Import data into custom table
-     * 
+     *
      * @param customEntityTemplate Custom table definition
      * @param file Data file
      * @param append True if data should be appended to the existing data
@@ -344,7 +333,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Import data into custom table in asynchronous mode
-     * 
+     *
      * @param customEntityTemplate Custom table definition
      * @param inputStream Data stream
      * @param append True if data should be appended to the existing data
@@ -366,14 +355,13 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Import data into custom table
-     * 
+     *
      * @param customEntityTemplate Custom table definition
      * @param inputStream Data stream
      * @param append True if data should be appended to the existing data
      * @return Number of records imported
      * @throws BusinessException General business exception
      */
-    @SuppressWarnings("rawtypes")
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public int importData(CustomEntityTemplate customEntityTemplate, InputStream inputStream, boolean append) throws BusinessException {
 
@@ -395,10 +383,10 @@ public class CustomTableService extends NativePersistenceService {
             }
         });
 
-        Map<String, Class> fieldTypes = new HashMap<>();
+        Map<String, CustomFieldTemplate> cftsMap = new HashMap<>(); 
         for (CustomFieldTemplate cft : fields) {
-            fieldTypes.put(cft.getCode(), cft.getFieldType().getDataClass());
-            fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
+        	cftsMap.put(cft.getCode(), cft);
+        	cftsMap.put(cft.getDbFieldname(), cft);
         }
 
         String tableName = customEntityTemplate.getDbTablename();
@@ -425,8 +413,8 @@ public class CustomTableService extends NativePersistenceService {
                 // Save to DB every 500 records
                 if (importedLines >= 500) {
 
-                    values = convertValues(values, fieldTypes, false);
-                    customTableService.createInNewTx(tableName, values, updateESImediately);
+                	values = convertValues(values, cftsMap, false);
+                    customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), values, updateESImediately);
 
                     values.clear();
                     importedLines = 0;
@@ -444,8 +432,9 @@ public class CustomTableService extends NativePersistenceService {
             }
 
             // Save to DB remaining records
-            values = convertValues(values, fieldTypes, false);
-            customTableService.createInNewTx(tableName, values, updateESImediately);
+            values = convertValues(values, cftsMap, false);
+            customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), values, updateESImediately);
+            
 
             // Re-populate ES index
             if (!updateESImediately) {
@@ -466,14 +455,13 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Import data into custom table
-     * 
+     *
      * @param customEntityTemplate Custom table definition
-     * @param values A list of records to import. Each record is a map of values with field name as a map key and field value as a value.
-     * @param append True if data should be appended to the existing data
+     * @param values               A list of records to import. Each record is a map of values with field name as a map key and field value as a value.
+     * @param append               True if data should be appended to the existing data
      * @return Number of records imported
      * @throws BusinessException General business exception
      */
-    @SuppressWarnings("rawtypes")
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public int importData(CustomEntityTemplate customEntityTemplate, List<Map<String, Object>> values, boolean append) throws BusinessException {
 
@@ -495,12 +483,12 @@ public class CustomTableService extends NativePersistenceService {
             }
         });
 
-        Map<String, Class> fieldTypes = new HashMap<>();
+        Map<String, CustomFieldTemplate> cftsMap = new HashMap<>(); 
         for (CustomFieldTemplate cft : fields) {
-            fieldTypes.put(cft.getCode(), cft.getFieldType().getDataClass());
-            fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
+        	cftsMap.put(cft.getCode(), cft);
+        	cftsMap.put(cft.getDbFieldname(), cft);
         }
-
+       
         String tableName = customEntityTemplate.getDbTablename();
         int importedLines = 0;
         int importedLinesTotal = 0;
@@ -523,9 +511,8 @@ public class CustomTableService extends NativePersistenceService {
 
                 // Save to DB every 1000 records
                 if (importedLines >= 1000) {
-
-                    valuesPartial = convertValues(valuesPartial, fieldTypes, false);
-                    customTableService.createInNewTx(tableName, valuesPartial, updateESImediately);
+                	valuesPartial = convertValues(valuesPartial, cftsMap, false);
+                    customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
 
                     valuesPartial.clear();
                     importedLines = 0;
@@ -538,8 +525,8 @@ public class CustomTableService extends NativePersistenceService {
             }
 
             // Save to DB remaining records
-            valuesPartial = convertValues(valuesPartial, fieldTypes, false);
-            customTableService.createInNewTx(tableName, valuesPartial, updateESImediately);
+            valuesPartial = convertValues(valuesPartial, cftsMap, false);
+            customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
 
             // Repopulate ES index
             if (!updateESImediately) {
@@ -555,7 +542,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Get the CSV file reader. Schema is created from field's dbFieldname values.
-     * 
+     *
      * @param fields Custom table fields definition
      * @return The CSV file reader
      */
@@ -576,7 +563,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Get the CSV file writer. Schema is created from field's dbFieldname values.
-     * 
+     *
      * @param fields Custom table fields definition
      * @return The CSV file reader
      */
@@ -649,7 +636,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Get field value of the first record matching search criteria
-     * 
+     *
      * @param cetCodeOrTablename Custom entity template code, or custom table name to query
      * @param fieldToReturn Field value to return
      * @param queryValues Search criteria with condition/field name as a key and field value as a value. See ElasticClient.search() for a query format.
@@ -657,9 +644,8 @@ public class CustomTableService extends NativePersistenceService {
      * @throws BusinessException General exception
      */
     public Object getValue(String cetCodeOrTablename, String fieldToReturn, Map<String, Object> queryValues) throws BusinessException {
-
+        removeEmptyKeys(queryValues);
         Map<String, Object> values = new HashMap<>(queryValues);
-
         List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_ID }, new SortOrder[] { SortOrder.DESC }, new String[] { fieldToReturn });
 
         if (results == null || results.isEmpty()) {
@@ -669,9 +655,13 @@ public class CustomTableService extends NativePersistenceService {
         }
     }
 
+     void removeEmptyKeys(Map<String, Object> queryValues) {
+        queryValues.entrySet().removeIf(e -> e.getKey().isEmpty());
+    }
+
     /**
      * Get field value of the first record matching search criteria for a given date. Applicable to custom tables that contain 'valid_from' and 'valid_to' fields
-     * 
+     *
      * @param cetCodeOrTablename Custom entity template code, or custom table name to query
      * @param fieldToReturn Field value to return
      * @param date Record validity date, as expressed by 'valid_from' and 'valid_to' fields, to match
@@ -696,7 +686,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Get field values of the first record matching search criteria
-     * 
+     *
      * @param cetCodeOrTablename Custom entity template code, or custom table name to query
      * @param fieldsToReturn Field values to return. Optional. If not provided all fields will be returned.
      * @param queryValues Search criteria with condition/field name as a key and field value as a value. See ElasticClient.search() for a query format.
@@ -718,7 +708,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Get field values of the first record matching search criteria for a given date. Applicable to custom tables that contain 'valid_from' and 'valid_to' fields
-     * 
+     *
      * @param cetCodeOrTablename Custom entity template code, or custom table name to query
      * @param fieldsToReturn Field values to return. Optional. If not provided all fields will be returned.
      * @param date Record validity date, as expressed by 'valid_from' and 'valid_to' fields, to match
@@ -743,41 +733,42 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Convert values to a data type matching field definition
-     * 
+     *
      * @param values A map of values with field name of customFieldTemplate code as a key and field value as a value
      * @param fields Field definitions
      * @param discardNull If True, null values will be discarded
      * @return Converted values with db field name as a key and field value as value.
      * @throws ValidationException
      */
-    @SuppressWarnings("rawtypes")
     public List<Map<String, Object>> convertValues(List<Map<String, Object>> values, Collection<CustomFieldTemplate> fields, boolean discardNull) throws ValidationException {
 
         if (values == null) {
             return null;
         }
 
-        Map<String, Class> fieldTypes = new HashMap<>();
+        Map<String, CustomFieldTemplate> cftsMap = new HashMap<>(); 
         for (CustomFieldTemplate cft : fields) {
-            fieldTypes.put(cft.getCode(), cft.getFieldType().getDataClass());
-            fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
+        	cftsMap.put(cft.getCode(), cft);
+        	cftsMap.put(cft.getDbFieldname(), cft);
         }
 
-        return convertValues(values, fieldTypes, discardNull);
+        return convertValues(values, cftsMap, discardNull);
 
     }
 
     /**
      * Convert values to a data type matching field definition
-     * 
+     *
      * @param values A map of values with field name of customFieldTemplate code as a key and field value as a value
      * @param fields Field definitions with field name or field code as a key and data class as a value
      * @param discardNull If True, null values will be discarded
+     * @param regexpFields 
+     * @param classNames 
      * @return Converted values with db field name as a key and field value as value.
      * @throws ValidationException
      */
-    @SuppressWarnings("rawtypes")
-    public List<Map<String, Object>> convertValues(List<Map<String, Object>> values, Map<String, Class> fields, boolean discardNull) throws ValidationException {
+    public List<Map<String, Object>> convertValues(List<Map<String, Object>> values, Map<String, CustomFieldTemplate> cftsMap, boolean discardNull)
+            throws ValidationException {
 
         if (values == null) {
             return null;
@@ -787,7 +778,7 @@ public class CustomTableService extends NativePersistenceService {
         String[] datePatterns = new String[] { DateUtils.DATE_TIME_PATTERN, paramBean.getDateTimeFormat(), DateUtils.DATE_PATTERN, paramBean.getDateFormat() };
 
         for (Map<String, Object> value : values) {
-            convertedValues.add(convertValue(value, fields, discardNull, datePatterns));
+            convertedValues.add(convertValue(value, cftsMap, discardNull, datePatterns));
         }
 
         return convertedValues;
@@ -795,7 +786,7 @@ public class CustomTableService extends NativePersistenceService {
 
     /**
      * Convert values to a data type matching field definition
-     * 
+     *
      * @param values A map of values with customFieldTemplate code or db field name as a key and field value as a value.
      * @param fields Field definitions
      * @param discardNull If True, null values will be discarded
@@ -804,7 +795,6 @@ public class CustomTableService extends NativePersistenceService {
      * @return Converted values with db field name as a key and field value as value.
      * @throws ValidationException
      */
-    @SuppressWarnings("rawtypes")
     public Map<String, Object> convertValue(Map<String, Object> values, Collection<CustomFieldTemplate> fields, boolean discardNull, String[] datePatterns)
             throws ValidationException {
 
@@ -812,28 +802,31 @@ public class CustomTableService extends NativePersistenceService {
             return null;
         }
 
-        Map<String, Class> fieldTypes = new HashMap<>();
+        Map<String, CustomFieldTemplate> cftsMap = new HashMap<>(); 
         for (CustomFieldTemplate cft : fields) {
-            fieldTypes.put(cft.getCode(), cft.getFieldType().getDataClass());
-            fieldTypes.put(cft.getDbFieldname(), cft.getFieldType().getDataClass());
+        	cftsMap.put(cft.getCode(), cft);
+        	cftsMap.put(cft.getDbFieldname(), cft);
         }
 
-        return convertValue(values, fieldTypes, discardNull, datePatterns);
+        return convertValue(values, cftsMap, discardNull, datePatterns);
     }
 
     /**
      * Convert single record values to a data type matching field definition
-     * 
+     *
      * @param values A map of values with customFieldTemplate code or db field name as a key and field value as a value.
      * @param fields Field definitions with field name or field code as a key and data class as a value
      * @param discardNull If True, null values will be discarded
      * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
      *        standard date and time and then date only patterns will be applied.
+     * @param classNames 
+     * @param regexpFields 
      * @return Converted values with db field name as a key and field value as value.
      * @throws ValidationException
      */
     @SuppressWarnings("rawtypes")
-    private Map<String, Object> convertValue(Map<String, Object> values, Map<String, Class> fields, boolean discardNull, String[] datePatterns) throws ValidationException {
+    private Map<String, Object> convertValue(Map<String, Object> values, Map<String, CustomFieldTemplate> cftsMap, boolean discardNull, String[] datePatterns)
+            throws ValidationException {
 
         if (values == null) {
             return null;
@@ -844,31 +837,39 @@ public class CustomTableService extends NativePersistenceService {
         // Handle ID field
         Object id = values.get(FIELD_ID);
         if (id != null) {
-            valuesConverted.put(FIELD_ID, castValue(id, Long.class, false, datePatterns));
+            valuesConverted.put(FIELD_ID, castValue(id, Long.class, false, datePatterns,null));
         }
 
         // Convert field based on data type
-        if (fields != null) {
+        if (cftsMap != null) {
             for (Entry<String, Object> valueEntry : values.entrySet()) {
 
                 String key = valueEntry.getKey();
                 if (key.equals(FIELD_ID)) {
                     continue; // Was handled before already
                 }
+                
+                String[] fieldInfo = key.split(" ");
+                String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1]; // field name here can be a db field name or a custom field code
+                CustomFieldTemplate cft = cftsMap.get(fieldName);  
+                if (cft == null) {
+                    throw new ValidationException("No field definition " + fieldName + " was found");
+                }
                 if (valueEntry.getValue() == null && !discardNull) {
-                    valuesConverted.put(key, null);
+                    // must check the default value
+                    valuesConverted.put(key, cft.getDefaultValueConverted());
+
+                } else if (FIELD_DISABLED.equals(key) && (BigDecimal) valueEntry.getValue() != BigDecimal.ZERO) {
+
+                    valuesConverted.put(key, 1);
 
                 } else if (valueEntry.getValue() != null) {
 
-                    String[] fieldInfo = key.split(" ");
-                    // String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
-                    String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1]; // field name here can be a db field name or a custom field code
-
-                    Class dataClass = fields.get(fieldName);
+                    Class dataClass = cft.getFieldType().getDataClass();
                     if (dataClass == null) {
                         throw new ValidationException("No field definition " + fieldName + " was found");
                     }
-                    Object value = castValue(valueEntry.getValue(), dataClass, false, datePatterns);
+					Object value = castValue(valueEntry.getValue(), dataClass, false, datePatterns, cft);
 
                     // Replace cft code with db field name if needed
                     String dbFieldname = CustomFieldTemplate.getDbFieldname(fieldName);
@@ -882,4 +883,179 @@ public class CustomTableService extends NativePersistenceService {
         }
         return valuesConverted;
     }
+
+    public Map<String, Object> findRecordOfTableById(CustomFieldTemplate field, Long id) {
+        try {
+            return Optional.ofNullable(field).map(CustomFieldTemplate::tableName).map(tableName -> findRecordByIdAndTableName(id, tableName)).orElse(new HashMap<>());
+        } catch (Exception ex) {
+            return new HashMap<>();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+	private Map<String, Object> findRecordByIdAndTableName(Long id, String tableName) {
+        QueryBuilder queryBuilder = getQuery(tableName, null);
+        queryBuilder.addCriterion("id", "=", id, true);
+        Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
+        return (Map<String, Object>) query.uniqueResult();
+    }
+
+    public List<CustomTableRecordDto> selectAllRecordsOfATableAsRecord(String tableName) {
+        return selectAllRecordsOfATableAsMap(tableName).stream()
+                .map(CustomTableRecordDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @SuppressWarnings("unchecked")
+	public List<Map<String, Object>> selectAllRecordsOfATableAsMap(String tableName) {
+        try {
+            return getQuery(tableName, null)
+                    .getNativeQuery(getEntityManager(), true)
+                    .list();
+        } catch (Exception ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+    
+    public boolean containsRecordOfTableByColumn(String tableName, String columnName, Long id) {
+        QueryBuilder queryBuilder = getQuery(tableName, null);
+        queryBuilder.addCriterion(columnName, "=", id, true);
+        Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
+        return !query.list().isEmpty();
+    }
+    
+	/**
+	 * Fetch entity from a referenceWrapper. This method return the wrapped object if it's an entity managed or a CustomEntity,
+	 *  but return a map of values if the wrapped object is a reference to a custom table
+	 * 
+	 * @param referenceWrapper
+	 * @return
+	 */
+	public Object findEntityFromReference(EntityReferenceWrapper referenceWrapper) {
+		String classname = referenceWrapper.getClassname();
+		String code = referenceWrapper.getCode();
+		String classnameCode = referenceWrapper.getClassnameCode();
+		return findEntityByClassNameAndKey(classname, code, classnameCode);
+	}
+
+	private Object findEntityByClassNameAndKey(String classname, String code, String classnameCode) {
+		if (classname.equals(CustomEntityInstance.class.getName())) {
+			CustomEntityTemplate cet = customEntityTemplateService.findByCode(classnameCode);
+			if (cet.isStoreAsTable()) {
+				return findRecordByIdAndTableName( Long.parseLong(code),cet.getDbTablename());
+			}else {
+				return customEntityInstanceService.findByCodeByCet(cet.getDbTablename(), code);
+			}
+		} else {
+			try {
+				return customEntityInstanceService.findByEntityClassAndCode(Class.forName(classname), code);
+			} catch (ClassNotFoundException e) {
+				log.error("class in the ClassRefWrapper " + classname + " not found ", e);
+			}
+		}
+		return null;
+	}
+
+	public List<Map<String, Object>> completeWithEntities(List<Map<String, Object>> list, Map<String, CustomFieldTemplate> cfts, int loadReferenceDepth) {
+        list.forEach(map -> completeWithEntities(cfts, map, 0, loadReferenceDepth));
+        return list;
+    }
+
+	public void completeWithEntities(Map<String, CustomFieldTemplate> cfts, Map<String, Object> map, int currentDepth, int maxDepth) {
+        if (currentDepth < maxDepth) {
+            Map<String, CustomFieldTemplate> reference = toLowerCaseKeys(cfts);
+            map.entrySet().stream().filter(entry -> reference.containsKey(entry.getKey().toLowerCase()))
+                    .forEach(entry -> replaceIdValueByItsRepresentation(reference, entry, currentDepth, maxDepth));
+        }
+    }
+
+    public void replaceIdValueByItsRepresentation(Map<String, CustomFieldTemplate> reference, Map.Entry<String, Object> entry, int currentDepth, int maxDepth) {
+        if (entry.getValue() != null && entry.getValue().toString().matches(ONLY_DIGIT_REGEX)) {
+            CustomFieldTemplate customFieldTemplate = reference.get(entry.getKey().toLowerCase());
+            Optional.ofNullable(customFieldTemplate).filter(field -> Objects.nonNull(field.getEntityClazz()))
+                    .map(field -> getEitherTableOrEntityValue(field, Long.valueOf(entry.getValue().toString()))).filter(values -> values.size() > 0)
+                    .ifPresent(values -> replaceValue(entry, customFieldTemplate, values, currentDepth, maxDepth));
+        }
+    }
+    
+    public Map<String, Object> getEitherTableOrEntityValue(CustomFieldTemplate field, Long id) {
+        CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(field.tableName());
+        if (relatedEntity != null ) {
+        	if(relatedEntity.isStoreAsTable()) {
+        		return findRecordOfTableById(field, id);
+        	}
+            return Optional.ofNullable(customEntityInstanceService.findById(id)).map(customEntityInstanceService::customEntityInstanceAsMapWithCfValues).orElse(new HashMap<>());
+        }
+        return findByClassAndId(field.getEntityClazz(), id);
+    }
+
+    public void replaceValue(Map.Entry<String, Object> entry, CustomFieldTemplate customFieldTemplate, Map<String, Object> values, int currentDepth, int maxDepth) {
+        entry.setValue(values);
+        final int depth = ++currentDepth;
+        Optional.ofNullable(customEntityTemplateService.findByCodeOrDbTablename(customFieldTemplate.tableName()))
+                .ifPresent(cet -> completeWithEntities(customFieldTemplateService.findByAppliesTo(cet.getAppliesTo()), values, depth, maxDepth));
+    }
+
+    public Map<String, CustomFieldTemplate> toLowerCaseKeys(Map<String, CustomFieldTemplate> cfts) {
+        return cfts.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().toLowerCase(), Map.Entry::getValue));
+    }
+    
+	public Map<String, CustomFieldTemplate> validateCfts(CustomEntityTemplate cet, boolean checkDisabledField) {
+		Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
+        if (cfts == null || cfts.isEmpty()) {
+            throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
+        }
+        if (checkDisabledField && !cfts.containsKey(NativePersistenceService.FIELD_DISABLED)) {
+            throw new ValidationException("Custom table does not contain a field 'disabled'", "customTable.noDisabledField");
+        }
+		return cfts;
+	}
+	
+	public CustomEntityTemplate getCET(String customTableCode) {
+		CustomEntityTemplate cet = customEntityTemplateService.findByCodeOrDbTablename(customTableCode);
+		if (cet == null) {
+			throw new EntityDoesNotExistsException(CustomEntityTemplate.class, customTableCode);
+		}
+		return cet;
+	}
+	
+	public void updateRecords(String dbTablename, Collection<CustomFieldTemplate> cftsValues, List<CustomTableRecordDto> valuesWithIds) {
+		
+		List<Long> inputIds=valuesWithIds.stream().map(x -> (castToLong(x.getValues().get(FIELD_ID)))).collect(toList());
+		List<BigInteger> existingRecords=filterExistingRecordsOnTable(dbTablename, inputIds);
+		
+        Map<Boolean, List<CustomTableRecordDto>> partitioned = valuesWithIds.stream().collect(Collectors.partitioningBy(x -> existingRecords.stream().anyMatch(y->castToLong(x.getValues().get(FIELD_ID)).equals(y.longValue()))));
+
+		List<CustomTableRecordDto> invalidList = partitioned.get(false);
+		if(!invalidList.isEmpty()) {
+			throw new BusinessException(prepareErrorMessage(invalidList));
+		}
+		SubListCreator<CustomTableRecordDto> subListCreator = new SubListCreator<CustomTableRecordDto>(partitioned.get(true), 500);
+		while (subListCreator.isHasNext()) {
+			List<Map<String, Object>> values = subListCreator.getNextWorkSet().stream().map(x -> x.getValues()).collect(toList());
+			values = convertValues(values, cftsValues, false);
+			update(dbTablename, values);
+		}
+	}
+	
+	private Long castToLong(Object id) {
+        if (id instanceof String) {
+            return Long.parseLong((String) id);
+        } else if (id instanceof Number) {
+            return ((Number) id).longValue();
+        }
+        throw new InvalidParameterException("Invalid id value found: "+id );
+	}
+	
+	private String prepareErrorMessage(List<CustomTableRecordDto> invalidList) {
+		String errorMessage="";
+		if (!invalidList.isEmpty()) {
+			errorMessage="Exception trying to update inexistant record(s): ";
+			for(CustomTableRecordDto item:invalidList) {
+				errorMessage=errorMessage+item.getValues().get(FIELD_ID)+", ";
+			}
+		}
+		return errorMessage;
+	}
+	
 }

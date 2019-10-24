@@ -114,6 +114,7 @@ public class DDRequestItem extends AuditableEntity {
     @Size(max = 1000)    
     private String rejectedFileName;
 
+
     public DDRequestItem() {
 
     }
@@ -278,6 +279,6 @@ public class DDRequestItem extends AuditableEntity {
 	@Transient
     public boolean hasError() {
         return !(errorMsg == null || errorMsg.trim().length() == 0);
-    }
+    }	
 
 }

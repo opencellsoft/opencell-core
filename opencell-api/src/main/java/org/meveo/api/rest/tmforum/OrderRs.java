@@ -44,7 +44,7 @@ public interface OrderRs {
      * 
      * @param id Product code
      * @param info Http request context
-     * @return
+     * @return Response of the request
      */
     @GET
     @Path("/{orderId}")
@@ -77,7 +77,7 @@ public interface OrderRs {
      * 
      * @param id Product order code
      * @param info Http request context
-     * @return
+     * @return Response of the delete request
      */
     @DELETE
     @Path("/{orderId}")
@@ -86,9 +86,9 @@ public interface OrderRs {
     /**
      * Evaluate and return the dueDateDelayEL. It checks the EL in this order: Order, CustomerAccount, BillingCycle.
      * 
-     * @param orderId
-     * @param info
-     * @return
+     * @param orderId The order id 
+     * @param info the URI info 
+     * @return Response of the due date delay 
      */
     @GET
     @Path("/{orderId}/applicableDueDateDelay")
@@ -97,12 +97,23 @@ public interface OrderRs {
     /**
      * Updates the dueDateDelayEL of an Order. 
      * 
-     * @param orderId
-     * @param postData
-     * @param info
-     * @return
+     * @param orderId The order id
+     * @param postData Applicable Due Date Delay data
+     * @param info The Uri information
+     * @return Response of the update request
      */
     @PUT
     @Path("/{orderId}/simpleDueDateDelay")
     public Response simpleDueDateDelay(@PathParam("orderId") String orderId, ApplicableDueDateDelayDto postData, @Context UriInfo info);
+
+    /**
+     * validate a product order
+     *
+     * @param productOrder Product order information
+     * @param info Http request context
+     * @return Product order information
+     */
+    @GET
+    @Path("/validate")
+    public Response validateProductOrder(ProductOrder productOrder, @Context UriInfo info);
 }

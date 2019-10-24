@@ -70,9 +70,10 @@ public class UnitPaymentJobBean {
                 result.registerError(customerAccountId, doPaymentResponseDto.getErrorMessage());
                 result.addReport("AccountOperation id : " + customerAccountId + " RejectReason : " + doPaymentResponseDto.getErrorMessage());
                 this.checkPaymentRetry(doPaymentResponseDto.getErrorCode(), listAOids, aoFilterScript);
-            } else {
+            } else if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.PENDING == doPaymentResponseDto.getPaymentStatus()){
                 result.registerSucces();
-            }
+                result.registerSucces();
+            }            
 
         } catch (Exception e) {
             log.error("Failed to pay recorded invoice id:" + customerAccountId, e);
@@ -82,14 +83,16 @@ public class UnitPaymentJobBean {
 
     }
 
-    private void checkPaymentRetry(String errorCode, List<Long> listAOids, AccountOperationFilterScript aoFilterScript) {
-        try {
-            Map<String, Object> methodContext = new HashMap<>();
-            methodContext.put("ERROR_CODE", errorCode);
-            methodContext.put("LIST_AO_IDs", listAOids);
-            aoFilterScript.checkPaymentRetry(methodContext);
-        } catch (Exception e) {
-            log.error(" Error on checkPaymentRetry [{}]", e.getMessage());
-        }
+	private void checkPaymentRetry(String errorCode, List<Long> listAOids, AccountOperationFilterScript aoFilterScript) {
+		if (aoFilterScript != null) {
+			try {
+				Map<String, Object> methodContext = new HashMap<>();
+				methodContext.put("ERROR_CODE", errorCode);
+				methodContext.put("LIST_AO_IDs", listAOids);
+				aoFilterScript.checkPaymentRetry(methodContext);
+			} catch (Exception e) {
+				log.error(" Error on checkPaymentRetry [{}]", e.getMessage());
+			}
+		}
     }
 }

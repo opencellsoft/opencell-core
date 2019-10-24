@@ -26,6 +26,7 @@ import org.meveo.service.catalog.impl.CalendarService;
 /**
  * Service class for WalletReservation entity
  * 
+ * @author Edward P. Legaspi
  * @author Wassim Drira
  * @lastModifiedVersion 5.0.1
  */
@@ -167,7 +168,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
         for (OfferServiceTemplate st : offerTemplate.getOfferServiceTemplates()) {
             servicesSum = servicesSum.add(realtimeChargingService.getActivationServicePrice(seller, userAccount.getBillingAccount(), st.getServiceTemplate(), subscriptionDate,
-                offerTemplate.getCode(), quantity, param1, param2, param3, isWithTax));
+                offerTemplate, quantity, param1, param2, param3, isWithTax));
         }
 
         return servicesSum;
@@ -208,7 +209,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
     private Amounts getBalanceAmount(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
             Date endDate, Long walletId, String walletCode, BalanceTypeEnum mode) {
 
-        Amounts result = new Amounts(BigDecimal.ZERO, BigDecimal.ZERO);
+        Amounts result = new Amounts();
 
         LevelEnum level = LevelEnum.PROVIDER;
 
@@ -226,7 +227,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
         try {
             StringBuilder strQuery = new StringBuilder();
-            strQuery.append("select new org.meveo.model.billing.Amounts(SUM(r.amountWithoutTax), SUM(r.amountWithTax)) from WalletOperation r " + "WHERE 1=1 ");
+            strQuery.append("select new org.meveo.model.billing.Amounts(SUM(r.amountWithoutTax), SUM(r.amountWithTax)) from WalletOperation r WHERE 1=1 ");
 
             if (startDate != null) {
                 strQuery.append(" AND r.operationDate>=:startDate ");
@@ -263,7 +264,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
             case PROVIDER:
                 break;
             case SELLER:
-                strQuery.append(" AND r.wallet.userAccount.billingAccount.customerAccount.customer.seller=:seller ");
+                strQuery.append(" AND r.seller=:seller ");
                 break;
             case USER_ACCOUNT:
                 strQuery.append(" AND r.wallet.userAccount=:userAccount ");
@@ -317,5 +318,4 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
         return result;
     }
-
 }

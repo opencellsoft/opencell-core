@@ -19,6 +19,7 @@
 package org.meveo.model.catalog;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -27,8 +28,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.QueryHint;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
@@ -40,25 +40,20 @@ import org.hibernate.annotations.Type;
  * @lastModifiedVersion 5.0.2
  */
 @Entity
-@Table(name = "cat_recurring_charge_templ")
+@DiscriminatorValue("R")
 @NamedQueries({
-        @NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgWithNotPricePlan", query = "select count (*) from RecurringChargeTemplate r where r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
+        @NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgNotAssociated", query = "select count(*) from RecurringChargeTemplate r where (r.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateRecurring serv) "
+                + " OR r.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null))", hints = {
+                        @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
 
-        @NamedQuery(name = "recurringChargeTemplate.getRecurringChrgWithNotPricePlan", query = "from RecurringChargeTemplate r where r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
-
-        @NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgNotAssociated", query = "select count(*) from RecurringChargeTemplate r where (r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv) "
-                + " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))   "),
-
-        @NamedQuery(name = "recurringChargeTemplate.getRecurringChrgNotAssociated", query = "from RecurringChargeTemplate r where (r.id not in (select serv.chargeTemplate from ServiceChargeTemplateRecurring serv) "
-                + " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))  ") })
+        @NamedQuery(name = "recurringChargeTemplate.getRecurringChrgNotAssociated", query = "from RecurringChargeTemplate r where (r.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateRecurring serv) "
+                + " OR r.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null))  ") })
 public class RecurringChargeTemplate extends ChargeTemplate {
 
-    /** The Constant CHARGE_TYPE. */
-    @Transient
-    public static final String CHARGE_TYPE = "RECURRING";
+    private static final long serialVersionUID = -7456322224120515575L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
+    /** The Constant CHARGE_TYPE. */
+    public static final String CHARGE_TYPE = "RECURRING";
 
     /**
      * The recurrence type
@@ -107,13 +102,6 @@ public class RecurringChargeTemplate extends ChargeTemplate {
     @Enumerated(EnumType.STRING)
     @Column(name = "share_level", length = 20)
     private LevelEnum shareLevel;
-
-    /**
-     * The filter expression
-     */
-    @Column(name = "filter_expression", length = 2000)
-    @Size(max = 2000)
-    private String filterExpression = null;
 
     /**
      * Expression to determine if subscription amount is prorated
@@ -276,29 +264,7 @@ public class RecurringChargeTemplate extends ChargeTemplate {
         this.shareLevel = shareLevel;
     }
 
-    /**
-     * Gets the filter expression.
-     *
-     * @return the filter expression
-     */
-    public String getFilterExpression() {
-        return filterExpression;
-    }
-
-    /**
-     * Sets the filter expression.
-     *
-     * @param filterExpression the new filter expression
-     */
-    public void setFilterExpression(String filterExpression) {
-        this.filterExpression = filterExpression;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.model.catalog.ChargeTemplate#getChargeType()
-     */
+    @Override
     public String getChargeType() {
         return CHARGE_TYPE;
     }
@@ -376,5 +342,4 @@ public class RecurringChargeTemplate extends ChargeTemplate {
     public void setCalendarCodeEl(String calendarCodeEl) {
         this.calendarCodeEl = calendarCodeEl;
     }
-
 }

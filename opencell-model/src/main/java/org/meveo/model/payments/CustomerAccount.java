@@ -22,9 +22,9 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,7 +35,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -44,8 +43,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.Transient;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
@@ -54,20 +53,25 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.intcrm.AddressBook;
 
 /**
  * Customer Account
- * 
+ *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.2
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 7.0
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "CA", inheritCFValuesFrom = "customer")
+@WorkflowedEntity
+@CustomFieldEntity(cftCodePrefix = "CustomerAccount", inheritCFValuesFrom = "customer")
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CA")
 @Table(name = "ar_customer_account")
@@ -78,7 +82,7 @@ import org.meveo.model.intcrm.AddressBook;
         @NamedQuery(name = "CustomerAccount.listCAIdsForRefund", query = "Select ca.id  from CustomerAccount as ca, AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='CREDIT' and "
                 + "                   ao.type not in ('P','AP') and ao.matchingStatus ='O' and ca.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and ao.customerAccount.id = ca.id and "
                 + "                   pm.paymentType =:paymentMethodIN  and ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN group by ca.id having sum(ao.unMatchingAmount) <> 0") })
-public class CustomerAccount extends AccountEntity {
+public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) CustomerAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
@@ -127,6 +131,12 @@ public class CustomerAccount extends AccountEntity {
      */
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AccountOperation> accountOperations = new ArrayList<>();
+
+    /**
+     * List of ca's dunning docs
+     */
+    @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    List<DunningDocument> dunningDocuments = new ArrayList<>();
 
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
@@ -205,6 +215,9 @@ public class CustomerAccount extends AccountEntity {
     @Column(name = "excluded_from_payment")
     private boolean excludedFromPayment;
 
+    @Transient
+    private Map<String, List<PaymentMethod>> auditedMethodPayments;
+
     /**
      * This method is called implicitly by hibernate, used to enable
 	 * encryption for custom fields of this entity
@@ -219,9 +232,6 @@ public class CustomerAccount extends AccountEntity {
 			cfAccumulatedValues.setEncrypted(true);
 		}
 	}
-
-    @Transient
-    private Map<String, List<PaymentMethod>> auditedMethodPayments;
 
     public CustomerAccount() {
         accountType = ACCOUNT_TYPE;
@@ -308,6 +318,14 @@ public class CustomerAccount extends AccountEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<DunningDocument> getDunningDocuments() {
+        return dunningDocuments;
+    }
+
+    public void setDunningDocuments(List<DunningDocument> dunningDocuments) {
+        this.dunningDocuments = dunningDocuments;
     }
 
     public List<ActionDunning> getActionDunnings() {
@@ -407,7 +425,7 @@ public class CustomerAccount extends AccountEntity {
 
     /**
      * Get a payment method marked as preferred
-     * 
+     *
      * @return Payment method marked as preferred
      */
     public PaymentMethod getPreferredPaymentMethod() {
@@ -437,7 +455,7 @@ public class CustomerAccount extends AccountEntity {
 
     /**
      * Get a list of card type payment methods
-     * 
+     *
      * @param noTokenOnly Retrieve only those that don't have a token
      * @return A list of card type payment methods
      */
@@ -498,7 +516,7 @@ public class CustomerAccount extends AccountEntity {
 
     /**
      * Mark currently valid card payment as preferred
-     * 
+     *
      * @return A currently valid card payment
      */
     public PaymentMethod markCurrentlyValidCardPaymentAsPreferred() {
@@ -529,7 +547,7 @@ public class CustomerAccount extends AccountEntity {
     /**
      * Ensure that one and only one payment method is marked as preferred. If currently preferred payment method is of type card, but expired, advance to a currently valid card
      * payment method if possible. If not possible - leave as it is. If no preferred payment method was found - mark the first payment method as preferred.
-     * 
+     *
      * @return A preferred payment method
      */
 
@@ -579,7 +597,7 @@ public class CustomerAccount extends AccountEntity {
 
     /**
      * Check if no more valid Card paymentMethod.
-     * 
+     *
      * @return true if no more valid card.
      */
     public boolean isNoMoreValidCard() {

@@ -17,7 +17,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
- * Takes care of tax related script method invocation
+ * Takes care of tax related script method invocation.
  * 
  * @author Edward P. Legaspi
  */

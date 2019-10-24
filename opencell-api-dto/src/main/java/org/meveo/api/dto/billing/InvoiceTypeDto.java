@@ -87,6 +87,10 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     /** The use Self Sequence . */
     private boolean useSelfSequence = true;
 
+    private String mailingType;
+
+    private String emailTemplateCode;
+
     /**
      * Instantiates a new invoice type dto.
      */
@@ -102,7 +106,6 @@ public class InvoiceTypeDto extends BusinessEntityDto {
      */
     public InvoiceTypeDto(InvoiceType invoiceType, CustomFieldsDto customFieldInstances) {
         super(invoiceType);
-
         this.occTemplateCode = invoiceType.getOccTemplate() != null ? invoiceType.getOccTemplate().getCode() : null;
         this.occTemplateNegativeCode = invoiceType.getOccTemplateNegative() != null ? invoiceType.getOccTemplateNegative().getCode() : null;
         this.occTemplateCodeEl = invoiceType.getOccTemplateCodeEl();
@@ -122,7 +125,8 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.pdfFilenameEL = invoiceType.getPdfFilenameEL();
         this.xmlFilenameEL = invoiceType.getXmlFilenameEL();
         this.billingTemplateNameEL = invoiceType.getBillingTemplateNameEL();
-
+        this.mailingType = invoiceType.getMailingType() != null ? invoiceType.getMailingType().getLabel() : null;
+        this.emailTemplateCode = invoiceType.getEmailTemplate() != null ? invoiceType.getEmailTemplate().getCode() : null;
         customFields = customFieldInstances;
         this.useSelfSequence = invoiceType.isUseSelfSequence();
     }
@@ -391,10 +395,34 @@ public class InvoiceTypeDto extends BusinessEntityDto {
         this.invoiceAccountable = invoiceAccountable;
     }
 
-    @Override
+    public String getMailingType() {
+        return mailingType;
+    }
+
+    public void setMailingType(String mailingType) {
+        this.mailingType = mailingType;
+    }
+
+    public String getEmailTemplateCode() {
+        return emailTemplateCode;
+    }
+
+    public void setEmailTemplateCode(String emailTemplateCode) {
+        this.emailTemplateCode = emailTemplateCode;
+    }
+
+    public Boolean isInvoiceAccountable() {
+		return invoiceAccountable;
+	}
+
+	public void setInvoiceAccountable(Boolean invoiceAccountable) {
+		this.invoiceAccountable = invoiceAccountable;
+	}
+
+	@Override
     public String toString() {
         return "InvoiceTypeDto [code=" + getCode() + ", description=" + getDescription() + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode="
                 + occTemplateNegativeCode + ", customInvoiceXmlScriptInstanceCode=" + customInvoiceXmlScriptInstanceCode + ", sequenceDto=" + sequenceDto + ", sellerSequences="
-                + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto + ", useSelfSequence=" + useSelfSequence + "]";
+                + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto + ", useSelfSequence=" + useSelfSequence + ", invoiceAccountable=" + invoiceAccountable + "]";
     }
 }

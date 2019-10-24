@@ -13,7 +13,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<CustomFieldValues> implements IEncryptable{
+public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<CustomFieldValues> implements IEncryptable {
 
     private static final long serialVersionUID = -5030465106663645694L;
 
@@ -21,13 +21,15 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
 
     @SuppressWarnings("unchecked")
     public CustomFieldJsonTypeDescriptor() {
+
         super(CustomFieldValues.class, ImmutableMutabilityPlan.INSTANCE);
+
     }
 
     @Override
     public String toString(CustomFieldValues value) {
 
-        if (value == null) {
+    	if (value == null) {
             return null;
         }
         
@@ -42,7 +44,7 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
     @Override
     public CustomFieldValues fromString(String string) {
 
-        if (string == null) {
+    	if (string == null) {
             return null;
         }
 
@@ -77,5 +79,4 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
         }
         throw unknownWrap(value.getClass());
     }
-    
 }
