@@ -153,6 +153,7 @@
                                 newLine="true" />
                             <hftl:formField label="#{messages[appProvider.entreprise?'serviceTemplate.minimumAmountWithoutTaxElSpark':'serviceTemplate.minimumAmountWithTaxElSpark']}"
                                 field="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                            <hftl:formField label="#{messages['serviceTemplate.minimumInvoiceSubCategory']}" id="invoiceSubCategoryId" field="minimumInvoiceSubCategory" valueLabelField="code" listBean="#{invoiceSubCategoryBean}" /> 
 
                             <p:fieldset legend="#{messages['subscription.renewal']}" styleClass="clearLeft">
 			                    <h:panelGroup id="serviceRenewal">
