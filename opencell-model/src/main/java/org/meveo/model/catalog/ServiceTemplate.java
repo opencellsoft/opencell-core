@@ -48,6 +48,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.annotation.ImageType;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
 
 /**
@@ -166,6 +167,11 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Column(name = "minimum_label_el_sp", length = 2000)
     @Size(max = 2000)
     private String minimumLabelElSpark;
+    
+    /** Corresponding invoice subcategory */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_invoice_sub_category_id")
+    private InvoiceSubCategory minimumInvoiceSubCategory;
 
     /**
      * Service renewal configuration
@@ -409,6 +415,20 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
      */
     public void setMinimumLabelElSpark(String minimumLabelElSpark) {
         this.minimumLabelElSpark = minimumLabelElSpark;
+    }
+    
+    /**
+     * @return the minimumInvoiceSubCategory
+     */
+    public InvoiceSubCategory getMinimumInvoiceSubCategory() {
+        return minimumInvoiceSubCategory;
+    }
+
+    /**
+     * @param minimumInvoiceSubCategory the minimumInvoiceSubCategory to set
+     */
+    public void setMinimumInvoiceSubCategory(InvoiceSubCategory minimumInvoiceSubCategory) {
+        this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
     }
 
     public SubscriptionRenewal getServiceRenewal() {
