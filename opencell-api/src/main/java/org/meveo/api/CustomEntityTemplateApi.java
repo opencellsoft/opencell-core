@@ -122,9 +122,6 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
                 customFieldTemplateApi.createWithoutUniqueConstraint(cftDto, cet.getAppliesTo());
             }
 			String columnNames = dto.getFields().stream().filter(x->x.getUniqueConstraint()!= null && x.getUniqueConstraint()).map(x-> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
-			if(!StringUtils.isEmpty(columnNames)) {
-				customFieldTemplateService.addConstraintByColumnsName(cet, columnNames);
-        }
 			customFieldTemplateService.addConstraintByColumnsName(cet, columnNames);
         }
 
