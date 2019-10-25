@@ -75,25 +75,25 @@ public class QuoteService extends BusinessService<Quote> {
 
     /**
      * Create a simulated invoice for quote.
-     * 
+     *
      * @param quoteInvoiceInfos map of quote invoice info
      * @return list of invoice
      * @throws BusinessException business exception
      */
     public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos) throws BusinessException {
-        return provideQuote(quoteInvoiceInfos, true);
+        return provideQuote(quoteInvoiceInfos, true, false);
     }
 
     /**
      * Create a simulated invoice for quote.
-     * 
+     *
      * @param quoteInvoiceInfos map of quote invoice info
-     * @param generatePdf generate a PDF file or not.
+     * @param generatePdf       generate a PDF file or not.
      * @return list of invoice
      * @throws BusinessException business exception
      */
     @SuppressWarnings("unused")
-    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos, boolean generatePdf) throws BusinessException {
+    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos, boolean generatePdf, boolean isVirtual) throws BusinessException {
         log.info("Creating simulated invoice for {}", quoteInvoiceInfos);
 
         List<Invoice> invoices = new ArrayList<>();
@@ -142,8 +142,8 @@ public class QuoteService extends BusinessService<Quote> {
                         // Add subscription charges
                         for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
                             try {
-                                WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, subscriptionCharge,
-                                    serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
+                                WalletOperation wo = oneShotChargeInstanceService
+                                        .oneShotChargeApplicationVirtual(subscription, subscriptionCharge, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
                                 if (wo != null) {
                                     walletOperations.add(wo);
                                 }
@@ -162,8 +162,8 @@ public class QuoteService extends BusinessService<Quote> {
                         if (serviceInstance.getTerminationDate() != null && serviceInstance.getSubscriptionTerminationReason().isApplyTerminationCharges()) {
                             for (OneShotChargeInstance terminationCharge : serviceInstance.getTerminationChargeInstances()) {
                                 try {
-                                    WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, terminationCharge,
-                                        serviceInstance.getTerminationDate(), serviceInstance.getQuantity());
+                                    WalletOperation wo = oneShotChargeInstanceService
+                                            .oneShotChargeApplicationVirtual(subscription, terminationCharge, serviceInstance.getTerminationDate(), serviceInstance.getQuantity());
                                     if (wo != null) {
                                         walletOperations.add(wo);
                                     }
@@ -182,8 +182,8 @@ public class QuoteService extends BusinessService<Quote> {
                         // Add recurring charges
                         for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
                             try {
-                                List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, quoteInvoiceInfo.getFromDate(),
-                                    quoteInvoiceInfo.getToDate());
+                                List<WalletOperation> walletOps = recurringChargeInstanceService
+                                        .applyRecurringChargeVirtual(recurringCharge, quoteInvoiceInfo.getFromDate(), quoteInvoiceInfo.getToDate());
                                 if (walletOperations != null && walletOps != null) {
                                     walletOperations.addAll(walletOps);
                                 }
@@ -272,8 +272,10 @@ public class QuoteService extends BusinessService<Quote> {
                     ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactionsToAssociate(null);
                 }
             }
-            invoiceService.create(invoice);
-            invoiceService.postCreate(invoice);
+            if (!isVirtual) {
+                invoiceService.create(invoice);
+                invoiceService.postCreate(invoice);
+            }
             invoices.add(invoice);
         }
         return invoices;
@@ -285,8 +287,10 @@ public class QuoteService extends BusinessService<Quote> {
         if (quote.getQuoteItems() == null || quote.getQuoteItems().isEmpty()) {
             throw new ValidationException("At least one quote line item is required");
         }
+        if (!quote.isVirtual()) {
+            super.create(quote);
+        }
 
-        super.create(quote);
     }
 
     @Override
@@ -295,7 +299,9 @@ public class QuoteService extends BusinessService<Quote> {
         if (quote.getQuoteItems() == null || quote.getQuoteItems().isEmpty()) {
             throw new ValidationException("At least one quote line item is required");
         }
-
+        if (quote.isVirtual()) {
+            return quote;
+        }
         return super.update(quote);
     }
 }
