@@ -42,9 +42,6 @@ public class BillingCycleApi extends BaseApi {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    @Inject
-    private ScriptInstanceService scriptInstanceService;
-
     public void create(BillingCycleDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -111,12 +108,6 @@ public class BillingCycleApi extends BaseApi {
         } else {
             billingCycle.setType(postData.getType());
         }
-		if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
-			ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
-			if (scriptInstance != null) {
-				billingCycle.setScriptInstance(scriptInstance);
-			}
-		}
         
         // populate customFields
         try {
@@ -214,16 +205,6 @@ public class BillingCycleApi extends BaseApi {
         if (postData.getType() != null) {
             billingCycle.setType(postData.getType());
         }
-		if (postData.getScriptInstanceCode() != null) {
-			if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
-				ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
-				if (scriptInstance != null) {
-					billingCycle.setScriptInstance(scriptInstance);
-				}
-			}
-		} else {
-			billingCycle.setScriptInstance(null);
-		}
 
         // populate customFields
         try {

@@ -386,14 +386,6 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     public void setCustomInvoiceXmlScriptInstanceCode(String customInvoiceXmlScriptInstanceCode) {
         this.customInvoiceXmlScriptInstanceCode = customInvoiceXmlScriptInstanceCode;
     }
-    
-    public Boolean isInvoiceAccountable() {
-        return invoiceAccountable;
-    }
-
-    public void setInvoiceAccountable(Boolean invoiceAccountable) {
-        this.invoiceAccountable = invoiceAccountable;
-    }
 
     public String getMailingType() {
         return mailingType;

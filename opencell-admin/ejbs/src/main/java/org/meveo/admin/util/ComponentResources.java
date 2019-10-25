@@ -33,10 +33,6 @@ public class ComponentResources implements Serializable {
     private Event<Locale> currentLocaleEventProducer;
 
     @Inject
-    @Client
-    private Event<Locale> currentLocaleEventProducer;
-
-    @Inject
     private LocaleSelector localeSelector;
 
     @Inject
