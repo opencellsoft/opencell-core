@@ -102,6 +102,7 @@ public class ProductQuote implements Serializable {
     protected List<ServiceLevelAgreement> agreement;
     protected List<QuoteProductOfferingPrice> quoteProductOfferingPrice;
     protected List<ProductQuoteItem> quoteItem;
+    private boolean isVirtual;
     /**
      * By default we do not generate the pdf as it cost CPU usage
      */
@@ -644,5 +645,13 @@ public class ProductQuote implements Serializable {
 
     public void setGeneratePdf(boolean generatePdf) {
         this.generatePdf = generatePdf;
+    }
+
+    public boolean isVirtual() {
+        return isVirtual;
+    }
+
+    public void setVirtual(boolean virtual) {
+        isVirtual = virtual;
     }
 }
