@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -26,14 +27,19 @@ public class JsonGenericMapper extends ObjectMapper{
     private final SimpleFilterProvider simpleFilterProvider;
 
     public JsonGenericMapper(HashSet<String> nestedEntities) {
-        registerModule(new GenericModule(nestedEntities));
-        setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-
+        setUpConfig(nestedEntities);
         simpleFilterProvider = new SimpleFilterProvider();
         addMixIn(BaseEntity.class, ForbiddenFieldsMixIn.class);
         simpleFilterProvider.addFilter("ForbiddenFieldsFilter", SimpleBeanPropertyFilter.serializeAllExcept(forbiddenFieldNames));
         addMixIn(GenericPaginatedResource.class, GenericPaginatedResourceMixIn.class);
         simpleFilterProvider.addFilter("GenericPaginatedResourceFilter", SimpleBeanPropertyFilter.filterOutAllExcept("data","total","offset","limit"));
+    }
+
+    private void setUpConfig(HashSet<String> nestedEntities) {
+        registerModule(new GenericModule(nestedEntities));
+        setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true);
+        configure(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS, true);
     }
 
     public String toJson(Set<String> fields, Class entityClass, Object dtoToSerialize) {
