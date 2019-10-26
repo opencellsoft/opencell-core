@@ -21,7 +21,7 @@ import static org.meveo.apiv2.ValidationUtils.checkEntityName;
 
 public class GenericApiAlteringService extends GenericApiService {
     private static final Logger logger = LoggerFactory.getLogger(GenericApiAlteringService.class);
-    private List<String> forbiddenFieldsToUpdate = Arrays.asList("id", "uuid", "auditable",  "status");
+    private List<String> forbiddenFieldsToUpdate = Arrays.asList("id", "uuid", "auditable");
 
     
     public Optional<String> update(String entityName, Long id, String jsonDto) {
