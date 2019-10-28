@@ -44,7 +44,8 @@ public interface CountryIsoRs extends IBaseRs {
      * @return {@link org.meveo.api.dto.response.GetCountryIsoResponse}.
      */
     @GET
-    @Path("/") GetCountryIsoResponse find(@QueryParam("countryCode") String countryCode);
+    @Path("/") 
+    GetCountryIsoResponse find(@QueryParam("countryCode") String countryCode);
 
     /**
      * Does not delete a country but the tradingCountry associated to it.
@@ -67,6 +68,7 @@ public interface CountryIsoRs extends IBaseRs {
     ActionStatus update(CountryIsoDto countryIsoDto);
 
     /**
+     * Creates or modify a tradingCountry base from the supplied country code.
      * @param countryIsoDto country iso
      * @return action status
      */

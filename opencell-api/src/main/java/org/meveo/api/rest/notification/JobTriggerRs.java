@@ -49,7 +49,7 @@ public interface JobTriggerRs extends IBaseRs {
      * Find a job trigger with a given code
      * 
      * @param notificationCode The job trigger's code
-     * @return
+     * @return Job Trigger Response data 
      */
     @GET
     @Path("/")

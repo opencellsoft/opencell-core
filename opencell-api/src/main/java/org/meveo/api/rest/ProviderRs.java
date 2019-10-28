@@ -113,6 +113,8 @@ public interface ProviderRs extends IBaseRs {
     ActionStatus createOrUpdate(ProviderDto postData);
 
     /**
+     * Update a provider CF.
+     *
      * @param postData provider to be updated
      * @return action status
      */
@@ -121,6 +123,8 @@ public interface ProviderRs extends IBaseRs {
     ActionStatus updateProviderCF(ProviderDto postData);
 
     /**
+     * Find a provider Cf with a given provider code.
+     *
      * @param providerCode provider's code
      * @return provider if exists
      */

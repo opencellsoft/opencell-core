@@ -1,14 +1,14 @@
 package org.meveo.api.custom;
 
-import java.util.ArrayList;
+import static java.util.stream.Collectors.toList;
+import static org.meveo.service.base.NativePersistenceService.FIELD_ID;
+
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -16,6 +16,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
@@ -31,34 +32,21 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.service.base.NativePersistenceService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.custom.CustomEntityInstanceService;
-import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableService;
 import org.primefaces.model.SortOrder;
 
 /**
  * @author Andrius Karpavicius
+ * @author Mohammed ELAZZOUZI
  * @lastModifiedVersion 7.0
  **/
 @Stateless
+@SuppressWarnings("serial")
 public class CustomTableApi extends BaseApi {
-
-    public static final String ONLY_DIGIT_REGEX = "^-{0,1}[0-9]*$";
-    @Inject
-    private CustomEntityTemplateService customEntityTemplateService;
 
     @Inject
     private CustomTableService customTableService;
-
-    @Inject
-    private CustomFieldTemplateService customFieldTemplateService;
-
-    @Inject
-    private CustomEntityInstanceService customEntityInstanceService;
 
     /**
      * Create new records in a custom table with an option of deleting existing data first
@@ -69,65 +57,24 @@ public class CustomTableApi extends BaseApi {
      */
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void create(CustomTableDataDto dto) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(dto.getCustomTableCode())) {
-            missingParameters.add("customTableCode");
-        }
-        if (dto.getValues() == null || dto.getValues().isEmpty()) {
-            missingParameters.add("values");
-        }
-
-        handleMissingParameters();
-
+    	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode());  put("values", dto.getValues());}};
+    	validateParams(toValidate);
+    	CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
         if (dto.getOverwrite() == null) {
             dto.setOverwrite(false);
         }
-
-        CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCustomTableCode());
-        if (cet == null) {
-            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCustomTableCode());
-        }
-
-        List<Map<String, Object>> values = new ArrayList<>();
-
-        for (CustomTableRecordDto record : dto.getValues()) {
-            values.add(record.getValues());
-        }
-
-        customTableService.importData(cet, values, !dto.getOverwrite());
-
+        customTableService.importData(cet, dto.getValues().stream().map(x->x.getValues()).collect(toList()), !dto.getOverwrite());
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void create(UnitaryCustomTableDataDto dto) throws MeveoApiException, BusinessException {
-
-        checkDtoRequiredFields(dto);
-
-        CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCustomTableCode());
-        if (cet == null) {
-            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCustomTableCode());
-        }
-        
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
-        if (cfts == null || cfts.isEmpty()) {
-            throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
-        }
-
+    	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode());  put("value", dto.getValue());}};
+    	validateParams(toValidate);
+    	CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
+        Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet,false);
         Map<String, Object> values = customTableService.convertValue(dto.getRowValues(), cfts.values(), false,null);
-
         Long id = customTableService.create(cet.getDbTablename(), values);
         dto.getValue().setId(id);
-    }
-
-    private void checkDtoRequiredFields(UnitaryCustomTableDataDto dto) {
-        if (StringUtils.isBlank(dto.getCustomTableCode())) {
-            missingParameters.add("customTableCode");
-        }
-        if (dto.getValue() == null) {
-            missingParameters.add("value");
-        }
-
-        handleMissingParameters();
     }
 
     /**
@@ -139,101 +86,53 @@ public class CustomTableApi extends BaseApi {
      */
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void update(CustomTableDataDto dto) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(dto.getCustomTableCode())) {
-            missingParameters.add("customTableCode");
+    	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode());  put("values", dto.getValues());}};
+    	validateParams(toValidate);
+    	CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
+        Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
+        
+        Map<Boolean, List<CustomTableRecordDto>> partitionedById = dto.getValues().stream().collect(Collectors.partitioningBy(x->x.getValues().get(FIELD_ID)!=null));
+        List<CustomTableRecordDto> valuesWithIds = partitionedById.get(true);
+        List<CustomTableRecordDto> valuesWithoutIds = partitionedById.get(false);
+        if (!valuesWithoutIds.isEmpty()) {
+            throw new ValidationException(valuesWithoutIds.size() + " record(s) for update are missing the IDs.");
         }
-        if (dto.getValues() == null || dto.getValues().isEmpty()) {
-            missingParameters.add("values");
-        }
-
-        handleMissingParameters();
-
-        CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCustomTableCode());
-        if (cet == null) {
-            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCustomTableCode());
-        }
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
-        if (cfts == null || cfts.isEmpty()) {
-            throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
-        }
-
-        int importedLines = 0;
-        List<Map<String, Object>> values = new ArrayList<>();
-
-        for (CustomTableRecordDto record : dto.getValues()) {
-
-            // Update every 500 records
-            if (importedLines >= 500) {
-
-                values = customTableService.convertValues(values, cfts.values(), false);
-                customTableService.update(cet.getDbTablename(), values);
-
-                values.clear();
-                importedLines = 0;
-            }
-
-            values.add(record.getValues());
-            importedLines++;
-        }
-
-        // Update remaining records
-        values = customTableService.convertValues(values, cfts.values(), false);
-        customTableService.update(cet.getDbTablename(), values);
+        customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void update(UnitaryCustomTableDataDto dto) throws MeveoApiException, BusinessException {
-        checkDtoRequiredFields(dto);
-
-        CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCustomTableCode());
-        if (cet == null) {
-            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCustomTableCode());
-        }
-
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
-        if (cfts == null || cfts.isEmpty()) {
-            throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
-        }
-
+    	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode());  put("value", dto.getValue());}};
+    	validateParams(toValidate);
+        CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
+        Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
         List<Map<String, Object>> values = customTableService.convertValues(Arrays.asList(dto.getRowValues()), cfts.values(), false);
         customTableService.update(cet.getDbTablename(), values);
     }
 
-    /**
+	/**
      * Create new records or update existing ones in a custom table, depending if 'id' value is present
      *
      * @param dto Values to add or update
      * @throws MeveoApiException API exception
      * @throws BusinessException General exception
      */
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void createOrUpdate(CustomTableDataDto dto) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(dto.getCustomTableCode())) {
-            missingParameters.add("customTableCode");
+    	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode());  put("values", dto.getValues());}};
+    	validateParams(toValidate);
+        CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
+        Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
+        Map<Boolean, List<CustomTableRecordDto>> partitionedById = dto.getValues().stream().collect(Collectors.partitioningBy(x->x.getValues().get(FIELD_ID)!=null));
+        //create records without ids
+        List<CustomTableRecordDto> valuesWithoutIds = partitionedById.get(false);
+        if (!valuesWithoutIds.isEmpty()) {
+            customTableService.importData(cet, valuesWithoutIds.stream().map(x -> x.getValues()).collect(toList()), !dto.getOverwrite());
         }
-        if (dto.getValues() == null || dto.getValues().isEmpty()) {
-            missingParameters.add("values");
-        }
-
-        handleMissingParameters();
-
-        CustomEntityTemplate cet = customEntityTemplateService.findByCodeOrDbTablename(dto.getCustomTableCode());
-        if (cet == null) {
-            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCustomTableCode());
-        }
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
-        if (cfts == null || cfts.isEmpty()) {
-            throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
-        }
-
-        for (CustomTableRecordDto record : dto.getValues()) {
-
-            if (record.getValues().containsKey(NativePersistenceService.FIELD_ID)) {
-                customTableService.update(cet.getDbTablename(), customTableService.convertValue(record.getValues(), cfts.values(), false, null));
-            } else {
-                customTableService.create(cet.getDbTablename(), customTableService.convertValue(record.getValues(), cfts.values(), false, null));
-            }
+        //update records with ids
+        List<CustomTableRecordDto> valuesWithIds = partitionedById.get(true);
+        if (!valuesWithIds.isEmpty()) {
+            customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
         }
     }
 
@@ -250,85 +149,24 @@ public class CustomTableApi extends BaseApi {
      */
     public CustomTableDataResponseDto list(String customTableCode, PagingAndFiltering pagingAndFiltering)
             throws MissingParameterException, EntityDoesNotExistsException, InvalidParameterException, ValidationException {
-
-        if (StringUtils.isBlank(customTableCode)) {
-            missingParameters.add("customTableCode");
-        }
-        handleMissingParameters();
-
+    	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", customTableCode);}};
+    	validateParams(toValidate);
         if (pagingAndFiltering == null) {
             pagingAndFiltering = new PagingAndFiltering();
         }
-
-        CustomEntityTemplate cet = customEntityTemplateService.findByCodeOrDbTablename(customTableCode);
-        if (cet == null) {
-            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, customTableCode);
-        }
-
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
-        if (cfts == null || cfts.isEmpty()) {
-            throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
-        }
-
+        CustomEntityTemplate cet = customTableService.getCET(customTableCode);
+        Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
         pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
-
-        PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, null, pagingAndFiltering, null);
-
+        PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, null, pagingAndFiltering, null);
         Long totalCount = customTableService.count(cet.getDbTablename(), paginationConfig);
-
         CustomTableDataResponseDto result = new CustomTableDataResponseDto();
-
         result.setPaging(pagingAndFiltering);
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
         result.getCustomTableData().setCustomTableCode(customTableCode);
-
         List<Map<String, Object>> list = customTableService.list(cet.getDbTablename(), paginationConfig);
-        List<Map<String, Object>> resultWithEntities = completeWithEntities(list, cfts, pagingAndFiltering);
-
+        customTableService.completeWithEntities(list, cfts, pagingAndFiltering.getLoadReferenceDepth());
         result.getCustomTableData().setValuesFromListofMap(list);
-
         return result;
-    }
-
-    private List<Map<String, Object>> completeWithEntities(List<Map<String, Object>> list, Map<String, CustomFieldTemplate> cfts, PagingAndFiltering pagingAndFiltering) {
-        list.forEach(map -> completeWithEntities(cfts, map, 0, pagingAndFiltering.getLoadReferenceDepth()));
-        return list;
-    }
-
-    private void completeWithEntities(Map<String, CustomFieldTemplate> cfts, Map<String, Object> map, int currentDepth, int maxDepth) {
-        if (currentDepth < maxDepth) {
-            Map<String, CustomFieldTemplate> reference = toLowerCaseKeys(cfts);
-            map.entrySet().stream().filter(entry -> reference.containsKey(entry.getKey().toLowerCase()))
-                    .forEach(entry -> replaceIdValueByItsRepresentation(reference, entry, currentDepth, maxDepth));
-        }
-    }
-
-    void replaceIdValueByItsRepresentation(Map<String, CustomFieldTemplate> reference, Map.Entry<String, Object> entry, int currentDepth, int maxDepth) {
-        if (entry.getValue() != null && entry.getValue().toString().matches(ONLY_DIGIT_REGEX)) {
-            CustomFieldTemplate customFieldTemplate = reference.get(entry.getKey().toLowerCase());
-            Optional.ofNullable(customFieldTemplate).filter(field -> Objects.nonNull(field.getEntityClazz()))
-                    .map(field -> getEitherTableOrEntityValue(field, Long.valueOf(entry.getValue().toString()))).filter(values -> values.size() > 0)
-                    .ifPresent(values -> replaceValue(entry, customFieldTemplate, values, currentDepth, maxDepth));
-        }
-    }
-
-    Map<String, Object> getEitherTableOrEntityValue(CustomFieldTemplate field, Long id) {
-        CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(field.tableName());
-        if (relatedEntity != null && relatedEntity.isStoreAsTable()) {
-            return customTableService.findRecordOfTableById(field, id);
-        }
-        return Optional.ofNullable(customEntityInstanceService.findById(id)).map(customEntityInstanceService::customEntityInstanceAsMapWithCfValues).orElse(new HashMap<>());
-    }
-
-    private void replaceValue(Map.Entry<String, Object> entry, CustomFieldTemplate customFieldTemplate, Map<String, Object> values, int currentDepth, int maxDepth) {
-        entry.setValue(values);
-        final int depth = ++currentDepth;
-        Optional.ofNullable(customEntityTemplateService.findByCodeOrDbTablename(customFieldTemplate.tableName()))
-                .ifPresent(cet -> completeWithEntities(customFieldTemplateService.findByAppliesTo(cet.getAppliesTo()), values, depth, maxDepth));
-    }
-
-    Map<String, CustomFieldTemplate> toLowerCaseKeys(Map<String, CustomFieldTemplate> cfts) {
-        return cfts.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().toLowerCase(), Map.Entry::getValue));
     }
 
     /**
@@ -339,83 +177,32 @@ public class CustomTableApi extends BaseApi {
      * @throws BusinessException General exception
      */
     public void remove(CustomTableDataDto dto) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(dto.getCustomTableCode())) {
-            missingParameters.add("customTableCode");
-        }
-
-        handleMissingParameters();
-
-        CustomEntityTemplate cet = customEntityTemplateService.findByCodeOrDbTablename(dto.getCustomTableCode());
-        if (cet == null) {
-            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCustomTableCode());
-        }
-
+    	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode());}};
+    	validateParams(toValidate);
+    	CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
         if (dto.getValues() == null || dto.getValues().isEmpty()) {
             customTableService.remove(cet.getDbTablename());
         } else {
-            Set<Long> ids = new HashSet<>();
-
-            for (CustomTableRecordDto record : dto.getValues()) {
-
-                Object id = record.getValues().get(NativePersistenceService.FIELD_ID);
-                if (id != null) {
-                    // Convert to long
-                    if (id instanceof String) {
-                        id = Long.parseLong((String) id);
-                    } else if (id instanceof Number) {
-                        id = ((Number) id).longValue();
-                    }
-                    ids.add((Long) id);
-
-                } else {
-                    throw new InvalidParameterException("Not all values have an 'id' field specified");
-                }
-            }
+            Set<Long> ids = extractIds(dto);
             customTableService.remove(cet.getDbTablename(), ids);
         }
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void remove(String tableName, Long id) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(tableName)) {
-            missingParameters.add("customTableCode");
-        }
-        if (id == null) {
-            missingParameters.add("id");
-        }
-        handleMissingParameters();
-
-        CustomEntityTemplate cet = customEntityTemplateService.findByCodeOrDbTablename(tableName);
-        if (cet == null) {
-            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, tableName);
-        }
+    	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("tableName", tableName);  put(FIELD_ID, id);}};
+    	validateParams(toValidate);
+    	CustomEntityTemplate cet = customTableService.getCET(tableName);
         customTableService.remove(cet.getDbTablename(), id);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void enableOrDisble(String tableName, Long id, boolean enable) {
-        if (StringUtils.isBlank(tableName)) {
-            missingParameters.add("customTableCode");
-        }
-        if (id == null) {
-            missingParameters.add("id");
-        }
-        handleMissingParameters();
-        
-        CustomEntityTemplate cet = customEntityTemplateService.findByCodeOrDbTablename(tableName);
-        if (cet == null) {
-            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, tableName);
-        }
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
-        if (cfts == null || cfts.isEmpty()) {
-            throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
-        }
-        if (cfts == null || cfts.isEmpty() || !cfts.containsKey(NativePersistenceService.FIELD_DISABLED)) {
-            throw new ValidationException("Custom table does not contain a field 'disabled'", "customTable.noDisabledField");
-        }
-        
+    	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("tableName", tableName);  put(FIELD_ID, id);}};
+    	validateParams(toValidate);
+    	CustomEntityTemplate cet = customTableService.getCET(tableName);
+    	customTableService.validateCfts(cet, true);
         if (enable) {
             customTableService.enable(cet.getDbTablename(), id);
         } else {
@@ -432,48 +219,45 @@ public class CustomTableApi extends BaseApi {
      * @throws BusinessException General exception
      */
     public void enableDisable(CustomTableDataDto dto, boolean enable) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(dto.getCustomTableCode())) {
-            missingParameters.add("customTableCode");
-        }
-        if (dto.getValues() == null || dto.getValues().isEmpty()) {
-            missingParameters.add("values");
-        }
-
-        handleMissingParameters();
-
-        CustomEntityTemplate cet = customEntityTemplateService.findByCodeOrDbTablename(dto.getCustomTableCode());
-        if (cet == null) {
-            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCustomTableCode());
-        }
-
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
-        if (cfts == null || cfts.isEmpty() || !cfts.containsKey(NativePersistenceService.FIELD_DISABLED)) {
-            throw new ValidationException("Custom table does not contain a field 'disabled'", "customTable.noDisabledField");
-        }
-
-        Set<Long> ids = new HashSet<>();
-
-        for (CustomTableRecordDto record : dto.getValues()) {
-
-            Object id = record.getValues().get(NativePersistenceService.FIELD_ID);
-            if (id != null) {
-                // Convert to long
-                if (id instanceof String) {
-                    id = Long.parseLong((String) id);
-                } else if (id instanceof Number) {
-                    id = ((Number) id).longValue();
-                }
-                ids.add((Long) id);
-
-            } else {
-                throw new InvalidParameterException("Not all values have an 'id' field specified");
-            }
-        }
+    	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode());  put("values", dto.getValues());}};
+    	validateParams(toValidate);
+        CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
+        customTableService.validateCfts(cet, true);
+        Set<Long> ids = extractIds(dto);
         if (enable) {
             customTableService.enable(cet.getDbTablename(), ids);
         } else {
             customTableService.disable(cet.getDbTablename(), ids);
         }
     }
+
+	private Set<Long> extractIds(CustomTableDataDto dto) {
+		return dto.getValues().stream().map(x -> (castToLong(x.getValues().get(FIELD_ID))).longValue()).collect(Collectors.toSet());
+	}
+    
+	private Long castToLong(Object id) {
+		if (id != null) {
+            if (id instanceof String) {
+                return Long.parseLong((String) id);
+            } else if (id instanceof Number) {
+                return ((Number) id).longValue();
+            }
+            throw new InvalidParameterException("Invalid id value found: "+id );
+        } else {
+            throw new InvalidParameterException("Not all values have an 'id' field specified");
+        }
+	}
+
+	@SuppressWarnings("rawtypes")
+	private void validateParams(Map<String, Object> toValidate) {
+		for(String paramName: toValidate.keySet()) {
+			Object value=toValidate.get(paramName);
+			if(value == null || (value instanceof String && StringUtils.isBlank((String) value)) 
+					|| (value instanceof Collection && CollectionUtils.isEmpty((Collection) value))){
+				missingParameters.add(paramName);
+			}
+		}
+		handleMissingParameters();
+	}
+
 }

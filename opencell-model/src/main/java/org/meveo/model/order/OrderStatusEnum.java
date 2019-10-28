@@ -51,24 +51,15 @@ public enum OrderStatusEnum {
      * All Order items have failed which results in the entire Order has Failed.
      */
     FAILED("Failed"),
-    /**
-     * Orders where previous orders with the same Service Id have been found in Error Management.
-     * Such orders must only be processed once errors associated with 
-     * the previous orders in Error Management for the same Service Id have been resolved or successfully reprocessed
-     */
-    HOLD("On-hold"),
-	
 	/**
      * Orders that are to be processed alongside other 'associated' (related) orders. 
      * And all the ‘associated’ orders have not yet been submitted for processing
      */
     WAITING("Waiting"),
-    
     /**
-     * Separate Cease and Provide orders for example. The processing of Provide orders must be deferred until the referenced (Cease) order has been successfully processed
+     * Separate termination and activation orders for example. The processing of activation orders must be deferred until the referenced (terminate) order has been successfully processed
      */
     DEFERRED("Deferred"),
-    
     /**
      * Some Order items have failed and some have succeeded so the entire Order is in a Partial state. This provides support for partial Failure of an Order
      */

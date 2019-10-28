@@ -106,6 +106,11 @@ public class SubscriptionDto extends BusinessEntityDto {
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
      */
     private String minimumLabelElSpark;
+    
+    /**
+     * Corresponding to minimum invoice subcategory
+     */
+    private String minimumInvoiceSubCategory;
 
     /**
      * A date till which subscription is subscribed. After this date it will either be extended or terminated
@@ -224,8 +229,10 @@ public class SubscriptionDto extends BusinessEntityDto {
         setEmailTemplate(e.getEmailTemplate() != null ? e.getEmailTemplate().getCode() : null);
         setCcedEmails(e.getCcedEmails());
         setEmail(e.getEmail());
-		setElectronicBilling(e.getElectronicBilling());
-		
+        setElectronicBilling(e.getElectronicBilling());
+        if(e.getMinimumInvoiceSubCategory() != null) {
+            setMinimumInvoiceSubCategory(e.getMinimumInvoiceSubCategory().getCode());
+        }
     }
 
     /**
@@ -700,6 +707,20 @@ public class SubscriptionDto extends BusinessEntityDto {
      */
     public void setDiscountPlansForTermination(List<String> discountPlansForTermination) {
         this.discountPlansForTermination = discountPlansForTermination;
+    }
+    
+    /**
+     * @return the minimumInvoiceSubCategory
+     */
+    public String getMinimumInvoiceSubCategory() {
+        return minimumInvoiceSubCategory;
+    }
+
+    /**
+     * @param minimumInvoiceSubCategory the minimumInvoiceSubCategory to set
+     */
+    public void setMinimumInvoiceSubCategory(String minimumInvoiceSubCategory) {
+        this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
     }
 
     @Override

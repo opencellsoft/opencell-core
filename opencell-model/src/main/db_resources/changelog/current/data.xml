@@ -1240,7 +1240,7 @@ public class DeleteCustomersScript extends Script {
 		</sql>	
 		
          <insert tableName="meveo_job_instance">
-            <column name="id" valueNumeric="-20" />
+            <column name="id" valueNumeric="-26" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="now()" />
@@ -1472,6 +1472,21 @@ public class ValidateBRScript extends Script {
             <column name="uuid" value="Trading_Country_FR"></column>
             <where>id=-2</where>
         </update>
+    </changeSet>
+    
+    <changeSet id="#4064_11092019" author="AbdelmounaimAkadid">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-27" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2019-07-01 00:00:00.000" />
+            <column name="job_category" value="INVOICING" />
+            <column name="job_template" value="UpdateUnpaidInvoiceStatusJob" />
+            <column name="code" value="UpdateUnpaidInvoiceStatusJob" />
+            <column name="creator" value="opencell.admin" />
+            <column name="description" value="Update Status of Unpaid Invoices"></column>
+            <column name="timerentity_id" valueNumeric="-3" />
+            <column name="uuid" value="UpdateUnpaidInvoiceStatusJob" />
+        </insert>
     </changeSet>
     
 </databaseChangeLog>
