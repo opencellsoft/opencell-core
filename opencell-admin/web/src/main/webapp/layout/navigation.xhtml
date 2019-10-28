@@ -1,10 +1,8 @@
 <h:form id="menu" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-	xmlns:hftl="http://hftl.org"
-	xmlns:p="http://primefaces.org/ui">
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+>
 
 	<div class="Container">
 		<div class="Container5 NoIndent">
@@ -13,13 +11,13 @@
 
 		<div class="Container95 NoIndent">
 			<c:if
-				test="#{facesContext.viewRoot.renderKitId eq 'PRIMEFACES_MOBILE'}">
+				test="#{FacesContext.viewRoot.renderKitId eq 'PRIMEFACES_MOBILE'}">
 
 				<!-- Mobile Navigation -->
 				<ui:include src="mobileNavigation.xhtml" />
 			</c:if>
 			<c:if
-				test="#{facesContext.viewRoot.renderKitId ne 'PRIMEFACES_MOBILE'}">
+				test="#{FacesContext.viewRoot.renderKitId ne 'PRIMEFACES_MOBILE'}">
 
 				<!-- Desktop Navigation -->
 				<ui:include src="desktopNavigation.xhtml" />
