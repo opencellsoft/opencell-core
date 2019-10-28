@@ -967,7 +967,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         
         List<Subscription> subscriptionsWithMinAmount = new ArrayList<Subscription>();
         if(billableEntity instanceof Subscription) {
-            subscriptionsWithMinAmount.add((Subscription)billableEntity);
+            if(StringUtils.isNotBlank(((Subscription)billableEntity).getMinimumAmountEl())) { 
+                subscriptionsWithMinAmount.add((Subscription)billableEntity);
+            }
         } else {
             subscriptionsWithMinAmount = getSubscriptionsWithMinAmount(billableEntity);
         }
