@@ -1,5 +1,7 @@
 <ui:composition template="/layout/template.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions" xmlns:of="http://omnifaces.org/functions">
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+                xmlns:of="http://omnifaces.org/functions"
+>
 
     <ui:param name="hideNavigation" value="true" />
 
@@ -12,14 +14,15 @@
             <ui:insert name="errorContent"></ui:insert>
 
             <ui:fragment rendered="#{requestScope['javax.servlet.error.exception'].message==null or !requestScope['javax.servlet.error.exception'].message.contains('conversation')}">
-                <div>
+                <!-- development stage -->
+                <h:panelGroup layout="block" rendered="#{!paramBean.productionStage}">
                     <ul>
                         <li>Date/time: #{of:formatDate(now, 'yyyy-MM-dd HH:mm:ss')}</li>
                         <li>User agent: #{header['user-agent']}</li>
                         <li>User IP: #{empty header['x-forwarded-for'] ? request.remoteAddr : fn:split(header['x-forwarded-for'], ',')[0]}</li>
                         <li>Request URI: <a href="#{requestScope['javax.servlet.error.request_uri']}">#{requestScope['javax.servlet.error.request_uri']}</a>
                         </li>
-                        <li>Ajax request: #{facesContext.partialViewContext.ajaxRequest ? 'Yes' : 'No'}</li>
+                        <li>Ajax request: #{FacesContext.partialViewContext.ajaxRequest ? 'Yes' : 'No'}</li>
                         <li>Status code: #{requestScope['javax.servlet.error.status_code']}</li>
                         <li>Exception type: #{requestScope['javax.servlet.error.exception_type']}</li>
                         <li>Exception message: #{requestScope['javax.servlet.error.message']}</li>
@@ -27,13 +30,21 @@
 						<code>#{of:printStackTrace(requestScope['javax.servlet.error.exception'])}</code>
 					</pre></li>
                     </ul>
-                </div>
+                </h:panelGroup>
+                <!-- production stage -->
+                <h:panelGroup layout="block" rendered="#{paramBean.productionStage}">
+                    <ul style="font-size: 15px;">
+                        <li><b>Date/time:</b> #{of:formatDate(now, 'yyyy-MM-dd HH:mm:ss')}</li>
+                        <li><b>Exception message:</b><code> #{requestScope['javax.servlet.error.message']}</code></li>
+                        <li><b>Please check the logs for more details or contact your support.</b></li>
+                    </ul>
+                </h:panelGroup>
             </ui:fragment>
             <p>
                 <a href="#{request.contextPath}">#{messages['message.backToHome']}</a>
             </p>
 
-            <h:outputScript rendered="#{facesContext.partialViewContext.ajaxRequest}">scrollTo(0, 0);</h:outputScript>
+            <h:outputScript rendered="#{FacesContext.partialViewContext.ajaxRequest}">scrollTo(0, 0);</h:outputScript>
 
         </div>
     </ui:define>
