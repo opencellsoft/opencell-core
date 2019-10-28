@@ -38,7 +38,7 @@ public class BillingCycleApi extends BaseApi {
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
-    
+
     @Inject
     private ScriptInstanceService scriptInstanceService;
 

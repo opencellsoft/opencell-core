@@ -151,7 +151,7 @@ public class CustomerApi extends AccountEntityApi {
 
         if (StringUtils.isBlank(postData.getCustomerCategory())) {
             missingParameters.add("customerCategory");
-        }       
+        }
         if (StringUtils.isBlank(postData.getSeller())) {
             missingParameters.add("seller");
         }
@@ -180,9 +180,9 @@ public class CustomerApi extends AccountEntityApi {
         }
 
         Seller seller = sellerService.findByCode(postData.getSeller());
-	        if (seller == null) {
-	            throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
-	        }
+        if (seller == null) {
+            throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+        }
 
         Customer customer = new Customer();
         populate(postData, customer);
