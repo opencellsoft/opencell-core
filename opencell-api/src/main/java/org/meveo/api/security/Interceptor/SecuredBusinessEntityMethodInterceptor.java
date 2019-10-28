@@ -1,10 +1,14 @@
 package org.meveo.api.security.Interceptor;
 
 import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
+import javax.persistence.Query;
 
 import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.api.security.filter.SecureMethodResultFilter;
@@ -13,9 +17,12 @@ import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.api.security.parameter.SecureMethodParameterHandler;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.security.Role;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.security.SecuredBusinessEntityService;
 import org.slf4j.Logger;
@@ -52,6 +59,9 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
     @Inject
     private UserService userService;
 
+    @Inject
+    private RoleService roleService;
+
     /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
     @Inject
     private ParamBeanFactory paramBeanFactory;
@@ -84,9 +94,8 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
             return context.proceed();
         }
 
-        User user = userService.findByUsername(currentUser.getUserName());
-
-        boolean hasRestrictions = user != null && user.getAllSecuredEntities() != null && !user.getAllSecuredEntities().isEmpty();
+        Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap = getAllSecuredEntities(currentUser);
+        boolean hasRestrictions = !allSecuredEntitiesMap.isEmpty();
 
 		if (!hasRestrictions) {
 			return context.proceed();
@@ -108,7 +117,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
                 // means that instead of filtering search criteria, results should be filtered instead
 
             } else {
-                if (!securedBusinessEntityService.isEntityAllowed(entity, user, false)) {
+                if (!securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
                     throw new AccessDeniedException("Access to entity details is not allowed.");
                 }
             }
@@ -119,8 +128,45 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
         SecureMethodResultFilter filter = filterFactory.getFilter(annotation.resultFilter());
         log.debug("Method {}.{} results will be filtered using {} filter.", objectName, methodName, filter);
-        result = filter.filterResult(context.getMethod(), result, currentUser, user);
+        result = filter.filterResult(context.getMethod(), result, currentUser, allSecuredEntitiesMap);
         return result;
 
+    }
+
+    /**
+     * Get all accessible entities for the current user, both associated directly to the user
+     * or to its associated roles.
+     * Those accessible entities are then grouped by types into Map
+     *
+     * @param currentUser MeveoUser current user
+     * @return current user's accessible entities
+     */
+    private Map<Class<?>, Set<SecuredEntity>> getAllSecuredEntities(MeveoUser currentUser) {
+        List<SecuredEntity> allSecuredEntities = new ArrayList<>();
+        User user = userService.findByUsername(currentUser.getUserName());
+        allSecuredEntities.addAll(user.getSecuredEntities());
+
+        List<Role> rolesWithSecuredEntities = roleService.getEntityManager().createNamedQuery("Role.getRolesWithSecuredEntities", Role.class)
+        		.setParameter("currentUserRoles", currentUser.getRoles())
+        		.getResultList();
+        allSecuredEntities.addAll(rolesWithSecuredEntities.stream().map(Role::getSecuredEntities).flatMap(List::stream).collect(Collectors.toList()));
+
+
+        // group secured entites by types into Map
+        Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap = new HashMap<>();
+        Set<SecuredEntity> securedEntitySet = null;
+        try {
+            for (SecuredEntity securedEntity : allSecuredEntities) {
+                Class<?> securedBusinessEntityClass = Class.forName(securedEntity.getEntityClass());
+                if (securedEntitiesMap.get(securedBusinessEntityClass) == null) {
+                    securedEntitySet = new HashSet<>();
+                    securedEntitiesMap.put(securedBusinessEntityClass, securedEntitySet);
+                }
+                securedEntitiesMap.get(securedBusinessEntityClass).add(securedEntity);
+            }
+        } catch (ClassNotFoundException e) {
+            // do nothing
+        }
+        return securedEntitiesMap;
     }
 }

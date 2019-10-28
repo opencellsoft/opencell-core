@@ -1,9 +1,11 @@
 package org.meveo.api.security.filter;
 
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Set;
 
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
-import org.meveo.model.admin.User;
+import org.meveo.model.admin.SecuredEntity;
 import org.meveo.security.MeveoUser;
 
 /**
@@ -18,7 +20,7 @@ import org.meveo.security.MeveoUser;
 public class NullFilter extends SecureMethodResultFilter {
 
 	@Override
-	public Object filterResult(Method methodContext, Object result, MeveoUser currentUser, User user) {
+	public Object filterResult(Method methodContext, Object result, MeveoUser currentUser, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap) {
 		return result;
 	}
 

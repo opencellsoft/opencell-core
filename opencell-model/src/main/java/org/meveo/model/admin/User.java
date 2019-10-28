@@ -169,12 +169,6 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     private CustomFieldValues cfAccumulatedValues;
 
     /**
-     * Accessible entities for data entry in GUI
-     */
-    @Transient
-    private Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap;
-
-    /**
      * Last login timestamp
      */
     @Temporal(TemporalType.TIMESTAMP)
@@ -301,52 +295,8 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
 
     public void setSecuredEntities(List<SecuredEntity> securedEntities) {
         this.securedEntities = securedEntities;
-        initializeSecuredEntitiesMap();
     }
 
-    public Map<Class<?>, Set<SecuredEntity>> getSecuredEntitiesMap() {
-        if (securedEntitiesMap == null || securedEntitiesMap.isEmpty()) {
-            initializeSecuredEntitiesMap();
-        }
-        return securedEntitiesMap;
-    }
-
-    private void initializeSecuredEntitiesMap() {
-        securedEntitiesMap = new HashMap<>();
-        Set<SecuredEntity> securedEntitySet = null;
-        try {
-            for (SecuredEntity securedEntity : securedEntities) {
-                Class<?> securedBusinessEntityClass = Class.forName(securedEntity.getEntityClass());
-                if (securedEntitiesMap.get(securedBusinessEntityClass) == null) {
-                    securedEntitySet = new HashSet<>();
-                    securedEntitiesMap.put(securedBusinessEntityClass, securedEntitySet);
-                }
-                securedEntitiesMap.get(securedBusinessEntityClass).add(securedEntity);
-            }
-        } catch (ClassNotFoundException e) {
-            // do nothing
-        }
-        
-		// secured entities from role
-		if (getRoles() != null && !getRoles().isEmpty()) {
-			for (Role r : getRoles()) {
-				try {
-					for (SecuredEntity securedEntity : r.getSecuredEntities()) {
-						Class<?> securedBusinessEntityClass = Class.forName(securedEntity.getEntityClass());
-						if (securedEntitiesMap.get(securedBusinessEntityClass) == null) {
-							securedEntitySet = new HashSet<>();
-							securedEntitiesMap.put(securedBusinessEntityClass, securedEntitySet);
-						}
-						securedEntitiesMap.get(securedBusinessEntityClass).add(securedEntity);
-					}
-				} catch (ClassNotFoundException e) {
-					// do nothing
-				}
-			}
-		}
-        
-    }
-    
     /**
      * Returns all the secured entities associated with this user's roles.
      * @return list of secured entities
@@ -362,18 +312,6 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
 			}
 		}
 
-		return result;
-	}
-	
-	/**
-	 * Returns all the secured entities of this user and all its roles.
-	 * @return list of secured entities
-	 */
-	public List<SecuredEntity> getAllSecuredEntities() {
-		List<SecuredEntity> result = new ArrayList<>();
-		result.addAll(getSecuredEntities());
-		result.addAll(getRoleSecuredEntities());
-		
 		return result;
 	}
 
@@ -392,7 +330,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
 
         return userName;
     }
-    
+
     /**
      * setting uuid if null
      */
@@ -402,7 +340,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     		uuid = UUID.randomUUID().toString();
     	}
     }
-    
+
     @Override
     public String getUuid() {
     	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
