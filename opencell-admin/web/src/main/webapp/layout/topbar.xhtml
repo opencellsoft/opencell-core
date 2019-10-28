@@ -1,9 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
 
 	<div id="topbar-wrapper" class="clearfix">
@@ -91,7 +90,7 @@
 	</div>
 
 	<div
-		id="#{facesContext.viewRoot.renderKitId eq 'PRIMEFACES_MOBILE' ? 'layout-menu-cover' : 'top-menu-cover'}"
+		id="#{FacesContext.viewRoot.renderKitId eq 'PRIMEFACES_MOBILE' ? 'layout-menu-cover' : 'top-menu-cover'}"
 		class="FLeft">
 		<c:if test="#{!hideNavigation}">
 			<ui:include src="/layout/navigation.xhtml" />
