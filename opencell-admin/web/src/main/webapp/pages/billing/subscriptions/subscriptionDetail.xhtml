@@ -100,7 +100,7 @@
 			column4Child="to" selection="#{subscriptionBean.entity.offer}"
 			width="1000" lazy="true"
 			dataModel="#{subscriptionBean.activeOfferTemplateDataModel}"
-			updateField=":subscriptionTab:subscriptionFormId:informationTab:offerSelectId :subscriptionTab:subscriptionFormId:informationTab:sellerSelectId_entity :subscriptionTab:subscriptionFormId:informationTab:offerSelectId_text :subscriptionTab:subscriptionFormId:informationTab:subscriptionAndRenewalDates :subscriptionTab:subscriptionFormId:informationTab:minimumAmountEl :subscriptionTab:subscriptionFormId:informationTab:minimumLabelEl :subscriptionTab:subscriptionFormId:informationTab:minimumAmountElSpark :subscriptionTab:subscriptionFormId:informationTab:minimumLabelElSpark"
+			updateField=":subscriptionTab:subscriptionFormId:informationTab:offerSelectId :subscriptionTab:subscriptionFormId:informationTab:sellerField :subscriptionTab:subscriptionFormId:informationTab:offerSelectId_text :subscriptionTab:subscriptionFormId:informationTab:subscriptionAndRenewalDates :subscriptionTab:subscriptionFormId:informationTab:minimumAmountEl :subscriptionTab:subscriptionFormId:informationTab:minimumLabelEl :subscriptionTab:subscriptionFormId:informationTab:minimumAmountElSpark :subscriptionTab:subscriptionFormId:informationTab:minimumLabelElSpark"
 			selectionListenerBean="#{subscriptionBean}" selectionListenerMethod="copyInfoFromOffer">
 		</hftl:entityPopup>
 		<!-- 		<hftl:entityPopup id="chargeTemplatePopup" -->
@@ -294,30 +294,16 @@
 
 				<p:tabView id="subscriptionTab" styleClass="tab-parent" activeIndex="#{subscriptionBean.activeMainTab}">
 
-					<p:tab id="serviceTab"
-						title="#{messages['subscription.tab.services']}"
-						rendered="#{not empty subscriptionBean.entity.id}">
-						<hftl:formPanel formId="headerInfo1"
-							edit="false" backingBean="#{subscriptionBean}"
-							showFormButtons="false">
+					<p:tab id="serviceTab" title="#{messages['subscription.tab.services']}"	rendered="#{not empty subscriptionBean.entity.id}">
 
-							<hftl:formField label="#{messages['businessEntity.code']}"
-								field="code" required="true" />
-							<hftl:formField label="#{messages['serviceInstance.status']}"
-								field="status" />
-							<hftl:formField label="#{messages['serviceInstance.statusDate']}"
-								field="statusDate" />
+                        <hftl:formPanel formId="headerInfo1" edit="false" backingBean="#{subscriptionBean}" showFormButtons="false">
+                            <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" componentWidth="40" />
+                            <hftl:formField label="#{messages['serviceInstance.status']}" field="status" componentWidth="10" />
+                            <hftl:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" componentWidth="10" />
+                            <hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" componentWidth="20" />
+                            <hftl:formField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" componentWidth="20" />
 
-							<hftl:formField id="offerSelectId1"
-								label="#{messages['subscription.offer']}" field="offer"
-								valueLabelField="code" newLine="true" />
-							<hftl:formField
-								label="#{messages['billingAccount.subscriptionDate']}"
-								field="subscriptionDate" />
-							<hftl:formField
-								label="#{messages['billingAccount.terminationDate']}"
-								field="terminationDate" />
-
+                            <hftl:formField id="offerSelectId1" label="#{messages['subscription.offer']}" field="offer" valueLabelField="code" newLine="true" popup="true"/>                                
 						</hftl:formPanel>
 
 						<h:panelGroup id="terminableServicesGroup"
@@ -522,6 +508,7 @@
                                      	<hftl:formField label="#{messages[appProvider.entreprise?'offerTemplate.minimumAmountWithoutTaxEl':'offerTemplate.minimumAmountWithTaxEl']}" field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
                                      	<hftl:formField label="#{messages['offerTemplate.minimumLabelElSpark']}" field="minimumLabelElSpark" id="minimumLabelElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />   
                                      	<hftl:formField label="#{messages[appProvider.entreprise?'offerTemplate.minimumAmountWithoutTaxElSpark':'offerTemplate.minimumAmountWithTaxElSpark']}" field="minimumAmountElSpark" id="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                                 		<hftl:formField label="#{messages['offerTemplate.minimumInvoiceSubCategory']}" id="invoiceSubCategoryId" field="minimumInvoiceSubCategory" valueLabelField="code" listBean="#{invoiceSubCategoryBean}" /> 
                                  	
                                  		<hftl:decorateFormField fieldId="balance_text" label="#{messages['subscription.balanceDue']}">
                                             <h:outputText id="balance_text" rendered="#{true or !subscriptionBean.edit}" value="#{subscriptionBean.getBalanceDue()}" style="font-weight:bold;"
@@ -535,9 +522,10 @@
 										<hftl:formField id="billingCycleSelectId" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
                             				popupId="billingCyclePopup" />
                             				
-                            			<hftl:formField id="sellerSelectId" label="#{messages['seller']}" field="seller" disabled="#{subscriptionBean.entity.offer == null}" valueLabelField="code" popup="true" componentWidth="30" required="true" allowEdit="false"
-                            				popupId="sellerPopup" />
-										
+                                        <h:panelGroup id="sellerField">
+                                			<hftl:formField id="sellerSelectId" label="#{messages['seller']}" field="seller" disabled="#{subscriptionBean.entity.offer == null}" valueLabelField="code" popup="true" componentWidth="30" required="true" allowEdit="false"
+                                				popupId="sellerPopup" />
+										</h:panelGroup>
 										<hftl:formField
 											label="#{messages['businessEntity.description']}"
 											field="description" size="80" />
