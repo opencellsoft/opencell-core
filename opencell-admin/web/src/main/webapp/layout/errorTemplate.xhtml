@@ -22,7 +22,7 @@
                         <li>User IP: #{empty header['x-forwarded-for'] ? request.remoteAddr : fn:split(header['x-forwarded-for'], ',')[0]}</li>
                         <li>Request URI: <a href="#{requestScope['javax.servlet.error.request_uri']}">#{requestScope['javax.servlet.error.request_uri']}</a>
                         </li>
-                        <li>Ajax request: #{FacesContext.partialViewContext.ajaxRequest ? 'Yes' : 'No'}</li>
+                        <li>Ajax request: #{facesContext.partialViewContext.ajaxRequest ? 'Yes' : 'No'}</li>
                         <li>Status code: #{requestScope['javax.servlet.error.status_code']}</li>
                         <li>Exception type: #{requestScope['javax.servlet.error.exception_type']}</li>
                         <li>Exception message: #{requestScope['javax.servlet.error.message']}</li>
@@ -44,7 +44,7 @@
                 <a href="#{request.contextPath}">#{messages['message.backToHome']}</a>
             </p>
 
-            <h:outputScript rendered="#{FacesContext.partialViewContext.ajaxRequest}">scrollTo(0, 0);</h:outputScript>
+            <h:outputScript rendered="#{facesContext.partialViewContext.ajaxRequest}">scrollTo(0, 0);</h:outputScript>
 
         </div>
     </ui:define>
