@@ -965,7 +965,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
         }
         
-        List<Subscription> subscriptionsWithMinAmount = getSubscriptionsWithMinAmount(billableEntity);
+        List<Subscription> subscriptionsWithMinAmount = new ArrayList<Subscription>();
+        if(billableEntity instanceof Subscription) {
+            subscriptionsWithMinAmount.add((Subscription)billableEntity);
+        } else {
+            subscriptionsWithMinAmount = getSubscriptionsWithMinAmount(billableEntity);
+        }
+        
         for (Subscription subscriptionWithMinAmount : subscriptionsWithMinAmount) {
             Object[] minAmountInfo = subscriptionToMinAmount.get(subscriptionWithMinAmount.getId());
             if(minAmountInfo == null) {
@@ -982,6 +988,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 if(invoiceSubCategory != null) {
                     amountMap.put(invoiceSubCategory.getId(), subscriptionAmounts);
                     subscriptionToMinAmount.put(subscriptionWithMinAmount.getId(), new Object[] { minAmount, minAmountLabel, subscriptionAmounts, amountMap, subscriptionWithMinAmount });
+                
+                    // Append extra amounts from service level
+                    if (extraAmountsPerSubscription.containsKey(subscriptionWithMinAmount.getId())) {
+
+                        Object[] subscriptionToMinAmountInfo = subscriptionToMinAmount.get(subscriptionWithMinAmount.getId());
+                        Map<String, Amounts> extraAmounts = extraAmountsPerSubscription.get(subscriptionWithMinAmount.getId());
+
+                        for (Entry<String, Amounts> amountInfo : extraAmounts.entrySet()) {
+                            ((Amounts) subscriptionToMinAmountInfo[2]).addAmounts(amountInfo.getValue());
+                            // Key consist of sellerId_invoiceSubCategoryId. Interested in invoiceSubCategoryId only
+                            ((Map<Long, Amounts>) subscriptionToMinAmountInfo[3]).put(Long.parseLong(amountInfo.getKey().split("_")[1]), amountInfo.getValue().clone());
+                        }
+                    }
+                
                 } else {
                     throw new BusinessException("minAmountInvoiceSubCategory not defined for subscription code="+subscriptionWithMinAmount.getCode());
                 }
@@ -1122,31 +1142,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         String minAmountEL = billingAccount.getMinimumAmountEl();
         String minAmountLabelEL = billingAccount.getMinimumLabelEl();
 
-        if (!StringUtils.isBlank(minAmountEL)) {
-            minAmount = evaluateMinAmountExpression(minAmountEL, billingAccount, null, null);
-            minAmountLabel = evaluateMinAmountLabelExpression(minAmountLabelEL, billingAccount, null, null);
-            Map<Long, Amounts> amountMap = new HashMap<Long, Amounts>();
-            InvoiceSubCategory invoiceSubCategory = billingAccount.getMinimumInvoiceSubCategory();
-            if(invoiceSubCategory != null) {
-                List<Seller> sellers = getSellersByBillingAccount(billingAccount);
-                if(sellers.size() > 0) {
-                    for(Seller seller : sellers) {
-                        Amounts baAmounts = new Amounts(BigDecimal.ZERO, BigDecimal.ZERO, null);
-                        amountMap.put(invoiceSubCategory.getId(), baAmounts);
-                        String key = seller.getId() + "_" + invoiceSubCategory.getId();
-                        baToMinAmounts.put(key, baAmounts);
-                    }
-                } else {
-                    Amounts baAmounts = new Amounts(BigDecimal.ZERO, BigDecimal.ZERO, null);
-                    amountMap.put(invoiceSubCategory.getId(), baAmounts);
-                    String key = billingAccount.getCustomerAccount().getCustomer().getSeller().getId() + "_" + invoiceSubCategory.getId();
-                    baToMinAmounts.put(key, baAmounts);
-                }
-            } else {
-                throw new BusinessException("minAmountInvoiceSubCategory not defined for billingAccount id="+ billingAccount.getId());
-            }
-        }
-
         // Calculate amounts on billing account level grouped by invoice category and seller
         // Calculate a total sum of amounts for billing account
         List<Object[]> amountsList = computeInvoiceableAmountForBillingAccount(billingAccount, new Date(0), lastTransactionDate);
@@ -1162,6 +1157,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 baToMinAmounts.get(extraAmount.getKey()).addAmounts(extraAmount.getValue());
             } else {
                 baToMinAmounts.put(extraAmount.getKey(), extraAmount.getValue().clone());
+            }
+        }
+        
+        if (!StringUtils.isBlank(minAmountEL)) {
+            minAmount = evaluateMinAmountExpression(minAmountEL, billingAccount, null, null);
+            minAmountLabel = evaluateMinAmountLabelExpression(minAmountLabelEL, billingAccount, null, null);
+            Map<Long, Amounts> amountMap = new HashMap<Long, Amounts>();
+            if(baToMinAmounts.size() == 0) {
+                InvoiceSubCategory invoiceSubCategory = billingAccount.getMinimumInvoiceSubCategory();
+                if(invoiceSubCategory != null) {
+                    Amounts baAmounts = new Amounts(BigDecimal.ZERO, BigDecimal.ZERO, null);
+                    amountMap.put(invoiceSubCategory.getId(), baAmounts);
+                    String key = billingAccount.getCustomerAccount().getCustomer().getSeller().getId() + "_" + invoiceSubCategory.getId();
+                    baToMinAmounts.put(key, baAmounts);
+                } else {
+                    throw new BusinessException("minAmountInvoiceSubCategory not defined for billingAccount code="+ billingAccount.getCode());
+                }
             }
         }
 
