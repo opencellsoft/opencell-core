@@ -630,4 +630,17 @@ public class ParamBean {
         return getDateTimeFormat();
     }
 
+    /**
+     * Get a production stage property value.
+     * False means that is on development stage.
+     *
+     * @return true/false
+     */
+    public boolean isProductionStage() {
+        ParamBean bean = ParamBean.getInstance();
+        if (bean != null) {
+            return Boolean.parseBoolean(bean.getProperty("production.stage", "false"));
+        }
+        return false;
+    }
 }
