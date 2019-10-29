@@ -54,7 +54,6 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.Provider;
@@ -84,7 +83,6 @@ import org.primefaces.model.SortOrder;
 /**
  * @author Edward P. Legaspi
  **/
-@SuppressWarnings("deprecation")
 @Stateless
 public class ProviderApi extends BaseApi {
 

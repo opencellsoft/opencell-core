@@ -179,7 +179,10 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
      * Should PDF be generated
      */
     @Transient
-    private boolean generatePdf = true;;
+    private boolean generatePdf = true;
+
+    @Transient
+    private boolean isVirtual = false;
 
     public String getExternalId() {
         return externalId;
@@ -351,5 +354,13 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
 
     public void setGeneratePdf(boolean generatePdf) {
         this.generatePdf = generatePdf;
+    }
+
+    public boolean isVirtual() {
+        return isVirtual;
+    }
+
+    public void setVirtual(boolean virtual) {
+        isVirtual = virtual;
     }
 }
