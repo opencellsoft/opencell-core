@@ -183,6 +183,12 @@ public class CustomTableApi extends BaseApi {
         if (dto.getValues() == null || dto.getValues().isEmpty()) {
             customTableService.remove(cet.getDbTablename());
         } else {
+            Map<Boolean, List<CustomTableRecordDto>> partitionedById = dto.getValues().stream().collect(Collectors.partitioningBy(x->x.getValues().get(FIELD_ID)!=null));
+            List<CustomTableRecordDto> valuesWithoutIds = partitionedById.get(false);
+            
+            if (!valuesWithoutIds.isEmpty()) {
+                throw new ValidationException(valuesWithoutIds.size() + " record(s) to remove are missing the IDs.");
+            }
             Set<Long> ids = extractIds(dto);
             customTableService.remove(cet.getDbTablename(), ids);
         }
