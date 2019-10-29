@@ -55,7 +55,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
@@ -82,7 +82,7 @@ import org.slf4j.LoggerFactory;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "charge_type", discriminatorType = DiscriminatorType.STRING)
 @NamedQueries({ @NamedQuery(name = "ChargeInstance.listPrepaid", query = "SELECT c FROM ChargeInstance c where c.prepaid=true and  c.status='ACTIVE'") })
-public abstract class ChargeInstance extends BusinessEntity {
+public abstract class ChargeInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
