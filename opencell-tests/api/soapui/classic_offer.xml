@@ -55638,7 +55638,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
                   <alias>pro</alias>\r
                   <preferred>false</preferred>\r
                   <cardNumber>6789678967896789</cardNumber>\r
-               </methodOfPayment>\r
+               </methodOfPayment>
+               <methodOfPayment paymentMethodType="CHECK"/>\r
             </paymentMethods>\r
          </crmAccountHierarchy>\r
       </ws:createOrUpdateCRMAccountHierarchy>\r
