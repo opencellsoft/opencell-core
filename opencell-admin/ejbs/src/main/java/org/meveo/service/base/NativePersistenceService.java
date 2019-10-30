@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -670,9 +671,8 @@ public class NativePersistenceService extends BaseService {
      */
     @SuppressWarnings({ "rawtypes" })
     public QueryBuilder getQuery(String tableName, PaginationConfiguration config) {
-
-        QueryBuilder queryBuilder = new QueryBuilder("select * from " + tableName + " a ", "a");
-
+        String fileds = (config!=null && config.getFetchFields()!=null)?config.getFetchFields().stream().map(x->" a."+x).collect(Collectors.joining(",")):"*";
+		QueryBuilder queryBuilder = new QueryBuilder("select "+fileds+" from " + tableName + " a ", "a");
         if (config == null) {
             return queryBuilder;
         }

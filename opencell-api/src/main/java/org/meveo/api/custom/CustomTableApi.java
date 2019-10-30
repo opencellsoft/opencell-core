@@ -157,7 +157,8 @@ public class CustomTableApi extends BaseApi {
         CustomEntityTemplate cet = customTableService.getCET(customTableCode);
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
         pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
-        PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, null, pagingAndFiltering, null);
+        List<String> fields = pagingAndFiltering.getFields()!=null?Arrays.asList(pagingAndFiltering.getFields().split(",")):null;
+		PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, null);
         Long totalCount = customTableService.count(cet.getDbTablename(), paginationConfig);
         CustomTableDataResponseDto result = new CustomTableDataResponseDto();
         result.setPaging(pagingAndFiltering);
