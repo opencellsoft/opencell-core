@@ -257,7 +257,9 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
             throws MeveoApiException, BusinessException {
 
         Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesToNoCache(appliesTo);
-
+		String oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint())
+				.map(x -> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
+        
         // Create, update or remove fields as necessary
         List<CustomFieldTemplate> cftsToRemove = new ArrayList<CustomFieldTemplate>();
         if (fields != null && !fields.isEmpty()) {
@@ -322,8 +324,6 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
             entityActionScriptService.remove(action.getId());
         }
         if(cet !=null) {
-			String oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint())
-					.map(x -> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
 			String newConstraintColumns = CollectionUtils.isEmpty(fields) ? ""
 					: fields.stream().filter(x -> x.getUniqueConstraint() != null && x.getUniqueConstraint())
 							.map(x -> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
