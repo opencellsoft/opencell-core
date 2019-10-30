@@ -56,6 +56,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.rating.EDR;
 
 /**
@@ -323,6 +324,21 @@ public class WalletOperation extends BaseEntity {
     @Column(name = "rating_unit_description", length = 20)
     @Size(max = 20)
     private String ratingUnitDescription;
+
+
+    /**
+     * input_unit_unitOfMeasure
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "input_unitofmeasure")
+    private UnitOfMeasure inputUnitOfMeasure;
+
+    /**
+     * rating_unit_unitOfMeasure
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rating_unitofmeasure")
+    private UnitOfMeasure ratingUnitOfMeasure;
 
     /**
      * Input quantity
@@ -1069,5 +1085,22 @@ public class WalletOperation extends BaseEntity {
      */
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public UnitOfMeasure getInputUnitOfMeasure() {
+        return inputUnitOfMeasure;
+    }
+
+    public void setInput_unitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
+        this.inputUnitOfMeasure = inputUnitOfMeasure;
+    }
+
+    public UnitOfMeasure getRatingUnitOfMeasure() {
+        return ratingUnitOfMeasure;
+    }
+
+    public void setRatingUnitOfMeasure(UnitOfMeasure ratingUnitOfMeasure) {
+        this.ratingUnitOfMeasure = ratingUnitOfMeasure;
+
     }
 }

@@ -53,19 +53,28 @@
 						<hftl:formField
 							label="#{messages['recurringChargeTemplate.sharedLevel']}"
 							field="shareLevel" />
-						<hftl:formField
-							label="#{messages['chargeTemplate.inputUnitDescription']}"
-							field="inputUnitDescription" />
-						<hftl:formField
-							label="#{messages['chargeTemplate.ratingUnitDescription']}"
-							field="ratingUnitDescription" />
+
+
+					<hftl:formField
+							label="#{messages['chargeTemplate.inputUnitOfMesure']}"
+							field="inputUnitOfMeasure" valueLabelField="symbol" listBean="#{unitOfMeasureBean}"/>
+
+					<hftl:formField
+							label="#{messages['chargeTemplate.ratingUnitOfMesure']}"
+							field="ratingUnitOfMeasure" valueLabelField="symbol" listBean="#{unitOfMeasureBean}"/>
+
+<!--						<hftl:formField-->
+<!--							label="#{messages['chargeTemplate.ratingUnitDescription']}"-->
+<!--							field="ratingUnitDescription" />-->
 						<hftl:formField
 							label="#{messages['chargeTemplate.unitMultiplicator']}"
 							field="unitMultiplicator" converter="bigDecimal12DigitsConverter" />
 						<hftl:formField label="#{messages['chargeTemplate.unitNbDecimal']}"
 							field="unitNbDecimal" />
+						<hftl:formField label="#{messages['chargeTemplate.inputUnitOfMesureEL']}" field="inputUnitEL" />
+						<hftl:formField label="#{messages['chargeTemplate.ratingUnitOfMesureEL']}" field="outputUnitEL"/>
 						<hftl:formField label="#{messages['chargeTemplate.roundingMode']}" field="roundingMode" />
-												
+
 						<hftl:formField label="#{messages['recurringChargeTemplate.filterExpression']}"
 						   field="filterExpression" textArea="true" rows="1" maxlength="2000"/>							
 

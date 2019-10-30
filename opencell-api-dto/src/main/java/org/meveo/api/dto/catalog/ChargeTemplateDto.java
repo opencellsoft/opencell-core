@@ -41,13 +41,24 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     private List<LanguageDescriptionDto> languageDescriptions;
 
     /** The input unit description. */
+    @Deprecated
     private String inputUnitDescription;
 
     /** The rating unit description. */
+    @Deprecated
     private String ratingUnitDescription;
 
     /** The unit multiplicator. */
+    @Deprecated
     private BigDecimal unitMultiplicator;
+    
+    private String inputUnitOfMeasureCode;
+    
+    private String ratingUnitOfMeasureCode;
+    
+    private String inputUnitEL;
+
+    private String outputUnitEL;
 
     /**
      * EDR and WO quantity field value precision
@@ -95,11 +106,14 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
         }
         roundingModeDtoEnum = chargeTemplate.getRoundingMode();
         customFields = customFieldInstances;
-
+        inputUnitOfMeasureCode=chargeTemplate.getInputUnitOfMeasure()!=null?chargeTemplate.getInputUnitOfMeasure().getCode():null;
+        ratingUnitOfMeasureCode=chargeTemplate.getRatingUnitOfMeasure()!=null?chargeTemplate.getRatingUnitOfMeasure().getCode():null;
+        inputUnitEL=chargeTemplate.getInputUnitEL();
+        outputUnitEL=chargeTemplate.getOutputUnitEL();
         inputUnitDescription = chargeTemplate.getInputUnitDescription();
         ratingUnitDescription = chargeTemplate.getRatingUnitDescription();
-        unitNbDecimal = chargeTemplate.getUnitNbDecimal();
         unitMultiplicator = chargeTemplate.getUnitMultiplicator();
+        unitNbDecimal = chargeTemplate.getUnitNbDecimal();
         roundingModeDtoEnum = chargeTemplate.getRoundingMode();
         revenueRecognitionRuleCode = chargeTemplate.getRevenueRecognitionRule() == null ? null : chargeTemplate.getRevenueRecognitionRule().getCode();
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getDescriptionI18n()));
@@ -310,4 +324,60 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
                 + ", ratingUnitDescription=" + ratingUnitDescription + ", unitMultiplicator=" + unitMultiplicator + ", unitNbDecimal=" + unitNbDecimal + ", customFields="
                 + customFields + ", triggeredEdrs=" + triggeredEdrs + ",roundingModeDtoEnum=" + roundingModeDtoEnum + "]";
     }
+
+	/**
+	 * @return the inputUnitOfMeasureCode
+	 */
+	public String getInputUnitOfMeasureCode() {
+		return inputUnitOfMeasureCode;
+	}
+
+	/**
+	 * @param inputUnitOfMeasureCode the inputUnitOfMeasureCode to set
+	 */
+	public void setInputUnitOfMeasureCode(String inputUnitOfMeasureCode) {
+		this.inputUnitOfMeasureCode = inputUnitOfMeasureCode;
+	}
+
+	/**
+	 * @return the ratingUnitOfMeasureCode
+	 */
+	public String getRatingUnitOfMeasureCode() {
+		return ratingUnitOfMeasureCode;
+	}
+
+	/**
+	 * @param ratingUnitOfMeasureCode the ratingUnitOfMeasureCode to set
+	 */
+	public void setRatingUnitOfMeasureCode(String ratingUnitOfMeasureCode) {
+		this.ratingUnitOfMeasureCode = ratingUnitOfMeasureCode;
+	}
+
+	/**
+	 * @return the inputUnitEL
+	 */
+	public String getInputUnitEL() {
+		return inputUnitEL;
+	}
+
+	/**
+	 * @param inputUnitEL the inputUnitEL to set
+	 */
+	public void setInputUnitEL(String inputUnitEL) {
+		this.inputUnitEL = inputUnitEL;
+	}
+
+	/**
+	 * @return the outputUnitEL
+	 */
+	public String getOutputUnitEL() {
+		return outputUnitEL;
+	}
+
+	/**
+	 * @param outputUnitEL the outputUnitEL to set
+	 */
+	public void setOutputUnitEL(String outputUnitEL) {
+		this.outputUnitEL = outputUnitEL;
+	}
 }

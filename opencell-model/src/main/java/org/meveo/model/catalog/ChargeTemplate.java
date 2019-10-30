@@ -18,11 +18,20 @@
  */
 package org.meveo.model.catalog;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.finance.RevenueRecognitionRule;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -43,21 +52,12 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ModuleItem;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.OperationTypeEnum;
-import org.meveo.model.finance.RevenueRecognitionRule;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Charge template/definition
@@ -129,10 +129,55 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     protected String ratingUnitDescription;
 
     /**
+     * input_unit_unitOfMeasure
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "input_unitofmeasure")
+    private UnitOfMeasure inputUnitOfMeasure;
+
+    /**
+     * rating_unit_unitOfMeasure
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rating_unitofmeasure")
+    private UnitOfMeasure ratingUnitOfMeasure;
+    
+    
+    /**
+     * Expression to calculate input unitOfMeasure
+     */
+    @Column(name = "input_unit_el", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String inputUnitEL;
+    
+    /**
+     * Expression to calculate input unitOfMeasure
+     */
+    @Column(name = "output_unit_el", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String outputUnitEL;
+
+    public String getInputUnitEL() {
+		return inputUnitEL;
+	}
+
+	public void setInputUnitEL(String inputUnitEL) {
+		this.inputUnitEL = inputUnitEL;
+	}
+
+	public String getOutputUnitEL() {
+		return outputUnitEL;
+	}
+
+	public void setOutputUnitEL(String outputUnitEL) {
+		this.outputUnitEL = outputUnitEL;
+	}
+
+	/**
      * Unit multiplicator between input and rating unit
      */
     @Column(name = "unit_multiplicator", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
-    protected BigDecimal unitMultiplicator;
+    private BigDecimal unitMultiplicator;
 
     /**
      * EDR and WO quantity field value precision
@@ -235,11 +280,11 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
         this.ratingUnitDescription = ratingUnitDescription;
     }
 
-    public BigDecimal getUnitMultiplicator() {
-        return unitMultiplicator;
-    }
+	public BigDecimal getUnitMultiplicator() {
+		return unitMultiplicator;
+	}
 
-    public void setUnitMultiplicator(BigDecimal unitMultiplicator) {
+	public void setUnitMultiplicator(BigDecimal unitMultiplicator) {
         this.unitMultiplicator = unitMultiplicator;
     }
 
@@ -355,5 +400,34 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
         computeRoundingValues(); // See if this can be computed only once upon entity load or upon value change
         return roundingUnityNbDecimal;
     }
+
+    public UnitOfMeasure getInputUnitOfMeasure() {
+        return inputUnitOfMeasure;
+    }
+
+    public void setInputUnitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
+        this.inputUnitOfMeasure = inputUnitOfMeasure;
+        updateUnitMultiplicator();
+    }
+
+    public UnitOfMeasure getRatingUnitOfMeasure() {
+        return ratingUnitOfMeasure;
+    }
+
+    public void setRatingUnitOfMeasure(UnitOfMeasure ratingUnitOfMeasure) {
+        this.ratingUnitOfMeasure = ratingUnitOfMeasure;
+        updateUnitMultiplicator();
+    }
+
+	private void updateUnitMultiplicator() {
+		setUnitMultiplicator(calculateUnitMultiplicator(this.inputUnitOfMeasure, this.ratingUnitOfMeasure));
+	}
+	
+    private BigDecimal calculateUnitMultiplicator(UnitOfMeasure IUM, UnitOfMeasure RUM) {
+		if(IUM!=null && RUM != null && IUM.isCompatibleWith(RUM)){
+			return BigDecimal.valueOf(IUM.getMultiplicator()).divide(BigDecimal.valueOf(RUM.getMultiplicator()),BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP );
+		}
+		return unitMultiplicator;
+	}
 
 }

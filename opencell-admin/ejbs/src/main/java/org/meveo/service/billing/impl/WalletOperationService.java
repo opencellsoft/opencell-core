@@ -79,6 +79,7 @@ import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
@@ -135,6 +136,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     @Inject
     private CurrencyService currencyService;
+    
+    @Inject
+    private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
     public WalletOperation rateOneShotApplication(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits,
             Date applicationDate, boolean isVirtual, String orderNumberOverride) throws BusinessException, RatingException {
@@ -161,7 +165,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         log.debug(
             "WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, multiplicator={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}",
-            new Object[] { subscription.getId(), quantityInChargeUnits, chargeInstance.getChargeTemplate().getUnitMultiplicator(), applicationDate, chargeInstance.getId(),
+            new Object[] { subscription.getId(), quantityInChargeUnits, chargeTemplateService.evaluateUnitRating(chargeInstance.getChargeTemplate()), applicationDate, chargeInstance.getId(),
                     chargeInstance.getDescription() });
 
         WalletOperation walletOperation = rateOneShotApplication(subscription, chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate, isVirtual,
