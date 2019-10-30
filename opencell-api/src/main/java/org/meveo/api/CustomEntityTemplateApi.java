@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BusinessEntityDto;
@@ -121,9 +122,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
                 customFieldTemplateApi.createWithoutUniqueConstraint(cftDto, cet.getAppliesTo());
             }
 			String columnNames = dto.getFields().stream().filter(x->x.getUniqueConstraint()!= null && x.getUniqueConstraint()).map(x-> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
-			if(!StringUtils.isEmpty(columnNames)) {
-				customFieldTemplateService.addConstraintByColumnsName(cet, columnNames);
-        }
+			customFieldTemplateService.addConstraintByColumnsName(cet, columnNames);
         }
 
         if (dto.getActions() != null) {
@@ -184,8 +183,8 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         cet = convertCustomEntityTemplateFromDTO(dto, cet);
         cet = customEntityTemplateService.update(cet);
 
-        synchronizeCustomFieldsAndActions(cet.getAppliesTo(), dto.getFields(), dto.getActions());
-
+        synchronizeCustomFieldsAndActions(cet, cet.getAppliesTo(), dto.getFields(), dto.getActions());
+        
         return cet;
     }
 
@@ -250,11 +249,11 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         }
 
         String appliesTo = EntityCustomizationUtils.getAppliesTo(clazz, null);
-
-        synchronizeCustomFieldsAndActions(appliesTo, dto.getFields(), dto.getActions());
+        CustomEntityTemplate cet = customEntityTemplateService.findByCodeNoCache(dto.getClassname());
+        synchronizeCustomFieldsAndActions(cet, appliesTo, dto.getFields(), dto.getActions());
     }
 
-    private void synchronizeCustomFieldsAndActions(String appliesTo, List<CustomFieldTemplateDto> fields, List<EntityCustomActionDto> actions)
+    private void synchronizeCustomFieldsAndActions(CustomEntityTemplate cet, String appliesTo, List<CustomFieldTemplateDto> fields, List<EntityCustomActionDto> actions)
             throws MeveoApiException, BusinessException {
 
         Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesToNoCache(appliesTo);
@@ -279,13 +278,13 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
             }
             // Update or create custom field templates
             for (CustomFieldTemplateDto cftDto : fields) {
-                customFieldTemplateApi.createOrUpdate(cftDto, appliesTo);
+                customFieldTemplateApi.createOrUpdateWithoutUniqueConstraint(cftDto, appliesTo);
             }
 
         } else {
             cftsToRemove.addAll(cetFields.values());
         }
-
+        
         for (CustomFieldTemplate cft : cftsToRemove) {
             customFieldTemplateService.remove(cft.getId());
         }
@@ -321,6 +320,14 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         for (EntityCustomAction action : actionsToRemove) {
             entityActionScriptService.remove(action.getId());
+        }
+        if(cet !=null) {
+			String oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint())
+					.map(x -> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
+			String newConstraintColumns = CollectionUtils.isEmpty(fields) ? ""
+					: fields.stream().filter(x -> x.getUniqueConstraint() != null && x.getUniqueConstraint())
+							.map(x -> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
+			customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns);
         }
     }
 
