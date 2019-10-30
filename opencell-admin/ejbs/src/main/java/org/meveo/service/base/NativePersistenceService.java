@@ -374,7 +374,10 @@ public class NativePersistenceService extends BaseService {
             // Find the identifier of the last inserted record
             if (returnId) {
                 if (id != null) {
-                    return (Long) id;
+                	if(id instanceof Number) {
+                		return ((Number) id).longValue();
+                	}
+                    
                 }
                 StringBuffer requestConstruction = buildSqlInsertionRequest(tableName, findIdFields);
 
@@ -387,10 +390,8 @@ public class NativePersistenceService extends BaseService {
                 }
 
                 id = query.getSingleResult();
-                if (id instanceof BigDecimal) {
-                    id = ((BigDecimal) id).longValue();
-                } else if (id instanceof BigInteger) {
-                    id = ((BigInteger) id).longValue();
+                if (id instanceof Number) {
+                    id = ((Number) id).longValue();
                 }
                 values.put(FIELD_ID, id);
 
