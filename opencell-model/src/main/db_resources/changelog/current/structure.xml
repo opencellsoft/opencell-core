@@ -2097,4 +2097,12 @@
         
     </changeSet>
     
+    <changeSet id="#4490_31102019" author="AbdelmounaimAkadid">
+		<addColumn tableName="billing_charge_instance">
+			<column name="cf_values_accum" type="${type.json}"></column>
+			<column name="cf_values" type="${type.json}"></column>
+			<column name="uuid" type="varchar(60)" />
+		</addColumn>
+	</changeSet>
+    
 </databaseChangeLog>
