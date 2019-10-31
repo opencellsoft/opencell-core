@@ -23613,7 +23613,7 @@ public class InvoiceCreateScript extends Script {
                      <scriptParams>
                         <entry>
                            <key>ACCOUNT_NAME</key>
-                           <value>#{event.billingAccount.customerAccount.code}</value>
+                           <value>ACCOUNT_NAME</value>
                         </entry>
                         <entry>
                            <key>INVOICE_DATE</key>
