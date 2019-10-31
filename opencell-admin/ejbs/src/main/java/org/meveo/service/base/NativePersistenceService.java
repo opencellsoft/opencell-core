@@ -256,33 +256,38 @@ public class NativePersistenceService extends BaseService {
             sql.append("insert into ").append(tableName);
             StringBuffer fields = new StringBuffer();
             StringBuffer fieldValues = new StringBuffer();
-            StringBuffer findIdFields = new StringBuffer();
+            StringBuffer whereConstraint = new StringBuffer();
 
             boolean first = true;
-            for (String fieldName : values.keySet()) {
-                // Ignore a null ID field
-                if (fieldName.equals(FIELD_ID) && values.get(fieldName) == null) {
-                    continue;
-                }
-
-                if (!first) {
-                    fields.append(",");
-                    fieldValues.append(",");
-                    findIdFields.append(" and ");
-                }
-                fields.append(fieldName);
-                if (values.get(fieldName) == null) {
-                    fieldValues.append("NULL");
-                    findIdFields.append(fieldName).append(" IS NULL");
-                } else {
-                    fieldValues.append(":").append(fieldName);
-                    findIdFields.append(fieldName).append("=:").append(fieldName);
-                }
-                first = false;
+            if(values.isEmpty()){
+                sql.append(" DEFAULT VALUES");
+            }else {
+	            for (String fieldName : values.keySet()) {
+	                // Ignore a null ID field
+	                if (fieldName.equals(FIELD_ID) && values.get(fieldName) == null) {
+	                    continue;
+	                }
+	
+	                if (first) {
+	                	whereConstraint.append(" where "); 
+	                }else {
+	                	fields.append(",");
+	                    fieldValues.append(",");
+	                    whereConstraint.append(" and ");
+	                }
+	                fields.append(fieldName);
+	                if (values.get(fieldName) == null) {
+	                    fieldValues.append("NULL");
+	                    whereConstraint.append(fieldName).append(" IS NULL");
+	                } else {
+	                    fieldValues.append(":").append(fieldName);
+	                    whereConstraint.append(fieldName).append("=:").append(fieldName);
+	                }
+	                first = false;
+	            }
+	
+	            sql.append(" (").append(fields).append(") values (").append(fieldValues).append(")");
             }
-
-            sql.append(" (").append(fields).append(") values (").append(fieldValues).append(")");
-
             Query query = getEntityManager().createNativeQuery(sql.toString());
             for (String fieldName : values.keySet()) {
                 if (values.get(fieldName) == null) {
@@ -298,7 +303,7 @@ public class NativePersistenceService extends BaseService {
                     return (Long) id;
                 }
 
-                query = getEntityManager().createNativeQuery("select id from " + tableName + " where " + findIdFields + " order by id desc").setMaxResults(1);
+                query = getEntityManager().createNativeQuery("select id from " + tableName + whereConstraint + " order by id desc").setMaxResults(1);
                 for (String fieldName : values.keySet()) {
                     if (values.get(fieldName) == null) {
                         continue;
