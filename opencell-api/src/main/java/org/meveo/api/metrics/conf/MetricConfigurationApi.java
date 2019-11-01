@@ -1,5 +1,8 @@
 package org.meveo.api.metrics.conf;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -8,10 +11,14 @@ import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.metric.configuration.MetricConfigurationDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.cache.MetricsConfigurationCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.metric.configuration.MetricConfiguration;
 import org.meveo.service.metric.configuration.MetricConfigurationService;
+
+import static javax.ws.rs.HttpMethod.*;
 
 /**
  *
@@ -22,6 +29,9 @@ public class MetricConfigurationApi extends BaseCrudApi<MetricConfiguration, Met
     @Inject
     MetricConfigurationService metricConfigurationService;
 
+    @Inject
+    MetricsConfigurationCacheContainerProvider metricsConfigurationCacheContainerProvider;
+
     @Override
     public MetricConfiguration create(MetricConfigurationDto dataDto) throws MeveoApiException, BusinessException {
         validate(dataDto);
@@ -30,6 +40,8 @@ public class MetricConfigurationApi extends BaseCrudApi<MetricConfiguration, Met
             throw new EntityAlreadyExistsException(MetricConfigurationDto.class, dataDto.getCode());
         }
         metricConfigurationService.create(MetricConfigurationDto.fromDto(dataDto));
+        // update cache
+        metricsConfigurationCacheContainerProvider.refreshCache(null);
         return metricConfigurationService.findByCode(dataDto.getCode());
     }
 
@@ -53,7 +65,11 @@ public class MetricConfigurationApi extends BaseCrudApi<MetricConfiguration, Met
         oldMetricConfiguration.setFullPath(dataDto.getFullPath());
         oldMetricConfiguration.setMethod(dataDto.getMethod());
         oldMetricConfiguration.setMetricType(dataDto.getMetricType());
-        return metricConfigurationService.update(oldMetricConfiguration);
+        MetricConfiguration updatedMetric = metricConfigurationService.update(oldMetricConfiguration);
+        // update cache
+        metricsConfigurationCacheContainerProvider.refreshCache(null);
+
+        return updatedMetric;
     }
 
     @Override
@@ -73,6 +89,14 @@ public class MetricConfigurationApi extends BaseCrudApi<MetricConfiguration, Met
         }
         if (StringUtils.isBlank(dataDto.getMetricType())) {
             missingParameters.add("metricType");
+        }
+        List<String> metrics = Arrays.asList("counter", "timer", "gauge", "histogram", "meter");
+        if (!metrics.contains(dataDto.getMetricType())) {
+            throw new InvalidParameterException(" Invalid metrics type " + dataDto.getMetricType() + " , not in list " + metrics + " ");
+        }
+        List<String> methods = Arrays.asList(DELETE, GET, POST, PUT, PATCH, HEAD, OPTIONS);
+        if (!methods.contains(dataDto.getMethod())) {
+            throw new InvalidParameterException(" Invalid request method " + dataDto.getMethod() + " , not in list " + methods + " ");
         }
 
         handleMissingParametersAndValidate(dataDto);
