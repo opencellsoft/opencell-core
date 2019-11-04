@@ -3483,7 +3483,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 // Save invoice subcategory and associate rated transactions
                 List<RatedTransaction> ratedTransactions = invoiceAgregateSubcat.getRatedtransactionsToAssociate();
-                em.persist(invoiceAgregateSubcat);
+                if (invoice.getId() == null) {
+                    create(invoice);
+                } else {
+                    em.persist(invoiceAgregateSubcat);
+                }
+
                 for (RatedTransaction ratedTransaction : ratedTransactions) {
                     if (ratedTransaction.getId() == null) {
                         em.persist(ratedTransaction);
@@ -3520,7 +3525,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 catAmountTax = catAmountTax.add(invoiceAgregateSubcat.getAmountTax());
                 catAmountWithTax = catAmountWithTax.add(invoiceAgregateSubcat.getAmountWithTax());
             }
-
+            em.flush();
             invoiceAgregateCat.setAmountWithoutTax(catAmountWithoutTax);
             invoiceAgregateCat.setAmountTax(catAmountTax);
             invoiceAgregateCat.setAmountWithTax(catAmountWithTax);
@@ -3544,7 +3549,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             netToPay = invoice.getAmountWithTax().add(round(balance, invoiceRounding, invoiceRoundingMode));
         }
         invoice.setNetToPay(netToPay);
-
+        if (invoiceDTO.isAutoValidation() == null || invoiceDTO.isAutoValidation()) {
+            invoice = serviceSingleton.assignInvoiceNumberVirtual(invoice);
+        }
         this.postCreate(invoice);
         return invoice;
 
@@ -3577,9 +3584,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.getLinkedInvoices().add(invoiceTmp);
             }
         }
-        if (invoiceDTO.isAutoValidation() == null || invoiceDTO.isAutoValidation()) {
-            invoice = serviceSingleton.assignInvoiceNumber(invoice);
-        }
+
+
         return invoice;
     }
 
