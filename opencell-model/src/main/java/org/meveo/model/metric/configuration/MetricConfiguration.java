@@ -27,8 +27,7 @@ import org.meveo.model.ExportIdentifier;
 @Table(name = "meveo_metric_config", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "meveo_metric_config_seq") })
-@NamedQueries({ @NamedQuery(name = "MetricConfiguration.findAllForCache", query = "SELECT m FROM MetricConfiguration m", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
+@NamedQueries({ @NamedQuery(name = "MetricConfiguration.findAllForCache", query = "SELECT m FROM MetricConfiguration m") })
 public class MetricConfiguration extends BusinessEntity {
     /**
      * the full path after opencell
@@ -47,6 +46,12 @@ public class MetricConfiguration extends BusinessEntity {
      */
     @Column(name = "metric_type")
     private String metricType;
+
+    /**
+     * the full path after opencell
+     */
+    @Column(name = "metric_unit")
+    private String metricUnit;
 
     public String getFullPath() {
         return fullPath;
@@ -77,5 +82,13 @@ public class MetricConfiguration extends BusinessEntity {
         return "MetricConfiguration{" + "fullPath='" + fullPath + '\'' + ", method='" + method + '\'' + ", metricType='" + metricType + '\'' + ", code='" + code + '\''
                 + ", previousCode='" + previousCode + '\'' + ", description='" + description + '\'' + ", appendGeneratedCode=" + appendGeneratedCode + ", auditable=" + auditable
                 + ", id=" + id + ", version=" + version + '}';
+    }
+
+    public String getMetricUnit() {
+        return metricUnit;
+    }
+
+    public void setMetricUnit(String metricUnit) {
+        this.metricUnit = metricUnit;
     }
 }

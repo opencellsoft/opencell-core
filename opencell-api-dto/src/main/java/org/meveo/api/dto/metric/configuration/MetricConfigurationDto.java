@@ -27,23 +27,14 @@ public class MetricConfigurationDto  extends BusinessEntityDto {
     @XmlElement(required = true)
     private String metricType;
 
+    /** The metric unit . */
+    @XmlElement(required = true)
+    private String metricUnit;
+
     /**
      * Instantiate a new MetricConfiguration Dto
      */
     public MetricConfigurationDto() {
-    }
-
-    public MetricConfigurationDto(String fullPath, String method, String metricType) {
-        this.fullPath = fullPath;
-        this.method = method;
-        this.metricType = metricType;
-    }
-
-    public MetricConfigurationDto(BusinessEntity e, String fullPath, String method, String metricType) {
-        super(e);
-        this.fullPath = fullPath;
-        this.method = method;
-        this.metricType = metricType;
     }
 
     /**
@@ -56,6 +47,7 @@ public class MetricConfigurationDto  extends BusinessEntityDto {
         dto.setFullPath(entity.getFullPath());
         dto.setMethod(Optional.of(entity.getMethod()).map(String::toUpperCase).orElse(""));
         dto.setMetricType(Optional.of(entity.getMetricType()).map(String::toLowerCase).orElse(""));
+        dto.setMetricUnit(Optional.of(entity.getMetricUnit()).map(String::toLowerCase).orElse(""));
         dto.setCode(entity.getCode());
         dto.setDescription(entity.getDescription());
 
@@ -71,6 +63,7 @@ public class MetricConfigurationDto  extends BusinessEntityDto {
         entity.setFullPath(metricConfigurationDto.getFullPath());
         entity.setMethod(metricConfigurationDto.getMethod());
         entity.setMetricType(metricConfigurationDto.getMetricType());
+        entity.setMetricUnit(metricConfigurationDto.getMetricUnit());
         entity.setCode(metricConfigurationDto.getCode());
         entity.setDescription(metricConfigurationDto.getDescription());
         return entity;
@@ -98,5 +91,13 @@ public class MetricConfigurationDto  extends BusinessEntityDto {
 
     public void setMetricType(String metricType) {
         this.metricType = metricType;
+    }
+
+    public String getMetricUnit() {
+        return metricUnit;
+    }
+
+    public void setMetricUnit(String metricUnit) {
+        this.metricUnit = metricUnit;
     }
 }

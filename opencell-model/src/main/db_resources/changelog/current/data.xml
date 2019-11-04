@@ -1502,6 +1502,7 @@ public class ValidateBRScript extends Script {
             <column name="full_path" type="text"/>
             <column name="method" type="text"/>
             <column name="metric_type" type="text"/>
+            <column name="metric_unit" type="text"/>
             <column name="version" type="int4"/>
             <column name="updated" type="datetime"/>
             <column name="created" type="datetime">

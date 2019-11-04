@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
@@ -22,9 +23,6 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.metric.configuration.MetricConfigurationService;
 import org.slf4j.Logger;
-
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * Provides cache related services (tracking running jobs) for job running related operations
@@ -42,7 +40,7 @@ public class MetricsConfigurationCacheContainerProvider implements Serializable 
      * Key format: &lt;metricsName&gt;, value: List of &lt;cluster node name&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-metrics-config")
-    private Cache<CacheKeyStr, Map<String, String>> metricsConfigCache;
+    private Cache<CacheKeyStr, Map<String, Map<String, String>>> metricsConfigCache;
 
     @Inject
     @CurrentUser
@@ -96,7 +94,7 @@ public class MetricsConfigurationCacheContainerProvider implements Serializable 
      * @param cacheKey
      * @param config
      */
-    private void putInCache(CacheKeyStr cacheKey, Map<String, String> config) {
+    private void putInCache(CacheKeyStr cacheKey, Map<String, Map<String, String>> config) {
         try {
             // Use flags to not return previous value
             metricsConfigCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, config);
@@ -112,7 +110,7 @@ public class MetricsConfigurationCacheContainerProvider implements Serializable 
      * @param metricKey metric name identifier
      * @param config
      */
-    public void addUpdateMetricsConfig(String metricKey, Map<String, String> config) {
+    public void addUpdateMetricsConfig(String metricKey, Map<String, Map<String, String>> config) {
         this.putInCache(new CacheKeyStr(currentUser.getProviderCode(), metricKey), config);
     }
 
@@ -151,12 +149,18 @@ public class MetricsConfigurationCacheContainerProvider implements Serializable 
     private void populateJobCache() {
         log.debug("Start to pre-populate metrics cache of provider {}.", currentUser.getProviderCode());
         List<MetricConfiguration> list = metricConfigurationService.findAllForCache();
-        Map<String, Map<String, String>> metricsConfig = list.stream()
-                .collect(groupingBy(MetricConfiguration::getFullPath, toMap(MetricConfiguration::getMethod, MetricConfiguration::getMetricType)));
-        for (Entry<String, Map<String, String>> metric : metricsConfig.entrySet()) {
-            this.addUpdateMetricsConfig(metric.getKey(), metric.getValue());
+        Map<String, Map<String, Map<String, String>>> entries = new HashMap<>();
+        for (MetricConfiguration mc: list) {
+            Map<String, String> metrics = new HashMap<>();
+            metrics.put("metric_type", mc.getMetricType());
+            metrics.put("metric_unit", Objects.requireNonNullElse(mc.getMetricUnit(), ""));
+            Map<String, Map<String, String>> values = new HashMap<>();
+            values.put(mc.getMethod(), metrics);
+            entries.computeIfAbsent(mc.getFullPath(), v -> new HashMap<>()).putAll(values);
         }
-        log.debug("End populating metrics cache of Provider {} with {} metrics configs.", currentUser.getProviderCode(), metricsConfig.size());
+        entries.forEach(this::addUpdateMetricsConfig);
+
+        log.debug("End populating metrics cache of Provider {} with {} metrics configs.", currentUser.getProviderCode(), list.size());
     }
 
     /**
@@ -164,10 +168,10 @@ public class MetricsConfigurationCacheContainerProvider implements Serializable 
      */
     private void clear() {
         String currentProvider = currentUser.getProviderCode();
-        Iterator<Entry<CacheKeyStr, Map<String, String>>> iter = metricsConfigCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).entrySet().iterator();
+        Iterator<Entry<CacheKeyStr, Map<String, Map<String, String>>>> iter = metricsConfigCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).entrySet().iterator();
         ArrayList<CacheKeyStr> itemsToBeRemoved = new ArrayList<>();
         while (iter.hasNext()) {
-            Entry<CacheKeyStr, Map<String, String>> entry = iter.next();
+            Entry<CacheKeyStr, Map<String, Map<String, String>>> entry = iter.next();
             boolean comparison = (entry.getKey().getProvider() == null) ? currentProvider == null : entry.getKey().getProvider().equals(currentProvider);
             if (comparison) {
                 itemsToBeRemoved.add(entry.getKey());
@@ -198,7 +202,7 @@ public class MetricsConfigurationCacheContainerProvider implements Serializable 
      * @param name a request name
      * @return a map
      */
-    public Map<String, String> getConfiguration(String name) {
+    public Map<String, Map<String, String>> getConfiguration(String name) {
         if (containsKey(name)) {
             String currentProvider = currentUser.getProviderCode();
             CacheKeyStr cacheKeyStr = new CacheKeyStr(currentProvider, name);
