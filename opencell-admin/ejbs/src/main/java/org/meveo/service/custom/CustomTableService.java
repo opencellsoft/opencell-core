@@ -1040,7 +1040,7 @@ public class CustomTableService extends NativePersistenceService {
 
 		List<Long> invalidList = partitioned.get(false);
 		if(!invalidList.isEmpty()) {
-			throw new BusinessException(prepareErrorMessage(invalidList));
+			throw new EntityDoesNotExistsException(dbTablename, invalidList);
 		}
 	}
 	
@@ -1051,17 +1051,6 @@ public class CustomTableService extends NativePersistenceService {
             return ((Number) id).longValue();
         }
         throw new InvalidParameterException("Invalid id value found: "+id );
-	}
-	
-	private String prepareErrorMessage(List<Long> invalidList) {
-		String errorMessage="";
-		if (!invalidList.isEmpty()) {
-			errorMessage="Exception trying to update/delete inexistant record(s): ";
-			for(Long item:invalidList) {
-				errorMessage=errorMessage+item+", ";
-			}
-		}
-		return errorMessage;
 	}
 	
 }
