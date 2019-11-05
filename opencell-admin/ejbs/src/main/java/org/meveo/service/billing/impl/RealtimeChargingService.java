@@ -2,6 +2,7 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -162,9 +163,9 @@ public class RealtimeChargingService {
             ba.getTradingCountry(), ba.getCustomerAccount().getTradingCurrency(), chargeTemplate);
 
         Date nextApplicationDate = walletOperationService.initChargeDateAndGetNextChargeDate(chargeInstance);
-        WalletOperation op;
+        List<WalletOperation> ops;
         try {
-            op = walletOperationService.applyFirstRecurringCharge(chargeInstance, nextApplicationDate, true);
+            ops = walletOperationService.applyFirstRecurringCharge(chargeInstance, nextApplicationDate, true);
 
         } catch (RatingException e) {
             log.trace("Failed to rate a recurring charge {}: {}", chargeInstance, e.getRejectionReason());
@@ -174,12 +175,10 @@ public class RealtimeChargingService {
             log.error("Failed to rate a recurring charge {}: {}", chargeInstance, e.getMessage(), e);
             throw e;
         }
+        return ops.stream().filter(walletOperation -> walletOperation != null)
+                .map(walletOperation -> priceWithoutTax ? walletOperation.getAmountWithoutTax() : walletOperation.getAmountWithTax())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal firstRecurringPrice = BigDecimal.ZERO;
-        if (op != null) {
-            firstRecurringPrice = priceWithoutTax ? op.getAmountWithoutTax() : op.getAmountWithTax();
-        }
-        return firstRecurringPrice;
     }
 
     /**
