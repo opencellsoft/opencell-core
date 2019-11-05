@@ -2,9 +2,11 @@ package org.meveo.apiv2.services.generic.JsonGenericApiMapper;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.VersionUtil;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.impl.IndexedListSerializer;
+import com.fasterxml.jackson.databind.ser.BeanSerializerFactory;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.hibernate.proxy.HibernateProxy;
@@ -12,19 +14,20 @@ import org.meveo.apiv2.generic.GenericPaginatedResource;
 import org.meveo.model.BaseEntity;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 class GenericModule extends SimpleModule {
-    private static final String NAME = "CustomLazyProxyModule";
+    private static final String NAME = "GenericModule";
     private static final VersionUtil VERSION_UTIL = new VersionUtil() {};
     private final Set<String> nestedEntities;
 
     GenericModule(Set<String> nestedEntities) {
         super(NAME, VERSION_UTIL.version());
+        this.nestedEntities = nestedEntities;
         addSerializer(HibernateProxy.class, new LazyProxySerializer());
         addSerializer(List.class, new ListCustomSerializer());
-        this.nestedEntities = nestedEntities;
     }
 
     private class LazyProxySerializer extends StdSerializer<HibernateProxy> {
@@ -45,15 +48,14 @@ class GenericModule extends SimpleModule {
 
     private class ListCustomSerializer extends StdSerializer<List> {
 
-        private IndexedListSerializer indexedListSerializer;
+        private JsonSerializer<Object> serializer;
 
         ListCustomSerializer() {
             this(List.class);
-            indexedListSerializer = new IndexedListSerializer(TypeFactory.defaultInstance().constructType(List.class), false, null, null);
         }
+
         ListCustomSerializer(Class<List> t) {
             super(t);
-            indexedListSerializer = new IndexedListSerializer(TypeFactory.defaultInstance().constructType(List.class), false, null, null);
         }
 
         @Override
@@ -71,8 +73,15 @@ class GenericModule extends SimpleModule {
                 }
                 gen.writeEndArray();
             }else {
-                indexedListSerializer.serialize(list, gen, provider);
+                resolveSerializer(provider).serialize(list, gen, provider);
             }
+        }
+
+        private JsonSerializer resolveSerializer(SerializerProvider provider) throws JsonMappingException {
+            if(serializer == null){
+                serializer = BeanSerializerFactory.instance.createSerializer(provider, TypeFactory.defaultInstance().constructType(List.class));
+            }
+            return serializer;
         }
 
         private boolean shouldReturnOnlyIds(List list, Object currentValue, String currentName) {
@@ -80,6 +89,25 @@ class GenericModule extends SimpleModule {
                     && !(currentValue instanceof GenericPaginatedResource)
                     && !(nestedEntities != null && nestedEntities.contains(currentName));
         }
-
     }
+
+    static class Builder {
+        private Set<String> nestedEntities;
+        public Builder withEntityToLoad(Set<String> nestedEntities){
+            this.nestedEntities = nestedEntities;
+            return this;
+        }
+
+        public static Builder getBuilder(){
+            return new Builder();
+        }
+
+        public GenericModule build(){
+            if(nestedEntities != null){
+                return new GenericModule(nestedEntities);
+            }
+            return new GenericModule(Collections.emptySet());
+        }
+    }
+
 }
