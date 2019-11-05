@@ -8,11 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.Entity;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,7 +30,7 @@ public class GenericApiAlteringService extends GenericApiService {
         checkEntityClass(entityClass);
         BaseEntity entityById = find(entityClass, id);
         JsonGenericMapper jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().build();
-        refreshEntityWithDotFields(jsonDto, entityById, jsonGenericMapper.parseFromJson(jsonDto, entityClass));
+        refreshEntityWithDotFields(JsonGenericMapper.Builder.getBuilder().build().readValue(jsonDto, Map.class), entityById, jsonGenericMapper.parseFromJson(jsonDto, entityClass));
         PersistenceService service = getPersistenceService(entityClass);
         service.enable(entityById);
         service.update(entityById);
@@ -46,7 +46,7 @@ public class GenericApiAlteringService extends GenericApiService {
         checkEntityClass(entityClass);
         BaseEntity entityToCreate = JsonGenericMapper.Builder
                 .getBuilder().build().parseFromJson(jsonDto, entityClass);
-        refreshEntityWithDotFields(jsonDto, entityToCreate, entityToCreate);
+        refreshEntityWithDotFields(JsonGenericMapper.Builder.getBuilder().build().readValue(jsonDto, Map.class), entityToCreate, entityToCreate);
         PersistenceService service = getPersistenceService(entityClass);
         service.create(entityToCreate);
         return entityToCreate.getId();
@@ -64,16 +64,11 @@ public class GenericApiAlteringService extends GenericApiService {
                 .toJson(null, entityClass, entity));
     }
 
-    private void refreshEntityWithDotFields(String dto, BaseEntity fetchedEntity, BaseEntity parsedEntity) {
-        try {
-            JsonGenericMapper.Builder.getBuilder().build()
-                    .readTree(dto).fieldNames()
-                    .forEachRemaining(fieldName -> {if(!forbiddenFieldsToUpdate.contains(fieldName)) FetchOrSetField(fieldName, parsedEntity, fetchedEntity);});
-        } catch (IOException e) {
-            new IllegalArgumentException("Invalid payload : ", e);
-        }
+    private void refreshEntityWithDotFields(Map<String,Object> readValueMap, Object fetchedEntity, Object parsedEntity) {
+        readValueMap.keySet().forEach(key -> {if(!forbiddenFieldsToUpdate.contains(key)) FetchOrSetField(key, readValueMap, parsedEntity, fetchedEntity);});
     }
-    private void FetchOrSetField(String fieldName, BaseEntity parsedEntity, BaseEntity fetchedEntity) {
+
+    private void FetchOrSetField(String fieldName, Map<String, Object> readValueMap, Object parsedEntity, Object fetchedEntity) {
         Field updatedField = FieldUtils.getField(parsedEntity.getClass(), fieldName, true);
         try {
             Object newValue = updatedField.get(parsedEntity);
@@ -84,6 +79,8 @@ public class GenericApiAlteringService extends GenericApiService {
                         .collect(Collectors.toCollection(ArrayList::new));
             } else if(updatedField.getType().isAnnotationPresent(Entity.class) && ((BaseEntity) newValue).getId() != null){
                 newValue = entityManagerWrapper.getEntityManager().getReference(newValue.getClass(), ((BaseEntity) newValue).getId());
+            } else if(readValueMap.get(fieldName) instanceof Map) {
+                refreshEntityWithDotFields((Map<String, Object>) readValueMap.get(fieldName), newValue, newValue);
             }
             updatedField.set(fetchedEntity, newValue);
         } catch (IllegalAccessException e) {
