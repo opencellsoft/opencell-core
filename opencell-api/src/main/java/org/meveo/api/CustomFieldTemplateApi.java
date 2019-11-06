@@ -121,12 +121,23 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         CustomFieldTemplate cft = fromDTO(postData, appliesTo, null);
-        customFieldTemplateService.create(cft, updateUniqueConstraint);
+        if(updateUniqueConstraint) {
+        	customFieldTemplateService.create(cft);
+        } else {
+        	customFieldTemplateService.createWithoutUniqueConstraint(cft);
+        }
 	}
 
     public void update(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {
+        update(postData, appliesTo, false);
+    }
+    
+    public void updateWithoutUniqueConstraint(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {
+        update(postData, appliesTo, true);
+    }
 
-        if (StringUtils.isBlank(postData.getCode())) {
+	private void update(CustomFieldTemplateDto postData, String appliesTo, boolean withoutUniqueConstraint) {
+		if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
         if (appliesTo == null && StringUtils.isBlank(postData.getAccountLevel()) && StringUtils.isBlank(postData.getAppliesTo())) {
@@ -182,10 +193,13 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         cft = fromDTO(postData, appliesTo, cft);
-
-        customFieldTemplateService.update(cft);
-
-    }
+        
+		if(withoutUniqueConstraint) {
+        	customFieldTemplateService.updateWithoutUniqueConstraint(cft);
+        }else {
+        	customFieldTemplateService.update(cft);
+        }
+	}
 
     public void remove(String code, String appliesTo) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(code)) {
@@ -300,7 +314,15 @@ public class CustomFieldTemplateApi extends BaseApi {
     }
 
     public void createOrUpdate(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getCode())) {
+        createOrUpdate(postData, appliesTo, false);
+    }
+    
+    public void createOrUpdateWithoutUniqueConstraint(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {
+        createOrUpdate(postData, appliesTo, true);
+    }
+
+	private void createOrUpdate(CustomFieldTemplateDto postData, String appliesTo, boolean withoutUniqueConstraint) {
+		if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
 
@@ -326,13 +348,20 @@ public class CustomFieldTemplateApi extends BaseApi {
         appliesTo = updateAppliesToToNewValue(appliesTo);
 
         CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo);
-
-        if (customFieldTemplate == null) {
-            create(postData, appliesTo);
-        } else {
-            update(postData, appliesTo);
-        }
-    }
+		if(withoutUniqueConstraint) {
+			if (customFieldTemplate == null) {
+	            createWithoutUniqueConstraint(postData, appliesTo);
+	        } else {
+	            updateWithoutUniqueConstraint(postData, appliesTo);
+	        }
+		}else {
+	        if (customFieldTemplate == null) {
+	            create(postData, appliesTo);
+	        } else {
+	            update(postData, appliesTo);
+	        }
+		}
+	}
 
     protected CustomFieldTemplate fromDTO(CustomFieldTemplateDto dto, String appliesTo, CustomFieldTemplate cftToUpdate) throws InvalidParameterException {
 

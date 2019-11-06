@@ -3337,7 +3337,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Create an invoice from an InvoiceDto
-     * 
+     *
      * @param invoiceDTO
      * @param seller
      * @param billingAccount
@@ -3374,7 +3374,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     throw new EntityDoesNotExistsException(UserAccount.class, catInvAgrDto.getUserAccountCode());
                 } else if (!userAccount.getBillingAccount().equals(billingAccount)) {
                     throw new InvalidParameterException(
-                        "User account code " + catInvAgrDto.getUserAccountCode() + " does not correspond to a Billing account " + billingAccount.getCode());
+                            "User account code " + catInvAgrDto.getUserAccountCode() + " does not correspond to a Billing account " + billingAccount.getCode());
                 }
             } else {
                 userAccount = billingAccount.getUsersAccounts().get(0);
@@ -3434,17 +3434,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
 
                         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(tempAmountWithoutTax, tempAmountWithTax, tax.getPercent(), isEnterprise, invoiceRounding,
-                            invoiceRoundingMode.getRoundingMode());
+                                invoiceRoundingMode.getRoundingMode());
 
                         BigDecimal amountWithoutTax = amounts[0];
                         BigDecimal amountWithTax = amounts[1];
                         BigDecimal amountTax = amounts[2];
 
                         RatedTransaction meveoRatedTransaction = new RatedTransaction(ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(),
-                            ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax,
-                            amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, userAccount, invoiceSubCategory, null, null, null, null, null,
-                            null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(),
-                            ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null);
+                                ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax,
+                                amountWithTax, amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, userAccount, invoiceSubCategory, null, null,
+                                null, null, null, null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(),
+                                ratedTransactionDto.getDescription(), ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null);
 
                         meveoRatedTransaction.setWallet(userAccount.getWallet());
                         // #3355 : setting params 1,2,3
@@ -3491,8 +3491,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 } else {
                     // we add subCatAmountWithoutTax, in the case if there any opened RT to include
-                    BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(subCatInvAgrDTO.getAmountWithoutTax(), subCatInvAgrDTO.getAmountWithTax(), tax.getPercent(),
-                        isEnterprise, invoiceRounding, invoiceRoundingMode.getRoundingMode());
+                    BigDecimal[] amounts = NumberUtils
+                            .computeDerivedAmounts(subCatInvAgrDTO.getAmountWithoutTax(), subCatInvAgrDTO.getAmountWithTax(), tax.getPercent(), isEnterprise, invoiceRounding,
+                                    invoiceRoundingMode.getRoundingMode());
 
                     invoiceAgregateSubcat.setAmountWithoutTax(amounts[0]);
                     invoiceAgregateSubcat.setAmountWithTax(amounts[1]);
@@ -3501,7 +3502,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 // Save invoice subcategory and associate rated transactions
                 List<RatedTransaction> ratedTransactions = invoiceAgregateSubcat.getRatedtransactionsToAssociate();
-                em.persist(invoiceAgregateSubcat);
+                if (invoice.getId() == null) {
+                    create(invoice);
+                } else {
+                    em.persist(invoiceAgregateSubcat);
+                }
+
                 for (RatedTransaction ratedTransaction : ratedTransactions) {
                     if (ratedTransaction.getId() == null) {
                         em.persist(ratedTransaction);
@@ -3537,8 +3543,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 catAmountWithoutTax = catAmountWithoutTax.add(invoiceAgregateSubcat.getAmountWithoutTax());
                 catAmountTax = catAmountTax.add(invoiceAgregateSubcat.getAmountTax());
                 catAmountWithTax = catAmountWithTax.add(invoiceAgregateSubcat.getAmountWithTax());
-            }
 
+            }
+            em.flush();
             invoiceAgregateCat.setAmountWithoutTax(catAmountWithoutTax);
             invoiceAgregateCat.setAmountTax(catAmountTax);
             invoiceAgregateCat.setAmountWithTax(catAmountWithTax);
@@ -3562,7 +3569,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             netToPay = invoice.getAmountWithTax().add(round(balance, invoiceRounding, invoiceRoundingMode));
         }
         invoice.setNetToPay(netToPay);
-
+        if (invoiceDTO.isAutoValidation() == null || invoiceDTO.isAutoValidation()) {
+            invoice = serviceSingleton.assignInvoiceNumberVirtual(invoice);
+        }
         this.postCreate(invoice);
         return invoice;
 
@@ -3577,7 +3586,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setDueDate(invoiceDTO.getDueDate());
         invoice.setDraft(invoiceDTO.isDraft());
         invoice.setAlreadySent(invoiceDTO.isCheckAlreadySent());
-        if(invoiceDTO.isCheckAlreadySent()) {
+        if (invoiceDTO.isCheckAlreadySent()) {
             invoice.setStatus(InvoiceStatusEnum.SENT);
         } else {
             invoice.setStatus(InvoiceStatusEnum.CREATED);
@@ -3600,9 +3609,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.getLinkedInvoices().add(invoiceTmp);
             }
         }
-        if (invoiceDTO.isAutoValidation() == null || invoiceDTO.isAutoValidation()) {
-            invoice = serviceSingleton.assignInvoiceNumber(invoice);
-        }
+
+
         return invoice;
     }
 
