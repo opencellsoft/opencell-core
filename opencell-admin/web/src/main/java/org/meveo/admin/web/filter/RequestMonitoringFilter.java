@@ -19,7 +19,6 @@ import org.eclipse.microprofile.metrics.Histogram;
 import org.eclipse.microprofile.metrics.Metadata;
 import org.eclipse.microprofile.metrics.MetadataBuilder;
 import org.eclipse.microprofile.metrics.MetricRegistry;
-import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.Timer;
 import org.eclipse.microprofile.metrics.annotation.RegistryType;
 import org.meveo.cache.MetricsConfigurationCacheContainerProvider;
@@ -61,11 +60,11 @@ public class RequestMonitoringFilter extends HttpFilter {
                     }
                     if (params.containsKey(req.getMethod())) {
                         Map<String, String> metrics = params.get(req.getMethod());
-                        String metric_type = metrics.get("metric_type");
-                        String unit = metrics.get("metric_unit");
+                        String metricsType = metrics.get("metrics_type");
+                        String unit = metrics.get("metrics_unit");
 
-                        log.info("Register {} metrics for {} in {}", metric_type, req.getMethod(), name);
-                        registerMetricForMethod(name, metric_type, millis, unit);
+                        log.info("Register {} metrics for {} in {}", metricsType, req.getMethod(), name);
+                        registerMetricsForMethod(name, metricsType, millis, unit);
                     }
                 } else {
                     log.debug("Name {} in uri {} not found ", name, uri);
@@ -76,22 +75,23 @@ public class RequestMonitoringFilter extends HttpFilter {
         }
     }
 
-    private void registerMetricForMethod(String name, String metric, long start, String unit) {
-        name = metric + name.replace("/", "_");
-        if ("counter".equalsIgnoreCase(metric)) {
+    private void registerMetricsForMethod(String name, String metrics, long start, String unit) {
+        name = metrics + name.replace("/", "_");
+
+        if ("counter".equalsIgnoreCase(metrics)) {
             registry.counter(name).inc();
-        } else if ("gauge".equalsIgnoreCase(metric)) {
+        } else if ("gauge".equalsIgnoreCase(metrics)) {
             registry.concurrentGauge(name).inc();
-        } else if ("histogram".equalsIgnoreCase(metric)) {
+        } else if ("histogram".equalsIgnoreCase(metrics)) {
             Histogram histogram = registry.histogram(name);
             long count = histogram.getCount();
             histogram.update(count + 1);
-        } else if ("meter".equalsIgnoreCase(metric)) {
+        } else if ("meter".equalsIgnoreCase(metrics)) {
             registry.meter(name).mark();
-        } else if ("timer".equalsIgnoreCase(metric)) {
+        } else if ("timer".equalsIgnoreCase(metrics)) {
             createTimerMetrics(name, start, unit);
         } else {
-            log.debug("unknown metric {} , must from list [counter, gauge, histogram, meter, timer]", metric);
+            log.debug("unknown metrics {} , must from list [counter, gauge, histogram, meter, timer]", metrics);
         }
     }
 

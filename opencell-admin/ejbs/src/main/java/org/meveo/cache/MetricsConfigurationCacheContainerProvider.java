@@ -18,10 +18,10 @@ import javax.inject.Inject;
 import org.infinispan.Cache;
 import org.infinispan.commons.CacheException;
 import org.infinispan.context.Flag;
-import org.meveo.model.metric.configuration.MetricConfiguration;
+import org.meveo.model.metrics.configuration.MetricsConfiguration;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.metric.configuration.MetricConfigurationService;
+import org.meveo.service.metrics.configuration.MetricsConfigurationService;
 import org.slf4j.Logger;
 
 /**
@@ -47,7 +47,7 @@ public class MetricsConfigurationCacheContainerProvider implements Serializable 
     protected MeveoUser currentUser;
 
     @Inject
-    private MetricConfigurationService metricConfigurationService;
+    private MetricsConfigurationService metricsConfigurationService;
 
     /**
      * Get a summary of cached information.
@@ -63,7 +63,7 @@ public class MetricsConfigurationCacheContainerProvider implements Serializable 
     }
 
     /**
-     * Refresh cache by name. Removes current provider's data from cache and populates it again
+     * Refresh cache by name asynchronously. Removes current provider's data from cache and populates it again
      *
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
@@ -74,6 +74,14 @@ public class MetricsConfigurationCacheContainerProvider implements Serializable 
             clear();
             populateJobCache();
         }
+    }
+
+    /**
+     * Removes current provider's data from cache and populates it again
+     */
+    public void clearAndUpdateCache() {
+        clear();
+        populateJobCache();
     }
 
     /**
@@ -104,20 +112,19 @@ public class MetricsConfigurationCacheContainerProvider implements Serializable 
     }
 
     /**
-     * Initialize cache record for a given metric.
-     * According to Infinispan documentation in clustered mode one node is treated as primary node to manage a particular key
+     * Initialize cache record for a given metrics.
      *
-     * @param metricKey metric name identifier
+     * @param metricsKey metrics name identifier
      * @param config
      */
-    public void addUpdateMetricsConfig(String metricKey, Map<String, Map<String, String>> config) {
-        this.putInCache(new CacheKeyStr(currentUser.getProviderCode(), metricKey), config);
+    public void addUpdateMetricsConfig(String metricsKey, Map<String, Map<String, String>> config) {
+        this.putInCache(new CacheKeyStr(currentUser.getProviderCode(), metricsKey), config);
     }
 
     /**
-     * Remove metric from cache
+     * Remove metrics from cache
      *
-     * @param metricName metric name identifier
+     * @param metricName metrics name identifier
      */
     public void removeMetricCache(String metricName) {
         String currentProvider = currentUser.getProviderCode();
@@ -131,7 +138,7 @@ public class MetricsConfigurationCacheContainerProvider implements Serializable 
     }
 
     /**
-     * Remove metric from cache
+     * Remove metrics from cache
      *
      * @param cacheKey cache key identifier
      */
@@ -148,12 +155,12 @@ public class MetricsConfigurationCacheContainerProvider implements Serializable 
      */
     private void populateJobCache() {
         log.debug("Start to pre-populate metrics cache of provider {}.", currentUser.getProviderCode());
-        List<MetricConfiguration> list = metricConfigurationService.findAllForCache();
+        List<MetricsConfiguration> list = metricsConfigurationService.findAllForCache();
         Map<String, Map<String, Map<String, String>>> entries = new HashMap<>();
-        for (MetricConfiguration mc: list) {
+        for (MetricsConfiguration mc : list) {
             Map<String, String> metrics = new HashMap<>();
-            metrics.put("metric_type", mc.getMetricType());
-            metrics.put("metric_unit", Objects.requireNonNullElse(mc.getMetricUnit(), ""));
+            metrics.put("metrics_type", mc.getMetricsType());
+            metrics.put("metrics_unit", Objects.requireNonNullElse(mc.getMetricsUnit(), ""));
             Map<String, Map<String, String>> values = new HashMap<>();
             values.put(mc.getMethod(), metrics);
             entries.computeIfAbsent(mc.getFullPath(), v -> new HashMap<>()).putAll(values);
@@ -179,7 +186,7 @@ public class MetricsConfigurationCacheContainerProvider implements Serializable 
         }
 
         for (CacheKeyStr elem : itemsToBeRemoved) {
-            log.debug("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
+            log.debug("Remove element Provider:{} Key:{} .", elem.getProvider(), elem.getKey());
             this.removeMetric(elem);
         }
     }

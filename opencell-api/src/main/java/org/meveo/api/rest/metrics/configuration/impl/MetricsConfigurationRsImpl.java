@@ -1,4 +1,4 @@
-package org.meveo.api.rest.metric.configuration.impl;
+package org.meveo.api.rest.metrics.configuration.impl;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -6,25 +6,25 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.metric.configuration.MetricConfigurationDto;
-import org.meveo.api.dto.response.GetMetricConfigurationResponse;
+import org.meveo.api.dto.metrics.configuration.MetricsConfigurationDto;
+import org.meveo.api.dto.response.GetMetricsConfigurationResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.metrics.conf.MetricConfigurationApi;
+import org.meveo.api.metrics.conf.MetricsConfigurationApi;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.api.rest.metric.configuration.MetricConfigurationRs;
+import org.meveo.api.rest.metrics.configuration.MetricsConfigurationRs;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
-public class MetricConfigurationRsImpl extends BaseRs implements MetricConfigurationRs {
+public class MetricsConfigurationRsImpl extends BaseRs implements MetricsConfigurationRs {
 
     @Inject
-    MetricConfigurationApi metricConfigurationApi;
+    MetricsConfigurationApi metricsConfigurationApi;
 
     @Override
-    public ActionStatus create(MetricConfigurationDto metricConfigurationDto) {
+    public ActionStatus create(MetricsConfigurationDto metricsConfigurationDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            metricConfigurationApi.create(metricConfigurationDto);
+            metricsConfigurationApi.create(metricsConfigurationDto);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -33,11 +33,11 @@ public class MetricConfigurationRsImpl extends BaseRs implements MetricConfigura
     }
 
     @Override
-    public GetMetricConfigurationResponse find(String code) {
-        GetMetricConfigurationResponse result = new GetMetricConfigurationResponse();
+    public GetMetricsConfigurationResponse find(String code) {
+        GetMetricsConfigurationResponse result = new GetMetricsConfigurationResponse();
 
         try {
-            result.setMetricConfigurationDto(metricConfigurationApi.find(code));
+            result.setMetricsConfigurationDto(metricsConfigurationApi.find(code));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -46,10 +46,10 @@ public class MetricConfigurationRsImpl extends BaseRs implements MetricConfigura
     }
 
     @Override
-    public ActionStatus update(MetricConfigurationDto metricConfigurationDto) {
+    public ActionStatus update(MetricsConfigurationDto metricsConfigurationDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            metricConfigurationApi.update(metricConfigurationDto);
+            metricsConfigurationApi.update(metricsConfigurationDto);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -61,7 +61,7 @@ public class MetricConfigurationRsImpl extends BaseRs implements MetricConfigura
     public ActionStatus remove(String code) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            metricConfigurationApi.remove(code);
+            metricsConfigurationApi.remove(code);
         } catch (Exception e) {
             processException(e, result);
         }
