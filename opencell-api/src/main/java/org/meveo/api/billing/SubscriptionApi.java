@@ -16,6 +16,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
@@ -76,6 +77,7 @@ import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.DueDateDelayEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductInstance;
@@ -118,6 +120,7 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -199,6 +202,9 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private BillingCycleService billingCycleService;
+    
+    @Inject
+    private InvoiceSubCategoryService invoiceSubCategoryService;
 
     @Inject
     private SellerService sellerService;
@@ -392,6 +398,14 @@ public class SubscriptionApi extends BaseApi {
         subscription.setSubscriptionRenewal(subscriptionRenewal);
 
         setSubscriptionFutureTermination(postData, subscription);
+        
+        if (!StringUtils.isBlank(postData.getMinimumInvoiceSubCategory())) {
+            InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
+            if (minimumInvoiceSubCategory == null) {
+                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
+            }
+            subscription.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
+        }
 
         if (postData.getMinimumAmountEl() != null) {
             subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
@@ -883,9 +897,16 @@ public class SubscriptionApi extends BaseApi {
             oneShotChargeInstanceService.oneShotChargeApplication(subscription, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                 postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),
                 postData.getDescription(), subscription.getOrderNumber(), true);
-        } catch (BusinessException e) {
+
+        } catch (RatingException e) {
+            log.trace("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getRejectionReason());
             throw new MeveoApiException(e.getMessage());
+
+        } catch (BusinessException e) {
+            log.error("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getMessage(), e);
+            throw e;
         }
+
     }
 
     /**
@@ -2165,7 +2186,16 @@ public class SubscriptionApi extends BaseApi {
             }
             subscription.setBillingCycle(billingCycle);
         }
+        
+        if (!StringUtils.isBlank(postData.getMinimumInvoiceSubCategory())) {
+            InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
+            if (minimumInvoiceSubCategory == null) {
+                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
+            }
+            subscription.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
+        }
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
+        
         //subscription.setTerminationDate(postData.getTerminationDate());
 
         SubscriptionRenewal subscriptionRenewal = null;

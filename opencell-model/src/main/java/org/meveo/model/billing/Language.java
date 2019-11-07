@@ -28,7 +28,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.IReferenceEntity;
 
 /**
  * Language entity

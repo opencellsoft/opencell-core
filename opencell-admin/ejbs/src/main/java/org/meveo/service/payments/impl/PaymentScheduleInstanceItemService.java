@@ -15,6 +15,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.RatingException;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.BillingAccount;
@@ -254,9 +255,19 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         String paymentlabel = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getPaymentLabel();
         OneShotChargeTemplate oneShot = createOneShotCharge(invoiceSubCat, paymentlabel);
 
-        oneShotChargeInstanceService.oneShotChargeApplication(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), oneShot, null,
-            new Date(), new BigDecimal((isPaymentRejected ? "" : "-") + amounts[0]), null, new BigDecimal(1), null, null, null,
-            paymentlabel + (isPaymentRejected ? " (Rejected)" : ""), null, true);
+        try {
+            oneShotChargeInstanceService.oneShotChargeApplication(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), oneShot, null,
+                new Date(), new BigDecimal((isPaymentRejected ? "" : "-") + amounts[0]), null, new BigDecimal(1), null, null, null,
+                paymentlabel + (isPaymentRejected ? " (Rejected)" : ""), null, true);
+
+        } catch (RatingException e) {
+            log.trace("Failed to apply a one shot charge {}: {}", oneShot, e.getRejectionReason());
+            throw e; // e.getBusinessException();
+
+        } catch (BusinessException e) {
+            log.error("Failed to apply a one shot charge {}: {}", oneShot, e.getMessage(), e);
+            throw e;
+        }
     }
 
     /**

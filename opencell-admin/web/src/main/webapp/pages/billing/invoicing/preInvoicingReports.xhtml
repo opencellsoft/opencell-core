@@ -136,7 +136,7 @@
 			<h:panelGroup layout="block" styleClass="form-panel-actions">
 				<p:commandButton action="#{billingRunBean.confirmInvoicing()}"
 					value="#{messages['action.confirm']}" />
-				<p:commandButton action="#{billingRunBean.cancelInvoicing()}"
+				<p:commandButton action="#{billingRunBean.cancel()}"
 					value="#{messages['action.cancel']}"
 					onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}" />
 				<p:button id="backButton" value="#{messages['action.back']}"

@@ -11,7 +11,6 @@ import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.slf4j.Logger;
 
 /**
  * Produce a currently authenticated user
@@ -26,9 +25,6 @@ public class CurrentUserProducer {
 
     @Inject
     EntityManagerProvider entityManagerProvider;
-
-    @Inject
-    Logger log;
 
     /**
      * Produce a current user

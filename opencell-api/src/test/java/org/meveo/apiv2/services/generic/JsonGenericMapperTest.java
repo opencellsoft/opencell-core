@@ -4,25 +4,21 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.meveo.apiv2.generic.ImmutableGenericPaginatedResource;
 import org.meveo.apiv2.services.generic.JsonGenericApiMapper.JsonGenericMapper;
-import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.admin.FileFormat;
+import org.meveo.model.admin.FileType;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.Channel;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
-import org.meveo.model.crm.custom.CustomFieldValue;
-import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.intcrm.AddressBook;
-import org.meveo.model.order.Order;
-import org.meveo.model.order.OrderItem;
-import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
@@ -32,7 +28,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,9 +39,7 @@ import java.io.IOException;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -55,7 +48,7 @@ public class JsonGenericMapperTest {
 
     @Before
     public void setUp() {
-        jsonGenericMapper = new JsonGenericMapper();
+        jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().build();
     }
 
     @Test
@@ -78,7 +71,7 @@ public class JsonGenericMapperTest {
         fields.addAll(Arrays.asList("id"));
         String expected = jsonGenericMapper.toJson(fields, Customer.class, param);
         //Then
-        assertThat(expected).isEqualTo("[{\"id\":0},{\"id\":1},{\"id\":2}]");
+        assertThat(expected).isEqualTo("[0,1,2]");
     }
 
     @Test
@@ -231,6 +224,60 @@ public class JsonGenericMapperTest {
     }
 
     @Test
+    public void should_return_only_ids_of_referenced_entities_code() {
+        JsonGenericMapper jsonGenericMapper1 = JsonGenericMapper.Builder.getBuilder().build();
+        //Given
+        OfferTemplate offerTemplate=new OfferTemplate();
+        OfferTemplate offerTemplate1=new OfferTemplate();
+        OfferTemplate offerTemplate2=new OfferTemplate();
+
+        Channel channel1 = new Channel();
+        channel1.setId(1l);
+        channel1.setCode("code-ch-1");
+        Channel channel2 = new Channel();
+        channel2.setId(2l);
+        channel2.setCode("code-ch-2");
+        Channel channel3 = new Channel();
+        channel3.setId(3l);
+        channel3.setCode("code-ch-3");
+
+        offerTemplate.setChannels(Arrays.asList(channel1, channel2, channel3));
+        offerTemplate1.setChannels(Arrays.asList(channel1, channel2, channel3));
+        offerTemplate2.setChannels(Arrays.asList(channel1, channel2, channel3));
+        ImmutableGenericPaginatedResource immutableGenericPaginatedResource = ImmutableGenericPaginatedResource.builder()
+                .total(3l).limit(0l).offset(0l)
+                .addData(offerTemplate, offerTemplate1, offerTemplate2).build();
+        //When
+        HashSet<String> fields = new HashSet<>();
+        fields.addAll(Arrays.asList("channels"));
+        String transform = jsonGenericMapper1.toJson(fields, offerTemplate.getClass(), immutableGenericPaginatedResource);
+        assertThat(transform).isEqualTo("{\"total\":3,\"limit\":0,\"offset\":0,\"data\":[{\"channels\":[1,2,3]},{\"channels\":[1,2,3]},{\"channels\":[1,2,3]}]}");
+    }
+
+    @Test
+    public void should_return_the_fields_of_referenced_entities_code() {
+        HashSet<String> nestedEntities = new HashSet<>();
+        nestedEntities.add("channels");
+        JsonGenericMapper jsonGenericMapper1 = JsonGenericMapper.Builder.getBuilder().withNestedEntities(nestedEntities).build();
+        //Given
+        OfferTemplate offerTemplate=new OfferTemplate();
+
+        Channel channel1 = new Channel();
+        channel1.setId(1l);
+        Channel channel2 = new Channel();
+
+        offerTemplate.setChannels(Arrays.asList(channel1, channel2));
+        ImmutableGenericPaginatedResource immutableGenericPaginatedResource = ImmutableGenericPaginatedResource.builder()
+                .total(1l).limit(0l).offset(0l)
+                .addData(offerTemplate).build();
+        //When
+        HashSet<String> fields = new HashSet<>();
+        fields.addAll(Arrays.asList("channels"));
+        String transform = jsonGenericMapper1.toJson(fields, offerTemplate.getClass(), immutableGenericPaginatedResource);
+        assertThat(transform).isEqualTo("{\"total\":1,\"limit\":0,\"offset\":0,\"data\":[{\"channels\":[{\"id\":1,\"historized\":false,\"notified\":false,\"appendGeneratedCode\":false,\"disabled\":false,\"active\":true,\"codeChanged\":false,\"transient\":false},{\"historized\":false,\"notified\":false,\"appendGeneratedCode\":false,\"disabled\":false,\"active\":true,\"codeChanged\":false,\"transient\":true}]}]}");
+    }
+
+    @Test
     public void should_transform_cyclic_reference_without_stackoverflow_error() throws IOException {
         //Given
         Subscription subscription = new Subscription();
@@ -250,7 +297,21 @@ public class JsonGenericMapperTest {
         //When
         HashSet<String> fields = new HashSet<>();
         String transform = jsonGenericMapper.toJson(fields, Subscription.class, subscription);
-        assertTrue(transform.contains("\"serviceInstances\":[{\"id\":456"));
+        assertTrue(transform.contains("\"serviceInstances\":[456]"));
+    }
+    @Test
+    public void should_correctly_parse_referenced_ids_From_Json() throws IOException {
+        //Given
+        JsonGenericMapper jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().build();
+        String jsonDto = "{\"code\":\"test\", \"fileTypes\":[5], \"inputDirectory\":\"/test\"}";
+        //When
+        FileType databaseFetchedFileType = new FileType();
+        databaseFetchedFileType.setId(5L);
+        databaseFetchedFileType.setCode("test");
+        databaseFetchedFileType.setDescription("test descr");
+
+        FileFormat resultingEntity = (FileFormat) jsonGenericMapper.parseFromJson(jsonDto, FileFormat.class);
+        assertTrue(resultingEntity.getFileTypes().get(0).getId().equals(5l));
     }
     private Date getDefaultDate() {
         return Date.from(LocalDate.of(2019, 01, 01).atStartOfDay(ZoneId.systemDefault()).toInstant());

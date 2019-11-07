@@ -1,7 +1,6 @@
 package org.meveo.service.custom;
 
 import static java.util.stream.Collectors.toList;
-import static org.meveo.service.base.NativePersistenceService.FIELD_ID;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,6 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -214,17 +214,20 @@ public class CustomTableService extends NativePersistenceService {
 
     @Override
     public void remove(String tableName, Long id) throws BusinessException {
-        super.remove(tableName, id);
-        customEntityInstanceService.remove(tableName, id);
-        elasticClient.remove(CustomTableRecord.class, tableName, id, true);
+        remove(tableName, new HashSet<>(Arrays.asList(id)));
     }
 
     @Override
     public void remove(String tableName, Set<Long> ids) throws BusinessException {
-        super.remove(tableName, ids);
+    	validateExistance(tableName, new ArrayList<Long>(ids));
+    	removeWithoutCheck(tableName, ids);
+    }
+
+	public void removeWithoutCheck(String tableName, Set<Long> ids) {
+		super.remove(tableName, ids);
         customEntityInstanceService.remove(tableName, ids);
         elasticClient.remove(CustomTableRecord.class, tableName, ids, true);
-    }
+	}
 
     @Override
     public void remove(String tableName) throws BusinessException {
@@ -852,7 +855,9 @@ public class CustomTableService extends NativePersistenceService {
                 String[] fieldInfo = key.split(" ");
                 String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1]; // field name here can be a db field name or a custom field code
                 CustomFieldTemplate cft = cftsMap.get(fieldName);  
-
+                if (cft == null) {
+                    throw new ValidationException("No field definition " + fieldName + " was found");
+                }
                 if (valueEntry.getValue() == null && !discardNull) {
                     // must check the default value
                     valuesConverted.put(key, cft.getDefaultValueConverted());
@@ -1018,21 +1023,24 @@ public class CustomTableService extends NativePersistenceService {
 	}
 	
 	public void updateRecords(String dbTablename, Collection<CustomFieldTemplate> cftsValues, List<CustomTableRecordDto> valuesWithIds) {
-		
 		List<Long> inputIds=valuesWithIds.stream().map(x -> (castToLong(x.getValues().get(FIELD_ID)))).collect(toList());
-		List<BigInteger> existingRecords=filterExistingRecordsOnTable(dbTablename, inputIds);
-		
-        Map<Boolean, List<CustomTableRecordDto>> partitioned = valuesWithIds.stream().collect(Collectors.partitioningBy(x -> existingRecords.stream().anyMatch(y->castToLong(x.getValues().get(FIELD_ID)).equals(y.longValue()))));
-
-		List<CustomTableRecordDto> invalidList = partitioned.get(false);
-		if(!invalidList.isEmpty()) {
-			throw new BusinessException(prepareErrorMessage(invalidList));
-		}
-		SubListCreator<CustomTableRecordDto> subListCreator = new SubListCreator<CustomTableRecordDto>(partitioned.get(true), 500);
+		validateExistance(dbTablename, inputIds);
+		SubListCreator<CustomTableRecordDto> subListCreator = new SubListCreator<CustomTableRecordDto>(valuesWithIds, 500);
 		while (subListCreator.isHasNext()) {
 			List<Map<String, Object>> values = subListCreator.getNextWorkSet().stream().map(x -> x.getValues()).collect(toList());
 			values = convertValues(values, cftsValues, false);
 			update(dbTablename, values);
+		}
+	}
+
+	private void validateExistance(String dbTablename, List<Long> inputIds) {
+		List<BigInteger> existingRecords=filterExistingRecordsOnTable(dbTablename, inputIds);
+		
+        Map<Boolean, List<Long>> partitioned = inputIds.stream().collect(Collectors.partitioningBy(x -> existingRecords.stream().anyMatch(y->x.equals(y.longValue()))));
+
+		List<Long> invalidList = partitioned.get(false);
+		if(!invalidList.isEmpty()) {
+			throw new EntityDoesNotExistsException(dbTablename, invalidList);
 		}
 	}
 	
@@ -1043,17 +1051,6 @@ public class CustomTableService extends NativePersistenceService {
             return ((Number) id).longValue();
         }
         throw new InvalidParameterException("Invalid id value found: "+id );
-	}
-	
-	private String prepareErrorMessage(List<CustomTableRecordDto> invalidList) {
-		String errorMessage="";
-		if (!invalidList.isEmpty()) {
-			errorMessage="Exception trying to update inexistant record(s): ";
-			for(CustomTableRecordDto item:invalidList) {
-				errorMessage=errorMessage+item.getValues().get(FIELD_ID)+", ";
-			}
-		}
-		return errorMessage;
 	}
 	
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Elastic search and custom tables" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="63d882e4-12ba-48cb-9cf8-b557b7f5787f" activeEnvironment="Default" name="Elastic search and custom tables" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -38,7 +38,7 @@
   </con:settings>
   <con:interface xsi:type="con:WsdlInterface" id="12eea81f-4c2a-4ab4-a6ca-023996713d59" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
       <con:endpoint>http://Alexander:8080/opencell/AccountWs</con:endpoint>
     </con:endpoints>
@@ -413,7 +413,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="851c5e5b-0df9-4e9c-9774-e39fa8f93d3f" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
       <con:endpoint>http://localhost:8080/opencell/CatalogWs</con:endpoint>
     </con:endpoints>
@@ -759,7 +759,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0a39cdb7-1de6-46e4-bbe7-8f6e82a4e738" wsaVersion="NONE" name="FilteredListWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilteredListWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/FilteredListWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/FilteredListWs</con:endpoint>
     </con:endpoints>
     <con:operation id="68fd0f9d-65de-4627-80d4-aefd0cc91fac" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -780,7 +780,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0e0ff08e-67e7-43b3-b03e-dd4e12d77cc7" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
       <con:endpoint>http://localhost:8080/opencell/SettingsWs</con:endpoint>
     </con:endpoints>
@@ -1246,7 +1246,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="8c2affeb-ab12-43ad-adde-ed28dba3be5d" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/SubscriptionWs</con:endpoint>
     </con:endpoints>
     <con:operation id="eb311c9f-15de-4d3f-b422-da737c5eb229" isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1321,7 +1321,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="46feb4ff-ba6f-4554-a95b-e943a466084d" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/WalletWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/WalletWs</con:endpoint>
     </con:endpoints>
     <con:operation id="5d0ddec3-09b0-439c-838f-58dafad04d96" isOneWay="false" action="" name="cancelReservation" bindingOperationName="cancelReservation" type="Request-Response" outputName="cancelReservationResponse" inputName="cancelReservation" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1372,7 +1372,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="405f4de6-2366-460c-88cd-c0e25de8ef4c" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="b924835f-f5bc-4eee-a684-a8b4439b1a87" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1459,7 +1459,7 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="7bf31d37-dd0b-4792-a1c9-c37a6c092b36" wadlVersion="http://wadl.dev.java.net/2009/02" name="Elastic search" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
     </con:endpoints>
     <con:resource name="Account by id" path="/${#Project#esIndexPrefix}_account/_doc/{type}_{id}" id="dc93348b-fbb2-4ed5-9fcd-c437a622a50f">
@@ -1715,7 +1715,7 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="9f953325-63c5-4b66-9828-6cfef4525b73" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO JAX-WS API Documentation" type="rest" basePath="/api/rest" definitionUrl="C:\andrius\projektai\seb\meveo\meveo-api\target\docs\application.wadl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#opencell.url}</con:endpoint>
     </con:endpoints>
     <con:resource name="/notification/jobTrigger" path="/notification/jobTrigger" id="c0880eb9-cb73-48bf-b9b1-7775f6ea9351">
@@ -15590,7 +15590,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="44fef92b-be52-4a1e-811f-84deec97b850" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/ScriptInstanceWs</con:endpoint>
     </con:endpoints>
     <con:operation id="5602eec5-69d1-4bbe-bed3-4af54069e28f" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">

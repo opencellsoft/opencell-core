@@ -5,7 +5,7 @@
         <artifactId>opencell</artifactId>
         <groupId>com.opencellsoft</groupId>
         <relativePath>../pom.xml</relativePath>
-        <version>8.1.1-SNAPSHOT</version>
+        <version>8.1.2-SNAPSHOT</version>
     </parent>
     <artifactId>opencell-model</artifactId>
     <packaging>jar</packaging>
@@ -48,6 +48,45 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sql-maven-plugin</artifactId>
+                <version>1.5</version>
+                <dependencies>
+                    <!-- specify the dependent jdbc driver here -->
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>42.2.5</version>
+                    </dependency>
+                </dependencies>
+
+                <!-- common configuration shared by all executions -->
+                <configuration>
+                    <driver>${db.driver}</driver>
+                    <url>${db.url}</url>
+                    <username>${db.username}</username>
+                    <password>${db.password}</password>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>reset-db</id>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <autocommit>true</autocommit>
+                            <!-- drop schema instead of database to avoid restarting wildfly -->
+                            <sqlCommand>
+                                drop schema IF EXISTS ${db.schema} cascade;
+                                create schema ${db.schema} AUTHORIZATION ${db.username};
+                            </sqlCommand>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
         <pluginManagement>
             <plugins>
@@ -85,7 +124,7 @@
                 <plugin>
                     <groupId>org.liquibase</groupId>
                     <artifactId>liquibase-maven-plugin</artifactId>
-                    <version>3.5.3</version>
+                    <version>3.8.0</version>
                     <configuration>
                         <changeLogFile>${liquibase.changeLogFile}</changeLogFile>
                         <driver>${db.driver}</driver>
@@ -107,6 +146,7 @@
                     <!-- </dependency> -->
                     <!-- </dependencies> -->
                 </plugin>
+
             </plugins>
         </pluginManagement>
     </build>
@@ -185,11 +225,6 @@
             <version>23.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
-        </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>

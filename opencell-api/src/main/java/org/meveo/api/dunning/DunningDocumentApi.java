@@ -18,9 +18,11 @@ import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.payments.AccountOperation;
@@ -39,7 +41,7 @@ import org.meveo.service.payments.impl.DunningDocumentService;
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class DunningDocumentApi extends BaseApi {
-    
+
     /**
      * Default sort for list call.
      */
@@ -47,13 +49,16 @@ public class DunningDocumentApi extends BaseApi {
 
     @Inject
     private DunningDocumentService dunningDocumentService;
-    
+
     @Inject
     private CustomerAccountService customerAccountService;
-    
+
     @Inject
     private InvoiceService invoiceService;
-    
+
+    @Inject
+    private InvoiceApi invoiceApi;
+
     @Inject
     private AccountOperationService accountOperationService;
 
@@ -71,7 +76,7 @@ public class DunningDocumentApi extends BaseApi {
 
         DunningDocument dunningDocument = new DunningDocument();
         dunningDocument.setCustomerAccount(customerAccount);
-        
+
         if (postData.getDueInvoices() != null) {
             List<RecordedInvoice> ris = new ArrayList<>();
             for (InvoiceDto invoiceDto : postData.getDueInvoices()) {
@@ -82,15 +87,16 @@ public class DunningDocumentApi extends BaseApi {
                 if (invoice.getRecordedInvoice() == null) {
                     throw new EntityDoesNotExistsException(RecordedInvoice.class, invoiceDto.getInvoiceNumber(), "invoiceNumber");
                 }
+                invoice.setStatus(InvoiceStatusEnum.DISPUTED);
                 RecordedInvoice ri = invoice.getRecordedInvoice();
                 ri.setDunningDocument(dunningDocument);
                 ris.add(invoice.getRecordedInvoice());
             }
             dunningDocument.setDueInvoices(ris);
         }
-        
+
         dunningDocumentService.create(dunningDocument);
-        
+
         return dunningDocument;
     }
 
@@ -100,26 +106,26 @@ public class DunningDocumentApi extends BaseApi {
         if (dunningDocument == null) {
             throw new EntityDoesNotExistsException(DunningDocument.class, dunningDocumentId);
         }
-        
-        for(PaymentDto paymentDto : paymentDtos) {
+
+        for (PaymentDto paymentDto : paymentDtos) {
             AccountOperation accountOperation = accountOperationService.findByReference(paymentDto.getReference());
             if (accountOperation == null) {
                 throw new EntityDoesNotExistsException(Payment.class, paymentDto.getReference(), "reference");
             }
-            if(!(accountOperation instanceof Payment)) {
+            if (!(accountOperation instanceof Payment)) {
                 throw new EntityDoesNotExistsException(Payment.class, paymentDto.getReference(), "reference");
             }
-            
+
             Payment payment = (Payment) accountOperation;
             payment.setDunningDocument(dunningDocument);
             dunningDocument.addPayment(payment);
         }
-        
+
         dunningDocumentService.update(dunningDocument);
-                
+
         return dunningDocument;
     }
-    
+
     /**
      * Find DunningDocument
      *
@@ -129,17 +135,17 @@ public class DunningDocumentApi extends BaseApi {
      */
     public DunningDocumentResponseDto find(String dunningDocumentCode) throws MeveoApiException {
         DunningDocumentResponseDto result = new DunningDocumentResponseDto();
-        
+
         DunningDocument dunningDocument = dunningDocumentService.findByCode(dunningDocumentCode);
         if (dunningDocument == null) {
             throw new EntityDoesNotExistsException(DunningDocument.class, dunningDocumentCode);
         }
-        
+
         result.setDunningDocument(dunningDocumentToDto(dunningDocument));
         return result;
-        
+
     }
-    
+
     /**
      * List DunningDocuments
      *
@@ -160,7 +166,8 @@ public class DunningDocumentApi extends BaseApi {
             sortBy = pagingAndFiltering.getSortBy();
         }
 
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, DunningDocument.class);
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering,
+            DunningDocument.class);
 
         Long totalCount = dunningDocumentService.count(paginationConfiguration);
 
@@ -181,7 +188,7 @@ public class DunningDocumentApi extends BaseApi {
         return result;
 
     }
-    
+
     /**
      * Convert dunningDocument dto to entity
      *
@@ -189,8 +196,35 @@ public class DunningDocumentApi extends BaseApi {
      * @return instance of DunningDocumentDto
      */
     public DunningDocumentDto dunningDocumentToDto(DunningDocument dunningDocument) {
-        DunningDocumentDto dto = new DunningDocumentDto(dunningDocument);
+       
+        DunningDocumentDto dto = new DunningDocumentDto();
+        dto.setAuditable(dunningDocument);
+
+        if (dunningDocument.getCustomerAccount() != null) {
+            dto.setCustomerAccountCode(dunningDocument.getCustomerAccount().getCode());
+        }
+        if (dunningDocument.getSubscription() != null) {
+            dto.setSubscriptionCode(dunningDocument.getSubscription().getCode());
+        }
+        if (dunningDocument.getDueInvoices() != null) {
+            List<InvoiceDto> dueInvoices = new ArrayList<InvoiceDto>();
+            for (RecordedInvoice recordedInvoice : dunningDocument.getDueInvoices()) {
+                for (Invoice invoice : recordedInvoice.getInvoices()) {
+                    dueInvoices.add(invoiceApi.invoiceToDto(invoice, false, null));
+                }
+
+            }
+            dto.setDueInvoices(dueInvoices);
+        }
+
+        if (dunningDocument.getPayments() != null) {
+            List<PaymentDto> paymentDtos = new ArrayList<PaymentDto>();
+            for (Payment payment : dunningDocument.getPayments()) {
+                paymentDtos.add(new PaymentDto(payment));
+            }
+            dto.setPayments(paymentDtos);
+        }
+
         return dto;
     }
-
 }

@@ -51,8 +51,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
@@ -103,7 +101,12 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.seller.id, inv.invoiceDate"),
         @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
         @NamedQuery(name = "Invoice.nullifyInvoiceFileNames", query = "update Invoice inv set inv.pdfFilename = null , inv.xmlFilename = null where inv.billingRun = :billingRun"),
-        @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId") })
+        @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId"), 
+        @NamedQuery(name = "Invoice.deleteByBR", query = "delete from Invoice inv where inv.billingRun.id=:billingRunId"),
+        @NamedQuery(name = "Invoice.updateUnpaidInvoicesStatus", query = "UPDATE Invoice inv set inv.status = org.meveo.model.billing.InvoiceStatusEnum.UNPAID"
+                + " WHERE inv.dueDate <= NOW() AND inv.status IN (org.meveo.model.billing.InvoiceStatusEnum.CREATED, org.meveo.model.billing.InvoiceStatusEnum.GENERATED, org.meveo.model.billing.InvoiceStatusEnum.SENT)")
+
+})
 public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
@@ -161,6 +164,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Column(name = "invoice_date")
     private Date invoiceDate;
+    
+    /**
+     * Invoice status
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 25)
+    private InvoiceStatusEnum status;
 
     /**
      * Payment due date
@@ -250,12 +260,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     private TradingLanguage tradingLanguage;
 
     /**
-     * Rated transactions that were included in invoice
-     */
-    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
-    private List<RatedTransaction> ratedTransactions = new ArrayList<>();
-
-    /**
      * Comment
      */
     @Column(name = "comment", length = 1200)
@@ -318,12 +322,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_invoices_orders", joinColumns = @JoinColumn(name = "invoice_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
     private List<Order> orders = new ArrayList<>();
-
-    /**
-     * Orders (numbers) referenced from Rated transactions
-     */
-    @Transient
-    private Set<String> orderNumbers;
 
     /**
      * Quote that invoice was produced for
@@ -440,14 +438,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.dueDate = DateUtils.truncateTime(this.dueDate);
         this.invoiceDate = DateUtils.truncateTime(this.invoiceDate);
         setUUIDIfNull();
-    }
-
-    public List<RatedTransaction> getRatedTransactions() {
-        return ratedTransactions;
-    }
-
-    public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
-        this.ratedTransactions = ratedTransactions;
     }
 
     public String getInvoiceNumber() {
@@ -692,6 +682,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void setInvoiceAdjustmentCurrentProviderNb(Long invoiceAdjustmentCurrentProviderNb) {
         this.invoiceAdjustmentCurrentProviderNb = invoiceAdjustmentCurrentProviderNb;
     }
+    
+    public InvoiceStatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(InvoiceStatusEnum status) {
+        this.status = status;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -825,19 +823,19 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
         return aggregates;
     }
-
-    public List<RatedTransaction> getRatedTransactionsForCategory(WalletInstance wallet, InvoiceSubCategory invoiceSubCategory) {
-
-        List<RatedTransaction> ratedTransactionsMatched = new ArrayList<>();
-
-        for (RatedTransaction ratedTransaction : ratedTransactions) {
-            if (ratedTransaction.getWallet().equals(wallet) && ratedTransaction.getInvoiceSubCategory().equals(invoiceSubCategory)) {
-                ratedTransactionsMatched.add(ratedTransaction);
-            }
-
-        }
-        return ratedTransactionsMatched;
-    }
+//
+//    public List<RatedTransaction> getRatedTransactionsForCategory(WalletInstance wallet, InvoiceSubCategory invoiceSubCategory) {
+//
+//        List<RatedTransaction> ratedTransactionsMatched = new ArrayList<>();
+//
+//        for (RatedTransaction ratedTransaction : ratedTransactions) {
+//            if (ratedTransaction.getWallet().equals(wallet) && ratedTransaction.getInvoiceSubCategory().equals(invoiceSubCategory)) {
+//                ratedTransactionsMatched.add(ratedTransaction);
+//            }
+//
+//        }
+//        return ratedTransactionsMatched;
+//    }
 
     /**
      * @return Quote that invoice was produced for
@@ -1053,20 +1051,6 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Override
     public void setDescription(String description) {
 
-    }
-
-    /**
-     * @return Orders (numbers) referenced from Rated transactions
-     */
-    public Set<String> getOrderNumbers() {
-        return orderNumbers;
-    }
-
-    /**
-     * @param orderNumbers Orders (numbers) referenced from Rated transactions
-     */
-    public void setOrderNumbers(Set<String> orderNumbers) {
-        this.orderNumbers = orderNumbers;
     }
 
     /**
