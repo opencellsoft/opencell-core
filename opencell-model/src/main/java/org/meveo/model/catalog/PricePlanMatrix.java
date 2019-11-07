@@ -318,6 +318,14 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Size(max = 2000)
     private String invoiceSubCategoryEL;
 
+    @Column(name = "validity_from")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date validityFrom;
+
+    @Column(name = "validity_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date validityDate;
+
     public String getEventCode() {
         return eventCode;
     }
@@ -822,4 +830,20 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 	public void setMinimumAmountELSpark(String minimumAmountELSpark) {
 		this.minimumAmountELSpark = minimumAmountELSpark;
 	}
+
+    public Date getValidityFrom() {
+        return validityFrom;
+    }
+
+    public void setValidityFrom(Date validityFrom) {
+        this.validityFrom = validityFrom;
+    }
+
+    public Date getValidityDate() {
+        return validityDate;
+    }
+
+    public void setValidityDate(Date validityDate) {
+        this.validityDate = validityDate;
+    }
 }
