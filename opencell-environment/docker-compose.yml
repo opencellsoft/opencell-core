@@ -1,0 +1,77 @@
+version: '2.2'
+services:
+
+
+  postgres:
+    image: ${PG_IMAGE}:${PG_IMAGE_VERSION}
+    restart: unless-stopped
+    container_name: postgres
+    environment:
+      POSTGRES_USER: opencell_db_user
+      POSTGRES_PASSWORD: opencell_db_password
+      POSTGRES_DB : opencell_db
+      POSTGRES_PORT : 5432
+    healthcheck:
+      test: 'PGPASSWORD="opencell_db_password" psql --host 127.0.0.1 --username opencell_db_user --dbname opencell_db -c "select 1" ; [ "0" -eq "$$?" ]; echo $$?'
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    volumes:
+       - postgresql-data:/var/lib/postgresql/data:z
+       - ./init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh #get it from http://dl.opencellsoft.com/keycloak/init-user-db.sh  # or get it from http://dl.opencellsoft.com/keycloak/init-user-db.sh
+       - ./../opencell-model/target/liquibase/migrate.sql:/docker-entrypoint-initdb.d/import-postgres.sql #get it from http://dl.opencellsoft.com/current/import-postgres.sql  # or get it from http://dl.opencellsoft.com/current/import-postgres.sql
+    ports:
+      - "5432:5432"
+
+  opencell:
+    image: ${OC_IMAGE}:${OC_IMAGE_VERSION}
+    restart: unless-stopped
+    container_name: opencell
+    depends_on:
+      - postgres
+      - elasticsearch
+    environment:
+      KEYCLOAK_URL: http://192.168.0.1:8080/auth
+      DB_HOST: postgres
+      DB_NAME: opencell_db
+      DB_PASSWORD: opencell_db_password
+      DB_USER: opencell_db_user
+      KEYCLOAK_DB_USER : keycloak
+      KEYCLOAK_DB_PASSWORD : keycloak
+      KEYCLOAK_DB_NAME : keycloak
+      KEYCLOAK_DB_HOST: postgres
+      SMTP_HOST: my.smtp.org
+      SMTP_PORT: 465
+      SMTP_FROM: no-reply@opencellsoft.com
+      SMTP_USERNAME: postmaster@my.domain.com
+      SMTP_PASSWORD: my-password
+      WILDFLY_SERVER_LOG_LEVEL: ERROR
+#    mem_limit: 5GB
+    # Carefull directories log, opencelldata and file opencell-admin.properties must exist and have UID and GID set to 1000
+    volumes:
+      - opencell-log:/opt/jboss/wildfly/standalone/log
+      - opencell-data:/opt/jboss/opencelldata
+      - ./../opencell-admin/web/target/opencell.war:/opt/jboss/wildfly/standalone/deployments/opencell.war # or get it from http://dl.opencellsoft.com/current/opencell.war
+      - ./opencell-admin.properties:/opt/jboss/wildfly/standalone/configuration/opencell-admin.properties # create empty file before start with UID and GID set to 1000
+#      - ./input-files/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - "8080:8080"
+
+  elasticsearch:
+    image: ${ES_IMAGE}:${ES_IMAGE_VERSION}
+    container_name: elasticsearch
+# WARRNIG for production need to set on host :  sysctl -w vm.max_map_count=262144
+    environment:
+      node.name: es
+      cluster.name: opencell
+      discovery.type: single-node # zen if cluster and then need : discovery.zen.ping.unicast.hosts: elasticsearch-xxx
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+
+
+volumes:
+  postgresql-data: {}
+  elasticsearch-data: {}
+  opencell-data: {}
+  opencell-log: {}
+
