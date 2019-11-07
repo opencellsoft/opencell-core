@@ -285,7 +285,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 	}
 
 	public void setUnitMultiplicator(BigDecimal unitMultiplicator) {
-        this.unitMultiplicator = unitMultiplicator;
+		updateUnitMultiplicator(unitMultiplicator);
     }
 
     /**
@@ -407,7 +407,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 
     public void setInputUnitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
         this.inputUnitOfMeasure = inputUnitOfMeasure;
-        updateUnitMultiplicator();
+        updateUnitMultiplicator(null);
     }
 
     public UnitOfMeasure getRatingUnitOfMeasure() {
@@ -416,16 +416,18 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 
     public void setRatingUnitOfMeasure(UnitOfMeasure ratingUnitOfMeasure) {
         this.ratingUnitOfMeasure = ratingUnitOfMeasure;
-        updateUnitMultiplicator();
+        updateUnitMultiplicator(null);
     }
 
-	private void updateUnitMultiplicator() {
-		setUnitMultiplicator(calculateUnitMultiplicator(this.inputUnitOfMeasure, this.ratingUnitOfMeasure));
+	private void updateUnitMultiplicator(BigDecimal multiplicator) {
+		this.unitMultiplicator=calculateUnitMultiplicator(multiplicator, this.inputUnitOfMeasure, this.ratingUnitOfMeasure);
 	}
 	
-    private BigDecimal calculateUnitMultiplicator(UnitOfMeasure IUM, UnitOfMeasure RUM) {
+    private BigDecimal calculateUnitMultiplicator(BigDecimal multiplicator, UnitOfMeasure IUM, UnitOfMeasure RUM) {
 		if(IUM!=null && RUM != null && IUM.isCompatibleWith(RUM)){
 			return BigDecimal.valueOf(IUM.getMultiplicator()).divide(BigDecimal.valueOf(RUM.getMultiplicator()),BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP );
+		} else if(multiplicator!=null) {
+			return multiplicator;
 		}
 		return unitMultiplicator;
 	}
