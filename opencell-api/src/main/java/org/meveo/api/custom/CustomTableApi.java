@@ -121,6 +121,9 @@ public class CustomTableApi extends BaseApi {
     public void createOrUpdate(CustomTableDataDto dto) throws MeveoApiException, BusinessException {
     	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode());  put("values", dto.getValues());}};
     	validateParams(toValidate);
+    	if (dto.getOverwrite() == null) {
+            dto.setOverwrite(false);
+        }
         CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
         Map<Boolean, List<CustomTableRecordDto>> partitionedById = dto.getValues().stream().collect(Collectors.partitioningBy(x->x.getValues().get(FIELD_ID)!=null));
