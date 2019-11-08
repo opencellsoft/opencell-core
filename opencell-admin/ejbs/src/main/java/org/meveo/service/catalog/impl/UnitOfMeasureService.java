@@ -83,7 +83,7 @@ public class UnitOfMeasureService extends BusinessService<UnitOfMeasure> {
 				throw new BusinessException(
 						"multiplicator must be 1 for a Base Unit of Measure, current value is " + multiplicator);
 			}
-			if (entity.getId() != null) {
+			if (entity.getParentUnitOfMeasure() != null) {
 				List<UnitOfMeasure> childs = listChildUnitsOfMeasures(entity);
 				if (childs != null && !childs.isEmpty()) {
 					throw new BusinessException("you cannot define a parent to this base unit as it's referenced by "
