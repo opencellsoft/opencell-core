@@ -60,7 +60,8 @@
                 <hftl:formField label="#{messages['address.address3']}" field="address" id="address3" childField="address3" />
                 <hftl:formField label="#{messages['address.zipCode']}" required="false" id="zipCode" field="address" childField="zipCode" />
                 <hftl:formField label="#{messages['address.city']}" required="false" id="city" field="address" childField="city" />
-                <hftl:formField id="countryPanel" label="#{messages['address.country']}" fkToEntity="false" field="address" childField="country" valueLabelField="description"  listBean="#{countryBean}"/> 
+				<hftl:formField label="#{messages['address.state']}" id="state" field="address" childField="state" popup="false" />
+				<hftl:formField id="countryPanel" label="#{messages['address.country']}" fkToEntity="false" field="address" childField="country" valueLabelField="description"  listBean="#{countryBean}"/>
             </p:fieldset>
 
 		</hftl:formPanel>
