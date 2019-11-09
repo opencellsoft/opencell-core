@@ -2139,12 +2139,17 @@
         <sql>CREATE INDEX edr_event_date_index ON ${db.schema.adapted}rating_edr ((event_date::DATE))</sql>
         <sql>CREATE INDEX rt_usage_date_index ON ${db.schema.adapted}billing_rated_transaction ((usage_date::DATE))</sql>
     </changeSet>
-    
+
     <changeSet id="#4412_20191125" author="MohammedELAZZOUZI">
     	<dropColumn tableName="billing_invoice_configuration" columnName="display_charges_periods"></dropColumn>
     	<addColumn tableName="billing_invoice_configuration">
     		<column name="display_wallet_operations" type="${type.boolean}" defaultValueNumeric="0"/>
     	</addColumn>
     </changeSet>
-    
+
+
+    <changeSet author="abdelkader.bouazza"  id="#4494-Enable_a_subscription_to_have_the_same_access_point_in_two_or_more_different_periods_of_time">
+        <dropUniqueConstraint tableName="medina_access" constraintName="uk_lca62y5gn9qo1e6jr84i9w3lr"/>
+        <addUniqueConstraint columnNames="acces_user_id, subscription_id, start_date, end_date" constraintName="uk_lca62y5gn9qo1e6jr84i9w3lr" deferrable="false" disabled="false" initiallyDeferred="false" tableName="medina_access" />
+    </changeSet>
 </databaseChangeLog>
