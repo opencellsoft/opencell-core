@@ -14,6 +14,8 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.AccessRs;
 import org.meveo.api.rest.impl.BaseRs;
 
+import java.util.Date;
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -51,11 +53,11 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
     }
 
     @Override
-    public GetAccessResponseDto find(String accessCode, String subscriptionCode) {
+    public GetAccessResponseDto find(String accessCode, String subscriptionCode, Date startDate, Date endDate) {
         GetAccessResponseDto result = new GetAccessResponseDto();
 
         try {
-            result.setAccess(accessApi.find(accessCode, subscriptionCode));
+            result.setAccess(accessApi.find(accessCode, subscriptionCode,startDate, endDate));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -64,11 +66,11 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
     }
 
     @Override
-    public ActionStatus remove(String accessCode, String subscriptionCode) {
+    public ActionStatus remove(String accessCode, String subscriptionCode, Date startDate, Date endDate) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accessApi.remove(accessCode, subscriptionCode);
+            accessApi.remove(accessCode, subscriptionCode, startDate, endDate);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -103,12 +105,12 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
     }
 
     @Override
-    public ActionStatus enable(String accessCode, String subscriptionCode) {
+    public ActionStatus enable(String accessCode, String subscriptionCode, Date startDate, Date endDate) {
 
         ActionStatus result = new ActionStatus();
 
         try {
-            accessApi.enableOrDisable(accessCode, subscriptionCode, true);
+            accessApi.enableOrDisable(accessCode, subscriptionCode, startDate, endDate, true);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -117,12 +119,12 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
     }
 
     @Override
-    public ActionStatus disable(String accessCode, String subscriptionCode) {
+    public ActionStatus disable(String accessCode, String subscriptionCode, Date startDate, Date endDate) {
 
         ActionStatus result = new ActionStatus();
 
         try {
-            accessApi.enableOrDisable(accessCode, subscriptionCode, false);
+            accessApi.enableOrDisable(accessCode, subscriptionCode, startDate, endDate,false);
         } catch (Exception e) {
             processException(e, result);
         }

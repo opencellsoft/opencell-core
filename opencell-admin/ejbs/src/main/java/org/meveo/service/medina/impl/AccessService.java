@@ -18,6 +18,7 @@
  */
 package org.meveo.service.medina.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -42,22 +43,29 @@ public class AccessService extends PersistenceService<Access> {
         return getEntityManager().createNamedQuery("Access.getAccessesByUserId", Access.class).setParameter("accessUserId", accessUserId).getResultList();
     }
 
-    public boolean isDuplicate(Access access) {
-        String stringQuery = "SELECT COUNT(*) FROM " + Access.class.getName() + " a WHERE a.accessUserId=:accessUserId AND a.subscription.id=:subscriptionId";
+    public boolean isDuplicateAndOverlaps(Access access) {
+        String stringQuery ="SELECT COUNT(*) FROM " + Access.class.getName() + " a WHERE a.accessUserId=:accessUserId AND a.subscription.id=:subscriptionId"+
+                " AND ((:start_date BETWEEN a.startDate AND a.endDate) OR (:end_date BETWEEN a.startDate AND a.endDate))";
         Query query = getEntityManager().createQuery(stringQuery);
         query.setParameter("accessUserId", access.getAccessUserId());
         query.setParameter("subscriptionId", access.getSubscription().getId());
+        query.setParameter("start_date", access.getStartDate());
+        query.setParameter("end_date", access.getEndDate());
         query.setHint("org.hibernate.flushMode", "NEVER");
         return ((Long) query.getSingleResult()).intValue() != 0;
     }
 
-    public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription) {
+    public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription, Date startDate, Date endDate) {
         try {
-            QueryBuilder qb = new QueryBuilder(Access.class, "a");
-            qb.addCriterion("accessUserId", "=", accessUserId, false);
-            qb.addCriterionEntity("subscription", subscription);
-            return (Access) qb.getQuery(getEntityManager()).getSingleResult();
-
+            String selectAccessByUserIdSubscriptionIdStartEndDateQuery ="SELECT a FROM " + Access.class.getName() +" a"
+                    + " WHERE a.accessUserId=:accessUserId AND a.subscription.id=:subscriptionId"
+                    + " AND ((:start_date BETWEEN a.startDate AND a.endDate) AND (:end_date BETWEEN a.startDate AND a.endDate))";
+            Query query = getEntityManager().createQuery(selectAccessByUserIdSubscriptionIdStartEndDateQuery);
+            query.setParameter("accessUserId", accessUserId);
+            query.setParameter("subscriptionId", subscription.getId());
+            query.setParameter("start_date", startDate);
+            query.setParameter("end_date", endDate);
+            return (Access) query.getSingleResult();
         } catch (NoResultException e) {
             log.warn("no result found");
             return null;
