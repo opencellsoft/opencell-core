@@ -46,7 +46,7 @@ public class Language extends AuditableEntity {
     /**
      * Language 3 letter code
      */
-    @Column(name = "language_code", length = 3)
+    @Column(name = "language_code", length = 3, unique = true, nullable=false)
     @Size(max = 3)
     private String languageCode;
 
