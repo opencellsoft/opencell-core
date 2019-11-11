@@ -9995,6 +9995,13 @@ $$ LANGUAGE plpgsql;
     <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
         <delete tableName="DATABASECHANGELOG" />
     </changeSet>
+    
+    <changeSet id="#4766_20191111" author="MohammedELAZZOUZI">
+    	<addNotNullConstraint tableName="adm_currency" columnName="currency_code"/>
+    	<addNotNullConstraint tableName="adm_language" columnName="language_code"/>
+        <addUniqueConstraint columnNames="language_code" constraintName="UniqueConstraint_adm_language_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_language" />
+    </changeSet>
+
 
 </databaseChangeLog>
 
