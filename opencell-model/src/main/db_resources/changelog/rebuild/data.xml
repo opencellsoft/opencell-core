@@ -7102,6 +7102,7 @@
             <column name="id" valueNumeric="1" />
             <column name="version" valueNumeric="1" />
             <column name="created" valueDate="2015-03-19 00:04:08.922" />
+            <column name="creator" value="opencell.admin" />
             <column name="code" value="DEMO" />
             <column name="amount_validation" valueNumeric="0" />
             <column name="automatic_invoicing" valueNumeric="0" />

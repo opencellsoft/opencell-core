@@ -99,7 +99,7 @@
             <h:outputText value="#{field.referenceCode}" />
         </c:if>
         <c:if test="#{edit}">
-            <p:autoComplete value="#{field}" required="#{cft.valueRequired}" size="30" maxlength="60" dropdown="true" placeholder="#{placeholder}" label="#{label}"
+            <p:autoComplete value="#{field}" size="30" maxlength="60" dropdown="true" placeholder="#{placeholder}" label="#{label}"
                 converter="org.jboss.seam.faces.conversion.ObjectConverter" completeMethod="#{customFieldDataEntryBean.autocompleteEntityForCFV}" queryDelay="1000" var="e"
                 itemLabel="#{e.referenceCode}" itemValue="#{e}">
                 <f:attribute name="classname" value="#{cft.entityClazz}" />
