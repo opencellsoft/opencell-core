@@ -30,7 +30,7 @@ import org.meveo.service.job.Job;
  *
  * @lastModifiedVersion willBeSetLater
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 8.2.1
  */
 @Stateless
 public class FlatFileProcessingJob extends Job {
@@ -139,9 +139,10 @@ public class FlatFileProcessingJob extends Job {
                 f.mkdirs();
             }
 
-            outputDir = outputDir != null ? outputDir : inputDir + File.separator + "output";
-            rejectDir = rejectDir != null ? rejectDir : inputDir + File.separator + "reject";
-            archiveDir = archiveDir != null ? archiveDir : inputDir + File.separator + "archive";
+            String inputDirParent = f.getParent();
+            outputDir = outputDir != null ? outputDir : inputDirParent + File.separator + "output";
+            rejectDir = rejectDir != null ? rejectDir : inputDirParent + File.separator + "reject";
+            archiveDir = archiveDir != null ? archiveDir : inputDirParent + File.separator + "archive";
 
             f = new File(outputDir);
             if (!f.exists()) {
