@@ -23609,7 +23609,7 @@ public class InvoiceCreateScript extends Script {
                      <scriptParams>
                         <entry>
                            <key>ACCOUNT_NAME</key>
-                           <value>#{event.billingAccount.customerAccount.code}</value>
+                           <value>ACCOUNT_NAME</value>
                         </entry>
                         <entry>
                            <key>INVOICE_DATE</key>
@@ -55632,7 +55632,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
                   <alias>pro</alias>\r
                   <preferred>false</preferred>\r
                   <cardNumber>6789678967896789</cardNumber>\r
-               </methodOfPayment>\r
+               </methodOfPayment>
+               <methodOfPayment paymentMethodType="CHECK"/>\r
             </paymentMethods>\r
          </crmAccountHierarchy>\r
       </ws:createOrUpdateCRMAccountHierarchy>\r

@@ -1,5 +1,13 @@
-<ui:composition template="/layout/errorTemplate.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<ui:composition template="/layout/errorTemplate.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:h="http://xmlns.jcp.org/jsf/html">
 
-    <ui:define name="contentTitle">#{requestScope['javax.servlet.error.exception'].message==null or !requestScope['javax.servlet.error.exception'].message.contains('conversation')?"You got a RuntimeException! There's a BUG somewhere!":messages['error.sessionExpired']}</ui:define>
+    <ui:define name="contentTitle">
+        <c:set  var="errorType" value="#{requestScope['javax.servlet.error.exception'].message==null
+                    or !requestScope['javax.servlet.error.exception'].message.contains('conversation')}"/>
+        <h:outputText value="You got a RuntimeException! There's a BUG somewhere!" rendered="#{errorType and !paramBean.productionStage}"  />
+        <h:outputText value="Sorry, a technical error has occured. (error #{requestScope['javax.servlet.error.status_code']})"
+                      rendered="#{errorType and paramBean.productionStage}"  />
+        <h:outputText value="#{messages['error.sessionExpired']}" rendered="#{!errorType}"/>
+    </ui:define>
 
 </ui:composition>

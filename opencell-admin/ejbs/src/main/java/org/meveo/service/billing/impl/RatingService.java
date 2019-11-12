@@ -383,17 +383,21 @@ public class RatingService extends PersistenceService<WalletOperation> {
      */
     public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax, Long countryId, TradingCurrency tcurrency)
             throws BusinessException, RatingException {
-
+        RecurringChargeTemplate recChargeTemplate = null;
+        ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
+        if (chargeInstance != null && chargeInstance instanceof RecurringChargeInstance) {
+            recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
+        }
         PricePlanMatrix pricePlan = null;
 
         if ((unitPriceWithoutTax == null && appProvider.isEntreprise()) || (unitPriceWithTax == null && !appProvider.isEntreprise())) {
 
-            List<PricePlanMatrix> chargePricePlans = pricePlanMatrixService.getActivePricePlansByChargeCode(bareWalletOperation.getCode());
+            List<PricePlanMatrix> chargePricePlans = getActivePricePlansByChargeCode(bareWalletOperation.getCode());
             if (chargePricePlans == null || chargePricePlans.isEmpty()) {
                 throw new NoPricePlanException("No price plan for charge code " + bareWalletOperation.getCode());
             }
 
-            pricePlan = ratePrice(chargePricePlans, bareWalletOperation, countryId, tcurrency);
+            pricePlan = ratePrice(chargePricePlans, bareWalletOperation, countryId, tcurrency, recChargeTemplate);
             if (pricePlan == null) {
                 throw new NoPricePlanException("No price plan matched for charge code " + bareWalletOperation.getCode());
 
@@ -426,22 +430,20 @@ public class RatingService extends PersistenceService<WalletOperation> {
         // if the wallet operation correspond to a recurring charge that is
         // shared, we divide the price by the number of
         // shared charges
-        ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
-        if (chargeInstance != null && chargeInstance instanceof RecurringChargeInstance) {
-            RecurringChargeTemplate recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
-            if (recChargeTemplate.getShareLevel() != null) {
-                RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) chargeInstance;
-                int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
-                if (sharedQuantity > 0) {
-                    if (appProvider.isEntreprise()) {
-                        unitPriceWithoutTax = unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-                    } else {
-                        unitPriceWithTax = unitPriceWithTax.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-                    }
-                    log.info("charge is shared " + sharedQuantity + " times, so unit price is " + unitPriceWithoutTax);
+
+        if (recChargeTemplate  != null && recChargeTemplate.getShareLevel() != null) {
+            RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) chargeInstance;
+            int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
+            if (sharedQuantity > 0) {
+                if (appProvider.isEntreprise()) {
+                    unitPriceWithoutTax = unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                } else {
+                    unitPriceWithTax = unitPriceWithTax.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                 }
+                log.info("charge is shared " + sharedQuantity + " times, so unit price is " + unitPriceWithoutTax);
             }
         }
+
 
         calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax);
 
@@ -482,6 +484,10 @@ public class RatingService extends PersistenceService<WalletOperation> {
             executeRatingScript(bareWalletOperation, productOffering.getGlobalRatingScriptInstance());
         }
 
+    }
+
+    public List<PricePlanMatrix> getActivePricePlansByChargeCode(String code) {
+        return pricePlanMatrixService.getActivePricePlansByChargeCode(code);
     }
 
     /**
@@ -560,12 +566,16 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param bareOperation operation
      * @param countryId county id
      * @param tcurrency trading currency
+     * @param chargeTemplate chargeTemplate
      * @return matrix of price plan
      * @throws BusinessException business exception
      */
-    private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency) throws BusinessException {
+    private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency,
+            ChargeTemplate chargeTemplate) throws BusinessException {
         // FIXME: the price plan properties could be null !
         // log.info("ratePrice rate " + bareOperation);
+        Date startDate = bareOperation.getStartDate();
+        Date endDate = bareOperation.getEndDate();
         for (PricePlanMatrix pricePlan : listPricePlan) {
 
             log.trace("Try to verify price plan {} for WO {}", pricePlan.getId(), bareOperation.getCode());
@@ -697,8 +707,12 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 log.trace("The quantity " + quantity + " is less than " + minQuantity);
                 continue;
             }
-            // log.debug("quantityMinOkInPricePlan");
-
+            if (chargeTemplate != null && chargeTemplate instanceof RecurringChargeTemplate && ((RecurringChargeTemplate)chargeTemplate).isProrataOnPriceChange()) {
+                if (!isStartDateBetween(startDate, pricePlan.getValidityFrom(), pricePlan.getValidityDate())
+                        || !isEndDateBetween(endDate, startDate, pricePlan.getValidityDate())){
+                    continue;
+                }
+            }
             Calendar validityCalendar = pricePlan.getValidityCalendar();
             boolean validityCalendarOK = validityCalendar == null || validityCalendar.previousCalendarDate(operationDate) != null;
             if (validityCalendarOK) {
@@ -713,6 +727,12 @@ public class RatingService extends PersistenceService<WalletOperation> {
         return null;
     }
 
+    private boolean isStartDateBetween(Date date, Date from, Date to) {
+        return (from != null && (date.equals(from) || (date.after(from))) && (to == null || (to != null || date.before(to))));
+    }
+    private boolean isEndDateBetween(Date date, Date from, Date to) {
+        return date.after(from) && (to == null || (date.before(to) || date.equals(to)));
+    }
     /**
      * Rerate wallet operation
      * 
