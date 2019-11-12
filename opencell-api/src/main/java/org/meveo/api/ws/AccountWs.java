@@ -366,10 +366,10 @@ public interface AccountWs extends IBaseWs {
     ActionStatus updateAccess(@WebParam(name = "access") AccessDto postData);
 
     @WebMethod
-    GetAccessResponseDto findAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "subscriptionCode") Date startDate, @WebParam(name = "subscriptionCode") Date endDate);
+    GetAccessResponseDto findAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "startDate") Date startDate, @WebParam(name = "endDate") Date endDate);
 
     @WebMethod
-    ActionStatus removeAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "subscriptionCode") Date startDate, @WebParam(name = "subscriptionCode") Date endDate);
+    ActionStatus removeAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "startDate") Date startDate, @WebParam(name = "endDate") Date endDate);
 
     /**
      * Enable an Access point with a given access code and subscription code.
@@ -379,7 +379,7 @@ public interface AccountWs extends IBaseWs {
      * @return Request processing status
      */
     @WebMethod
-    ActionStatus enableAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "subscriptionCode") Date startDate, @WebParam(name = "subscriptionCode") Date endDate);
+    ActionStatus enableAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "startDate") Date startDate, @WebParam(name = "endDate") Date endDate);
 
     /**
      * Disable an Access point with a given access code and subscription code.
@@ -389,7 +389,7 @@ public interface AccountWs extends IBaseWs {
      * @return Request processing status
      */
     @WebMethod
-    ActionStatus disableAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "subscriptionCode") Date startDate, @WebParam(name = "subscriptionCode") Date endDate);
+    ActionStatus disableAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "startDate") Date startDate, @WebParam(name = "endDate") Date endDate);
 
     @WebMethod
     AccessesResponseDto listAccess(@WebParam(name = "subscriptionCode") String subscriptionCode);
