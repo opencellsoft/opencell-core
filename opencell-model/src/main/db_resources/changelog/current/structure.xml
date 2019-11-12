@@ -2117,4 +2117,12 @@
             <column name="validity_date" type="datetime"></column>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#4765_20191112" author="MohammedELAZZOUZI">
+    	<update tableName="billing_cycle">
+	        <column name="billing_cycle_type" value="BILLINGACCOUNT"/>
+	        <where>billing_cycle_type is null</where>
+    	</update>
+        <addNotNullConstraint columnName="billing_cycle_type" tableName="billing_cycle" />
+    </changeSet>
 </databaseChangeLog>
