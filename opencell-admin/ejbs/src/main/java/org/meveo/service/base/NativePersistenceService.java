@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -373,7 +374,10 @@ public class NativePersistenceService extends BaseService {
             // Find the identifier of the last inserted record
             if (returnId) {
                 if (id != null) {
-                    return (Long) id;
+                	if(id instanceof Number) {
+                		return ((Number) id).longValue();
+                	}
+                    
                 }
                 StringBuffer requestConstruction = buildSqlInsertionRequest(tableName, findIdFields);
 
@@ -386,10 +390,8 @@ public class NativePersistenceService extends BaseService {
                 }
 
                 id = query.getSingleResult();
-                if (id instanceof BigDecimal) {
-                    id = ((BigDecimal) id).longValue();
-                } else if (id instanceof BigInteger) {
-                    id = ((BigInteger) id).longValue();
+                if (id instanceof Number) {
+                    id = ((Number) id).longValue();
                 }
                 values.put(FIELD_ID, id);
 
@@ -670,9 +672,8 @@ public class NativePersistenceService extends BaseService {
      */
     @SuppressWarnings({ "rawtypes" })
     public QueryBuilder getQuery(String tableName, PaginationConfiguration config) {
-
-        QueryBuilder queryBuilder = new QueryBuilder("select * from " + tableName + " a ", "a");
-
+        String fileds = (config!=null && config.getFetchFields()!=null)?config.getFetchFields().stream().map(x->" a."+x).collect(Collectors.joining(",")):"*";
+		QueryBuilder queryBuilder = new QueryBuilder("select "+fileds+" from " + tableName + " a ", "a");
         if (config == null) {
             return queryBuilder;
         }
