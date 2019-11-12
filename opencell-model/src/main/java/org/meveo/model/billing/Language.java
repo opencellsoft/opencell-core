@@ -53,7 +53,7 @@ public class Language extends AuditableEntity {
     /**
      * Description
      */
-    @Column(name = "description_en", length = 100)
+    @Column(name = "description_en", length = 100, unique = true, nullable=false)
     @Size(max = 100)
     private String descriptionEn;
 
