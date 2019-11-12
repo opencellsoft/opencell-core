@@ -52,7 +52,7 @@ public class Currency extends AuditableEntity {
     private String currencyCode;
 
     /** Currency name. */
-    @Column(name = "description_en", length = 255)
+    @Column(name = "description_en", length = 255, unique = true, nullable=false)
     @Size(max = 255)
     private String descriptionEn;
 
