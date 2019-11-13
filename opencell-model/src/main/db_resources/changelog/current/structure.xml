@@ -2126,4 +2126,11 @@
         <addUniqueConstraint columnNames="description_en" constraintName="UniqueConstraint_adm_currency__description_en" tableName="adm_currency" />
     </changeSet>
     
+    <changeSet id="#4765_20191112" author="MohammedELAZZOUZI">
+    	<update tableName="billing_cycle">
+	        <column name="billing_cycle_type" value="BILLINGACCOUNT"/>
+	        <where>billing_cycle_type is null</where>
+    	</update>
+        <addNotNullConstraint columnName="billing_cycle_type" tableName="billing_cycle" columnDataType="varchar(256)"/>
+    </changeSet>
 </databaseChangeLog>
