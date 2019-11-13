@@ -2123,6 +2123,6 @@
 	        <column name="billing_cycle_type" value="BILLINGACCOUNT"/>
 	        <where>billing_cycle_type is null</where>
     	</update>
-        <addNotNullConstraint columnName="billing_cycle_type" tableName="billing_cycle" />
+        <addNotNullConstraint columnName="billing_cycle_type" tableName="billing_cycle" columnDataType="varchar(256)"/>
     </changeSet>
 </databaseChangeLog>
