@@ -158,7 +158,7 @@ public class BillingCycle extends BusinessCFEntity {
      * Entity type to bill
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "billing_cycle_type")
+    @Column(name = "billing_cycle_type", nullable = false)
     private BillingEntityTypeEnum type;
 
     /**
