@@ -1338,14 +1338,6 @@
             <column name="description_en" value="Dollar du Zimbabwe" />
             <column name="system_currency" valueNumeric="1" />
         </insert>
-        <insert tableName="adm_currency">
-            <column name="id" valueNumeric="168" />
-            <column name="created" valueDate="2015-03-19 00:04:03.55" />
-            <column name="version" valueNumeric="1" />
-            <column name="currency_code" value="GHS" />
-            <column name="description_en" value="Cedi ghanéen" />
-            <column name="system_currency" valueNumeric="1" />
-        </insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-languages">
         <insert tableName="adm_language">
