@@ -674,7 +674,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
+
+        <!-- Micro profile dependencies included in WF 18-->
+        <dependency>
+            <groupId>org.eclipse.microprofile.metrics</groupId>
+            <artifactId>microprofile-metrics-api</artifactId>
+        </dependency>
     </dependencies>
 
     <profiles>
