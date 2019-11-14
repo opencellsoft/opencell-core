@@ -16,6 +16,7 @@ import org.meveo.cache.CacheContainerProvider;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
+import org.meveo.cache.MetricsConfigurationCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.TenantCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
@@ -87,6 +88,8 @@ public class ApplicationInitializer {
 
     @Inject
     private ElasticSearchIndexPopulationService esPopulationService;
+    @Inject
+    private MetricsConfigurationCacheContainerProvider metricsConfigurationCacheContainerProvider;
 
     public void init() {
 
@@ -149,6 +152,7 @@ public class ApplicationInitializer {
         cftCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         jobCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         tenantCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+        metricsConfigurationCacheContainerProvider.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
 
         if (createESIndex) {
             // Here cache will be populated as part of reindexing
