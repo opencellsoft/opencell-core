@@ -1,5 +1,20 @@
 package org.meveo.admin.job;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.meveo.admin.async.GenericWorkflowAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
@@ -18,19 +33,6 @@ import org.meveo.service.filter.FilterService;
 import org.meveo.service.generic.wf.GenericWorkflowService;
 import org.meveo.service.generic.wf.WorkflowInstanceService;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 @Stateless
 public class GenericWorkflowJobBean extends BaseJobBean {
@@ -87,6 +89,15 @@ public class GenericWorkflowJobBean extends BaseJobBean {
 
             // Create wf instances
             List<BusinessEntity> entities = workflowInstanceService.findEntitiesWithoutWFInstance(genericWf);
+            
+            Filter wfFilter = genericWf.getFilter();
+            if(wfFilter!=null) {
+            	Filter filter = filterService.findById(wfFilter.getId());
+	            if (filter != null) {
+	            	entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
+	            }
+            }
+            
             for (BusinessEntity entity : entities) {
                 workflowInstanceService.create(entity, genericWf);
             }
@@ -96,39 +107,39 @@ public class GenericWorkflowJobBean extends BaseJobBean {
             if (genericWf.getId() != null) {
                 genericWf = genericWorkflowService.refreshOrRetrieve(genericWf);
             }
-            Filter wfFilter = genericWf.getFilter();
-            if(wfFilter!=null) {
-			Filter filter = filterService.findById(wfFilter.getId());
-	            if (filter != null) {
-	                List<BusinessEntity> listFilteredEntities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
-	                Map<Long, BusinessEntity> mapFilteredEntities = new HashMap<Long, BusinessEntity>();
-	                for (BusinessEntity entity : listFilteredEntities) {
-	                    mapFilteredEntities.put(entity.getId(), entity);
-	                }
-	                List<WorkflowInstance> wfInstancesFiltered = new ArrayList<WorkflowInstance>();
-	                for (WorkflowInstance workflowInstance : wfInstances )
-	                {
-	                    if (workflowInstance.getEntityInstanceId() != null) {
-	                        if(mapFilteredEntities.get(workflowInstance.getEntityInstanceId()) != null) {
-	                            wfInstancesFiltered.add(workflowInstance);
-	                        }
-	                    }
-	                }
-	                wfInstances = wfInstancesFiltered;
-	            }
+            
+            
+            
+            Map<Long, BusinessEntity> mapFilteredEntities = entities.stream().collect(Collectors.toMap(x->x.getId(), x->x));
+            
+            SubListCreator subListCreator = new SubListCreator(wfInstances, nbRuns.intValue());
+            List<Map<Long, List<Object>>> subMaps = new ArrayList();
+            while (subListCreator.isHasNext()) {
+            	Map<Long, List<Object>> wfInstancesFiltered = new TreeMap();
+            	List<WorkflowInstance> nextWorkSet = (List<WorkflowInstance>) subListCreator.getNextWorkSet();
+				for (WorkflowInstance workflowInstance : nextWorkSet ){
+                    Long entityInstanceId = workflowInstance.getEntityInstanceId();
+					if (entityInstanceId != null) {
+                        BusinessEntity businessEntity = mapFilteredEntities.get(entityInstanceId);
+    					if(businessEntity != null) {
+                            wfInstancesFiltered.put(entityInstanceId, Arrays.asList(businessEntity,workflowInstance));
+                        }
+                    }
+                }
+            	subMaps.add(wfInstancesFiltered);
             }
-
+            
             log.debug("wfInstances:" + wfInstances.size());
             result.setNbItemsToProcess(wfInstances.size());
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
-            SubListCreator subListCreator = new SubListCreator(wfInstances, nbRuns.intValue());
+            
             log.debug("block to run:" + subListCreator.getBlocToRun());
             log.debug("nbThreads:" + nbRuns);
 
             MeveoUser lastCurrentUser = currentUser.unProxy();
-            while (subListCreator.isHasNext()) {
-                futures.add(genericWorkflowAsync.launchAndForget((List<WorkflowInstance>) subListCreator.getNextWorkSet(), genericWf, result, lastCurrentUser));
+            for(Map<Long, List<Object>> map:subMaps) {
+                futures.add(genericWorkflowAsync.launchAndForget(map, genericWf, result, lastCurrentUser));
 
                 if (subListCreator.isHasNext()) {
                     try {
