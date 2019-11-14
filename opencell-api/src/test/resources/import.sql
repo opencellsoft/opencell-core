@@ -204,7 +204,6 @@ INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_cur
 INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (165,1,'YER','Riyal yéménite',true,now(),null,null,null);
 INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (166,1,'ZMK','Kwacha de Zambie',true,now(),null,null,null);
 INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (167,1,'ZWD','Dollar du Zimbabwe',true,now(),null,null,null);
-INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (168,1,'GHS','Cedi ghanéen',true,now(),null,null,null);
 
 DROP SEQUENCE IF EXISTS ADM_CURRENCY_SEQ;
 CREATE SEQUENCE ADM_CURRENCY_SEQ start with 169 increment by 1;
