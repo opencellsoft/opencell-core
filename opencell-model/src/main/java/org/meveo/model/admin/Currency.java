@@ -47,12 +47,12 @@ public class Currency extends AuditableEntity {
     private static final long serialVersionUID = 1L;
 
     /** Currency code e.g. EUR for euros. */
-    @Column(name = "currency_code", length = 3, unique = true)
+    @Column(name = "currency_code", length = 3, unique = true, nullable=false)
     @Size(max = 3)
     private String currencyCode;
 
     /** Currency name. */
-    @Column(name = "description_en", length = 255)
+    @Column(name = "description_en", length = 255, unique = true, nullable=false)
     @Size(max = 255)
     private String descriptionEn;
 
