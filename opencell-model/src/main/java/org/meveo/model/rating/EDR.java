@@ -66,12 +66,14 @@ import org.meveo.model.billing.Subscription;
         @NamedQuery(name = "EDR.updateRatedTransactionForSafeDeletion", query = "update RatedTransaction rt set rt.edr=NULL where rt.edr in (select e FROM EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
         @NamedQuery(name = "EDR.deleteNotOpenEdrBetweenTwoDate", query = "delete from EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate"),
 
+        @NamedQuery(name = "EDR.getNotOpenedEdrBetweenTwoDate", query = "SELECT e from EDR e join fetch e.subscription where e.status != 'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate and e.id >:lastId order by e.id"),
+
         @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN' where e.status='REJECTED' and e.id in :ids") })
 public class EDR extends BaseEntity {
 
     private static final long serialVersionUID = 1278336655583933747L;
 
-    public static String EDR_TABLE_ORIGIN = "EDR_TABLE";
+    public static final String EDR_TABLE_ORIGIN = "EDR_TABLE";
 
     /**
      * Matched subscription
