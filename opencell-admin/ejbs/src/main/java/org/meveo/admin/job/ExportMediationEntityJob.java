@@ -90,6 +90,15 @@ public class ExportMediationEntityJob extends Job {
         firstTransactionDate.setValueRequired(true);
         result.put("ExportMediationEntityJob_firstTransactionDate", firstTransactionDate);
 
+        CustomFieldTemplate maxResult = new CustomFieldTemplate();
+        maxResult.setCode("ExportMediationEntityJob_maxResult");
+        maxResult.setAppliesTo(APPLIES_TO_NAME);
+        maxResult.setActive(true);
+        maxResult.setDescription(resourceMessages.getString("exportEntityJob.maxResult"));
+        maxResult.setFieldType(CustomFieldTypeEnum.LONG);
+        maxResult.setValueRequired(false);
+        result.put("ExportMediationEntityJob_maxResult", maxResult);
+
         return result;
     }
 }
