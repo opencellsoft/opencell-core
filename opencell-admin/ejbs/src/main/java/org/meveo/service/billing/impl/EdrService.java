@@ -235,6 +235,7 @@ public class EdrService extends PersistenceService<EDR> {
      * @param lastTransactionDate last Transaction Date
      * @return the number of deleted entities
      */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public long purge(Date firstTransactionDate, Date lastTransactionDate) {
 
         getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate)

@@ -1360,6 +1360,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @param lastTransactionDate last operation date
      * @return the number of deleted entities
      */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public long purge(Date firstTransactionDate, Date lastTransactionDate) {
 
         return getEntityManager().createNamedQuery("WalletOperation.deleteNotOpenWObetweenTwoDates").setParameter("firstTransactionDate", firstTransactionDate)

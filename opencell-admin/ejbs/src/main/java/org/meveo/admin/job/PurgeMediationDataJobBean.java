@@ -1,41 +1,23 @@
 package org.meveo.admin.job;
 
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.api.dto.RatedTransactionDto;
-import org.meveo.api.dto.billing.EDRDto;
-import org.meveo.api.dto.billing.WalletOperationDto;
-import org.meveo.commons.utils.JAXBUtils;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.jaxb.mediation.EDRs;
-import org.meveo.model.jaxb.mediation.RatedTransactions;
-import org.meveo.model.jaxb.mediation.WalletOperations;
-import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.rating.EDR;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.billing.impl.EdrService;
-import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.billing.impl.WalletService;
-import org.meveo.service.job.JobExecutionService;
-import org.slf4j.Logger;
+import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.xml.bind.JAXBException;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+
+import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.EdrService;
+import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.WalletOperationService;
+import org.slf4j.Logger;
 
 /**
  * The Class job bean to remove not open EDR, WO, RTx between two dates.
@@ -62,10 +44,6 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
     @Inject
     private RatedTransactionService ratedTransactionService;
 
-    @Inject
-    private WalletService walletService;
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
@@ -76,19 +54,27 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
             if (lastTransactionDate == null) {
                 lastTransactionDate = new Date();
             }
-            Boolean edrCf = (Boolean) this.getParamOrCFValue(jobInstance, "PurgeMediationDataJob_edrCf");
-            Boolean woCf = (Boolean) this.getParamOrCFValue(jobInstance, "PurgeMediationDataJob_woCf");
-            Boolean rtCf = (Boolean) this.getParamOrCFValue(jobInstance, "PurgeMediationDataJob_rtCf");
+            boolean edrCf = (boolean) this.getParamOrCFValue(jobInstance, "PurgeMediationDataJob_edrCf");
+            boolean woCf = (boolean) this.getParamOrCFValue(jobInstance, "PurgeMediationDataJob_woCf");
+            boolean rtCf = (boolean) this.getParamOrCFValue(jobInstance, "PurgeMediationDataJob_rtCf");
             long nbItems = 0;
+            String formattedStartDate = DateUtils.formatDateWithPattern(firstTransactionDate, "yyyy-MM-dd");
+            String formattedEndDate = DateUtils.formatDateWithPattern(lastTransactionDate, "yyyy-MM-dd");
             if (woCf) {
-                nbItems = walletOperationService.purge(firstTransactionDate,lastTransactionDate);
+                log.info("=> starting purge wallet operation between {} and {}", formattedStartDate, formattedEndDate);
+                nbItems = purgeWalletOperationByDay(firstTransactionDate, lastTransactionDate);
+                log.info("==>{} WOs rows purged", nbItems);
             }
             if (rtCf) {
-                long itemsRemoved = ratedTransactionService.purge(firstTransactionDate,lastTransactionDate);
+                log.info("=> starting purge rated transactions between {} and {}", formattedStartDate, formattedEndDate);
+                long itemsRemoved = purgeRatedTransactionsByDay(firstTransactionDate, lastTransactionDate);
+                log.info("==>{} RTs rows purged", itemsRemoved);
                 nbItems += itemsRemoved;
             }
             if (edrCf) {
-                long itemsRemoved = edrService.purge(firstTransactionDate,lastTransactionDate);
+                log.info("=> starting purge rated transactions between {} and {}", formattedStartDate, formattedEndDate);
+                long itemsRemoved = purgeEdrByDay(firstTransactionDate, lastTransactionDate);
+                log.info("==>{} EDRs rows purged ", itemsRemoved);
                 nbItems += itemsRemoved;
             }
             result.setNbItemsToProcess(nbItems);
@@ -100,5 +86,63 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
         }
     }
 
+    /**
+     * Purge wallet operation rows day by day
+     *
+     * @param firstTransactionDate a start date
+     * @param lastTransactionDate  a end date
+     * @return a number of deleted items
+     */
+    private long purgeWalletOperationByDay(Date firstTransactionDate, Date lastTransactionDate) {
+        long nbItems = 0;
+        do {
+            Date startDate = DateUtils.setTimeToZero(firstTransactionDate);
+            Date endDate = DateUtils.setDateToEndOfDay(firstTransactionDate);
+            long deleted = walletOperationService.purge(startDate, endDate);
+            log.debug("{} WOs processed for {}", deleted, startDate.toInstant());
+            nbItems += deleted;
+            firstTransactionDate = DateUtils.addDaysToDate(firstTransactionDate, 1);
+        } while (lastTransactionDate.after(firstTransactionDate));
+        return nbItems;
+    }
+    /**
+     * Purge rated transactions rows day by day
+     *
+     * @param firstTransactionDate a start date
+     * @param lastTransactionDate  a end date
+     * @return a number of deleted items
+     */
+    private long purgeRatedTransactionsByDay(Date firstTransactionDate, Date lastTransactionDate) {
+        long nbItems = 0;
+        do {
+            Date startDate = DateUtils.setTimeToZero(firstTransactionDate);
+            Date endDate = DateUtils.setDateToEndOfDay(firstTransactionDate);
+            long deleted = ratedTransactionService.purge(startDate, endDate);
+            log.debug("{} RTs processed for {}", deleted, startDate.toInstant());
+            nbItems += deleted;
+            firstTransactionDate = DateUtils.addDaysToDate(firstTransactionDate, 1);
+        } while (lastTransactionDate.after(firstTransactionDate));
+        return nbItems;
+    }
+
+    /**
+     * Purge rating edr rows day by day
+     *
+     * @param firstTransactionDate a start date
+     * @param lastTransactionDate  a end date
+     * @return a number of deleted items
+     */
+    private long purgeEdrByDay(Date firstTransactionDate, Date lastTransactionDate) {
+        long nbItems = 0;
+        do {
+            Date startDate = DateUtils.setTimeToZero(firstTransactionDate);
+            Date endDate = DateUtils.setDateToEndOfDay(firstTransactionDate);
+            long deleted = edrService.purge(startDate, endDate);
+            log.debug("{} EDRs processed for {}", deleted, startDate.toInstant());
+            nbItems += deleted;
+            firstTransactionDate = DateUtils.addDaysToDate(firstTransactionDate, 1);
+        } while (lastTransactionDate.after(firstTransactionDate));
+        return nbItems;
+    }
 
 }
