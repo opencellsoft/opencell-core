@@ -144,6 +144,10 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
      * @return An ordered list by priority (ascended) of usage charge instances
      */
     public List<UsageChargeInstance> getActiveUsageChargeInstancesBySubscriptionId(Long subscriptionId) {
+        if (subscriptionId == null) {
+            return getEntityManager().createNamedQuery("UsageChargeInstance.getActiveUsageCharges", UsageChargeInstance.class)
+                    .getResultList();
+        }
         return getEntityManager().createNamedQuery("UsageChargeInstance.getActiveUsageChargesBySubscriptionId", UsageChargeInstance.class)
                 .setParameter("subscriptionId", subscriptionId).getResultList();
     }

@@ -343,7 +343,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
         return response.isCommitted();
     }
-
+    
     /**
      * Item selector getter. Item selector keeps a state of multiselect checkboxes.
      * 
@@ -408,7 +408,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             entity.setInvoicePrefix(invoicePrefix + entity.getExternalRef2());
         } else {
             entity.setInvoicePrefix(null);
-        }
+    }
     }
 
     public void processValueChange(ValueChangeEvent value) {
