@@ -202,7 +202,6 @@ INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_cur
 INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (165,1,'YER','Riyal yéménite',true,CURRENT_TIMESTAMP,null,null,null);
 INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (166,1,'ZMK','Kwacha de Zambie',true,CURRENT_TIMESTAMP,null,null,null);
 INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (167,1,'ZWD','Dollar du Zimbabwe',true,CURRENT_TIMESTAMP,null,null,null);
-INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (168,1,'GHS','Cedi ghanéen',true,CURRENT_TIMESTAMP,null,null,null);
 
 /* COUNTRY */
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(1,1,CURRENT_TIMESTAMP,null,'AD','Andorra',null,null,8,5);

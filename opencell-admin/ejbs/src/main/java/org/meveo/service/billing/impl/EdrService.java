@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -23,6 +23,8 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -85,12 +87,12 @@ public class EdrService extends PersistenceService<EDR> {
         if (deduplicateEdrs) {
             useInMemoryDeduplication = EdrService.DeduplicateEDRTypeEnum.MEMORY.name().equalsIgnoreCase(deduplicateType);
             inMemoryDeduplicationPrepopulated = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "true").equals("true");
-        }
+    }
     }
 
     /**
      * Get a list of unprocessed EDRs to rate up to a given date. List is sorted by subscription and ID in ascending order
-     * 
+     *
      * @param rateUntilDate date until we still rate
      * @param ratingGroup group of ratedTransaction. {@link RatedTransactionGroup}
      * @param nbToRetrieve Number of items to retrieve for processing
@@ -114,11 +116,11 @@ public class EdrService extends PersistenceService<EDR> {
                 .setParameter("ratingGroup", ratingGroup).setMaxResults(nbToRetrieve).getResultList();
         }
 
-    }
+        }
 
     /**
      * Check if EDR exits matching an origin batch and record numbers
-     * 
+     *
      * @param originBatch original batch
      * @param originRecord origin record
      * @return True if EDR was found
@@ -149,7 +151,7 @@ public class EdrService extends PersistenceService<EDR> {
 
     /**
      * Check if EDR, identified by batch and a record, was processed already
-     * 
+     *
      * @param originBatch original batch
      * @param originRecord original record
      * @return true/false
@@ -185,17 +187,17 @@ public class EdrService extends PersistenceService<EDR> {
 
     /**
      * Reopen EDRs that were rejected
-     * 
+     *
      * @param ids List of EDRs to reopen
      */
     public void reopenRejectedEDRS(List<Long> ids) {
         getEntityManager().createNamedQuery("EDR.reopenByIds").setParameter("ids", ids).executeUpdate();
-    }
+        }
 
     /**
      * Get EDRs that are unprocessed. Sorted in descending order by event date, so older items will be added first and thus expire first from the cache, limited to a number of
      * items to return as configured in 'mediation.deduplicateCacheSize' setting
-     * 
+     *
      * @param from Pagination - a record to retrieve from
      * @param pageSize Pagination - number of records to retrieve
      * @return A list of EDR identifiers
@@ -212,30 +214,37 @@ public class EdrService extends PersistenceService<EDR> {
      *
      * @param firstTransactionDate first Transaction Date
      * @param lastTransactionDate last Transaction Date
+     * @param lastId a last id used for pagination
+     * @param max  a max rows
      * @return All open EDR between two Date
      */
-    public List<EDR> getNotOpenedEdrsBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
-        return getEntityManager().createNamedQuery("EDR.getNotOpenedEdrBetweenTwoDate", EDR.class).setParameter("firstTransactionDate", firstTransactionDate)
-            .setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public List<EDR> getNotOpenedEdrsBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate, long lastId, int max) {
+        return getEntityManager().createNamedQuery("EDR.getNotOpenedEdrBetweenTwoDate", EDR.class)
+                .setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate)
+                .setParameter("lastId", lastId)
+                .setMaxResults(max)
+                .getResultList();
     }
 
     /**
      * Remove All open EDR between two Date.
      *
      * @param firstTransactionDate first Transaction Date
-     * @param lastTransactionDate last Transaction Date
+     * @param lastTransactionDate  last Transaction Date
      * @return the number of deleted entities
      */
     public long purge(Date firstTransactionDate, Date lastTransactionDate) {
 
         getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate)
-            .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
 
         getEntityManager().createNamedQuery("EDR.updateRatedTransactionForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate)
             .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
 
         return getEntityManager().createNamedQuery("EDR.deleteNotOpenEdrBetweenTwoDate").setParameter("firstTransactionDate", firstTransactionDate)
-            .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
 
     }
 

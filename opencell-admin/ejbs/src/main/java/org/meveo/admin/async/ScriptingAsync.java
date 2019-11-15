@@ -32,12 +32,12 @@ public class ScriptingAsync {
 	@Inject
 	@ApplicationProvider
 	protected Provider appProvider;
-	
+
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public String runScript(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context) {
 		ScriptInterface script = null;
-		
+
 		try {
 			script = scriptInstanceService.getScriptInstance(scriptCode);
 			context.put(Script.CONTEXT_CURRENT_USER, currentUser);

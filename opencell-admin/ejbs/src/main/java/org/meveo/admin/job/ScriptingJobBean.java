@@ -43,7 +43,9 @@ public class ScriptingJobBean extends BaseJobBean {
 	@Resource(lookup = "java:jboss/ee/concurrency/executor/default")
 	ManagedExecutorService executor;
 
-	@Inject
+
+	
+    @Inject
 	private ScriptingAsync scriptingAsync;
 
 	@JpaAmpNewTx

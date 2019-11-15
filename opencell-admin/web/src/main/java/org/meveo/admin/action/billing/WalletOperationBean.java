@@ -48,115 +48,115 @@ import org.primefaces.model.LazyDataModel;
 @Named
 @ViewScoped
 public class WalletOperationBean extends BaseBean<WalletOperation> {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
+	/**
      * Injected @{link WalletOperation} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private WalletOperationService walletOperationService;
+	 */
+	@Inject
+	private WalletOperationService walletOperationService;
+	
+	@Inject
+	private TradingCurrencyService tradingCurrencyService;
+	
+	@Inject
+	private RatedTransactionService ratedTransactionService;
+   private Map<String, Currency> listCurrency = new HashMap<String, Currency>();
 
-    @Inject
-    private TradingCurrencyService tradingCurrencyService;
-
-    @Inject
-    private RatedTransactionService ratedTransactionService;
-    private Map<String, Currency> listCurrency = new HashMap<String, Currency>();
-
-    /**
+	/**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public WalletOperationBean() {
-        super(WalletOperation.class);
-    }
+	 */
+	public WalletOperationBean() {
+		super(WalletOperation.class);
+	}
 
-    /**
+	/**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
      * 
-     * @return wallet operation.
-     */
-    @Produces
-    @Named("walletOperation")
-    public WalletOperation init() {
-        return initEntity();
-    }
+	 * @return wallet operation.
+	 */
+	@Produces
+	@Named("walletOperation")
+	public WalletOperation init() {
+		return initEntity();
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<WalletOperation> getPersistenceService() {
-        return walletOperationService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<WalletOperation> getPersistenceService() {
+		return walletOperationService;
+	}
 
-    public Map<String, Currency> getListCurrency() {
-        listCurrency.clear();
-        if (tradingCurrencyService.list().size() > 0 && tradingCurrencyService.list() != null) {
-            for (TradingCurrency trading : tradingCurrencyService.list()) {
-                listCurrency.put(trading.getCurrency().getCurrencyCode(), trading.getCurrency());
+	public Map<String, Currency> getListCurrency() {
+		listCurrency.clear();
+		if(tradingCurrencyService.list().size()>0 && tradingCurrencyService.list()!=null){
+			for(TradingCurrency trading :tradingCurrencyService.list() ){
+				listCurrency.put(trading.getCurrency().getCurrencyCode(),trading.getCurrency());
             }
         }
-        return listCurrency;
-    }
-
-    @Override
-    public LazyDataModel<WalletOperation> getLazyDataModel() {
-        return this.getLazyDataModel(this.filters, this.listFiltered);
-    }
-
-    @Override
-    public LazyDataModel<WalletOperation> getLazyDataModel(Map<String, Object> inputFilters, boolean forceReload) {
-        this.filters = inputFilters;
-        this.getFilters();
-        return this.filterDataModelByBillingRun(forceReload);
-    }
-
-    @Override
-    public Map<String, Object> getFilters() {
-        return super.getFilters();
-    }
-
-    private LazyDataModel<WalletOperation> filterDataModelByBillingRun(boolean forceReload) {
-        if (filters.containsKey("billingRun")) {
-            BillingRun br = (BillingRun) filters.get("billingRun");
+		return listCurrency;
+	}
+	
+	@Override
+	public LazyDataModel<WalletOperation> getLazyDataModel() {
+		return this.getLazyDataModel(this.filters, this.listFiltered);
+	}
+	
+	@Override
+	public LazyDataModel<WalletOperation> getLazyDataModel(Map<String, Object> inputFilters, boolean forceReload) {
+		this.filters = inputFilters;
+		this.getFilters();
+		return this.filterDataModelByBillingRun(forceReload);
+	}
+	
+	@Override
+	public Map<String, Object> getFilters() {
+		return super.getFilters();
+	}
+	
+	private LazyDataModel<WalletOperation> filterDataModelByBillingRun(boolean forceReload) {
+		if (filters.containsKey("billingRun")) {
+			BillingRun br = (BillingRun) filters.get("billingRun");
             filters.put("ratedTransaction.billingRun", br);
-            filters.remove("billingRun");
-        }
-        return super.getLazyDataModel(filters, forceReload);
-    }
+			filters.remove("billingRun");
+		}
+		return super.getLazyDataModel(filters, forceReload);
+	}
 
-    public void updatedToRerate(WalletOperation walletOperation) {
-        try {
-            List<Long> walletIdList = new ArrayList<Long>();
-            walletIdList.add(walletOperation.getId());
-            if (walletOperationService.updateToRerate(walletIdList) > 0) {
-                walletOperationService.refresh(walletOperation);
-                messages.info(new BundleKey("messages", "update.successful"));
-            } else {
-                messages.info(new BundleKey("messages", "walletOperation.alreadyBilled"));
-            }
-        } catch (Exception e) {
-            log.error("failed to updated to rerate ", e);
-            messages.error(new BundleKey("messages", "update.failed"));
-        }
-    }
-
-    public String massToRerate() {
-        try {
-            List<Long> walletIdList = null;
-            if (getSelectedEntities() != null) {
-                walletIdList = new ArrayList<Long>();
-                for (WalletOperation wallet : getSelectedEntities()) {
-                    walletIdList.add(wallet.getId());
-                }
-            }
-            int count = walletOperationService.updateToRerate(walletIdList);
-            messages.info(new BundleKey("messages", "walletOperation.updateToRerate"), count);
-        } catch (Exception e) {
-            log.error("error while updating to rerate", e);
-            messages.error(new BundleKey("messages", "update.failed"));
-        }
-        conversation.end();
-        return "walletOperations";
-    }
+	public void updatedToRerate(WalletOperation walletOperation) {
+		try {
+			List<Long> walletIdList = new ArrayList<Long>();
+			walletIdList.add(walletOperation.getId());
+			if (walletOperationService.updateToRerate(walletIdList) > 0) {
+				walletOperationService.refresh(walletOperation);
+				messages.info(new BundleKey("messages", "update.successful"));
+			} else {
+				messages.info(new BundleKey("messages", "walletOperation.alreadyBilled"));
+			}
+		} catch (Exception e) {
+			log.error("failed to updated to rerate ", e);
+			messages.error(new BundleKey("messages", "update.failed"));
+		}
+	}
+	
+	public String massToRerate() {
+		try {
+			List<Long> walletIdList = null;
+			if (getSelectedEntities() != null) {
+				walletIdList = new ArrayList<Long>();
+				for (WalletOperation wallet : getSelectedEntities()) {
+					walletIdList.add(wallet.getId());
+				}
+			}
+			int count = walletOperationService.updateToRerate(walletIdList);
+			messages.info(new BundleKey("messages", "walletOperation.updateToRerate"), count);
+		} catch (Exception e) {
+			log.error("error while updating to rerate", e);
+			messages.error(new BundleKey("messages", "update.failed"));
+		}
+		conversation.end();
+		return "walletOperations";
+	}
 }

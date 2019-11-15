@@ -54,7 +54,6 @@ public class DeletionService {
 
     public void checkEntityIsNotreferenced(IEntity entity) {
         String entityClass = entity instanceof CustomEntityInstance ? String.format(CUSTOM_ENTITY_CLASS_PREFIX, ((CustomEntityInstance)entity).getCetCode()) : entity.getClass().getName();
-
         boolean isIncluded = isIncluded(entity, entityClass);
 
         if (isIncluded) {
