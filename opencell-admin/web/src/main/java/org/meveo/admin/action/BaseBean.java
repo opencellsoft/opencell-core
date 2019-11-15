@@ -287,11 +287,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             List<String> formFieldsToFetch = getFormFieldsToFetch();
 
             if (formFieldsToFetch == null) {
-                entity = (T) getPersistenceService().findById(getObjectId());
+                entity = (T) getPersistenceService().findById(getObjectId(), true);
             } else {
-                entity = (T) getPersistenceService().findById(getObjectId(), formFieldsToFetch);
+                entity = (T) getPersistenceService().findById(getObjectId(), formFieldsToFetch, true);
             }
-
             loadPartOfModules();
 
         } else {
