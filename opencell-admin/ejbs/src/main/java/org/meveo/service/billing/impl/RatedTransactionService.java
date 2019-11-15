@@ -1650,6 +1650,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param lastTransactionDate last operation date
      * @return the number of deleted entities
      */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public long purge(Date firstTransactionDate, Date lastTransactionDate) {
         return getEntityManager().createNamedQuery("RatedTransaction.deleteNotOpenBetweenTwoDates").setParameter("firstTransactionDate", firstTransactionDate)
             .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();

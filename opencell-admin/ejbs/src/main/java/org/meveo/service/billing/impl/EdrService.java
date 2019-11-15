@@ -23,6 +23,8 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -226,6 +228,7 @@ public class EdrService extends PersistenceService<EDR> {
      * @param lastTransactionDate last Transaction Date
      * @return the number of deleted entities
      */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public long purge(Date firstTransactionDate, Date lastTransactionDate) {
 
         getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletion").setParameter("firstTransactionDate", firstTransactionDate)
