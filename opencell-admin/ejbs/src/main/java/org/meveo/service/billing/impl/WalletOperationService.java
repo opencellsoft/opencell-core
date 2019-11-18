@@ -1339,11 +1339,18 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * 
      * @param firstTransactionDate first operation date
      * @param lastTransactionDate last operation date
+     * @param lastId a last id for pagination
+     * @param max a max rows
      * @return a list of Wallet Operation
      */
-    public List<WalletOperation> getNotOpenedWalletOperationBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public List<WalletOperation> getNotOpenedWalletOperationBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate, Long lastId, int max) {
         return getEntityManager().createNamedQuery("WalletOperation.listNotOpenedWObetweenTwoDates", WalletOperation.class)
-            .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+                .setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate)
+                .setParameter("lastId", lastId)
+                .setMaxResults(max)
+                .getResultList();
     }
 
     /**
@@ -1353,6 +1360,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @param lastTransactionDate last operation date
      * @return the number of deleted entities
      */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public long purge(Date firstTransactionDate, Date lastTransactionDate) {
 
         return getEntityManager().createNamedQuery("WalletOperation.deleteNotOpenWObetweenTwoDates").setParameter("firstTransactionDate", firstTransactionDate)
