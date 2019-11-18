@@ -1,9 +1,18 @@
 package org.meveo.api;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -11,8 +20,6 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-
-import org.apache.commons.io.FileUtils;
 
 public class ParserSwagger {
 
@@ -402,7 +409,7 @@ public class ParserSwagger {
         }
         File realName = new File(filePath);
         Files.delete(Paths.get(filePath));
-        FileUtils.moveFile(FileUtils.getFile(filePathTemp), realName);
+        new File(filePathTemp).renameTo(realName);
     }
     //Will create a unique operation ID for the annotation
     private String autoCompleteUrl(String urlEndString, String typeProcess, String className) {
