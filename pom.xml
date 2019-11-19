@@ -768,8 +768,6 @@
                 <db.schema>public</db.schema>
                 <db.username>meveo</db.username>
                 <db.password>meveo</db.password>
-                <db.alternative.url>jdbc:postgresql://localhost/postgres</db.alternative.url>
-                <db.name>meveo</db.name>
             </properties>
             <dependencies>
                 <!-- Dependency for liquibase plugin -->

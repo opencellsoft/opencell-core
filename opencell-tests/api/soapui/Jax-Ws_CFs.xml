@@ -6275,13 +6275,6 @@ public class Action1 extends Script {
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="3fda79ed-932e-4372-ab30-21d08fcab761" name="Contains 101">
-              <con:configuration>
-                <token>&lt;childEntityValue cetCode="${#Project#baseEntityPrefix}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_1" description="child entity 1"></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="4a9a6622-8c03-4538-ac95-cd75178b8a50" name="XPath Match">
               <con:configuration>
                 <path>//childEntityValue[@code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_CET_CFT1"]</path>
@@ -6881,6 +6874,15 @@ public class Action1 extends Script {
                      </mapValue>
                   </customField>]]></content>
                 <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="4f655b61-794c-4981-a43c-8ce3cd5e5916" name="XPath Match 13">
+              <con:configuration>
+                <path>exists(//childEntityValue[@cetCode="${#Project#baseEntityPrefix}_CET" and @code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_CHILD_1" and @description="child entity 1"])</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -13121,17 +13123,10 @@ public class Action1 extends Script {
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="fdf38239-5fa8-47c2-83c5-9a86b1cf003f" name="Contains 1">
-              <con:configuration>
-                <token>&lt;customEntityTemplate name="Custom Entity one" code="${#Project#entityPrefix}_${#TestSuite#index}_CET" description="Custom entity template one"></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="d0893b65-c072-4669-a2a3-131564d9edc8" name="XPath Match">
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<field id="*" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>STRING</fieldType>
@@ -13156,7 +13151,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="26431a3f-ad67-455b-877f-30a910f89c9b" name="XPath Match 1">
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2" description="Entity field2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<field id="*" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2" description="Entity field2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>LONG</fieldType>
@@ -13179,6 +13174,15 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="XPath Match" id="3c406cc5-85a0-4e66-8c66-32f2f654ac7c">
               <con:configuration/>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="b785fdac-49a7-4726-a5ef-af9da60f38da" name="XPath Match 3">
+              <con:configuration>
+                <path>exists(//customEntityTemplate[@name="Custom Entity one" and @code="${#Project#entityPrefix}_${#TestSuite#index}_CET" and @description="Custom entity template one"])</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
@@ -13267,13 +13271,6 @@ public class Action1 extends Script {
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="021f9c3e-4f5b-4bd0-90d2-facf58ab85a0" name="Contains 1">
-              <con:configuration>
-                <token>&lt;customEntityInstance cetCode="${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CEI" description="CEI"></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="Simple Contains" id="bd143471-127d-430a-854d-5654570caeeb" name="Contains 2">
               <con:configuration>
                 <token><![CDATA[<customField code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1" description="Entity field1">
@@ -13292,6 +13289,15 @@ public class Action1 extends Script {
                   </customField>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="3af0d94d-33bd-4752-95b4-96be109dc363" name="XPath Match">
+              <con:configuration>
+                <path>exists(//customEntityInstance[@cetCode="${#Project#entityPrefix}_${#TestSuite#index}_CET" and @code="${#Project#entityPrefix}_${#TestSuite#index}_CEI" and @description="CEI"])</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -13506,17 +13512,10 @@ public class Action1 extends Script {
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="fdf38239-5fa8-47c2-83c5-9a86b1cf003f" name="Contains 1">
-              <con:configuration>
-                <token>&lt;customEntityTemplate name="Custom Entity one again" code="${#Project#entityPrefix}_${#TestSuite#index}_CET" description="Custom entity template one again"></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="7831900c-05a4-4f79-9ea1-9c861442853e" name="XPath Match">
               <con:configuration>
                 <path>//field [@code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT3"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT3" description="Custom field 1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<field id="*" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT3" description="Custom field 1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>STRING</fieldType>
@@ -13541,7 +13540,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="6fb5521e-daf2-4717-8287-0f1f0e7e47e0" name="XPath Match 1">
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2" description="Custom field 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<field id="*" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2" description="Custom field 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <fieldType>LONG</fieldType>
@@ -13565,12 +13564,12 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="95f81137-eb15-4a92-ad98-abcb11256821" name="XPath Match 2">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION1"]</path>
-                <content><![CDATA[<action appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION1" description="Action 1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action id="*" appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION1" description="Action 1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active and entity.code!='test'}</applicableOnEl>
   <label>Action 1</label>
-  <script code="Action1">
+  <script id="*" code="Action1">
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
@@ -13587,12 +13586,12 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="edd292a3-0a8d-4653-ae71-bd452a1ab138" name="XPath Match 3">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION3"]</path>
-                <content><![CDATA[<action appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION3" description="Action 3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action id="*" appliesTo="CE_${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CET_ACTION3" description="Action 3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
   <label>Action 3</label>
-  <script code="Action3">
+  <script id="*" code="Action3">
     <auditable created="*" creator="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
@@ -13602,6 +13601,15 @@ public class Action1 extends Script {
   </script>
 </action>]]></content>
                 <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="da8333bf-d093-4d07-928b-5ebb402646e6" name="XPath Match 4">
+              <con:configuration>
+                <path>exists(//customEntityTemplate[@name="Custom Entity one again" and @code="${#Project#entityPrefix}_${#TestSuite#index}_CET" and @description="Custom entity template one again"])</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -13693,13 +13701,6 @@ public class Action1 extends Script {
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="26b8b38e-b32e-4b43-aca7-22edecc0c7b2" name="Contains 1">
-              <con:configuration>
-                <token>&lt;customEntityInstance cetCode="${#Project#entityPrefix}_${#TestSuite#index}_CET" code="${#Project#entityPrefix}_${#TestSuite#index}_CEI" description="CEI instance"></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="Simple Contains" id="ce5664b6-23bd-4e71-a62b-8348fb07bcc9" name="Contains 2">
               <con:configuration>
                 <token><![CDATA[<customField code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT3" description="Custom field 1">
@@ -13718,6 +13719,15 @@ public class Action1 extends Script {
                   </customField>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="7263fd77-cc35-4d9f-845e-f2f03b53eabe" name="XPath Match">
+              <con:configuration>
+                <path>exists(//customEntityInstance[@cetCode="${#Project#entityPrefix}_${#TestSuite#index}_CET" and @code="${#Project#entityPrefix}_${#TestSuite#index}_CEI" and @description="CEI instance"])</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -31049,7 +31059,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="4e6928ba-4d13-45c7-964f-a88e37016e3f" name="XPath Match">
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<field id="*" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <languageDescriptions>
@@ -31084,7 +31094,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="6f0bf3cc-84d4-40cc-a3e0-09b8c207fb49" name="XPath Match 1">
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2" description="Entity field2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<field id="*" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2" description="Entity field2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>LONG</fieldType>
@@ -31109,12 +31119,12 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="9426c99d-dc19-4f1c-9ee3-33e56c4d25fc" name="XPath Match 2">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1"]</path>
-                <content><![CDATA[<action appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1" description="Action 1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action id="*" appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1" description="Action 1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{!entity.active}</applicableOnEl>
   <label>Action 1</label>
-  <script code="Action1">
+  <script id="*" code="Action1">
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
@@ -31131,7 +31141,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="6dd4ef3d-519a-423b-baf0-d48de1e233f2" name="XPath Match 3">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2"]</path>
-                <content><![CDATA[<action appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action id="*" appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
@@ -31144,7 +31154,7 @@ public class Action1 extends Script {
     <languageCode>ENG</languageCode>
     <description>English pudding</description>
   </labelsTranslated>
-  <script code="Action2">
+  <script id="*" code="Action2">
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
@@ -31162,7 +31172,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="4e6928ba-4d13-45c7-964f-a88e37016e3f" name="XPath Match 4">
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Entity field3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<field id="*" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Entity field3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>STRING</fieldType>
@@ -31192,7 +31202,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="4e6928ba-4d13-45c7-964f-a88e37016e3f" name="XPath Match 5">
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT4"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT4" description="Entity field4" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<field id="*" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT4" description="Entity field4" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>MULTI_VALUE</fieldType>
@@ -31223,7 +31233,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="4e6928ba-4d13-45c7-964f-a88e37016e3f" name="XPath Match 6">
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT5"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT5" description="Entity field5" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<field id="*" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT5" description="Entity field5" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>MULTI_VALUE</fieldType>
@@ -31363,7 +31373,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="f7ba7a79-ae82-4f71-a03c-63bd4a3ce291" name="XPath Match">
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<field id="*" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <languageDescriptions>
@@ -31398,7 +31408,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="ad553491-52d8-49a0-b5a7-01c4710caff6" name="XPath Match 1">
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<field id="*" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <fieldType>STRING</fieldType>
@@ -31423,7 +31433,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="c789fd9f-bbd8-4397-b577-b2f1f19aaefb" name="XPath Match 2">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2"]</path>
-                <content><![CDATA[<action appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action id="*" appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
@@ -31436,7 +31446,7 @@ public class Action1 extends Script {
     <languageCode>ENG</languageCode>
     <description>English pudding</description>
   </labelsTranslated>
-  <script code="Action2">
+  <script id="*" code="Action2">
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
@@ -31454,12 +31464,12 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="da534676-c16e-45ba-aeaa-3b5a5e33c9b1" name="XPath Match 3">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3"]</path>
-                <content><![CDATA[<action appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action id="*" appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
   <label>Action 3</label>
-  <script code="Action3">
+  <script id="*" code="Action3">
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
@@ -31595,7 +31605,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="f7ba7a79-ae82-4f71-a03c-63bd4a3ce291" name="XPath Match">
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<field id="*" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <languageDescriptions>
@@ -31630,7 +31640,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="ad553491-52d8-49a0-b5a7-01c4710caff6" name="XPath Match 1">
               <con:configuration>
                 <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6-updated" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<field id="*" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6-updated" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <fieldType>STRING</fieldType>
@@ -31655,7 +31665,7 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="c789fd9f-bbd8-4397-b577-b2f1f19aaefb" name="XPath Match 2">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2"]</path>
-                <content><![CDATA[<action appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action id="*" appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
@@ -31668,7 +31678,7 @@ public class Action1 extends Script {
     <languageCode>ENG</languageCode>
     <description>English pudding - updated</description>
   </labelsTranslated>
-  <script code="Action2">
+  <script id="*" code="Action2">
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
@@ -31686,12 +31696,12 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="da534676-c16e-45ba-aeaa-3b5a5e33c9b1" name="XPath Match 3">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3"]</path>
-                <content><![CDATA[<action appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3 - updated" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action id="*" appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3 - updated" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{!entity.active}</applicableOnEl>
   <label>Action 3 - updated</label>
-  <script code="Action34">
+  <script id="*" code="Action34">
     <auditable created="*" creator="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
@@ -31836,12 +31846,12 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="85385f3d-0cd4-472b-9961-2e08b8bf9899" name="XPath Match">
               <con:configuration>
                 <path>//entityAction[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4"]</path>
-                <content><![CDATA[<entityAction appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 4" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<entityAction id="*" appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 4" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" creator="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
   <label>Action 4</label>
-  <script code="Action4">
+  <script id="*" code="Action4">
     <auditable created="*" creator="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
@@ -31943,12 +31953,12 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="86b418fd-4827-4c7e-ae3b-f09e6a8314b9" name="XPath Match">
               <con:configuration>
                 <path>//entityAction[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4"]</path>
-                <content><![CDATA[<entityAction appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<entityAction id="*" appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="*" updater="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
   <label>Action 41</label>
-  <script code="Action4">
+  <script id="*" code="Action4">
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
@@ -32003,12 +32013,12 @@ public class Action1 extends Script {
             <con:assertion type="XPath Match" id="17bccab4-8f48-4db8-9363-e21f8369520a" name="XPath Match">
               <con:configuration>
                 <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4"]</path>
-                <content><![CDATA[<action appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <content><![CDATA[<action id="*" appliesTo="JobInstance_PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION4" description="Action 41" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <auditable created="*" updated="*" creator="opencell.admin" updater="*"/>
   <disabled>false</disabled>
   <applicableOnEl>#{entity.active}</applicableOnEl>
   <label>Action 41</label>
-  <script code="Action4">
+  <script id="*" code="Action4">
     <auditable created="*" updated="*" creator="*" updater="*"/>
     <disabled>false</disabled>
     <type>JAVA</type>
@@ -33479,10 +33489,10 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:assertion>
             <con:assertion type="Simple Contains" id="508d21bb-7e58-4d26-bdbe-5f0f7b2a1816" name="Contains 2">
               <con:configuration>
-                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_Customer_STRING_SINGLE_NV" description="Customer_STRING_SINGLE_NV field">
-                     <fieldType>STRING</fieldType>
-                     <stringValue>updated from script</stringValue>
-                  </customField>]]></token>
+                <token>code="${#Project#baseEntityPrefix}_Customer_STRING_SINGLE_NV" description="Customer_STRING_SINGLE_NV field">
+                     &lt;fieldType>STRING&lt;/fieldType>
+                     &lt;stringValue>updated from script&lt;/stringValue>
+                  &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -34369,7 +34379,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>84</con:value>
+        <con:value>88</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -37001,7 +37011,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>124</con:value>
+        <con:value>128</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -38550,7 +38560,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>87</con:value>
+        <con:value>91</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39773,7 +39783,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>76</con:value>
+        <con:value>80</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

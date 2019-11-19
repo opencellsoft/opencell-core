@@ -46,7 +46,7 @@ import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * Billing cycle
- * 
+ *
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
@@ -158,7 +158,7 @@ public class BillingCycle extends BusinessCFEntity {
      * Entity type to bill
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "billing_cycle_type")
+    @Column(name = "billing_cycle_type", nullable = false)
     private BillingEntityTypeEnum type;
 
     /**
@@ -215,7 +215,7 @@ public class BillingCycle extends BusinessCFEntity {
 
     /**
      * Used for immediate invoicing by oneshot charge
-     * 
+     *
      * @return Number of days to add to a charge date to compute the invoice date
      */
     public Integer getInvoiceDateDelay() {
@@ -224,7 +224,7 @@ public class BillingCycle extends BusinessCFEntity {
 
     /**
      * Used for immediate invoicing by oneshot charge
-     * 
+     *
      * @param invoiceDateDelay Number of days to add to a charge date to compute the invoice date
      */
     public void setInvoiceDateDelay(Integer invoiceDateDelay) {
@@ -359,6 +359,9 @@ public class BillingCycle extends BusinessCFEntity {
     }
 
     public BillingEntityTypeEnum getType() {
+        if (type == null) {
+            return BillingEntityTypeEnum.BILLINGACCOUNT;
+        }
         return type;
     }
 

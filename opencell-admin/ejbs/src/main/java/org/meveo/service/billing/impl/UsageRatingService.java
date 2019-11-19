@@ -657,8 +657,10 @@ public class UsageRatingService implements Serializable {
                 log.debug("Will apply matching charge instance id={} for EDR {}", usageChargeInstance.getId(), edr.getId());
 
                 ratedEDRResult = rateEDRonChargeAndCounters(edr, usageChargeInstance, isVirtual);
-                walletOperations.add(ratedEDRResult.getWalletOperation());
-
+                if (ratedEDRResult.getWalletOperation() != null) {
+                    walletOperations.add(ratedEDRResult.getWalletOperation());
+                }
+                
                 if (rateTriggeredEdr && !ratedEDRResult.getTriggeredEDRs().isEmpty()) {
                     walletOperations.addAll(rateTriggeredEDRs(isVirtual, rateTriggeredEdr, maxDeep, currentRatingDepth, ratedEDRResult.getTriggeredEDRs()));
                 }

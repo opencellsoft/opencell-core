@@ -34,7 +34,7 @@
                 <p:tab title="#{messages['customer.tab.information']}">
                     <hftl:formField label="#{messages['billingCycle.code']}" field="code" validateUnique="true" required="true" />
                     <hftl:formField label="#{messages['billingCycle.description']}" id="description" field="description" useConverter="false" size="50" />
-                    <hftl:formField label="#{messages['billingCycle.type']}" field="type" noSelectionLabel="false" disabled="false" />
+                    <hftl:formField label="#{messages['billingCycle.type']}" field="type" noSelectionLabel="false" disabled="false" required="true" />
                     <hftl:formField label="#{messages['billingCycle.calendar']}" field="calendar" valueLabelField="code" required="true" listBean="#{calendarBean}" />
                     <hftl:formField label="#{messages['billingCycle.billingTemplateName']}" field="billingTemplateName" required="false" />
                     <hftl:formField label="#{messages['billingCycle.billingTemplateNameEL']}" field="billingTemplateNameEL" required="false" />

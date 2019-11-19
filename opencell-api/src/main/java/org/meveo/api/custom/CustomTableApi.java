@@ -121,15 +121,22 @@ public class CustomTableApi extends BaseApi {
     public void createOrUpdate(CustomTableDataDto dto) throws MeveoApiException, BusinessException {
     	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode());  put("values", dto.getValues());}};
     	validateParams(toValidate);
+    	if (dto.getOverwrite() == null) {
+            dto.setOverwrite(false);
+        }
         CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
         Map<Boolean, List<CustomTableRecordDto>> partitionedById = dto.getValues().stream().collect(Collectors.partitioningBy(x->x.getValues().get(FIELD_ID)!=null));
         //create records without ids
         List<CustomTableRecordDto> valuesWithoutIds = partitionedById.get(false);
-        customTableService.importData(cet, valuesWithoutIds.stream().map(x->x.getValues()).collect(toList()), !dto.getOverwrite());
+        if (!valuesWithoutIds.isEmpty()) {
+            customTableService.importData(cet, valuesWithoutIds.stream().map(x -> x.getValues()).collect(toList()), !dto.getOverwrite());
+        }
         //update records with ids
         List<CustomTableRecordDto> valuesWithIds = partitionedById.get(true);
-        customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
+        if (!valuesWithIds.isEmpty()) {
+            customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
+        }
     }
 
     /**
@@ -153,7 +160,8 @@ public class CustomTableApi extends BaseApi {
         CustomEntityTemplate cet = customTableService.getCET(customTableCode);
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
         pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
-        PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, null, pagingAndFiltering, null);
+        List<String> fields = pagingAndFiltering.getFields()!=null?Arrays.asList(pagingAndFiltering.getFields().split(",")):null;
+		PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, null);
         Long totalCount = customTableService.count(cet.getDbTablename(), paginationConfig);
         CustomTableDataResponseDto result = new CustomTableDataResponseDto();
         result.setPaging(pagingAndFiltering);
@@ -179,6 +187,12 @@ public class CustomTableApi extends BaseApi {
         if (dto.getValues() == null || dto.getValues().isEmpty()) {
             customTableService.remove(cet.getDbTablename());
         } else {
+            Map<Boolean, List<CustomTableRecordDto>> partitionedById = dto.getValues().stream().collect(Collectors.partitioningBy(x->x.getValues().get(FIELD_ID)!=null));
+            List<CustomTableRecordDto> valuesWithoutIds = partitionedById.get(false);
+            
+            if (!valuesWithoutIds.isEmpty()) {
+                throw new ValidationException(valuesWithoutIds.size() + " record(s) to remove are missing the IDs.");
+            }
             Set<Long> ids = extractIds(dto);
             customTableService.remove(cet.getDbTablename(), ids);
         }

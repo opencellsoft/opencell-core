@@ -26,6 +26,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -44,6 +45,7 @@ import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
@@ -101,6 +103,9 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     
     @Inject
     private BusinessServiceModelService businessServiceModelService;
+    
+    @Inject
+    private InvoiceSubCategoryService invoiceSubCategoryService;
     
     @Inject
     private SubscriptionApi subscriptionApi;
@@ -257,6 +262,15 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
         serviceTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         serviceTemplate.setServiceRenewal(subscriptionApi.subscriptionRenewalFromDto(serviceTemplate.getServiceRenewal(), postData.getRenewalRule(), false));
+        
+        if (!StringUtils.isBlank(postData.getMinimumInvoiceSubCategory())) {
+            InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
+            if (minimumInvoiceSubCategory == null) {
+                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
+            } else {
+                serviceTemplate.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
+            }
+        }
         
         if (postData.isDisabled() != null) {
             serviceTemplate.setDisabled(postData.isDisabled());

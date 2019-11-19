@@ -10,8 +10,6 @@ import org.meveo.apiv2.generic.ImmutableGenericPaginatedResource;
 import org.meveo.apiv2.services.generic.JsonGenericApiMapper.JsonGenericMapper;
 import org.meveo.service.base.PersistenceService;
 
-import static org.meveo.apiv2.ValidationUtils.checkEntityClass;
-import static org.meveo.apiv2.ValidationUtils.checkEntityName;
 import static org.meveo.apiv2.ValidationUtils.checkId;
 import static org.meveo.apiv2.ValidationUtils.checkRecords;
 
@@ -26,7 +24,9 @@ public class GenericApiLoadService extends GenericApiService {
                 .offset(Long.valueOf(searchConfig.getFirstRow()))
                 .total(getCount(searchConfig, entityClass))
                 .build();
-        return new JsonGenericMapper().toJson(genericFields, entityClass, genericPaginatedResource);
+        return JsonGenericMapper.Builder.getBuilder()
+                .withNestedEntities(new HashSet(searchConfig.getFetchFields())).build()
+                .toJson(genericFields, entityClass, genericPaginatedResource);
     }
 
     private long getCount(PaginationConfiguration searchConfig, Class entityClass) {
@@ -39,7 +39,8 @@ public class GenericApiLoadService extends GenericApiService {
         Class entityClass = getEntityClass(entityName);
         PersistenceService persistenceService = getPersistenceService(entityClass);
         return Optional
-                .ofNullable(new JsonGenericMapper()
+                .ofNullable(JsonGenericMapper.Builder.getBuilder()
+                        .withNestedEntities(new HashSet(searchConfig.getFetchFields())).build()
                         .toJson(genericFields, entityClass, Collections.singletonMap("data",persistenceService.findById(id, searchConfig.getFetchFields()))));
     }
 
