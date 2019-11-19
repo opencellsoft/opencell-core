@@ -18,7 +18,18 @@
  */
 package org.meveo.service.generic.wf;
 
-import com.google.common.collect.Maps;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.filter.Filter;
@@ -29,16 +40,7 @@ import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.filter.FilterService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.google.common.collect.Maps;
 
 @Stateless
 public class WorkflowInstanceService extends PersistenceService<WorkflowInstance> {
@@ -77,20 +79,6 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
         params.put("clazz", clazz.getName());
 
         return (List<WorkflowInstance>) executeSelectQuery(query, params);
-    }
-
-    public BusinessEntity getBusinessEntity(WorkflowInstance workflowInstance) throws BusinessException {
-
-        BusinessEntity businessEntity = null;
-        try {
-            String qualifiedName = workflowInstance.getTargetEntityClass();
-            Class<BusinessEntity> clazz = (Class<BusinessEntity>) Class.forName(qualifiedName);
-            businessEntityService.setEntityClass(clazz);
-            businessEntity = businessEntityService.findByWorkflowInstance(workflowInstance);
-        } catch (Exception e) {
-            throw new BusinessException(e);
-        }
-        return businessEntity;
     }
 
     public List<BusinessEntity> findEntitiesWithoutWFInstance(GenericWorkflow gwf) throws BusinessException {
