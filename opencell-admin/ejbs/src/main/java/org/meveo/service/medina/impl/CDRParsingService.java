@@ -105,7 +105,6 @@ public class CDRParsingService extends PersistenceService<EDR> {
     /**
      * Creates the edr.
      *
-     * @param line the line
      * @throws CDRParsingException the CDR parsing exception
      * @throws BusinessException the business exception
      */
