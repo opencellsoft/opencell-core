@@ -37,7 +37,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.generic.wf.GWFTransition;
@@ -119,7 +118,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
             throw new BusinessException("No workflow instance for business entity " + businessEntity.getCode());
         }
 
-        return executeWorkflow(workflowInstance, genericWorkflow);
+        return executeWorkflow(businessEntity, workflowInstance, genericWorkflow);
     }
 
     /**
@@ -130,11 +129,10 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
      * @return
      * @throws BusinessException
      */
-    public WorkflowInstance executeWorkflow(WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
+    public WorkflowInstance executeWorkflow(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
         log.debug("Executing generic workflow script:{} on instance {}", genericWorkflow.getCode(), workflowInstance);
         try {
 
-            IWFEntity iwfEntity = (IWFEntity) workflowInstanceService.getBusinessEntity(workflowInstance);
             WFStatus currentWFStatus = workflowInstance.getCurrentStatus();
             String currentStatus = currentWFStatus != null ? currentWFStatus.getCode() : null;
             log.trace("Actual status: {}", currentStatus);

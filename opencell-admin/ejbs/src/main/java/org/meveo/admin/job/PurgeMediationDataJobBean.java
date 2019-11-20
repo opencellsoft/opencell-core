@@ -62,18 +62,18 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
             String formattedEndDate = DateUtils.formatDateWithPattern(lastTransactionDate, "yyyy-MM-dd");
             if (woCf) {
                 log.info("=> starting purge wallet operation between {} and {}", formattedStartDate, formattedEndDate);
-                nbItems = purgeWalletOperationByDay(firstTransactionDate, lastTransactionDate);
+                nbItems = walletOperationService.purge(firstTransactionDate,lastTransactionDate);
                 log.info("==>{} WOs rows purged", nbItems);
             }
             if (rtCf) {
                 log.info("=> starting purge rated transactions between {} and {}", formattedStartDate, formattedEndDate);
-                long itemsRemoved = purgeRatedTransactionsByDay(firstTransactionDate, lastTransactionDate);
+                long itemsRemoved = ratedTransactionService.purge(firstTransactionDate,lastTransactionDate);
                 log.info("==>{} RTs rows purged", itemsRemoved);
                 nbItems += itemsRemoved;
             }
             if (edrCf) {
                 log.info("=> starting purge rated transactions between {} and {}", formattedStartDate, formattedEndDate);
-                long itemsRemoved = purgeEdrByDay(firstTransactionDate, lastTransactionDate);
+                long itemsRemoved = edrService.purge(firstTransactionDate, lastTransactionDate);
                 log.info("==>{} EDRs rows purged ", itemsRemoved);
                 nbItems += itemsRemoved;
             }
@@ -85,64 +85,4 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
             result.addReport(e.getMessage());
         }
     }
-
-    /**
-     * Purge wallet operation rows day by day
-     *
-     * @param firstTransactionDate a start date
-     * @param lastTransactionDate  a end date
-     * @return a number of deleted items
-     */
-    private long purgeWalletOperationByDay(Date firstTransactionDate, Date lastTransactionDate) {
-        long nbItems = 0;
-        do {
-            Date startDate = DateUtils.setTimeToZero(firstTransactionDate);
-            Date endDate = DateUtils.setDateToEndOfDay(firstTransactionDate);
-            long deleted = walletOperationService.purge(startDate, endDate);
-            log.debug("{} WOs processed for {}", deleted, startDate.toInstant());
-            nbItems += deleted;
-            firstTransactionDate = DateUtils.addDaysToDate(firstTransactionDate, 1);
-        } while (lastTransactionDate.after(firstTransactionDate));
-        return nbItems;
-    }
-    /**
-     * Purge rated transactions rows day by day
-     *
-     * @param firstTransactionDate a start date
-     * @param lastTransactionDate  a end date
-     * @return a number of deleted items
-     */
-    private long purgeRatedTransactionsByDay(Date firstTransactionDate, Date lastTransactionDate) {
-        long nbItems = 0;
-        do {
-            Date startDate = DateUtils.setTimeToZero(firstTransactionDate);
-            Date endDate = DateUtils.setDateToEndOfDay(firstTransactionDate);
-            long deleted = ratedTransactionService.purge(startDate, endDate);
-            log.debug("{} RTs processed for {}", deleted, startDate.toInstant());
-            nbItems += deleted;
-            firstTransactionDate = DateUtils.addDaysToDate(firstTransactionDate, 1);
-        } while (lastTransactionDate.after(firstTransactionDate));
-        return nbItems;
-    }
-
-    /**
-     * Purge rating edr rows day by day
-     *
-     * @param firstTransactionDate a start date
-     * @param lastTransactionDate  a end date
-     * @return a number of deleted items
-     */
-    private long purgeEdrByDay(Date firstTransactionDate, Date lastTransactionDate) {
-        long nbItems = 0;
-        do {
-            Date startDate = DateUtils.setTimeToZero(firstTransactionDate);
-            Date endDate = DateUtils.setDateToEndOfDay(firstTransactionDate);
-            long deleted = edrService.purge(startDate, endDate);
-            log.debug("{} EDRs processed for {}", deleted, startDate.toInstant());
-            nbItems += deleted;
-            firstTransactionDate = DateUtils.addDaysToDate(firstTransactionDate, 1);
-        } while (lastTransactionDate.after(firstTransactionDate));
-        return nbItems;
-    }
-
 }
