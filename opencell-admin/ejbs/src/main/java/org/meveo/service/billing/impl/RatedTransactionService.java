@@ -1627,7 +1627,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             servMin = true;
         } catch (NoResultException e) {
         }
-        return new boolean[] { baMin, subMin, servMin };
+        return new boolean[] { servMin, subMin, baMin };
     }
 
     /**
