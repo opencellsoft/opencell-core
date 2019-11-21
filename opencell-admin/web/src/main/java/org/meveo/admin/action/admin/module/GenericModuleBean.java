@@ -48,9 +48,11 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.MeveoModuleItem;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.index.ElasticClient;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.CroppedImage;
@@ -76,6 +78,9 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
 
     @Inject
     private MeveoModuleApi moduleApi;
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     @Inject
     @ViewBean
@@ -358,6 +363,9 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
         }
 
         boolean isNew = entity.isTransient();
+
+        ScriptInstance scriptInstance = scriptInstanceService.retrieveIfNotManaged(entity.getScript());
+        entity.setScript(scriptInstance);
 
         super.saveOrUpdate(killConversation);
 
