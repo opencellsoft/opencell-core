@@ -437,15 +437,23 @@ public class ElasticClient {
 
         log.debug("Bulk processing {} action Elastic Search requests", bulkRequest.numberOfActions());
 
+        int count = 0;
+        int maxTries = 3;
         // Execute bulk request
         BulkResponse bulkResponse = null;
-        try {
-            bulkResponse = client.bulk(bulkRequest, RequestOptions.DEFAULT);
-
-        } catch (IOException e) {
-            throw new BusinessException("Failed to process bulk request in Elastic Search. Pending changes " + queuedChanges.getQueuedChanges(), e);
+        while(true) {
+            try {
+                bulkResponse = client.bulk(bulkRequest, RequestOptions.DEFAULT);
+                break;
+            } catch (IOException e) {
+                if (++count == maxTries){
+                    throw new BusinessException("Failed to process bulk request in Elastic Search. Pending changes " + queuedChanges.getQueuedChanges(), e);
+                }
+                else{
+                    log.info("Retry to process bulk request in Elastic Search. Try #{}.", count);
+                }
+            }
         }
-
         if (bulkResponse.hasFailures() || log.isTraceEnabled()) {
             for (BulkItemResponse bulkItemResponse : bulkResponse.getItems()) {
                 if (bulkItemResponse.isFailed()) {
