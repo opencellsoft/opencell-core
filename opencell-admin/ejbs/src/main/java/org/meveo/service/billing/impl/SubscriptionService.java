@@ -275,11 +275,11 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if (terminationReason == null) {
             throw new ValidationException("Termination reason not provided", "subscription.error.noTerminationReason");
 
-        } else if (terminationDate.before(subscription.getSubscriptionDate())) {
+        } else if (subscription.getSubscriptionDate().after(terminationDate)) {
             throw new ValidationException("Termination date can not be before the subscription date", "subscription.error.terminationDateBeforeSubscriptionDate");
         }
 
-        // checks if termination date is > now (do not ignore time, as subscription time is time sensative)
+        // checks if termination date is > now (do not ignore time, as subscription time is time sensitive)
         Date now = new Date();
         if (terminationDate.compareTo(now) <= 0) {
             return terminateSubscriptionWithPastDate(subscription, terminationDate, terminationReason, orderNumber, orderItemId, orderItemAction);
