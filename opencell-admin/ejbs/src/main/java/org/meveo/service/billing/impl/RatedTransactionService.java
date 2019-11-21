@@ -992,7 +992,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     subscriptionToMinAmount.put(subscriptionWithMinAmount.getId(), new Object[] { minAmount, minAmountLabel, subscriptionAmounts, amountMap, subscriptionWithMinAmount });
                 
                     // Append extra amounts from service level
-                    if (extraAmountsPerSubscription != null && extraAmountsPerSubscription.containsKey(subscriptionWithMinAmount.getId())) {
+                    if (extraAmountsPerSubscription.containsKey(subscriptionWithMinAmount.getId())) {
 
                         Object[] subscriptionToMinAmountInfo = subscriptionToMinAmount.get(subscriptionWithMinAmount.getId());
                         Map<String, Amounts> extraAmounts = extraAmountsPerSubscription.get(subscriptionWithMinAmount.getId());
@@ -1627,7 +1627,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             servMin = true;
         } catch (NoResultException e) {
         }
-        return new boolean[] { servMin, subMin, baMin };
+        return new boolean[] { baMin, subMin, servMin };
     }
 
     /**
