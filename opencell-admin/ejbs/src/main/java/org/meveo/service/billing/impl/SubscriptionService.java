@@ -271,6 +271,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if (terminationDate == null) {
             terminationDate = new Date();
         }
+        // point termination date to the end of the day
+        terminationDate = DateUtils.setDateToEndOfDay(terminationDate);
 
         if (terminationReason == null) {
             throw new ValidationException("Termination reason not provided", "subscription.error.noTerminationReason");
