@@ -14,6 +14,7 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.slf4j.Logger;
 
+@Deprecated
 public class Jabber {
     /**
      * user name.
@@ -23,7 +24,7 @@ public class Jabber {
     /**
      * password.
      */
-    public static String password = "password";
+    public static String password = null;
 
     /**
      * id.
@@ -54,8 +55,6 @@ public class Jabber {
      * free.
      */
     public static boolean free = false;
-    @Inject
-
     private static Logger log;
     static {
         try {
