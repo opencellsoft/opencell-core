@@ -37,12 +37,16 @@ import org.meveo.model.catalog.UsageChargeTemplate;
  * Usage charge as part of subscribed service
  * 
  * @author Andrius Karpavicius
+ * @author Khalid HORRI
+ * @lastModifiedVersion 9.0
  */
 @Entity
 @DiscriminatorValue("U")
 @NamedQueries({
         @NamedQuery(name = "UsageChargeInstance.getActiveUsageChargesBySubscriptionId", query = "SELECT c FROM UsageChargeInstance c where c.status='ACTIVE' and c.subscription.id=:subscriptionId order by c.priority ASC", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+        @NamedQuery(name = "UsageChargeInstance.getActiveUsageCharges", query = "SELECT c FROM UsageChargeInstance c where c.status='ACTIVE'  order by c.priority ASC", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") })})
 public class UsageChargeInstance extends ChargeInstance {
 
     private static final long serialVersionUID = 1L;

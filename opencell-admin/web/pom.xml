@@ -89,7 +89,15 @@
 				<version>1.5.3</version>
 				<executions>
 					<execution>
+						<id>phase-exploded</id>
 						<phase>prepare-package</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>phase-war</id>
+						<phase>package</phase>
 						<goals>
 							<goal>replace</goal>
 						</goals>
@@ -134,9 +142,9 @@
 						<id>install</id>
 						<phase>install</phase>
 						<configuration>
-							<tasks>
+							<target>
 								<copy file="../lib/flatworm-3.0.2.jar" tofile="${project.build.directory}/opencell/WEB-INF/lib/flatworm-3.0.2.jar" />
-							</tasks>
+							</target>
 						</configuration>
 						<goals>
 							<goal>run</goal>
@@ -431,7 +439,11 @@
 			<version>2.4.0</version>
 			<scope>test</scope>
 		</dependency>
-
+		<!-- Micro profile dependencies included in WF 18-->
+		<dependency>
+			<groupId>org.eclipse.microprofile.metrics</groupId>
+			<artifactId>microprofile-metrics-api</artifactId>
+		</dependency>
 	</dependencies>
 
 	<profiles>
