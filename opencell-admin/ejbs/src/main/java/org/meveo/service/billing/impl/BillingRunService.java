@@ -34,6 +34,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.meveo.admin.async.AmountsToInvoice;
@@ -52,10 +53,12 @@ import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RejectedBillingAccount;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -114,6 +117,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @Inject
     private OrderService orderService;
+    
+    @Inject
+    InvoiceAgregateService invoiceAgregateService;
 
     /**
      * Generate pre invoicing reports.
@@ -471,8 +477,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         ratedTransactionService.deleteMinRTs(billingRun);
         ratedTransactionService.uninvoiceRTs(billingRun);
+        
         invoiceService.deleteInvoices(billingRun);
-
+		invoiceAgregateService.deleteInvoiceAgregates(billingRun);
+		
         // Andrius: I see no point of this update, as it has no relevant change:
         // Query queryBA = getEntityManager().createQuery("update " + BillingAccount.class.getName() + " set billingRun=null where billingRun=:billingRun");
         // queryBA.setParameter("billingRun", billingRun);
