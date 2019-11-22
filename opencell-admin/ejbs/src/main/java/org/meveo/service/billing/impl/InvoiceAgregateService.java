@@ -26,6 +26,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -120,4 +121,13 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
        query.executeUpdate();
 	}
 	
+    /**
+     * Delete invoiceAgregates associated to a billing run
+     * 
+     * @param billingRun Billing run
+     */
+    public void deleteInvoiceAgregates(BillingRun billingRun) {
+        getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
+        getEntityManager().createNamedQuery("InvoiceAgregate.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
+    }
 }
