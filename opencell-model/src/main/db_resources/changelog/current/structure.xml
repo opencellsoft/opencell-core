@@ -2138,4 +2138,15 @@
         <sql>CREATE INDEX edr_event_date_index ON ${db.schema.adapted}rating_edr ((event_date::DATE))</sql>
         <sql>CREATE INDEX rt_usage_date_index ON ${db.schema.adapted}billing_rated_transaction ((usage_date::DATE))</sql>
     </changeSet>
+    
+    <changeSet id="#4795_221119" author="Mohammed_ElAzzouzi">
+  		<sql>create index billing_invoice_agregate_tax_invoice_agregate_idx on ${db.schema.adapted}billing_invoice_agregate (tax_invoice_agregate)</sql>
+		<sql>create index billing_invoice_agregate_sub_cat_invoice_agregate_id_idx on ${db.schema.adapted}billing_invoice_agregate (sub_cat_invoice_agregate_id)</sql>
+		<sql>create index ar_account_operation_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (cat_inv_agregate_id)</sql>
+		<sql>create index ar_account_operation_sub_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (sub_cat_inv_agregate_id)</sql>
+		<sql>create index billing_rated_transaction_aggregate_id_r_idx on ${db.schema.adapted}billing_rated_transaction (aggregate_id_r)</sql>
+		<sql>create index billing_rated_transaction_aggregate_id_t_idx on ${db.schema.adapted}billing_rated_transaction (aggregate_id_t)</sql>
+		<sql>create index billing_rated_transaction_aggregate_id_f_idx on ${db.schema.adapted}billing_rated_transaction (aggregate_id_f)</sql>
+    </changeSet>
+    
 </databaseChangeLog>
