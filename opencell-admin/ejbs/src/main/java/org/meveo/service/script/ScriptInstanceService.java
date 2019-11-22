@@ -280,7 +280,9 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
         if (context == null) {
             context = new HashMap<String, Object>();
         }
-        context.put(Script.CONTEXT_ACTION, scriptCode);
+        if (context.get(Script.CONTEXT_ACTION) == null) {
+            context.put(Script.CONTEXT_ACTION, scriptCode);
+        }
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
@@ -368,7 +370,9 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
         if (context == null) {
             context = new HashMap<String, Object>();
         }
-        context.put(Script.CONTEXT_ACTION, scriptCode);
+        if (context.get(Script.CONTEXT_ACTION) == null) {
+            context.put(Script.CONTEXT_ACTION, scriptCode);
+        }
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
@@ -419,7 +423,9 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
         if (context == null) {
             context = new HashMap<String, Object>();
         }
-        context.put(Script.CONTEXT_ACTION, scriptCode);
+        if (context.get(Script.CONTEXT_ACTION) == null) {
+            context.put(Script.CONTEXT_ACTION, scriptCode);
+        }
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 

@@ -242,15 +242,14 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         CustomEntityInstance cei = ceiToUpdate;
         if (ceiToUpdate == null) {
-            cei = new CustomEntityInstance();
-            if (dto.isDisabled() != null) {
-                cei.setDisabled(dto.isDisabled());
-            }
-
+            cei = new CustomEntityInstance();            
         }
         cei.setCode(dto.getCode());
         cei.setCetCode(dto.getCetCode());
         cei.setDescription(dto.getDescription());
+        if (dto.isDisabled() != null) {
+            cei.setDisabled(dto.isDisabled());
+        }
 
         return cei;
     }

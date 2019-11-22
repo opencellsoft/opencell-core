@@ -1627,19 +1627,26 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             servMin = true;
         } catch (NoResultException e) {
         }
-        return new boolean[] { baMin, subMin, servMin };
+        return new boolean[] { servMin, subMin, baMin };
     }
 
     /**
      * Gets All open rated transaction between two date.
-     * 
-     * @param firstTransactionDate first Transaction Date
-     * @param lastTransactionDate last Transaction Date
+     *
+     * @param firstTransactionDate a first transaction date
+     * @param lastTransactionDate  a last transaction date
+     * @param lastId a last id used for pagination
+     * @param max a max result used for pagination
      * @return All open rated transaction between two date.
      */
-    public List<RatedTransaction> getNotOpenedRatedTransactionBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate) {
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public List<RatedTransaction> getNotOpenedRatedTransactionBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate, long lastId, int max) {
         return getEntityManager().createNamedQuery("RatedTransaction.listNotOpenedBetweenTwoDates", RatedTransaction.class)
-            .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getResultList();
+                .setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate)
+                .setParameter("lastId", lastId)
+                .setMaxResults(max)
+                .getResultList();
 
     }
 
@@ -1751,7 +1758,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * Retrieve rated transactions associated to an invoice aggregate
      * 
-     * @param invoice Invoice
+     * @param subCategoryInvoiceAgregate Invoice
      * @return A list of rated transactions
      */
     public List<RatedTransaction> getRatedTransactionsByInvoiceAggr(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {

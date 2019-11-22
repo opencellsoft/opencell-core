@@ -187,7 +187,7 @@ public class WebHook extends Notification {
     @Override
     public String toString() {
         final int maxLen = 10;
-        return String.format("WebHook [host=%s, port=%s, page=%s, httpMethod=%s, username=%s, password=%s, headers=%s, webhookParams=%s, notification=%s]", host, port, page,
+        return String.format("WebHook [host=%s, port=%s, page=%s, httpMethod=%s, username=%s, pass_word=%s, headers=%s, webhookParams=%s, notification=%s]", host, port, page,
             httpMethod, username, password, headers != null ? toString(headers.entrySet(), maxLen) : null,
             webhookParams != null ? toString(webhookParams.entrySet(), maxLen) : null, super.toString());
     }

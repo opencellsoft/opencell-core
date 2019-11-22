@@ -9,6 +9,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -27,9 +28,9 @@ public class UnitGenericWorkflowJobBean {
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
+    public void execute(JobExecutionResultImpl result, BusinessEntity be, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
         try {
-            genericWorkflowService.executeWorkflow(workflowInstance, genericWorkflow);
+            genericWorkflowService.executeWorkflow(be, workflowInstance, genericWorkflow);
             result.registerSucces();
         } catch (Exception e) {
             log.error("Failed to unit generic workflow for {}", workflowInstance, e);

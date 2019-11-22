@@ -2106,8 +2106,6 @@
 		</addColumn>
 	</changeSet>
 
-
-
     <changeSet author="abdelkader.bouazza" id="#4523-Changing-amount-for-a-service-instance-with-prorating">
         <addColumn tableName="cat_charge_template">
             <column name="prorata_on_price_change" type="${type.boolean}" defaultValueNumeric="0"></column>
@@ -2116,5 +2114,29 @@
             <column name="validity_from" type="datetime"></column>
             <column name="validity_date" type="datetime"></column>
         </addColumn>
+    </changeSet>
+    
+    <changeSet id="#4766_20191111" author="MohammedELAZZOUZI">
+    	<addNotNullConstraint tableName="adm_currency" columnName="currency_code" columnDataType="varchar(3)"/>
+    	<addNotNullConstraint tableName="adm_currency" columnName="description_en" columnDataType="varchar(255)"/>
+    	<addNotNullConstraint tableName="adm_language" columnName="description_en" columnDataType="varchar(255)"/>
+    	<addNotNullConstraint tableName="adm_language" columnName="language_code" columnDataType="varchar(3)"/>
+        <addUniqueConstraint columnNames="language_code" constraintName="UniqueConstraint_adm__language_code" tableName="adm_language" />
+        <addUniqueConstraint columnNames="description_en" constraintName="UniqueConstraint_adm_language__description_en" tableName="adm_language" />
+        <addUniqueConstraint columnNames="description_en" constraintName="UniqueConstraint_adm_currency__description_en" tableName="adm_currency" />
+    </changeSet>
+    
+    <changeSet id="#4765_20191112" author="MohammedELAZZOUZI">
+    	<update tableName="billing_cycle">
+	        <column name="billing_cycle_type" value="BILLINGACCOUNT"/>
+	        <where>billing_cycle_type is null</where>
+    	</update>
+        <addNotNullConstraint columnName="billing_cycle_type" tableName="billing_cycle" columnDataType="varchar(256)"/>
+    </changeSet>
+
+    <changeSet id="#4783_20191118" author="MohamedSTITANE" dbms="postgresql">
+        <sql>CREATE INDEX wo_operation_date_index ON ${db.schema.adapted}billing_wallet_operation ((operation_date::DATE))</sql>
+        <sql>CREATE INDEX edr_event_date_index ON ${db.schema.adapted}rating_edr ((event_date::DATE))</sql>
+        <sql>CREATE INDEX rt_usage_date_index ON ${db.schema.adapted}billing_rated_transaction ((usage_date::DATE))</sql>
     </changeSet>
 </databaseChangeLog>
