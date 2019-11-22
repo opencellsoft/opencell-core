@@ -80,7 +80,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
             boolean woCf = (boolean) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_woCf", false);
             boolean rtCf = (boolean) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_rtCf", false);
 
-            int maxResult = ((Long) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_maxResult", 100000)).intValue();
+            int maxResult = ((Long) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_maxResult", 100000L)).intValue();
             long nbItems = 0;
             if (edrCf) {
                 log.info("==> Start exporting EDR ");
