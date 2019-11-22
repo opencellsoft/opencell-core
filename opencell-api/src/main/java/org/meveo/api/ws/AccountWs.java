@@ -365,7 +365,7 @@ public interface AccountWs extends IBaseWs {
     @WebMethod
     ActionStatus updateAccess(@WebParam(name = "access") AccessDto postData);
 
-    @WebMethod
+   @WebMethod
     GetAccessResponseDto findAccess(@WebParam(name = "accessCode") String accessCode, @WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "startDate") Date startDate, @WebParam(name = "endDate") Date endDate);
 
     @WebMethod

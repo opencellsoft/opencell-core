@@ -50,6 +50,29 @@ public interface AccessRs extends IBaseRs {
 
     /**
      * Search for an access with a given access code and subscription code.
+     *
+     * @param accessCode Access code
+     * @param subscriptionCode Subscription code
+     * @return Access
+     */
+    @GET
+    @Path("/")
+    @Deprecated
+    GetAccessResponseDto find(String accessCode, String subscriptionCode);
+
+    /**
+     * Search for an access with a given access code and subscription code.
+     *
+     * @param accessCode Access code
+     * @param subscriptionCode Subscription code
+     * @return Access
+     */
+    @GET
+    @Path("/")
+    GetAccessResponseDto find(String accessCode, String subscriptionCode, @QueryParam("usageDate") Date usageDate);
+
+    /**
+     * Search for an access with a given access code and subscription code.
      * 
      * @param accessCode Access code
      * @param subscriptionCode Subscription code

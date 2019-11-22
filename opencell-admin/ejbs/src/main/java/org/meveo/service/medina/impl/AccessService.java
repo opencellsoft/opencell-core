@@ -70,6 +70,15 @@ public class AccessService extends PersistenceService<Access> {
         return query.getResultList();
     }
 
+    @Deprecated
+    public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription) {
+        return findByUserIdAndSubscription(accessUserId, subscription, new Date(), new Date());
+    }
+
+    public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription, Date date) {
+        return findByUserIdAndSubscription(accessUserId, subscription, date, date);
+    }
+
     public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription, Date startDate, Date endDate) {
         try {
             List<Access> accesses = retreiveAccessByUserIdAndSubscription(accessUserId, subscription);

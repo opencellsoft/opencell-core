@@ -52,6 +52,33 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
         return result;
     }
 
+    @Deprecated
+    @Override
+    public GetAccessResponseDto find(String accessCode, String subscriptionCode) {
+        GetAccessResponseDto result = new GetAccessResponseDto();
+
+        try {
+            result.setAccess(accessApi.find(accessCode, subscriptionCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public GetAccessResponseDto find(String accessCode, String subscriptionCode, Date usageDate) {
+        GetAccessResponseDto result = new GetAccessResponseDto();
+
+        try {
+            result.setAccess(accessApi.find(accessCode, subscriptionCode, usageDate));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
     @Override
     public GetAccessResponseDto find(String accessCode, String subscriptionCode, Date startDate, Date endDate) {
         GetAccessResponseDto result = new GetAccessResponseDto();
