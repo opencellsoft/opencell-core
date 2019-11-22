@@ -364,8 +364,10 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
 
         boolean isNew = entity.isTransient();
 
-        ScriptInstance scriptInstance = scriptInstanceService.retrieveIfNotManaged(entity.getScript());
-        entity.setScript(scriptInstance);
+        if (entity.getScript() != null) {
+            ScriptInstance scriptInstance = scriptInstanceService.retrieveIfNotManaged(entity.getScript());
+            entity.setScript(scriptInstance);
+        }
 
         super.saveOrUpdate(killConversation);
 
