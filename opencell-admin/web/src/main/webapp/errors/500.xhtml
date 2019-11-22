@@ -5,7 +5,8 @@
         <c:set  var="errorType" value="#{requestScope['javax.servlet.error.exception'].message==null
                     or !requestScope['javax.servlet.error.exception'].message.contains('conversation')}"/>
         <h:outputText value="You got a RuntimeException! There's a BUG somewhere!" rendered="#{errorType and !paramBean.productionStage}"  />
-        <h:outputText value="Sorry, a technical error has occured." rendered="#{errorType and paramBean.productionStage}"  />
+        <h:outputText value="Sorry, a technical error has occured. (error #{requestScope['javax.servlet.error.status_code']})"
+                      rendered="#{errorType and paramBean.productionStage}"  />
         <h:outputText value="#{messages['error.sessionExpired']}" rendered="#{!errorType}"/>
     </ui:define>
 
