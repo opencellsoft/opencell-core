@@ -122,6 +122,15 @@ public class AccessApi extends BaseApi {
 
     }
 
+    @Deprecated
+    public AccessDto find(String accessCode, String subscriptionCode) throws MeveoApiException {
+        return find(accessCode, subscriptionCode, new Date(), new Date());
+    }
+
+    public AccessDto find(String accessCode, String subscriptionCode, Date usageDate) throws MeveoApiException {
+        return find(accessCode, subscriptionCode, usageDate, usageDate);
+    }
+
     public AccessDto find(String accessCode, String subscriptionCode, Date startDate, Date endDate) throws MeveoApiException {
 
         if (StringUtils.isBlank(accessCode)) {

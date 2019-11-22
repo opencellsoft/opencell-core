@@ -159,6 +159,19 @@ public class AccessServiceTest {
     }
 
     @Test
+    public void findByUserIdAndSubscription3() {
+        Date usageDate = parse("09/11/2019");
+        Subscription subscription= new Subscription();
+        subscription.setId(1L);
+        Access dbAccess1 = getAccess("01/11/2019", "01/12/2019");
+        when(accessService.findByUserIdAndSubscription("AccessUserId", subscription, usageDate)).thenCallRealMethod();
+        when(accessService.findByUserIdAndSubscription("AccessUserId", subscription, usageDate, usageDate)).thenCallRealMethod();
+        when(query.getResultList()).thenReturn(Arrays.asList(dbAccess1));
+        Access byUserIdAndSubscription = accessService.findByUserIdAndSubscription("AccessUserId", subscription, usageDate);
+        assertNotNull(byUserIdAndSubscription);
+    }
+
+    @Test
     public void findByUserIdAndSubscription2() {
         Access access = getAccess("01/11/2019", null);
         Access dbAccess1 = getAccess("01/10/2019", null);
