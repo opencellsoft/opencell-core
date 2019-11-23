@@ -33,6 +33,16 @@
         		backingBean="#{customerListBean}" searchField1Label="#{messages['customer.code']}" searchField1="code"
             	column1Label="#{messages['customer.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
         </hftl:entityPopup>
+        <hftl:entityPopup id="billingAccountPopup"
+                          header="#{messages['billingAccount.popup.header']}"
+                          backingBean="#{billingAccountBean}"
+                          searchField1Label="#{messages['billingAccount.code']}"
+                          searchField1="code"
+                          column1Label="#{messages['billingAccount.code']}"
+                          column1="code"
+                          selection="#{customerAccountBean.entity.minimumTargetAccount}"
+                          updateField=":parentTab:formCustomerAccount:childTab:minimumTargetAccount :parentTab:formCustomerAccount:childTab:minimumTargetAccount_text">
+        </hftl:entityPopup>
 
         <p:importEnum type="org.meveo.model.payments.CustomerAccountStatusEnum" var="CustomerAccountStatusEnum" />
         <p:importEnum type="org.meveo.model.payments.PaymentMethodEnum" var="PaymentMethodEnum" />
@@ -45,6 +55,7 @@
                 <p:menuitem value="#{messages['menu.customerAccount']} - #{customerAccountBean.entity.code}" disabled="true" rendered="#{!customerAccountBean.entity.transient}" />
             </p:breadCrumb>
         </h:form>
+
 
         <h:panelGroup styleClass="col2-set">
             <h:panelGroup styleClass="col1">
@@ -109,9 +120,14 @@
                                         <hftl:formField label="#{messages['customerAccount.creditCategory']}" field="creditCategory" valueLabelField="code" listBean="#{creditCategoryBean}" />
                                         <hftl:formField label="#{messages['billingCycle.dueDateDelayEL']}" field="dueDateDelayEL" required="false" textArea="true" rows="1" maxlength="2000" componentWidth="50"/>                                       
                                         <hftl:formField label="#{messages['billingCycle.dueDateDelayELSpark']}" field="dueDateDelayELSpark" required="false"  textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
+
                                         <hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />
 										<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
-								        <hftl:formField label="#{messages['customerAccount.status']}" field="status" disabled="true" />                                       
+								        <hftl:formField label="#{messages['customerAccount.status']}" field="status" disabled="true" />
+                                        <hftl:formField label="#{messages['userAccount.minimumLabelEl']}" field="minimumLabelEl" id="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true"/>
+                                        <hftl:formField label="#{messages[appProvider.entreprise?'userAccount.minimumAmountWithoutTaxEl':'userAccount.minimumAmountWithTaxEl']}" field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                                        <hftl:formField id="minimumTargetAccount" label="#{messages['customerAccount.minimumTargetAccount']}" field="minimumTargetAccount" valueLabelField="code"
+                                                        popup="true" popupId="billingAccountPopup" allowEdit="true"  componentWidth="100" />
                                         
                                     </p:fieldset>
                                 </p:tab>

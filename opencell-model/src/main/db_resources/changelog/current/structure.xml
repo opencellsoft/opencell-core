@@ -2133,4 +2133,20 @@
     	</update>
         <addNotNullConstraint columnName="billing_cycle_type" tableName="billing_cycle" columnDataType="varchar(256)"/>
     </changeSet>
+    <changeSet author="khalid.horri" id="#4757_20191118">
+        <addColumn tableName="billing_user_account">
+            <column name="minimum_amount_el" type="varchar(2000)" />
+            <column name="minimum_label_el" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="crm_customer">
+            <column name="minimum_target_account_id" type="bigint" />
+            <column name="minimum_amount_el" type="varchar(2000)" />
+            <column name="minimum_label_el" type="varchar(2000)" />
+        </addColumn>
+        <addColumn tableName="ar_customer_account">
+            <column name="minimum_target_account_id" type="bigint" />
+            <column name="minimum_amount_el" type="varchar(2000)" />
+            <column name="minimum_label_el" type="varchar(2000)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -23,15 +23,8 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
@@ -41,6 +34,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
@@ -58,6 +52,9 @@ import org.meveo.model.payments.CustomerAccount;
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "crm_customer")
+@NamedQueries({
+        @NamedQuery(name = "Customer.getMimimumRTUsed", query = "select c.minimumAmountEl from Customer c where c.minimumAmountEl is not null")})
+
 public class Customer extends AccountEntity implements IWFEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Customer.class.getAnnotation(DiscriminatorValue.class)).value();
@@ -102,6 +99,28 @@ public class Customer extends AccountEntity implements IWFEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "additional_details_id")
     private AdditionalDetails additionalDetails;
+
+    /**
+     * Expression to determine minimum amount value
+     */
+    @Column(name = "minimum_amount_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountEl;
+
+    /**
+     * The billable Entity
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_target_account_id")
+    private BillingAccount minimumTargetAccount;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
+    @Column(name = "minimum_label_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelEl;
+
 
     public AddressBook getAddressbook() {
         return addressbook;
@@ -183,4 +202,27 @@ public class Customer extends AccountEntity implements IWFEntity {
         }
     }
 
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public BillingAccount getMinimumTargetAccount() {
+        return minimumTargetAccount;
+    }
+
+    public void setMinimumTargetAccount(BillingAccount minimumTargetAccount) {
+        this.minimumTargetAccount = minimumTargetAccount;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
 }

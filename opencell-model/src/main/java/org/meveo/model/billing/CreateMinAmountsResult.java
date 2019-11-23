@@ -29,6 +29,12 @@ public class CreateMinAmountsResult implements Serializable {
      and amounts as values 
     */
     Map<String, Amounts> createdAmountSubscription;
+
+    /**
+     * Additional Rated transaction amounts created to reach minimum invoicing amount per user account. A map of &lt;seller.id&gt;_&lt;invoiceSubCategory.id&gt; as a key a
+     and amounts as values
+     */
+    Map<String, Amounts> createdAmountUserAccount;
     
     
     List<RatedTransaction> minAmountTransactions = new ArrayList<RatedTransaction>();
@@ -89,5 +95,20 @@ public class CreateMinAmountsResult implements Serializable {
     public void setCreatedAmountSubscription(Map<String, Amounts> createdAmountSubscription) {
         this.createdAmountSubscription = createdAmountSubscription;
     }
-    
+
+    /**
+     *
+     * @return the CreatedAmountUserAccount
+     */
+    public Map<String, Amounts> getCreatedAmountUserAccount() {
+        return createdAmountUserAccount;
+    }
+
+    /**
+     *
+     * @param createdAmountUserAccount the CreatedAmountUserAccount
+     */
+    public void setCreatedAmountUserAccount(Map<String, Amounts> createdAmountUserAccount) {
+        this.createdAmountUserAccount = createdAmountUserAccount;
+    }
 }

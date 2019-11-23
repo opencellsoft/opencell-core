@@ -104,6 +104,12 @@ import org.meveo.model.rating.EDR;
 
         @NamedQuery(name = "RatedTransaction.sumInvoiceableByBA", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.seller.id FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and r.billingAccount=:billingAccount GROUP BY r.invoiceSubCategory.id, r.seller.id"),
 
+        @NamedQuery(name = "RatedTransaction.sumInvoiceableByUA", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.userAccount.id, r.invoiceSubCategory.id,r.seller.id FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and r.billingAccount=:billingAccount and r.userAccount.minimumAmountEl is not null GROUP BY r.invoiceSubCategory.id, r.seller.id, r.userAccount.id"),
+
+        @NamedQuery(name = "RatedTransaction.sumInvoiceableByCA", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.seller.id FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and r.billingAccount.customerAccount=:customerAccount GROUP BY r.invoiceSubCategory.id, r.seller.id"),
+
+        @NamedQuery(name = "RatedTransaction.sumInvoiceableByCustomer", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoiceSubCategory.id, r.seller.id FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and r.billingAccount.customerAccount.customer=:customer GROUP BY r.invoiceSubCategory.id, r.seller.id"),
+
         @NamedQuery(name = "RatedTransaction.cancelByWOIds", query = "UPDATE RatedTransaction r SET r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED WHERE id IN (SELECT wo.ratedTransaction.id FROM WalletOperation wo WHERE wo.id IN :notBilledWalletIdList)"),
         @NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", query = "select r from RatedTransaction r where r.invoice=:invoice and r.invoiceSubCategory=:invoiceSubCategory "),
 

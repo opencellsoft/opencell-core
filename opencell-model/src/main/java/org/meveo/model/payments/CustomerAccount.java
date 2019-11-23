@@ -81,7 +81,8 @@ import org.meveo.model.intcrm.AddressBook;
                 + "                   ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  group by ca.id having sum(ao.unMatchingAmount) <> 0"),
         @NamedQuery(name = "CustomerAccount.listCAIdsForRefund", query = "Select ca.id  from CustomerAccount as ca, AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='CREDIT' and "
                 + "                   ao.type not in ('P','AP') and ao.matchingStatus ='O' and ca.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and ao.customerAccount.id = ca.id and "
-                + "                   pm.paymentType =:paymentMethodIN  and ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN group by ca.id having sum(ao.unMatchingAmount) <> 0") })
+                + "                   pm.paymentType =:paymentMethodIN  and ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN group by ca.id having sum(ao.unMatchingAmount) <> 0"),
+        @NamedQuery(name = "CustomerAccount.getMimimumRTUsed", query = "select ca.minimumAmountEl from CustomerAccount ca where ca.minimumAmountEl is not null")})
 public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) CustomerAccount.class.getAnnotation(DiscriminatorValue.class)).value();
@@ -217,6 +218,28 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
 
     @Transient
     private Map<String, List<PaymentMethod>> auditedMethodPayments;
+
+
+    /**
+     * Expression to determine minimum amount value
+     */
+    @Column(name = "minimum_amount_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountEl;
+
+    /**
+     * The billable Entity
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_target_account_id")
+    private BillingAccount minimumTargetAccount;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
+    @Column(name = "minimum_label_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelEl;
 
     /**
      * This method is called implicitly by hibernate, used to enable
@@ -646,5 +669,29 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
             PaymentMethods.add(paymentMethod);
             getAuditedMethodPayments().put(action, PaymentMethods);
         }
+    }
+
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public BillingAccount getMinimumTargetAccount() {
+        return minimumTargetAccount;
+    }
+
+    public void setMinimumTargetAccount(BillingAccount minimumTargetAccount) {
+        this.minimumTargetAccount = minimumTargetAccount;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
     }
 }
