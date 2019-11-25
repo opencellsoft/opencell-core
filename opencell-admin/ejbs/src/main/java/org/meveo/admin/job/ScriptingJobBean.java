@@ -83,7 +83,7 @@ public class ScriptingJobBean extends BaseJobBean {
 
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void finalize(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context)
+	public void complete(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context)
 			throws BusinessException {
 		ScriptInterface script = null;
 		try {
