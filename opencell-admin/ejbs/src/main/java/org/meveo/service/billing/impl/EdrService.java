@@ -129,8 +129,12 @@ public class EdrService extends PersistenceService<EDR> {
 
         try {
 
-            Query query = getEntityManager().createQuery("select e.id from EDR e where " + (originBatch == null ? "e.originBatch is null " : "e.originBatch=:originBatch") + " and "
-                    + (originRecord == null ? "e.originRecord is null " : "e.originRecord=:originRecord"));
+            StringBuilder selectQuery = new StringBuilder("select e.id from EDR e where ")
+                    .append(originBatch == null ? "e.originBatch is null " : "e.originBatch=:originBatch")
+                    .append(" and ")
+                    .append(originRecord == null ? "e.originRecord is null " : "e.originRecord=:originRecord");
+                            
+            Query query = getEntityManager().createQuery(selectQuery.toString());
 
             if (originBatch != null) {
                 query.setParameter("originBatch", originBatch);
