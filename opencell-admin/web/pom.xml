@@ -45,7 +45,8 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>3.2.3</version>
+				<!--do not upgrade, needed for maven-replacer -->
+				<version>2.0.1</version>
 				<configuration>
 					<packagingExcludes>**/import*.sql</packagingExcludes>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
@@ -89,15 +90,7 @@
 				<version>1.5.3</version>
 				<executions>
 					<execution>
-						<id>phase-exploded</id>
 						<phase>prepare-package</phase>
-						<goals>
-							<goal>replace</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>phase-war</id>
-						<phase>package</phase>
 						<goals>
 							<goal>replace</goal>
 						</goals>
