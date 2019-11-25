@@ -140,7 +140,7 @@ public class FilteringJobBean extends BaseJobBean {
 
         } finally {
             try {
-                scriptInterface.complete(context);
+                scriptInterface.terminate(context);
 
             } catch (Exception e) {
                 log.error("Error on finally execute", e);

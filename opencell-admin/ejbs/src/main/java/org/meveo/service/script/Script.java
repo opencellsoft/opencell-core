@@ -115,7 +115,7 @@ public abstract class Script implements Serializable, ScriptInterface {
     }
 
     @Override
-    public void complete(Map<String, Object> methodContext) throws BusinessException {
+    public void terminate(Map<String, Object> methodContext) throws BusinessException {
 
     }
 

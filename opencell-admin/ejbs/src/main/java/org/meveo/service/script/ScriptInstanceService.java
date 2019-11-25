@@ -426,7 +426,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
         ScriptInterface classInstance = getScriptInstance(scriptCode);
         classInstance.init(context);
         classInstance.execute(context);
-        classInstance.complete(context);
+        classInstance.terminate(context);
 
         log.trace("Script {} executed with parameters {}", scriptCode, context);
         return context;
@@ -453,7 +453,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
 
         compiledScript.init(context);
         compiledScript.execute(context);
-        compiledScript.complete(context);
+        compiledScript.terminate(context);
 
         log.trace("Script {} executed with parameters {}", compiledScript.getClass(), context);
         return context;

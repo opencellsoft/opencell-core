@@ -196,7 +196,7 @@ public class FlatFileProcessingJobBean {
             }
             try {
                 if (script != null) {
-                    script.complete(context);
+                    script.terminate(context);
                 }
             } catch (Exception e) {
                 result.addReport("\r\n error in script finalization : " + e.getMessage());

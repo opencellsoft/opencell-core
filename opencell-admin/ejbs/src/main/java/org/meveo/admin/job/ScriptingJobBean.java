@@ -88,7 +88,7 @@ public class ScriptingJobBean extends BaseJobBean {
 		ScriptInterface script = null;
 		try {
 			script = scriptInstanceService.getScriptInstance(scriptCode);
-			script.complete(context);
+			script.terminate(context);
 
 		} catch (Exception e) {
 			log.error("Exception on finalize script", e);
