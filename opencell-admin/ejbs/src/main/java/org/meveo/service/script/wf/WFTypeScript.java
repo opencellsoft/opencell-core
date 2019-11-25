@@ -48,7 +48,7 @@ public class WFTypeScript<E extends BusinessEntity> extends WorkflowType<E> impl
     }
 
     @Override
-    public void finalize(Map<String, Object> methodContext) throws BusinessException {
+    public void complete(Map<String, Object> methodContext) throws BusinessException {
         throw new UnsupportedOperationException();
     }
 
