@@ -1639,7 +1639,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param max a max result used for pagination
      * @return All open rated transaction between two date.
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<RatedTransaction> getNotOpenedRatedTransactionBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate, long lastId, int max) {
         return getEntityManager().createNamedQuery("RatedTransaction.listNotOpenedBetweenTwoDates", RatedTransaction.class)
                 .setParameter("firstTransactionDate", firstTransactionDate)
