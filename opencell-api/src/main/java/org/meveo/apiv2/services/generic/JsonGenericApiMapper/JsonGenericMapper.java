@@ -60,16 +60,16 @@ public class JsonGenericMapper extends ObjectMapper{
     }
 
     public BaseEntity parseFromJson(String jsonDto, Class entityClass) {
-        try {
-            return  (BaseEntity) readValue(jsonDto, entityClass);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("The given string value: " + jsonDto + " cannot be transformed to Json object", e);
-        }
+        return  (BaseEntity) readValue(jsonDto, entityClass);
     }
 
     @Override
-    public <T> T readValue(String content, Class<T> valueType) throws IOException{
-        return super.readValue(regularizeJsonDtoArrayIds(content), valueType);
+    public <T> T readValue(String content, Class<T> valueType){
+        try {
+            return super.readValue(regularizeJsonDtoArrayIds(content), valueType);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("The given string value: " + content + " cannot be transformed to Json object", e);
+        }
     }
 
     private String regularizeJsonDtoArrayIds(String jsonDto) throws IOException {
@@ -88,8 +88,10 @@ public class JsonGenericMapper extends ObjectMapper{
                         arrayJsonNodes.add(objectJsonNode);
                     }
                 }
-                ((ArrayNode)next).removeAll();
-                ((ArrayNode)next).addAll(arrayJsonNodes);
+                if(arrayJsonNodes.size()>0){
+                    ((ArrayNode)next).removeAll();
+                    ((ArrayNode)next).addAll(arrayJsonNodes);
+                }
             }
         }
         return rootJsonNode.toString();
