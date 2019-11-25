@@ -1932,5 +1932,11 @@
         <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}switch_rating_edr_to_partition</sql>       
         
     </changeSet>
+
+    <changeSet id="#4783_20191118" author="MohamedSTITANE" dbms="postgresql">
+        <sql>CREATE INDEX wo_operation_date_index ON ${db.schema.adapted}billing_wallet_operation ((operation_date::DATE))</sql>
+        <sql>CREATE INDEX edr_event_date_index ON ${db.schema.adapted}rating_edr ((event_date::DATE))</sql>
+        <sql>CREATE INDEX rt_usage_date_index ON ${db.schema.adapted}billing_rated_transaction ((usage_date::DATE))</sql>
+    </changeSet>
     
 </databaseChangeLog>
