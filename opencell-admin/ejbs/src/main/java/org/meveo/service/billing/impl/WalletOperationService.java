@@ -16,8 +16,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import static org.meveo.commons.utils.NumberUtils.round;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -83,6 +81,8 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
+
+import static org.meveo.commons.utils.NumberUtils.round;
 
 /**
  * Service class for WalletOperation entity
@@ -1343,7 +1343,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @param max a max rows
      * @return a list of Wallet Operation
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<WalletOperation> getNotOpenedWalletOperationBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate, Long lastId, int max) {
         return getEntityManager().createNamedQuery("WalletOperation.listNotOpenedWObetweenTwoDates", WalletOperation.class)
                 .setParameter("firstTransactionDate", firstTransactionDate)
