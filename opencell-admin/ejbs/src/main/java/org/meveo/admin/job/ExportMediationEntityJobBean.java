@@ -17,17 +17,37 @@ import org.meveo.api.dto.billing.EDRDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.admin.Currency;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.jaxb.mediation.EDRs;
 import org.meveo.model.jaxb.mediation.RatedTransactions;
 import org.meveo.model.jaxb.mediation.WalletOperations;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.rating.EDR;
+import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.billing.impl.WalletService;
+import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
@@ -60,6 +80,26 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     @Inject
     private JobExecutionService jobExecutionService;
 
+    @Inject
+    private SellerService sellerService;
+    @Inject
+    private WalletService walletService;
+    @Inject
+    private CurrencyService currencyService;
+    @Inject
+    private WalletTemplateService walletTemplateService;
+    @Inject
+    private UserAccountService userAccountService;
+    @Inject
+    private TaxService taxService;
+    @Inject
+    private OfferTemplateService offerTemplateService;
+    @Inject
+    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
+    @Inject
+    private BillingAccountService billingAccountService;
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
@@ -82,23 +122,28 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
 
             int maxResult = ((Long) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_maxResult", 100000L)).intValue();
             long nbItems = 0;
+            String report = "";
             if (edrCf) {
                 log.info("==> Start exporting EDR ");
                 nbItems = exportEDR(jobInstance.getId(), dir, firstTransactionDate, lastTransactionDate, maxResult);
                 log.info("{} EDRs exported in total", nbItems);
+                report += "EDRs : " + nbItems;
             }
             if (woCf) {
                 log.info("==> Start exporting wallet operation ");
                 long woCount = exportWalletOperation(jobInstance.getId(), dir, firstTransactionDate, lastTransactionDate, maxResult);
                 log.info("{} WOs exported in total", woCount);
                 nbItems += woCount;
+                report += " WOs : " + woCount;
             }
             if (rtCf) {
                 log.info("==> Start exporting rated transaction ");
                 long rtCount = exportRatedTransaction(jobInstance.getId(), dir, firstTransactionDate, lastTransactionDate, maxResult);
                 log.info("{} RTs exported in total", rtCount);
                 nbItems += rtCount;
+                report += " RTs : " + rtCount;
             }
+            result.addReport(report);
             result.setNbItemsToProcess(nbItems);
             result.setNbItemsCorrectlyProcessed(nbItems);
         } catch (Exception e) {
@@ -182,7 +227,8 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
         boolean moreToProcess = true;
         do {
             String timestamp = sdf.format(new Date());
-            List<RatedTransaction> ratedTransactions = ratedTransactionService.getNotOpenedRatedTransactionBetweenTwoDates(firstTransactionDate, lastTransactionDate, lastId, maxResult);
+            List<RatedTransaction> ratedTransactions = ratedTransactionService
+                    .getNotOpenedRatedTransactionBetweenTwoDates(firstTransactionDate, lastTransactionDate, lastId, maxResult);
             if (!ratedTransactions.isEmpty()) {
                 RatedTransactions ratedTransactionDtos = ratedTransactionToDto(ratedTransactions, jobInstanceId);
                 nbItems = ratedTransactionDtos.getRatedTransactions() != null ? ratedTransactionDtos.getRatedTransactions().size() : 0;
@@ -217,9 +263,9 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     }
 
     /**
-     * @param walletOperations
-     * @param jobInstanceId
-     * @return
+     * @param walletOperations a wallet operation
+     * @param jobInstanceId a a job instance id
+     * @return a list of wallet operations
      */
 
     private WalletOperations walletOperationsToDto(List<WalletOperation> walletOperations, Long jobInstanceId) {
@@ -232,12 +278,53 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
                     break;
                 }
                 if (wo != null) {
+                    //  fix hibernate lazy initialization error
+                    refreshFields(wo);
                     WalletOperationDto walletOperationDto = new WalletOperationDto(wo);
                     dto.getWalletOperations().add(walletOperationDto);
                 }
             }
         }
         return dto;
+    }
+
+    /**
+     * Retrieve or refresh lazy fields to prevent hibernate lazy error
+     * @param wo a wallet operation
+     */
+    private void refreshFields(WalletOperation wo) {
+        if (wo.getSeller() != null) {
+            Seller seller = sellerService.retrieveIfNotManaged(wo.getSeller());
+            wo.setSeller(seller);
+        }
+        if (wo.getWallet() != null) {
+            WalletInstance wallet = walletService.retrieveIfNotManaged(wo.getWallet());
+            if (wallet.getWalletTemplate() != null) {
+                WalletTemplate walletTemplate = walletTemplateService.retrieveIfNotManaged(wallet.getWalletTemplate());
+                wallet.setWalletTemplate(walletTemplate);
+            }
+            if (wallet.getUserAccount() != null) {
+                UserAccount userAccount = userAccountService.retrieveIfNotManaged(wallet.getUserAccount());
+                wallet.setUserAccount(userAccount);
+            }
+            wo.setWallet(wallet);
+        }
+        if (wo.getCurrency() != null) {
+            Currency currency = currencyService.retrieveIfNotManaged(wo.getCurrency());
+            wo.setCurrency(currency);
+        }
+        if (wo.getTax() != null) {
+            Tax tax = taxService.retrieveIfNotManaged(wo.getTax());
+            wo.setTax(tax);
+        }
+        if (wo.getOfferTemplate() != null) {
+            OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(wo.getOfferTemplate());
+            wo.setOfferTemplate(offerTemplate);
+        }
+        if (wo.getChargeInstance() != null) {
+            ChargeInstance chargeInstance = chargeInstanceService.retrieveIfNotManaged(wo.getChargeInstance());
+            wo.setChargeInstance(chargeInstance);
+        }
     }
 
     /**
@@ -257,6 +344,8 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
                     break;
                 }
                 if (rt != null) {
+                    //  start fix hibernate lazy initialization error
+                    refreshFields(rt);
                     RatedTransactionDto ratedTransactionDto = new RatedTransactionDto(rt);
                     dto.getRatedTransactions().add(ratedTransactionDto);
                 }
@@ -266,8 +355,31 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     }
 
     /**
-     * @param edr
-     * @return
+     * Retrieve or refresh lazy fields to prevent hibernate lazy error
+     * @param rt a rated transaction
+     */
+    private void refreshFields(RatedTransaction rt) {
+        if (rt.getTax() != null) {
+            Tax tax = taxService.retrieveIfNotManaged(rt.getTax());
+            rt.setTax(tax);
+        }
+        if (rt.getPriceplan() != null) {
+            PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.retrieveIfNotManaged(rt.getPriceplan());
+            rt.setPriceplan(pricePlanMatrix);
+        }
+        if (rt.getSeller() != null) {
+            Seller seller = sellerService.retrieveIfNotManaged(rt.getSeller());
+            rt.setSeller(seller);
+        }
+        if (rt.getBillingAccount() != null) {
+            BillingAccount billingAccount = billingAccountService.retrieveIfNotManaged(rt.getBillingAccount());
+            rt.setBillingAccount(billingAccount);
+        }
+    }
+
+    /**
+     * @param edr an event data record
+     * @return a EDR dto
      */
     private EDRDto edrToDto(EDR edr) {
         if (edr == null) {

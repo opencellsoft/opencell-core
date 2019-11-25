@@ -218,7 +218,6 @@ public class EdrService extends PersistenceService<EDR> {
      * @param max  a max rows
      * @return All open EDR between two Date
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<EDR> getNotOpenedEdrsBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate, long lastId, int max) {
         return getEntityManager().createNamedQuery("EDR.getNotOpenedEdrBetweenTwoDate", EDR.class)
                 .setParameter("firstTransactionDate", firstTransactionDate)
