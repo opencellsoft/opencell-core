@@ -18,7 +18,6 @@ import org.meveo.api.dto.billing.EDRDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.jaxb.mediation.EDRs;
@@ -27,19 +26,9 @@ import org.meveo.model.jaxb.mediation.WalletOperations;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.rating.EDR;
-import org.meveo.service.admin.impl.CurrencyService;
-import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.billing.impl.WalletService;
-import org.meveo.service.billing.impl.WalletTemplateService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.PricePlanMatrixService;
-import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
@@ -71,27 +60,6 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
 
     @Inject
     private JobExecutionService jobExecutionService;
-
-    @Inject
-    private SellerService sellerService;
-    @Inject
-    private WalletService walletService;
-    @Inject
-    private CurrencyService currencyService;
-    @Inject
-    private WalletTemplateService walletTemplateService;
-    @Inject
-    private UserAccountService userAccountService;
-    @Inject
-    private TaxService taxService;
-    @Inject
-    private OfferTemplateService offerTemplateService;
-    @Inject
-    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
-    @Inject
-    private PricePlanMatrixService pricePlanMatrixService;
-    @Inject
-    private BillingAccountService billingAccountService;
 
     @EJB
     ExportMediationEntityJobBean exportMediationEntityJobBeanNewTx;
