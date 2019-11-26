@@ -1549,23 +1549,25 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                             Date periodEndDate = null;
                             code = ratedTransaction.getCode();
                             description = ratedTransaction.getDescription();
+                            
+                            if (appProvider.getInvoiceConfiguration().getDisplayWalletOperations()) {
+                            	
                             List<WalletOperation> walletOperations = walletOperationService.listByRatedTransactionId(ratedTransaction.getId());
 
-                            if (walletOperations != null && !walletOperations.isEmpty()) {
-
-								for (WalletOperation walletOperation : walletOperations) {
-									Element woLine = doc.createElement("walletOperation");
-	                            	woLine.setAttribute("code", walletOperation.getCode());
-	                            	line.appendChild(woLine);
-	                            	
-									ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-									if (appProvider.getInvoiceConfiguration().getDisplayChargesPeriods()) {
-
+		                        if (walletOperations != null && !walletOperations.isEmpty()) {
+		
+									for (WalletOperation walletOperation : walletOperations) {
+										Element woLine = doc.createElement("walletOperation");
+		                            	woLine.setAttribute("code", walletOperation.getCode());
+		                            	line.appendChild(woLine);
+		                            	
+										ChargeInstance chargeInstance = walletOperation.getChargeInstance();
+		
 										if (!isVirtual) {
 											chargeInstance = (ChargeInstance) chargeInstanceService
 													.findById(chargeInstance.getId(), false);
 										}
-
+		
 										ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 										// get periodStartDate and periodEndDate for recurrents
 										periodStartDate = walletOperation.getStartDate();
@@ -1597,7 +1599,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 									}
 								}                            
                             }
-    
                             line.setAttribute("code", code != null ? code : "");
     
                             if (ratedTransaction.getParameter1() != null) {
@@ -1716,17 +1717,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                 edrInfo.setAttribute("decimalParam5", edr.getDecimalParam5() != null ? edr.getDecimalParam5().toPlainString() : "");
                                 line.appendChild(edrInfo);
                             }
-    
-							if (!isVirtual && walletOperations != null && !walletOperations.isEmpty()) {
-								for (WalletOperation walletOperation : walletOperations) {
-									// Retrieve Service Instance
-									ServiceInstance serviceInstance = walletOperation.getChargeInstance().getServiceInstance();
-
-									if (serviceInstance != null) {
-										String offerCode = ratedTransaction.getOfferTemplate() != null ? ratedTransaction.getOfferTemplate().getCode() : null;
-										addService(serviceInstance, doc, offerCode, line);
-									}
-								}
+                            
+                            ServiceInstance serviceInstance = ratedTransaction.getServiceInstance();
+							if (serviceInstance != null) {
+								String offerCode = ratedTransaction.getOfferTemplate() != null ? ratedTransaction.getOfferTemplate().getCode() : null;
+								addService(serviceInstance, doc, offerCode, line);
 							}
                             subCategory.appendChild(line);
                         }
