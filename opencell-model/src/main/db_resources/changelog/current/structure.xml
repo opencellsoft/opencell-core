@@ -2325,6 +2325,11 @@
 		<sql>create index billing_rated_transaction_aggregate_id_t_idx on ${db.schema.adapted}billing_rated_transaction (aggregate_id_t)</sql>
 		<sql>create index billing_rated_transaction_aggregate_id_f_idx on ${db.schema.adapted}billing_rated_transaction (aggregate_id_f)</sql>
     </changeSet>
-    
+    <changeSet id="#4696_251119" author="Mohammed_ElAzzouzi">
+    <modifyDataType 
+            columnName="request_uri"
+            newDataType="varchar(1024)"
+            tableName="adm_inbound_request"/>
+    </changeSet>
 
 </databaseChangeLog>
