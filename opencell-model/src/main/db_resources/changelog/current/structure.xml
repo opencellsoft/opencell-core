@@ -2139,6 +2139,13 @@
         <sql>CREATE INDEX rt_usage_date_index ON ${db.schema.adapted}billing_rated_transaction ((usage_date::DATE))</sql>
     </changeSet>
     
+    <changeSet id="#4412_20191125" author="MohammedELAZZOUZI">
+    	<dropColumn tableName="billing_invoice_configuration" columnName="display_charges_periods"></dropColumn>
+    	<addColumn tableName="billing_invoice_configuration">
+    		<column name="display_wallet_operations" type="${type.boolean}" defaultValueNumeric="0"/>
+    	</addColumn>
+    </changeSet>
+    
     <changeSet id="#4795_221119" author="Mohammed_ElAzzouzi">
   		<sql>create index billing_invoice_agregate_tax_invoice_agregate_idx on ${db.schema.adapted}billing_invoice_agregate (tax_invoice_agregate)</sql>
 		<sql>create index billing_invoice_agregate_sub_cat_invoice_agregate_id_idx on ${db.schema.adapted}billing_invoice_agregate (sub_cat_invoice_agregate_id)</sql>
