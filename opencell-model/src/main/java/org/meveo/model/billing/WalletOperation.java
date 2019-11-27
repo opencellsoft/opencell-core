@@ -455,8 +455,12 @@ public class WalletOperation extends BaseEntity {
         this.code = chargeTemplate.getCode();
         this.description = chargeInstance.getDescription();
         this.chargeInstance = chargeInstance;
-        this.ratingUnitDescription = chargeTemplate.getRatingUnitDescription();
-        this.inputUnitDescription = chargeTemplate.getInputUnitDescription();
+        UnitOfMeasure CTInputUnitOfMeasure = chargeTemplate.getInputUnitOfMeasure();
+        UnitOfMeasure CTRatingUnitOfMeasure = chargeTemplate.getRatingUnitOfMeasure();
+        this.ratingUnitDescription = CTRatingUnitOfMeasure != null ? CTRatingUnitOfMeasure.getCode() : chargeTemplate.getRatingUnitDescription();
+        this.inputUnitDescription = CTInputUnitOfMeasure != null ? CTInputUnitOfMeasure.getCode() : chargeTemplate.getInputUnitDescription();
+        this.inputUnitOfMeasure=CTInputUnitOfMeasure;
+		this.ratingUnitOfMeasure=CTRatingUnitOfMeasure;
         this.operationDate = operationDate;
         this.orderNumber = orderNumber;
         this.parameter1 = criteria1;
