@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -17,6 +18,7 @@ import org.meveo.api.dto.billing.EDRDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.jaxb.mediation.EDRs;
@@ -25,9 +27,19 @@ import org.meveo.model.jaxb.mediation.WalletOperations;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.rating.EDR;
+import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.billing.impl.WalletService;
+import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
@@ -60,6 +72,29 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     @Inject
     private JobExecutionService jobExecutionService;
 
+    @Inject
+    private SellerService sellerService;
+    @Inject
+    private WalletService walletService;
+    @Inject
+    private CurrencyService currencyService;
+    @Inject
+    private WalletTemplateService walletTemplateService;
+    @Inject
+    private UserAccountService userAccountService;
+    @Inject
+    private TaxService taxService;
+    @Inject
+    private OfferTemplateService offerTemplateService;
+    @Inject
+    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
+    @Inject
+    private BillingAccountService billingAccountService;
+
+    @EJB
+    ExportMediationEntityJobBean exportMediationEntityJobBeanNewTx;
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
@@ -80,25 +115,30 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
             boolean woCf = (boolean) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_woCf", false);
             boolean rtCf = (boolean) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_rtCf", false);
 
-            int maxResult = ((Long) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_maxResult", 100000)).intValue();
+            int maxResult = ((Long) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_maxResult", 100000L)).intValue();
             long nbItems = 0;
+            String report = "";
             if (edrCf) {
                 log.info("==> Start exporting EDR ");
                 nbItems = exportEDR(jobInstance.getId(), dir, firstTransactionDate, lastTransactionDate, maxResult);
                 log.info("{} EDRs exported in total", nbItems);
+                report += "EDRs : " + nbItems;
             }
             if (woCf) {
                 log.info("==> Start exporting wallet operation ");
                 long woCount = exportWalletOperation(jobInstance.getId(), dir, firstTransactionDate, lastTransactionDate, maxResult);
                 log.info("{} WOs exported in total", woCount);
                 nbItems += woCount;
+                report += " WOs : " + woCount;
             }
             if (rtCf) {
                 log.info("==> Start exporting rated transaction ");
                 long rtCount = exportRatedTransaction(jobInstance.getId(), dir, firstTransactionDate, lastTransactionDate, maxResult);
                 log.info("{} RTs exported in total", rtCount);
                 nbItems += rtCount;
+                report += " RTs : " + rtCount;
             }
+            result.addReport(report);
             result.setNbItemsToProcess(nbItems);
             result.setNbItemsCorrectlyProcessed(nbItems);
         } catch (Exception e) {
@@ -148,22 +188,13 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
      */
     private long exportWalletOperation(long jobInstanceId, File dir, Date firstTransactionDate, Date lastTransactionDate, int maxResult) throws JAXBException {
         int nbItems = 0;
-        long lastId = 0;
-        boolean moreToProcess = true;
+        long lastId = 0L;
+        boolean moreToProcess;
         do {
-            String timestamp = sdf.format(new Date());
-            List<WalletOperation> walletOperation = walletOperationService.getNotOpenedWalletOperationBetweenTwoDates(firstTransactionDate, lastTransactionDate, lastId, maxResult);
-
-            int size = walletOperation.size();
-            if (size > 0) {
-                WalletOperations walletOperations = walletOperationsToDto(walletOperation, jobInstanceId);
-                JAXBUtils.marshaller(walletOperations, new File(dir + File.separator + "WO_" + timestamp + ".xml"));
-                lastId = walletOperation.get(size - 1).getId();
-                nbItems += size;
-                log.info("{} WOs processed", size);
-            } else {
-                moreToProcess = false;
-            }
+            PaginationResult paginationResult = exportMediationEntityJobBeanNewTx.exportWalletOperationPerPage(jobInstanceId, dir, firstTransactionDate, lastTransactionDate, maxResult, lastId);
+            lastId = paginationResult.getLastId();
+            nbItems += paginationResult.getNbItems();
+            moreToProcess = paginationResult.getMoreToProcess();
         } while (moreToProcess);
         return nbItems;
     }
@@ -178,20 +209,13 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
      */
     private long exportRatedTransaction(long jobInstanceId, File dir, Date firstTransactionDate, Date lastTransactionDate, int maxResult) throws JAXBException {
         int nbItems = 0;
-        Long lastId = 0L;
-        boolean moreToProcess = true;
+        long lastId = 0L;
+        boolean moreToProcess;
         do {
-            String timestamp = sdf.format(new Date());
-            List<RatedTransaction> ratedTransactions = ratedTransactionService.getNotOpenedRatedTransactionBetweenTwoDates(firstTransactionDate, lastTransactionDate, lastId, maxResult);
-            if (!ratedTransactions.isEmpty()) {
-                RatedTransactions ratedTransactionDtos = ratedTransactionToDto(ratedTransactions, jobInstanceId);
-                nbItems = ratedTransactionDtos.getRatedTransactions() != null ? ratedTransactionDtos.getRatedTransactions().size() : 0;
-                JAXBUtils.marshaller(ratedTransactionDtos, new File(dir + File.separator + "RTx_" + timestamp + ".xml"));
-                int size = ratedTransactions.size();
-                lastId = ratedTransactions.get(size - 1).getId();
-                log.info("{} RT processed", size);
-            } else
-                moreToProcess = false;
+            PaginationResult paginationResult = exportMediationEntityJobBeanNewTx.exportRatedTransactionPerPage(jobInstanceId, dir, firstTransactionDate, lastTransactionDate, maxResult, lastId);
+            lastId = paginationResult.getLastId();
+            nbItems += paginationResult.getNbItems();
+            moreToProcess = paginationResult.getMoreToProcess();
         } while (moreToProcess);
         return nbItems;
     }
@@ -217,9 +241,9 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     }
 
     /**
-     * @param walletOperations
-     * @param jobInstanceId
-     * @return
+     * @param walletOperations a wallet operation
+     * @param jobInstanceId    a a job instance id
+     * @return a list of wallet operations
      */
 
     private WalletOperations walletOperationsToDto(List<WalletOperation> walletOperations, Long jobInstanceId) {
@@ -257,6 +281,8 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
                     break;
                 }
                 if (rt != null) {
+//                    //  start fix hibernate lazy initialization error
+//                    refreshFields(rt);
                     RatedTransactionDto ratedTransactionDto = new RatedTransactionDto(rt);
                     dto.getRatedTransactions().add(ratedTransactionDto);
                 }
@@ -266,8 +292,8 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     }
 
     /**
-     * @param edr
-     * @return
+     * @param edr an event data record
+     * @return a EDR dto
      */
     private EDRDto edrToDto(EDR edr) {
         if (edr == null) {
@@ -276,4 +302,79 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
         return new EDRDto(edr);
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public PaginationResult exportWalletOperationPerPage(long jobInstanceId, File dir, Date firstDate, Date lastDate, int maxResult, Long lastId) throws JAXBException {
+        PaginationResult result = new PaginationResult();
+        String timestamp = sdf.format(new Date());
+        List<WalletOperation> walletOperation = walletOperationService.getNotOpenedWalletOperationBetweenTwoDates(firstDate, lastDate, lastId, maxResult);
+
+        int size = walletOperation.size();
+
+        if (size > 0) {
+            WalletOperations walletOperations = walletOperationsToDto(walletOperation, jobInstanceId);
+            JAXBUtils.marshaller(walletOperations, new File(dir + File.separator + "WO_" + timestamp + ".xml"));
+            result.setLastId(walletOperation.get(size - 1).getId());
+            result.setNbItems(size);
+            result.setMoreToProcess(true);
+            log.info("{} WOs processed", size);
+        }
+        return result;
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public PaginationResult exportRatedTransactionPerPage(long jobInstanceId, File dir, Date firstDate, Date lastDate, int maxResult, long lastId) throws JAXBException {
+        String timestamp = sdf.format(new Date());
+        List<RatedTransaction> ratedTransactions = ratedTransactionService
+                .getNotOpenedRatedTransactionBetweenTwoDates(firstDate, lastDate, lastId, maxResult);
+        PaginationResult result = new PaginationResult();
+        if (!ratedTransactions.isEmpty()) {
+            RatedTransactions ratedTransactionDtos = ratedTransactionToDto(ratedTransactions, jobInstanceId);
+            JAXBUtils.marshaller(ratedTransactionDtos, new File(dir + File.separator + "RTx_" + timestamp + ".xml"));
+            int size = ratedTransactions.size();
+            result.setLastId(ratedTransactions.get(size - 1).getId());
+            result.setNbItems(size);
+            result.setMoreToProcess(true);
+            log.info("{} RT processed", size);
+        }
+        return result;
+    }
+
+    /**
+     * Inner class to handle pagination
+     */
+    private static class PaginationResult {
+        private long lastId;
+        private int nbItems;
+        private boolean moreToProcess;
+
+        public PaginationResult() {
+            this.moreToProcess = false;
+            this.lastId = 0L;
+            this.nbItems = 0;
+        }
+
+        public void setLastId(long lastId) {
+            this.lastId = lastId;
+        }
+
+        public long getLastId() {
+            return lastId;
+        }
+
+        public void setNbItems(int nbItems) {
+            this.nbItems = nbItems;
+        }
+
+        public int getNbItems() {
+            return nbItems;
+        }
+
+        public void setMoreToProcess(boolean moreToProcess) {
+            this.moreToProcess = moreToProcess;
+        }
+
+        public boolean getMoreToProcess() {
+            return moreToProcess;
+        }
+    }
 }
