@@ -1,5 +1,6 @@
 package org.meveo.api.account;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -58,7 +59,7 @@ public class AccessApi extends BaseApi {
             access.setDisabled(postData.isDisabled());
         }
 
-        if (accessService.isDuplicate(access)) {
+        if (accessService.isDuplicateAndOverlaps(access)) {
             throw new MeveoApiException(MeveoApiErrorCodeEnum.DUPLICATE_ACCESS, "Duplicate subscription / access point pair.");
         }
 
@@ -85,7 +86,12 @@ public class AccessApi extends BaseApi {
         if (postData.getSubscription() == null) {
             missingParameters.add("subscription");
         }
-
+        if (postData.getStartDate() == null) {
+            missingParameters.add("startDate");
+        }
+        if (postData.getEndDate() == null) {
+            missingParameters.add("endDate");
+        }
         handleMissingParameters();
 
         Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
@@ -93,7 +99,7 @@ public class AccessApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
         }
 
-        Access access = accessService.findByUserIdAndSubscription(postData.getCode(), subscription);
+        Access access = accessService.findByUserIdAndSubscription(postData.getCode(), subscription, postData.getStartDate(), postData.getEndDate());
         if (access == null) {
             throw new EntityDoesNotExistsException(Access.class, postData.getCode());
         }
@@ -116,13 +122,28 @@ public class AccessApi extends BaseApi {
 
     }
 
+    @Deprecated
     public AccessDto find(String accessCode, String subscriptionCode) throws MeveoApiException {
+        return find(accessCode, subscriptionCode, new Date(), new Date());
+    }
+
+    public AccessDto find(String accessCode, String subscriptionCode, Date usageDate) throws MeveoApiException {
+        return find(accessCode, subscriptionCode, usageDate, usageDate);
+    }
+
+    public AccessDto find(String accessCode, String subscriptionCode, Date startDate, Date endDate) throws MeveoApiException {
 
         if (StringUtils.isBlank(accessCode)) {
             missingParameters.add("accessCode");
         }
         if (StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
+        }
+        if (startDate == null) {
+            missingParameters.add("startDate");
+        }
+        if (endDate == null) {
+            missingParameters.add("endDate");
         }
 
         handleMissingParameters();
@@ -132,7 +153,7 @@ public class AccessApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
 
-        Access access = accessService.findByUserIdAndSubscription(accessCode, subscription);
+        Access access = accessService.findByUserIdAndSubscription(accessCode, subscription, startDate, endDate);
         if (access == null) {
             throw new EntityDoesNotExistsException(Access.class, accessCode);
         }
@@ -140,7 +161,7 @@ public class AccessApi extends BaseApi {
         return new AccessDto(access, entityToDtoConverter.getCustomFieldsDTO(access, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
     }
 
-    public void remove(String accessCode, String subscriptionCode) throws MeveoApiException, BusinessException {
+    public void remove(String accessCode, String subscriptionCode, Date startDate, Date endDate) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(accessCode)) {
             missingParameters.add("accessCode");
@@ -148,7 +169,12 @@ public class AccessApi extends BaseApi {
         if (StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
         }
-
+        if (startDate == null) {
+            missingParameters.add("startDate");
+        }
+        if (endDate == null) {
+            missingParameters.add("endDate");
+        }
         handleMissingParameters();
 
         Subscription subscription = subscriptionService.findByCode(subscriptionCode);
@@ -156,7 +182,7 @@ public class AccessApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
 
-        Access access = accessService.findByUserIdAndSubscription(accessCode, subscription);
+        Access access = accessService.findByUserIdAndSubscription(accessCode, subscription, startDate, endDate);
         if (access == null) {
             throw new EntityDoesNotExistsException(Access.class, accessCode);
         }
@@ -202,7 +228,7 @@ public class AccessApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
         }
 
-        Access access = accessService.findByUserIdAndSubscription(postData.getCode(), subscription);
+        Access access = accessService.findByUserIdAndSubscription(postData.getCode(), subscription, postData.getStartDate(), postData.getEndDate());
 
         if (access == null) {
             create(postData);
@@ -219,7 +245,7 @@ public class AccessApi extends BaseApi {
     public void createOrUpdatePartial(AccessDto accessDto) throws MeveoApiException, BusinessException {
         AccessDto existedAccessDto = null;
         try {
-            existedAccessDto = find(accessDto.getCode(), accessDto.getSubscription());
+            existedAccessDto = find(accessDto.getCode(), accessDto.getSubscription(), accessDto.getStartDate(), accessDto.getEndDate());
         } catch (Exception e) {
             existedAccessDto = null;
         }
@@ -253,13 +279,19 @@ public class AccessApi extends BaseApi {
      * @throws MissingParameterException Missing parameters
      * @throws BusinessException A general business exception
      */
-    public void enableOrDisable(String accessCode, String subscriptionCode, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
+    public void enableOrDisable(String accessCode, String subscriptionCode, Date startDate, Date endDate, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
 
         if (StringUtils.isBlank(accessCode)) {
             missingParameters.add("accessCode");
         }
         if (StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
+        }
+        if (startDate == null) {
+            missingParameters.add("startDate");
+        }
+        if (endDate == null) {
+            missingParameters.add("endDate");
         }
 
         handleMissingParameters();
@@ -269,7 +301,7 @@ public class AccessApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
 
-        Access access = accessService.findByUserIdAndSubscription(accessCode, subscription);
+        Access access = accessService.findByUserIdAndSubscription(accessCode, subscription, startDate, endDate);
         if (access == null) {
             throw new EntityDoesNotExistsException(Access.class, accessCode);
         }
