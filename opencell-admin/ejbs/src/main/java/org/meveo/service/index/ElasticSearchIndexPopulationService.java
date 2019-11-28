@@ -158,11 +158,12 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
         StringBuilder selectQuery = new StringBuilder("select e from ")
                 .append(classname)
-                .append(" e where e.id>")
+                .append(" e where e.id >")
                 .append(" :fromId")
                 .append(" order by e.id");
-        Query query = getEntityManager().createQuery(selectQuery.toString()).setParameter("fromId", fromId);
-        query.setMaxResults(pageSize);
+        Query query = getEntityManager().createQuery(selectQuery.toString())
+                .setParameter("fromId", ((Number) fromId).longValue())
+                .setMaxResults(pageSize);
 
         List<? extends ISearchable> entities = query.getResultList();
         int found = entities.size();
@@ -796,13 +797,13 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     public Object[] populateIndexFromNativeTable(String tableName, Object fromId, int pageSize, ReindexingStatistics statistics) throws BusinessException {
 
         Session session = getEntityManager().unwrap(Session.class);
-        StringBuilder selectQuery = new StringBuilder("select e from ")
+        StringBuilder selectQuery = new StringBuilder("select * from ")
                 .append(tableName)
-                .append(" e where e.id>")
+                .append(" e where e.id >")
                 .append(" :fromId")
                 .append(" order by e.id");
         SQLQuery query = session.createSQLQuery(selectQuery.toString());
-        query.setParameter("fromId", fromId);
+        query.setParameter("fromId", ((Number) fromId).longValue());
         query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
         if (pageSize > -1) {
             query.setMaxResults(pageSize);
