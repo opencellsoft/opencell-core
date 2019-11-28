@@ -152,7 +152,8 @@ public class ElasticSearchConfiguration implements Serializable {
 
                     for (Class<?> classToIndex : clazzes) {
 
-                        if (!ISearchable.class.isAssignableFrom(classToIndex) || Modifier.isAbstract(classToIndex.getModifiers())) {
+                        if (!ISearchable.class.isAssignableFrom(classToIndex) || Modifier.isAbstract(classToIndex.getModifiers())
+                                || classToIndex.getEnclosingClass() != null) { //Ignoring inner classes
                             continue;
                         }
 
