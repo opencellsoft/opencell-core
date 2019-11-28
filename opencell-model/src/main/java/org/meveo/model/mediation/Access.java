@@ -57,7 +57,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "Access", inheritCFValuesFrom = "subscription")
 @ExportIdentifier({ "accessUserId", "subscription.code" })
-@Table(name = "medina_access", uniqueConstraints = { @UniqueConstraint(columnNames = { "acces_user_id", "subscription_id" }) })
+@Table(name = "medina_access", uniqueConstraints = { @UniqueConstraint(columnNames = { "acces_user_id", "subscription_id", "start_date", "end_date" }) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "medina_access_seq"), })
 @NamedQueries({

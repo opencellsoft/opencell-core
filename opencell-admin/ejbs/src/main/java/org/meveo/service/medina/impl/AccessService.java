@@ -18,6 +18,7 @@
  */
 package org.meveo.service.medina.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -42,26 +43,78 @@ public class AccessService extends PersistenceService<Access> {
         return getEntityManager().createNamedQuery("Access.getAccessesByUserId", Access.class).setParameter("accessUserId", accessUserId).getResultList();
     }
 
-    public boolean isDuplicate(Access access) {
-        String stringQuery = "SELECT COUNT(*) FROM " + Access.class.getName() + " a WHERE a.accessUserId=:accessUserId AND a.subscription.id=:subscriptionId";
-        Query query = getEntityManager().createQuery(stringQuery);
-        query.setParameter("accessUserId", access.getAccessUserId());
-        query.setParameter("subscriptionId", access.getSubscription().getId());
-        query.setHint("org.hibernate.flushMode", "NEVER");
-        return ((Long) query.getSingleResult()).intValue() != 0;
+    public boolean isDuplicateAndOverlaps(Access access) {
+        List<Access> accesses = retreiveAccessByUserIdAndSubscription(access.getAccessUserId(), access.getSubscription());
+
+        if(accesses.isEmpty()){
+            return false;
+        }else if(access.getStartDate() == null && access.getEndDate() == null){
+            return true;
+        }
+
+        for (Access element : accesses){
+            if((access.getStartDate() != null && isDateBetween(access.getStartDate(), element.getStartDate(), element.getEndDate()))
+                    || (access.getEndDate() != null && isDateBetween(access.getEndDate(), element.getStartDate(), element.getEndDate()))){
+                return true;
+            }
+        }
+        return false;
     }
 
-    public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription) {
-        try {
-            QueryBuilder qb = new QueryBuilder(Access.class, "a");
-            qb.addCriterion("accessUserId", "=", accessUserId, false);
-            qb.addCriterionEntity("subscription", subscription);
-            return (Access) qb.getQuery(getEntityManager()).getSingleResult();
+    private List<Access> retreiveAccessByUserIdAndSubscription(String accessUserId, Subscription subscription) {
+        String selectAccessByUserIdSubscriptionIdStartEndDateQuery ="SELECT a FROM " + Access.class.getName() +" a"
+                + " WHERE a.accessUserId=:accessUserId AND a.subscription.id=:subscriptionId";
+        Query query = getEntityManager().createQuery(selectAccessByUserIdSubscriptionIdStartEndDateQuery);
+        query.setParameter("accessUserId", accessUserId);
+        query.setParameter("subscriptionId", subscription.getId());
+        return query.getResultList();
+    }
 
+    @Deprecated
+    public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription) {
+        return findByUserIdAndSubscription(accessUserId, subscription, new Date(), new Date());
+    }
+
+    public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription, Date date) {
+        return findByUserIdAndSubscription(accessUserId, subscription, date, date);
+    }
+
+    public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription, Date startDate, Date endDate) {
+        try {
+            List<Access> accesses = retreiveAccessByUserIdAndSubscription(accessUserId, subscription);
+            for (Object resultElement : accesses){
+                Access access = (Access) resultElement;
+                if(isEqualsOrOverlaps(startDate, endDate, access)){
+                    return access;
+                }
+            }
+            return null;
         } catch (NoResultException e) {
             log.warn("no result found");
             return null;
         }
+    }
+
+    private boolean isEqualsOrOverlaps(Date startDate, Date endDate, Access access2){
+        if(access2.getStartDate() == null && access2.getEndDate() == null){
+            return true;
+        }
+        if(startDate != null){
+            return isDateBetween(startDate, access2.getStartDate(), access2.getEndDate())
+                    ? endDate == null || isDateBetween(endDate, access2.getStartDate(), access2.getEndDate())
+                    : false;
+        }else if(endDate != null){
+            return access2.getStartDate() != null && endDate.after(access2.getStartDate());
+        }
+        return true;
+    }
+
+    private boolean isDateBetween(Date date, Date startDate, Date endDate) {
+        return ((startDate != null && (startDate.getTime() == date.getTime() || startDate.before(date)))
+                && (endDate != null && (endDate.getTime() == date.getTime() || endDate.after(date))))
+                || (endDate == null && startDate == null)
+                || (startDate != null && endDate == null && (startDate.getTime() == date.getTime() || startDate.before(date)))
+                || (endDate != null && startDate == null && (endDate.getTime() == date.getTime() || endDate.after(date)));
     }
 
     @SuppressWarnings("unchecked")
