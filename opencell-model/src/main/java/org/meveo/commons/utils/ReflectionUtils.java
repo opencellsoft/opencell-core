@@ -185,7 +185,7 @@ public class ReflectionUtils {
             return classname;
         }
 
-        pos = classname.indexOf("$$");
+        pos = classname.indexOf("$");
         if (pos > 0) {
             classname = classname.substring(0, pos);
         }
