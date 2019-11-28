@@ -1,0 +1,10 @@
+{
+            "code": "TEST",
+            "jobTemplate": "SepaDirectDebitJob",
+            "jobCategory": "ACCOUNT_RECEIVABLES",
+            "customFields": {
+               "customField":[{
+                  "code": "SepaJob_ddRequestBuilder"  }
+            ]
+         }
+            }  
