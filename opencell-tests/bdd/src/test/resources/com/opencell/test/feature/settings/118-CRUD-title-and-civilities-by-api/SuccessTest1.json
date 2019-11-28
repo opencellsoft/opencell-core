@@ -1,0 +1,11 @@
+{
+    "code": "TEST",
+    "description": "Title and civilities test EDIT",
+    "languageDescriptions": [
+        {
+            "languageCode": "FRA",
+            "description": "Test"
+        }
+    ],
+    "isCompany": "false"
+}

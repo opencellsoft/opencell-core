@@ -1,0 +1,28 @@
+{
+    "code": "TEST",
+    "customerAccount": "TEST",
+    "description": "test_billing_account_edit",
+    "name": {
+        "title": "MR",
+        "firstName": "Ben",
+        "lastName": "Ohara"
+    },
+    "country": "FR",
+    "language": "FRA",
+    "address": {
+        "address1": "14 rue Crespin du Gast",
+        "address2": null,
+        "address3": null,
+        "zipCode": "75011",
+        "city": "PARIS",
+        "country": "FR",
+        "state": "Paris Area"
+    },
+    "contactInformation": {
+        "email": "ben.ohara@opencellsoft.com",
+        "phone": null,
+        "mobile": null,
+        "fax": null
+    },
+    "billingCycle": "BC_CLASSIC_MONTHLY_1ST"
+}
