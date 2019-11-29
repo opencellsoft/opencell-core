@@ -195,7 +195,7 @@ public class ServiceSingleton {
         seller = seller.findSellerForInvoiceNumberingSequence(cfName, invoiceDate, invoiceType);
 
         InvoiceSequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
-
+        
         try {
             sequence = (InvoiceSequence) BeanUtils.cloneBean(sequence);
             return sequence;
