@@ -1,32 +1,33 @@
+#!/usr/bin/env groovy
 pipeline {
-    parameters {
-        string(name: 'branch', description: 'Branch', defaultValue: "9.X")
+    environment {
+        URL_SONAR = credentials('Sonar_URL')
+        CREDENTIAL_SONAR = credentials('Sonar_ID')
+        JAVA_VERSION = sh (
+            script: '''grep '<java.version>' ./pom.xml | sed -n 's:.*<java.version>\\(.*\\)</java.version>.*:\\1:p' ''',
+            returnStdout: true
+            ).trim()
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: ''))
     }
-    agent {
-        docker {
-            image 'maven:3-jdk-11' 
-            args '-v /root/.m2:/root/.m2' 
-        }
-    }
-    stages {
-        stage("Checkout Meveo") { 
+    agent any
+        stage('Build') {
             steps {
-                echo "flag: ${params.branch}"
-                git branch: "${params.branch}",
-                url: 'git://git.assembla.com/meveo.git'
-            }
-        }
-        stage('Build') { 
-            steps {
-                sh 'mvn -B -Dmaven.test.skip=true clean package' 
+                script {
+                    docker.image("maven:3-jdk-$env.JAVA_VERSION").inside('-v /root/.m2:/root/.m2') {
+                        sh 'mvn -B -Dmaven.test.skip=true clean package'
+                    }
+                }
             }
         }
         stage('Test') {
             steps {
-                sh 'mvn test'
+                script {
+                    docker.image("maven:3-jdk-$env.JAVA_VERSION").inside('-v /root/.m2:/root/.m2') {
+                        sh 'mvn test'
+                    }
+                }
             }
             post {
                 always {
@@ -34,11 +35,27 @@ pipeline {
                 }
             }
         }
-        stage('Import-SQL Build') {
+        stage('Import-SQL') {
             steps {
-                sh 'rm -fr databasechangelog.csv'
-                sh 'mvn -f opencell-model/pom.xml -Ddb.url=offline:postgresql?outputLiquibaseSql=true -Prebuild liquibase:updateSQL'
-                sh "cp $WORKSPACE/opencell-model/target/liquibase/migrate.sql $WORKSPACE/opencell-model/target/liquibase/import-postgres.sql"
+                script {
+                    docker.image("maven:3-jdk-$env.JAVA_VERSION").inside('-v /root/.m2:/root/.m2') {
+                        sh 'rm -fr databasechangelog.csv'
+                        sh 'mvn -f opencell-model/pom.xml -Ddb.url=offline:postgresql?outputLiquibaseSql=true -Prebuild liquibase:updateSQL'
+                        sh "cp $WORKSPACE/opencell-model/target/liquibase/migrate.sql $WORKSPACE/opencell-model/target/liquibase/import-postgres.sql"
+                    }
+                }
+            }
+        }
+        stage('Sonar') {
+            when { branch "integration" }
+            steps {
+                script {
+                    docker.image("maven:3-jdk-$env.JAVA_VERSION").inside('-v /root/.m2:/root/.m2') {
+                        sh 'mvn sonar:sonar ' +
+                        '-Dsonar.host.url=${URL_SONAR} ' +
+                        '-Dsonar.login=${CREDENTIAL_SONAR} '
+                    }
+                }
             }
         }
     }
