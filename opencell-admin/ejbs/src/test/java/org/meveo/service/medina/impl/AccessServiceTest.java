@@ -91,19 +91,6 @@ public class AccessServiceTest {
         assertTrue(accessService.isDuplicateAndOverlaps(access));
     }
 
-    public boolean isDuplicateAndOverlaps(Access access, Access access2){
-        if(access.getStartDate() != null){
-            return isDateBetween(access.getStartDate(), access2.getStartDate(), access2.getEndDate()) || access.getEndDate() != null ?
-                    isDateBetween(access.getEndDate(), access2.getStartDate(), access2.getEndDate()) : access.getStartDate().before(access2.getStartDate());
-        }else if(access.getEndDate() != null){
-            return access.getEndDate().after(access2.getStartDate());
-        }
-        return true;
-    }
-    private boolean isDateBetween(Date date, Date startDate, Date endDate) {
-        return ((startDate != null && startDate.before(date)) && (endDate != null && endDate.after(date)));
-    }
-
     @Test
     public void isDuplicateAndOverlaps2() {
         Access access = getAccess(null, null);
@@ -159,19 +146,6 @@ public class AccessServiceTest {
     }
 
     @Test
-    public void findByUserIdAndSubscription3() {
-        Date usageDate = parse("09/11/2019");
-        Subscription subscription= new Subscription();
-        subscription.setId(1L);
-        Access dbAccess1 = getAccess("01/11/2019", "01/12/2019");
-        when(accessService.findByUserIdAndSubscription("AccessUserId", subscription, usageDate)).thenCallRealMethod();
-        when(accessService.findByUserIdAndSubscription("AccessUserId", subscription, usageDate, usageDate)).thenCallRealMethod();
-        when(query.getResultList()).thenReturn(Arrays.asList(dbAccess1));
-        Access byUserIdAndSubscription = accessService.findByUserIdAndSubscription("AccessUserId", subscription, usageDate);
-        assertNotNull(byUserIdAndSubscription);
-    }
-
-    @Test
     public void findByUserIdAndSubscription2() {
         Access access = getAccess("01/11/2019", null);
         Access dbAccess1 = getAccess("01/10/2019", null);
@@ -182,6 +156,83 @@ public class AccessServiceTest {
         assertNotNull(byUserIdAndSubscription);
     }
 
+    @Test
+    public void findByUserIdAndSubscription3() {
+        Date usageDate = parse("09/11/2019");
+        Subscription subscription= new Subscription();
+        subscription.setId(1L);
+        Access dbAccess1 = getAccess("01/11/2019", "01/12/2019");
+        when(accessService.findByUserIdAndSubscription("AccessUserId", subscription, usageDate)).thenCallRealMethod();
+        when(query.getResultList()).thenReturn(Arrays.asList(dbAccess1));
+        Access byUserIdAndSubscription = accessService.findByUserIdAndSubscription("AccessUserId", subscription, usageDate);
+        assertNotNull(byUserIdAndSubscription);
+    }
+
+    @Test
+    public void findByUserIdAndSubscription4() {
+        Access access = getAccess("01/11/2019", null);
+        Access dbAccess1 = getAccess(null, null);
+        when(accessService.findByUserIdAndSubscription(access.getAccessUserId(), access.getSubscription(), access.getStartDate(), access.getEndDate())).thenCallRealMethod();
+        when(query.getResultList()).thenReturn(Arrays.asList(dbAccess1));
+
+        Access byUserIdAndSubscription = accessService.findByUserIdAndSubscription(access.getAccessUserId(), access.getSubscription(), access.getStartDate(), access.getEndDate());
+        assertNotNull(byUserIdAndSubscription);
+    }
+
+    @Test
+    public void findByUserIdAndSubscription5() {
+        Access access = getAccess(null, null);
+        Access dbAccess1 = getAccess(null, null);
+        when(accessService.findByUserIdAndSubscription(access.getAccessUserId(), access.getSubscription(), access.getStartDate(), access.getEndDate())).thenCallRealMethod();
+        when(query.getResultList()).thenReturn(Arrays.asList(dbAccess1));
+
+        Access byUserIdAndSubscription = accessService.findByUserIdAndSubscription(access.getAccessUserId(), access.getSubscription(), access.getStartDate(), access.getEndDate());
+        assertNotNull(byUserIdAndSubscription);
+    }
+
+    @Test
+    public void findByUserIdAndSubscription6() {
+        Access access = getAccess("01/11/2019", "01/12/2019");
+        Access dbAccess1 = getAccess(null, null);
+        when(accessService.findByUserIdAndSubscription(access.getAccessUserId(), access.getSubscription(), access.getStartDate(), access.getEndDate())).thenCallRealMethod();
+        when(query.getResultList()).thenReturn(Arrays.asList(dbAccess1));
+
+        Access byUserIdAndSubscription = accessService.findByUserIdAndSubscription(access.getAccessUserId(), access.getSubscription(), access.getStartDate(), access.getEndDate());
+        assertNotNull(byUserIdAndSubscription);
+    }
+
+    @Test
+    public void findByUserIdAndSubscription7() {
+        Access access = getAccess("01/11/2019", "01/12/2019");
+        Access dbAccess1 = getAccess(null, null);
+        when(accessService.findByUserIdAndSubscription(access.getAccessUserId(), access.getSubscription(), access.getStartDate())).thenCallRealMethod();
+        when(query.getResultList()).thenReturn(Arrays.asList(dbAccess1));
+
+        Access byUserIdAndSubscription = accessService.findByUserIdAndSubscription(access.getAccessUserId(), access.getSubscription(), access.getStartDate());
+        assertNotNull(byUserIdAndSubscription);
+    }
+
+    @Test
+    public void findByUserIdAndSubscription8() {
+        Access access = getAccess("01/11/2019", "01/12/2019");
+        Access dbAccess1 = getAccess("01/11/2019", null);
+        when(accessService.findByUserIdAndSubscription(access.getAccessUserId(), access.getSubscription(), access.getStartDate())).thenCallRealMethod();
+        when(query.getResultList()).thenReturn(Arrays.asList(dbAccess1));
+
+        Access byUserIdAndSubscription = accessService.findByUserIdAndSubscription(access.getAccessUserId(), access.getSubscription(), access.getStartDate());
+        assertNotNull(byUserIdAndSubscription);
+    }
+
+    @Test
+    public void findByUserIdAndSubscription9() {
+        Access access = getAccess("01/11/2019", "01/12/2019");
+        Access dbAccess1 = getAccess(null, "01/12/2019");
+        when(accessService.findByUserIdAndSubscription(access.getAccessUserId(), access.getSubscription(), access.getStartDate())).thenCallRealMethod();
+        when(query.getResultList()).thenReturn(Arrays.asList(dbAccess1));
+
+        Access byUserIdAndSubscription = accessService.findByUserIdAndSubscription(access.getAccessUserId(), access.getSubscription(), access.getStartDate());
+        assertNotNull(byUserIdAndSubscription);
+    }
 
     private Access getAccess(String startDate, String endDate) {
         Subscription subscription= new Subscription();
