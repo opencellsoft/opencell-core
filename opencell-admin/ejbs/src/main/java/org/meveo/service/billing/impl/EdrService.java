@@ -289,4 +289,23 @@ public class EdrService extends PersistenceService<EDR> {
             create(edr);
         }
     }
+
+	/**
+	 * @param firstTransactionDate
+	 * @param lastTransactionDate
+	 * @param lastId
+	 * @param maxResult
+	 * @param formattedStatus
+	 * @return
+	 */
+	public List<EDR> getEdrsBetweenTwoDatesByStatus(Date firstTransactionDate, Date lastTransactionDate, long lastId, int maxResult, List<EDRStatusEnum> formattedStatus) {
+		return getEntityManager().createNamedQuery("EDR.getEdrsBetweenTwoDateByStatus", EDR.class)
+				.setParameter("status", formattedStatus)
+                .setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate)
+                .setParameter("lastId", lastId)
+                .setMaxResults(maxResult)
+                .getResultList();
+	}
+	
 }
