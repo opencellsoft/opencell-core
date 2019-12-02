@@ -1,0 +1,26 @@
+{
+    "code": "MISSING",
+    "customerAccount": "TEST",
+    "description": "test_billing_account",
+    "name": {
+        "title": "MR",
+        "firstName": "Ben",
+        "lastName": "Ohara"
+    },
+    "address": {
+        "address1": "14 rue Crespin du Gast",
+        "address2": null,
+        "address3": null,
+        "zipCode": "75011",
+        "city": "PARIS",
+        "country": "FR",
+        "state": "Paris Area"
+    },
+    "contactInformation": {
+        "email": "ben.ohara@opencellsoft.com",
+        "phone": null,
+        "mobile": null,
+        "fax": null
+    },
+    "billingCycle": "BC_CLASSIC_MONTHLY_1ST"
+}
