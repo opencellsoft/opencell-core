@@ -307,5 +307,16 @@ public class EdrService extends PersistenceService<EDR> {
                 .setMaxResults(maxResult)
                 .getResultList();
 	}
+
+	public long purge(Date firstTransactionDate, Date lastTransactionDate, List<EDRStatusEnum> targetStatusList) {
+		getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletionByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
+				.setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+
+		getEntityManager().createNamedQuery("EDR.updateRatedTransactionForSafeDeletionByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
+				.setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+
+		return getEntityManager().createNamedQuery("EDR.deleteEdrBetweenTwoDateByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
+				.setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+	}
 	
 }

@@ -2151,4 +2151,12 @@
         <dropUniqueConstraint tableName="medina_access" constraintName="uk_lca62y5gn9qo1e6jr84i9w3lr"/>
         <addUniqueConstraint columnNames="acces_user_id, subscription_id, start_date, end_date" constraintName="uk_lca62y5gn9qo1e6jr84i9w3lr" deferrable="false" disabled="false" initiallyDeferred="false" tableName="medina_access" />
     </changeSet>
+    
+    <changeSet id="#4804_021219" author="MohamedElYoussoufi" dbms="postgresql">
+    	<dropForeignKeyConstraint baseTableName="billing_wallet_operation" constraintName="fk_j3ntuqkj79m0fgdwa3anib1nk"/>
+    	<addForeignKeyConstraint baseColumnNames="reratedwalletoperation_id" baseTableName="billing_wallet_operation"
+                             constraintName="fk_wo_rerated_wo" onDelete="CASCADE" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="billing_wallet_operation" />
+    </changeSet>
+    
 </databaseChangeLog>
