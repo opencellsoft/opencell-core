@@ -123,6 +123,10 @@ public class CustomFieldInstanceService extends BaseService {
         Query query = null;
         Class<?> clazz = trimTableNameAndGetClass(classNameAndCode);
 
+        StringBuilder selectQuery = new StringBuilder("select e from ")
+                .append(classNameAndCode)
+                .append(" e where ");
+        
         if (classNameAndCode.startsWith(CustomEntityTemplate.class.getName())) {
             String cetCode = CustomFieldTemplate.retrieveCetCode(classNameAndCode);
             CustomEntityTemplate cet = customEntityTemplateService.findByCode(cetCode);
@@ -136,13 +140,13 @@ public class CustomFieldInstanceService extends BaseService {
             	return result.stream().map(record-> initTempEntityInstance(record.get("id"),cet.getDbTablename())).collect(Collectors.toList());
             }
         } else if (clazz.isInstance(BusinessEntity.class)) {
-            query = getEntityManager().createQuery("select e from " + classNameAndCode + " e where lower(e.code) like :code");
+            query = getEntityManager().createQuery(selectQuery.append("lower(e.code) like :code").toString());
 
         } else {
             ReferenceIdentifierCode referenceIdentifier = clazz.getAnnotation(ReferenceIdentifierCode.class);
             if (referenceIdentifier != null) {
                 String field = referenceIdentifier.value();
-                query = getEntityManager().createQuery("select e from " + classNameAndCode + " e where lower(cast(e." + field + " as string) ) like :code");
+                query = getEntityManager().createQuery(selectQuery.append("lower(cast(e." + field + " as string) ) like :code").toString());
             }
 
             ReferenceIdentifierQuery referenceIdentifierQuery = clazz.getAnnotation(ReferenceIdentifierQuery.class);

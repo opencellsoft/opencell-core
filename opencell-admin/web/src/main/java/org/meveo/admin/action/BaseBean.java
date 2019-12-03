@@ -1521,19 +1521,26 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
             boolean isBusinessEntity = BusinessEntity.class.isAssignableFrom(classFieldInfo.getKey());
 
-            String sql = "select " + (isBusinessEntity ? "code" : "id") + " from " + classFieldInfo.getKey().getName() + " where ";
+            StringBuilder sql = new StringBuilder("select ")
+                    .append(isBusinessEntity ? "code" : "id")
+                    .append(" from ")
+                    .append(classFieldInfo.getKey().getName())
+                    .append(" where ");
+            
             boolean fieldAddedToSql = false;
             for (Field field : classFieldInfo.getValue()) {
                 // For now lets ignore list type fields
                 if (field.getType() == entityClass) {
-                    sql = sql + (fieldAddedToSql ? " or " : " ") + field.getName() + "=:id";
+                    sql.append(fieldAddedToSql ? " or " : " ")
+                    .append(field.getName())
+                    .append("=:id");
                     fieldAddedToSql = true;
                 }
             }
 
             if (fieldAddedToSql) {
 
-                List entitiesMatched = getPersistenceService().getEntityManager().createQuery(sql).setParameter("id", referencedEntity).setMaxResults(10).getResultList();
+                List entitiesMatched = getPersistenceService().getEntityManager().createQuery(sql.toString()).setParameter("id", referencedEntity).setMaxResults(10).getResultList();
                 if (!entitiesMatched.isEmpty()) {
 
                     matchedEntityInfo = (matchedEntityInfo == null ? "" : matchedEntityInfo + "; ") + ReflectionUtils.getHumanClassName(classFieldInfo.getKey().getSimpleName())

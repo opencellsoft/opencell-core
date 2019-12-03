@@ -82,22 +82,22 @@ public class NativePersistenceService extends BaseService {
     /**
      * ID field name
      */
-    public static String FIELD_ID = "id";
+    public static final String FIELD_ID = "id";
 
     /**
      * Valid from field name
      */
-    public static String FIELD_VALID_FROM = "valid_from";
+    public static final String FIELD_VALID_FROM = "valid_from";
 
     /**
      * Validity priority field name
      */
-    public static String FIELD_VALID_PRIORITY = "valid_priority";
+    public static final String FIELD_VALID_PRIORITY = "valid_priority";
 
     /**
      * Disabled field name
      */
-    public static String FIELD_DISABLED = "disabled";
+    public static final String FIELD_DISABLED = "disabled";
 
     @Inject
     @MeveoJpa
@@ -128,7 +128,10 @@ public class NativePersistenceService extends BaseService {
 
         try {
             Session session = getEntityManager().unwrap(Session.class);
-            SQLQuery query = session.createSQLQuery("select * from " + tableName + " e where id=:id");
+            StringBuilder selectQuery = new StringBuilder("select * from ")
+                    .append(tableName)
+                    .append(" e where id=:id");
+            SQLQuery query = session.createSQLQuery(selectQuery.toString());
             query.setParameter("id", id);
             query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
 
@@ -476,11 +479,17 @@ public class NativePersistenceService extends BaseService {
      */
     public void updateValue(String tableName, Long id, String fieldName, Object value) throws BusinessException {
 
+        StringBuilder updateQuery = new StringBuilder("update ")
+                .append(tableName)
+                .append(" set ")
+                .append(fieldName)
+                .append(value == null ? "= null" : "= :" + fieldName)
+                .append(" where id= :id");
         try {
             if (value == null) {
-                getEntityManager().createNativeQuery("update " + tableName + " set " + fieldName + "= null where id=" + id).executeUpdate();
+                getEntityManager().createNativeQuery(updateQuery.toString()).setParameter("id", id).executeUpdate();
             } else {
-                getEntityManager().createNativeQuery("update " + tableName + " set " + fieldName + "= :" + fieldName + " where id=" + id).setParameter(fieldName, value)
+                getEntityManager().createNativeQuery(updateQuery.toString()).setParameter(fieldName, value).setParameter("id", id)
                     .executeUpdate();
             }
 
@@ -499,7 +508,12 @@ public class NativePersistenceService extends BaseService {
      */
     public void disable(String tableName, Long id) throws BusinessException {
 
-        getEntityManager().createNativeQuery("update " + tableName + " set disabled=1 where id=" + id).executeUpdate();
+        StringBuilder updateQuery = new StringBuilder("update ")
+                .append(tableName)
+                .append(" set ")
+                .append(FIELD_DISABLED)
+                .append("=1 where id= :id");
+        getEntityManager().createNativeQuery(updateQuery.toString()).setParameter("id", id).executeUpdate();
     }
 
     /**
@@ -511,7 +525,12 @@ public class NativePersistenceService extends BaseService {
      */
     public void disable(String tableName, Set<Long> ids) throws BusinessException {
 
-        getEntityManager().createNativeQuery("update " + tableName + " set disabled=1 where id in :ids").setParameter("ids", ids).executeUpdate();
+        StringBuilder updateQuery = new StringBuilder("update ")
+                .append(tableName)
+                .append(" set ")
+                .append(FIELD_DISABLED)
+                .append("=1 where id in :ids");
+        getEntityManager().createNativeQuery(updateQuery.toString()).setParameter("ids", ids).executeUpdate();
     }
 
     /**
@@ -523,7 +542,12 @@ public class NativePersistenceService extends BaseService {
      */
     public void enable(String tableName, Long id) throws BusinessException {
 
-        getEntityManager().createNativeQuery("update " + tableName + " set disabled=0 where id=" + id).executeUpdate();
+        StringBuilder updateQuery = new StringBuilder("update ")
+                .append(tableName)
+                .append(" set ")
+                .append(FIELD_DISABLED)
+                .append("=0 where id= :id");
+        getEntityManager().createNativeQuery(updateQuery.toString()).setParameter("id", id).executeUpdate();
     }
 
     /**
@@ -535,7 +559,12 @@ public class NativePersistenceService extends BaseService {
      */
     public void enable(String tableName, Set<Long> ids) throws BusinessException {
 
-        getEntityManager().createNativeQuery("update " + tableName + " set disabled=0 where id in :ids").setParameter("ids", ids).executeUpdate();
+        StringBuilder updateQuery = new StringBuilder("update ")
+                .append(tableName)
+                .append(" set ")
+                .append(FIELD_DISABLED)
+                .append("=0 where id in :ids");
+        getEntityManager().createNativeQuery(updateQuery.toString()).setParameter("ids", ids).executeUpdate();
     }
 
     /**
@@ -547,7 +576,10 @@ public class NativePersistenceService extends BaseService {
      */
     public void remove(String tableName, Long id) throws BusinessException {
         this.deletionService.checkTablenotreferenced(tableName, id);
-        getEntityManager().createNativeQuery("delete from " + tableName + " where id=" + id).executeUpdate();
+        StringBuilder deleteQuery = new StringBuilder("delete from ")
+                .append(tableName)
+                .append(" where id= :id");
+        getEntityManager().createNativeQuery(deleteQuery.toString()).setParameter("id", id).executeUpdate();
     }
 
     /**
@@ -559,7 +591,10 @@ public class NativePersistenceService extends BaseService {
      */
     public void remove(String tableName, Set<Long> ids) throws BusinessException {
         ids.stream().forEach(id -> deletionService.checkTablenotreferenced(tableName, id));
-        getEntityManager().createNativeQuery("delete from " + tableName + " where id in:ids").setParameter("ids", ids).executeUpdate();
+        StringBuilder deleteQuery = new StringBuilder("delete from ")
+                .append(tableName)
+                .append(" where id in:ids");
+        getEntityManager().createNativeQuery(deleteQuery.toString()).setParameter("ids", ids).executeUpdate();
 
     }
 
@@ -570,7 +605,9 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void remove(String tableName) throws BusinessException {
-        getEntityManager().createNativeQuery("delete from " + tableName).executeUpdate();
+        StringBuilder deleteQuery = new StringBuilder("delete from ")
+                .append(tableName);
+        getEntityManager().createNativeQuery(deleteQuery.toString()).executeUpdate();
 
     }
 
@@ -594,7 +631,7 @@ public class NativePersistenceService extends BaseService {
     public List<Map<String, Object>> listActive(String tableName) {
 
         Map<String, Object> filters = new HashMap<>();
-        filters.put("disabled", 0);
+        filters.put(FIELD_DISABLED, 0);
         return list(tableName, new PaginationConfiguration(filters));
     }
 
@@ -1213,7 +1250,14 @@ public class NativePersistenceService extends BaseService {
 
 	public boolean validateRecordExistanceByTableName(String tableName,Long id) {
 		Session session = getEntityManager().unwrap(Session.class);
-        SQLQuery query = session.createSQLQuery("select "+FIELD_ID+" from " + tableName + " e where "+FIELD_ID+"=:id");
+		StringBuilder selectQuery = new StringBuilder("select ")
+                .append(FIELD_ID)
+                .append(" from ")
+                .append(tableName)
+                .append(" e where ")
+                .append(FIELD_ID)
+                .append("=:id");
+		SQLQuery query = session.createSQLQuery(selectQuery.toString());
         query.setParameter("id", id);
         return query.uniqueResult()!=null;
 	}
@@ -1222,8 +1266,14 @@ public class NativePersistenceService extends BaseService {
 	@SuppressWarnings("unchecked")
 	public List<BigInteger> filterExistingRecordsOnTable(String tableName,List<Long> ids) {
 		Session session = getEntityManager().unwrap(Session.class);
-		
-        SQLQuery query = session.createSQLQuery("select "+FIELD_ID+" from " + tableName + " e where "+FIELD_ID+" in (:ids)");
+		StringBuilder selectQuery = new StringBuilder("select ")
+                .append(FIELD_ID)
+                .append(" from ")
+                .append(tableName)
+                .append(" e where ")
+                .append(FIELD_ID)
+                .append(" in (:ids)");
+        SQLQuery query = session.createSQLQuery(selectQuery.toString());
         query.setParameterList("ids", ids);
         return (List<BigInteger>)query.list();
 	}
