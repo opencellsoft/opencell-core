@@ -339,6 +339,29 @@ public class ReflectionUtils {
         return classes;
     }
     
+    /**
+     * Find subclasses of a certain class.
+     *
+     * @param parentClass Parent or interface class
+     * @param reflections Reflections object containing the package scan result
+     * @return A list of class objects
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static Set<Class<?>> getSubclasses(Class parentClass, Reflections reflections) {
+        return reflections.getSubTypesOf(parentClass);
+    }
+    
+    /**
+     * Get a new Reflection object instance.
+     *
+     * @param packageName package to scan
+     * @return A new Reflections object
+     */
+    public static Reflections getReflectionsInstance(String packageName) {
+        return new Reflections(packageName);
+    }
+    
+    
     public static Object getSubclassObjectByDiscriminatorValue(Class parentClass, String discriminatorValue) {
         Set<Class<?>> subClasses = getSubclasses(parentClass);
         Object result = null;

@@ -17,6 +17,8 @@ import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.dto.response.account.GetAccessResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
+import java.util.Date;
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -48,25 +50,52 @@ public interface AccessRs extends IBaseRs {
 
     /**
      * Search for an access with a given access code and subscription code.
-     * 
+     *
      * @param accessCode Access code
      * @param subscriptionCode Subscription code
      * @return Access
      */
     @GET
     @Path("/")
-    GetAccessResponseDto find(@QueryParam("accessCode") String accessCode, @QueryParam("subscriptionCode") String subscriptionCode);
+    @Deprecated
+    GetAccessResponseDto find(String accessCode, String subscriptionCode);
+
+    /**
+     * Search for an access with a given access code and subscription code.
+     *
+     * @param accessCode Access code
+     * @param subscriptionCode Subscription code
+     * @return Access
+     */
+    @GET
+    @Path("/")
+    GetAccessResponseDto find(String accessCode, String subscriptionCode, @QueryParam("usageDate") Date usageDate);
+
+    /**
+     * Search for an access with a given access code and subscription code.
+     * 
+     * @param accessCode Access code
+     * @param subscriptionCode Subscription code
+     * @param startDate Access startDate
+     * @param endDate Access endDate
+     * @return Access
+     */
+    @GET
+    @Path("/")
+    GetAccessResponseDto find(@QueryParam("accessCode") String accessCode, @QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("startDate") Date startDate, @QueryParam("endDate") Date endDate);
 
     /**
      * Remove an access with a given access code and subscription code.
      * 
      * @param accessCode Access code
      * @param subscriptionCode Subscription code
+     * @param startDate Access startDate
+     * @param endDate Access endDate
      * @return Request processing status
      */
     @DELETE
-    @Path("/{accessCode}/{subscriptionCode}")
-    ActionStatus remove(@PathParam("accessCode") String accessCode, @PathParam("subscriptionCode") String subscriptionCode);
+    @Path("/{accessCode}/{subscriptionCode}/{startDate}/{endDate}")
+    ActionStatus remove(@PathParam("accessCode") String accessCode, @PathParam("subscriptionCode") String subscriptionCode, @PathParam("startDate") Date startDate, @PathParam("endDate") Date endDate);
 
     /**
      * List Access filtered by subscriptionCode.
@@ -93,20 +122,24 @@ public interface AccessRs extends IBaseRs {
      * 
      * @param accessCode Access code
      * @param subscriptionCode Subscription code
+     * @param startDate Access startDate
+     * @param endDate Access endDate
      * @return Request processing status
      */
     @POST
-    @Path("/{accessCode}/{subscriptionCode}/enable")
-    ActionStatus enable(@PathParam("accessCode") String accessCode, @PathParam("subscriptionCode") String subscriptionCode);
+    @Path("/{accessCode}/{subscriptionCode}/{startDate}/{endDate}/enable")
+    ActionStatus enable(@PathParam("accessCode") String accessCode, @PathParam("subscriptionCode") String subscriptionCode, @PathParam("startDate") Date startDate, @PathParam("endDate") Date endDate);
 
     /**
      * Disable an Access point with a given access code and subscription code.
      * 
      * @param accessCode Access code
      * @param subscriptionCode Subscription code
+     * @param startDate Access startDate
+     * @param endDate Access endDate
      * @return Request processing status
      */
     @POST
-    @Path("/{accessCode}/{subscriptionCode}/disable")
-    ActionStatus disable(@PathParam("accessCode") String accessCode, @PathParam("subscriptionCode") String subscriptionCode);
+    @Path("/{accessCode}/{subscriptionCode}/{startDate}/{endDate}/disable")
+    ActionStatus disable(@PathParam("accessCode") String accessCode, @PathParam("subscriptionCode") String subscriptionCode, @PathParam("startDate") Date startDate, @PathParam("endDate") Date endDate);
 }

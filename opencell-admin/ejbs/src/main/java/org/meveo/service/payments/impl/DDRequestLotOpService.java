@@ -41,10 +41,14 @@ public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
     public List<DDRequestLotOp> getDDRequestOps(DDRequestBuilder ddRequestBuilder, Seller seller,PaymentOrRefundEnum paymentOrRefundEnum) {
         List<DDRequestLotOp> ddrequestOps = new ArrayList<DDRequestLotOp>();
 
+        StringBuilder selectQuery = new StringBuilder("from ")
+                .append(DDRequestLotOp.class.getSimpleName())
+                .append(" as p  left join fetch p.ddrequestLOT t where p.status=:statusIN and ")
+                .append("p.ddRequestBuilder=:builderIN and p.paymentOrRefundEnum=:paymentOrRefundEnumIN ")
+                .append(seller == null ? "" : " and  p.seller =:sellerIN");
         try {
             Query query = getEntityManager()
-                .createQuery("from " + DDRequestLotOp.class.getSimpleName() + " as p  left join fetch p.ddrequestLOT t where p.status=:statusIN and "
-                        + "p.ddRequestBuilder=:builderIN and p.paymentOrRefundEnum=:paymentOrRefundEnumIN " + (seller == null ? "" : " and  p.seller =:sellerIN"))
+                .createQuery(selectQuery.toString())
                 .setParameter("statusIN", DDRequestOpStatusEnum.WAIT).setParameter("builderIN", ddRequestBuilder)
                 .setParameter("paymentOrRefundEnumIN", paymentOrRefundEnum);
             if (seller != null) {

@@ -32,6 +32,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -112,6 +113,8 @@ public class ElasticSearchConfiguration implements Serializable {
 
         ObjectMapper mapper = new ObjectMapper();
 
+        Reflections reflections = ReflectionUtils.getReflectionsInstance("org.meveo");
+
         ParamBean paramBean = ParamBean.getInstance();
         String configFileParam = paramBean.getProperty("elasticsearch.config.file.path", "");
 
@@ -131,7 +134,6 @@ public class ElasticSearchConfiguration implements Serializable {
 
         // Load entity mapping to index, type and update type. In case configuration is provided for a parent class, configuration will be repeated for all subclasses as well.
         Iterator<Entry<String, JsonNode>> entityMappings = node.get("entityMapping").fields();
-
         while (entityMappings.hasNext()) {
 
             Entry<String, JsonNode> entityMappingInfo = entityMappings.next();
@@ -142,7 +144,7 @@ public class ElasticSearchConfiguration implements Serializable {
                 try {
                     Class clazz = Class.forName(classname);
 
-                    Set<Class<?>> clazzes = ReflectionUtils.getSubclasses(clazz);
+                    Set<Class<?>> clazzes = ReflectionUtils.getSubclasses(clazz, reflections);
                     if (clazzes == null) {
                         clazzes = new HashSet<>();
                     }
@@ -150,7 +152,8 @@ public class ElasticSearchConfiguration implements Serializable {
 
                     for (Class<?> classToIndex : clazzes) {
 
-                        if (!ISearchable.class.isAssignableFrom(classToIndex) || Modifier.isAbstract(classToIndex.getModifiers())) {
+                        if (!ISearchable.class.isAssignableFrom(classToIndex) || Modifier.isAbstract(classToIndex.getModifiers())
+                                || classToIndex.getEnclosingClass() != null) { //Ignoring inner classes
                             continue;
                         }
 
@@ -191,7 +194,7 @@ public class ElasticSearchConfiguration implements Serializable {
                 try {
                     Class clazz = Class.forName(entityFieldMappingInfo.getKey());
 
-                    Set<Class<?>> clazzes = ReflectionUtils.getSubclasses(clazz);
+                    Set<Class<?>> clazzes = ReflectionUtils.getSubclasses(clazz, reflections);
                     if (clazzes != null) {
                         for (Class<?> subclass : clazzes) {
                             classNamesOrDefault.add(subclass.getName());

@@ -47,16 +47,24 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
     public BigDecimal calculateRecordsBetweenDueMonth(Integer from, Integer to, String category) {
         log.info("calculateRecordsBetweenDueMonth({},{},{})", new Object[] {from, to, category });
         BigDecimal result = new BigDecimal(0);
-        String queryString = "select sum(unMatchingAmount) from " + getEntityClass().getSimpleName() + " where category=" + category + " and (status=0 or status=2)";
+        StringBuilder queryString = new StringBuilder("select sum(unMatchingAmount) from ")
+                .append(getEntityClass().getSimpleName())
+                .append(" where category= :category and (status=0 or status=2)");
 
         if (from != null) {
-            queryString += " and dueMonth >= " + from;
+            queryString.append(" and dueMonth >= :from");
         }
         if (to != null) {
-            queryString += " and dueMonth < " + to;
+            queryString.append(" and dueMonth < :to");
         }
         log.debug("calculateRecordsBetweenDueMonth: queryString={}", queryString);
-        Query query = getEntityManager().createQuery(queryString);
+        Query query = getEntityManager().createQuery(queryString.toString()).setParameter("category", category);
+        if (from != null) {
+            query.setParameter("from", from);
+        }
+        if (to != null) {
+            query.setParameter("to", to);
+        }
         if (query.getSingleResult() != null) {
             result = (BigDecimal) query.getSingleResult();
         }
@@ -74,17 +82,25 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
     public int countRecordsBetweenDueMonth(Integer from, Integer to, String category) {
         log.info("countRecordsBetweenDueMonth({},{},{})", new Object[] { from, to, category });
         int result = 0;
-        String queryString = "select count(*) from " + getEntityClass().getSimpleName() + " where category=" + category + " and (status=0 or status=2)";
+        StringBuilder queryString = new StringBuilder("select count(*) from ")
+                .append(getEntityClass().getSimpleName())
+                .append(" where category= :category and (status=0 or status=2)");
         if (from != null) {
-            queryString += " and dueMonth >= " + from;
+            queryString.append(" and dueMonth >= :from");
         }
         if (to != null) {
-            queryString += " and dueMonth < " + to;
+            queryString.append(" and dueMonth < :to");
         }
         log.debug("countRecordsBetweenDueMonth: queryString={}", queryString);
-        Query query = getEntityManager().createQuery(queryString);
+        Query query = getEntityManager().createQuery(queryString.toString()).setParameter("category", category);
         log.debug("countRecordsBetweenDueMonth: query={}", query);
         Object queryResult = query.getSingleResult();
+        if (from != null) {
+            query.setParameter("from", from);
+        }
+        if (to != null) {
+            query.setParameter("to", to);
+        }
         if (queryResult != null) {
             result = ((Long) queryResult).intValue();
         }
@@ -100,11 +116,11 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
 	public BigDecimal totalAmount(String category) {
 		log.info("totalAmount({})", category);
 		BigDecimal result = new BigDecimal(0);
-		String queryString = "select sum(unMatchingAmount) from "
-				+ getEntityClass().getSimpleName() + " where category=" + category
-				+ " and status=0  or status=2";
+		StringBuilder queryString = new StringBuilder("select sum(unMatchingAmount) from ")
+		        .append(getEntityClass().getSimpleName())
+		        .append(" where category= :category and status=0  or status=2");
 		log.debug("totalAmount: queryString={}", queryString);
-		Query query = getEntityManager().createQuery(queryString);
+		Query query = getEntityManager().createQuery(queryString.toString()).setParameter("category", category);
 		log.debug("countRecordsBetweenDueMonth: query={}", query);
 		Object queryResult = query.getSingleResult();
 		if (queryResult != null) {
@@ -122,11 +138,11 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
 	public int totalCount(String category) {
 		log.info("totalCount({})", category);
 		int result = 0;
-		String queryString = "select count(*) from "
-				+ getEntityClass().getSimpleName() + " where category=" + category
-				+ " and status=0  or status=2";
+		StringBuilder queryString = new StringBuilder("select count(*) from ")
+		        .append(getEntityClass().getSimpleName())
+		        .append(" where category= :category and status=0  or status=2");
 		log.debug("totalCount: queryString={}", queryString);
-		Query query = getEntityManager().createQuery(queryString);
+		Query query = getEntityManager().createQuery(queryString.toString()).setParameter("category", category);
 		log.debug("totalCount: query={}", query);
 		Object queryResult = query.getSingleResult();
 		if (queryResult != null) {
