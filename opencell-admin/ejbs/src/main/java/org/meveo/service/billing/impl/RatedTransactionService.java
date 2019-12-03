@@ -1788,4 +1788,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 .setMaxResults(maxResult)
                 .getResultList();
 	}
+
+	public long purge(Date firstTransactionDate, Date lastTransactionDate, List<RatedTransactionStatusEnum> targetStatusList) {
+		return getEntityManager().createNamedQuery("RatedTransaction.deleteBetweenTwoDatesByStatus")
+				.setParameter("status", targetStatusList)
+				.setParameter("firstTransactionDate", firstTransactionDate)
+	            .setParameter("lastTransactionDate", lastTransactionDate)
+	            .executeUpdate();
+	}
+	
 }

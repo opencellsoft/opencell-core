@@ -1434,7 +1434,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public long purge(Date firstTransactionDate, Date lastTransactionDate) {
-
         return getEntityManager().createNamedQuery("WalletOperation.deleteNotOpenWObetweenTwoDates").setParameter("firstTransactionDate", firstTransactionDate)
             .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
     }
@@ -1530,6 +1529,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 .setParameter("status", formattedStatus)
                 .setMaxResults(maxResult)
                 .getResultList();
+	}
+
+	public long purge(Date firstTransactionDate, Date lastTransactionDate, List<WalletOperationStatusEnum> targetStatusList) {
+		return getEntityManager().createNamedQuery("WalletOperation.deleteWObetweenTwoDatesByStatus")
+				.setParameter("status", targetStatusList)
+				.setParameter("firstTransactionDate", firstTransactionDate)
+	            .setParameter("lastTransactionDate", lastTransactionDate)
+	            .executeUpdate();
 	}
 	
 }
