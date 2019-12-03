@@ -6,6 +6,7 @@ import org.meveo.apiv2.services.generic.GenericApiLoadService;
 import org.meveo.apiv2.services.generic.GenericApiAlteringService;
 import org.meveo.apiv2.services.generic.GenericRequestMapper;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -16,7 +17,6 @@ import java.util.Set;
 
 @Stateless
 public class GenericResourceImpl implements GenericResource {
-    private final GenericRequestMapper genericRequestMapper = new GenericRequestMapper();
     @Inject
     private GenericApiLoadService loadService;
     @Inject
@@ -28,7 +28,9 @@ public class GenericResourceImpl implements GenericResource {
         if(searchConfig != null){
             genericFields = searchConfig.getGenericFields();
         }
-        return Response.ok().entity(loadService.findPaginatedRecords(entityName, genericRequestMapper.mapTo(searchConfig), genericFields))
+        Class entityClass = loadService.getEntityClass(entityName);
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, loadService.getEntityManager());
+        return Response.ok().entity(loadService.findPaginatedRecords(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields))
                 .links(buildPaginatedResourceLink(entityName)).build();
     }
     
@@ -38,6 +40,8 @@ public class GenericResourceImpl implements GenericResource {
         if(searchConfig != null){
             genericFields = searchConfig.getGenericFields();
         }
+        Class entityClass = loadService.getEntityClass(entityName);
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, loadService.getEntityManager());
         return loadService.findByClassNameAndId(entityName, id, genericRequestMapper.mapTo(searchConfig), genericFields)
                 .map(deletedEntity -> Response.ok().entity(deletedEntity).links(buildSingleResourceLink(entityName, id)).build())
                 .orElseThrow(NotFoundException::new);
