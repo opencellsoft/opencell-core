@@ -72,10 +72,10 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
 
     @EJB
     ExportMediationEntityJobBean exportMediationEntityJobBeanNewTx;
-    
+
     private static final long OLD_DATE = 50;
 
-	private static final String SPLIT_CHAR = ",";
+    private static final String SPLIT_CHAR = ",";
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
@@ -83,27 +83,27 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running with parameter={}", jobInstance.getParametres());
         try {
-        	
-        	String exportParentDir = paramBeanFactory.getChrootDir() + File.separator + "exports" + File.separator;
-			File dir = new File(exportParentDir);
-			if (!dir.exists()) {
-				dir.mkdirs();
-			}
 
-			String exportFileName = (String) this.getParamOrCFValue(jobInstance, EXPORT_MEDIATION_ENTITY_JOB_FILE_NAME);
-			exportFileName = exportFileName == null ? "" : exportFileName;
-			
+            String exportParentDir = paramBeanFactory.getChrootDir() + File.separator + "exports" + File.separator;
+            File dir = new File(exportParentDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            String exportFileName = (String) this.getParamOrCFValue(jobInstance, EXPORT_MEDIATION_ENTITY_JOB_FILE_NAME);
+            exportFileName = exportFileName == null ? "" : exportFileName;
+
             Date firstTransactionDate = (Date) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_firstTransactionDate");
             Date lastTransactionDate = (Date) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_lastTransactionDate");
             if (lastTransactionDate == null) {
                 lastTransactionDate = new Date();
             }
             long daysToIgnore = (long) this.getParamOrCFValue(jobInstance, EXPORT_MEDIATION_DATA_JOB_DAYS_TO_IGNORE);
-			if (daysToIgnore > 0) {
-				firstTransactionDate = java.sql.Date.valueOf(LocalDate.now().minusYears(OLD_DATE));
-				lastTransactionDate = java.sql.Date.valueOf(LocalDate.now().minusDays(daysToIgnore));
-			}
-			
+            if (daysToIgnore > 0) {
+                firstTransactionDate = java.sql.Date.valueOf(LocalDate.now().minusYears(OLD_DATE));
+                lastTransactionDate = java.sql.Date.valueOf(LocalDate.now().minusDays(daysToIgnore));
+            }
+
             boolean edrCf = (boolean) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_edrCf", false);
             boolean woCf = (boolean) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_woCf", false);
             boolean rtCf = (boolean) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_rtCf", false);
@@ -115,7 +115,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
                 log.info("==> Start exporting EDR ");
                 List<EDRStatusEnum> formattedStatus = getTargetStatusList(jobInstance, EDRStatusEnum.class, EXPORT_MEDIATION_ENTITY_JOB_EDR_STATUS_CF);
                 if (!formattedStatus.isEmpty()) {
-                	nbItems = exportEDR(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, formattedStatus, exportParentDir, exportFileName);
+                    nbItems = exportEDR(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, formattedStatus, exportParentDir, exportFileName);
                     log.info("{} EDRs exported in total", nbItems);
                     report += "EDRs : " + nbItems;
                 }
@@ -123,18 +123,20 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
             if (woCf) {
                 log.info("==> Start exporting wallet operation ");
                 List<WalletOperationStatusEnum> formattedStatus = getTargetStatusList(jobInstance, WalletOperationStatusEnum.class, EXPORT_MEDIATION_ENTITY_JOB_WO_STATUS_CF);
-				if (!formattedStatus.isEmpty()) {
-					long woCount = exportWalletOperation(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, formattedStatus, exportParentDir, exportFileName);
-	                log.info("{} WOs exported in total", woCount);
-	                nbItems += woCount;
-	                report += " WOs : " + woCount;
-				}
+                if (!formattedStatus.isEmpty()) {
+                    long woCount = exportWalletOperation(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, formattedStatus, exportParentDir,
+                            exportFileName);
+                    log.info("{} WOs exported in total", woCount);
+                    nbItems += woCount;
+                    report += " WOs : " + woCount;
+                }
             }
             if (rtCf) {
                 log.info("==> Start exporting rated transaction ");
                 List<RatedTransactionStatusEnum> formattedStatus = getTargetStatusList(jobInstance, RatedTransactionStatusEnum.class, EXPORT_MEDIATION_ENTITY_JOB_RT_STATUS_CF);
                 if (!formattedStatus.isEmpty()) {
-                	long rtCount = exportRatedTransaction(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, formattedStatus, exportParentDir, exportFileName);
+                    long rtCount = exportRatedTransaction(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, formattedStatus, exportParentDir,
+                            exportFileName);
                     log.info("{} RTs exported in total", rtCount);
                     nbItems += rtCount;
                     report += " RTs : " + rtCount;
@@ -155,13 +157,14 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
      * @param firstTransactionDate a first transaction date
      * @param lastTransactionDate  a last transaction date
      * @param maxResult            a number of rows to fetch
-     * @param formattedStatus 
-     * @param exportFileName 
-     * @param exportParentDir 
+     * @param formattedStatus
+     * @param exportFileName
+     * @param exportParentDir
      * @return number of items
      * @throws JAXBException
      */
-    private int exportEDR(Long jobInstanceId, Date firstTransactionDate, Date lastTransactionDate, int maxResult, List<EDRStatusEnum> formattedStatus, String exportParentDir, String exportFileName) throws JAXBException {
+    private int exportEDR(Long jobInstanceId, Date firstTransactionDate, Date lastTransactionDate, int maxResult, List<EDRStatusEnum> formattedStatus, String exportParentDir,
+            String exportFileName) throws JAXBException {
         int nbItems = 0;
         long lastId = 0L;
         boolean moreToProcess = true;
@@ -172,17 +175,17 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
                 int size = edrList.size();
                 lastId = edrList.get(size - 1).getId();
                 EDRs edrs = edrsToDto(edrList, jobInstanceId);
-                
+
                 String exportDir = exportParentDir + "edr" + File.separator;
-        		File dir = new File(exportDir);
-        		if (!dir.exists()) {
-        			dir.mkdirs();
-        		}
-        		if (exportFileName.isEmpty()) {
-        			exportFileName = "EDR_";
-        		}
-                
-        		JAXBUtils.marshaller(edrs, new File(dir + File.separator + exportFileName + "_" + timestamp + ".xml"));
+                File dir = new File(exportDir);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                if (exportFileName.isEmpty()) {
+                    exportFileName = "EDR_";
+                }
+
+                JAXBUtils.marshaller(edrs, new File(dir + File.separator + exportFileName + "_" + timestamp + ".xml"));
                 log.info("{} edr processed", size);
                 nbItems += size;
             } else
@@ -196,18 +199,20 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
      * @param firstTransactionDate a first transaction date
      * @param lastTransactionDate  a last transaction date
      * @param maxResult            a number of rows to fetch
-     * @param exportFileName 
-     * @param exportParentDir 
-     * @param formattedStatus 
+     * @param exportFileName
+     * @param exportParentDir
+     * @param formattedStatus
      * @return
      * @throws JAXBException
      */
-    private long exportWalletOperation(long jobInstanceId, Date firstTransactionDate, Date lastTransactionDate, int maxResult, List<WalletOperationStatusEnum> formattedStatus, String exportParentDir, String exportFileName) throws JAXBException {
+    private long exportWalletOperation(long jobInstanceId, Date firstTransactionDate, Date lastTransactionDate, int maxResult, List<WalletOperationStatusEnum> formattedStatus,
+            String exportParentDir, String exportFileName) throws JAXBException {
         int nbItems = 0;
         long lastId = 0L;
         boolean moreToProcess;
         do {
-            PaginationResult paginationResult = exportMediationEntityJobBeanNewTx.exportWalletOperationPerPage(jobInstanceId, firstTransactionDate, lastTransactionDate, maxResult, lastId, formattedStatus, exportParentDir, exportFileName);
+            PaginationResult paginationResult = exportMediationEntityJobBeanNewTx
+                    .exportWalletOperationPerPage(jobInstanceId, firstTransactionDate, lastTransactionDate, maxResult, lastId, formattedStatus, exportParentDir, exportFileName);
             lastId = paginationResult.getLastId();
             nbItems += paginationResult.getNbItems();
             moreToProcess = paginationResult.getMoreToProcess();
@@ -219,18 +224,20 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
      * @param jobInstanceId        a job instance id
      * @param firstTransactionDate a first transaction date
      * @param lastTransactionDate  a last transaction date
-     * @param exportFileName 
-     * @param exportParentDir 
-     * @param formattedStatus 
+     * @param exportFileName
+     * @param exportParentDir
+     * @param formattedStatus
      * @return a number of processed items
      * @throws JAXBException an exception
      */
-    private long exportRatedTransaction(long jobInstanceId, Date firstTransactionDate, Date lastTransactionDate, int maxResult, List<RatedTransactionStatusEnum> formattedStatus, String exportParentDir, String exportFileName) throws JAXBException {
+    private long exportRatedTransaction(long jobInstanceId, Date firstTransactionDate, Date lastTransactionDate, int maxResult, List<RatedTransactionStatusEnum> formattedStatus,
+            String exportParentDir, String exportFileName) throws JAXBException {
         int nbItems = 0;
         long lastId = 0L;
         boolean moreToProcess;
         do {
-            PaginationResult paginationResult = exportMediationEntityJobBeanNewTx.exportRatedTransactionPerPage(jobInstanceId, firstTransactionDate, lastTransactionDate, maxResult, lastId, formattedStatus, exportParentDir, exportFileName);
+            PaginationResult paginationResult = exportMediationEntityJobBeanNewTx
+                    .exportRatedTransactionPerPage(jobInstanceId, firstTransactionDate, lastTransactionDate, maxResult, lastId, formattedStatus, exportParentDir, exportFileName);
             lastId = paginationResult.getLastId();
             nbItems += paginationResult.getNbItems();
             moreToProcess = paginationResult.getMoreToProcess();
@@ -319,7 +326,8 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public PaginationResult exportWalletOperationPerPage(long jobInstanceId, Date firstDate, Date lastDate, int maxResult, Long lastId, List<WalletOperationStatusEnum> formattedStatus, String exportParentDir, String exportFileName) throws JAXBException {
+    public PaginationResult exportWalletOperationPerPage(long jobInstanceId, Date firstDate, Date lastDate, int maxResult, Long lastId,
+            List<WalletOperationStatusEnum> formattedStatus, String exportParentDir, String exportFileName) throws JAXBException {
         PaginationResult result = new PaginationResult();
         String timestamp = sdf.format(new Date());
         List<WalletOperation> walletOperation = walletOperationService.getWalletOperationBetweenTwoDatesByStatus(firstDate, lastDate, lastId, maxResult, formattedStatus);
@@ -327,14 +335,14 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
         if (size > 0) {
             WalletOperations walletOperations = walletOperationsToDto(walletOperation, jobInstanceId);
             String exportDir = exportParentDir + "wo" + File.separator;
-    		File dir = new File(exportDir);
-    		if (!dir.exists()) {
-    			dir.mkdirs();
-    		}
-    		if (exportFileName.isEmpty()) {
-    			exportFileName = "WO_";
-    		}
-    		JAXBUtils.marshaller(walletOperations, new File(dir + File.separator + exportFileName + "_" + timestamp + ".xml"));
+            File dir = new File(exportDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            if (exportFileName.isEmpty()) {
+                exportFileName = "WO_";
+            }
+            JAXBUtils.marshaller(walletOperations, new File(dir + File.separator + exportFileName + "_" + timestamp + ".xml"));
             result.setLastId(walletOperation.get(size - 1).getId());
             result.setNbItems(size);
             result.setMoreToProcess(true);
@@ -344,23 +352,23 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public PaginationResult exportRatedTransactionPerPage(long jobInstanceId, Date firstDate, Date lastDate, int maxResult, long lastId, List<RatedTransactionStatusEnum> formattedStatus, String exportParentDir, String exportFileName) throws JAXBException {
+    public PaginationResult exportRatedTransactionPerPage(long jobInstanceId, Date firstDate, Date lastDate, int maxResult, long lastId,
+            List<RatedTransactionStatusEnum> formattedStatus, String exportParentDir, String exportFileName) throws JAXBException {
         String timestamp = sdf.format(new Date());
-        List<RatedTransaction> ratedTransactions = ratedTransactionService
-                .getRatedTransactionBetweenTwoDatesByStatus(firstDate, lastDate, lastId, maxResult, formattedStatus);
+        List<RatedTransaction> ratedTransactions = ratedTransactionService.getRatedTransactionBetweenTwoDatesByStatus(firstDate, lastDate, lastId, maxResult, formattedStatus);
         PaginationResult result = new PaginationResult();
         if (!ratedTransactions.isEmpty()) {
             RatedTransactions ratedTransactionDtos = ratedTransactionToDto(ratedTransactions, jobInstanceId);
             String exportDir = exportParentDir + "rt" + File.separator;
-    		File dir = new File(exportDir);
-    		if (!dir.exists()) {
-    			dir.mkdirs();
-    		}
+            File dir = new File(exportDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
 
-    		if (exportFileName.isEmpty()) {
-    			exportFileName = "RT_";
-    		}
-    		JAXBUtils.marshaller(ratedTransactionDtos, new File(dir + File.separator + exportFileName + "_" + timestamp + ".xml"));
+            if (exportFileName.isEmpty()) {
+                exportFileName = "RT_";
+            }
+            JAXBUtils.marshaller(ratedTransactionDtos, new File(dir + File.separator + exportFileName + "_" + timestamp + ".xml"));
             int size = ratedTransactions.size();
             result.setLastId(ratedTransactions.get(size - 1).getId());
             result.setNbItems(size);
@@ -369,7 +377,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
         }
         return result;
     }
-    
+
     /**
      * @param <T>
      * @param jobInstance
@@ -378,19 +386,19 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
      * @return
      */
     private <T extends Enum<T>> List<T> getTargetStatusList(JobInstance jobInstance, Class<T> clazz, String cfCode) {
-		List<T> formattedStatus = new ArrayList<T>();
-		String statusListStr = (String) this.getParamOrCFValue(jobInstance, cfCode);
-		if (statusListStr != null && !statusListStr.isEmpty()) {
-			List<String> statusList = Arrays.asList(statusListStr.split(SPLIT_CHAR));
-			for (String status : statusList) {
-				T statusEnum = T.valueOf(clazz, status.toUpperCase());
-				if (statusEnum != null) {
-					formattedStatus.add(statusEnum);
-				}
-			}
-		}
-		return formattedStatus;
-	}
+        List<T> formattedStatus = new ArrayList<T>();
+        String statusListStr = (String) this.getParamOrCFValue(jobInstance, cfCode);
+        if (statusListStr != null && !statusListStr.isEmpty()) {
+            List<String> statusList = Arrays.asList(statusListStr.split(SPLIT_CHAR));
+            for (String status : statusList) {
+                T statusEnum = T.valueOf(clazz, status.toUpperCase());
+                if (statusEnum != null) {
+                    formattedStatus.add(statusEnum);
+                }
+            }
+        }
+        return formattedStatus;
+    }
 
     /**
      * Inner class to handle pagination
@@ -430,5 +438,5 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
             return moreToProcess;
         }
     }
-    
+
 }

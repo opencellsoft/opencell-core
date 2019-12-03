@@ -110,7 +110,7 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
             result.addReport(e.getMessage());
         }
     }
-    
+
     private  <T extends Enum<T>> List<T> getTargetStatusList(JobInstance jobInstance, Class<T> clazz, String cfCode) {
         List<T> formattedStatus = new ArrayList<T>();
         String statusListStr = (String) this.getParamOrCFValue(jobInstance, cfCode);
@@ -125,5 +125,4 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
         }
         return formattedStatus;
     }
-    
 }
