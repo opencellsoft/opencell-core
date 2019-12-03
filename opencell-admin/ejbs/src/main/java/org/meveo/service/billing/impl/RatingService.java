@@ -945,8 +945,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
             userMap.put("amount", amount.doubleValue());
         }
         if (expression.indexOf("access") >= 0 && walletOperation.getEdr() != null && walletOperation.getEdr().getAccessCode() != null) {
-            Access access = accessService.findByUserIdAndSubscription(walletOperation.getEdr().getAccessCode(), chargeInstance.getSubscription(), walletOperation.getStartDate(),
-                    walletOperation.getEndDate());
+            Access access = accessService.findByUserIdAndSubscription(walletOperation.getEdr().getAccessCode(), chargeInstance.getSubscription(), walletOperation.getEdr().getEventDate());
             userMap.put("access", access);
         }
 

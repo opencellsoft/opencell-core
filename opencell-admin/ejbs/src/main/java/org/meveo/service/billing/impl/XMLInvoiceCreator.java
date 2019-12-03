@@ -1545,17 +1545,25 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     
                             Element line = doc.createElement("line");
                             String code = "", description = "";
-                            Date periodStartDate = null;
-                            Date periodEndDate = null;
+                            
                             code = ratedTransaction.getCode();
                             description = ratedTransaction.getDescription();
+                            
+                            Date periodStartDateRT = ratedTransaction.getStartDate();
+                            Date periodEndDateRT = ratedTransaction.getEndDate();
+							
+							line.setAttribute("periodEndDate",
+									DateUtils.formatDateWithPattern(periodEndDateRT, invoiceDateFormat));
+							line.setAttribute("periodStartDate",
+									DateUtils.formatDateWithPattern(periodStartDateRT, invoiceDateFormat));
                             
                             if (appProvider.getInvoiceConfiguration().getDisplayWalletOperations()) {
                             	
                             List<WalletOperation> walletOperations = walletOperationService.listByRatedTransactionId(ratedTransaction.getId());
 
 		                        if (walletOperations != null && !walletOperations.isEmpty()) {
-		
+		                        	Date periodStartDate = null;
+		                            Date periodEndDate = null;
 									for (WalletOperation walletOperation : walletOperations) {
 										Element woLine = doc.createElement("walletOperation");
 		                            	woLine.setAttribute("code", walletOperation.getCode());
