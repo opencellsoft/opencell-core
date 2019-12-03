@@ -746,9 +746,12 @@ public class QueryBuilder {
         applyOrdering(paginationSortAlias);
 
         String from = "from ";
-        String s = "select " + (alias != null ? alias + "." : "") + "id " + q.toString().substring(q.indexOf(from));
+        StringBuilder s = new StringBuilder("select ")
+                .append(alias != null ? alias + "." : "")
+                .append("id ")
+                .append(q.toString().substring(q.indexOf(from)));
 
-        TypedQuery<Long> result = em.createQuery(s, Long.class);
+        TypedQuery<Long> result = em.createQuery(s.toString(), Long.class);
         applyPagination(result);
 
         for (Map.Entry<String, Object> e : params.entrySet()) {
