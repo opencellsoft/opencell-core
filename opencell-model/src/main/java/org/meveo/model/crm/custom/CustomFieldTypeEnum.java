@@ -1,6 +1,7 @@
 package org.meveo.model.crm.custom;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +36,11 @@ public enum CustomFieldTypeEnum {
      * String value picked from a list of values
      */
     LIST(false, String.class, "varchar(%length)"),
+
+    /**
+     * String value picked from a list of values, with possibility of multi select
+     */
+    CHECKBOX_LIST(false, List.class, StringUtils.EMPTY),
 
     /**
      * A reference to an entity

@@ -43,14 +43,14 @@ import org.slf4j.LoggerFactory;
  * <li>a child entity containing the actual data, that is serialized as Json to serializedValue field</li>
  * <li>a list or a map of above mentioned data types, serialized as Json to to serializedValue field</li>
  * </ul>
- * 
+ * <p>
  * A reference to an entity, child entity, list and map values should not be modified behind the scenes - an appropriate SET method has to be called to serialize the value. - This
  * limitations comes from MERGE loosing transient values and thus JPA callback @postUpdate can not be used (see CustomFieldInstance class).
- * 
+ * <p>
  * Serialized value format is described in serializeValue() method for each data type.
- * 
+ * <p>
  * entityReferenceValueForGUI, mapValuesForGUI, matrixValuesForGUI fields are used in data entry from GUI ONLY.
- * 
+ *
  * @author Andrius Karpavicius
  * @author Edward P. Legaspi
  * @lastModifiedVersion 7.0
@@ -125,7 +125,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
      */
     @JsonProperty("double")
     private Double doubleValue;
-    
+
     /**
      * Double type value
      */
@@ -162,7 +162,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
      */
     @JsonProperty("listDouble")
     private List<Double> listDoubleValue = null;
-    
+
     /**
      * List of Boolean type value
      */
@@ -199,7 +199,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
      */
     @JsonProperty("mapDouble")
     private Map<String, Double> mapDoubleValue = null;
-    
+
     /**
      * Map of Boolean type value
      */
@@ -220,7 +220,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Contains mapValue adapted for GUI data entry in the following way:
-     * 
+     * <p>
      * List item corresponds to an entry in a mapValue with the following list's map values: MAP_KEY=mapValue.entry.key and MAP_VALUE=mapValue.entry.value
      */
     @JsonIgnore
@@ -228,7 +228,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Contains mapValue adapted for GUI data entry in the following way:
-     * 
+     * <p>
      * List item corresponds to an entry in a mapValue with the following list's map values: MAP_VALUE=mapValue.entry.value, mapValue.entry.key is parsed into separate key/value
      * pairs and inserted into map
      */
@@ -237,7 +237,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Contains entity reference converted into a CustomFieldValueHolder object in the following way:
-     * 
+     * <p>
      * CustomFieldValueHolder.entity = entity reference CEI object, CustomFieldValueHolder.values = childEntityValue.fieldValues
      */
     @JsonIgnore
@@ -245,7 +245,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Contains entityReferenceValue converted into a BusinessEntity object in the following way:
-     * 
+     * <p>
      * A class of entityReferenceValue.className type is instantiated with code field set to entityReferenceValue.code value and in case it is Custom Entity Instance class, a
      * cetCode field is set to entityReferenceValue.classnameCode value
      */
@@ -272,7 +272,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Instantiate Custom field value with a given value
-     * 
+     *
      * @param value Value to assign
      */
     public CustomFieldValue(Object value) {
@@ -281,10 +281,10 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Instantiate Custom field value with a given value and a period
-     * 
-     * @param period Value validity period
+     *
+     * @param period   Value validity period
      * @param priority Priority to assign
-     * @param value Value to assign
+     * @param value    Value to assign
      */
     public CustomFieldValue(DatePeriod period, Integer priority, Object value) {
         this.period = period;
@@ -348,48 +348,48 @@ public class CustomFieldValue implements Serializable, Cloneable {
     public void setDoubleValue(Double doubleValue) {
         this.doubleValue = doubleValue;
     }
-    
+
     /**
      * @return Boolean type value
      */
-	public Boolean getBooleanValue() {
-		return booleanValue;
-	}
+    public Boolean getBooleanValue() {
+        return booleanValue;
+    }
 
-	/**
-	 * @param booleanValue Boolean type value
-	 */
-	public void setBooleanValue(Boolean booleanValue) {
-		this.booleanValue = booleanValue;
-	}
-	
-	/**
-	 * @return List of Boolean type value
-	 */
-	public List<Boolean> getListBooleanValue() {
-		return listBooleanValue;
-	}
+    /**
+     * @param booleanValue Boolean type value
+     */
+    public void setBooleanValue(Boolean booleanValue) {
+        this.booleanValue = booleanValue;
+    }
 
-	/**
-	 * @param listBooleanValue List of Boolean type value
-	 */
-	public void setListBooleanValue(List<Boolean> listBooleanValue) {
-		this.listBooleanValue = listBooleanValue;
-	}
+    /**
+     * @return List of Boolean type value
+     */
+    public List<Boolean> getListBooleanValue() {
+        return listBooleanValue;
+    }
 
-	/**
-	 * @return Map of Boolean type value
-	 */
-	public Map<String, Boolean> getMapBooleanValue() {
-		return mapBooleanValue;
-	}
+    /**
+     * @param listBooleanValue List of Boolean type value
+     */
+    public void setListBooleanValue(List<Boolean> listBooleanValue) {
+        this.listBooleanValue = listBooleanValue;
+    }
 
-	/**
-	 * @param mapBooleanValue Map of Boolean type value
-	 */
-	public void setMapBooleanValue(Map<String, Boolean> mapBooleanValue) {
-		this.mapBooleanValue = mapBooleanValue;
-	}
+    /**
+     * @return Map of Boolean type value
+     */
+    public Map<String, Boolean> getMapBooleanValue() {
+        return mapBooleanValue;
+    }
+
+    /**
+     * @param mapBooleanValue Map of Boolean type value
+     */
+    public void setMapBooleanValue(Map<String, Boolean> mapBooleanValue) {
+        this.mapBooleanValue = mapBooleanValue;
+    }
 
     /**
      * @param mapValuesForGUI Map type values when entered from GUI
@@ -413,7 +413,6 @@ public class CustomFieldValue implements Serializable, Cloneable {
     }
 
     /**
-     * 
      * @param matrixValuesForGUI Matrix/map type values when entered from GUI
      */
     public void setMatrixValuesForGUI(List<Map<String, Object>> matrixValuesForGUI) {
@@ -429,9 +428,9 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Set a reference to an entity value. Value is serialized immediately.
-     * 
+     * <p>
      * NOTE: Always set a new value. DO NOT edit the value, as it will not be persisted, or explicitly call serializeValue() afterwards.
-     * 
+     *
      * @param entityReferenceValue Reference to an entity value
      */
     public void setEntityReferenceValue(EntityReferenceWrapper entityReferenceValue) {
@@ -462,7 +461,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Set a list of values.
-     * 
+     *
      * @param listValue list of values to set.
      */
     @SuppressWarnings({ "rawtypes" })
@@ -506,7 +505,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
             listBooleanValue = new ArrayList<>();
             for (Object listItem : listValue) {
                 if (listItem instanceof Boolean) {
-                	listBooleanValue.add(((Boolean) listItem).booleanValue());
+                    listBooleanValue.add(((Boolean) listItem).booleanValue());
                 }
             }
 
@@ -541,9 +540,9 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Set a map of values. Value is serialized immediately.
-     * 
+     * <p>
      * NOTE: Always set a new value. DO NOT edit the value, as it will not be persisted, or explicitly call serializeValue() afterwards.
-     * 
+     *
      * @param mapValue A map of values
      */
     @SuppressWarnings({ "rawtypes" })
@@ -610,7 +609,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
             mapBooleanValue = new LinkedHashMap<>();
             for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
                 if (mapItem.getValue() instanceof Boolean) {
-                	mapBooleanValue.put(mapItem.getKey(), ((Boolean) mapItem.getValue()).booleanValue());
+                    mapBooleanValue.put(mapItem.getKey(), ((Boolean) mapItem.getValue()).booleanValue());
                 }
             }
 
@@ -638,7 +637,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Append source entity/accumulation path that value came from
-     * 
+     *
      * @param sourceToAdd Source entity/accumulation path that value came from
      */
     public void addSource(String sourceToAdd) {
@@ -648,7 +647,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
         if (this.source == null) {
             this.source = sourceToAdd;
         } else if (!this.source.contains(sourceToAdd)) { // TODO this could be potentially a problem when path are similar e.g. customer.ca and customer.ca.ba and search is by
-                                                         // "customer.ca", but right now - unlikely.
+            // "customer.ca", but right now - unlikely.
             this.source = this.source + "," + sourceToAdd;
         }
     }
@@ -729,8 +728,8 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Set value of a given type
-     * 
-     * @param value value object
+     *
+     * @param value     value object
      * @param fieldType field type.
      */
     public void setSingleValue(Object value, CustomFieldTypeEnum fieldType) {
@@ -763,7 +762,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
                 longValue = (Long) value;
             }
             break;
-            
+
         case BOOLEAN:
             if (value instanceof Boolean) {
                 booleanValue = ((Boolean) value);
@@ -791,7 +790,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Convert value to a string. List and map values are converted to string with usual JAVA list.toSting() and map.toString() means.
-     * 
+     *
      * @param sdf Date format if applicable
      * @return Value as string
      */
@@ -823,7 +822,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Convert simple value (string, date, long, double) to a string
-     * 
+     *
      * @param sdf Date format if applicable
      * @return Value as string
      */
@@ -846,8 +845,8 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Get a short representation of a value to be used as display in GUI in inherited fields.
-     * 
-     * @param value object value.
+     *
+     * @param value      object value.
      * @param dateFormat Date format
      * @return Return formated value when storage type is Single and concatenated values when storage type is multiple
      */
@@ -915,8 +914,8 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Get a short representation of a value to be used as display in GUI in versioned field summary (periods table)
-     * 
-     * @param cft Custom field template
+     *
+     * @param cft        Custom field template
      * @param dateFormat Date format
      * @return Return formated value when storage type is Single and concatenated values when storage type is multiple
      */
@@ -1067,13 +1066,13 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Check if values is empty when used in data entry/display for GUI (use XXXForGUI fields instead of serializedValue field )
-     * 
+     *
      * @return True is value is empty
      */
     public boolean isValueEmptyForGui() {
-        boolean isEmpty = ((stringValue == null || stringValue.isEmpty()) && dateValue == null && longValue == null && doubleValue == null && booleanValue == null && entityReferenceValueForGUI == null
-                && (mapValuesForGUI == null || mapValuesForGUI.isEmpty()) && (matrixValuesForGUI == null || matrixValuesForGUI.isEmpty())
-                && (childEntityValuesForGUI == null || childEntityValuesForGUI.isEmpty()));
+        boolean isEmpty = ((stringValue == null || stringValue.isEmpty()) && dateValue == null && longValue == null && doubleValue == null && booleanValue == null
+                && entityReferenceValueForGUI == null && (mapValuesForGUI == null || mapValuesForGUI.isEmpty()) && (matrixValuesForGUI == null || matrixValuesForGUI.isEmpty()) && (
+                childEntityValuesForGUI == null || childEntityValuesForGUI.isEmpty()));
 
         if (isEmpty) {
             return true;
@@ -1115,16 +1114,16 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Check if values is empty when used in non-GUI data manipulation (do not use XXXForGUI fields)
-     * 
+     *
      * @return True is value is empty
      */
     public boolean isValueEmpty() {
-        return ((stringValue == null || stringValue.isEmpty()) && dateValue == null && longValue == null && doubleValue == null && booleanValue == null
-                && (listStringValue == null || listStringValue.isEmpty()) && (listDateValue == null || listDateValue.isEmpty())
-                && (listLongValue == null || listLongValue.isEmpty()) && (listDoubleValue == null || listDoubleValue.isEmpty()) && (listBooleanValue == null || listBooleanValue.isEmpty())
-                && (listEntityValue == null || listEntityValue.isEmpty()) && (mapStringValue == null || mapStringValue.isEmpty())
-                && (mapDateValue == null || mapDateValue.isEmpty()) && (mapLongValue == null || mapLongValue.isEmpty()) && (mapDoubleValue == null || mapDoubleValue.isEmpty()) && (mapBooleanValue == null || mapBooleanValue.isEmpty())
-                && (mapEntityValue == null || mapEntityValue.isEmpty()) && (entityReferenceValue == null || entityReferenceValue.isEmpty()));
+        return ((stringValue == null || stringValue.isEmpty()) && dateValue == null && longValue == null && doubleValue == null && booleanValue == null && (listStringValue == null
+                || listStringValue.isEmpty()) && (listDateValue == null || listDateValue.isEmpty()) && (listLongValue == null || listLongValue.isEmpty()) && (
+                listDoubleValue == null || listDoubleValue.isEmpty()) && (listBooleanValue == null || listBooleanValue.isEmpty()) && (listEntityValue == null || listEntityValue
+                .isEmpty()) && (mapStringValue == null || mapStringValue.isEmpty()) && (mapDateValue == null || mapDateValue.isEmpty()) && (mapLongValue == null || mapLongValue
+                .isEmpty()) && (mapDoubleValue == null || mapDoubleValue.isEmpty()) && (mapBooleanValue == null || mapBooleanValue.isEmpty()) && (mapEntityValue == null
+                || mapEntityValue.isEmpty()) && (entityReferenceValue == null || entityReferenceValue.isEmpty()));
     }
 
     /**
@@ -1135,8 +1134,8 @@ public class CustomFieldValue implements Serializable, Cloneable {
      * <li>"map_"<value classname eg. String>|<json representation of Map></li>
      * <li>"matrix_"<value classname eg. String>|<key names>|<json representation of Map></li>
      * </ul>
-     * 
-     * @param cft Custom field template
+     *
+     * @param cft              Custom field template
      * @param valueToSerialize Value to serialize
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -1162,7 +1161,8 @@ public class CustomFieldValue implements Serializable, Cloneable {
                 itemClass = Double.class;
             } else if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY || cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
                 itemClass = EntityReferenceWrapper.class;
-            } else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
+            } else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST || cft.getFieldType() == CustomFieldTypeEnum.CHECKBOX_LIST
+                    || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
                 itemClass = String.class;
             } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
                 itemClass = Long.class;
@@ -1185,7 +1185,8 @@ public class CustomFieldValue implements Serializable, Cloneable {
                 itemClass = Double.class;
             } else if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY || cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
                 itemClass = EntityReferenceWrapper.class;
-            } else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
+            } else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST || cft.getFieldType() == CustomFieldTypeEnum.CHECKBOX_LIST
+                    || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
                 itemClass = String.class;
             } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
                 itemClass = Long.class;
@@ -1259,7 +1260,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Deserialize a serialized reference to an entity, list or map of values. See method serialize() for serialized value format
-     * 
+     *
      * @param serializedValue Serialized value
      * @return EntityReferenceWrapper, ChildEntityValueWrapper, List or Map object
      */
@@ -1427,7 +1428,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Set value of a given type
-     * 
+     *
      * @param value Value to set
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -1460,7 +1461,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
         } else if (value instanceof Double) {
             doubleValue = (Double) value;
-            
+
         } else if (value instanceof Boolean) {
             booleanValue = (Boolean) value;
 
@@ -1490,17 +1491,17 @@ public class CustomFieldValue implements Serializable, Cloneable {
     @Override
     public String toString() {
         final int maxLen = 10;
-        return String.format(
-            "CustomFieldValue [source=%s, stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, booleanValue=%s, entityReferenceValue=%s, listValue=%s, mapValue=%s, mapValuesForGUI=%s, matrixValuesForGUI=%s, childEntityValuesForGUI=%s, entityReferenceValueForGUI=%s]",
-            source, stringValue, dateValue, longValue, doubleValue, booleanValue, entityReferenceValue, getListValue() != null ? toString(getListValue(), maxLen) : null,
-            getMapValue() != null ? toString(getMapValue().entrySet(), maxLen) : null, mapValuesForGUI != null ? toString(mapValuesForGUI, maxLen) : null,
-            matrixValuesForGUI != null ? toString(matrixValuesForGUI, maxLen) : null, childEntityValuesForGUI != null ? toString(childEntityValuesForGUI, maxLen) : null,
-            entityReferenceValueForGUI);
+        return String
+                .format("CustomFieldValue [source=%s, stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, booleanValue=%s, entityReferenceValue=%s, listValue=%s, mapValue=%s, mapValuesForGUI=%s, matrixValuesForGUI=%s, childEntityValuesForGUI=%s, entityReferenceValueForGUI=%s]",
+                        source, stringValue, dateValue, longValue, doubleValue, booleanValue, entityReferenceValue,
+                        getListValue() != null ? toString(getListValue(), maxLen) : null, getMapValue() != null ? toString(getMapValue().entrySet(), maxLen) : null,
+                        mapValuesForGUI != null ? toString(mapValuesForGUI, maxLen) : null, matrixValuesForGUI != null ? toString(matrixValuesForGUI, maxLen) : null,
+                        childEntityValuesForGUI != null ? toString(childEntityValuesForGUI, maxLen) : null, entityReferenceValueForGUI);
     }
 
     /**
      * @param collection collection
-     * @param maxLen max length
+     * @param maxLen     max length
      * @return collection as string.
      */
     private String toString(Collection<?> collection, int maxLen) {
@@ -1519,8 +1520,8 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Convert (deserialize) a string value (serialized value in case of list, map, entity, childEntity) into an object according to custom field data type definition.
-     * 
-     * @param cft custom field template.s
+     *
+     * @param cft            custom field template.s
      * @param valueToConvert Value to convert
      * @return A value corresponding to custom field data type definition
      */
@@ -1533,14 +1534,14 @@ public class CustomFieldValue implements Serializable, Cloneable {
         try {
 
             if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && !cft.getFieldType().isStoredSerialized()) {
-            	if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+                if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
                     return Double.parseDouble(valueToConvert);
-            	} else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
+                } else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
                     return Boolean.parseBoolean(valueToConvert);
                 } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
                     return Long.parseLong(valueToConvert);
                 } else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST
-                        || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
+                        || cft.getFieldType() == CustomFieldTypeEnum.CHECKBOX_LIST || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
                     return valueToConvert;
                 } else if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
                     return DateUtils.parseDateWithPattern(valueToConvert, DateUtils.DATE_TIME_PATTERN);
@@ -1568,8 +1569,8 @@ public class CustomFieldValue implements Serializable, Cloneable {
                         serializedValueWithMetaInfo = "map_" + cft.getFieldType().getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR + valueToConvert;
 
                     } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
-                        serializedValueWithMetaInfo = "matrix_" + cft.getFieldType().getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR
-                                + StringUtils.concatenate(MATRIX_COLUMN_NAME_SEPARATOR, matrixColumnNames) + SERIALIZATION_SEPARATOR + valueToConvert;
+                        serializedValueWithMetaInfo = "matrix_" + cft.getFieldType().getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR + StringUtils
+                                .concatenate(MATRIX_COLUMN_NAME_SEPARATOR, matrixColumnNames) + SERIALIZATION_SEPARATOR + valueToConvert;
                     }
                 } else {
                     serializedValueWithMetaInfo = valueToConvert;
@@ -1590,8 +1591,8 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Convert (serialize) object according to custom field data type definition to a string value (serialized value in case of list, map, entity, childEntity).
-     * 
-     * @param cft customer field template.
+     *
+     * @param cft            customer field template.
      * @param valueToConvert Value to convert
      * @return A value corresponding to custom field data type definition
      */
@@ -1649,7 +1650,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Check if List/Map/Matrix type field is excessive in size
-     * 
+     *
      * @return True if List or Map value exceeds 20K rows
      */
     @SuppressWarnings("rawtypes")
@@ -1668,12 +1669,12 @@ public class CustomFieldValue implements Serializable, Cloneable {
         return false;
     }
 
-    public List<EntityReferenceWrapper> getAllEntities(){
+    public List<EntityReferenceWrapper> getAllEntities() {
         List<EntityReferenceWrapper> entities = Optional.ofNullable(listEntityValue).orElse(new ArrayList<>());
         Collection<EntityReferenceWrapper> mapEntities = Optional.ofNullable(mapEntityValue).map(Map::values).orElse(new ArrayList<>());
         entities.addAll(mapEntities);
 
-        if(entityReferenceValue != null){
+        if (entityReferenceValue != null) {
             entities.add(entityReferenceValue);
         }
 

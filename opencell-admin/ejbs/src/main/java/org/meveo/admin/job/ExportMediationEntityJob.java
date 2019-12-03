@@ -1,6 +1,17 @@
 package org.meveo.admin.job;
 
-import org.meveo.admin.exception.BusinessException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
+import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
@@ -9,18 +20,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.job.Job;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import com.google.common.collect.Maps;
 
 /**
  * The Class ExportMediationEntityJob to export EDR, WO and RTx as XML file.
@@ -51,75 +50,18 @@ public class ExportMediationEntityJob extends Job {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         exportMediationEntityJobBean.execute(result, jobInstance);
     }
 
     @Override
     public JobCategoryEnum getJobCategory() {
-        return JobCategoryEnum.UTILS;
+        return JobCategoryEnum.IMPORT_HIERARCHY;
     }
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<>();
-
-        CustomFieldTemplate edrCf = new CustomFieldTemplate();
-        edrCf.setCode("ExportMediationEntityJob_edrCf");
-        edrCf.setAppliesTo(APPLIES_TO_NAME);
-        edrCf.setActive(true);
-        edrCf.setDescription(resourceMessages.getString("exportEntityJob.edrCf"));
-        edrCf.setFieldType(CustomFieldTypeEnum.BOOLEAN);
-        edrCf.setValueRequired(false);
-        result.put("ExportMediationEntityJob_edrCf", edrCf);
-
-        CustomFieldTemplate edrStatusCf = new CustomFieldTemplate();
-        edrStatusCf.setCode(EXPORT_MEDIATION_ENTITY_JOB_EDR_STATUS_CF);
-        edrStatusCf.setAppliesTo(APPLIES_TO_NAME);
-        edrStatusCf.setActive(true);
-        edrStatusCf.setDescription(resourceMessages.getString(MESSAGE_EXPORT_ENTITY_JOB_EDR_STATUS_CF));
-        edrStatusCf.setFieldType(CustomFieldTypeEnum.STRING);
-        edrStatusCf.setValueRequired(false);
-        edrStatusCf.setMaxValue(100L);
-        result.put(EXPORT_MEDIATION_ENTITY_JOB_EDR_STATUS_CF, edrStatusCf);
-
-        CustomFieldTemplate woCf = new CustomFieldTemplate();
-        woCf.setCode("ExportMediationEntityJob_woCf");
-        woCf.setAppliesTo(APPLIES_TO_NAME);
-        woCf.setActive(true);
-        woCf.setDescription(resourceMessages.getString("exportEntityJob.woCf"));
-        woCf.setFieldType(CustomFieldTypeEnum.BOOLEAN);
-        woCf.setValueRequired(false);
-        result.put("ExportMediationEntityJob_woCf", woCf);
-
-        CustomFieldTemplate woStatusCf = new CustomFieldTemplate();
-        woStatusCf.setCode(EXPORT_MEDIATION_ENTITY_JOB_WO_STATUS_CF);
-        woStatusCf.setAppliesTo(APPLIES_TO_NAME);
-        woStatusCf.setActive(true);
-        woStatusCf.setDescription(resourceMessages.getString(MESSAGE_EXPORT_ENTITY_JOB_WO_STATUS_CF));
-        woStatusCf.setFieldType(CustomFieldTypeEnum.STRING);
-        woStatusCf.setValueRequired(false);
-        woStatusCf.setMaxValue(100L);
-        result.put(EXPORT_MEDIATION_ENTITY_JOB_WO_STATUS_CF, woStatusCf);
-
-        CustomFieldTemplate rtCf = new CustomFieldTemplate();
-        rtCf.setCode("ExportMediationEntityJob_rtCf");
-        rtCf.setAppliesTo(APPLIES_TO_NAME);
-        rtCf.setActive(true);
-        rtCf.setDescription(resourceMessages.getString("exportEntityJob.rtCf"));
-        rtCf.setFieldType(CustomFieldTypeEnum.BOOLEAN);
-        rtCf.setValueRequired(false);
-        result.put("ExportMediationEntityJob_rtCf", rtCf);
-
-        CustomFieldTemplate rtStatusCf = new CustomFieldTemplate();
-        rtStatusCf.setCode(EXPORT_MEDIATION_ENTITY_JOB_RT_STATUS_CF);
-        rtStatusCf.setAppliesTo(APPLIES_TO_NAME);
-        rtStatusCf.setActive(true);
-        rtStatusCf.setMaxValue(100L);
-        rtStatusCf.setDescription(resourceMessages.getString(MESSAGE_EXPORT_ENTITY_JOB_RT_STATUS_CF));
-        rtStatusCf.setFieldType(CustomFieldTypeEnum.STRING);
-        rtStatusCf.setValueRequired(false);
-        result.put(EXPORT_MEDIATION_ENTITY_JOB_RT_STATUS_CF, rtStatusCf);
 
         CustomFieldTemplate lastTransactionDate = new CustomFieldTemplate();
         lastTransactionDate.setCode("ExportMediationEntityJob_lastTransactionDate");
@@ -128,6 +70,7 @@ public class ExportMediationEntityJob extends Job {
         lastTransactionDate.setDescription(resourceMessages.getString("exportEntityJob.lastTransactionDate"));
         lastTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
         lastTransactionDate.setValueRequired(false);
+        lastTransactionDate.setGuiPosition("tab:Custom fields:0;fieldGroup:Dates configuration:0;field:1");
         result.put("ExportMediationEntityJob_lastTransactionDate", lastTransactionDate);
 
         CustomFieldTemplate firstTransactionDate = new CustomFieldTemplate();
@@ -137,6 +80,7 @@ public class ExportMediationEntityJob extends Job {
         firstTransactionDate.setDescription(resourceMessages.getString("exportEntityJob.firstTransactionDate"));
         firstTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
         firstTransactionDate.setValueRequired(true);
+        firstTransactionDate.setGuiPosition("tab:Custom fields:0;fieldGroup:Dates configuration:0;field:0");
         result.put("ExportMediationEntityJob_firstTransactionDate", firstTransactionDate);
 
         CustomFieldTemplate maxResult = new CustomFieldTemplate();
@@ -146,6 +90,7 @@ public class ExportMediationEntityJob extends Job {
         maxResult.setDescription(resourceMessages.getString("exportEntityJob.maxResult"));
         maxResult.setFieldType(CustomFieldTypeEnum.LONG);
         maxResult.setValueRequired(false);
+        maxResult.setGuiPosition("tab:Custom fields:0;fieldGroup:Configuration:0;field:0");
         result.put("ExportMediationEntityJob_maxResult", maxResult);
 
         CustomFieldTemplate daysToIgnore = new CustomFieldTemplate();
@@ -156,6 +101,7 @@ public class ExportMediationEntityJob extends Job {
         daysToIgnore.setFieldType(CustomFieldTypeEnum.LONG);
         daysToIgnore.setValueRequired(false);
         daysToIgnore.setDefaultValue("0");
+        daysToIgnore.setGuiPosition("tab:Custom fields:0;fieldGroup:Dates configuration:0;field:2");
         result.put(EXPORT_MEDIATION_DATA_JOB_DAYS_TO_IGNORE, daysToIgnore);
 
         CustomFieldTemplate exportFileName = new CustomFieldTemplate();
@@ -166,7 +112,56 @@ public class ExportMediationEntityJob extends Job {
         exportFileName.setFieldType(CustomFieldTypeEnum.STRING);
         exportFileName.setMaxValue(100L);
         exportFileName.setValueRequired(false);
+        exportFileName.setGuiPosition("tab:Custom fields:0;fieldGroup:Configuration:0;field:1");
         result.put(EXPORT_MEDIATION_ENTITY_JOB_FILE_NAME, exportFileName);
+
+        CustomFieldTemplate edrStatusCf = new CustomFieldTemplate();
+        edrStatusCf.setCode(EXPORT_MEDIATION_ENTITY_JOB_EDR_STATUS_CF);
+        edrStatusCf.setAppliesTo(APPLIES_TO_NAME);
+        edrStatusCf.setActive(true);
+        edrStatusCf.setDescription(resourceMessages.getString(MESSAGE_EXPORT_ENTITY_JOB_EDR_STATUS_CF));
+        edrStatusCf.setFieldType(CustomFieldTypeEnum.CHECKBOX_LIST);
+        edrStatusCf.setStorageType(CustomFieldStorageTypeEnum.LIST);
+        edrStatusCf.setValueRequired(true);
+        SortedMap<String, String> edrStatusList = new TreeMap<>();
+        for (EDRStatusEnum e : EDRStatusEnum.values()) {
+            edrStatusList.put(e.name(), resourceMessages.getString(e.getLabel()));
+        }
+        edrStatusCf.setListValues(edrStatusList);
+        edrStatusCf.setGuiPosition("tab:Custom fields:0;fieldGroup:Status:0;field:0");
+        result.put(EXPORT_MEDIATION_ENTITY_JOB_EDR_STATUS_CF, edrStatusCf);
+
+        CustomFieldTemplate rtStatusCf = new CustomFieldTemplate();
+        rtStatusCf.setCode(EXPORT_MEDIATION_ENTITY_JOB_RT_STATUS_CF);
+        rtStatusCf.setAppliesTo(APPLIES_TO_NAME);
+        rtStatusCf.setActive(true);
+        rtStatusCf.setDescription(resourceMessages.getString(MESSAGE_EXPORT_ENTITY_JOB_RT_STATUS_CF));
+        rtStatusCf.setFieldType(CustomFieldTypeEnum.CHECKBOX_LIST);
+        rtStatusCf.setStorageType(CustomFieldStorageTypeEnum.LIST);
+        rtStatusCf.setValueRequired(true);
+        SortedMap<String, String> rtStatusList = new TreeMap<>();
+        for (RatedTransactionStatusEnum e : RatedTransactionStatusEnum.values()) {
+            rtStatusList.put(e.name(), resourceMessages.getString(e.getLabel()));
+        }
+        rtStatusCf.setListValues(rtStatusList);
+        rtStatusCf.setGuiPosition("tab:Custom fields:0;fieldGroup:Status:0;field:1");
+        result.put(EXPORT_MEDIATION_ENTITY_JOB_RT_STATUS_CF, rtStatusCf);
+
+        CustomFieldTemplate woStatusCf = new CustomFieldTemplate();
+        woStatusCf.setCode(EXPORT_MEDIATION_ENTITY_JOB_WO_STATUS_CF);
+        woStatusCf.setAppliesTo(APPLIES_TO_NAME);
+        woStatusCf.setActive(true);
+        woStatusCf.setDescription(resourceMessages.getString(MESSAGE_EXPORT_ENTITY_JOB_WO_STATUS_CF));
+        woStatusCf.setFieldType(CustomFieldTypeEnum.CHECKBOX_LIST);
+        woStatusCf.setStorageType(CustomFieldStorageTypeEnum.LIST);
+        woStatusCf.setValueRequired(true);
+        SortedMap<String, String> woStatusList = new TreeMap<>();
+        for (WalletOperationStatusEnum e : WalletOperationStatusEnum.values()) {
+            woStatusList.put(e.name(), resourceMessages.getString(e.getLabel()));
+        }
+        woStatusCf.setListValues(woStatusList);
+        woStatusCf.setGuiPosition("tab:Custom fields:0;fieldGroup:Status:0;field:2");
+        result.put(EXPORT_MEDIATION_ENTITY_JOB_WO_STATUS_CF, woStatusCf);
 
         return result;
     }

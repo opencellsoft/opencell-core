@@ -3,8 +3,6 @@ package org.meveo.admin.job;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -83,7 +81,6 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running with parameter={}", jobInstance.getParametres());
         try {
-
             String exportParentDir = paramBeanFactory.getChrootDir() + File.separator + "exports" + File.separator;
             File dir = new File(exportParentDir);
             if (!dir.exists()) {
@@ -104,43 +101,31 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
                 lastTransactionDate = java.sql.Date.valueOf(LocalDate.now().minusDays(daysToIgnore));
             }
 
-            boolean edrCf = (boolean) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_edrCf", false);
-            boolean woCf = (boolean) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_woCf", false);
-            boolean rtCf = (boolean) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_rtCf", false);
-
             int maxResult = ((Long) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_maxResult", 100000L)).intValue();
             long nbItems = 0;
             String report = "";
-            if (edrCf) {
+            List<EDRStatusEnum> edrStatus = getTargetStatusList(jobInstance, EDRStatusEnum.class, EXPORT_MEDIATION_ENTITY_JOB_EDR_STATUS_CF);
+            if (!edrStatus.isEmpty()) {
                 log.info("==> Start exporting EDR ");
-                List<EDRStatusEnum> formattedStatus = getTargetStatusList(jobInstance, EDRStatusEnum.class, EXPORT_MEDIATION_ENTITY_JOB_EDR_STATUS_CF);
-                if (!formattedStatus.isEmpty()) {
-                    nbItems = exportEDR(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, formattedStatus, exportParentDir, exportFileName);
-                    log.info("{} EDRs exported in total", nbItems);
-                    report += "EDRs : " + nbItems;
-                }
+                nbItems = exportEDR(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, edrStatus, exportParentDir, exportFileName);
+                log.info("{} EDRs exported in total", nbItems);
+                report += "EDRs : " + nbItems;
             }
-            if (woCf) {
+            List<WalletOperationStatusEnum> woStatus = getTargetStatusList(jobInstance, WalletOperationStatusEnum.class, EXPORT_MEDIATION_ENTITY_JOB_WO_STATUS_CF);
+            if (!woStatus.isEmpty()) {
                 log.info("==> Start exporting wallet operation ");
-                List<WalletOperationStatusEnum> formattedStatus = getTargetStatusList(jobInstance, WalletOperationStatusEnum.class, EXPORT_MEDIATION_ENTITY_JOB_WO_STATUS_CF);
-                if (!formattedStatus.isEmpty()) {
-                    long woCount = exportWalletOperation(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, formattedStatus, exportParentDir,
-                            exportFileName);
-                    log.info("{} WOs exported in total", woCount);
-                    nbItems += woCount;
-                    report += " WOs : " + woCount;
-                }
+                long woCount = exportWalletOperation(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, woStatus, exportParentDir, exportFileName);
+                log.info("{} WOs exported in total", woCount);
+                nbItems += woCount;
+                report += " WOs : " + woCount;
             }
-            if (rtCf) {
+            List<RatedTransactionStatusEnum> rtStatusList = getTargetStatusList(jobInstance, RatedTransactionStatusEnum.class, EXPORT_MEDIATION_ENTITY_JOB_RT_STATUS_CF);
+            if (!rtStatusList.isEmpty()) {
                 log.info("==> Start exporting rated transaction ");
-                List<RatedTransactionStatusEnum> formattedStatus = getTargetStatusList(jobInstance, RatedTransactionStatusEnum.class, EXPORT_MEDIATION_ENTITY_JOB_RT_STATUS_CF);
-                if (!formattedStatus.isEmpty()) {
-                    long rtCount = exportRatedTransaction(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, formattedStatus, exportParentDir,
-                            exportFileName);
-                    log.info("{} RTs exported in total", rtCount);
-                    nbItems += rtCount;
-                    report += " RTs : " + rtCount;
-                }
+                long rtCount = exportRatedTransaction(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, rtStatusList, exportParentDir, exportFileName);
+                log.info("{} RTs exported in total", rtCount);
+                nbItems += rtCount;
+                report += " RTs : " + rtCount;
             }
             result.addReport(report);
             result.setNbItemsToProcess(nbItems);
@@ -376,28 +361,6 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
             log.info("{} RT processed", size);
         }
         return result;
-    }
-
-    /**
-     * @param <T>
-     * @param jobInstance
-     * @param clazz
-     * @param cfCode
-     * @return
-     */
-    private <T extends Enum<T>> List<T> getTargetStatusList(JobInstance jobInstance, Class<T> clazz, String cfCode) {
-        List<T> formattedStatus = new ArrayList<T>();
-        String statusListStr = (String) this.getParamOrCFValue(jobInstance, cfCode);
-        if (statusListStr != null && !statusListStr.isEmpty()) {
-            List<String> statusList = Arrays.asList(statusListStr.split(SPLIT_CHAR));
-            for (String status : statusList) {
-                T statusEnum = T.valueOf(clazz, status.toUpperCase());
-                if (statusEnum != null) {
-                    formattedStatus.add(statusEnum);
-                }
-            }
-        }
-        return formattedStatus;
     }
 
     /**
