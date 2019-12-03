@@ -2146,7 +2146,16 @@
     		<column name="display_wallet_operations" type="${type.boolean}" defaultValueNumeric="0"/>
     	</addColumn>
     </changeSet>
-
+        
+    <changeSet id="#4795_221119" author="Mohammed_ElAzzouzi">
+  		<sql>create index billing_invoice_agregate_tax_invoice_agregate_idx on ${db.schema.adapted}billing_invoice_agregate (tax_invoice_agregate)</sql>
+		<sql>create index billing_invoice_agregate_sub_cat_invoice_agregate_id_idx on ${db.schema.adapted}billing_invoice_agregate (sub_cat_invoice_agregate_id)</sql>
+		<sql>create index ar_account_operation_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (cat_inv_agregate_id)</sql>
+		<sql>create index ar_account_operation_sub_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (sub_cat_inv_agregate_id)</sql>
+		<sql>create index billing_rated_transaction_aggregate_id_r_idx on ${db.schema.adapted}billing_rated_transaction (aggregate_id_r)</sql>
+		<sql>create index billing_rated_transaction_aggregate_id_t_idx on ${db.schema.adapted}billing_rated_transaction (aggregate_id_t)</sql>
+		<sql>create index billing_rated_transaction_aggregate_id_f_idx on ${db.schema.adapted}billing_rated_transaction (aggregate_id_f)</sql>
+    </changeSet>
 
     <changeSet author="abdelkader.bouazza"  id="#4494-Enable_a_subscription_to_have_the_same_access_point_in_two_or_more_different_periods_of_time">
         <dropUniqueConstraint tableName="medina_access" constraintName="uk_lca62y5gn9qo1e6jr84i9w3lr"/>

@@ -32,6 +32,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -45,6 +46,7 @@ import org.meveo.model.catalog.DiscountPlanItem;
  */
 @Entity
 @DiscriminatorValue("F")
+@NamedQuery(name = "SubCategoryInvoiceAgregate.deleteByBR", query = "delete from SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId")
 public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
     /** The Constant serialVersionUID. */

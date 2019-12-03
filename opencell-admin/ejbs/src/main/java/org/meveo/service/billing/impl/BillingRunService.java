@@ -114,6 +114,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @Inject
     private OrderService orderService;
+    
+    @Inject
+    InvoiceAgregateService invoiceAgregateService;
 
     /**
      * Generate pre invoicing reports.
@@ -471,8 +474,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         ratedTransactionService.deleteMinRTs(billingRun);
         ratedTransactionService.uninvoiceRTs(billingRun);
+        
         invoiceService.deleteInvoices(billingRun);
-
+		invoiceAgregateService.deleteInvoiceAgregates(billingRun);
+		
         // Andrius: I see no point of this update, as it has no relevant change:
         // Query queryBA = getEntityManager().createQuery("update " + BillingAccount.class.getName() + " set billingRun=null where billingRun=:billingRun");
         // queryBA.setParameter("billingRun", billingRun);
