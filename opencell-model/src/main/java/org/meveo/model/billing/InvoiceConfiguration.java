@@ -85,12 +85,6 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     @Column(name = "display_cf_as_xml")
     private Boolean displayCfAsXML = false;
 
-    /**
-     * Should counter periods be displayed in the XML invoice
-     */
-    @Type(type = "numeric_boolean")
-    @Column(name = "display_charges_periods")
-    private Boolean displayChargesPeriods = false;
 
     /**
      * Should Billing cycle be displayed in the XML invoice
@@ -112,7 +106,23 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     @Column(name = "current_invoice_nb")
     private Long currentInvoiceNb = 0L;
 
-    public Boolean getDisplaySubscriptions() {
+    /**
+     * Should wallet operations be displayed in the XML invoice
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "display_wallet_operations")
+    private Boolean displayWalletOperations = false;
+
+    
+    public Boolean getDisplayWalletOperations() {
+		return displayWalletOperations;
+	}
+
+	public void setDisplayWalletOperations(Boolean displayWalletOperations) {
+		this.displayWalletOperations = displayWalletOperations;
+	}
+
+	public Boolean getDisplaySubscriptions() {
         return displaySubscriptions;
     }
 
@@ -176,13 +186,7 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
         this.displayCfAsXML = displayCfAsXML;
     }
 
-    public Boolean getDisplayChargesPeriods() {
-        return displayChargesPeriods;
-    }
 
-    public void setDisplayChargesPeriods(Boolean displayChargesPeriods) {
-        this.displayChargesPeriods = displayChargesPeriods;
-    }
 
     public Boolean getDisplayBillingCycle() {
         return displayBillingCycle;
@@ -196,7 +200,7 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     public String toString() {
         return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", "
                 + "displayPricePlans=" + displayPricePlans + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", " + "displayDetail=" + displayDetail
-                + ", displayCfAsXML=" + displayCfAsXML + ", displayChargesPeriods=" + displayChargesPeriods + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders="
+                + ", displayCfAsXML=" + displayCfAsXML + ", displayWalletOperations=" + displayWalletOperations + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders="
                 + displayOrders + "]";
     }
 
