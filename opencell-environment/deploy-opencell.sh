@@ -55,7 +55,7 @@ docker-compose up -d
 
 echo ">>> Waiting opencell is ready, don't matter about 404 errors"
 ### Wait for application is up
-while ! (curl -sSf http://localhost:8080/opencell/about.xhtml | grep Version > /dev/null)
+while ! (curl -sSf http://localhost:${OC_PORT}/opencell/about.xhtml | grep Version > /dev/null)
 do
 sleep 3
 echo "Please wait, opencell not yet up"
