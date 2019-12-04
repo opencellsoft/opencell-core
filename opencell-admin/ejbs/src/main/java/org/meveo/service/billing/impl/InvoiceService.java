@@ -3614,7 +3614,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param billingRun Billing run
      */
     public void deleteInvoices(BillingRun billingRun) {
-        getEntityManager().createNamedQuery("Invoice.deleteByBR").setParameter("billingRun", billingRun).executeUpdate();
+        getEntityManager().createNamedQuery("Invoice.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
     }
 
     /**
