@@ -95,11 +95,6 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
             if (lastTransactionDate == null) {
                 lastTransactionDate = new Date();
             }
-            long daysToIgnore = (long) this.getParamOrCFValue(jobInstance, EXPORT_MEDIATION_DATA_JOB_DAYS_TO_IGNORE);
-            if (daysToIgnore > 0) {
-                firstTransactionDate = java.sql.Date.valueOf(LocalDate.now().minusYears(OLD_DATE));
-                lastTransactionDate = java.sql.Date.valueOf(LocalDate.now().minusDays(daysToIgnore));
-            }
 
             int maxResult = ((Long) this.getParamOrCFValue(jobInstance, "ExportMediationEntityJob_maxResult", 100000L)).intValue();
             long nbItems = 0;

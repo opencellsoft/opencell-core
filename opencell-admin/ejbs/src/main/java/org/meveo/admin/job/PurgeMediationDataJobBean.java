@@ -23,7 +23,6 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.slf4j.Logger;
 
-import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_DAYS_TO_RETAIN;
 import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_EDR_STATUS_CF;
 import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_RT_STATUS_CF;
 import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_WO_STATUS_CF;
@@ -49,10 +48,6 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
     @Inject
     private RatedTransactionService ratedTransactionService;
 
-    private static final long OLD_DATE = 50;
-
-    private static final String SPLIT_CHAR = ",";
-
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
@@ -63,45 +58,36 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
             if (lastTransactionDate == null) {
                 lastTransactionDate = new Date();
             }
-            long daysToRetain = (long) this.getParamOrCFValue(jobInstance, PURGE_MEDIATION_DATA_JOB_DAYS_TO_RETAIN);
-            if (daysToRetain > 0) {
-                firstTransactionDate = java.sql.Date.valueOf(LocalDate.now().minusYears(OLD_DATE));
-                lastTransactionDate = java.sql.Date.valueOf(LocalDate.now().minusDays(daysToRetain));
-            }
-            boolean edrCf = (boolean) this.getParamOrCFValue(jobInstance, "PurgeMediationDataJob_edrCf", false);
-            boolean woCf = (boolean) this.getParamOrCFValue(jobInstance, "PurgeMediationDataJob_woCf", false);
-            boolean rtCf = (boolean) this.getParamOrCFValue(jobInstance, "PurgeMediationDataJob_rtCf", false);
             long nbItems = 0;
+            String report = "";
             String formattedStartDate = DateUtils.formatDateWithPattern(firstTransactionDate, "yyyy-MM-dd");
             String formattedEndDate = DateUtils.formatDateWithPattern(lastTransactionDate, "yyyy-MM-dd");
-            if (woCf) {
+            List<WalletOperationStatusEnum> woStatusList = getTargetStatusList(jobInstance, WalletOperationStatusEnum.class, PURGE_MEDIATION_DATA_JOB_WO_STATUS_CF);
+            if (!woStatusList.isEmpty()) {
                 log.info("=> starting purge wallet operation between {} and {}", formattedStartDate, formattedEndDate);
-                List<WalletOperationStatusEnum> targetStatusList = getTargetStatusList(jobInstance, WalletOperationStatusEnum.class, PURGE_MEDIATION_DATA_JOB_WO_STATUS_CF);
-                if (!targetStatusList.isEmpty()) {
-                    nbItems = walletOperationService.purge(firstTransactionDate, lastTransactionDate, targetStatusList);
-                    log.info("==>{} WOs rows purged", nbItems);
-                }
+                nbItems = walletOperationService.purge(firstTransactionDate, lastTransactionDate, woStatusList);
+                log.info("==>{} WOs rows purged", nbItems);
+                report += "WOs :" + nbItems;
             }
-            if (rtCf) {
+            List<RatedTransactionStatusEnum> rtStatusList = getTargetStatusList(jobInstance, RatedTransactionStatusEnum.class, PURGE_MEDIATION_DATA_JOB_RT_STATUS_CF);
+            if (!rtStatusList.isEmpty()) {
                 log.info("=> starting purge rated transactions between {} and {}", formattedStartDate, formattedEndDate);
-                List<RatedTransactionStatusEnum> targetStatusList = getTargetStatusList(jobInstance, RatedTransactionStatusEnum.class, PURGE_MEDIATION_DATA_JOB_RT_STATUS_CF);
-                if (!targetStatusList.isEmpty()) {
-                    long itemsRemoved = ratedTransactionService.purge(firstTransactionDate, lastTransactionDate, targetStatusList);
-                    log.info("==>{} RTs rows purged", itemsRemoved);
-                    nbItems += itemsRemoved;
-                }
+                long itemsRemoved = ratedTransactionService.purge(firstTransactionDate, lastTransactionDate, rtStatusList);
+                log.info("==>{} RTs rows purged", itemsRemoved);
+                report += ", RTs : " + itemsRemoved;
+                nbItems += itemsRemoved;
             }
-            if (edrCf) {
+            List<EDRStatusEnum> edrStatusList = getTargetStatusList(jobInstance, EDRStatusEnum.class, PURGE_MEDIATION_DATA_JOB_EDR_STATUS_CF);
+            if (!edrStatusList.isEmpty()) {
                 log.info("=> starting purge rated transactions between {} and {}", formattedStartDate, formattedEndDate);
-                List<EDRStatusEnum> targetStatusList = getTargetStatusList(jobInstance, EDRStatusEnum.class, PURGE_MEDIATION_DATA_JOB_EDR_STATUS_CF);
-                if (!targetStatusList.isEmpty()) {
-                    long itemsRemoved = edrService.purge(firstTransactionDate, lastTransactionDate, targetStatusList);
-                    log.info("==>{} EDRs rows purged ", itemsRemoved);
-                    nbItems += itemsRemoved;
-                }
+                long itemsRemoved = edrService.purge(firstTransactionDate, lastTransactionDate, edrStatusList);
+                log.info("==>{} EDRs rows purged ", itemsRemoved);
+                report += ", EDRs : " + itemsRemoved;
+                nbItems += itemsRemoved;
             }
             result.setNbItemsToProcess(nbItems);
             result.setNbItemsCorrectlyProcessed(nbItems);
+            result.addReport(report);
         } catch (Exception e) {
             log.error("Failed to run purge EDR/WO/RT job", e);
             result.registerError(e.getMessage());

@@ -473,7 +473,10 @@ public class CustomFieldValue implements Serializable, Cloneable {
         if (itemClass == String.class) {
             listStringValue = new ArrayList<>();
             for (Object listItem : listValue) {
-                listStringValue.add(listItem.toString());
+                //prevent duplicated values
+                if (!listStringValue.contains(listItem)) {
+                    listStringValue.add(listItem.toString());
+                }
             }
 
         } else if (itemClass == Date.class) {

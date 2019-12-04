@@ -93,17 +93,6 @@ public class ExportMediationEntityJob extends Job {
         maxResult.setGuiPosition("tab:Custom fields:0;fieldGroup:Configuration:0;field:0");
         result.put("ExportMediationEntityJob_maxResult", maxResult);
 
-        CustomFieldTemplate daysToIgnore = new CustomFieldTemplate();
-        daysToIgnore.setCode(EXPORT_MEDIATION_DATA_JOB_DAYS_TO_IGNORE);
-        daysToIgnore.setAppliesTo(APPLIES_TO_NAME);
-        daysToIgnore.setActive(true);
-        daysToIgnore.setDescription(resourceMessages.getString(MESSAGE_EXPORT_ENTITY_JOB_DAYS_TO_IGNORE));
-        daysToIgnore.setFieldType(CustomFieldTypeEnum.LONG);
-        daysToIgnore.setValueRequired(false);
-        daysToIgnore.setDefaultValue("0");
-        daysToIgnore.setGuiPosition("tab:Custom fields:0;fieldGroup:Dates configuration:0;field:2");
-        result.put(EXPORT_MEDIATION_DATA_JOB_DAYS_TO_IGNORE, daysToIgnore);
-
         CustomFieldTemplate exportFileName = new CustomFieldTemplate();
         exportFileName.setCode(EXPORT_MEDIATION_ENTITY_JOB_FILE_NAME);
         exportFileName.setAppliesTo(APPLIES_TO_NAME);
@@ -122,7 +111,7 @@ public class ExportMediationEntityJob extends Job {
         edrStatusCf.setDescription(resourceMessages.getString(MESSAGE_EXPORT_ENTITY_JOB_EDR_STATUS_CF));
         edrStatusCf.setFieldType(CustomFieldTypeEnum.CHECKBOX_LIST);
         edrStatusCf.setStorageType(CustomFieldStorageTypeEnum.LIST);
-        edrStatusCf.setValueRequired(true);
+        edrStatusCf.setValueRequired(false);
         SortedMap<String, String> edrStatusList = new TreeMap<>();
         for (EDRStatusEnum e : EDRStatusEnum.values()) {
             edrStatusList.put(e.name(), resourceMessages.getString(e.getLabel()));
@@ -138,7 +127,7 @@ public class ExportMediationEntityJob extends Job {
         rtStatusCf.setDescription(resourceMessages.getString(MESSAGE_EXPORT_ENTITY_JOB_RT_STATUS_CF));
         rtStatusCf.setFieldType(CustomFieldTypeEnum.CHECKBOX_LIST);
         rtStatusCf.setStorageType(CustomFieldStorageTypeEnum.LIST);
-        rtStatusCf.setValueRequired(true);
+        rtStatusCf.setValueRequired(false);
         SortedMap<String, String> rtStatusList = new TreeMap<>();
         for (RatedTransactionStatusEnum e : RatedTransactionStatusEnum.values()) {
             rtStatusList.put(e.name(), resourceMessages.getString(e.getLabel()));
@@ -154,7 +143,7 @@ public class ExportMediationEntityJob extends Job {
         woStatusCf.setDescription(resourceMessages.getString(MESSAGE_EXPORT_ENTITY_JOB_WO_STATUS_CF));
         woStatusCf.setFieldType(CustomFieldTypeEnum.CHECKBOX_LIST);
         woStatusCf.setStorageType(CustomFieldStorageTypeEnum.LIST);
-        woStatusCf.setValueRequired(true);
+        woStatusCf.setValueRequired(false);
         SortedMap<String, String> woStatusList = new TreeMap<>();
         for (WalletOperationStatusEnum e : WalletOperationStatusEnum.values()) {
             woStatusList.put(e.name(), resourceMessages.getString(e.getLabel()));
