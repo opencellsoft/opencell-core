@@ -59,6 +59,21 @@ public abstract class AccountDto extends BusinessEntityDto {
     private ContactInformationDto contactInformation;
 
     /**
+     * Expression to determine minimum amount value
+     */
+    private String minimumAmountEl;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
+    private String minimumLabelEl;
+
+    /**
+     * The billing account code to be used when calculating the min amount billable for Customer and CA
+     */
+    private String minimumTargetAccount;
+
+    /**
      * Instantiates a new account dto.
      */
     public AccountDto() {
@@ -321,4 +336,27 @@ public abstract class AccountDto extends BusinessEntityDto {
 		this.contactInformation = contactInformation;
 	}
 
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
+
+    public String getMinimumTargetAccount() {
+        return minimumTargetAccount;
+    }
+
+    public void setMinimumTargetAccount(String minimumTargetAccount) {
+        this.minimumTargetAccount = minimumTargetAccount;
+    }
 }

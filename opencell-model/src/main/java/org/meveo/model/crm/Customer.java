@@ -53,7 +53,8 @@ import org.meveo.model.payments.CustomerAccount;
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "crm_customer")
 @NamedQueries({
-        @NamedQuery(name = "Customer.getMimimumRTUsed", query = "select c.minimumAmountEl from Customer c where c.minimumAmountEl is not null")})
+        @NamedQuery(name = "Customer.getMimimumRTUsed", query = "select c.minimumAmountEl from Customer c where c.minimumAmountEl is not null"),
+        @NamedQuery(name = "Customer.getCustomersWithMinAmountELNotNullByBA", query = "select c from Customer c where c.minimumAmountEl is not null  AND c=:customer")})
 
 public class Customer extends AccountEntity implements IWFEntity {
 

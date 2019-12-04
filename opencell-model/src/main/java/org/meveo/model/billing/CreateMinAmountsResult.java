@@ -39,6 +39,8 @@ public class CreateMinAmountsResult implements Serializable {
     
     List<RatedTransaction> minAmountTransactions = new ArrayList<RatedTransaction>();
 
+    List<ExtraMinAmount> extraMinAmounts = new ArrayList<>();
+
     /**
      * Instantiate
      */
@@ -110,5 +112,21 @@ public class CreateMinAmountsResult implements Serializable {
      */
     public void setCreatedAmountUserAccount(Map<String, Amounts> createdAmountUserAccount) {
         this.createdAmountUserAccount = createdAmountUserAccount;
+    }
+
+    /**
+     * Gets ExtraMinAmount
+     * @return an ExtraMinAmount
+     */
+    public List<ExtraMinAmount> getExtraMinAmounts() {
+        return extraMinAmounts;
+    }
+
+    /**
+     * Sets ExtraMinAmount
+     * @param extraMinAmounts the ExtraMinAmount
+     */
+    public void setExtraMinAmounts(List<ExtraMinAmount> extraMinAmounts) {
+        this.extraMinAmounts = extraMinAmounts;
     }
 }

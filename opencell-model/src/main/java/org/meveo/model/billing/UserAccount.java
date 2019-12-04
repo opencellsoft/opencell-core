@@ -68,6 +68,7 @@ import org.meveo.model.WorkflowedEntity;
 @Table(name = "billing_user_account")
 @NamedQueries({ @NamedQuery(name = "UserAccount.findByCode", query = "select u from  UserAccount u where u.code = :code and lower(u.accountType) = 'acct_ua'"),
         @NamedQuery(name = "UserAccount.getUserAccountsWithMinAmountELNotNullByBA", query = "select u from UserAccount u where u.minimumAmountEl is not null AND u.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND u.billingAccount=:billingAccount"),
+        @NamedQuery(name = "UserAccount.getUserAccountsWithMinAmountELNotNullByUA", query = "select u from UserAccount u where u.minimumAmountEl is not null AND u.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND u=:userAccount"),
         @NamedQuery(name = "UserAccount.getMimimumRTUsed", query = "select u.minimumAmountEl from UserAccount u where u.minimumAmountEl is not null"),
 
 })

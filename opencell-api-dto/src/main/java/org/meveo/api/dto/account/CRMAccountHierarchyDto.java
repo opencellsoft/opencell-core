@@ -216,6 +216,11 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
     private String ccedEmails;
 
     /**
+     * An object to store minimumAmount data for each account
+     */
+    private MinimumAmountElDto minimumAmountEl;
+
+    /**
      * Gets the crm account type.
      *
      * @return the crm account type
@@ -1055,5 +1060,21 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
      */
     public void setCcedEmails(String ccedEmails) {
         this.ccedEmails = ccedEmails;
+    }
+
+    /**
+     * Gets the MinimumAmountElDto
+     * @return the MinimumAmountElDto
+     */
+    public MinimumAmountElDto getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    /**
+     * Sets the MinimumAmountElDto
+     * @param minimumAmountEl the MinimumAmountElDto
+     */
+    public void setMinimumAmountEl(MinimumAmountElDto minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
     }
 }

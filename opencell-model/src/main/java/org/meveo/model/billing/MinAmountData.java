@@ -1,5 +1,6 @@
 package org.meveo.model.billing;
 
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.Seller;
 
@@ -11,10 +12,10 @@ public class MinAmountData {
     private String minAmountLabel;
     private Amounts amounts;
     private Map<Long, Amounts> invoiceSubCategoryAmounts;
-    private IEntity entity;
+    private BusinessEntity entity;
     private Seller seller;
 
-    public MinAmountData(BigDecimal minAmount, String minAmountLabel, Amounts amounts, Map<Long, Amounts> invoiceSubCategoryAmounts, IEntity entity, Seller seller) {
+    public MinAmountData(BigDecimal minAmount, String minAmountLabel, Amounts amounts, Map<Long, Amounts> invoiceSubCategoryAmounts, BusinessEntity entity, Seller seller) {
         this.minAmount = minAmount;
         this.minAmountLabel = minAmountLabel;
         this.amounts = amounts;
@@ -55,11 +56,11 @@ public class MinAmountData {
         this.invoiceSubCategoryAmounts = invoiceSubCategoryAmounts;
     }
 
-    public IEntity getEntity() {
+    public BusinessEntity getEntity() {
         return entity;
     }
 
-    public void setEntity(IEntity entity) {
+    public void setEntity(BusinessEntity entity) {
         this.entity = entity;
     }
 

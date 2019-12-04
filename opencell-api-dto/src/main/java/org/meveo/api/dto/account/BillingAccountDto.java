@@ -90,6 +90,8 @@ public class BillingAccountDto extends AccountDto {
     /**
      * Expression to determine minimum amount value
      */
+    @Deprecated
+    // Moved to AccountDto
     private String minimumAmountEl;
 
     /**
@@ -100,6 +102,8 @@ public class BillingAccountDto extends AccountDto {
     /**
      * Expression to determine rated transaction description to reach minimum amount value
      */
+    @Deprecated
+    // Moved to AccountDto
     private String minimumLabelEl;
 
     /**
