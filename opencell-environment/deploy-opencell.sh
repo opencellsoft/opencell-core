@@ -53,20 +53,25 @@ docker-compose up -d
 
 echo ">>> Waiting opencell is ready, don't matter about 404 errors"
 ### Wait for application is up
-while ! (curl -sSf http://${OC_HOST:-localhost}:${OC_PORT:-8080}/opencell/about.xhtml | grep Version > /dev/null)
-do
-sleep 3
-echo "Please wait, opencell not yet up"
+export CONNEXION_TIMEOUT=${CONNEXION_TIMEOUT:-120}
+sleep 5
+i=0;                                  
+while [ "${i}" -lt "${CONNEXION_TIMEOUT}" ]; do
+  if ((curl -sSkf http://${OC_HOST:-localhost}:${OC_PORT:-8080}/opencell/about.xhtml | grep Opencell > /dev/null)) then
+
+    clear
+    echo ">>> FINISHED !"
+
+    echo "Great, now your environnement is ready !"
+    echo "Please open http://${OC_HOST:-localhost}:${OC_PORT:-8080}/ page to start"
+    echo "> Marketing manager is available on http://${OC_HOST:-localhost}:${OC_PORT:-8080}/opencell with credentials: opencell.marketingmanager / opencell.marketingmanager"
+    echo "> Administration console is available on http://${OC_HOST:-localhost}:${OC_PORT:-8080}/opencell with crendialts: opencell.superadmin / opencell.superadmin"
+    echo ""
+    echo "Any problem with this installer, please contact me : antoine.michea@opencellsoft.com"
+
+    break;
+  fi
+  echo "$i not yet up"
+  sleep 1
+  i=$((i+1))
 done
-
-
-clear
-echo ">>> FINISHED !"
-
-echo "Great, now your environnement is ready !"
-echo "Please open http://${OC_HOST:-localhost}:${OC_PORT:-8080}/ page to start"
-echo "> Marketing manager is available on http://${OC_HOST:-localhost}:${OC_PORT:-8080}/opencell with credentials: opencell.marketingmanager / opencell.marketingmanager"
-echo "> Administration console is available on http://${OC_HOST:-localhost}:${OC_PORT:-8080}/opencell with crendialts: opencell.superadmin / opencell.superadmin"
-echo ""
-echo "Any problem with this installer, please contact me : antoine.michea@opencellsoft.com"
-
