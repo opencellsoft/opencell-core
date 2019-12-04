@@ -1944,8 +1944,6 @@
 		<sql>create index billing_invoice_agregate_sub_cat_invoice_agregate_id_idx on ${db.schema.adapted}billing_invoice_agregate (sub_cat_invoice_agregate_id)</sql>
 		<sql>create index ar_account_operation_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (cat_inv_agregate_id)</sql>
 		<sql>create index ar_account_operation_sub_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (sub_cat_inv_agregate_id)</sql>
-		<sql>create index billing_rated_transaction_aggregate_id_r_idx on ${db.schema.adapted}billing_rated_transaction (aggregate_id_r)</sql>
-		<sql>create index billing_rated_transaction_aggregate_id_t_idx on ${db.schema.adapted}billing_rated_transaction (aggregate_id_t)</sql>
 		<sql>create index billing_rated_transaction_aggregate_id_f_idx on ${db.schema.adapted}billing_rated_transaction (aggregate_id_f)</sql>
     </changeSet>
     
