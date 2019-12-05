@@ -4,9 +4,9 @@ pipeline {
         URL_SONAR = credentials('Sonar_URL')
         CREDENTIAL_SONAR = credentials('Sonar_ID')
         JAVA_VAR = sh (
-            script: "grep '<java.version>' ./pom.xml | sed 's/<java\\.version>\\(.*\\)<.*>/\\1/' | sed 's/^[ \\t]*//;s/[ \\t]*\$//'",
+            script: "grep '<java.version>' ./pom.xml | sed 's/<java\\.version>\\(.*\\)<.*>/\\1/'",
             returnStdout: true
-            )
+            ).trim()
 
     }
     options {
