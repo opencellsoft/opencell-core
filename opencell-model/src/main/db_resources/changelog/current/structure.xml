@@ -2146,17 +2146,16 @@
     	</addColumn>
     </changeSet>
 
-
     <changeSet author="abdelkader.bouazza"  id="#4494-Enable_a_subscription_to_have_the_same_access_point_in_two_or_more_different_periods_of_time">
         <dropUniqueConstraint tableName="medina_access" constraintName="uk_lca62y5gn9qo1e6jr84i9w3lr"/>
         <addUniqueConstraint columnNames="acces_user_id, subscription_id, start_date, end_date" constraintName="uk_lca62y5gn9qo1e6jr84i9w3lr" deferrable="false" disabled="false" initiallyDeferred="false" tableName="medina_access" />
     </changeSet>
-    
-    <changeSet id="#4804_021219" author="MohamedElYoussoufi" dbms="postgresql">
-    	<dropForeignKeyConstraint baseTableName="billing_wallet_operation" constraintName="fk_j3ntuqkj79m0fgdwa3anib1nk"/>
-    	<addForeignKeyConstraint baseColumnNames="reratedwalletoperation_id" baseTableName="billing_wallet_operation"
-                             constraintName="fk_wo_rerated_wo" onDelete="CASCADE" onUpdate="NO ACTION"
-                             referencedColumnNames="id" referencedTableName="billing_wallet_operation" />
+
+    <changeSet id="#4795_221119" author="Mohammed_ElAzzouzi">
+  		<sql>create index billing_invoice_agregate_tax_invoice_agregate_idx on ${db.schema.adapted}billing_invoice_agregate (tax_invoice_agregate)</sql>
+		<sql>create index billing_invoice_agregate_sub_cat_invoice_agregate_id_idx on ${db.schema.adapted}billing_invoice_agregate (sub_cat_invoice_agregate_id)</sql>
+		<sql>create index ar_account_operation_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (cat_inv_agregate_id)</sql>
+		<sql>create index ar_account_operation_sub_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (sub_cat_inv_agregate_id)</sql>
     </changeSet>
-    
+
 </databaseChangeLog>
