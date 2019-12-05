@@ -55,10 +55,15 @@ echo ">>> Waiting opencell is ready, don't matter about 404 errors"
 ### Wait for application is up
 export CONNEXION_TIMEOUT=${CONNEXION_TIMEOUT:-120}
 sleep 5
-i=0;                                  
-while [ "${i}" -lt "${CONNEXION_TIMEOUT}" ]; do
-  if ((curl -sSkf http://${OC_HOST:-localhost}:${OC_PORT:-8080}/opencell/about.xhtml | grep Opencell > /dev/null)) then
+i=0;
+until [ "`docker inspect -f {{.State.Health.Status}} opencell-${TENANT:-demo}`"=="healthy" ]; do
+  echo "$i not yet up"
+  sleep 1
+  i=$((i+1))
+done; 
 
+if [ "${i}" -lt "${CONNEXION_TIMEOUT}" ];
+ then
     clear
     echo ">>> FINISHED !"
 
@@ -70,8 +75,6 @@ while [ "${i}" -lt "${CONNEXION_TIMEOUT}" ]; do
     echo "Any problem with this installer, please contact me : antoine.michea@opencellsoft.com"
 
     break;
-  fi
-  echo "$i not yet up"
-  sleep 1
-  i=$((i+1))
-done
+ else
+    echo "DEPLOY ERROR, please check logs"
+fi
