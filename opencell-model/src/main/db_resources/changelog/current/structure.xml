@@ -2338,8 +2338,6 @@
 		        <constraints nullable="false" />
 		    </column>
        </addColumn>
-        <sql>update ${db.schema.adapted}billing_invoice_type set invoice_accountable = 1 where code not in ('QUOTE','DRAFT','PREPAID')</sql>
-        <sql>update ${db.schema.adapted}billing_invoice_type set invoice_accountable = 0 where code in ('QUOTE','DRAFT','PREPAID')</sql>
     </changeSet>
     
     <changeSet id="#4766_20191111" author="MohammedELAZZOUZI">
