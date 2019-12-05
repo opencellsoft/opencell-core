@@ -10,7 +10,7 @@
 		<delete tableName="meveo_timer">
 		</delete>
 	</changeSet>
-	
+
 	<changeSet id="#4092_20190415 - Add SelfCare Settings" author="EdwardPLegaspi">
 		<insert tableName="adm_permission">
             <column name="id" valueNumeric="-117" />
@@ -50,7 +50,7 @@
             <column name="user_id" value="-5"></column>
             <column name="role_id" value="-112"></column>
         </insert>
-        
+
         <sql><![CDATA[
         INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-20, 0, 0, now(), 'org.meveo.service.script.selfcare.CreateAccess', 'AddAccess', 'JAVA', '
 			package org.meveo.service.script.selfcare;
@@ -87,7 +87,7 @@
 			}
         ');
         ]]></sql>
-        
+
         <insert tableName="meveo_module">
         	<column name="id" valueNumeric="-1"></column>
         	<column name="version" value="0"></column>
@@ -100,9 +100,9 @@
         	<column name="installed" value="0"></column>
         	<column name="script_instance_id" valueNumeric="-20"></column>
         </insert>
-        
+
         <sql>
-        	<![CDATA[UPDATE ${db.schema.adapted}meveo_module 
+        	<![CDATA[UPDATE ${db.schema.adapted}meveo_module
         		SET module_source='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 				<Module license="GPL" code="AddAccessModule" description="AddAccessModule">
 				    <script code="org.meveo.service.script.selfcare.CreateAccess" description="AddAccess"></script>
@@ -125,7 +125,7 @@
 	        	'
 			WHERE id=-1;]]>
         </sql>
-        
+
         <sql><![CDATA[
         INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-21, 0, 0, now(), 'org.meveo.service.script.SelfcareAccountScript', 'Script BAM for selfcare accounts', 'JAVA', '
 			package org.meveo.service.script;
@@ -216,7 +216,7 @@
 			}
         ');
         ]]></sql>
-        
+
         <sql><![CDATA[
         INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-22, 0, 0, now(), 'org.meveo.service.script.selfcare.RegisterHierarchy', 'Register crm hierarchy', 'JAVA', '
 			package org.meveo.service.script.selfcare;
@@ -251,7 +251,7 @@
 			}
         ');
         ]]></sql>
-        
+
         <insert tableName="meveo_module">
         	<column name="id" valueNumeric="-2"></column>
         	<column name="version" value="0"></column>
@@ -264,14 +264,14 @@
         	<column name="installed" value="0"></column>
         	<column name="script_instance_id" valueNumeric="-21"></column>
         </insert>
-        
+
         <insert tableName="crm_business_account_model">
         	<column name="id" valueNumeric="-2"></column>
         	<column name="hierarchy_type" value="C_UA"></column>
         </insert>
-        
+
         <sql>
-        	<![CDATA[UPDATE ${db.schema.adapted}meveo_module 
+        	<![CDATA[UPDATE ${db.schema.adapted}meveo_module
         		SET module_source='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 				<BusinessAccountModel license="GPL" code="Client" description="Individual customer">
 				    <script code="org.meveo.service.script.SelfcareAccountScript" description="Script BAM for selfcare accounts"></script>
@@ -343,7 +343,7 @@
 	        	'
 			WHERE id=-2;]]>
         </sql>
-        
+
         <insert tableName="meveo_module">
         	<column name="id" valueNumeric="-3"></column>
         	<column name="version" value="0"></column>
@@ -356,13 +356,13 @@
         	<column name="installed" value="0"></column>
         	<column name="script_instance_id" valueNumeric="-20"></column>
         </insert>
-        
+
         <insert tableName="cat_business_offer_model">
         	<column name="id" valueNumeric="-3"></column>
         </insert>
-        
+
         <sql>
-        	<![CDATA[UPDATE ${db.schema.adapted}meveo_module 
+        	<![CDATA[UPDATE ${db.schema.adapted}meveo_module
         		SET module_source='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 				<BusinessOfferModel license="GPL" code="aBOM2" description="description aBOM">
 				    <script code="org.meveo.service.script.selfcare.CreateAccess" description="add access"></script>
@@ -373,7 +373,7 @@
 	        	'
 			WHERE id=-3;]]>
         </sql>
-        
+
         <insert tableName="crm_custom_field_tmpl">
         	<column name="id" valueNumeric="-1"></column>
         	<column name="version" value="0"></column>
@@ -393,7 +393,7 @@
         	<column name="cf_protectable" valueNumeric="1"></column>
         </insert>
 	</changeSet>
-	
+
 	<changeSet author="EdwardPLegaspi" id="#4150_20190424 - Bring back the timers">
         <insert tableName="meveo_timer">
             <column name="id" valueNumeric="-1" />
@@ -406,7 +406,7 @@
             <column name="sc_sec" value="0" />
             <column name="sc_year" value="*" />
             <column name="code" value="Hourly" />
-            
+
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
         </insert>
         <insert tableName="meveo_timer">
@@ -420,7 +420,7 @@
             <column name="sc_sec" value="59" />
             <column name="sc_year" value="*" />
             <column name="code" value="Monthly" />
-            
+
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
         </insert>
         <insert tableName="meveo_timer">
@@ -434,11 +434,11 @@
             <column name="sc_sec" value="59" />
             <column name="sc_year" value="*" />
             <column name="code" value="Daily-midnight" />
-            
+
             <column name="created" valueDate="2017-06-29 00:04:19.913" />
         </insert>
     </changeSet>
-	
+
 	<changeSet id="#4082_20190404" author="SaidRamli">
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-23, 0, 0, now(), 'org.meveo.service.script.DeleteCustomersScript', 'DeleteCustomersScript', 'JAVA', '
 package org.meveo.service.script;
@@ -1237,8 +1237,8 @@ public class DeleteCustomersScript extends Script {
 		return collection == null ? Collections.EMPTY_LIST : collection;
 	}
 }');]]>
-		</sql>	
-		
+		</sql>
+
          <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-20" />
             <column name="version" valueNumeric="0" />
@@ -1257,7 +1257,7 @@ public class DeleteCustomersScript extends Script {
             <column name="uuid" value="DeleteCustomersScript_JOB" />
             <column name="run_on_nodes" value="null" />
             <column name="single_node" value="1" />
-            
+
             <column name="cf_values">
 	            <![CDATA[{"FlatFileProcessingJob_mappingConf":[{"string":"<beanio xmlns=\"http://www.beanio.org/2012/03\" \r\n      xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n      xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n      <stream name=\"RECORD\" format=\"csv\" strict=\"true\">\r\n        <parser>\r\n          <property name=\"delimiter\" value=\";\" />\r\n        </parser>     \r\n        <record name=\"customer\"  minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">  \r\n           <field name=\"customerCode\" minOccurs=\"0\" position=\"0\" />\r\n           <field name=\"noCheck\" minOccurs=\"0\" position=\"1\"/>\r\n        </record> \r\n      </stream>\r\n    </beanio>"}]
 						,"FlatFileProcessingJob_recordVariableName":[{"string":"RECORD"}]
@@ -1275,7 +1275,7 @@ public class DeleteCustomersScript extends Script {
 						,"FlatFileProcessingJob_inputDir":[{"string":"/batch/customer/delete"}]}]]>
             </column>
             <column name="verbose_report" value="1" />
-            
+
           </insert>
 	</changeSet>
 
@@ -1367,8 +1367,7 @@ public class ValidateBRScript extends Script {
             <column name="creator" value="opencell.admin" />
             <column name="description" value="Export open EDR, WO, RTx"/>
             <column name="uuid" value="ExportMediationEntityJob" />
-            <column name="cf_values"
-                    value='{ "ExportMediationEntityJob_rtStatusCf": [ { "listString": [ "BILLED", "CANCELED", "OPEN", "REJECTED", "RERATED" ] } ], "ExportMediationEntityJob_maxResult": [ { "long": 1000 } ], "ExportMediationEntityJob_edrStatusCf": [ { "listString": [ "AGGREGATED", "MEDIATING", "OPEN", "RATED", "REJECTED" ] } ], "ExportMediationEntityJob_woStatusCf": [ { "listString": [ "CANCELED", "OPEN", "RERATED", "RESERVED", "SCHEDULED", "TO_RERATE", "TREATED" ] } ], "ExportMediationEntityJob_firstTransactionDate": [ { "date": "2017-12-01T00:00:00Z" } ] }'/>
+            <column name="cf_values" value='{"ExportMediationEntityJob_lastTransactionDate":[{"date":""}],"ExportMediationEntityJob_firstTransactionDate":[{"date":"2017-01-01T00:00:00Z"}],"ExportMediationEntityJob_rtCf":[{"boolean":true}],"ExportMediationEntityJob_edrCf":[{"boolean":true}],"ExportMediationEntityJob_woCf":[{"boolean":true}]}'></column>
         </insert>
     </changeSet>
     <changeSet id="4403_20190701_purge_job" author="horriKhalid">
@@ -1382,8 +1381,7 @@ public class ValidateBRScript extends Script {
             <column name="creator" value="opencell.admin" />
             <column name="description" value="Purge not open EDR, WO, RTx"/>
             <column name="uuid" value="PurgeMediationDataJob" />
-            <column name="cf_values"
-                    value='{"PurgeMediationDataJob_edrStatusCf":[ { "listString":[ "AGGREGATED", "MEDIATING", "OPEN", "RATED", "REJECTED" ] } ], "PurgeMediationDataJob_firstTransactionDate":[ { "date":"2017-12-01T00:00:00Z" } ], "PurgeMediationDataJob_woStatusCf":[ { "listString":[ "CANCELED", "OPEN", "RERATED", "RESERVED", "SCHEDULED", "TO_RERATE", "TREATED" ] } ], "PurgeMediationDataJob_rtStatusCf":[ { "listString":[ "BILLED", "CANCELED", "OPEN", "REJECTED", "RERATED" ] } ] }'/>
+            <column name="cf_values" value='{"PurgeMediationDataJob_woCf":[{"boolean":true}],"PurgeMediationDataJob_firstTransactionDate":[{"date":"2017-01-01T00:00:00Z"}],"PurgeMediationDataJob_edrCf":[{"boolean":true}],"PurgeMediationDataJob_lastTransactionDate":[{"date":""}],"PurgeMediationDataJob_rtCf":[{"boolean":true}]}'></column>
         </insert>
     </changeSet>
     <changeSet id="4403_20190701_import_job" author="horriKhalid">
@@ -1435,5 +1433,19 @@ public class ValidateBRScript extends Script {
 			    <where>code='SALES_JOURNAL'</where>
 		</update>
 	</changeSet>
-    
+
+    <changeSet id="4804_20191205" author="MohamedSTITANE">
+        <update tableName="meveo_job_instance" >
+            <column name="cf_values"
+                    value='{ "ExportMediationEntityJob_rtStatusCf": [ { "listString": [ "BILLED", "CANCELED", "OPEN", "REJECTED", "RERATED" ] } ], "ExportMediationEntityJob_maxResult": [ { "long": 1000 } ], "ExportMediationEntityJob_edrStatusCf": [ { "listString": [ "AGGREGATED", "MEDIATING", "OPEN", "RATED", "REJECTED" ] } ], "ExportMediationEntityJob_woStatusCf": [ { "listString": [ "CANCELED", "OPEN", "RERATED", "RESERVED", "SCHEDULED", "TO_RERATE", "TREATED" ] } ], "ExportMediationEntityJob_firstTransactionDate": [ { "date": "2017-12-01T00:00:00Z" } ] }'/>
+            <where>id = -23</where>
+        </update>
+        <update tableName="meveo_job_instance" >
+            <column name="cf_values"
+                    value='{"PurgeMediationDataJob_edrStatusCf":[ { "listString":[ "AGGREGATED", "MEDIATING", "OPEN", "RATED", "REJECTED" ] } ], "PurgeMediationDataJob_firstTransactionDate":[ { "date":"2017-12-01T00:00:00Z" } ], "PurgeMediationDataJob_woStatusCf":[ { "listString":[ "CANCELED", "OPEN", "RERATED", "RESERVED", "SCHEDULED", "TO_RERATE", "TREATED" ] } ], "PurgeMediationDataJob_rtStatusCf":[ { "listString":[ "BILLED", "CANCELED", "OPEN", "REJECTED", "RERATED" ] } ] }'/>
+            <where>id = -24</where>
+        </update>
+
+    </changeSet>
+
 </databaseChangeLog>
