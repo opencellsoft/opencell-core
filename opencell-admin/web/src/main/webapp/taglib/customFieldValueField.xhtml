@@ -2,8 +2,8 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:hftl="http://hftl.org"
-    xmlns:pe="http://primefaces.org/ui/extensions" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags">
+      xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
 
 
 <!-- 
@@ -135,6 +135,12 @@
     </c:if>
     <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.BOOLEAN}">
         <p:selectBooleanButton rendered="#{edit and !disabled}" value="#{field.booleanValue}" onLabel="#{messages['commons.yes']}" offLabel="#{messages['commons.no']}" />
+    </c:if>
+    <c:if test="#{cft.fieldType eq CustomFieldTypeEnum.CHECKBOX_LIST}">
+        <p:selectCheckboxMenu value="#{field.listValue}" required="#{cft.valueRequired and !hasInheritedValue}" rendered="#{edit and !disabled}"
+                              label="#{cft.description}" filterMatchMode="startsWith"  panelStyle="width:250px" multiple="true">
+            <f:selectItems value="#{cft.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})" />
+        </p:selectCheckboxMenu>
     </c:if>
 </ui:composition>
 </html>
