@@ -1512,4 +1512,31 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             walletOperation.changeStatus(WalletOperationStatusEnum.TO_RERATE);
         }
     }
+
+	/**
+	 * @param firstDate
+	 * @param lastDate
+	 * @param lastId
+	 * @param maxResult
+	 * @param formattedStatus
+	 * @return
+	 */
+	public List<WalletOperation> getWalletOperationBetweenTwoDatesByStatus(Date firstDate, Date lastDate, Long lastId, int maxResult, List<WalletOperationStatusEnum> formattedStatus) {
+		return getEntityManager().createNamedQuery("WalletOperation.listWObetweenTwoDatesByStatus", WalletOperation.class)
+                .setParameter("firstTransactionDate", firstDate)
+                .setParameter("lastTransactionDate", lastDate)
+                .setParameter("lastId", lastId)
+                .setParameter("status", formattedStatus)
+                .setMaxResults(maxResult)
+                .getResultList();
+	}
+
+	public long purge(Date firstTransactionDate, Date lastTransactionDate, List<WalletOperationStatusEnum> targetStatusList) {
+		return getEntityManager().createNamedQuery("WalletOperation.deleteWObetweenTwoDatesByStatus")
+				.setParameter("status", targetStatusList)
+				.setParameter("firstTransactionDate", firstTransactionDate)
+	            .setParameter("lastTransactionDate", lastTransactionDate)
+	            .executeUpdate();
+	}
+
 }

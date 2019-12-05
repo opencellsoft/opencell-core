@@ -129,7 +129,9 @@ public class CustomFieldDataEntryBean implements Serializable {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    /** paramBeanFactory */
+    /**
+     * paramBeanFactory
+     */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
@@ -141,7 +143,9 @@ public class CustomFieldDataEntryBean implements Serializable {
      */
     private Map<String, Object> selectedItem;
 
-    /** Logger. */
+    /**
+     * Logger.
+     */
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -307,7 +311,6 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param customFieldTemplates Custom field templates applicable for the entity, mapped by a custom CFT code
      * @param cfValuesByCode Custom field values mapped by a CFT code
      * @param entity Entity containing custom field values
-     * 
      * @return Prepared for GUI custom fields instances
      */
     private Map<String, List<CustomFieldValue>> prepareCFIForGUI(Map<String, CustomFieldTemplate> customFieldTemplates, Map<String, List<CustomFieldValue>> cfValuesByCode,
@@ -760,7 +763,6 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param entityValueHolder Entity custom field value holder
      * @param cfValue Map value holder
      * @param cft Custom field definition
-     *
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
@@ -1061,9 +1063,11 @@ public class CustomFieldDataEntryBean implements Serializable {
                     // Not saving empty values unless template has a default value or is versionable (to prevent that for SINGLE type CFT with a default value, value is
                     // instantiates automatically)
                     // Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
-                    if ((cfValue.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
-                            || ((isNewEntity && cft.isHideOnNew())
-                                    || (entity != null && !ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity)))) {
+                    // escape this control when the CF is Multi CHECKBOX MENU
+                    if (!CustomFieldTypeEnum.CHECKBOX_LIST.name().equals(cft.getFieldType().name()) && (
+                            (cfValue.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
+                                    || ((isNewEntity && cft.isHideOnNew()) || (entity != null && !ValueExpressionWrapper
+                                    .evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity))))) {
                         log.trace("Will ommit from saving cfi {}", cfValue);
 
                         // Existing value update
@@ -1224,7 +1228,10 @@ public class CustomFieldDataEntryBean implements Serializable {
             // Populate customFieldValue.listValue from mapValuesForGUI field
         } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
 
-            List<Object> listValue = new ArrayList<Object>();
+            List<Object> listValue = new ArrayList<>();
+            if (CustomFieldTypeEnum.CHECKBOX_LIST.name().equalsIgnoreCase(cft.getFieldType().name())) {
+                listValue.addAll(customFieldValue.getListValue());
+            } else {
             for (Map<String, Object> listItem : customFieldValue.getMapValuesForGUI()) {
                 if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
                     listValue.add(new EntityReferenceWrapper((IReferenceEntity) listItem.get(CustomFieldValue.MAP_VALUE)));
@@ -1232,6 +1239,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                 } else {
                     listValue.add(listItem.get(CustomFieldValue.MAP_VALUE));
                 }
+            }
             }
             customFieldValue.setListValue(listValue);
 
