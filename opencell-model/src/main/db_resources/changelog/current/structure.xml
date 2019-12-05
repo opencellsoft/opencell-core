@@ -2331,16 +2331,6 @@
             newDataType="varchar(1024)"
             tableName="adm_inbound_request"/>
     </changeSet>
-
-    <changeSet author="abdelkader.bouazza" id="#4523-Changing-amount-for-a-service-instance-with-prorating">
-        <addColumn tableName="cat_charge_template">
-            <column name="prorata_on_price_change" type="${type.boolean}" defaultValueNumeric="0"></column>
-        </addColumn>
-        <addColumn tableName="cat_price_plan_matrix">
-            <column name="validity_from" type="datetime"></column>
-            <column name="validity_date" type="datetime"></column>
-        </addColumn>
-    </changeSet>
     
     <changeSet id="#4766_20191111" author="MohammedELAZZOUZI">
     	<addNotNullConstraint tableName="adm_currency" columnName="currency_code" columnDataType="varchar(3)"/>
