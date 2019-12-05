@@ -23,6 +23,17 @@ public class MinAmountForAccounts {
         }
     }
 
+    public MinAmountForAccounts(boolean customerHasMinAmount, boolean caHasMinAmount, boolean baHasMinAmount, boolean uaHasMinAmount, boolean subscriptionHasMinAmount,
+            boolean serviceHasMinAmount) {
+
+        this.customerHasMinAmount = customerHasMinAmount;
+        this.customerAccountHasMinAmount = caHasMinAmount;
+        this.baHasMinAmount = baHasMinAmount;
+        this.uaHasMinAmount = uaHasMinAmount;
+        this.subscriptionHasMinAmount = subscriptionHasMinAmount;
+        this.serviceHasMinAmount = serviceHasMinAmount;
+    }
+
     public MinAmountForAccounts(boolean baHasMinAmount, boolean uaHasMinAmount, boolean subscriptionHasMinAmount, boolean serviceHasMinAmount) {
         this.baHasMinAmount = baHasMinAmount;
         this.uaHasMinAmount = uaHasMinAmount;
@@ -76,5 +87,20 @@ public class MinAmountForAccounts {
 
     public void setCustomerAccountHasMinAmount(boolean customerAccountHasMinAmount) {
         this.customerAccountHasMinAmount = customerAccountHasMinAmount;
+    }
+
+    /**
+     * Check whether Min amount is activated on any level of accounts hierarchy
+     *
+     * @return
+     */
+    public boolean isMinAmountCalculationActivated() {
+        return baHasMinAmount || uaHasMinAmount || subscriptionHasMinAmount || serviceHasMinAmount || customerHasMinAmount || customerAccountHasMinAmount;
+    }
+
+    public MinAmountForAccounts includesFirstRun(boolean includeFirstRun) {
+        MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts(includeFirstRun && customerHasMinAmount, includeFirstRun && customerAccountHasMinAmount,
+                includeFirstRun && baHasMinAmount, includeFirstRun && uaHasMinAmount, includeFirstRun && subscriptionHasMinAmount, includeFirstRun && serviceHasMinAmount);
+        return minAmountForAccounts;
     }
 }

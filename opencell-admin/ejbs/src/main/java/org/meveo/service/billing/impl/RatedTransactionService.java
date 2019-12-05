@@ -447,8 +447,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public IBillableEntity updateEntityTotalAmountsAndLinkToBR(IBillableEntity entity, BillingRun billingRun, boolean instantiateMinRtsForService,
-            boolean instantiateMinRtsForSubscription, boolean instantiateMinRtsForBA) throws BusinessException {
+    public IBillableEntity updateEntityTotalAmountsAndLinkToBR(IBillableEntity entity, BillingRun billingRun, MinAmountForAccounts minAmountForAccounts) throws BusinessException {
 
         log.debug("Calculating total amounts and creating min RTs for {}/{}", entity.getClass().getSimpleName(), entity.getId());
 
@@ -471,7 +470,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         null;
             }
         }
-        MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts(instantiateMinRtsForBA, false, instantiateMinRtsForSubscription, instantiateMinRtsForService);
+        //MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts(instantiateMinRtsForBA, false, instantiateMinRtsForSubscription, instantiateMinRtsForService);
         calculateAmountsAndCreateMinAmountTransactions(entity, null, billingRun.getLastTransactionDate(), true, minAmountForAccounts);
 
         BigDecimal invoiceAmount = entity.getTotalInvoicingAmountWithoutTax();
@@ -637,13 +636,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 extraMinAmounts = createMinAmountsResult.getExtraMinAmounts();
                 minAmountTransactions.addAll(createMinAmountsResult.getMinAmountTransactions());
             }
-            if (minAmountForAccounts.isCustomerAccountHasMinAmount() && billingAccount.getCustomerAccount().getCustomer().getMinimumTargetAccount().equals(billingAccount)) {
+            if (minAmountForAccounts.isCustomerAccountHasMinAmount() && billingAccount.getCustomerAccount().getMinimumTargetAccount() != null && billingAccount.getCustomerAccount()
+                    .getMinimumTargetAccount().equals(billingAccount)) {
                 CreateMinAmountsResult createMinAmountsResult = createMinRTForAccount(billableEntity, billingAccount, lastTransactionDate, minRatingDate, extraMinAmounts,
                         CustomerAccount.class);
                 extraMinAmounts = createMinAmountsResult.getExtraMinAmounts();
                 minAmountTransactions.addAll(createMinAmountsResult.getMinAmountTransactions());
             }
-            if (minAmountForAccounts.isCustomerHasMinAmount() && billingAccount.getCustomerAccount().getCustomer().getMinimumTargetAccount().equals(billingAccount)) {
+            if (minAmountForAccounts.isCustomerHasMinAmount() && billingAccount.getCustomerAccount().getCustomer().getMinimumTargetAccount() != null && billingAccount
+                    .getCustomerAccount().getCustomer().getMinimumTargetAccount().equals(billingAccount)) {
                 CreateMinAmountsResult createMinAmountsResult = createMinRTForAccount(billableEntity, billingAccount, lastTransactionDate, minRatingDate, extraMinAmounts,
                         Customer.class);
                 extraMinAmounts = createMinAmountsResult.getExtraMinAmounts();
@@ -1044,7 +1045,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             BigDecimal invSubcategoryAmountWithTax = (BigDecimal) amounts[1];
             Long invSubCategoryId = (Long) amounts[2];
             BusinessEntity entity = (BusinessEntity) em.find(accountClass, amounts[3]);
-            Seller seller = getSeller(billingAccount, entity, amounts);
+            Seller seller = getSeller(billingAccount, entity);
 
             MinAmountData minAmountDataInfo = accountToMinAmount.get(entity.getId());
 
@@ -1054,6 +1055,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 String minAmountLabelEL = getMinimumAmountElInfo(entity, "getMinimumLabelEl");
                 BigDecimal minAmount = evaluateMinAmountExpression(minAmountEL, entity);
                 String minAmountLabel = evaluateMinAmountLabelExpression(minAmountLabelEL, entity);
+                if (minAmount == null) {
+                    continue;
+                }
                 MinAmountData minAmountData = new MinAmountData(minAmount, minAmountLabel, new Amounts(), new HashMap<Long, Amounts>(), entity, seller);
                 accountToMinAmount.put(entity.getId(), minAmountData);
 
@@ -1098,14 +1102,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 if (invoiceSubCategory != null) {
                     amountMap.put(invoiceSubCategory.getId(), accountAmounts);
                     accountToMinAmount
-                            .put(entity.getId(), new MinAmountData(minAmount, minAmountLabel, accountAmounts.clone(), amountMap, entity, getSeller(billingAccount, entity, null)));
+                            .put(entity.getId(), new MinAmountData(minAmount, minAmountLabel, accountAmounts.clone(), amountMap, entity, getSeller(billingAccount, entity)));
 
                     if (extraMinAmounts != null) {
                         accountToMinAmount = appendExtraAmount(extraMinAmounts, accountToMinAmount, entity);
                     }
 
                 } else {
-                    throw new BusinessException("minAmountInvoiceSubCategory not defined for account code=" + entity.getCode());
+                    throw new BusinessException("minAmountInvoiceSubCategory not defined for " + accountClass.getSimpleName() + " code=" + entity.getCode());
                 }
             } else {
                 // Service amount exceed the minimum amount per service
@@ -1122,7 +1126,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         for (Entry<Long, MinAmountData> accountAmounts : accountToMinAmount.entrySet()) {
             Map<String, Amounts> minRTAmountMap = new HashMap<>();
 
-            if (accountAmounts.getValue() == null) {
+            if (accountAmounts.getValue() == null || accountAmounts.getValue().getMinAmount() == null) {
                 continue;
             }
 
@@ -1501,14 +1505,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return rt;
     }
 
-    private Seller getSeller(BillingAccount billingAccount, BusinessEntity entity, Object[] amounts) {
+    private Seller getSeller(BillingAccount billingAccount, BusinessEntity entity) {
         if (entity instanceof ServiceInstance) {
             return ((ServiceInstance) entity).getSubscription().getSeller();
         }
         if (entity instanceof Subscription) {
             return ((Subscription) entity).getSeller();
-        } else if (amounts != null) {
-            return getEntityManager().find(Seller.class, amounts[4]);
         }
         return billingAccount.getCustomerAccount().getCustomer().getSeller();
     }
@@ -2411,7 +2413,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * * Determine if minimum RT transactions functionality is used at all. A check is done on serviceInstance, subscription, userAccount or billing account entities for minimumAmountEl field
+     * * Determine if minimum RT transactions functionality is used at all accounts hierarchy. A check is done on serviceInstance, subscription, userAccount or billing account entities for minimumAmountEl field
      * value presence.
      *
      * @return the MinAmountForAccounts

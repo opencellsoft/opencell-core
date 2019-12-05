@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -76,7 +77,7 @@ public class InvoicingAsync {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<List<IBillableEntity>> calculateBillableAmountsAsync(List<IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId,
-            boolean instantiateMinRtsForService, boolean instantiateMinRtsForSubscription, boolean instantiateMinRtsForBA, MeveoUser lastCurrentUser) throws BusinessException {
+            MinAmountForAccounts minAmountForAccounts, MeveoUser lastCurrentUser) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -87,8 +88,7 @@ public class InvoicingAsync {
             if (jobInstanceId != null && i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
-            IBillableEntity billableEntity = ratedTransactionService.updateEntityTotalAmountsAndLinkToBR(entity, billingRun, instantiateMinRtsForService,
-                instantiateMinRtsForSubscription, instantiateMinRtsForBA);
+            IBillableEntity billableEntity = ratedTransactionService.updateEntityTotalAmountsAndLinkToBR(entity, billingRun, minAmountForAccounts);
             if (billableEntity != null) {
                 billableEntities.add(billableEntity);
             }
@@ -146,8 +146,7 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> createAgregatesAndInvoiceAsync(List<? extends IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, boolean instantiateMinRtsForService,
-            boolean instantiateMinRtsForSubscription, boolean instantiateMinRtsForBA, MeveoUser lastCurrentUser) {
+    public Future<String> createAgregatesAndInvoiceAsync(List<? extends IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, MinAmountForAccounts minAmountForAccounts, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -156,8 +155,7 @@ public class InvoicingAsync {
                 break;
             }
             try {
-                invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun, null, null, null, null, instantiateMinRtsForService,
-                    instantiateMinRtsForSubscription, instantiateMinRtsForBA, false);
+                invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun, null, null, null, null, minAmountForAccounts, false);
             } catch (Exception e1) {
                 log.error("Failed to create invoices for entity {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
             }
