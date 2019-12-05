@@ -78,7 +78,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Provides support for custom field value data entry
- * 
+ *
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Said Ramli
@@ -129,7 +129,9 @@ public class CustomFieldDataEntryBean implements Serializable {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    /** paramBeanFactory */
+    /**
+     * paramBeanFactory
+     */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
@@ -141,13 +143,15 @@ public class CustomFieldDataEntryBean implements Serializable {
      */
     private Map<String, Object> selectedItem;
 
-    /** Logger. */
+    /**
+     * Logger.
+     */
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Explicitly refresh fields and action definitions. Should be used on some field value change event when that field is used to determine what fields and actions apply. E.g.
      * Job template.
-     * 
+     *
      * @param entity Entity to [re]load definitions and field values for
      */
     public void refreshFieldsAndActions(ICustomFieldEntity entity) {
@@ -159,7 +163,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Explicitly refresh fields and action definitions while preserving field values. Should be used when entity customization is managed as part of some page that contains CF
      * data entry and CF fields should be refreshed when entity customization is finished. Job template.
-     * 
+     *
      * @param entity Entity to [re]load definitions and field values for
      */
     public void refreshFieldsAndActionsWhilePreserveValues(ICustomFieldEntity entity) {
@@ -170,7 +174,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get a grouped list of custom field definitions. If needed, load applicable custom fields (templates) and their values for a given entity
-     * 
+     *
      * @param entity Entity to load definitions and field values for
      * @return Custom field information
      */
@@ -188,7 +192,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get a list of actions applicable for an entity. If needed, load them.
-     * 
+     *
      * @param entity Entity to load action definitions
      * @return A list of actions
      */
@@ -206,7 +210,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get a custom field value holder for a given entity
-     * 
+     *
      * @param entityUuid Entity uuid identifier
      * @return Custom field value holder
      */
@@ -216,7 +220,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Load applicable custom actions for a given entity
-     * 
+     *
      * @param entity Entity to load action definitions
      */
     private void initCustomActions(ICustomFieldEntity entity) {
@@ -237,7 +241,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         });
 
         Map<K, V> result = new LinkedHashMap<>();
-        for (Iterator<Entry<K, V>> it = list.iterator(); it.hasNext();) {
+        for (Iterator<Entry<K, V>> it = list.iterator(); it.hasNext(); ) {
             Map.Entry<K, V> entry = (Map.Entry<K, V>) it.next();
             result.put(entry.getKey(), entry.getValue());
         }
@@ -247,7 +251,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Load available custom fields (templates) and their values for a given entity
-     * 
+     *
      * @param entity Entity to load definitions and field values for
      */
     private void initFields(ICustomFieldEntity entity) {
@@ -277,7 +281,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Load available custom fields (templates) while preserving their values for a given entity
-     * 
+     *
      * @param entity Entity to load definitions and field values for
      */
     private void refreshFieldsWhilePreservingValues(ICustomFieldEntity entity) {
@@ -303,11 +307,10 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Prepare custom field values for GUI - instantiate fields with default values, deserialize values for GUI.
-     * 
+     *
      * @param customFieldTemplates Custom field templates applicable for the entity, mapped by a custom CFT code
-     * @param cfValuesByCode Custom field values mapped by a CFT code
-     * @param entity Entity containing custom field values
-     * 
+     * @param cfValuesByCode       Custom field values mapped by a CFT code
+     * @param entity               Entity containing custom field values
      * @return Prepared for GUI custom fields instances
      */
     private Map<String, List<CustomFieldValue>> prepareCFIForGUI(Map<String, CustomFieldTemplate> customFieldTemplates, Map<String, List<CustomFieldValue>> cfValuesByCode,
@@ -316,7 +319,8 @@ public class CustomFieldDataEntryBean implements Serializable {
         Map<String, List<CustomFieldValue>> cfisPrepared = new HashMap<>();
 
         // For each template, check if custom field value exists, and instantiate one if needed with a default value
-        cftLoop: for (CustomFieldTemplate cft : customFieldTemplates.values()) {
+        cftLoop:
+        for (CustomFieldTemplate cft : customFieldTemplates.values()) {
 
             List<CustomFieldValue> cfValuesByTemplate = null;
             if (cfValuesByCode != null) {
@@ -410,9 +414,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Increase priority of a custom field value period
-     * 
-     * @param entityValueHolder custom field value holder
-     * @param cft Custom field definition
+     *
+     * @param entityValueHolder   custom field value holder
+     * @param cft                 Custom field definition
      * @param valuePeriodToChange Custom field value period to change
      */
     public void increasePriority(CustomFieldValueHolder entityValueHolder, CustomFieldTemplate cft, CustomFieldValue valuePeriodToChange) {
@@ -426,9 +430,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Decrease priority of a custom field value period
-     * 
-     * @param entityValueHolder custom field value holder
-     * @param cft Custom field definition
+     *
+     * @param entityValueHolder   custom field value holder
+     * @param cft                 Custom field definition
      * @param valuePeriodToChange Custom field value period to change
      */
     public void decreasePriority(CustomFieldValueHolder entityValueHolder, CustomFieldTemplate cft, CustomFieldValue valuePeriodToChange) {
@@ -442,9 +446,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Remove a customField period
-     * 
-     * @param entityValueHolder Entity custom field value holder
-     * @param cft Custom field definition
+     *
+     * @param entityValueHolder   Entity custom field value holder
+     * @param cft                 Custom field definition
      * @param valuePeriodToRemove Custom field value period to remove
      */
     public void removePeriod(CustomFieldValueHolder entityValueHolder, CustomFieldTemplate cft, CustomFieldValue valuePeriodToRemove) {
@@ -458,9 +462,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Add a new customField period with a previous validation that matching period does not exists
-     * 
+     *
      * @param entityValueHolder Entity custom field value holder
-     * @param cft Custom field definition
+     * @param cft               Custom field definition
      */
     public void addNewValuePeriod(CustomFieldValueHolder entityValueHolder, CustomFieldTemplate cft) {
 
@@ -511,15 +515,15 @@ public class CustomFieldDataEntryBean implements Serializable {
                 // For a strict match need to edit an existing period
                 if (strictMatch) {
                     messages.error(new BundleKey("messages", "customFieldTemplate.matchingPeriodFound.noNew"),
-                        cfValue.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(cfValue.getPeriod().getFrom(), datePattern),
-                        cfValue.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(cfValue.getPeriod().getTo(), datePattern));
+                            cfValue.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(cfValue.getPeriod().getFrom(), datePattern),
+                            cfValue.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(cfValue.getPeriod().getTo(), datePattern));
                     entityValueHolder.setValuePeriodMatched(false);
 
                     // For a non-strict match user has an option to create a period with a higher priority
                 } else {
                     messages.warn(new BundleKey("messages", "customFieldTemplate.matchingPeriodFound"),
-                        cfValue.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(cfValue.getPeriod().getFrom(), datePattern),
-                        cfValue.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(cfValue.getPeriod().getTo(), datePattern));
+                            cfValue.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(cfValue.getPeriod().getFrom(), datePattern),
+                            cfValue.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(cfValue.getPeriod().getTo(), datePattern));
                     entityValueHolder.setValuePeriodMatched(true);
                 }
                 FacesContext.getCurrentInstance().validationFailed();
@@ -560,10 +564,10 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Add value to a map of values, setting a default value if applicable
-     * 
+     *
      * @param entityValueHolder Entity custom field value holder
-     * @param cfv Map value holder
-     * @param cft Custom field definition
+     * @param cfv               Map value holder
+     * @param cft               Custom field definition
      */
     public void addValueToMap(CustomFieldValueHolder entityValueHolder, CustomFieldValue cfv, CustomFieldTemplate cft) {
 
@@ -631,7 +635,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Autocomplete method for listing entities for "Reference to entity" type custom field values
-     * 
+     *
      * @param wildcode A partial entity code match
      * @return A list of entities [partially] matching code
      * @throws IllegalAccessException
@@ -645,7 +649,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Validate complex custom fields.
-     * 
+     *
      * @param entity Entity, to which custom fields are related to
      * @return Are custom fields valid or not
      */
@@ -701,7 +705,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get inherited custom field value for a given entity
-     * 
+     *
      * @param entity to get the inherited value for
      * @param cfCode Custom field code
      * @return Custom field value
@@ -712,9 +716,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get a a list of custom field CFvalues for a given entity's parent's hierarchy up. (DOES NOT include a given entity)
-     * 
+     *
      * @param entity Entity
-     * @param cft Custom field definition
+     * @param cft    Custom field definition
      * @return A list of Custom field CFvalues. From all the entities CF entity hierarchy up.
      */
     public List<CustomFieldValue> getInheritedVersionableCFValue(ICustomFieldEntity entity, CustomFieldTemplate cft) {
@@ -732,9 +736,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get inherited custom field value for a given entity. A cumulative custom field value is calculated for Map(Matrix) type fields
-     * 
+     *
      * @param entity to get the inherited value for
-     * @param cft Custom field definition
+     * @param cft    Custom field definition
      * @return Custom field value
      */
     public CustomFieldValue getInheritedCumulativeCFValue(ICustomFieldEntity entity, CustomFieldTemplate cft) {
@@ -758,9 +762,8 @@ public class CustomFieldDataEntryBean implements Serializable {
      * Add row to a matrix. v5.0: Fix for save values on a multi values CF type problem
      *
      * @param entityValueHolder Entity custom field value holder
-     * @param cfValue Map value holder
-     * @param cft Custom field definition
-     *
+     * @param cfValue           Map value holder
+     * @param cft               Custom field definition
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
@@ -906,9 +909,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Execute custom action on an entity
-     * 
-     * @param entity Entity to execute action on
-     * @param action Action to execute
+     *
+     * @param entity            Entity to execute action on
+     * @param action            Action to execute
      * @param encodedParameters Additional parameters encoded in URL like style param=value&amp;param=value
      * @return A script execution result value from Script.RESULT_GUI_OUTCOME variable
      */
@@ -951,10 +954,10 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Execute custom action on a child entity
-     * 
-     * @param parentEntity Parent entity, entity is related to
-     * @param childEntity Entity to execute action on
-     * @param action Action to execute
+     *
+     * @param parentEntity      Parent entity, entity is related to
+     * @param childEntity       Entity to execute action on
+     * @param action            Action to execute
      * @param encodedParameters Additional parameters encoded in URL like style param=value&amp;param=value
      * @return A script execution result value from Script.RESULT_GUI_OUTCOME variable
      */
@@ -993,8 +996,8 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Save custom fields for a given entity
-     * 
-     * @param entity Entity, the fields relate to
+     *
+     * @param entity      Entity, the fields relate to
      * @param isNewEntity Is it a new entity
      * @return CustomFieldValue Map
      * @throws BusinessException General business exception
@@ -1006,14 +1009,14 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Save custom fields for a given entity.
-     * 
-     * @param entity Entity, the fields relate to
-     * @param uuid Unique uuid of field value holder
-     * @param duplicateCFI Should custom field value be duplicated.
-     * @param isNewEntity Is it a new entity
+     *
+     * @param entity             Entity, the fields relate to
+     * @param uuid               Unique uuid of field value holder
+     * @param duplicateCFI       Should custom field value be duplicated.
+     * @param isNewEntity        Is it a new entity
      * @param removedOriginalCFI - When duplicating a CFI, this boolean is true when we want to remove the original CFI. Use specially in offer instantiation where we assigned CFT
-     *        values on entity a but then save it on entity b. Entity a is then reverted. This flag is needed because on some part CFI is duplicated first, but is not updated,
-     *        instead we duplicate again.
+     *                           values on entity a but then save it on entity b. Entity a is then reverted. This flag is needed because on some part CFI is duplicated first, but is not updated,
+     *                           instead we duplicate again.
      * @return CustomFieldValue Map
      * @throws BusinessException General business exception
      */
@@ -1061,9 +1064,11 @@ public class CustomFieldDataEntryBean implements Serializable {
                     // Not saving empty values unless template has a default value or is versionable (to prevent that for SINGLE type CFT with a default value, value is
                     // instantiates automatically)
                     // Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
-                    if ((cfValue.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
-                            || ((isNewEntity && cft.isHideOnNew())
-                                    || (entity != null && !ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity)))) {
+                    // escape this control when the CF is Multi CHECKBOX MENU
+                    if (!CustomFieldTypeEnum.CHECKBOX_LIST.name().equals(cft.getFieldType().name()) && (
+                            (cfValue.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
+                                    || ((isNewEntity && cft.isHideOnNew()) || (entity != null && !ValueExpressionWrapper
+                                    .evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity))))) {
                         log.trace("Will ommit from saving cfi {}", cfValue);
 
                         // Existing value update
@@ -1095,24 +1100,24 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get a child entity column corresponding to a given code
-     * 
+     *
      * @param childEntityTypeFieldDefinition Child entity type field definition
-     * @param childFieldCode Child entity field code
+     * @param childFieldCode                 Child entity field code
      * @return customFieldTemplate
      */
     public CustomFieldTemplate getChildEntityField(CustomFieldTemplate childEntityTypeFieldDefinition, String childFieldCode) {
 
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(
-            EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(childEntityTypeFieldDefinition.getEntityClazz())));
+                EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(childEntityTypeFieldDefinition.getEntityClazz())));
 
         return cfts.get(childFieldCode);
     }
 
     /**
      * Prepare new child entity record for data entry
-     * 
-     * @param mainEntityValueHolder Entity custom field value holder
-     * @param mainEntityCfv Main entity's custom field value containing child entities
+     *
+     * @param mainEntityValueHolder      Entity custom field value holder
+     * @param mainEntityCfv              Main entity's custom field value containing child entities
      * @param childEntityFieldDefinition Custom field template of child entity type, definition, corresponding to cfv
      */
     public void newChildEntity(CustomFieldValueHolder mainEntityValueHolder, CustomFieldValue mainEntityCfv, CustomFieldTemplate childEntityFieldDefinition) {
@@ -1130,9 +1135,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Save child entity record.
-     * 
-     * @param mainEntityValueHolder Main entity custom field value holder
-     * @param mainEntityCfv Main entity's custom field value containing child entities
+     *
+     * @param mainEntityValueHolder      Main entity custom field value holder
+     * @param mainEntityCfv              Main entity's custom field value containing child entities
      * @param childEntityFieldDefinition Custom field template of child entity type, definition, corresponding to cfv
      */
     public void saveChildEntity(CustomFieldValueHolder mainEntityValueHolder, CustomFieldValue mainEntityCfv, CustomFieldTemplate childEntityFieldDefinition) {
@@ -1173,9 +1178,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Prepare to edit child entity.
-     * 
+     *
      * @param mainEntityValueHolder Main entity custom field value holder
-     * @param selectedChildEntity Child entity custom field value holder
+     * @param selectedChildEntity   Child entity custom field value holder
      */
     public void editChildEntity(CustomFieldValueHolder mainEntityValueHolder, CustomFieldValueHolder selectedChildEntity) {
         mainEntityValueHolder.setSelectedChildEntity(selectedChildEntity);
@@ -1184,8 +1189,8 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Remove child entity record from a given field
-     * 
-     * @param mainEntityCfv Main entity's custom field value containing child entities
+     *
+     * @param mainEntityCfv       Main entity's custom field value containing child entities
      * @param selectedChildEntity Child entity record to remove
      */
     public void removeChildEntity(CustomFieldValue mainEntityCfv, CustomFieldValueHolder selectedChildEntity) {
@@ -1197,9 +1202,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Serialize map, list and entity reference values that were adapted for GUI data entry. See CustomFieldValue.xxxGUI fields for transformation description
-     * 
+     *
      * @param customFieldValue Value to serialize
-     * @param cft Custom field template
+     * @param cft              Custom field template
      * @throws BusinessException General business exception
      */
     private void serializeFromGUI(CustomFieldValue customFieldValue, CustomFieldTemplate cft) {
@@ -1224,13 +1229,17 @@ public class CustomFieldDataEntryBean implements Serializable {
             // Populate customFieldValue.listValue from mapValuesForGUI field
         } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
 
-            List<Object> listValue = new ArrayList<Object>();
-            for (Map<String, Object> listItem : customFieldValue.getMapValuesForGUI()) {
-                if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
-                    listValue.add(new EntityReferenceWrapper((IReferenceEntity) listItem.get(CustomFieldValue.MAP_VALUE)));
+            List<Object> listValue = new ArrayList<>();
+            if (CustomFieldTypeEnum.CHECKBOX_LIST.name().equalsIgnoreCase(cft.getFieldType().name())) {
+                listValue.addAll(customFieldValue.getListValue());
+            } else {
+                for (Map<String, Object> listItem : customFieldValue.getMapValuesForGUI()) {
+                    if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+                        listValue.add(new EntityReferenceWrapper((IReferenceEntity) listItem.get(CustomFieldValue.MAP_VALUE)));
 
-                } else {
-                    listValue.add(listItem.get(CustomFieldValue.MAP_VALUE));
+                    } else {
+                        listValue.add(listItem.get(CustomFieldValue.MAP_VALUE));
+                    }
                 }
             }
             customFieldValue.setListValue(listValue);
@@ -1296,9 +1305,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Save child entities to DB as Custom entity instance object along with its custom fields.
-     * 
-     * @param mainEntity Entity of which child entity type field is being saved
-     * @param customFieldValue Value to serialize
+     *
+     * @param mainEntity                 Entity of which child entity type field is being saved
+     * @param customFieldValue           Value to serialize
      * @param childEntityFieldDefinition Custom field template
      * @throws BusinessException General business exception
      */
@@ -1309,7 +1318,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         // Find current child entities, so the ones no longer referenced shall be removed
         List<CustomEntityInstance> previousChildEntities = customEntityInstanceService
-            .findChildEntities(CustomFieldTemplate.retrieveCetCode(childEntityFieldDefinition.getEntityClazz()), mainEntity.getUuid());
+                .findChildEntities(CustomFieldTemplate.retrieveCetCode(childEntityFieldDefinition.getEntityClazz()), mainEntity.getUuid());
 
         for (CustomFieldValueHolder childEntityValueHolder : customFieldValue.getChildEntityValuesForGUI()) {
 
@@ -1336,7 +1345,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Deserialize map, list and entity reference values to adapt them for GUI data entry. See CustomFieldValue.xxxGUI fields for transformation description
-     * 
+     *
      * @param cft Custom field template
      */
     @SuppressWarnings("unchecked")
@@ -1435,7 +1444,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Covert entity reference to a Business entity JPA object.
-     * 
+     *
      * @param entityReferenceValue Entity reference value
      * @return Business entity JPA object
      */
@@ -1477,7 +1486,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Convert childEntity field type value of EntityReferenceWrapper type to GUI suitable format - CustomFieldValueHolder. Entity is loaded from db with all related custom fields.
-     * 
+     *
      * @param childEntityWrapper EntityReferenceWrapper value to convert
      * @return CustomFieldValueHolder instance
      */
@@ -1496,7 +1505,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Save custom fields for a given entity.
-     * 
+     *
      * @param entity Entity, the fields relate to
      * @return CustomFieldTemplate and Value Map
      * @throws BusinessException General business exception
@@ -1523,7 +1532,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get custom field values for a given entity - in case of versioned custom fields, retrieve the latest value.
-     * 
+     *
      * @param entity Entity, the fields relate to
      * @return CustomFieldTemplate and Value Map
      * @throws BusinessException General business exception
@@ -1554,9 +1563,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Set values of custom fields
-     * 
+     *
      * @param cfValues A map of custom field values with CFT as a key and CF value as a value
-     * @param entity Entity custom field values apply to
+     * @param entity   Entity custom field values apply to
      */
     public void setCustomFieldValues(Map<CustomFieldTemplate, Object> cfValues, BusinessCFEntity entity) {
 
@@ -1583,7 +1592,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get names of repeated custom field component forms and tabs ids
-     * 
+     *
      * @param prefix prefix to apply
      * @param suffix suffix to apply
      * @param length Number of repeated items
@@ -1611,7 +1620,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             initFields(entity);
         }
 
-            GroupedCustomField groupCF = groupedFieldTemplates.get(entity.getUuid());
+        GroupedCustomField groupCF = groupedFieldTemplates.get(entity.getUuid());
         CustomFieldValueHolder cfValueHolder = getFieldValueHolderByUUID(entity.getUuid());
         int ctr = 0;
         for (GroupedCustomField groupCFChild : groupCF.getChildren()) {
@@ -1625,7 +1634,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get currently active locale
-     * 
+     *
      * @return Currently active locale
      */
     public Locale getCurrentLocale() {
@@ -1634,7 +1643,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Calculate a parent JSF component id based on a given component id
-     * 
+     *
      * @param componentId Component identifier
      * @return A parent JSF component id
      */
@@ -1658,7 +1667,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get key of ron type.
-     * 
+     *
      * @param key custom field key
      * @return the custom field key or null in the error case
      */
@@ -1667,10 +1676,10 @@ public class CustomFieldDataEntryBean implements Serializable {
         if (ronkey != null) {
             String[] ron = ((String) ronkey).split(CustomFieldValue.RON_VALUE_SEPARATOR);
 
-            if(ron.length > 0 && !((String) ronkey).isEmpty()) {
+            if (ron.length > 0 && !((String) ronkey).isEmpty()) {
 
-                for(String valueOfRON : ron) {
-                    if(!valueOfRON.isEmpty() && !NumberUtils.isParsable(valueOfRON)) {
+                for (String valueOfRON : ron) {
+                    if (!valueOfRON.isEmpty() && !NumberUtils.isParsable(valueOfRON)) {
                         messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
                         FacesContext.getCurrentInstance().validationFailed();
                         return null;
@@ -1678,23 +1687,23 @@ public class CustomFieldDataEntryBean implements Serializable {
                 }
 
                 if (ron[0] == null && ron.length > 1 && ron[1] == null) {
-                messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
-                FacesContext.getCurrentInstance().validationFailed();
-                return null;
-
-                } else if (ron[0] != null  && !ron[0].isEmpty() && ron.length > 1 && ron[1] != null) {
-                try {
-                    if (Double.valueOf(ron[0]).compareTo(Double.valueOf(ron[1])) >= 0) {
-                        messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
-                        FacesContext.getCurrentInstance().validationFailed();
-                        return null;
-                    }
-
-                } catch (NumberFormatException e) {
                     messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
                     FacesContext.getCurrentInstance().validationFailed();
                     return null;
-                }
+
+                } else if (ron[0] != null && !ron[0].isEmpty() && ron.length > 1 && ron[1] != null) {
+                    try {
+                        if (Double.valueOf(ron[0]).compareTo(Double.valueOf(ron[1])) >= 0) {
+                            messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
+                            FacesContext.getCurrentInstance().validationFailed();
+                            return null;
+                        }
+
+                    } catch (NumberFormatException e) {
+                        messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
+                        FacesContext.getCurrentInstance().validationFailed();
+                        return null;
+                    }
                 } else if (ron[0] != null && ron.length == 1) {
                     try {
                         Double.parseDouble(ron[0]);
@@ -1702,9 +1711,9 @@ public class CustomFieldDataEntryBean implements Serializable {
                         messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
                         FacesContext.getCurrentInstance().validationFailed();
                         return null;
-            }
+                    }
                 }
-        } else {
+            } else {
                 messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
                 FacesContext.getCurrentInstance().validationFailed();
                 return null;
@@ -1719,8 +1728,8 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get the key of custom field
-     * 
-     * @param cft the custom field
+     *
+     * @param cft     the custom field
      * @param csvLine the csv line
      * @return the custom field key or null in the error case
      */
@@ -1745,39 +1754,39 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get the value of custom field
-     * 
-     * @param cft the custom field
+     *
+     * @param cft     the custom field
      * @param csvLine the csv line
      * @return the custom field value or null in the error case
      */
     private Object getMapValue(CustomFieldTemplate cft, Map<String, Object> csvLine) {
-        switch (cft.getFieldType()){
-            case DOUBLE:
-                return Double.parseDouble((String) csvLine.get(CustomFieldValue.MAP_VALUE));
-            case LONG:
-                return Long.parseLong((String) csvLine.get(CustomFieldValue.MAP_VALUE));
-            case STRING:
-            case DATE:
-            case TEXT_AREA:
-            case ENTITY:
-            case CHILD_ENTITY:
-            case LIST:
-            case MULTI_VALUE:
-                return csvLine.get(CustomFieldValue.MAP_VALUE);
-            default:
-                messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
-                FacesContext.getCurrentInstance().validationFailed();
-                return null;
+        switch (cft.getFieldType()) {
+        case DOUBLE:
+            return Double.parseDouble((String) csvLine.get(CustomFieldValue.MAP_VALUE));
+        case LONG:
+            return Long.parseLong((String) csvLine.get(CustomFieldValue.MAP_VALUE));
+        case STRING:
+        case DATE:
+        case TEXT_AREA:
+        case ENTITY:
+        case CHILD_ENTITY:
+        case LIST:
+        case MULTI_VALUE:
+            return csvLine.get(CustomFieldValue.MAP_VALUE);
+        default:
+            messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
+            FacesContext.getCurrentInstance().validationFailed();
+            return null;
         }
     }
 
     /**
      * Validate keys and map values
-     * 
-     * @param cft the custom field
+     *
+     * @param cft             the custom field
      * @param mapValuesForGUI the map values for GUI
-     * @param key the map key
-     * @param value the map value
+     * @param key             the map key
+     * @param value           the map value
      * @return true is the map is valid or false in the error case.
      */
     private boolean validateMapKeysValues(CustomFieldTemplate cft, List<Map<String, Object>> mapValuesForGUI, String key, Object value) {
@@ -1798,10 +1807,10 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Add csv line to map GUI
-     * 
-     * @param cft the custom field
+     *
+     * @param cft             the custom field
      * @param mapValuesForGUI the map values for GUI
-     * @param csvLine the csv line
+     * @param csvLine         the csv line
      * @return true is the map is valid or false in the error case.
      */
     private boolean addMapValuesItem(CustomFieldTemplate cft, List<Map<String, Object>> mapValuesForGUI, Map<String, Object> csvLine) {
@@ -1835,9 +1844,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get the matrix key
-     * 
-     * @param cft the custom field
-     * @param column the custom field column
+     *
+     * @param cft     the custom field
+     * @param column  the custom field column
      * @param csvLine csv line
      * @return the matrix key if the matrix is valid or null in the error case.
      */
@@ -1871,9 +1880,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Validate the keys and values matrix.
-     * 
-     * @param cft the custom field
-     * @param matrixValuesForGUI the matrix values for GUI
+     *
+     * @param cft                  the custom field
+     * @param matrixValuesForGUI   the matrix values for GUI
      * @param matrixKeysValuesItem the matrix keys and values
      * @return true is the matrix is valid or false in the error case.
      */
@@ -1904,8 +1913,8 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get the keys matrix
-     * 
-     * @param cft the custom field
+     *
+     * @param cft     the custom field
      * @param csvLine the csv line.
      * @return the keys matrix is the matrix is valid or null in the error case.
      */
@@ -1931,8 +1940,8 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get the values matrix
-     * 
-     * @param cft the custom field
+     *
+     * @param cft     the custom field
      * @param csvLine the csv line.
      * @return the values matrix is the matrix is valid or null in the error case.
      */
@@ -1967,10 +1976,10 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get the values matrix
-     * 
-     * @param cft the custom field
+     *
+     * @param cft                the custom field
      * @param matrixValuesForGUI the matrix values for GUI
-     * @param csvLine the csv line
+     * @param csvLine            the csv line
      * @return the values matrix is the matrix is valid or false in the error case.
      */
     private boolean addMatrixValuesItem(CustomFieldTemplate cft, List<Map<String, Object>> matrixValuesForGUI, Map<String, Object> csvLine) {
@@ -2001,7 +2010,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Get the file reader
-     * 
+     *
      * @param cft the custom field
      * @return the file reader
      */
@@ -2028,7 +2037,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Handle a file upload and import the file
-     * 
+     *
      * @param event File upload event
      */
     public void handleFileUpload(FileUploadEvent event) {
@@ -2121,7 +2130,6 @@ public class CustomFieldDataEntryBean implements Serializable {
         return (LazyDataModel) cfv.getDatasetForGUI();
     }
 
-
     /**
      * Gets the selectedItem
      *
@@ -2143,9 +2151,9 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Remove value from a map of values.
      *
-     * @param cfv Map value holder
+     * @param cfv         Map value holder
      * @param storageType storage ype.
-     * @param mapValues map of values
+     * @param mapValues   map of values
      */
     public void removeValue(CustomFieldValue cfv, CustomFieldStorageTypeEnum storageType, Map<String, Object> mapValues) {
         List valueList = storageType == CustomFieldStorageTypeEnum.MATRIX ? cfv.getMatrixValuesForGUI() : cfv.getMapValuesForGUI();
