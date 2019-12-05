@@ -1770,4 +1770,31 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return getEntityManager().createNamedQuery("RatedTransaction.listByInvoiceSubCategoryAggr", RatedTransaction.class)
             .setParameter("invoice", subCategoryInvoiceAgregate.getInvoice()).setParameter("invoiceAgregateF", subCategoryInvoiceAgregate).getResultList();
     }
+
+	/**
+	 * @param firstDate
+	 * @param lastDate
+	 * @param lastId
+	 * @param maxResult
+	 * @param formattedStatus
+	 * @return
+	 */
+	public List<RatedTransaction> getRatedTransactionBetweenTwoDatesByStatus(Date firstDate, Date lastDate, long lastId, int maxResult, List<RatedTransactionStatusEnum> formattedStatus) {
+		return getEntityManager().createNamedQuery("RatedTransaction.listBetweenTwoDatesByStatus", RatedTransaction.class)
+                .setParameter("firstTransactionDate", firstDate)
+                .setParameter("lastTransactionDate", lastDate)
+                .setParameter("lastId", lastId)
+                .setParameter("status", formattedStatus)
+                .setMaxResults(maxResult)
+                .getResultList();
+	}
+
+	public long purge(Date firstTransactionDate, Date lastTransactionDate, List<RatedTransactionStatusEnum> targetStatusList) {
+		return getEntityManager().createNamedQuery("RatedTransaction.deleteBetweenTwoDatesByStatus")
+				.setParameter("status", targetStatusList)
+				.setParameter("firstTransactionDate", firstTransactionDate)
+	            .setParameter("lastTransactionDate", lastTransactionDate)
+	            .executeUpdate();
+	}
+	
 }
