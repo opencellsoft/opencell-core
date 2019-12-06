@@ -1,0 +1,19 @@
+{
+    "code": "TEST",
+    "firstName": "Ben",
+    "lastName": "Ohara",
+    "phone": "0123456789",
+    "mobile": "0123456789",
+    "fax": "0123456789",
+    "email": "ben.ohara@opencellsoft.com",
+    "genericMail": "ben.ohara@opencellsoft.com",
+    "addressDto": {
+        "address1": "14 rue Crespin du Gast",
+        "address2": null,
+        "address3": null,
+        "zipCode": "75011",
+        "city": "PARIS",
+        "country": "FR",
+        "state": "Paris Area"
+    }
+}
