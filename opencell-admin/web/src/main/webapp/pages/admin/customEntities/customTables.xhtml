@@ -32,7 +32,7 @@
                 <h:panelGroup rendered="#{customTableBean.exportFuture!=null}">
 
                     <p:poll interval="5" update="exportSummary" stop="#{customTableBean.exportFuture!=null and customTableBean.exportFuture.isDone()}" widgetVar="exportStatusPoll"
-                        onerror="PF('exportStatusPoll').stop()" />
+                        onerror="PF('exportStatusPoll').stop()" process="@this"/>
 
                     <h:panelGroup rendered="#{customTableBean.exportFuture!=null}">
                         <h:panelGroup rendered="#{!customTableBean.exportFuture.isDone()}">
@@ -82,7 +82,7 @@
                     <p:remoteCommand name="updateData" update=":ctForm:ctSearchResults" />
 
                     <p:poll interval="5" update="importSummary" stop="#{customTableBean.importFuture!=null and customTableBean.importFuture.isDone()}" widgetVar="importStatusPoll"
-                        onerror="PF('importStatusPoll').stop()" onsuccess="updateData()" />
+                        onerror="PF('importStatusPoll').stop()" onsuccess="updateData()" process="@this" />
 
                     <h:panelGroup rendered="#{customTableBean.importFuture!=null}">
                         <h:panelGroup rendered="#{!customTableBean.importFuture.isDone()}">

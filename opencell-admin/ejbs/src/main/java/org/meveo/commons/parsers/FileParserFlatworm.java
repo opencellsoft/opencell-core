@@ -11,6 +11,7 @@ import com.blackbear.flatworm.ConfigurationReader;
 import com.blackbear.flatworm.FileFormat;
 import com.blackbear.flatworm.MatchedRecord;
 
+@Deprecated
 public class FileParserFlatworm implements IFileParser {
 
     private FileFormat fileFormat = null;

@@ -1,3 +1,4 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
@@ -37,14 +38,6 @@
                 <ui:insert name="body"/>
             </div>
 
-            <script type="text/javascript">
-                $(function () {
-                    if (window.self != window.top) {
-                        $(document.body).addClass("in-iframe");
-                        $('#layout-menu-cover').addClass('active');
-                    }
-                });
-            </script>
 
             <c:if test="#{!currentUser.hasRole('hideMenuHeaderFooter') }">
                 <ui:include src="footer.xhtml"/>

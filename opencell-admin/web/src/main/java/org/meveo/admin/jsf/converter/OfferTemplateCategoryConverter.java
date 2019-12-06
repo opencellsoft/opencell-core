@@ -10,7 +10,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 
-@FacesConverter("offerTemplateCategoryConverter")
+@FacesConverter(value = "offerTemplateCategoryConverter", managed = true)
 public class OfferTemplateCategoryConverter implements Converter {
 
 	@Inject

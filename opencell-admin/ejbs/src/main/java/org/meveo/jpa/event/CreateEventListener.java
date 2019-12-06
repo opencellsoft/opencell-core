@@ -1,8 +1,8 @@
 package org.meveo.jpa.event;
 
 import org.hibernate.HibernateException;
+import org.hibernate.event.internal.DefaultPersistEventListener;
 import org.hibernate.event.spi.PersistEvent;
-import org.hibernate.jpa.event.internal.core.JpaPersistEventListener;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
@@ -14,7 +14,7 @@ import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
  * @author Abdellatif BARI.
  * @since 7.0
  */
-public class CreateEventListener extends JpaPersistEventListener {
+public class CreateEventListener extends DefaultPersistEventListener {
 
     @Override
     public void onPersist(PersistEvent event) throws HibernateException {

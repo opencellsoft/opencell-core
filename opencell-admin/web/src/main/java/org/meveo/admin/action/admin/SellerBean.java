@@ -18,7 +18,6 @@
  */
 package org.meveo.admin.action.admin;
 
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -59,13 +58,15 @@ public class SellerBean extends CustomFieldBean<Seller> {
     
     @Inject
     private CustomerSequenceService customerSequenceService;
-
+    
     private InvoiceTypeSellerSequence selectedInvoiceTypeSellerSequence;
     private CustomerSequence selectedCustomerSequence;
     private String prefixEl;
     private InvoiceType invoiceType;
     private InvoiceSequence invoiceSequence;
     private boolean editSellerSequence = false;
+    
+    
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -122,7 +123,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
         if (!editSellerSequence) {
             if (entity.isContainsInvoiceTypeSequence(invoiceType)) {
                 messages.error(new BundleKey("messages", "seller.sellerSequence.unique"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return;
             } else {
                 entity.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, entity, invoiceSequence, prefixEl));

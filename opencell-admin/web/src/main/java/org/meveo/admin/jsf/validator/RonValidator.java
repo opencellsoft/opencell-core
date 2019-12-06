@@ -3,11 +3,11 @@ package org.meveo.admin.jsf.validator;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
+import javax.inject.Named;
 
-@FacesValidator("ronValidator")
+@Named("ronValidator")
 public class RonValidator implements Validator{
 
     public RonValidator(){

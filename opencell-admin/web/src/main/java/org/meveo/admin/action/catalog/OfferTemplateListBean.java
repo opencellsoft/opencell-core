@@ -34,7 +34,7 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -97,7 +97,7 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 		options.put("resizable", false);
 		options.put("draggable", false);
 		options.put("modal", true);
-		RequestContext.getCurrentInstance().openDialog("selectedOffersForExport", options, null);
+		PrimeFaces.current().dialog().openDynamic("selectedOffersForExport", options, null);
 	}
 
 

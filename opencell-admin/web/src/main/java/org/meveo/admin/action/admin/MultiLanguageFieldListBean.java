@@ -54,11 +54,15 @@ public class MultiLanguageFieldListBean extends BaseBean<IEntity> {
 
     @Inject
     private MultiLanguageFieldService multiLanguageFieldService;
+    
+
+    @Inject
+    private FacesContext facesContext;
 
     @Override
     public void preRenderView() {
 
-        if (FacesContext.getCurrentInstance().isPostback()) {
+        if (facesContext.isPostback()) {
             return; // Skip postback/ajax requests.
         }
 

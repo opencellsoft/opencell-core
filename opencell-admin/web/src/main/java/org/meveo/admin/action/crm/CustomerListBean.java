@@ -52,32 +52,6 @@ public class CustomerListBean extends BaseBean<Customer> {
 		super(Customer.class);
 	}
 
-	// TODO
-	// /**
-	// * Factory method, that is invoked if data model is empty. In this window
-	// we
-	// * don't need to display data table when page is loaded. Only when Search
-	// * button is pressed we should show the list. In this method we check if
-	// * list isn't called for sorting and pagination.
-	// *
-	// * @see org.meveo.admin.action.BaseBean#list()
-	// */
-	// @Produces
-	// @Named("customers")
-	// public void noList() {
-	// final FacesContext context = FacesContext.getCurrentInstance();
-	// final String sortField =
-	// context.getExternalContext().getRequestParameterMap()
-	// .get("sortField");
-	// final String resultsForm =
-	// context.getExternalContext().getRequestParameterMap()
-	// .get("results_form");
-	//
-	// if ((sortField != null) || (resultsForm != null)) {
-	// this.list();
-	// }
-	// }
-
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */

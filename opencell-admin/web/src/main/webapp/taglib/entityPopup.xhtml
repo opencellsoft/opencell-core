@@ -84,9 +84,9 @@
                         </c:if>
                     </p:outputPanel>
                     <h:panelGroup layout="block" styleClass="search-panel-actions">
-                        <p:commandButton id="buttonSearch" value="#{messages['commons.search']}" update="@form"/>
-                        <p:commandButton id="buttonClear" action="#{backingBean.clean}" value="#{messages['commons.clean']}" update="#{id}popupForm"/>
-                        <p:commandButton id="buttonAll" action="#{backingBean.back}" value="#{messages['commons.all']}"/>
+                        <p:commandButton id="buttonSearch" value="#{messages['commons.search']}" update="@form" process="@form"/>
+                        <p:commandButton id="buttonClear" action="#{backingBean.clean}" value="#{messages['commons.clean']}" update="#{id}popupForm" process="@this"/>
+                        <p:commandButton id="buttonAll" action="#{backingBean.back}" value="#{messages['commons.all']}" process="@this"/>
                     </h:panelGroup>
                 </h:panelGroup>
             </c:if>

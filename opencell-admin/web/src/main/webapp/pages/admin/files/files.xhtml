@@ -1,13 +1,10 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html" 
-	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:o="http://omnifaces.org/ui"
-	xmlns:of="http://omnifaces.org/functions"
- 	template="/layout/template.xhtml">
+				xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+				xmlns:f="http://xmlns.jcp.org/jsf/core"
+				xmlns:h="http://xmlns.jcp.org/jsf/html"
+				xmlns:hftl="http://hftl.org"
+				xmlns:p="http://primefaces.org/ui"
+				template="/layout/template.xhtml">
  	
  
 	<ui:define name="metadata">
@@ -42,7 +39,7 @@
 				    	<p:commandButton icon="fa fa-level-up" value="Up"
 				    		rendered="#{userBean.hasSelectedFolder()}" 
 				    		action="#{userBean.setSelectedFolder('..')}" 
-				    		update=":fileExplorer" />
+				    		update=":fileExplorer" process="@this"/>
 			    		<p:spacer width="8" />
 				    	<h:outputText value="#{messages['fileExplorer.currentDirectory']}: #{userBean.selectedFolder}" 
 				    		rendered="#{userBean.hasSelectedFolder()}"/>
@@ -50,14 +47,14 @@
 				    <p:column headerText="#{messages['fileExplorer.fileName']}" sortBy="#{file.name}">
 						<p:commandLink action="#{userBean.setSelectedFolder(file.name)}"
 							rendered="#{file.isDirectory()}"
-							update=":fileExplorer">
+							update=":fileExplorer" process="@this">
 							<i class="fa fa-folder-o fa-2x"></i>
 							<p:spacer width="8" />
 							<h:outputText value='#{file.name}' />
 						</p:commandLink>
 						<p:commandLink action="#{userBean.setSelectedFileName(file.name)}"
 							rendered="#{!file.isDirectory()}"
-							update=":fileExplorer">
+							update=":fileExplorer" process="@this">
 							<i class="fa fa-file-#{userBean.getFileType(file.name)}-o fa-2x"></i>
 							<p:spacer width="8" />
 							<h:outputText value='#{file.name}' />
@@ -80,11 +77,11 @@
 					</p:commandButton>
 					<p:commandButton value="#{messages['fileExplorer.delete']}"
 						icon="ui-icon-trash" action="#{userBean.deleteSelectedFile()}"
-						update=":fileExplorer"
+						update=":fileExplorer" process="@this"
 						rendered="#{userBean.canUserUpdateEntity()}">
 						<p:confirm header="#{messages['commons.confirmationHeader']}"
 							message="#{messages['fileExplorer.deleteConfirm']}"
-							icon="ui-icon-alert" />
+							icon="ui-icon-alert"/>
 						<f:param name="cid"
 							value="#{javax.enterprise.context.conversation.id}" />
 					</p:commandButton>
@@ -112,7 +109,7 @@
                  <p:inputText id="dirName" value="#{userBean.directoryName}"/>
                  <p:commandButton value="#{messages['fileExplorer.createDirectory']}"
                          action="#{userBean.createDirectory()}"
-                         update=":fileExplorer">
+                         update=":fileExplorer" process="@form">
                          <f:param name="cid"
                              value="#{javax.enterprise.context.conversation.id}" />
                      </p:commandButton>
@@ -121,7 +118,7 @@
              <h:form rendered="#{userBean.currentDirEmpty and userBean.canUserUpdateEntity()}">
                  <p:commandButton value="#{messages['fileExplorer.deleteDirectory']}"
                          action="#{userBean.deleteDirectory()}"
-                         update=":fileExplorer">
+                         update=":fileExplorer" process="@form">
                          <p:confirm header="Confirmation"
                              message="#{messages['fileExplorer.deleteDirectoryConfirm']}"
                              icon="ui-icon-alert" />

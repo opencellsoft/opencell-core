@@ -226,7 +226,7 @@ public class OrderBean extends CustomFieldBean<Order> {
         } catch (Exception e) {
             log.error("Failed to load order item for edit", e);
             messages.error(new BundleKey("messages", "order.orderItemEdit.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
         }
     }
 
@@ -405,7 +405,7 @@ public class OrderBean extends CustomFieldBean<Order> {
         } catch (Exception e) {
             log.error("Failed to save order item ", e);
             messages.error(new BundleKey("messages", "order.orderItemSaved.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
         }
     }
 
@@ -450,7 +450,7 @@ public class OrderBean extends CustomFieldBean<Order> {
         } catch (BusinessException e) {
             log.error("Failed to send order for processing ", e);
             messages.error(new BundleKey("messages", "order.sendToProcess.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
         }
         return null;
     }

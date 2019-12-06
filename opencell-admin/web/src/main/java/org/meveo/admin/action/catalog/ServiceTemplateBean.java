@@ -262,7 +262,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     }
 
     public void saveServiceChargeTemplateSubscription() {
-        log.info("saveServiceChargeTemplateSubscription getObjectId=#0", getObjectId());
+        log.info("saveServiceChargeTemplateSubscription getObjectId={}", getObjectId());
 
         try {
             if (serviceChargeTemplateSubscription == null) {
@@ -319,7 +319,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     }
 
     public void saveServiceChargeTemplateTermination() {
-        log.info("saveServiceChargeTemplateTermination getObjectId=#0", getObjectId());
+        log.info("saveServiceChargeTemplateTermination getObjectId={}", getObjectId());
 
         try {
             if (serviceChargeTemplateTermination == null) {
@@ -375,7 +375,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     }
 
     public void saveServiceChargeTemplateRecurring() {
-        log.info("saveServiceChargeTemplateRecurring getObjectId=#0", getObjectId());
+        log.info("saveServiceChargeTemplateRecurring getObjectId={}", getObjectId());
 
         try {
             if (serviceChargeTemplateRecurring == null) {

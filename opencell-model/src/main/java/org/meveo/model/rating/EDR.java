@@ -592,7 +592,7 @@ public class EDR extends BaseEntity {
 
     /**
      * Deduce quantity left to rate
-     * 
+     *
      * @param quantityToDeduce Amount to deduce by
      * @return A new quantity left to rate value
      */
@@ -617,7 +617,7 @@ public class EDR extends BaseEntity {
 
     /**
      * Change status and update a last updated timestamp
-     * 
+     *
      * @param status Processing status
      */
     public void changeStatus(EDRStatusEnum status) {

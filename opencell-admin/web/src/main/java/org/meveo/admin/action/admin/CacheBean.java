@@ -18,6 +18,21 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.infinispan.Cache;
 import org.infinispan.commons.api.BasicCache;
@@ -26,6 +41,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
+import org.meveo.cache.MetricsConfigurationCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.TenantCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
@@ -38,20 +54,6 @@ import org.meveo.util.view.LazyDataModelWSize;
 import org.omnifaces.cdi.Param;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
-
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
 
 @Named
 @ViewScoped
@@ -82,6 +84,9 @@ public class CacheBean implements Serializable {
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
+
+    @Inject
+    private MetricsConfigurationCacheContainerProvider metricsConfigurationCacheContainerProvider;
 
     /** Logger. */
     @Inject
@@ -147,6 +152,7 @@ public class CacheBean implements Serializable {
             caches.putAll(tenantCacheContainerProvider.getCaches());
             caches.putAll(esPopulationService.getCaches());
             caches.putAll(scriptInstanceService.getCaches());
+            caches.putAll(metricsConfigurationCacheContainerProvider.getCaches());
 
             selectedCache = caches.get(cacheName);
         }
@@ -169,6 +175,7 @@ public class CacheBean implements Serializable {
         caches.putAll(tenantCacheContainerProvider.getCaches());
         caches.putAll(esPopulationService.getCaches());
         caches.putAll(scriptInstanceService.getCaches());
+        caches.putAll(metricsConfigurationCacheContainerProvider.getCaches());
         caches = new TreeMap<String, Cache>(caches);
 
         for (Entry<String, Cache> cache : caches.entrySet()) {
@@ -196,6 +203,7 @@ public class CacheBean implements Serializable {
         jobCacheContainerProvider.refreshCache(cacheName);
         esPopulationService.refreshCache(cacheName);
         scriptInstanceService.refreshCache(cacheName);
+        metricsConfigurationCacheContainerProvider.refreshCache(cacheName);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 

@@ -78,15 +78,18 @@ public class PDFParametersConstruction {
     private String PDF_DIR_NAME = "pdf";
     private NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("FR"));
 
-    private ClassLoader cl = new URLClassLoader(new URL[] { PDFParametersConstruction.class.getClassLoader().getResource("reports/fonts.jar") });
-
     public Map<String, Object> constructParameters(Invoice invoice, String provider) {
 
         try {
-            currencyFormat.setMinimumFractionDigits(2);
-
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put(JRParameter.REPORT_CLASS_LOADER, cl);
+            URL resource = PDFParametersConstruction.class.getClassLoader().getResource("reports/fonts.jar");
+            if (resource != null) {
+                ClassLoader cl = new URLClassLoader(new URL[] { resource });
+                parameters.put(JRParameter.REPORT_CLASS_LOADER, cl);
+            } else {
+                log.error("the reports/fonts.jar not found");
+            }
+            currencyFormat.setMinimumFractionDigits(2);
 
             BillingAccount billingAccount = invoice.getBillingAccount();
             BillingCycle billingCycle = null;

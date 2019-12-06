@@ -2,7 +2,7 @@ package org.meveo.jpa.event;
 
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.jpa.event.internal.core.JpaFlushEventListener;
+import org.hibernate.event.internal.DefaultFlushEventListener;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.service.index.ElasticClient;
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Andrius Karpavicius
  */
-public class FlushEventListener extends JpaFlushEventListener {
+public class FlushEventListener extends DefaultFlushEventListener {
 
     private static final long serialVersionUID = -9043373325952642047L;
 

@@ -304,7 +304,7 @@ public class GenericWorkflowBean extends CustomFieldBean<GenericWorkflow> {
         if (!editWFStatus) {
             if (entity.getStatuses().contains(selectedWFStatus)) {
                 messages.error(new BundleKey("messages", "generic.wf.unique"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return;
             }
 

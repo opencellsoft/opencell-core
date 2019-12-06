@@ -37,7 +37,7 @@ import org.meveo.model.catalog.ChargeTemplate;
  * @since Jul 28, 2011
  * 
  */
-@FacesValidator("amountValidator")
+@FacesValidator(value = "amountValidator", managed = true)
 public class AmountValidator implements Validator {
     private static String amountWithoutTaxID = "amountWithoutTax";
     private static String chargeTemplateID = "chargeTemplate";

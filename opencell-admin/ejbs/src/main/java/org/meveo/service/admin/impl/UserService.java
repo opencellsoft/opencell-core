@@ -28,6 +28,7 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.hibernate.FlushMode;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -81,7 +82,7 @@ public class UserService extends PersistenceService<User> {
         String queryString = "select distinct u from User u join u.roles as r where r.name in (:roles) ";
         Query query = getEntityManager().createQuery(queryString);
         query.setParameter("roles", Arrays.asList(roles));
-        query.setHint("org.hibernate.flushMode", "NEVER");
+        query.setHint("org.hibernate.flushMode", FlushMode.MANUAL);
         return query.getResultList();
     }
 
@@ -90,7 +91,7 @@ public class UserService extends PersistenceService<User> {
         Query query = getEntityManager().createQuery(stringQuery);
         query.setParameter("userName", username.toUpperCase());
         query.setParameter("id", id);
-        query.setHint("org.hibernate.flushMode", "NEVER");
+        query.setHint("org.hibernate.flushMode", FlushMode.MANUAL);
         return ((Long) query.getSingleResult()).intValue() != 0;
     }
 
@@ -98,11 +99,11 @@ public class UserService extends PersistenceService<User> {
         String stringQuery = "select count(*) from User u where u.userName = :userName";
         Query query = getEntityManager().createQuery(stringQuery);
         query.setParameter("userName", username.toUpperCase());
-        query.setHint("org.hibernate.flushMode", "NEVER");
+        query.setHint("org.hibernate.flushMode", FlushMode.MANUAL);
         return ((Long) query.getSingleResult()).intValue() != 0;
     }
 
-
+    @RolesAllowed({ "userManagement", "userSelfManagement" })
     public User findByUsername(String username) {
         try {
             return getEntityManager().createNamedQuery("User.getByUsername", User.class).setParameter("username", username.toLowerCase()).getSingleResult();
