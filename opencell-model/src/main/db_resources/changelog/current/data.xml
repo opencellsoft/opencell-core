@@ -4465,4 +4465,9 @@ order by edr.STATUS, edr.id DESC
     	<sql>update ${db.schema.adapted}billing_invoice set due_date = to_timestamp(to_char(due_date , 'yyyy-mm-dd') , 'yyyy-mm-dd')</sql>
     </changeSet>
     
+    
+    <changeSet id="#4827_05122019" author="Mohammed_ELAZZOUZI">
+        <sql>update ${db.schema.adapted}billing_invoice_type set invoice_accountable = 1 where code not in ('QUOTE','DRAFT','PREPAID')</sql>
+        <sql>update ${db.schema.adapted}billing_invoice_type set invoice_accountable = 0 where code in ('QUOTE','DRAFT','PREPAID')</sql>
+    </changeSet>
 </databaseChangeLog>

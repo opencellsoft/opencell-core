@@ -179,6 +179,10 @@ public class InvoiceTypeApi extends BaseApi {
                 invoiceType.getSellerSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, invoiceSequenceInvoiceTypeSeller, value.getPrefixEL()));
             }
         }
+        Boolean invoiceAccountable = postData.isInvoiceAccountable();
+        if (invoiceAccountable != null) {
+             invoiceType.setInvoiceAccountable(invoiceAccountable);
+        } // else default value = true
         invoiceType.setMatchingAuto(postData.isMatchingAuto());
         invoiceType.setBillingTemplateName(postData.getBillingTemplateName());
         invoiceType.setBillingTemplateNameEL(postData.getBillingTemplateNameEL());

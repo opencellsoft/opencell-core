@@ -41,7 +41,10 @@ import org.meveo.model.ExportIdentifier;
 public class Language extends AuditableEntity {
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "language_code", length = 3)
+    /**
+     * Language 3 letter code
+     */
+    @Column(name = "language_code", length = 3, unique = true, nullable=false)
     @Size(max = 3)
     private String languageCode;
 

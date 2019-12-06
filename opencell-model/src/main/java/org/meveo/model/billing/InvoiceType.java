@@ -94,6 +94,13 @@ public class InvoiceType extends BusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "matching_auto")
     private boolean matchingAuto = false;
+    
+    /** 
+     * Used to decide if AccountOperations will be created or not , during AO_Job execution
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "invoice_accountable")
+    private boolean invoiceAccountable = true;
 
     @Column(name = "billing_template_name")
     @Size(max = 50)
@@ -293,5 +300,13 @@ public class InvoiceType extends BusinessCFEntity {
 
     public void setCustomInvoiceXmlScriptInstance(ScriptInstance customInvoiceXmlScriptInstance) {
         this.customInvoiceXmlScriptInstance = customInvoiceXmlScriptInstance;
+    }
+    
+    public boolean isInvoiceAccountable() {
+        return invoiceAccountable;
+    }
+
+    public void setInvoiceAccountable(boolean invoiceAccountable) {
+        this.invoiceAccountable = invoiceAccountable;
     }
 }
