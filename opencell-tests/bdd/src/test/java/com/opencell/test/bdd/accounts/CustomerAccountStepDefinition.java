@@ -1,4 +1,4 @@
-package com.opencell.test.bdd.customers;
+package com.opencell.test.bdd.accounts;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
