@@ -33,17 +33,15 @@ docker_path=`which docker.io || which docker`
   fi
 
 . docker-images-version.env
-echo ">>> Downloading opencell softwares & docker images"
-echo need to fix permissions, please enter your password
 
 
 
 echo ">>> compiling WAR and create SQL file"
 
 
-docker run  -u ${UID} --rm -v ${HOME}/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2 -v $PWD/../:/app -w /app  ${MAVEN_IMAGE}:${MAVEN_IMAGE_VERSION} mvn -Dmaven.test.skip=true -B clean package
+docker run  -u ${UID:-1000} --rm -v ${HOME:-$PWD}/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2 -v $PWD/../:/app -w /app  ${MAVEN_IMAGE}:${MAVEN_IMAGE_VERSION} mvn -Dmaven.test.skip=true -B clean package
 rm -fr ../databasechangelog.csv
-docker run  -u ${UID} --rm -v ${HOME}/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2 -v $PWD/../:/app -w /app  ${MAVEN_IMAGE}:${MAVEN_IMAGE_VERSION} mvn -Dmaven.test.skip=true -B -f opencell-model/pom.xml -Ddb.url=offline:postgresql?outputLiquibaseSql=true -Prebuild liquibase:updateSQL
+docker run  -u ${UID:-1000} --rm -v ${HOME:-$PWD}/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2 -v $PWD/../:/app -w /app  ${MAVEN_IMAGE}:${MAVEN_IMAGE_VERSION} mvn -Dmaven.test.skip=true -B -f opencell-model/pom.xml -Ddb.url=offline:postgresql?outputLiquibaseSql=true -Prebuild liquibase:updateSQL
 
 
 echo "Pulling docker images from docker hub"
@@ -55,20 +53,28 @@ docker-compose up -d
 
 echo ">>> Waiting opencell is ready, don't matter about 404 errors"
 ### Wait for application is up
-while ! (curl -sSf http://localhost:${OC_PORT}/opencell/about.xhtml | grep Version > /dev/null)
-do
-sleep 3
-echo "Please wait, opencell not yet up"
-done
+export CONNEXION_TIMEOUT=${CONNEXION_TIMEOUT:-120}
+sleep 5
+i=0;
+until [ "`docker inspect -f {{.State.Health.Status}} opencell-${TENANT:-demo}`"=="healthy" ]; do
+  echo "$i not yet up"
+  sleep 1
+  i=$((i+1))
+done; 
 
+if [ "${i}" -lt "${CONNEXION_TIMEOUT}" ];
+ then
+    clear
+    echo ">>> FINISHED !"
 
-clear
-echo ">>> FINISHED !"
+    echo "Great, now your environnement is ready !"
+    echo "Please open http://${OC_HOST:-localhost}:${OC_PORT:-8080}/ page to start"
+    echo "> Marketing manager is available on http://${OC_HOST:-localhost}:${OC_PORT:-8080}/opencell with credentials: opencell.marketingmanager / opencell.marketingmanager"
+    echo "> Administration console is available on http://${OC_HOST:-localhost}:${OC_PORT:-8080}/opencell with crendialts: opencell.superadmin / opencell.superadmin"
+    echo ""
+    echo "Any problem with this installer, please contact me : antoine.michea@opencellsoft.com"
 
-echo "Great, now your environnement is ready !"
-echo "Please open http://localhost:8080/ page to start"
-echo "> Marketing manager is available on http://localhost:8080/opencell with credentials: opencell.marketingmanager / opencell.marketingmanager"
-echo "> Administration console is available on http://localhost:8080/opencell with crendialts: opencell.superadmin / opencell.superadmin"
-echo ""
-echo "Any problem with this installer, please contact me : antoine.michea@opencellsoft.com"
-
+    break;
+ else
+    echo "DEPLOY ERROR, please check logs"
+fi
