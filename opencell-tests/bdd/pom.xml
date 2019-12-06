@@ -4,7 +4,7 @@
 	<groupId>bdd.opencell.tests</groupId>
 	<artifactId>opencell-bdd</artifactId>
 	<name>Opencell BDD tests</name>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>9.0.0</version>
 
 	<pluginRepositories>
 		<pluginRepository>
