@@ -1,0 +1,24 @@
+{
+	"code":"OF",
+	"description":"{{template.label}} offer {{$timestamp}}",
+	"disabled":false,
+	"lifeCycleStatus":"ACTIVE",
+	"bomCode":null,
+	"offerTemplateCategoryCode":null,
+	"offerServiceTemplate":[
+		{
+			"serviceTemplate": {
+				"code":"SE_USG_UNIT",
+				"customFields":null
+			},
+			"mandatory":false
+		},{
+			"serviceTemplate":{
+				"code":"5_SE_CLASSIC_REC_FLAT",
+				"customFields":null
+			},
+			"mandatory":false
+		}
+	]
+}
+				

@@ -1,0 +1,5 @@
+{
+  "code": "TEST_WITH_TAX",
+  "description": "Invoice Subcategory",
+  "invoiceCategory": "NOT_EXIST"
+}

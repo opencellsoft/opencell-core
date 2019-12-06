@@ -19,6 +19,7 @@
 package org.meveo.admin.action.medina;
 
 import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -128,16 +129,15 @@ public class AccessBean extends CustomFieldBean<Access> {
     @Override
     @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		String result = "";
 		Subscription subscription = subscriptionService.retrieveIfNotManaged(entity.getSubscription());
 		entity.setSubscription(subscription);
 
-		if (entity.isTransient()) {
-			if (accessService.isDuplicate(entity)) {
-				messages.error(new BundleKey("messages", "access.duplicate"));
-				return result;
-			}
-        }
+		if (accessService.isDuplicateAndOverlaps(entity)) {
+			messages.error(new BundleKey("messages", "access.duplicate"));
+			FacesContext.getCurrentInstance().validationFailed();
+			return null;
+		}
+
 		
         String outcome = super.saveOrUpdate(killConversation);
 //        log.debug("outcome when save in access detail {} and conversation status {}",outcome,killConversation);

@@ -156,8 +156,14 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         Set<String> cftIndexable = new HashSet<>();
         Set<String> cftNotIndexable = new HashSet<>();
 
-        Query query = getEntityManager().createQuery("select e from " + classname + " e where e.id>" + fromId + " order by e.id");
-        query.setMaxResults(pageSize);
+        StringBuilder selectQuery = new StringBuilder("select e from ")
+                .append(classname)
+                .append(" e where e.id >")
+                .append(" :fromId")
+                .append(" order by e.id");
+        Query query = getEntityManager().createQuery(selectQuery.toString())
+                .setParameter("fromId", ((Number) fromId).longValue())
+                .setMaxResults(pageSize);
 
         List<? extends ISearchable> entities = query.getResultList();
         int found = entities.size();
@@ -762,7 +768,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      */
     public int getRecordCountInNativeTable(String tableName) {
 
-        Object count = getEntityManager().createNativeQuery("select count(*) from " + tableName).getSingleResult();
+        StringBuilder selectQuery = new StringBuilder("select count(*) from ")
+                .append(tableName);
+        Object count = getEntityManager().createNativeQuery(selectQuery.toString()).getSingleResult();
 
         if (count instanceof BigInteger) {
             return ((BigInteger) count).intValue();
@@ -789,7 +797,13 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     public Object[] populateIndexFromNativeTable(String tableName, Object fromId, int pageSize, ReindexingStatistics statistics) throws BusinessException {
 
         Session session = getEntityManager().unwrap(Session.class);
-        SQLQuery query = session.createSQLQuery("select * from " + tableName + " e where e.id>" + fromId + " order by e.id");
+        StringBuilder selectQuery = new StringBuilder("select * from ")
+                .append(tableName)
+                .append(" e where e.id >")
+                .append(" :fromId")
+                .append(" order by e.id");
+        SQLQuery query = session.createSQLQuery(selectQuery.toString());
+        query.setParameter("fromId", ((Number) fromId).longValue());
         query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
         if (pageSize > -1) {
             query.setMaxResults(pageSize);

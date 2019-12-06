@@ -43,9 +43,9 @@ import org.meveo.service.base.BusinessService;
 public class CounterTemplateService extends BusinessService<CounterTemplate> {
 
 	public void removeByPrefix(String prefix) {
+	    StringBuilder deleteQuery = new StringBuilder("DELETE CounterTemplate t WHERE t.code LIKE :prefix");
 		Query query = getEntityManager()
-				.createQuery("DELETE CounterTemplate t WHERE t.code LIKE '"
-						+ prefix + "%'");
+				.createQuery(deleteQuery.toString()).setParameter("prefix", prefix + "%'");
 		
 		query.executeUpdate();
 	}
