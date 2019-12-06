@@ -32793,7 +32793,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_USAGE</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>100</percent>
+			<discountValue>100</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -32839,7 +32839,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_RECURRING</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>100</percent>
+			<discountValue>100</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -32885,7 +32885,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_ONESHOT</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>100</percent>
+			<discountValue>100</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -32931,7 +32931,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_PRODUCTS</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>100</percent>
+			<discountValue>100</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -33017,7 +33017,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_USAGE</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>10</percent>
+			<discountValue>10</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -33063,7 +33063,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_RECURRING</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>10</percent>
+			<discountValue>10</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -33109,7 +33109,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_ONESHOT</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>10</percent>
+			<discountValue>10</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -33155,7 +33155,7 @@ RU5ErkJggg==
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_PRODUCTS</invoiceCategoryCode>
 			<invoiceSubCategoryCode></invoiceSubCategoryCode>
-			<percent>10</percent>
+			<discountValue>10</discountValue>
 			<accountingCode>DISCOUNT</accountingCode>
 			<expressionEl></expressionEl>
 		</discountPlanItem>
@@ -44501,11 +44501,11 @@ public class ForgotPassword extends ModuleScript{
       <con:properties>
         <con:property>
           <con:name>unduePaymentId</con:name>
-          <con:value>56</con:value>
+          <con:value>6</con:value>
         </con:property>
         <con:property>
           <con:name>undueRefundId</con:name>
-          <con:value>57</con:value>
+          <con:value>7</con:value>
         </con:property>
       </con:properties>
     </con:testCase>
@@ -44560,7 +44560,7 @@ public class ForgotPassword extends ModuleScript{
       </con:property>
       <con:property>
         <con:name>invoice1_amount</con:name>
-        <con:value>113.30</con:value>
+        <con:value>89.41</con:value>
       </con:property>
       <con:property>
         <con:name>invoice2_number</con:name>
@@ -51202,7 +51202,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoice>
-      	<invoiceNumber>COM_000000017</invoiceNumber>
+      	<invoiceNumber>000000001</invoiceNumber>
       </ws:findXMLInvoice>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -51244,7 +51244,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findPdfInvoice>
-      	<invoiceNumber>COM_000000017</invoiceNumber>
+      	<invoiceNumber>000000001</invoiceNumber>
 	 </ws:findPdfInvoice>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -55652,7 +55652,8 @@ public class ${#Project#entityPrefix}_${#TestSuite#index}_PaymentCallBackScript 
                   <alias>pro</alias>\r
                   <preferred>false</preferred>\r
                   <cardNumber>6789678967896789</cardNumber>\r
-               </methodOfPayment>\r
+               </methodOfPayment>
+               <methodOfPayment paymentMethodType="CHECK"/>
             </paymentMethods>\r
          </crmAccountHierarchy>\r
       </ws:createOrUpdateCRMAccountHierarchy>\r
@@ -61678,7 +61679,7 @@ rkJggg==
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://localhost:8080/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>provider</con:name>
@@ -61694,7 +61695,7 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>mainOfferId</con:name>
-      <con:value>77</con:value>
+      <con:value>5</con:value>
     </con:property>
     <con:property>
       <con:name>templateCode</con:name>
@@ -61706,11 +61707,11 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>partnerOfferId</con:name>
-      <con:value>76</con:value>
+      <con:value>4</con:value>
     </con:property>
     <con:property>
       <con:name>recOfferId</con:name>
-      <con:value>78</con:value>
+      <con:value>6</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>
