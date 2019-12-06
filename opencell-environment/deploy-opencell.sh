@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Opencell4Docker Installer Script
 #
@@ -60,7 +61,7 @@ until [ "`docker inspect -f {{.State.Health.Status}} opencell-${TENANT:-demo}`"=
   echo "$i not yet up"
   sleep 1
   i=$((i+1))
-done; 
+done;
 
 if [ "${i}" -lt "${CONNEXION_TIMEOUT}" ];
  then
