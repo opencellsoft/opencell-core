@@ -57,7 +57,7 @@ echo ">>> Waiting opencell is ready, don't matter about 404 errors"
 export CONNEXION_TIMEOUT=${CONNEXION_TIMEOUT:-120}
 sleep 5
 i=0;
-until [ "`docker inspect -f {{.State.Health.Status}} opencell-${TENANT:-demo}`"=="healthy" ]; do
+until [ "$(docker inspect --format '{{json .State.Health.Status }}' opencell-${TENANT:-demo})" == "\"healthy\"" ]; do
   echo "$i not yet up"
   sleep 1
   if [ "${i}" -gt "${CONNEXION_TIMEOUT}"  ]; then
