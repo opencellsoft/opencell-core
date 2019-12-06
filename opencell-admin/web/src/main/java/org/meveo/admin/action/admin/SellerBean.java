@@ -176,13 +176,11 @@ public class SellerBean extends CustomFieldBean<Seller> {
     }
     
 	public void saveOrUpdateCustomerSequence() throws BusinessException {
-		if (selectedCustomerSequence.isTransient()) {
-			customerSequenceService.create(selectedCustomerSequence);
-		} else {
-			customerSequenceService.update(selectedCustomerSequence);
+		if (selectedCustomerSequence.isTransient() && !entity.getCustomerSequences().contains(selectedCustomerSequence)) {
+		    selectedCustomerSequence.updateAudit(currentUser);
+	        entity.getCustomerSequences().add(selectedCustomerSequence);
 		}
 		
-		entity = sellerService.refreshOrRetrieve(entity);
 		resetCustomerSequence();
 	}
 	
