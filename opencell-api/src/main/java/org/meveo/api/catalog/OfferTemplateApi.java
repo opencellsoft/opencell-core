@@ -33,6 +33,7 @@ import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.*;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
@@ -75,6 +76,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     @Inject
     private DiscountPlanService discountPlanService;
+
+    @Inject
+    private InvoiceSubCategoryService invoiceSubCategoryService;
 
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
@@ -245,6 +249,14 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
         offerTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
         offerTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
+        if (!StringUtils.isBlank(postData.getMinimumInvoiceSubCategory())) {
+            InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
+            if (minimumInvoiceSubCategory == null) {
+                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
+            } else {
+                offerTemplate.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
+            }
+        }
         if (postData.getLifeCycleStatus() != null) {
             offerTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
         }

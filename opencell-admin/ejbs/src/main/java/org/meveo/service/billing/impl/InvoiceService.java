@@ -736,7 +736,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             // Instantiate additional RTs to reach minimum amount to invoice on service, subscription or BA level if needed
-            if (isMinAmountApplies(entityToInvoice, minAmountForAccounts)) {
+            if ( minAmountForAccounts.isMinAmountCalculationActivated()) {
                 ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, false, minAmountForAccounts);
                 minAmountTransactions = entityToInvoice.getMinRatedTransactions();
             }
@@ -2063,6 +2063,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Date invoiceDate = generateInvoiceRequestDto.getInvoicingDate();
         Date firstTransactionDate = generateInvoiceRequestDto.getFirstTransactionDate();
         Date lastTransactionDate = generateInvoiceRequestDto.getLastTransactionDate();
+        ApplyMinimumModeEnum applyMinimumModeEnum = ApplyMinimumModeEnum.NO_PARENT;
+        if(generateInvoiceRequestDto.getApplyMinimum()!= null) {
+            applyMinimumModeEnum = ApplyMinimumModeEnum.valueOf(generateInvoiceRequestDto.getApplyMinimum());
+        }
 
         if (StringUtils.isBlank(entity)) {
             throw new BusinessException("entity is null");
@@ -2088,7 +2092,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Create missing rated transactions up to a last transaction date
         ratedTransactionService.createRatedTransaction(entity, lastTransactionDate);
 
-        MinAmountForAccounts minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated();
+        MinAmountForAccounts minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated(entity,applyMinimumModeEnum);
 
         List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft);
 

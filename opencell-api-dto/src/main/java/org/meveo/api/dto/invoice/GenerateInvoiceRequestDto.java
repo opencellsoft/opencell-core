@@ -12,11 +12,11 @@ import org.meveo.api.dto.FilterDto;
 
 /**
  * The Class GenerateInvoiceRequestDto.
- * 
+ *
  * @author anasseh
  * @author Abdelmounaim Akadid
  * @author Said Ramli
- * @lastModifiedVersion 5.1 
+ * @lastModifiedVersion 5.1
  */
 @XmlRootElement(name = "GenerateInvoiceRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -24,49 +24,72 @@ public class GenerateInvoiceRequestDto {
 
     @XmlElement()
     private String targetType;
-    
+
     @XmlElement()
     private String targetCode;
-    
+
     @XmlElement()
     private String billingAccountCode;
 
-    /** The invoicing date. */
+    /**
+     * The invoicing date.
+     */
     @XmlElement(required = true)
     private Date invoicingDate;
 
-    /** The first transaction date. */
+    /**
+     * The first transaction date.
+     */
     @XmlElement()
     private Date firstTransactionDate;
 
-    /** The last transaction date. */
+    /**
+     * The last transaction date.
+     */
     @XmlElement()
     private Date lastTransactionDate;
 
-    /** The filter. */
+    /**
+     * The filter.
+     */
     @XmlElement()
     private FilterDto filter;
 
-    /** The order number. */
+    /**
+     * The order number.
+     */
     @XmlElement()
     private String orderNumber;
 
-    /** The generate XML. */
+    /**
+     * The generate XML.
+     */
     private Boolean generateXML;
-    
-    /** The generate PDF. */
+
+    /**
+     * The generate PDF.
+     */
     private Boolean generatePDF;
-    
-    /** The generate AO. */
+
+    /**
+     * The generate AO.
+     */
     private Boolean generateAO;
-    
-    /** The custom fields. */
+
+    /**
+     * The custom fields.
+     */
     private CustomFieldsDto customFields;
-    
+
     /**
      * Includes rated transactions in the return value
      */
     private Boolean includeRatedTransactions;
+
+    /**
+     * apply mode for invoice minimum rules
+     */
+    private String applyMinimum;
 
     /**
      * Instantiates a new generate invoice request dto.
@@ -268,48 +291,70 @@ public class GenerateInvoiceRequestDto {
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
-    
+
     /**
-	 * @return the billingAccountCode
-	 */
-	public String getBillingAccountCode() {
-		return billingAccountCode;
-	}
-
-	/**
-	 * @param billingAccountCode the billingAccountCode to set
-	 */
-	public void setBillingAccountCode(String billingAccountCode) {
-		this.billingAccountCode = billingAccountCode;
-	}
-
-	@Override
-    public String toString() {
-        return "GenerateInvoiceRequestDto [targetCode=" + targetCode + ", targetType=" + targetType + ", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate
-                + ", filter=" + filter + ", orderNumber=" + orderNumber + ", generateXML=" + generateXML + ", generatePDF=" + generatePDF + ", generateAO=" + generateAO + "]";
+     * @return the billingAccountCode
+     */
+    public String getBillingAccountCode() {
+        return billingAccountCode;
     }
 
-	/**
-	 * Whether to include ratedTransactions in the return object or not
-	 * @return boolean value
-	 */
-	public Boolean getIncludeRatedTransactions() {
-		return includeRatedTransactions;
-	}
+    /**
+     * @param billingAccountCode the billingAccountCode to set
+     */
+    public void setBillingAccountCode(String billingAccountCode) {
+        this.billingAccountCode = billingAccountCode;
+    }
 
-	/**
-	 * Whether to include ratedTransactions in the return object or not
-	 * @param includeRatedTransactions boolean value
-	 */
-	public void setIncludeRatedTransactions(Boolean includeRatedTransactions) {
-		this.includeRatedTransactions = includeRatedTransactions;
-	}
-	
-	/**
-	 * Whether to include ratedTransactions in the return object or not
-	 * @return boolean value
-	 */
-	public boolean isIncludeRatedTransactions() {
-		return getIncludeRatedTransactions() != null ? getIncludeRatedTransactions() : false;
-	}
+    @Override
+    public String toString() {
+        return "GenerateInvoiceRequestDto [targetCode=" + targetCode + ", targetType=" + targetType + ", invoicingDate=" + invoicingDate + ", lastTransactionDate="
+                + lastTransactionDate + ", filter=" + filter + ", orderNumber=" + orderNumber + ", generateXML=" + generateXML + ", generatePDF=" + generatePDF + ", generateAO="
+                + generateAO + "]";
+    }
+
+    /**
+     * Whether to include ratedTransactions in the return object or not
+     *
+     * @return boolean value
+     */
+    public Boolean getIncludeRatedTransactions() {
+        return includeRatedTransactions;
+    }
+
+    /**
+     * Whether to include ratedTransactions in the return object or not
+     *
+     * @param includeRatedTransactions boolean value
+     */
+    public void setIncludeRatedTransactions(Boolean includeRatedTransactions) {
+        this.includeRatedTransactions = includeRatedTransactions;
+    }
+
+    /**
+     * Whether to include ratedTransactions in the return object or not
+     *
+     * @return boolean value
+     */
+    public boolean isIncludeRatedTransactions() {
+        return getIncludeRatedTransactions() != null ? getIncludeRatedTransactions() : false;
+    }
+
+    /**
+     * Gets the applyMinimum
+     *
+     * @return the applyMinimum
+     */
+    public String getApplyMinimum() {
+        return applyMinimum;
+    }
+
+    /**
+     * Sets the applyMinimum
+     *
+     * @param applyMinimum the applyMinimum
+     */
+    public void setApplyMinimum(String applyMinimum) {
+        this.applyMinimum = applyMinimum;
+    }
 }

@@ -849,10 +849,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             type = billingCycle.getType();
         }
 
-        //boolean[] minRTsUsed = new boolean[] { false, false, false };
+
         MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts();
         if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) || BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
-            //minRTsUsed = ratedTransactionService.isMinRTsUsed();
+
             minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated();
         }
         boolean includesFirstRun = false;

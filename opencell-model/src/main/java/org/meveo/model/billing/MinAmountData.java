@@ -7,12 +7,37 @@ import org.meveo.model.admin.Seller;
 import java.math.BigDecimal;
 import java.util.Map;
 
+/**
+ * Store needed data related to create a new Rated transaction from minimum amount
+ * @author Khalid HORRI
+ * @lastModifiedVersion 10.0
+ */
 public class MinAmountData {
+    /**
+     * The minimum amount
+     */
     private BigDecimal minAmount;
+    /**
+     * The minimum amounts label
+     */
     private String minAmountLabel;
+    /**
+     * The amounts
+     */
     private Amounts amounts;
+    /**
+     * Min amount by invoiceSubCateory
+     */
     private Map<Long, Amounts> invoiceSubCategoryAmounts;
+
+    /**
+     * The entity having the minimum amount, customer, CA, BA, UA, subscription or serviceInstance
+     */
     private BusinessEntity entity;
+
+    /**
+     * The seller
+     */
     private Seller seller;
 
     public MinAmountData(BigDecimal minAmount, String minAmountLabel, Amounts amounts, Map<Long, Amounts> invoiceSubCategoryAmounts, BusinessEntity entity, Seller seller) {
