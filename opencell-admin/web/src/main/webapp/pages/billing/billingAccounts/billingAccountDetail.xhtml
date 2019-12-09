@@ -245,7 +245,7 @@
 									<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
 							     </p:fieldset>		
 							     
-							     <p:fieldset legend="#{messages['invoice.discounts']}" styleClass="clearLeft" >
+							     <p:fieldset legend="#{messages['invoice.discounts']}" styleClass="clearLeft" rendered="#{not empty billingAccountBean.entity.id}">
 							     	<p:outputPanel id="discountPanel">
 								     	<h:panelGroup styleClass="form-panel" style="margin-bottom: 10px">
 								     		<hftl:formField displayOneLine="false" listenerUpdate="instantiateDiscountPlanDialog" field="discountPlan" valueLabelField="code" listBean="#{discountPlanBean}" />
