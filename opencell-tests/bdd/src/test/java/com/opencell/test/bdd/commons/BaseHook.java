@@ -91,4 +91,13 @@ public class BaseHook {
         }
         return Optional.empty();
     }
+
+    public Optional<String> getField(String field){
+        if(jsonObject != null && jsonObject.get(field) != null){
+            return Optional.of(jsonObject.get(field).asText());
+        }
+        return Optional.empty();
+    }
 }
+
+

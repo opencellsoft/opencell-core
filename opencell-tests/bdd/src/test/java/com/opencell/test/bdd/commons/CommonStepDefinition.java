@@ -49,6 +49,16 @@ public class CommonStepDefinition implements En {
                 assertNotNull(base.getResponse().getHttpStatusCode());
             });
         });
+        When("^I call the delete \"([^\"]*)\" with identifier \\\"([^\\\"]*)\\\"$", (String api, String field) -> {
+            String bodyRequest = getBodyRequest();
+            base.getField(field).ifPresent( code ->{
+                ValidatableResponse response = RestApiUtils.delete(api + code, bodyRequest);
+                base.setResponse(new ApiResponse(response.extract().statusCode(), response.extract().body().as(ActionStatus.class)));
+                assertNotNull(base.getResponse());
+                assertNotNull(base.getResponse().getActionStatus());
+                assertNotNull(base.getResponse().getHttpStatusCode());
+            });
+        });
         Then("^The entity is deleted$", () -> {
             assertNotNull(base.getResponse());
         });    
