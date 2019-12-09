@@ -1,10 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>opencell</artifactId>
+		<groupId>com.opencellsoft</groupId>
+		<relativePath>../../pom.xml</relativePath>
+		<version>9.0.0-SNAPSHOT</version>
+	</parent>
 	<groupId>bdd.opencell.tests</groupId>
 	<artifactId>opencell-bdd</artifactId>
 	<name>Opencell BDD tests</name>
-	<version>9.0.1-SNAPSHOT</version>
 
 	<pluginRepositories>
 		<pluginRepository>
@@ -38,7 +44,7 @@
 		<port>8080</port>
 		<thinkTime>1000</thinkTime>
 		<firstCustId>100</firstCustId>
-		<!--  setting up Cucumber parameters -->
+		<!-- setting up Cucumber parameters -->
 		<opencell.keycloak.url>http://tests.i.opencellsoft.com/auth</opencell.keycloak.url>
 		<opencell.keycloak.secret>afe07e5a-68cb-4fb0-8b75-5b6053b07dc3</opencell.keycloak.secret>
 		<opencell.keycloak.realm>opencell</opencell.keycloak.realm>
@@ -48,12 +54,10 @@
 		<dependency>
 			<groupId>com.opencellsoft</groupId>
 			<artifactId>opencell-api-dto</artifactId>
-			<version>9.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.25</version>
 		</dependency>
 		<dependency>
 			<groupId>io.cucumber</groupId>
@@ -81,13 +85,11 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<version>3.12.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -126,7 +128,6 @@
 		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
-			<version>0.9.11</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-all -->
 		<dependency>
@@ -181,86 +182,60 @@
 	</profiles>
 
 	<build>
-	<plugins>
-		<!--plugin>
-			<groupId>com.lazerycode.jmeter</groupId>
-			<artifactId>jmeter-maven-plugin</artifactId>
-			<version>2.7.0</version>
-			<executions>
-				<execution>
-					<id>jmeter-tests</id>
-					<phase>verify</phase>
-					<goals>
-						<goal>jmeter</goal>
-					</goals>
-				</execution>
-			</executions>
-			<configuration>
-				<!- <resultsDirectory>/tmp/jmeter</resultsDirectory> ->
-				<testFilesDirectory>${basedir}/jmeter/</testFilesDirectory>
-				<remoteConfig>
-					<!- <startServersBeforeTests>true</startServersBeforeTests> ->
-					<!- <serverList>server1,server2</serverList> ->
-					<!- <stopServersAfterTests>true</stopServersAfterTests> ->
-					<serverList>${remote.jmeter}</serverList>
-				</remoteConfig>
-				<!- <propertiesFilesDirectory>${basedir}/jmeter/</propertiesFilesDirectory> ->
-				<propertiesUser>
-					<users>${users}</users>
-					<period>${period}</period>
-					<loops>${loops}</loops>
-					<protocol>${protocol}</protocol>
-					<host>${host}</host>
-					<port>${port}</port>
-					<thinkTime>${thinkTime}</thinkTime>
-					<firstCustId>${firstCustId}</firstCustId>
-				</propertiesUser>
-				<!- source file that contains jmeter result data. Needs to be XML format
-                    or a GZIPed XML format ->
-				<!- <source>${project.build.directory}/jmeter/results/*</source> ->
-
-				<!- directory where to store analysis report files. At least a file
-                    "summary.txt" will be stored here. -->
-				<!-- <targetDirectory>${project.build.directory}/reports</targetDirectory> ->
-			</configuration>
-		</plugin -->
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-compiler-plugin</artifactId>
-			<configuration>
-				<source>1.8</source>
-				<target>1.8</target>
-			</configuration>
-		</plugin>
-		<plugin>
-			<groupId>org.jacoco</groupId>
-			<artifactId>jacoco-maven-plugin</artifactId>
-			<version>0.7.9</version>
-			<executions>
-				<execution>
-					<phase>test</phase>
-					<goals>
-						<goal>prepare-agent</goal>
-					</goals>
-					<configuration>
-						<destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
-						<propertyName>surefireArgLine</propertyName>
-					</configuration>
-				</execution>
-				<execution>
-					<id>generate-code-coverage-report</id>
-					<phase>test</phase>
-					<goals>
-						<goal>report</goal>
-					</goals>
-					<configuration>
-						<dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
-						<outputDirectory>${basedir}/target/jacoco-reports</outputDirectory>
-					</configuration>
-				</execution>
-			</executions>
-		</plugin>
-	</plugins>
+		<plugins>
+			<!--plugin> <groupId>com.lazerycode.jmeter</groupId> <artifactId>jmeter-maven-plugin</artifactId> 
+				<version>2.7.0</version> <executions> <execution> <id>jmeter-tests</id> <phase>verify</phase> 
+				<goals> <goal>jmeter</goal> </goals> </execution> </executions> <configuration> 
+				<!- <resultsDirectory>/tmp/jmeter</resultsDirectory> -> <testFilesDirectory>${basedir}/jmeter/</testFilesDirectory> 
+				<remoteConfig> <!- <startServersBeforeTests>true</startServersBeforeTests> 
+				-> <!- <serverList>server1,server2</serverList> -> <!- <stopServersAfterTests>true</stopServersAfterTests> 
+				-> <serverList>${remote.jmeter}</serverList> </remoteConfig> <!- <propertiesFilesDirectory>${basedir}/jmeter/</propertiesFilesDirectory> 
+				-> <propertiesUser> <users>${users}</users> <period>${period}</period> <loops>${loops}</loops> 
+				<protocol>${protocol}</protocol> <host>${host}</host> <port>${port}</port> 
+				<thinkTime>${thinkTime}</thinkTime> <firstCustId>${firstCustId}</firstCustId> 
+				</propertiesUser> <!- source file that contains jmeter result data. Needs 
+				to be XML format or a GZIPed XML format -> <!- <source>${project.build.directory}/jmeter/results/*</source> 
+				-> <!- directory where to store analysis report files. At least a file "summary.txt" 
+				will be stored here. -->
+			<!-- <targetDirectory>${project.build.directory}/reports</targetDirectory> 
+				-> </configuration> </plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.9</version>
+				<executions>
+					<execution>
+						<phase>test</phase>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
+							<propertyName>surefireArgLine</propertyName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-code-coverage-report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+							<outputDirectory>${basedir}/target/jacoco-reports</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 	<reporting>
 		<plugins>
@@ -277,8 +252,8 @@
 					<aggregate>true</aggregate>
 					<linkXRef>false</linkXRef>
 					<argLine>${surefireArgLine}</argLine>
-					 <forkCount>1</forkCount>
-        			<reuseForks>true</reuseForks>
+					<forkCount>1</forkCount>
+					<reuseForks>true</reuseForks>
 				</configuration>
 			</plugin>
 		</plugins>
