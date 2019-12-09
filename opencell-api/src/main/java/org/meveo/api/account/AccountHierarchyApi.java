@@ -263,9 +263,9 @@ public class AccountHierarchyApi extends BaseApi {
             sellerApi.createOrUpdate(sellerDto);
         }
 
-        String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
-        if (postData.getUsePrefix() != null && !postData.getUsePrefix()) {
-            customerCode = customerCodeOrId;
+        String customerCode = customerCodeOrId;
+        if (postData.getUsePrefix() != null && postData.getUsePrefix()) {
+            customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
         }
 
         CustomerDto customerDto = new CustomerDto();
@@ -447,9 +447,9 @@ public class AccountHierarchyApi extends BaseApi {
         sellerApi.createOrUpdate(sellerDto);
 
         CustomerDto customerDto = null;
-        String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
-        if (postData.getUsePrefix() != null && !postData.getUsePrefix()) {
-            customerCode = customerCodeOrId;
+        String customerCode = customerCodeOrId; 
+        if (postData.getUsePrefix() != null && postData.getUsePrefix()) {
+            customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
         }
         try {
             customerDto = customerApi.find(customerCode);
@@ -1362,7 +1362,11 @@ public class AccountHierarchyApi extends BaseApi {
             handleMissingParameters();
         }
 
-        String customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
+        String customerCode = customerCodeOrId;
+        if (postData.getUsePrefix() != null && postData.getUsePrefix()) {
+            customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
+        }
+        
         if (customerService.findByCode(customerCode) == null) {
             create(postData);
         } else {

@@ -40,6 +40,9 @@ public class DefaultImageStreamer {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+    @Inject
+    private FacesContext facesContext;
 
     public String getDefaultImage(String groupName) {
         if (groupName.equals("offerCategory")) {
@@ -58,17 +61,16 @@ public class DefaultImageStreamer {
     }
 
     public StreamedContent getImage() {
-        FacesContext context = FacesContext.getCurrentInstance();
         DefaultStreamedContent streamedFile = new DefaultStreamedContent();
 
-        if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
+        if (facesContext.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
             // So, we're rendering the HTML. Return a stub StreamedContent so
             // that it will generate right URL.
             return new DefaultStreamedContent();
         } else {
-            String fileName = context.getExternalContext().getRequestParameterMap().get("fileName");
+            String fileName = facesContext.getExternalContext().getRequestParameterMap().get("fileName");
             // String providerCode = context.getExternalContext().getRequestParameterMap().get("providerCode");
-            String groupName = context.getExternalContext().getRequestParameterMap().get("pictureGroupName");
+            String groupName = facesContext.getExternalContext().getRequestParameterMap().get("pictureGroupName");
 
             String imagePath = ModuleUtil.getPicturePath(currentUser.getProviderCode(), groupName) + File.separator + fileName;
             try {

@@ -66,23 +66,23 @@
             <ui:define name="buttons">
                 <hf:formButtons killConversationOnSave="false" killConversationOnBack="false" backingBean="#{businessOfferModelBean}" edit="true" showEditButton="#{!businessOfferModelBean.entity.downloaded}"
                     showEnableDisableButton="#{!businessOfferModelBean.entity.downloaded}" showDeleteButton="#{!businessOfferModelBean.entity.downloaded}" formId="moduleId"
-                    useCustomIdParam="true">
+                    useCustomIdParam="true" ajaxSubmit="false">
 
-                    <p:commandButton value="#{messages['meveoModule.install']}" action="#{businessOfferModelBean.install}" update="@all"
-                        rendered="#{businessOfferModelBean.entity.downloaded and !businessOfferModelBean.entity.installed}" />
-                    <p:commandButton value="#{messages['meveoModule.uninstall']}" action="#{businessOfferModelBean.uninstall}" update="@all"
-                        rendered="#{businessOfferModelBean.entity.downloaded and businessOfferModelBean.entity.installed}">
+                    <p:commandButton value="#{messages['meveoModule.install']}" action="#{businessOfferModelBean.install}" update="@form"
+                        rendered="#{businessOfferModelBean.entity.downloaded and !businessOfferModelBean.entity.installed}" process="@this" />
+                    <p:commandButton value="#{messages['meveoModule.uninstall']}" action="#{businessOfferModelBean.uninstall}" update="@form"
+                        rendered="#{businessOfferModelBean.entity.downloaded and businessOfferModelBean.entity.installed}" process="@this">
                         <p:confirm header="#{messages['meveoModule.uninstall']}" message="#{messages['meveoModule.confirmUninstall']}" />
                     </p:commandButton>
                     <p:commandButton value="#{messages['commons.disable']}"
                         rendered="#{businessOfferModelBean.entity.downloaded and businessOfferModelBean.entity.installed and businessOfferModelBean.entity.active}"
-                        action="#{businessOfferModelBean.disable}" update="@form">
+                        action="#{businessOfferModelBean.disable}" update="@form" process="@this">
                         <p:confirm header="#{messages['commons.disable']}" message="#{messages['meveoModule.confirmDisableAllModule']}" />
                     </p:commandButton>
 
                     <p:commandButton value="#{messages['commons.enable']}"
                         rendered="#{businessOfferModelBean.entity.downloaded and businessOfferModelBean.entity.installed and businessOfferModelBean.entity.disabled}"
-                        action="#{businessOfferModelBean.enable}" update="@form">
+                        action="#{businessOfferModelBean.enable}" update="@form" process="@this">
                         <p:confirm header="#{messages['commons.disable']}" message="#{messages['meveoModule.confirmEnableAllModule']}" />
                     </p:commandButton>
 
@@ -92,7 +92,7 @@
 
         <h:form id="businessServiceTemplates">
             <p:panel width="100" header="#{messages['serviceTemplate.title']}">
-                <p:dataTable id="businessServiceTemplates" var="entity" value="#{businessOfferModelBean.bomServices}" paginator="true" rows="10" sortBy="#{entity.code}"
+                <p:dataTable id="businessServiceTemplatesTable" var="entity" value="#{businessOfferModelBean.bomServices}" paginator="true" rows="10" sortBy="#{entity.code}"
                     paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                     rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid" reflow="true">
                     <p:column headerText="#{messages['BusinessEntity.code']}">

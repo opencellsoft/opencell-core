@@ -38,6 +38,7 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
@@ -73,6 +74,9 @@ public class CRMConnectorRejectedFileBean implements Serializable {
     /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
     @Inject
     private ParamBeanFactory paramBeanFactory;
+
+    @Inject
+    private FacesContext facesContext;
 
     // private static String errorPath = null;
     // private static String allertPath = null;
@@ -154,9 +158,9 @@ public class CRMConnectorRejectedFileBean implements Serializable {
         File tmpFile = new File(tmpPath + File.separator + UUID.randomUUID().toString());
 
         try (FileOutputStream fout = new FileOutputStream(tmpFile);
-             CheckedOutputStream csum = new CheckedOutputStream(fout, new CRC32());
-             GZIPOutputStream out = new GZIPOutputStream(new BufferedOutputStream(csum));
-             InputStream in = new FileInputStream(new File(document.getAbsolutePath()));) {
+                CheckedOutputStream csum = new CheckedOutputStream(fout, new CRC32());
+                GZIPOutputStream out = new GZIPOutputStream(new BufferedOutputStream(csum));
+                InputStream in = new FileInputStream(new File(document.getAbsolutePath()));) {
 
             int sig = 0;
             byte[] buf = new byte[1024];
@@ -171,7 +175,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
         } catch (Exception e) {
             log.error("Error:#0, when compress file:#1", e, document.getAbsolutePath());
         }
-        
+
         list();
         log.info("end compress...");
         return null;
@@ -188,8 +192,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
         
         log.info("start to download...");
         File f = new File(document.getAbsolutePath());
-        javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
-        HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
+        HttpServletResponse res = (HttpServletResponse) facesContext.getExternalContext().getResponse();
         res.setContentType("application/force-download");
         res.setContentLength(document.getSize().intValue());
         res.addHeader("Content-disposition", "attachment;filename=\"" + document.getFilename() + "\"");
@@ -201,7 +204,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
                 out.write(buf, 0, sig);
             }
             out.flush();
-            context.responseComplete();
+            facesContext.responseComplete();
             log.info("download over!");
         } catch (Exception e) {
             log.error("Error:#0, when dowload file: #1", e, document.getAbsolutePath());

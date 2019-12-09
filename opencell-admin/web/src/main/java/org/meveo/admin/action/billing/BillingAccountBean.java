@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
+import javax.faces.context.ExternalContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -90,6 +90,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     @Inject
     private DiscountPlanService discountPlanService;
+    
+    @Inject
+    private ExternalContext externalContext;
 
     /** Selected billing account in exceptionelInvoicing page. */
     private ListItemsSelector<BillingAccount> itemSelector;
@@ -339,8 +342,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
      * @return
      */
     private boolean isCommitted() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+        HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
         return response.isCommitted();
     }
     

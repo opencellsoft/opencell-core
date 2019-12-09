@@ -295,7 +295,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     }
 
     public void setTransientCode(String transientCode) {
-        code = transientCode;
+        setCode(transientCode);
     }
 
     /**

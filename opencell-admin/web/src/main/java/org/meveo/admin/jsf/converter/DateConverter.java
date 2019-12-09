@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
+import javax.inject.Named;
 
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -35,14 +35,14 @@ import org.meveo.commons.utils.ParamBeanFactory;
  * @lastModifiedVersion 5.0
  *
  */
-@FacesConverter("dateConverter")
+@Named("dateConverter")
 public class DateConverter implements Converter {
 
     @Override
     public Object getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
         ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
         String dateFormat = paramBeanFactory.getInstance().getDateFormat();
-        DateFormat df = new SimpleDateFormat(dateFormat, FacesContext.getCurrentInstance().getViewRoot().getLocale());
+        DateFormat df = new SimpleDateFormat(dateFormat, facesContext.getViewRoot().getLocale());
 
         try {
             return df.parse(str);
@@ -55,7 +55,7 @@ public class DateConverter implements Converter {
     public String getAsString(FacesContext facesContext, UIComponent uIComponent, Object obj) {
         ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
         String dateFormat = paramBeanFactory.getInstance().getDateFormat();
-        DateFormat df = new SimpleDateFormat(dateFormat, FacesContext.getCurrentInstance().getViewRoot().getLocale());
+        DateFormat df = new SimpleDateFormat(dateFormat, facesContext.getViewRoot().getLocale());
 
         return df.format(obj);
     }

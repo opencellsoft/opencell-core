@@ -1,5 +1,27 @@
 package org.meveo.service.job;
 
+import java.util.Collection;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
+import javax.ejb.ScheduleExpression;
+import javax.ejb.Timeout;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.ejb.TimerService;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
+import org.eclipse.microprofile.metrics.Counter;
+import org.eclipse.microprofile.metrics.Metadata;
+import org.eclipse.microprofile.metrics.MetadataBuilder;
+import org.eclipse.microprofile.metrics.MetricRegistry;
+import org.eclipse.microprofile.metrics.Tag;
+import org.eclipse.microprofile.metrics.annotation.RegistryType;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.cache.JobCacheContainerProvider;
@@ -19,21 +41,6 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Resource;
-import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
-import javax.ejb.ScheduleExpression;
-import javax.ejb.Timeout;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.ejb.TimerService;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * Interface that must implement all jobs that are managed in meveo application by the JobService bean. The implementation must be a session EJB and must statically register itself
@@ -86,6 +93,10 @@ public abstract class Job {
     @Inject
     private AuditOrigin auditOrigin;
 
+    @Inject
+    @RegistryType(type = MetricRegistry.Type.APPLICATION)
+    MetricRegistry registry;
+
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -100,6 +111,14 @@ public abstract class Job {
 
         auditOrigin.setAuditOrigin(ChangeOriginEnum.JOB);
         auditOrigin.setAuditOriginName(jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
+        // add counter metrics
+        Metadata metadata = new MetadataBuilder()
+                .withName("is_running_" + jobInstance.getJobTemplate() + "_" + jobInstance.getCode())
+                .build();
+        // counter that return 1 when job is running
+        Tag tgName = new Tag("name", jobInstance.getCode());
+        Counter counter = registry.counter(metadata, tgName);
+        counter.inc();
 
         if (executionResult == null) {
             executionResult = new JobExecutionResultImpl();
@@ -150,7 +169,8 @@ public abstract class Job {
                 jobExecutionService.persistResult(this, executionResult, jobInstance);
             }
         }
-
+        // revert counter to return 0 at the end of the job
+        counter.inc(-1);
     }
 
     /**

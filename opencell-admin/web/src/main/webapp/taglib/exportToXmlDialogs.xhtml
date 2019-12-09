@@ -61,7 +61,7 @@
             <h:panelGroup id="exportSummary">
                 <h:form rendered="#{entityExportImportBean.exportImportFuture!=null}">
                     <p:poll interval="5" update="exportSummary" stop="#{entityExportImportBean.exportImportFuture!=null and entityExportImportBean.exportImportFuture.isDone()}"
-                        widgetVar="expStatusPoll" onerror="PF('expStatusPoll').stop()" />
+                        widgetVar="expStatusPoll" onerror="PF('expStatusPoll').stop()" process="@this"/>
 
                     <h:panelGroup rendered="#{entityExportImportBean.exportImportFuture!=null and !entityExportImportBean.exportImportFuture.isDone()}">
 
@@ -122,7 +122,7 @@
 
                             <p:poll interval="5" update="remoteImportSummary" listener="#{entityExportImportBean.checkRemoteImportStatus}"
                                 stop="#{entityExportImportBean.remoteImportResult!=null and entityExportImportBean.remoteImportResult.isDone()}" widgetVar="impStatusPoll"
-                                onerror="PF('impStatusPoll').stop()" />
+                                onerror="PF('impStatusPoll').stop()" process="@this"/>
 
                             <h:panelGroup rendered="#{entityExportImportBean.remoteImportResult==null or !entityExportImportBean.remoteImportResult.isDone()}">
 

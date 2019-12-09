@@ -1,5 +1,5 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+                xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -117,9 +117,10 @@
                                 </f:facet>
 
                                 <p:commandButton id="editSubCategoryCountryLink" update=":tabView:formTax" action="#{invoiceSubCategoryBean.editInvoiceSubcategoryCountry(entity)}"
-                                    icon="ui-icon-document" />
+                                    icon="ui-icon-document" process="@form"/>
                                 <p:commandButton id="editSubCategoryCountrydeletelink" action="#{invoiceSubCategoryBean.deleteInvoiceSubcategoryCountry(entity)}"
-                                    rendered="#{invoiceSubCategoryBean.canUserUpdateEntity()}" icon="ui-icon-trash" update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formTax" />
+                                    rendered="#{invoiceSubCategoryBean.canUserUpdateEntity()}" icon="ui-icon-trash"
+                                    update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formTax" process="@this"/>
                             </p:column>
                         </hftl:dataList>
                     </h:panelGroup>
@@ -149,20 +150,24 @@
                             <ui:define name="buttons">
                                 <p:commandButton rendered="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.id==null and invoiceSubCategoryBean.canUserUpdateEntity()}"
                                     action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}" value="#{messages['invoiceSubCategoryCountry.saveNewtax']}"
-                                    update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formTax,:tabView:subCategoryCountrydiv" />
+                                    update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formTax,:tabView:subCategoryCountrydiv"
+                                    process="@form"/>
 
                                 <p:commandButton rendered="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.id!=null and invoiceSubCategoryBean.canUserUpdateEntity()}"
                                     action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}" value="#{messages['invoiceSubCategoryCountry.modifyTax']}"
-                                    update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formTax,:tabView:subCategoryCountrydiv" />
+                                    update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formTax,:tabView:subCategoryCountrydiv"
+                                    process="@form"/>
 
-                                <p:commandButton value="#{messages['action.cancel']}" action="#{invoiceSubCategoryBean.newInvoiceSubcategoryCountryInstance}" update=":tabView:subCategoryCountrydiv" />
+                                <p:commandButton value="#{messages['action.cancel']}" action="#{invoiceSubCategoryBean.newInvoiceSubcategoryCountryInstance}"
+                                                 update=":tabView:subCategoryCountrydiv" process="@this"/>
 
 
                                 <!-- <p:button id="buttonBack" value="#{messages['action.back']}"
                                             outcome="#{invoiceSubCategoryBean.back()}"
                                             includeViewParams="true">
                                             </p:button> -->
-                                <p:commandButton id="buttonBack" value="#{messages['action.back']}" action="#{invoiceSubCategoryBean.setActiveTab(0)}" update=":tabView" immediate="true"></p:commandButton>
+                                <p:commandButton id="buttonBack" value="#{messages['action.back']}" action="#{invoiceSubCategoryBean.setActiveTab(0)}"
+                                                 update=":tabView" immediate="true" process="@this"/>
                             </ui:define>
                         </hftl:formPanel>
                     </p:panel>

@@ -1,9 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+				xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+				xmlns:f="http://xmlns.jcp.org/jsf/core"
+				xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+				xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
 		<f:metadata>
@@ -66,6 +65,7 @@
 							<p:commandButton value="#{messages['bundleTemplate.addProduct']}"
 								action="#{bundleTemplateBean.addProductTemplateToBundle(prodT)}"
 								update=":#{p:component('bundleTemplateList')} :#{p:component('messages')} :selectProduct"
+											 process="@this"
 								oncomplete="PF('selectProduct').hide()">
 							</p:commandButton>
 						</p:column>

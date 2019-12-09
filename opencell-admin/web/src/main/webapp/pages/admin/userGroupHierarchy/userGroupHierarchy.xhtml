@@ -1,6 +1,6 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
-    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+                xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="body">
 
@@ -37,13 +37,13 @@
                         <h:panelGrid columns="1" id="buttons" styleClass="clearLeft">
                             <h:panelGrid columns="2">
                                 <p:commandButton id="addUserHierarchyRootBtn" icon="fa fa-home" action="#{userHierarchyLevelBean.newUserHierarchyRoot()}"
-                                    update="messages userGroupLevelDetailPanel buttons" style="padding-right:5px">
+                                    update="messages userGroupLevelDetailPanel buttons" process="@this" style="padding-right:5px">
                                 </p:commandButton>
                                 <p:outputLabel value="#{messages['userGroupHierarchy.addUserGroupRoot']}" />
                             </h:panelGrid>
                             <h:panelGrid columns="2" rendered="#{userHierarchyLevelBean.selectedNode != null}">
                                 <p:commandButton id="addUserHierarchyLevelBtn" icon="fa fa-plus" action="#{userHierarchyLevelBean.newUserHierarchyLevel()}"
-                                    update="messages userGroupLevelDetailPanel buttons">
+                                    update="messages userGroupLevelDetailPanel buttons" process="@this">
                                 </p:commandButton>
                                 <p:outputLabel value="#{messages['userGroupHierarchy.addUserGroupLevel']}" />
                             </h:panelGrid>
@@ -59,7 +59,7 @@
 <!--                             </h:panelGrid> -->
                             <h:panelGrid columns="2" rendered="#{userHierarchyLevelBean.selectedNode != null}">
                                 <p:commandButton id="deleteUserHierarchyLevellink" icon="ui-icon-trash" action="#{userHierarchyLevelBean.removeUserHierarchyLevel()}"
-                                    update="messages userGroupPanel buttons userGroupLevelDetailPanel" ajax="true">
+                                    update="messages userGroupPanel buttons userGroupLevelDetailPanel" ajax="true" process="@this">
                                     <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['userGroupHierarchy.confirmDelete']}" icon="ui-icon-alert" />
                                 </p:commandButton>
                                 <p:outputLabel value="#{messages['userGroupHierarchy.deleteUserGroupLevel']}" />

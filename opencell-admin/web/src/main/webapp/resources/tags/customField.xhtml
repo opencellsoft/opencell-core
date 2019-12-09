@@ -45,7 +45,19 @@
             dateTimePattern="#{cc.attrs.dateTimePattern}" />
     </c:if>
 
-    <c:if test="#{cc.attrs.cft.fieldType ne CustomFieldTypeEnum.CHILD_ENTITY}">
+    <c:if test="#{cc.attrs.cft.fieldType eq CustomFieldTypeEnum.CHECKBOX_LIST}">
+        <c:set var="inheritedValue" value="#{customFieldDataEntryBean.getInheritedCFValue(cc.attrs.entity, cc.attrs.cft.code)}"/>
+
+        <hftl:decorateFormField
+                label="#{cc.attrs.cft.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}#{cc.attrs.cft.valueRequired and inheritedValue ==null?' *':''}"
+                componentWidth="25" displayOneLine="false">
+            <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code)}"
+                                        entity="#{cc.attrs.entity}"
+                                        disabled="#{cc.attrs.disabled}" datePattern="#{cc.attrs.datePattern}" hasInheritedValue="#{inheritedValue !=null}"/>
+        </hftl:decorateFormField>
+    </c:if>
+
+    <c:if test="#{cc.attrs.cft.fieldType ne CustomFieldTypeEnum.CHILD_ENTITY and cc.attrs.cft.fieldType ne CustomFieldTypeEnum.CHECKBOX_LIST}">
         <c:if test="#{!cc.attrs.cft.versionable}">
             <c:if test="#{cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.SINGLE }">
 

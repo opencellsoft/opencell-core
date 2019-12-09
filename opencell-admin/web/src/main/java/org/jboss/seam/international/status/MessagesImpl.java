@@ -22,6 +22,7 @@ import java.util.Iterator;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
 import javax.inject.Inject;
 
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -38,10 +39,16 @@ public class MessagesImpl implements Messages {
     @Inject
     private MessageFactory factory;
 
+    @Inject
+    private FacesContext facesContext;
+
+    @Inject
+    private Flash flash;
+
     // private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public void clear() {
-        Iterator<FacesMessage> it = FacesContext.getCurrentInstance().getMessages();
+        Iterator<FacesMessage> it = facesContext.getMessages();
         while (it.hasNext()) {
             it.next();
             it.remove();
@@ -49,13 +56,13 @@ public class MessagesImpl implements Messages {
     }
 
     public boolean isEmpty() {
-        return FacesContext.getCurrentInstance().getMessages().hasNext();
+        return facesContext.getMessages().hasNext();
     }
 
     private void enqueueBuilder(final MessageBuilder builder) {
         Message message = builder.build();
-        FacesContext.getCurrentInstance().addMessage(message.getTargets(), new FacesMessage(message.getSeverity(), message.getText(), message.getDetail()));
-        FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+        facesContext.addMessage(message.getTargets(), new FacesMessage(message.getSeverity(), message.getText(), message.getDetail()));
+        flash.setKeepMessages(true);
     }
 
     /*
@@ -127,5 +134,4 @@ public class MessagesImpl implements Messages {
     public void fatal(final String message, final Object... params) {
         enqueueBuilder(factory.fatal(message, params));
     }
-
 }

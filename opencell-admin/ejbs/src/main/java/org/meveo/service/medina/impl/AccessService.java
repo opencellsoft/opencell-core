@@ -18,6 +18,7 @@
  */
 package org.meveo.service.medina.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -27,7 +28,9 @@ import javax.persistence.Query;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
+import static  org.meveo.model.shared.DateUtils.isPeriodsOverlap;
 
 @Stateless
 public class AccessService extends PersistenceService<Access> {
@@ -42,22 +45,61 @@ public class AccessService extends PersistenceService<Access> {
         return getEntityManager().createNamedQuery("Access.getAccessesByUserId", Access.class).setParameter("accessUserId", accessUserId).getResultList();
     }
 
-    public boolean isDuplicate(Access access) {
-        String stringQuery = "SELECT COUNT(*) FROM " + Access.class.getName() + " a WHERE a.accessUserId=:accessUserId AND a.subscription.id=:subscriptionId";
-        Query query = getEntityManager().createQuery(stringQuery);
-        query.setParameter("accessUserId", access.getAccessUserId());
-        query.setParameter("subscriptionId", access.getSubscription().getId());
-        query.setHint("org.hibernate.flushMode", "NEVER");
-        return ((Long) query.getSingleResult()).intValue() != 0;
+    public boolean isDuplicateAndOverlaps(Access access) {
+        List<Access> accesses = retrieveAccessByUserIdAndSubscription(access.getAccessUserId(), access.getSubscription());
+        if(accesses.isEmpty()){
+            return false;
+        }else if(access.getStartDate() == null && access.getEndDate() == null){
+            return true;
+        }
+        for (Access element : accesses){
+            if(isPeriodsOverlap(access.getStartDate(), access.getEndDate(), element.getStartDate(), element.getEndDate())){
+                return true;
+            }
+        }
+        return false;
     }
 
-    public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription) {
-        try {
-            QueryBuilder qb = new QueryBuilder(Access.class, "a");
-            qb.addCriterion("accessUserId", "=", accessUserId, false);
-            qb.addCriterionEntity("subscription", subscription);
-            return (Access) qb.getQuery(getEntityManager()).getSingleResult();
+    private List<Access> retrieveAccessByUserIdAndSubscription(String accessUserId, Subscription subscription) {
+        String selectAccessByUserIdSubscriptionIdStartEndDateQuery ="SELECT a FROM " + Access.class.getName() +" a"
+                + " WHERE a.accessUserId=:accessUserId AND a.subscription.id=:subscriptionId";
+        Query query = getEntityManager().createQuery(selectAccessByUserIdSubscriptionIdStartEndDateQuery);
+        query.setParameter("accessUserId", accessUserId);
+        query.setParameter("subscriptionId", subscription.getId());
+        return query.getResultList();
+    }
 
+    @Deprecated
+    public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription) {
+        return findByUserIdAndSubscription(accessUserId, subscription, new Date(), new Date());
+    }
+
+    public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription, Date date) {
+        try {
+            List<Access> accesses = retrieveAccessByUserIdAndSubscription(accessUserId, subscription);
+            for (Object resultElement : accesses){
+                Access access = (Access) resultElement;
+                if(DateUtils.isDateWithinPeriod(date, access.getStartDate(), access.getEndDate())){
+                    return access;
+                }
+            }
+            return null;
+        } catch (NoResultException e) {
+            log.warn("no result found");
+            return null;
+        }
+    }
+
+    public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription, Date startDate, Date endDate) {
+        try {
+            List<Access> accesses = retrieveAccessByUserIdAndSubscription(accessUserId, subscription);
+            for (Object resultElement : accesses){
+                Access access = (Access) resultElement;
+                if(isPeriodsOverlap(startDate, endDate, access.getStartDate(), access.getEndDate())){
+                    return access;
+                }
+            }
+            return null;
         } catch (NoResultException e) {
             log.warn("no result found");
             return null;

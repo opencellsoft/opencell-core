@@ -181,7 +181,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
      */
     @Column(name = "password", length = 10)
     @Size(max = 10)
-    private String password = "";
+    private String password;
 
     /**
      * Expression to calculate Invoice due date delay value

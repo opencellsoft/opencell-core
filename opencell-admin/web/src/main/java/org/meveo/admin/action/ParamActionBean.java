@@ -124,7 +124,7 @@ public class ParamActionBean extends BaseBean<ParamProperty> implements Serializ
         paramBean.saveProperties();
         reset();
         FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("success"), bundle.getString("properties.save.successful"));
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+        facesContext.addMessage(null, msg);
     }
 
     /**
@@ -147,12 +147,12 @@ public class ParamActionBean extends BaseBean<ParamProperty> implements Serializ
         log.info("Add new property:" + this.entity.getKey() + " -> " + this.entity.getValue());
         if (!this.isDataValid()) {
             messages.error(new BundleKey("messages", "properties.add.error"));
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
             return;
         }
         if (getProperties().stream().anyMatch(property -> property.getKey().equals(this.entity.getKey()))){
             messages.error(new BundleKey("messages", "properties.add.exist"));
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
             return;
 
         }

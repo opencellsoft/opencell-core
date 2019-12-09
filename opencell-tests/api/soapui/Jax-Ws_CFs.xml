@@ -11367,6 +11367,8 @@ public class Action1 extends Script {
       <ws:createAccess>
          <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACCESS">
             <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB</subscription>
+            <startDate>2016-03-15</startDate>
+            <endDate>2016-04-01</endDate>
             <customFields>
                <customField code="${#Project#baseEntityPrefix}_Access_STRING_SINGLE_NV">
                   <stringValue>ACC_STRING_VALUE_0</stringValue>
@@ -11490,6 +11492,8 @@ public class Action1 extends Script {
       <ws:findAccess> 
          <accessCode>${#Project#entityPrefix}_${#TestSuite#index}_ACCESS</accessCode> 
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB</subscriptionCode> 
+         <startDate>2016-03-15</startDate>
+         <endDate>2016-04-01</endDate>    
       </ws:findAccess> 
    </soapenv:Body> 
 </soapenv:Envelope>]]></con:request>
@@ -11623,6 +11627,8 @@ public class Action1 extends Script {
       <ws:updateAccess>
          <access code="${#Project#entityPrefix}_${#TestSuite#index}_ACCESS">
             <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB</subscription>
+            <startDate>2016-03-15</startDate>
+            <endDate>2016-04-01</endDate>         
             <customFields>
                <customField code="${#Project#baseEntityPrefix}_Access_STRING_SINGLE_NV">
                   <stringValue>ACC_STRING_VALUE_0145</stringValue>
@@ -11746,6 +11752,8 @@ public class Action1 extends Script {
       <ws:findAccess> 
          <accessCode>${#Project#entityPrefix}_${#TestSuite#index}_ACCESS</accessCode> 
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB</subscriptionCode> 
+         <startDate>2016-03-15</startDate>
+         <endDate>2016-04-01</endDate>    
       </ws:findAccess> 
    </soapenv:Body> 
 </soapenv:Envelope>]]></con:request>
@@ -12423,7 +12431,9 @@ public class Action1 extends Script {
                                                 </customFields>\r
                                                 <accesses>\r
                                                    <access code="${#Project#entityPrefix}_${#TestSuite#index}_H_ACC">\r
-                                                      <subscription>${#Project#entityPrefix}_${#TestSuite#index}_H_SUB</subscription>\r
+                                                      <subscription>${#Project#entityPrefix}_${#TestSuite#index}_H_SUB</subscription>
+                                                      <startDate>2016-03-15</startDate>
+                                                      <endDate>2016-04-01</endDate> \r
                                                       <customFields>\r
                                                          <customField code="${#Project#baseEntityPrefix}_Access_STRING_SINGLE_NV">\r
                                                             <stringValue>ACC_STRING_VALUE_0</stringValue>\r
@@ -12967,6 +12977,8 @@ public class Action1 extends Script {
       <ws:findAccess> 
          <accessCode>${#Project#entityPrefix}_${#TestSuite#index}_H_ACC</accessCode> 
          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_H_SUB</subscriptionCode> 
+         <startDate>2016-03-15</startDate>
+         <endDate>2016-04-01</endDate>
       </ws:findAccess> 
    </soapenv:Body> 
 </soapenv:Envelope>]]></con:request>

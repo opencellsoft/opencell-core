@@ -1,7 +1,8 @@
 package org.meveo.jpa.event;
 
 import org.hibernate.event.spi.PostDeleteEvent;
-import org.hibernate.jpa.event.internal.core.JpaPostDeleteEventListener;
+import org.hibernate.event.spi.PostDeleteEventListener;
+import org.hibernate.persister.entity.EntityPersister;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.service.index.ElasticClient;
@@ -14,14 +15,12 @@ import org.slf4j.LoggerFactory;
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.3
  */
-public class DeleteEventListener extends JpaPostDeleteEventListener {
+public class DeleteEventListener implements PostDeleteEventListener {
 
     private static final long serialVersionUID = 4290464068190662604L;
 
     @Override
     public void onPostDelete(PostDeleteEvent event) {
-        super.onPostDelete(event);
-
         ElasticClient elasticClient = (ElasticClient) EjbUtils.getServiceInterface("ElasticClient");
         try {
             elasticClient.flushChanges();
@@ -29,5 +28,10 @@ public class DeleteEventListener extends JpaPostDeleteEventListener {
             Logger log = LoggerFactory.getLogger(getClass());
             log.error("Failed to flush ES changes", e);
         }
+    }
+
+    @Override
+    public boolean requiresPostCommitHanding(EntityPersister entityPersister) {
+        return false;
     }
 }

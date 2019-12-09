@@ -105,30 +105,28 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         return super.update(pp);
     }
 
-    @SuppressWarnings("deprecation")
     private String getCellAsString(Cell cell) {
         switch (cell.getCellType()) {
-        case Cell.CELL_TYPE_BOOLEAN:
+        case BOOLEAN:
             return cell.getBooleanCellValue() + "";
-        case Cell.CELL_TYPE_ERROR:
-        case Cell.CELL_TYPE_BLANK:
-        case Cell.CELL_TYPE_FORMULA:
+        case ERROR:
+        case BLANK:
+        case FORMULA:
             return null;
-        case Cell.CELL_TYPE_NUMERIC:
+        case NUMERIC:
             return "" + cell.getNumericCellValue();
         default:
             return cell.getStringCellValue();
         }
     }
 
-    @SuppressWarnings("deprecation")
-    private Date getCellAsDate(Cell cell) {
+    private Date getCellAsDate(Cell cell) {        
         switch (cell.getCellType()) {
-        case Cell.CELL_TYPE_ERROR:
-        case Cell.CELL_TYPE_BLANK:
-        case Cell.CELL_TYPE_FORMULA:
+        case ERROR:
+        case BLANK:
+        case FORMULA:
             return null;
-        case Cell.CELL_TYPE_NUMERIC:
+        case NUMERIC:
             return DateUtil.getJavaDate(cell.getNumericCellValue());
         default:
             try {

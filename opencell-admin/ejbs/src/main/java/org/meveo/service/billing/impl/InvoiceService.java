@@ -35,8 +35,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -107,12 +105,9 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
-import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.WriteOff;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -3121,65 +3116,64 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (discountValue != null) {
                 if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-                    discountAmount = amount.multiply(discountValue.divide(HUNDRED)).setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
+                    discountAmount = amount.abs().multiply(discountValue.negate().divide(HUNDRED)).setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
                 } else {
                     discountAmount = discountValue.negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
                 }
-            }
-            if (discountAmount != null && amount.compareTo(BigDecimal.ZERO) > 0) {
-                discountAmount = discountAmount.negate();
-            }
 
-            if (discountAmount != null && discountAmount.abs().negate().compareTo(BigDecimal.ZERO) < 0) {
-                discountAggregate = new SubCategoryInvoiceAgregate(scAggregate.getInvoiceSubCategory(), billingAccount, scAggregate.getUserAccount(), scAggregate.getWallet(),
+                if (!((discountAmount.compareTo(BigDecimal.ZERO) < 0 && amount.compareTo(BigDecimal.ZERO) < 0)
+                        || (discountAmount.compareTo(BigDecimal.ZERO) > 0 && amount.compareTo(BigDecimal.ZERO) > 0))) {
+                    if (discountAmount.abs().compareTo(amount.abs()) > 0) {
+                        discountAmount = amount.negate();
+                    }
+                }
+
+                if (discountAmount != null && discountAmount.compareTo(BigDecimal.ZERO) != 0) {
+                    discountAggregate = new SubCategoryInvoiceAgregate(scAggregate.getInvoiceSubCategory(), billingAccount, scAggregate.getUserAccount(), scAggregate.getWallet(),
                         scAggregate.getTax(), invoice, null);
 
-                discountAggregate.updateAudit(currentUser);
-                discountAggregate.setItemNumber(scAggregate.getItemNumber());
-                discountAggregate.setCategoryInvoiceAgregate(cAggregate);
+                    discountAggregate.updateAudit(currentUser);
+                    discountAggregate.setItemNumber(scAggregate.getItemNumber());
+                    discountAggregate.setCategoryInvoiceAgregate(cAggregate);
 
-                discountAggregate.setDiscountAggregate(true);
-                if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-                    discountAggregate.setDiscountPercent(discountValue);
+                    discountAggregate.setDiscountAggregate(true);
+                    if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+                        discountAggregate.setDiscountPercent(discountValue);
+                    }
+                    discountAggregate.setDiscountPlanItem(discountPlanItem);
+                    discountAggregate.setDescription(discountPlanItem.getCode());
+
+                    amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, scAggregate.getTaxPercent(), isEnterprise, invoiceRounding,
+                        invoiceRoundingMode.getRoundingMode());
+
+                    discountAggregate.setAmountWithoutTax(amounts[0]);
+                    discountAggregate.setAmountWithTax(amounts[1]);
+                    discountAggregate.setAmountTax(amounts[2]);
+
+                    invoice.addInvoiceAggregate(discountAggregate);
+                    return discountAggregate;
                 }
-                discountAggregate.setDiscountPlanItem(discountPlanItem);
-                discountAggregate.setDescription(discountPlanItem.getCode());
-
-                amounts = NumberUtils
-                        .computeDerivedAmounts(discountAmount, discountAmount, scAggregate.getTaxPercent(), isEnterprise, invoiceRounding, invoiceRoundingMode.getRoundingMode());
-
-                discountAggregate.setAmountWithoutTax(amounts[0]);
-                discountAggregate.setAmountWithTax(amounts[1]);
-                discountAggregate.setAmountTax(amounts[2]);
-
-                invoice.addInvoiceAggregate(discountAggregate);
-                return discountAggregate;
             }
         }
         return null;
     }
 
     private BigDecimal getDiscountValue(Invoice invoice, SubCategoryInvoiceAgregate scAggregate, BigDecimal amount, DiscountPlanItem discountPlanItem) {
-        BigDecimal discountValue = discountPlanItem.getDiscountValue();
+        BigDecimal computedDiscount = discountPlanItem.getDiscountValue();
 
         final String dpValueEL = discountPlanItem.getDiscountValueEL();
         if (isNotBlank(dpValueEL)) {
             final BigDecimal evalDiscountValue = evaluateDiscountPercentExpression(dpValueEL, scAggregate.getUserAccount(), scAggregate.getWallet(), invoice, amount);
-            log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(), discountValue, amount);
-            if (discountValue != null) {
-                discountValue = evalDiscountValue;
+            log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(), computedDiscount, amount);
+            if (computedDiscount != null) {
+                computedDiscount = evalDiscountValue;
             }
         }
-        if (discountValue == null || amount == null) {
+        if (computedDiscount == null || amount == null) {
             return BigDecimal.ZERO;
         }
-        if (discountValue.compareTo(BigDecimal.ZERO) < 0 && amount.compareTo(BigDecimal.ZERO) < 0 && discountValue.compareTo(HUNDRED.negate()) < 0) {
-            discountValue = HUNDRED.negate();
-        }
-        if (discountValue.compareTo(BigDecimal.ZERO) > 0 && amount.compareTo(BigDecimal.ZERO) > 0 && discountValue.compareTo(HUNDRED) > 0) {
-            discountValue = HUNDRED;
-        }
-        return discountValue;
+
+        return computedDiscount;
     }
 
     private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, List<DiscountPlanInstance> discountPlanInstances, Invoice invoice,
@@ -3655,7 +3649,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param billingRun Billing run
      */
     public void deleteInvoices(BillingRun billingRun) {
-        getEntityManager().createNamedQuery("Invoice.deleteByBR").setParameter("billingRun", billingRun).executeUpdate();
+        getEntityManager().createNamedQuery("Invoice.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
     }
 
     /**

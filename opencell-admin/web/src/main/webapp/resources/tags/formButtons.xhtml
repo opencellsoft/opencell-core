@@ -57,7 +57,7 @@
     <cc:attribute name="ajaxSubmit" required="true" />
     <cc:attribute name="submitPartialProcess" />
     <cc:attribute name="submitPartialSubmitFilter" default=":not([name*='omitFromSubmit'])"/> <!--  instead of partial submit filter, jquery expression could be used in process attribute, but issue is with calendars or other input components that are not of input type:  process="@this @( :input:not([name*='omitFromSubmit']))" -->
-    <cc:attribute name="submitUpdate" default="@all"/>
+    <cc:attribute name="submitUpdate" default="@form"/> 
     <cc:attribute name="execute" default="false" />
     <cc:attribute name="formId" default="formId" />
     <cc:attribute name="submitActionListener" default="false" />
@@ -82,24 +82,22 @@
 
         <p:commandButton value="#{messages['commons.disable']}"
             rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.active and cc.attrs.backingBean.canUserUpdateEntity()}"
-            action="#{cc.attrs.backingBean.disable}" update="@form">
+            action="#{cc.attrs.backingBean.disable}" update="@form" process="@form">
             <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
         </p:commandButton>
-            
+
         <p:commandButton value="#{messages['commons.enable']}"
             rendered="#{not empty cc.attrs.backingBean.objectId and cc.attrs.showEnableDisableButton and cc.attrs.backingBean.entity.disabled and cc.attrs.backingBean.canUserUpdateEntity()}"
-            action="#{cc.attrs.backingBean.enable}" update="@form">
+            action="#{cc.attrs.backingBean.enable}" update="@form" process="@form">
             <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
         </p:commandButton>
         
         <script type="text/javascript">
-			//<![CDATA[
 				function delayDisable(button){
 					setTimeout(function(){
 		            	button.disabled = true;
 		            }, 100);
 				}
-			//]]>
 		</script>
 
 		<p:commandButton id="saveButton"
@@ -196,17 +194,15 @@
 
 
         <script type="text/javascript">
-			//<![CDATA[
 				function handleUpdateWithMessageComplete(xhr, status, args) {
 					var result = args.result;
-					if(typeof(result)!="undefined" && !result){
+					if(typeof(result)!="undefined" &amp;&amp; !result){
 						PF('#{cc.attrs.formId}confirmCannotUpdateWithMessageDialog').show();
 					}
 				}
-			//]]>
 		</script>	
 		<p:commandButton id="deletelink" icon="ui-icon-trash" value="#{messages['commons.delete']}" action="#{cc.attrs.backingBean.deleteWithBack}" immediate="true" update="@form"
-			rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null and cc.attrs.backingBean.canUserUpdateEntity()}">
+			rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null and cc.attrs.backingBean.canUserUpdateEntity()}" process="@this">
             <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
 		</p:commandButton>
 
@@ -215,7 +211,7 @@
 			severity="alert" widgetVar="#{cc.attrs.formId}confirmCannotUpdateWithMessageDialog" appendTo="@(body)">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="cannotUpdateWithMessage" value="#{messages['commons.ok']}"
-					oncomplete="PF('#{cc.attrs.formId}confirmCannotUpdateWithMessageDialog').hide()" update="@this" />
+					oncomplete="PF('#{cc.attrs.formId}confirmCannotUpdateWithMessageDialog').hide()" update="@this" process="@this" />
 			</p:panel>
 		</p:confirmDialog>		
 	</h:panelGroup>

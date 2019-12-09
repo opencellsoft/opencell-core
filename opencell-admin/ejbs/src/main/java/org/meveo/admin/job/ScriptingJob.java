@@ -57,7 +57,7 @@ public class ScriptingJob extends Job {
 
             scriptingJobBean.init(result, scriptCode, context);
             scriptingJobBean.execute(result, scriptCode, context);
-            scriptingJobBean.finalize(result, scriptCode, context);
+            scriptingJobBean.complete(result, scriptCode, context);
 
         } catch (Exception e) {
             log.error("Exception on init/execute script", e);

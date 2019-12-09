@@ -129,8 +129,12 @@ public class EdrService extends PersistenceService<EDR> {
 
         try {
 
-            Query query = getEntityManager().createQuery("select e.id from EDR e where " + (originBatch == null ? "e.originBatch is null " : "e.originBatch=:originBatch") + " and "
-                    + (originRecord == null ? "e.originRecord is null " : "e.originRecord=:originRecord"));
+            StringBuilder selectQuery = new StringBuilder("select e.id from EDR e where ")
+                    .append(originBatch == null ? "e.originBatch is null " : "e.originBatch=:originBatch")
+                    .append(" and ")
+                    .append(originRecord == null ? "e.originRecord is null " : "e.originRecord=:originRecord");
+                            
+            Query query = getEntityManager().createQuery(selectQuery.toString());
 
             if (originBatch != null) {
                 query.setParameter("originBatch", originBatch);
@@ -218,7 +222,6 @@ public class EdrService extends PersistenceService<EDR> {
      * @param max  a max rows
      * @return All open EDR between two Date
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<EDR> getNotOpenedEdrsBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate, long lastId, int max) {
         return getEntityManager().createNamedQuery("EDR.getNotOpenedEdrBetweenTwoDate", EDR.class)
                 .setParameter("firstTransactionDate", firstTransactionDate)
@@ -289,4 +292,34 @@ public class EdrService extends PersistenceService<EDR> {
             create(edr);
         }
     }
+
+	/**
+	 * @param firstTransactionDate
+	 * @param lastTransactionDate
+	 * @param lastId
+	 * @param maxResult
+	 * @param formattedStatus
+	 * @return
+	 */
+	public List<EDR> getEdrsBetweenTwoDatesByStatus(Date firstTransactionDate, Date lastTransactionDate, long lastId, int maxResult, List<EDRStatusEnum> formattedStatus) {
+		return getEntityManager().createNamedQuery("EDR.getEdrsBetweenTwoDateByStatus", EDR.class)
+				.setParameter("status", formattedStatus)
+                .setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate)
+                .setParameter("lastId", lastId)
+                .setMaxResults(maxResult)
+                .getResultList();
+	}
+
+	public long purge(Date firstTransactionDate, Date lastTransactionDate, List<EDRStatusEnum> targetStatusList) {
+		getEntityManager().createNamedQuery("EDR.updateWalletOperationForSafeDeletionByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
+				.setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+
+		getEntityManager().createNamedQuery("EDR.updateRatedTransactionForSafeDeletionByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
+				.setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+
+		return getEntityManager().createNamedQuery("EDR.deleteEdrBetweenTwoDateByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
+				.setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+	}
+
 }

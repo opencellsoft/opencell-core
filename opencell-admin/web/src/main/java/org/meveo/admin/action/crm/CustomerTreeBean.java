@@ -21,7 +21,6 @@ package org.meveo.admin.action.crm;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -65,7 +64,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
     // This is a list of available FontAwesome currency symbols
     private static final List<String> CURRENCIES = new ArrayList<String>() {
-        private static final long serialVersionUID = 3959294292718669361L;
+    private static final long serialVersionUID = 3959294292718669361L;
 
         {
             add("GPB");
@@ -116,7 +115,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
     private Class selectedEntityClass;
 
     public boolean isVisible() {
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+    	HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
         Boolean visible = (Boolean) session.getAttribute("hierarchyPanel:visible");
         if (visible == null) {
             visible = true;
@@ -126,7 +125,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
     }
 
     public void toggleVisibility() {
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+    	HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
         Boolean visible = (Boolean) session.getAttribute("hierarchyPanel:visible");
         if (visible == null) {
             visible = true;
