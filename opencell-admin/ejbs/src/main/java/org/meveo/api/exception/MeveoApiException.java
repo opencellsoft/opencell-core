@@ -2,6 +2,7 @@ package org.meveo.api.exception;
 
 import javax.ejb.ApplicationException;
 
+import org.meveo.api.ApiErrorCodeEnum;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 
 @ApplicationException(rollback = true)
@@ -9,7 +10,7 @@ public class MeveoApiException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
-	private MeveoApiErrorCodeEnum errorCode;
+	private ApiErrorCodeEnum errorCode;
 
 	public MeveoApiException() {
 		errorCode = MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
@@ -20,7 +21,7 @@ public class MeveoApiException extends RuntimeException {
 		errorCode = MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
 	}
 
-	public MeveoApiException(MeveoApiErrorCodeEnum errorCode, String message) {
+	public MeveoApiException(ApiErrorCodeEnum errorCode, String message) {
 		super(message);
 		this.errorCode = errorCode;
 	}
@@ -29,11 +30,11 @@ public class MeveoApiException extends RuntimeException {
 		super(message);
 	}
 
-	public MeveoApiErrorCodeEnum getErrorCode() {
+	public ApiErrorCodeEnum getErrorCode() {
 		return errorCode;
 	}
 
-	public void setErrorCode(MeveoApiErrorCodeEnum errorCode) {
+	public void setErrorCode(ApiErrorCodeEnum errorCode) {
 		this.errorCode = errorCode;
 	}
 }
