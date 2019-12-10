@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNotNull;
 public class CountryIsoStepDefinition implements En {
     public CountryIsoStepDefinition(BaseHook base) {
         Then("^The country iso is created$", () -> {
-           BaseHook baseb = base;
             base.getField("countryCode").ifPresent( code ->{
                 if(base.getResponse().getHttpStatusCode() == HttpStatus.SC_OK) {
                     ValidatableResponse response = RestApiUtils.get("/countryIso?countryCode=" + code, "");
