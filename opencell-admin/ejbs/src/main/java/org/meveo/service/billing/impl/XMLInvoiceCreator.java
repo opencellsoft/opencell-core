@@ -438,6 +438,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             Element sellerTag = doc.createElement("seller");
             sellerTag.setAttribute("code", seller.getCode() != null ? seller.getCode() : "");
             sellerTag.setAttribute("description", seller.getDescription() != null ? seller.getDescription() : "");
+            sellerTag.setAttribute("vatNo", seller.getVatNo() != null ? seller.getVatNo() : "");
             addCustomFields(seller, doc, sellerTag);
             addAdress(seller, doc, sellerTag, billingAccountLanguage);
             sellerTag.appendChild(toContactTag(doc, seller.getContactInformation()));
