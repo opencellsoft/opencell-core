@@ -145,8 +145,8 @@ public class SepaDirectDebitAsync {
 		ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
 		ddRequestLOT.setSendDate(new Date());
 		ddRequestLOT.setPaymentOrRefundEnum(ddrequestLotOp.getPaymentOrRefundEnum());
-		ddRequestLOT.setFileName(sepaFile.getDDFileName(ddRequestLOT, appProvider));
 		ddRequestLOTService.create(ddRequestLOT);
+		ddRequestLOT.setFileName(sepaFile.getDDFileName(ddRequestLOT, appProvider));
 		int nbItemsKo = 0;
 		int nbItemsOk = 0;
 		String allErrors = "";
