@@ -37,6 +37,7 @@ import javax.inject.Inject;
 import org.jfree.util.Log;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.UnitSepaDirectDebitJobBean;
+import org.meveo.admin.sepa.SepaFile;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
@@ -90,6 +91,9 @@ public class SepaDirectDebitAsync {
 	/** The job execution service. */
 	@Inject
 	private JobExecutionService jobExecutionService;
+	
+	@Inject
+	private SepaFile sepaFile;
 
 	/**
 	 * Create payments for all items from the ddRequestLot. One Item at a time in a
@@ -141,7 +145,7 @@ public class SepaDirectDebitAsync {
 		ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
 		ddRequestLOT.setSendDate(new Date());
 		ddRequestLOT.setPaymentOrRefundEnum(ddrequestLotOp.getPaymentOrRefundEnum());
-
+		ddRequestLOT.setFileName(sepaFile.getDDFileName(ddRequestLOT, appProvider));
 		ddRequestLOTService.create(ddRequestLOT);
 		int nbItemsKo = 0;
 		int nbItemsOk = 0;
