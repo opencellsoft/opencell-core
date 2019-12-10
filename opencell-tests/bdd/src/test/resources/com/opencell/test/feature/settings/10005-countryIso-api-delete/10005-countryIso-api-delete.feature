@@ -1,4 +1,4 @@
-@settings @test
+@settings
 Feature: Delete CountryIso by API
 
   Background: System is configured.
@@ -18,4 +18,4 @@ Feature: Delete CountryIso by API
     Examples: 
       | jsonFile                                                        | dto           | api                      | statusCode | status  | errorCode                        | message                                       |
       | settings/00004-countryIso-api-create/SuccessTest.json           | CountryIsoDto | /countryIso?countryCode= |        200 | SUCCESS |                                  |                                               |
-      | settings/10004-countryIso-api-delete/ENTITY_DOES_NOT_EXIST.json | CountryIsoDto | /countryIso?countryCode= |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | Calendar with code=NOT_EXIST does not exists. |
+      | settings/10005-countryIso-api-delete/ENTITY_DOES_NOT_EXIST.json | CountryIsoDto | /countryIso?countryCode= |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | Calendar with code=NOT_EXIST does not exists. |
