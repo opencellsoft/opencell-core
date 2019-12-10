@@ -14,6 +14,7 @@ Feature: Create Credit Category by API
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                               | dto               | api                                    | statusCode | status  | errorCode | message |
-      | payments/00002-creditCategory-api-create/Success.json  | CreditCategoryDto | /payment/creditCategory/createOrUpdate |        200 | SUCCESS |           |         |
-      | payments/00002-creditCategory-api-create/Success1.json | CreditCategoryDto | /payment/creditCategory/createOrUpdate |        200 | SUCCESS |           |         |
+      | jsonFile                                               | dto               | api                                    | statusCode | status  | errorCode                       | message                                       |
+      | payments/00002-creditCategory-api-create/Success.json  | CreditCategoryDto | /payment/creditCategory/createOrUpdate |        200 | SUCCESS |                                 |                                               |
+      | payments/00002-creditCategory-api-create/Success.json  | CreditCategoryDto | /payment/creditCategory/               |        200 | FAIL    | ENTITY_ALREADY_EXISTS_EXCEPTION | CreditCategory with code=TEST already exists. |
+      | payments/00002-creditCategory-api-create/Success1.json | CreditCategoryDto | /payment/creditCategory/createOrUpdate |        200 | SUCCESS |                                 |                                               |
