@@ -1,0 +1,14 @@
+{
+    
+    "code": "INGENICO_OGONE_CARD_RELA11",
+    "description" : "created gateway2",
+    "applicationEL": "#{paymentGateway.code eq  mv:executeScript(customerAccount,\"org.meveo.service.script.SelectGatewayScript\",null)}",
+   
+    "marchandId" : "OpenCellTest",
+    "secretKey" : "t6XTfmNwAzjqdU0K5d4PScJKifkt5n2MU7k5Wb2u1mw=",
+    "apiKey" : "fe4b8561e7d6d332",
+    "webhooksKeyId" : "bc65d19f-81dc-4cd7-9ebf-a08117e0ee18",
+    "webhooksSecretKey" : "HWm33qk4lgSaO9Qq1EmrByo8B9XU0VsGDGZrlPrsVdg=",
+    "type" : "NATIF",
+    "paymentMethodType" : "CARD"
+}
