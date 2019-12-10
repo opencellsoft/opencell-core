@@ -1,7 +1,10 @@
 package com.opencell.test.bdd.commons;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.google.gson.JsonObject;
+
 import cucumber.api.java.Before;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.BaseEntityDto;
@@ -93,6 +96,10 @@ public class BaseHook {
     }
 
     public Optional<String> getField(String field){
+        if(entityDto != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            jsonObject = mapper.valueToTree(entityDto);
+        }
         if(jsonObject != null && jsonObject.get(field) != null){
             return Optional.of(jsonObject.get(field).asText());
         }
