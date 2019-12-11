@@ -28,7 +28,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    docker.image("maven:3-jdk-$MAVEN_JDK_VERSION").inside('-v $HOME/.m2:/root/.m2) {
+                    docker.image("maven:3-jdk-$MAVEN_JDK_VERSION").inside('-v $HOME/.m2:/root/.m2') {
                         sh 'mvn -B -Dmaven.test.skip=true clean package'
                     }
                 }
