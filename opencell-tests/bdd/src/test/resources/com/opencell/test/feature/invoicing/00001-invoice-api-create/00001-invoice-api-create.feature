@@ -7,7 +7,7 @@ Feature: Create Invoice by API
   Scenario Outline: Create Invoice by API
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<api>"
-    Then The seller is created
+    Then The invoice is created
     And Validate that the statusCode is "<statusCode>"
     And The status is "<status>"
     And The message  is "<message>"
