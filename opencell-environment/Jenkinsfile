@@ -6,6 +6,7 @@ pipeline {
     environment {
         URL_SONAR = credentials('Sonar_URL')
         CREDENTIAL_SONAR = credentials('Sonar_ID')
+    }
     options {
         buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: ''))
     }
