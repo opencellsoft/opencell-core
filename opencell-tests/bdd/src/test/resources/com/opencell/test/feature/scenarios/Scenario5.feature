@@ -1,3 +1,4 @@
+@ignore
 Feature: Payment + Refund process
    
    Background:  System is configured.

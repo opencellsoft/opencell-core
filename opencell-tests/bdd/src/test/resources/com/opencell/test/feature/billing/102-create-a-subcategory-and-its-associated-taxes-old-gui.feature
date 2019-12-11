@@ -1,3 +1,4 @@
+@ignore
 Feature: Creation of a new subcategory with asociated taxes 
 
    Background:  System is configured.

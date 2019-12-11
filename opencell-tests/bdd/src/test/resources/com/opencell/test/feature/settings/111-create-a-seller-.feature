@@ -1,3 +1,4 @@
+@ignore
 Feature: Creation of a new seller
    
    Background:  System is configured.

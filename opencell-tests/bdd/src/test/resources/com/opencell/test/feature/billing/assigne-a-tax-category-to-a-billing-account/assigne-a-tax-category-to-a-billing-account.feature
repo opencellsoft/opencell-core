@@ -1,3 +1,4 @@
+@ignore
 Feature: Create and assigned a tax category to a billing account by API
 
   Background: The classic offer is already executed
