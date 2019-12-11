@@ -67,7 +67,9 @@ pipeline {
                     docker.image("maven:3-jdk-$env.JAVA_VERSION").inside('-v /root/.m2:/root/.m2') {
                         sh 'mvn sonar:sonar ' +
                         '-Dsonar.host.url=${URL_SONAR} ' +
-                        '-Dsonar.login=${CREDENTIAL_SONAR} '
+                        '-Dsonar.login=${CREDENTIAL_SONAR} ' +
+                        '-Dsonar.projectName=OpencellCore ' +
+                        '-Dsonar.junit.reportPaths=target/surefire-reports/ '
                     }
                 }
             }
