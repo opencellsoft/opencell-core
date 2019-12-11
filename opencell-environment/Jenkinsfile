@@ -1,7 +1,4 @@
 #!/usr/bin/env groovy
-
-def pom = readMavenPom file: 'pom.xml'
-print pom.java.version
 pipeline {
     environment {
         URL_SONAR = credentials('Sonar_URL')
