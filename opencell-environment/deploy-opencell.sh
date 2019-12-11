@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Opencell4Docker Installer Script
 #
@@ -56,11 +57,15 @@ echo ">>> Waiting opencell is ready, don't matter about 404 errors"
 export CONNEXION_TIMEOUT=${CONNEXION_TIMEOUT:-120}
 sleep 5
 i=0;
-until [ "`docker inspect -f {{.State.Health.Status}} opencell-${TENANT:-demo}`"=="healthy" ]; do
+until [ "$(docker inspect --format '{{json .State.Health.Status }}' opencell-${TENANT:-demo})" == "\"healthy\"" ]; do
   echo "$i not yet up"
   sleep 1
+  if [ "${i}" -gt "${CONNEXION_TIMEOUT}"  ]; then
+    echo "Container won't start correctly"
+    exit 1
+  fi
   i=$((i+1))
-done; 
+done
 
 if [ "${i}" -lt "${CONNEXION_TIMEOUT}" ];
  then
@@ -74,7 +79,6 @@ if [ "${i}" -lt "${CONNEXION_TIMEOUT}" ];
     echo ""
     echo "Any problem with this installer, please contact me : antoine.michea@opencellsoft.com"
 
-    break;
  else
     echo "DEPLOY ERROR, please check logs"
 fi

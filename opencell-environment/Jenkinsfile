@@ -1,14 +1,11 @@
 #!/usr/bin/env groovy
+
+def pom = readMavenPom file: 'pom.xml'
+print pom.java.version
 pipeline {
     environment {
         URL_SONAR = credentials('Sonar_URL')
         CREDENTIAL_SONAR = credentials('Sonar_ID')
-        JAVA_VAR = sh (
-            script: "grep '<java.version>' ./pom.xml | sed 's/<java\\.version>\\(.*\\)<.*>/\\1/'",
-            returnStdout: true
-            ).trim()
-
-    }
     options {
         buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: ''))
     }
@@ -16,14 +13,23 @@ pipeline {
 
     stages {
 
-        stage('Build') { 
+    stage('Init') {
+        steps {
+            script {
+                JAVA_VAR = sh (
+                    script: '''grep '<java.version>' ./pom.xml | sed -n 's:.*<java.version>\\(.*\\)</java.version>.*:\\1:p' ''',
+                    returnStdout: true
+                    ).trim()
+                if (!JAVA_VAR?.trim()) {
+                    JAVA_VAR="8"
+            }
+        }
+    }
+        stage('Build') {
             steps {
                 script {
-                    if (!JAVA_VAR) {
-                        JAVA_VAR="8"
-                    }
-                    docker.image("maven:3-jdk-$JAVA_VAR").inside('-v /root/.m2:/root/.m2') {
-                        sh 'mvn -B -Dmaven.test.skip=true clean package' 
+                    docker.image("maven:3-jdk-$env.JAVA_VERSION").inside('-v /root/.m2:/root/.m2') {
+                        sh 'mvn -B -Dmaven.test.skip=true clean package'
                     }
                 }
             }
@@ -31,11 +37,8 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    if (!JAVA_VAR) {
-                        JAVA_VAR="8"
-                    }
-                    docker.image("maven:3-jdk-$JAVA_VAR").inside('-v /root/.m2:/root/.m2') {
-                        sh 'mvn test' 
+                    docker.image("maven:3-jdk-$env.JAVA_VERSION").inside('-v /root/.m2:/root/.m2') {
+                        sh 'mvn test'
                     }
                 }
             }
@@ -48,28 +51,22 @@ pipeline {
         stage('Import-SQL Build') {
             steps {
                 script {
-                    if (!JAVA_VAR) {
-                        JAVA_VAR="8"
-                    }
-                    docker.image("maven:3-jdk-$JAVA_VAR").inside('-v /root/.m2:/root/.m2') {
+                    docker.image("maven:3-jdk-$env.JAVA_VERSION").inside('-v /root/.m2:/root/.m2') {
                         sh 'rm -fr databasechangelog.csv'
                         sh 'mvn -f opencell-model/pom.xml -Ddb.url=offline:postgresql?outputLiquibaseSql=true -Prebuild liquibase:updateSQL'
-                        sh "cp $WORKSPACE/opencell-model/target/liquibase/migrate.sql $WORKSPACE/opencell-model/target/liquibase/import-postgres.sql" 
+                        sh "cp $WORKSPACE/opencell-model/target/liquibase/migrate.sql $WORKSPACE/opencell-model/target/liquibase/import-postgres.sql"
                     }
                 }
             }
         }
-        stage('Sonar') { 
+        stage('Sonar') {
             when { branch "integration" }
             steps {
                 script {
-                    if (!JAVA_VAR) {
-                        JAVA_VAR="8"
-                    }
-                    docker.image("maven:3-jdk-$JAVA_VAR").inside('-v /root/.m2:/root/.m2') {
-                        sh 'mvn sonar:sonar ' + 
+                    docker.image("maven:3-jdk-$env.JAVA_VERSION").inside('-v /root/.m2:/root/.m2') {
+                        sh 'mvn sonar:sonar ' +
                         '-Dsonar.host.url=${URL_SONAR} ' +
-                        '-Dsonar.login=${CREDENTIAL_SONAR} ' 
+                        '-Dsonar.login=${CREDENTIAL_SONAR} '
                     }
                 }
             }
