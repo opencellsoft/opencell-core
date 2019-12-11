@@ -1,0 +1,8 @@
+{
+    "description": "Test",
+    "exoneratedFromTaxes": "true",
+    "exonerationTaxEl": "exoneration Tax El",
+    "exonerationTaxElSpark": "exoneration Tax El Spark",
+    "exonerationReason": "exoneration Reason"
+}
+
