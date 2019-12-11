@@ -5,7 +5,7 @@ Feature: Create a Gateway by API
   @admin @superadmin
   Scenario Outline: Create a Gateway by API
     Given The entity has the following information "<jsonFile>" as "<dto>"
-    When I call the "<api>"
+    When I call the  "<api>"
     Then The gateway is created
     And Validate that the statusCode is "<statusCode>"
     And The status is "<status>"

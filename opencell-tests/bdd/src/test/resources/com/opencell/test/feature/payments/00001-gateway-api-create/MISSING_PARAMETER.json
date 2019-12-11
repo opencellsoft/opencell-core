@@ -1,7 +1,7 @@
 {
     "code": "INGENICO_OGONE_CARD_RELA11",
     "description" : "created gateway2",
-    "applicationEL": "#{paymentGateway.code eq  mv:executeScript(customerAccount,\"org.meveo.service.script.SelectGatewayScript\",null)}",
+    "applicationEL":  "#{paymentGateway.code eq  mv:executeScript(customerAccount,\"org.meveo.service.script.SelectGatewayScript\",null)}",
     "implementationClassName" : "org.meveo.service.payments.impl.IngenicoGatewayPayment",
     "marchandId" : "OpenCellTest",
     "secretKey" : "t6XTfmNwAzjqdU0K5d4PScJKifkt5n2MU7k5Wb2u1mw=",
