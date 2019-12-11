@@ -6,7 +6,7 @@ Feature: Delete Provider Contact by API
 
 
   @admin @superadmin
-  Scenario Outline: DeleteProvider Contact by API
+  Scenario Outline: Delete Provider Contact by API
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the delete "<api>"
     Then The entity is deleted
