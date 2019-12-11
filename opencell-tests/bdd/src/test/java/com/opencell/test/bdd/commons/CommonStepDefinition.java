@@ -50,7 +50,7 @@ public class CommonStepDefinition implements En {
                 assertNotNull(base.getResponse().getHttpStatusCode());
             });
         });
-        When("^I call the delete \"([^\"]*)\" with identifier \\\"([^\\\"]*)\\\"$", (String api, String field) -> {
+        When("^I call the delete \"([^\"]*)\" with identifier \"([^\"]*)\"$", (String api, String field) -> {
             String bodyRequest = getBodyRequest();
             base.getField(field).ifPresent( code ->{
                 ValidatableResponse response = RestApiUtils.delete(api + code, bodyRequest);
@@ -58,6 +58,18 @@ public class CommonStepDefinition implements En {
                 assertNotNull(base.getResponse());
                 assertNotNull(base.getResponse().getActionStatus());
                 assertNotNull(base.getResponse().getHttpStatusCode());
+            });
+        });
+        When("^I call the delete \"([^\"]*)\" with identifiers \"([^\"]*)\" and \"([^\"]*)\"$", (String api, String field1, String field2) -> {
+            String bodyRequest = getBodyRequest();
+            base.getField(field1).ifPresent( f1 ->{
+                base.getField(field2).ifPresent(f2 ->{
+                    ValidatableResponse response = RestApiUtils.delete(api + f1 + "/" + f2, bodyRequest);
+                    base.setResponse(new ApiResponse(response.extract().statusCode(), response.extract().body().as(ActionStatus.class)));
+                    assertNotNull(base.getResponse());
+                    assertNotNull(base.getResponse().getActionStatus());
+                    assertNotNull(base.getResponse().getHttpStatusCode());
+                });
             });
         });
         Then("^The entity is deleted$", () -> {
