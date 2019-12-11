@@ -11,32 +11,34 @@ pipeline {
 
     stages {
 
-    stage('Init') {
-        steps {
-            script {
-                JAVA_VAR = sh (
-                    script: '''grep '<java.version>' ./pom.xml | sed -n 's:.*<java.version>\\(.*\\)</java.version>.*:\\1:p' ''',
-                    returnStdout: true
-                    ).trim()
-                if (!JAVA_VAR?.trim()) {
-                    JAVA_VAR="8"
+        stage('Init') {
+            steps {
+                script {
+                     = sh (
+                        script: '''grep '<java.version>' ./pom.xml | sed -n 's:.*<java.version>\\(.*\\)</java.version>.*:\\1:p' ''',
+                        returnStdout: true
+                        ).trim()
+                    if (!MAVEN_JDK_VERSION?.trim()) {
+                        MAVEN_JDK_VERSION="8"
+                    }
                 }
             }
         }
-    }
+        
         stage('Build') {
             steps {
                 script {
-                    docker.image("maven:3-jdk-$env.JAVA_VERSION").inside('-v /root/.m2:/root/.m2') {
+                    docker.image("maven:3-jdk-$MAVEN_JDK_VERSION").inside('-v /root/.m2:/root/.m2') {
                         sh 'mvn -B -Dmaven.test.skip=true clean package'
                     }
                 }
             }
         }
+
         stage('Test') {
             steps {
                 script {
-                    docker.image("maven:3-jdk-$env.JAVA_VERSION").inside('-v /root/.m2:/root/.m2') {
+                    docker.image("maven:3-jdk-$MAVEN_JDK_VERSION").inside('-v /root/.m2:/root/.m2') {
                         sh 'mvn test'
                     }
                 }
@@ -47,10 +49,11 @@ pipeline {
                 }
             }
         }
+
         stage('Import-SQL Build') {
             steps {
                 script {
-                    docker.image("maven:3-jdk-$env.JAVA_VERSION").inside('-v /root/.m2:/root/.m2') {
+                    docker.image("maven:3-jdk-$MAVEN_JDK_VERSION").inside('-v /root/.m2:/root/.m2') {
                         sh 'rm -fr databasechangelog.csv'
                         sh 'mvn -f opencell-model/pom.xml -Ddb.url=offline:postgresql?outputLiquibaseSql=true -Prebuild liquibase:updateSQL'
                         sh "cp $WORKSPACE/opencell-model/target/liquibase/migrate.sql $WORKSPACE/opencell-model/target/liquibase/import-postgres.sql"
@@ -58,11 +61,12 @@ pipeline {
                 }
             }
         }
+
         stage('Sonar') {
             when { branch "integration" }
             steps {
                 script {
-                    docker.image("maven:3-jdk-$env.JAVA_VERSION").inside('-v /root/.m2:/root/.m2') {
+                    docker.image("maven:3-jdk-$MAVEN_JDK_VERSION").inside('-v /root/.m2:/root/.m2') {
                         sh 'mvn sonar:sonar ' +
                         '-Dsonar.host.url=${URL_SONAR} ' +
                         '-Dsonar.login=${CREDENTIAL_SONAR} ' +
