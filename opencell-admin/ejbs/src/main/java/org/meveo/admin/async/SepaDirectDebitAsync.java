@@ -37,6 +37,7 @@ import javax.inject.Inject;
 import org.jfree.util.Log;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.UnitSepaDirectDebitJobBean;
+import org.meveo.admin.sepa.SepaFile;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
@@ -90,6 +91,9 @@ public class SepaDirectDebitAsync {
 	/** The job execution service. */
 	@Inject
 	private JobExecutionService jobExecutionService;
+	
+	@Inject
+	private SepaFile sepaFile;
 
 	/**
 	 * Create payments for all items from the ddRequestLot. One Item at a time in a
@@ -141,16 +145,18 @@ public class SepaDirectDebitAsync {
 		ddRequestLOT.setDdRequestBuilder(ddRequestBuilder);
 		ddRequestLOT.setSendDate(new Date());
 		ddRequestLOT.setPaymentOrRefundEnum(ddrequestLotOp.getPaymentOrRefundEnum());
-
 		ddRequestLOTService.create(ddRequestLOT);
+		ddRequestLOT.setFileName(sepaFile.getDDFileName(ddRequestLOT, appProvider));
 		int nbItemsKo = 0;
 		int nbItemsOk = 0;
 		String allErrors = "";
 
 		if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.AO) {
 			for (AccountOperation ao : listAoToPay) {
-				String errorMsg = getMissingField(ao, ddRequestLOT, appProvider);
-				Name caName = ao.getCustomerAccount().getName();
+				ao = accountOperationService.refreshOrRetrieve(ao);
+				CustomerAccount ca = ao.getCustomerAccount();
+				String errorMsg = getMissingField(ao, ddRequestLOT, appProvider, ca);
+				Name caName = ca.getName();
 				String caFullName = this.getCaFullName(caName);
 				ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, Arrays.asList(ao)));
 				if (errorMsg != null) {
@@ -179,7 +185,7 @@ public class SepaDirectDebitAsync {
 				CustomerAccount ca = entry.getKey();
 				String caFullName = this.getCaFullName(ca.getName());
 				for (AccountOperation ao : entry.getValue()) {
-					String errorMsg = getMissingField(ao, ddRequestLOT, appProvider);
+					String errorMsg = getMissingField(ao, ddRequestLOT, appProvider, ca);
 					if (errorMsg != null) {
 						allErrorsByItem += errorMsg + " ; ";
 					} else {
@@ -240,12 +246,12 @@ public class SepaDirectDebitAsync {
 	 * @param accountOperation the account operation
 	 * @param ddRequestLOT     the dd request LOT
 	 * @param appProvider      the app provider
+	 * @param ca 
 	 * @return the missing field
 	 * @throws BusinessException the business exception
 	 */
-	public String getMissingField(AccountOperation accountOperation, DDRequestLOT ddRequestLOT, Provider appProvider) throws BusinessException {
+	public String getMissingField(AccountOperation accountOperation, DDRequestLOT ddRequestLOT, Provider appProvider, CustomerAccount ca) throws BusinessException {
 		String prefix = "AO.id:" + accountOperation.getId() + " : ";
-		CustomerAccount ca = accountOperation.getCustomerAccount();
 		if (ca == null) {
 			return prefix + "recordedInvoice.ca";
 		}
