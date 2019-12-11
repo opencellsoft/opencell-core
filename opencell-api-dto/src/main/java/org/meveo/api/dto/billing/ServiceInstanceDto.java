@@ -23,7 +23,7 @@ import org.meveo.model.billing.UsageChargeInstance;
  * 
  * @author anasseh
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 8.2.2
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceInstanceDto extends BusinessEntityDto {
@@ -83,7 +83,7 @@ public class ServiceInstanceDto extends BusinessEntityDto {
 
     /** The amount PS. */
     private BigDecimal amountPS;
-    
+
     /** The calendar PS code. */
     private String calendarPSCode;
 
@@ -104,7 +104,7 @@ public class ServiceInstanceDto extends BusinessEntityDto {
 
     /** The due date days PS. */
     private Integer dueDateDaysPS;
-    
+
     private Boolean autoEndOfEngagement;
 
     /**
@@ -125,10 +125,9 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     /**
      * Instantiates a new service instance dto.
      *
-     * @param serviceInstance the ServiceInstance entity
-     * @param customFieldInstances the custom field instances
+     * * @param serviceInstance the ServiceInstance entity
      */
-    public ServiceInstanceDto(ServiceInstance serviceInstance, CustomFieldsDto customFieldInstances) {
+    public ServiceInstanceDto(ServiceInstance serviceInstance) {
         super(serviceInstance);
         id = serviceInstance.getId();
         status = serviceInstance.getStatus();
@@ -149,6 +148,37 @@ public class ServiceInstanceDto extends BusinessEntityDto {
         setMinimumAmountElSpark(serviceInstance.getMinimumAmountElSpark());
         setMinimumLabelEl(serviceInstance.getMinimumLabelEl());
         setMinimumLabelElSpark(serviceInstance.getMinimumLabelElSpark());
+    }
+
+    /**
+     * Instantiates a new service instance dto.
+     *
+     * @param serviceInstance the ServiceInstance entity
+     * @param recurringChargeInstances the recurring charge instances
+     * @param subscriptionChargeInstances the subscription charge instances
+     * @param terminationChargeInstances the termination charge instances
+     * @param usageChargeInstances the usage charge instances
+     * @param customFieldInstances the custom field instances
+     */
+    public ServiceInstanceDto(ServiceInstance serviceInstance, List<ChargeInstanceDto> recurringChargeInstances, List<ChargeInstanceDto> subscriptionChargeInstances,
+            List<ChargeInstanceDto> terminationChargeInstances, List<ChargeInstanceDto> usageChargeInstances, CustomFieldsDto customFieldInstances) {
+
+        this(serviceInstance);
+        this.recurringChargeInstances = recurringChargeInstances;
+        this.subscriptionChargeInstances = subscriptionChargeInstances;
+        this.terminationChargeInstances = terminationChargeInstances;
+        this.usageChargeInstances = usageChargeInstances;
+        customFields = customFieldInstances;
+    }
+
+    /**
+     * Instantiates a new service instance dto.
+     *
+     * @param serviceInstance the ServiceInstance entity
+     * @param customFieldInstances the custom field instances
+     */
+    public ServiceInstanceDto(ServiceInstance serviceInstance, CustomFieldsDto customFieldInstances) {
+        this(serviceInstance);
 
         if (serviceInstance.getRecurringChargeInstances() != null) {
             recurringChargeInstances = new ArrayList<ChargeInstanceDto>();
@@ -369,8 +399,6 @@ public class ServiceInstanceDto extends BusinessEntityDto {
         this.rateUntilDate = rateUntilDate;
     }
 
-    
-    
     /**
      * Gets the amount PS.
      *
@@ -407,7 +435,6 @@ public class ServiceInstanceDto extends BusinessEntityDto {
         this.calendarPSCode = calendarPSCode;
     }
 
-
     /**
      * Gets the payment day in month PS.
      *
@@ -416,7 +443,6 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     public Integer getPaymentDayInMonthPS() {
         return paymentDayInMonthPS;
     }
-
 
     /**
      * Sets the payment day in month PS.
@@ -427,7 +453,9 @@ public class ServiceInstanceDto extends BusinessEntityDto {
         this.paymentDayInMonthPS = paymentDayInMonthPS;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
