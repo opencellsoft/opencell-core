@@ -52,7 +52,7 @@ import java.util.List;
  * 
  * @author anasseh
  * @author Abdellatif BARI
- * @lastModifiedVersion 8.0.0
+ * @lastModifiedVersion 8.2.2
  */
 @Stateless
 public class AccountOperationService extends PersistenceService<AccountOperation> {
@@ -311,8 +311,9 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         ParamBean paramBean = paramBeanFactory.getInstance();
         String debitOccTemplateCode = null;
 
+
         if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
-            debitOccTemplateCode = paramBean.getProperty("occ.transferAccountOperation.debit", "CRD_TRS");
+            debitOccTemplateCode = paramBean.getProperty("occ.transferAccountOperation.credit", "CRD_TRS");
         } else if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
             debitOccTemplateCode = paramBean.getProperty("occ.transferAccountOperation.debit", "DBT_TRS");
         } else {
