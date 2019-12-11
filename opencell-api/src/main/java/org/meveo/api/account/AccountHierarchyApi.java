@@ -1,15 +1,5 @@
 package org.meveo.api.account;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
@@ -89,6 +79,15 @@ import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.MeveoParamBean;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Creates the customer hierarchy including : - Trading Country - Trading Currency - Trading Language - Customer Brand - Customer Category - Seller - Customer - Customer Account -
@@ -1191,7 +1190,11 @@ public class AccountHierarchyApi extends BaseApi {
         customerDto.setCustomerCategory(postData.getCustomerCategory());
         customerDto.setCustomerBrand(postData.getCustomerBrand());
         if (accountHierarchyTypeEnum.getHighLevel() == 3) {
-            customerDto.setSeller(postData.getCrmParentCode());
+            if (!StringUtils.isBlank(postData.getSeller())) {
+                customerDto.setSeller(postData.getSeller());
+            } else {
+                customerDto.setSeller(postData.getCrmParentCode());
+            }
         } else {
             customerDto.setSeller(postData.getCode());
         }

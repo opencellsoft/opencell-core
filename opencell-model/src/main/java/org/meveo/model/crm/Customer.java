@@ -18,14 +18,6 @@
  */
 package org.meveo.model.crm;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.*;
-import javax.validation.constraints.Size;
-
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -39,12 +31,31 @@ import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 /**
  * Customer
  *
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @author Khalid HORRI
+ * @lastModifiedVersion 10.0
  */
 @Entity
 @WorkflowedEntity
@@ -87,11 +98,10 @@ public class Customer extends AccountEntity implements IWFEntity {
     private List<CustomerAccount> customerAccounts = new ArrayList<>();
 
     /**
-     * Seller. Deprecated in 5.2. Now seller is set in subscription.
+     * Seller. used as a default Seller for minimum RTs
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
-    @Deprecated
     private Seller seller;
 
     /**
@@ -143,12 +153,10 @@ public class Customer extends AccountEntity implements IWFEntity {
         accountType = ACCOUNT_TYPE;
     }
 
-    @Deprecated
     public Seller getSeller() {
         return seller;
     }
 
-    @Deprecated
     public void setSeller(Seller seller) {
         this.seller = seller;
     }

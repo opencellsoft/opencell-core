@@ -18,24 +18,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.TypedQuery;
-
 import org.meveo.admin.async.AmountsToInvoice;
 import org.meveo.admin.async.InvoicingAsync;
 import org.meveo.admin.async.SubListCreator;
@@ -45,7 +27,18 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.IBillableEntity;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingEntityTypeEnum;
+import org.meveo.model.billing.BillingProcessTypesEnum;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceSequence;
+import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.billing.PostInvoicingReportsDTO;
+import org.meveo.model.billing.PreInvoicingReportsDTO;
+import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -53,6 +46,23 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.order.OrderService;
+
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.TypedQuery;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * The Class BillingRunService.
@@ -494,7 +504,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      *
      * @return true, if is active billing runs exist
      */
-    @SuppressWarnings("unchecked")
     public boolean isActiveBillingRunsExist() {
         QueryBuilder qb = new QueryBuilder(BillingRun.class, "c");
         qb.startOrClause();
@@ -525,7 +534,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param status the status
      * @return the billing runs
      */
-    @SuppressWarnings("unchecked")
     public List<BillingRun> getBillingRuns(String code, BillingRunStatusEnum... status) {
 
         BillingRunStatusEnum bRStatus;
@@ -623,7 +631,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param jobInstanceId the job instance id
      * @throws BusinessException the business exception
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws BusinessException {
 
@@ -674,7 +681,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param instantiateMinRtsForBA           Should rated transactions to reach minimum invoicing amount be checked and instantiated on Billing account level.
      * @throws BusinessException business exception.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, List<? extends IBillableEntity> entities,
             MinAmountForAccounts minAmountForAccounts) throws BusinessException {
         SubListCreator subListCreator = null;
@@ -715,7 +721,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param result        the Job execution result
      * @throws BusinessException the business exception
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void assignInvoiceNumberAndIncrementBAInvoiceDates(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result)
             throws BusinessException {
@@ -841,7 +846,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @param result        the Job execution result
      * @throws Exception the exception
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void validate(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, JobExecutionResultImpl result) throws Exception {
         log.info("Processing billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
