@@ -40,6 +40,28 @@ public class CommonStepDefinition implements En {
             assertNotNull(base.getResponse().getActionStatus());
             assertNotNull(base.getResponse().getHttpStatusCode());
         });
+        When("^I call the \"([^\"]*)\" \"([^\"]*)\"$", (String action, String api) -> {
+            String bodyRequest = getBodyRequest();
+            ValidatableResponse response = null;
+            switch(action) {
+            case "create":
+            case "Create":
+                response = RestApiUtils.post(api, bodyRequest);
+                break;
+            case "update":
+            case "Update":
+                response = RestApiUtils.put(api, bodyRequest);
+                break;
+            case "delete":
+            case "Delete":
+                response = RestApiUtils.delete(api, bodyRequest);
+                break;
+            }
+            base.setResponse(new ApiResponse(response.extract().statusCode(), response.extract().body().as(ActionStatus.class)));
+            assertNotNull(base.getResponse());
+            assertNotNull(base.getResponse().getActionStatus());
+            assertNotNull(base.getResponse().getHttpStatusCode());
+        });
         When("^I call the delete \"([^\"]*)\"$", (String api) -> {
             String bodyRequest = getBodyRequest();
             base.getCode().ifPresent( code ->{
