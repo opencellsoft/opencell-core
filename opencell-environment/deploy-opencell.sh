@@ -39,7 +39,7 @@ docker_path=`which docker.io || which docker`
 
 echo ">>> compiling WAR and create SQL file"
 
-docker run  -u ${UID:-1000} --rm -v ${HOME:-$PWD}/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2 -v $PWD/../:/app -w /app  ${MAVEN_IMAGE}:${MAVEN_IMAGE_VERSION} mvn -Duser.home=/var/maven -Dmaven.test.skip=true -B clean package
+docker run  -u ${UID:-1000} --rm -v ${HOME:-$PWD}/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2 -v $PWD/../:/app -w /app  ${MAVEN_IMAGE}:${MAVEN_IMAGE_VERSION} mvn -Duser.home=/var/maven -Dmaven.test.skip=true -B clean install
 rm -fr ../databasechangelog.csv
 docker run  -u ${UID:-1000} --rm -v ${HOME:-$PWD}/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2 -v $PWD/../:/app -w /app  ${MAVEN_IMAGE}:${MAVEN_IMAGE_VERSION} mvn -Duser.home=/var/maven -Dmaven.test.skip=true -B -f opencell-model/pom.xml -Ddb.url=offline:postgresql?outputLiquibaseSql=true -Prebuild liquibase:updateSQL
 
