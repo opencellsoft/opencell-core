@@ -1,15 +1,14 @@
 package org.meveo.api.dto.account;
 
-import java.util.Date;
+import org.meveo.api.dto.billing.SubscriptionsDto;
+import org.meveo.model.billing.AccountStatusEnum;
+import org.meveo.model.billing.UserAccount;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.billing.SubscriptionsDto;
-import org.meveo.model.billing.AccountStatusEnum;
-import org.meveo.model.billing.UserAccount;
+import java.util.Date;
 
 /**
  * The Class UserAccountDto.
@@ -78,25 +77,31 @@ public class UserAccountDto extends AccountDto {
 		super(e);
         id = e.getId();
 		if (e.getBillingAccount() != null) {
-			setBillingAccount(e.getBillingAccount().getCode());
-			setBillingAccountDescription(e.getBillingAccount().getDescription());
+            setBillingAccount(e.getBillingAccount().getCode());
+            setBillingAccountDescription(e.getBillingAccount().getDescription());
 
-			if (e.getBillingAccount().getCustomerAccount() != null) {
-				setCustomerAccount(e.getBillingAccount().getCustomerAccount().getCode());
-				setCustomerAccountDescription(e.getBillingAccount().getCustomerAccount().getDescription());
+            if (e.getBillingAccount().getCustomerAccount() != null) {
+                setCustomerAccount(e.getBillingAccount().getCustomerAccount().getCode());
+                setCustomerAccountDescription(e.getBillingAccount().getCustomerAccount().getDescription());
 
-				if (e.getBillingAccount().getCustomerAccount().getCustomer() != null) {
-					setCustomer(e.getBillingAccount().getCustomerAccount().getCustomer().getCode());
-					setCustomerDescription(e.getBillingAccount().getCustomerAccount().getCustomer().getDescription());
-				}
-			}
-		}
+                if (e.getBillingAccount().getCustomerAccount().getCustomer() != null) {
+                    setCustomer(e.getBillingAccount().getCustomerAccount().getCustomer().getCode());
+                    setCustomerDescription(e.getBillingAccount().getCustomerAccount().getCustomer().getDescription());
+                }
+            }
+        }
 
-		setSubscriptionDate(e.getSubscriptionDate());
-		setTerminationDate(e.getTerminationDate());
-		setStatus(e.getStatus());
-		setStatusDate(e.getStatusDate());
-	}
+        setSubscriptionDate(e.getSubscriptionDate());
+        setTerminationDate(e.getTerminationDate());
+        setStatus(e.getStatus());
+        setStatusDate(e.getStatusDate());
+        if (e.getMinimumAmountEl() != null) {
+            setMinimumAmountEl(e.getMinimumAmountEl());
+        }
+        if (e.getMinimumLabelEl() != null) {
+            setMinimumLabelEl(e.getMinimumLabelEl());
+        }
+    }
 
     /**
      * Gets the billing account.

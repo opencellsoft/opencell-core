@@ -2164,14 +2164,22 @@
             <column name="minimum_label_el" type="varchar(2000)" />
         </addColumn>
         <addColumn tableName="crm_customer">
-            <column name="minimum_target_account_id" type="bigint" />
-            <column name="minimum_amount_el" type="varchar(2000)" />
-            <column name="minimum_label_el" type="varchar(2000)" />
+            <column name="minimum_target_account_id" type="bigint"/>
+            <column name="minimum_amount_el" type="varchar(2000)"/>
+            <column name="minimum_label_el" type="varchar(2000)"/>
         </addColumn>
         <addColumn tableName="ar_customer_account">
-            <column name="minimum_target_account_id" type="bigint" />
-            <column name="minimum_amount_el" type="varchar(2000)" />
-            <column name="minimum_label_el" type="varchar(2000)" />
+            <column name="minimum_target_account_id" type="bigint"/>
+            <column name="minimum_amount_el" type="varchar(2000)"/>
+            <column name="minimum_label_el" type="varchar(2000)"/>
         </addColumn>
+        <addForeignKeyConstraint baseColumnNames="minimum_target_account_id" baseTableName="crm_customer" constraintName="fk_customer_minimum_target_account_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account"/>
+        <addForeignKeyConstraint baseColumnNames="minimum_target_account_id" baseTableName="ar_customer_account" constraintName="fk_ca_minimum_target_account_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account"/>
     </changeSet>
 </databaseChangeLog>

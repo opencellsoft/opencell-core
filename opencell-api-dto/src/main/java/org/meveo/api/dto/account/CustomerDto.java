@@ -1,14 +1,13 @@
 package org.meveo.api.dto.account;
 
-import java.util.Date;
+import org.meveo.api.dto.crm.AdditionalDetailsDto;
+import org.meveo.model.crm.Customer;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.crm.AdditionalDetailsDto;
-import org.meveo.model.crm.Customer;
+import java.util.Date;
 
 /**
  * The Class CustomerDto.
@@ -63,31 +62,41 @@ public class CustomerDto extends AccountDto {
      * @param e Customer entity
      */
 	public CustomerDto(Customer e) {
-		super(e);
+        super(e);
 
-		setVatNo(e.getVatNo());
-		setRegistrationNo(e.getRegistrationNo());
+        setVatNo(e.getVatNo());
+        setRegistrationNo(e.getRegistrationNo());
 
-		if (e.getCustomerCategory() != null) {
-			setCustomerCategory(e.getCustomerCategory().getCode());
-		}
+        if (e.getCustomerCategory() != null) {
+            setCustomerCategory(e.getCustomerCategory().getCode());
+        }
 
-		if (e.getCustomerBrand() != null) {
-			setCustomerBrand(e.getCustomerBrand().getCode());
-		}
+        if (e.getCustomerBrand() != null) {
+            setCustomerBrand(e.getCustomerBrand().getCode());
+        }
 
-		if (e.getSeller() != null) {
-			setSeller(e.getSeller().getCode());
-		}
+        if (e.getSeller() != null) {
+            setSeller(e.getSeller().getCode());
+        }
 
-		if (e.getContactInformation() != null) {
-			setContactInformation(new ContactInformationDto(e.getContactInformation()));
-		}
-		
-		if (e.getAdditionalDetails() != null) {
-			setAdditionalDetails(new AdditionalDetailsDto(e.getAdditionalDetails()));
-		}
-	}
+        if (e.getContactInformation() != null) {
+            setContactInformation(new ContactInformationDto(e.getContactInformation()));
+        }
+
+        if (e.getAdditionalDetails() != null) {
+            setAdditionalDetails(new AdditionalDetailsDto(e.getAdditionalDetails()));
+        }
+
+        if (e.getMinimumAmountEl() != null) {
+            setMinimumAmountEl(e.getMinimumAmountEl());
+        }
+        if (e.getMinimumLabelEl() != null) {
+            setMinimumLabelEl(e.getMinimumLabelEl());
+        }
+        if (e.getMinimumTargetAccount() != null) {
+            setMinimumTargetAccount(e.getMinimumTargetAccount().getCode());
+        }
+    }
 
     /**
      * Gets the customer category.
