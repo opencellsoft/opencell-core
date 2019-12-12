@@ -28,8 +28,8 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    docker.image("maven:3-jdk-$MAVEN_JDK_VERSION").inside('-v /var/jenkins_home/.m2:/root/.m2') {
-                        sh 'mvn -B -Dmaven.test.skip=true clean package'
+                    docker.image("maven:3-jdk-$MAVEN_JDK_VERSION").inside('-v /var/jenkins_home/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2') {
+                        sh 'mvn -B -Duser.home=/var/maven -Dmaven.test.skip=true clean package'
                     }
                 }
             }
@@ -38,8 +38,8 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    docker.image("maven:3-jdk-$MAVEN_JDK_VERSION").inside('-v /var/jenkins_home/.m2:/root/.m2') {
-                        sh 'mvn test'
+                    docker.image("maven:3-jdk-$MAVEN_JDK_VERSION").inside('-v /var/jenkins_home/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2') {
+                        sh 'mvn -Duser.home=/var/maven  test'
                     }
                 }
             }
@@ -53,9 +53,9 @@ pipeline {
         stage('Import-SQL Build') {
             steps {
                 script {
-                    docker.image("maven:3-jdk-$MAVEN_JDK_VERSION").inside('-v /var/jenkins_home/.m2:/root/.m2') {
+                    docker.image("maven:3-jdk-$MAVEN_JDK_VERSION").inside('-v /var/jenkins_home/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2') {
                         sh 'rm -fr databasechangelog.csv'
-                        sh 'mvn -f opencell-model/pom.xml -Ddb.url=offline:postgresql?outputLiquibaseSql=true -Prebuild liquibase:updateSQL'
+                        sh 'mvn -f opencell-model/pom.xml -Duser.home=/var/maven -Ddb.url=offline:postgresql?outputLiquibaseSql=true -Prebuild liquibase:updateSQL'
                         sh "cp $WORKSPACE/opencell-model/target/liquibase/migrate.sql $WORKSPACE/opencell-model/target/liquibase/import-postgres.sql"
                     }
                 }
@@ -66,8 +66,8 @@ pipeline {
             when { branch "integration" }
             steps {
                 script {
-                    docker.image("maven:3-jdk-$MAVEN_JDK_VERSION").inside('-v /var/jenkins_home/.m2:/root/.m2') {
-                        sh 'mvn sonar:sonar ' +
+                    docker.image("maven:3-jdk-$MAVEN_JDK_VERSION").inside('-v /var/jenkins_home/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2') {
+                        sh 'mvn sonar:sonar -Duser.home=/var/maven  ' +
                         '-Dsonar.host.url=${URL_SONAR} ' +
                         '-Dsonar.login=${CREDENTIAL_SONAR} ' +
                         '-Dsonar.projectName=OpencellCore ' +
