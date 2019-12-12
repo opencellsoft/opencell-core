@@ -1,0 +1,6 @@
+{
+    "code": "TEST",
+    "description": "Test payment gateway",
+    "type": "INVALID",
+    "paymentMethodType": "CHECK"
+}
