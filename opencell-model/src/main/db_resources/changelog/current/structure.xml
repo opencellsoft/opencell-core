@@ -1947,5 +1947,12 @@
 		<sql>create index billing_rated_transaction_aggregate_id_f_idx on ${db.schema.adapted}billing_rated_transaction (aggregate_id_f)</sql>
     </changeSet>
     
+    <changeSet id="#4765_20191112" author="MohammedELAZZOUZI">
+        <update tableName="billing_cycle">
+            <column name="billing_cycle_type" value="BILLINGACCOUNT"/>
+            <where>billing_cycle_type is null</where>
+        </update>
+        <addNotNullConstraint columnName="billing_cycle_type" tableName="billing_cycle" columnDataType="varchar(256)"/>
+    </changeSet>
     
 </databaseChangeLog>
