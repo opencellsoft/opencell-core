@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
@@ -28,6 +27,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
+import org.infinispan.util.function.SerializableBiFunction;
 
 /**
  * Provides cache related services (tracking running jobs) for job running related operations
@@ -148,7 +148,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         String currentNode = EjbUtils.getCurrentClusterNode();
         String currentProvider = currentUser.getProviderCode();
 
-        BiFunction<? super CacheKeyLong, ? super List<String>, ? extends List<String>> remappingFunction = (jobInstIdFullKey, nodesOld) -> {
+        SerializableBiFunction<? super CacheKeyLong, ? super List<String>, ? extends List<String>> remappingFunction = (jobInstIdFullKey, nodesOld) -> {
 
             if (nodesOld == null || nodesOld.isEmpty()) {
                 isRunning[0] = JobRunningStatusEnum.NOT_RUNNING;
@@ -199,7 +199,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @param times
      * @return list of nodes
      */
-    private List<String> computeCacheWithRetry(CacheKeyLong cacheKey, BiFunction<? super CacheKeyLong, ? super List<String>, ? extends List<String>> remappingFunction, long delay,
+    private List<String> computeCacheWithRetry(CacheKeyLong cacheKey, SerializableBiFunction<? super CacheKeyLong, ? super List<String>, ? extends List<String>> remappingFunction, long delay,
             final long times) {
 
         try {
@@ -258,7 +258,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         boolean isClusterMode = EjbUtils.isRunningInClusterMode();
         String currentProvider = currentUser.getProviderCode();
 
-        BiFunction<? super CacheKeyLong, ? super List<String>, ? extends List<String>> remappingFunction = (jobInstIdFullKey, nodesOld) -> {
+        SerializableBiFunction<? super CacheKeyLong, ? super List<String>, ? extends List<String>> remappingFunction = (jobInstIdFullKey, nodesOld) -> {
 
             if (nodesOld == null || nodesOld.isEmpty()) {
                 return nodesOld;
@@ -315,7 +315,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @param jobInstanceId Job instance identifier
      */
     public void addUpdateJobInstance(Long jobInstanceId) {
-        BiFunction<? super CacheKeyLong, ? super List<String>, ? extends List<String>> remappingFunction = (jobInstIdFullKey, nodesOld) -> {
+        SerializableBiFunction<? super CacheKeyLong, ? super List<String>, ? extends List<String>> remappingFunction = (jobInstIdFullKey, nodesOld) -> {
 
             if (nodesOld != null) {
                 return nodesOld;
