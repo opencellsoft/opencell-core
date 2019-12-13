@@ -128,8 +128,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
             Seller seller = null;
             String ddRequestBuilderCode = null;
             String sellerCode = null;
-            PaymentOrRefundEnum paymentOrRefundEnum = PaymentOrRefundEnum.PAYMENT;
-            paymentOrRefundEnum = PaymentOrRefundEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "SepaJob_paymentOrRefund")).toUpperCase());
+            PaymentOrRefundEnum paymentOrRefundEnum = PaymentOrRefundEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "SepaJob_paymentOrRefund")).toUpperCase());
             if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_ddRequestBuilder") != null) {
                 ddRequestBuilderCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_ddRequestBuilder")).getCode();
                 ddRequestBuilder = ddRequestBuilderService.findByCode(ddRequestBuilderCode);
