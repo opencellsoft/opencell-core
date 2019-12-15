@@ -40145,7 +40145,7 @@ public class CreateAccess extends OfferScript {
                ]]]]>><![CDATA[
                </script>
             </script>
-           <offerTemplate code="OF_DUMMY"/>
+           <offerTemplate code="OF_${#Project#templateCode}_TEMPLATE"/>
          </businessOfferModel>
       </ws:createBusinessOfferModel>
    </soapenv:Body>
