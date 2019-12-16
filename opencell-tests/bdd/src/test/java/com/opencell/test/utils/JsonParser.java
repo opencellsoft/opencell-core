@@ -71,6 +71,9 @@ public class JsonParser<T extends BaseEntityDto> {
     public JsonNode readValue(String fileName) {
 
         try {
+            System.out.println("USER DIRECTORY: " + System.getProperty("user.dir"));
+            System.out.println("JSON_DIR: " + JSON_DIR);
+            System.out.println("FILENAME: " + fileName);
             File json = ResourceUtils.getFileFromClasspathResource(JSON_DIR + fileName.replace("/",System.getProperty("file.separator")));
             ObjectMapper objectMapper = new ObjectMapper();
             return  objectMapper.readValue(json, JsonNode.class);

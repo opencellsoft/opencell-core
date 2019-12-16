@@ -9,7 +9,7 @@ import cucumber.api.junit.Cucumber;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(plugin = {"pretty","json:target/cucumber-reports/Cucumber.json",
-        "junit:target/cucumber-reports/Cucumber.xml"}, tags = {"@url or @administration or @billing or @customer or @offers or @settings"})
+        "junit:target/cucumber-reports/Cucumber.xml"}, tags = {"@settings"})
 public class CucumberRunnerTest {
 
 }
