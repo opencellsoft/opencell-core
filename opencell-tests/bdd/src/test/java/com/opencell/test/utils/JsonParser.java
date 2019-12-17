@@ -19,7 +19,7 @@ import java.nio.file.Files;
 
 public class JsonParser<T extends BaseEntityDto> {
 
-    public final static String JSON_DIR= "com"+System.getProperty("file.separator")+"opencell"+System.getProperty("file.separator")+"test"+System.getProperty("file.separator")+"feature"+System.getProperty("file.separator");
+    public final static String JSON_DIR= "com/opencell/test/feature/";
 
     public static String writeObjectAsJsonString(Object object) {
         return null;
@@ -53,39 +53,24 @@ public class JsonParser<T extends BaseEntityDto> {
 
 
     public  T readValue(String fileName, Class<T> clazz) {
-
         try {
-            System.out.println("USER DIRECTORY: " + System.getProperty("user.dir"));
-            System.out.println("JSON_DIR: " + JSON_DIR);
-            System.out.println("FILENAME: " + fileName);
-            File json = ResourceUtils.getFileFromClasspathResource(JSON_DIR + fileName.replace("/",System.getProperty("file.separator")));
+            File json = ResourceUtils.getFileFromClasspathResource(JSON_DIR + fileName);
             ObjectMapper objectMapper = new ObjectMapper();
-            System.out.println("JSON: " + json);
             return objectMapper.readValue(json, clazz);
         }catch (JsonMappingException mappingException) {
                 throw new JSONParserException(mappingException);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
-
     }
 
     public JsonNode readValue(String fileName) {
-
         try {
-            System.out.println("USER DIRECTORY: " + System.getProperty("user.dir"));
-            System.out.println("JSON_DIR: " + JSON_DIR);
-            System.out.println("FILENAME: " + fileName);
-            File json = ResourceUtils.getFileFromClasspathResource(JSON_DIR + fileName.replace("/",System.getProperty("file.separator")));
+            File json = ResourceUtils.getFileFromClasspathResource(JSON_DIR + fileName);
             ObjectMapper objectMapper = new ObjectMapper();
             return  objectMapper.readValue(json, JsonNode.class);
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 }

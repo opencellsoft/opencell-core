@@ -25,41 +25,33 @@ public class ResourceUtils {
     public final static String FILE_SEPARATOR = System.getProperty("file.separator");
 
     public static File getFileFromClasspathResource(String resource) {
-        return new File(findBasePathFromClasspathResource(resource), resource);
+        return new File(findFilePathFromClasspathResource(resource));
     }
-
-    public static String findBasePathFromClasspathResource(String resource) {
+    public static String findFilePathFromClasspathResource(String resource) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL url = loader.getResource(resource);
-        String basepath = findBasePath(convertUrlToFilename(url));
-        System.out.println("DEBUG---- Basepath: " + basepath);
-        return basepath;
+        return convertUrlToFilename(url);
     }
-
+    
     public static String findBasePath(String path) {
         if(path.indexOf(FILE_SEPARATOR)==-1) {
-            System.out.println("DEBUG---- findBasePath path1: " + path);
             return path;
         }
-        String path2 =  path.substring(0, path.lastIndexOf(FILE_SEPARATOR));
-        System.out.println("DEBUG---- findBasePath path2: " + path2);
+        String path2 =  path.substring(0, path.lastIndexOf(""));
         return path2;
     }
 
     public static String convertUrlToFilename(URL url) {
-        System.out.println("DEBUG---- convertUrlFileName url: " + url);
-        return convertUrlToFilename(url.getFile());
+        return convertUrlToFilename(url.getFile()) ;
     }
 
     public static String convertUrlToFilename(String path) {
-        System.out.println("DEBUG--- PATH: " + path);
         if (path.indexOf("file:/")!=-1) {
             if (path.indexOf(":", path.indexOf("file:/") + 6) != -1)
                 path = path.substring(path.indexOf("file:/")+6);
             else
                 path = path.substring(path.indexOf("file:/")+5);
         }
-        System.out.println("DEBUG--- PATH2: " + path);
         return path.replace('/', System.getProperty("file.separator").charAt(0));
     }
 }
