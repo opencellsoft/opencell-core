@@ -37,10 +37,13 @@ public class ResourceUtils {
     }
 
     public static String findBasePath(String path) {
-        if(path.indexOf(FILE_SEPARATOR)==-1)
+        if(path.indexOf(FILE_SEPARATOR)==-1) {
+            System.out.println("DEBUG---- findBasePath path1: " + path);
             return path;
-
-        return path.substring(0, path.lastIndexOf(FILE_SEPARATOR));
+        }
+        String path2 =  path.substring(0, path.lastIndexOf(FILE_SEPARATOR));
+        System.out.println("DEBUG---- findBasePath path2: " + path2);
+        return path2;
     }
 
     public static String convertUrlToFilename(URL url) {
