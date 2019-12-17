@@ -31,8 +31,9 @@ public class ResourceUtils {
     public static String findBasePathFromClasspathResource(String resource) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL url = loader.getResource(resource);
-
-        return findBasePath(convertUrlToFilename(url));
+        String basepath = findBasePath(convertUrlToFilename(url));
+        System.out.println("DEBUG---- Basepath: " + basepath);
+        return basepath;
     }
 
     public static String findBasePath(String path) {
