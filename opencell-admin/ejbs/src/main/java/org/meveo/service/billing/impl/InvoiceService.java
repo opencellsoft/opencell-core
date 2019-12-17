@@ -18,52 +18,15 @@
  */
 package org.meveo.service.billing.impl;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.meveo.commons.utils.NumberUtils.round;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.math.BigDecimal;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
+import net.sf.jasperreports.engine.DefaultJasperReportsContext;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRPropertiesUtil;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRXmlDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.util.IOUtils;
 import org.jboss.vfs.VFS;
@@ -95,7 +58,31 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.ApplyMinimumModeEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceModeEnum;
+import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionGroup;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.ReferenceDateEnum;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -126,15 +113,50 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import net.sf.jasperreports.engine.DefaultJasperReportsContext;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRPropertiesUtil;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JRXmlDataSource;
-import net.sf.jasperreports.engine.util.JRLoader;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.UUID;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.meveo.commons.utils.NumberUtils.round;
 
 /**
  * The Class InvoiceService.
@@ -383,7 +405,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return list of invoices related to given billing run
      * @throws BusinessException business exception
      */
-    @SuppressWarnings("unchecked")
     public List<Invoice> getInvoices(BillingRun billingRun) throws BusinessException {
         try {
             Query q = getEntityManager().createQuery("from Invoice where billingRun = :billingRun");
@@ -403,7 +424,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return list of invoice
      * @throws BusinessException business exception
      */
-    @SuppressWarnings("unchecked")
     public List<Invoice> getInvoices(BillingAccount billingAccount, InvoiceType invoiceType) throws BusinessException {
         try {
             Query q = getEntityManager().createQuery("from Invoice where billingAccount = :billingAccount and invoiceType=:invoiceType");
@@ -424,7 +444,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoicesToNumberInfo instance of InvoicesToNumberInfo
      * @throws BusinessException business exception
      */
-    @SuppressWarnings("deprecation")
     private void assignInvoiceNumberFromReserve(Invoice invoice, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
         InvoiceType invoiceType = invoice.getInvoiceType();
         String prefix = invoiceType.getPrefixEL();
@@ -842,7 +861,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of invoices
      * @throws BusinessException General business exception
      */
-    @SuppressWarnings("unchecked")
     private List<Invoice> createAggregatesAndInvoiceFromRTs(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
             Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, BillingCycle defaultBillingCycle, BillingAccount billingAccount,
             PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balanceDue, BigDecimal totalInvoiceBalance) throws BusinessException {
@@ -1070,7 +1088,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of rated transaction groups
      * @throws BusinessException
      */
-    @SuppressWarnings("unchecked")
     private List<RatedTransactionGroup> executeBCScript(BillingRun billingRun, InvoiceType invoiceType, List<RatedTransaction> ratedTransactions, IBillableEntity entity,
             String scriptInstanceCode) throws BusinessException {
 
@@ -1123,7 +1140,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param billingRun billing run
      * @return list of invoice for given billing run
      */
-    @SuppressWarnings("unchecked")
     public List<Invoice> findByBillingRun(BillingRun billingRun) {
         QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
         qb.addCriterionEntity("billingRun", billingRun);
@@ -1617,7 +1633,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param ba          billing account
      * @return list of invoice for given type
      */
-    @SuppressWarnings("unchecked")
     public List<Invoice> findInvoicesByType(InvoiceType invoiceType, BillingAccount ba) {
         List<Invoice> result = new ArrayList<Invoice>();
         QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null);
@@ -1983,7 +1998,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param billingAccount billing account
      * @return list of invoice which doesn't have account operation.
      */
-    @SuppressWarnings("unchecked")
     public List<Invoice> getInvoicesWithAccountOperation(BillingAccount billingAccount) {
         try {
             QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
@@ -2420,7 +2434,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param billingRunId Billing run id
      * @return A list of invoice identifiers
      */
-    @SuppressWarnings("unchecked")
     public List<InvoicesToNumberInfo> getInvoicesToNumberSummary(Long billingRunId) {
 
         List<InvoicesToNumberInfo> invoiceSummaries = new ArrayList<>();
@@ -2453,7 +2466,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoice invoice used to get subcategory
      * @return list of SubCategoryInvoiceAgregate
      */
-    @SuppressWarnings("unchecked")
     public List<SubCategoryInvoiceAgregate> listByInvoice(Invoice invoice) {
         QueryBuilder qb = new QueryBuilder(SubCategoryInvoiceAgregate.class, "c");
         qb.addCriterionEntity("invoice", invoice);
@@ -2500,7 +2512,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param nYear age of the invoices
      * @return Filtered list of invoices
      */
-    @SuppressWarnings("unchecked")
     public List<Invoice> listInactiveInvoice(int nYear) {
         QueryBuilder qb = new QueryBuilder(Invoice.class, "e");
         Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
@@ -2682,7 +2693,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return a list of invoices
      * @throws BusinessException
      */
-    @SuppressWarnings("unchecked")
     public List<Invoice> findByNotAlreadySentAndDontSend() throws BusinessException {
         List<Invoice> result = new ArrayList<Invoice>();
         QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null);
