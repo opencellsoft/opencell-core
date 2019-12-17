@@ -1,4 +1,4 @@
-@administration
+@payments
 Feature: Create Account Operation by API
 
   Background: The classic offer is already executed
