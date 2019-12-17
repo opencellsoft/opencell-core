@@ -1,4 +1,4 @@
-@administration
+@payments
 Feature: Delete Account Operation by API
 
   Background: The classic offer is already executed
