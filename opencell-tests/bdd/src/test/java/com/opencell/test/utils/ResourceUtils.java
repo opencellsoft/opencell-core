@@ -47,6 +47,7 @@ public class ResourceUtils {
     }
 
     public static String convertUrlToFilename(String path) {
+        System.out.println("DEBUG--- PATH: " + path);
         if (path.indexOf("file:/")!=-1) {
             if (path.indexOf(":", path.indexOf("file:/") + 6) != -1)
                 path = path.substring(path.indexOf("file:/")+6);
