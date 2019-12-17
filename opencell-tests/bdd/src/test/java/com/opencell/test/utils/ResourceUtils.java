@@ -43,6 +43,7 @@ public class ResourceUtils {
     }
 
     public static String convertUrlToFilename(URL url) {
+        System.out.println("DEBUG---- convertUrlFileName url: " + url);
         return convertUrlToFilename(url.getFile());
     }
 
@@ -54,7 +55,7 @@ public class ResourceUtils {
             else
                 path = path.substring(path.indexOf("file:/")+5);
         }
-
+        System.out.println("DEBUG--- PATH2: " + path);
         return path.replace('/', System.getProperty("file.separator").charAt(0));
     }
 }
