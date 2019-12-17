@@ -60,6 +60,7 @@ public class JsonParser<T extends BaseEntityDto> {
             System.out.println("FILENAME: " + fileName);
             File json = ResourceUtils.getFileFromClasspathResource(JSON_DIR + fileName.replace("/",System.getProperty("file.separator")));
             ObjectMapper objectMapper = new ObjectMapper();
+            System.out.println("JSON: " + json);
             return objectMapper.readValue(json, clazz);
         }catch (JsonMappingException mappingException) {
                 throw new JSONParserException(mappingException);
