@@ -1231,16 +1231,15 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             .getResultList();
         walletIdList.removeAll(walletOperationsBilled);
 
-        if (!walletIdList.isEmpty()) {
+		if (!walletIdList.isEmpty()) {
+			// cancelled selected rts
+			getEntityManager().createNamedQuery("RatedTransaction.cancelByWOIds")
+					.setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
+			// set selected wo to rerate and ratedTx.id=null
+			walletsOpToRerate = getEntityManager().createNamedQuery("WalletOperation.setStatusToRerate")
+					.setParameter("now", new Date()).setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
 
-            // set selected wo to rerate and ratedTx.id=null
-            walletsOpToRerate = getEntityManager().createNamedQuery("WalletOperation.setStatusToRerate").setParameter("now", new Date())
-                .setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
-
-            // cancelled selected rts
-            getEntityManager().createNamedQuery("RatedTransaction.cancelByWOIds").setParameter("now", new Date()).setParameter("notBilledWalletIdList", walletIdList)
-                .executeUpdate();
-        }
+		}
         getEntityManager().flush();
         return walletsOpToRerate;
     }
