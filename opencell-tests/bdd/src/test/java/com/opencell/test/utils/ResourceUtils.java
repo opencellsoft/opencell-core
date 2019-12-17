@@ -33,14 +33,6 @@ public class ResourceUtils {
         return convertUrlToFilename(url);
     }
     
-    public static String findBasePath(String path) {
-        if(path.indexOf(FILE_SEPARATOR)==-1) {
-            return path;
-        }
-        String path2 =  path.substring(0, path.lastIndexOf(""));
-        return path2;
-    }
-
     public static String convertUrlToFilename(URL url) {
         return convertUrlToFilename(url.getFile()) ;
     }
