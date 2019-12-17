@@ -19,7 +19,7 @@ import java.nio.file.Files;
 
 public class JsonParser<T extends BaseEntityDto> {
 
-    public final static String JSON_DIR= "com"+System.getProperty("file.separator")+"opencell"+System.getProperty("file.separator")+"test"+System.getProperty("file.separator")+"feature"+System.getProperty("file.separator");
+    public final static String JSON_DIR= "";
 
     public static String writeObjectAsJsonString(Object object) {
         return null;
