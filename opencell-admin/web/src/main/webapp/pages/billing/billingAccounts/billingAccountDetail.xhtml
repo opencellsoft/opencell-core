@@ -252,7 +252,7 @@
 									<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
 							     </p:fieldset>		
 							     
-							     <p:fieldset legend="#{messages['invoice.discounts']}" styleClass="clearLeft">
+							     <p:fieldset legend="#{messages['invoice.discounts']}" styleClass="clearLeft" rendered="#{not empty billingAccountBean.entity.id}">
 							     	<p:outputPanel id="discountPanel">
 						     			<p:messages id="discountMessages"></p:messages>
 								     	<h:panelGroup styleClass="form-panel" style="margin-bottom: 10px; width: 100%">
@@ -335,7 +335,8 @@
                                                 <hftl:formField label="#{messages['address.address3']}" field="address" childField="address3" />
                                                 <hftl:formField label="#{messages['address.zipCode']}" field="address" childField="zipCode" newLine="true" />
                                                 <hftl:formField label="#{messages['address.city']}" field="address" childField="city" />
-                                                <hftl:formField id="countryPanel" label="#{messages['address.country']}" fkToEntity="false" field="address" childField="country" valueLabelField="description" listBean="#{countryBean}"/>
+												<hftl:formField label="#{messages['address.state']}" id="state" field="address" childField="state" popup="false" />
+												<hftl:formField id="countryPanel" label="#{messages['address.country']}" fkToEntity="false" field="address" childField="country" valueLabelField="description" listBean="#{countryBean}"/>
 												
 											</p:fieldset>
 

@@ -120,7 +120,7 @@ public class AccountHierarchyDto implements Serializable {
 
     /** The limit. */
     @XmlTransient
-    private int limit;
+    private Integer limit;
 
     /** The sort field. */
     @XmlTransient
@@ -128,7 +128,7 @@ public class AccountHierarchyDto implements Serializable {
 
     /** The index. */
     @XmlTransient
-    private int index;
+    private Integer index;
 
     /** The payment methods. */
     @XmlElementWrapper(name = "paymentMethods")
@@ -535,7 +535,7 @@ public class AccountHierarchyDto implements Serializable {
      *
      * @return the limit
      */
-    public int getLimit() {
+    public Integer getLimit() {
         return limit;
     }
 
@@ -544,7 +544,7 @@ public class AccountHierarchyDto implements Serializable {
      *
      * @param limit the new limit
      */
-    public void setLimit(int limit) {
+    public void setLimit(Integer limit) {
         this.limit = limit;
     }
 
@@ -571,7 +571,7 @@ public class AccountHierarchyDto implements Serializable {
      *
      * @return the index
      */
-    public int getIndex() {
+    public Integer getIndex() {
         return index;
     }
 
@@ -580,7 +580,7 @@ public class AccountHierarchyDto implements Serializable {
      *
      * @param index the new index
      */
-    public void setIndex(int index) {
+    public void setIndex(Integer index) {
         this.index = index;
     }
 

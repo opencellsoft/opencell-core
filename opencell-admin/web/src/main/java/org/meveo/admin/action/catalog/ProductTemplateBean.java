@@ -191,7 +191,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
             entity.setActive(true);
             return saveOrUpdate(false);
         } else {
-            FacesContext.getCurrentInstance().addMessage(null,
+            facesContext.addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_ERROR, "Valid From cannot be greater than Valid To.", "Valid From cannot be greater than Valid To."));
         }
         return "";
@@ -202,7 +202,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
             entity.setActive(false);
             return saveOrUpdate(false);
         } else {
-            FacesContext.getCurrentInstance().addMessage(null,
+            facesContext.addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_ERROR, "Valid From cannot be greater than Valid To.", "Valid From cannot be greater than Valid To."));
         }
         return "";

@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.Row;
@@ -175,7 +174,7 @@ public final class ExcelExporter {
 				}
 			}
 
-		} catch (InvalidFormatException | IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException("Unable to create file", e);
 		}
 

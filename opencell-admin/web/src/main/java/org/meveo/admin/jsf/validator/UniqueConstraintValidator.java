@@ -23,15 +23,15 @@ import java.text.MessageFormat;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.service.validation.ValidationService;
 
-@FacesValidator("uniqueConstraintValidator")
+@Named("uniqueConstraintValidator")
 public class UniqueConstraintValidator implements Validator {
     @Inject
     private ValidationService validationService;

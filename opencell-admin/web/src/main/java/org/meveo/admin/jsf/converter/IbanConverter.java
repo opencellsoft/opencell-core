@@ -15,7 +15,7 @@ import org.meveo.commons.utils.ParamBeanFactory;
  * @author Hatim OUDAD
  *
  */
-@FacesConverter("ibanConverter")
+@FacesConverter(value = "ibanConverter", managed = true)
 public class IbanConverter implements Converter {
 
 	@Inject

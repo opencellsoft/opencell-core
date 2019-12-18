@@ -113,10 +113,9 @@ public class CustomerBean extends AccountBean<Customer> {
      */
     @ActionMethod
     public String exportCustomerHierarchy() throws Exception {
-        javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
         customerApi.exportCustomerHierarchy(entity.getCode(), response);
-        context.responseComplete();
+        facesContext.responseComplete();
 
         return null;
     }

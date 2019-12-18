@@ -44,8 +44,7 @@
 				field="enableHistory" isMessage="true" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
-			<hftl:actionsColumn renderDuplicateLink="true"
-				permission="#{currentUser.hasRole('administrationVisualization')}" />
+			<hftl:actionsColumn permission="#{currentUser.hasRole('administrationVisualization')}" />
 		</hftl:dataList>
 
 	</ui:define>

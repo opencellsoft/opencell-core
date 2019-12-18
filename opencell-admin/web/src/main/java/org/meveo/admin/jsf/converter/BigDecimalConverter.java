@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.jsf.converter;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
@@ -26,40 +27,34 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-@FacesConverter("bigDecimalConverter")
-public class BigDecimalConverter implements Converter {
+@FacesConverter(value = "bigDecimalConverter", managed = true)
+public class BigDecimalConverter implements Converter, Serializable {
 
-	private DecimalFormat format = new DecimalFormat("#,##0.00");
+    private static final long serialVersionUID = 7431045453306531451L;
 
-	@Override
-	public String getAsString(FacesContext facesContext,
-			UIComponent uIComponent, Object obj) {
-		if (obj == null || obj.toString().length() == 0) {
-			return "";
-		}
+    private DecimalFormat format = new DecimalFormat("#,##0.00");
 
-		BigDecimal montant = (BigDecimal) obj;
-		String value = getDecimalFormat().format(montant);
-		value = value.replace(" ", "");
-		value = value.replace("\u00a0", "");
-		return value;
-	}
+    @Override
+    public String getAsString(FacesContext facesContext, UIComponent uIComponent, Object obj) {
+        if (obj == null || obj.toString().length() == 0) {
+            return "";
+        }
 
-	@Override
-	public Object getAsObject(FacesContext facesContext,
-			UIComponent uIComponent, String str) {
-		if (str == null || str.equals("")) {
-			return null;
-		}
-		/*
-		 * if (!str.matches(paramBean.getProperty("bigDecimal.pattern"))) {
-		 * throw new ConverterException(resourceMessages.getString(
-		 * "javax.faces.converter.BigDecimalConverter.DECIMAL_detail")); }
-		 */
+        String value = getDecimalFormat().format(obj);
+        value = value.replace(" ", "");
+        value = value.replace("\u00a0", "");
+        return value;
+    }
+
+    @Override
+    public Object getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
+        if (str == null || str.equals("")) {
+            return null;
+        }
         str = str.replace(" ", "");
         str = str.replace("\u00a0", "");
-        int commaPos = str.indexOf(",");
-        int dotPos = str.indexOf(".");
+        int commaPos = str.indexOf(',');
+        int dotPos = str.indexOf('.');
         if (commaPos > 0 && dotPos > 0) {
             // Get rid of comma when value was entered in 2,500.89 format (EN locale)
             if (commaPos < dotPos) {
@@ -75,9 +70,9 @@ public class BigDecimalConverter implements Converter {
         }
 
         return new BigDecimal(str);
-	}
+    }
 
-	protected DecimalFormat getDecimalFormat() {
-		return format;
-	}
+    protected DecimalFormat getDecimalFormat() {
+        return format;
+    }
 }

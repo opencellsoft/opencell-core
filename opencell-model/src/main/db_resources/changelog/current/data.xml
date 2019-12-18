@@ -1473,7 +1473,7 @@ public class ValidateBRScript extends Script {
             <where>id=-2</where>
         </update>
     </changeSet>
-    
+
     <changeSet id="#4064_11092019" author="AbdelmounaimAkadid">
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-27" />
@@ -1489,6 +1489,31 @@ public class ValidateBRScript extends Script {
         </insert>
     </changeSet>
 
+    <changeSet id="#4742_20191030" author="MohamedSTITANE">
+        <createSequence sequenceName="meveo_metrics_config_seq" />
+        <createTable tableName="meveo_metrics_config">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_metrics_config_id_pk" />
+            </column>
+            <column name="code" type="varchar(100)">
+                <constraints unique="true" uniqueConstraintName="meveo_metrics_config_code_unique" nullable="false"/>
+            </column>
+            <column name="description" type="text"/>
+            <column name="full_path" type="text"/>
+            <column name="method" type="text"/>
+            <column name="metrics_type" type="text"/>
+            <column name="metrics_unit" type="text"/>
+            <column name="version" type="int4"/>
+            <column name="updated" type="datetime"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </createTable>
+    </changeSet>
+    
+    
     <changeSet id="4804_20191205" author="MohamedSTITANE">
         <update tableName="meveo_job_instance" >
             <column name="cf_values"
@@ -1500,6 +1525,6 @@ public class ValidateBRScript extends Script {
                     value='{"PurgeMediationDataJob_edrStatusCf":[ { "listString":[ "AGGREGATED", "MEDIATING", "OPEN", "RATED", "REJECTED" ] } ], "PurgeMediationDataJob_firstTransactionDate":[ { "date":"2017-12-01T00:00:00Z" } ], "PurgeMediationDataJob_woStatusCf":[ { "listString":[ "CANCELED", "OPEN", "RERATED", "RESERVED", "SCHEDULED", "TO_RERATE", "TREATED" ] } ], "PurgeMediationDataJob_rtStatusCf":[ { "listString":[ "BILLED", "CANCELED", "OPEN", "REJECTED", "RERATED" ] } ] }'/>
             <where>id = -24</where>
         </update>
-
     </changeSet>
+    
 </databaseChangeLog>

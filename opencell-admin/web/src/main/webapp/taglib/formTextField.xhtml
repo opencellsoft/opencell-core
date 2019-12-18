@@ -28,7 +28,7 @@
                     <f:validator validatorId="#{validatorId}" />
                 </c:if>
                 <c:if test="#{validateUnique}">
-                    <f:validator validatorId="uniqueConstraintValidator" />
+                    <f:validator binding="#{uniqueConstraintValidator}" />
                     <f:attribute name="className" value="#{entity.getClass().getSimpleName()}" />
                     <f:attribute name="fieldName" value="#{field}" />
                     <f:attribute name="idValue" value="#{entity.getId()}" />
