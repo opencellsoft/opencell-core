@@ -618,9 +618,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         Date minRatingDate = DateUtils.addDaysToDate(lastTransactionDate, -1);
 
-        if (billableEntity instanceof Order && calculateAndUpdateTotalAmounts) {
-            totalInvoiceableAmounts = computeTotalOrderInvoiceAmount((Order) billableEntity, new Date(0), lastTransactionDate);
-
+        if (billableEntity instanceof Order) {
+            if (calculateAndUpdateTotalAmounts) {
+                totalInvoiceableAmounts = computeTotalOrderInvoiceAmount((Order) billableEntity, new Date(0), lastTransactionDate);
+            }
         } else {
             //Create Min Amount RTs for hierarchy
 
