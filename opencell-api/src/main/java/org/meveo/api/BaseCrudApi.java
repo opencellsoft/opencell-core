@@ -2,16 +2,23 @@ package org.meveo.api;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.module.ModulePropertyFlagLoader;
+import org.meveo.api.dto.response.GenericSearchResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.BusinessEntity;
 import org.meveo.service.base.BusinessService;
+import org.primefaces.model.SortOrder;
 
 /**
  * Base API service for CRUD operations on entity
@@ -118,7 +125,7 @@ public abstract class BaseCrudApi<E extends BusinessEntity, T extends BusinessEn
 
         ps.remove(entity);
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -127,5 +134,37 @@ public abstract class BaseCrudApi<E extends BusinessEntity, T extends BusinessEn
     @Override
     public T find(String code, ModulePropertyFlagLoader modulePropertyFlagLoader) throws MeveoApiException {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Perform a paginated search returning a list of DTOs matched
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @param entityToDtoFunction A function definition to convert entity to dto object
+     * @return Search results including repeated pagination and filtering criteria plus total record count
+     * @throws MeveoApiException Api related exception
+     */
+    protected GenericSearchResponse<T> find(PagingAndFiltering pagingAndFiltering, Function<E, T> entityToDtoFunction) throws MeveoApiException {
+
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, null, pagingAndFiltering, entityClass);
+
+        Long totalCount = ps.count(paginationConfig);
+
+        pagingAndFiltering.setTotalNumberOfRecords(totalCount.intValue());
+
+        List<T> dtos = new ArrayList<T>();
+        if (totalCount > 0) {
+            List<E> walletOperations = ps.list(paginationConfig);
+            for (E wo : walletOperations) {
+                dtos.add(entityToDtoFunction.apply(wo));
+            }
+        }
+
+        GenericSearchResponse<T> response = new GenericSearchResponse<T>(dtos, pagingAndFiltering);
+        return response;
     }
 }
