@@ -37,12 +37,12 @@ import org.slf4j.LoggerFactory;
  * @author <a href="http://community.jboss.org/people/LightGuard">Jason Porter</a>
  */
 @ConversationScoped
-@FacesConverter("org.jboss.seam.faces.conversion.ObjectConverter")
+@FacesConverter(value = "org.jboss.seam.faces.conversion.ObjectConverter", managed = true)
 public class ObjectConverter implements javax.faces.convert.Converter, Serializable {
 
     private static final long serialVersionUID = -406332789399557968L;
-    final private Map<String, Object> converterMap = new HashMap<String, Object>();
-    final private Map<Object, String> reverseConverterMap = new HashMap<Object, String>();
+    private final Map<String, Object> converterMap = new HashMap<>();
+    private final Map<Object, String> reverseConverterMap = new HashMap<>();
 
     @Inject
     private transient Conversation conversation;
