@@ -1625,17 +1625,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         } catch (NoResultException e) {
         }
         try {
-            em.createNamedQuery("OfferTemplate.getMimimumRTUsed").setMaxResults(1).getSingleResult();
-            subMin = true;
-        } catch (NoResultException e) {
-        }
-        try {
             getEntityManager().createNamedQuery("ServiceInstance.getMimimumRTUsed").setMaxResults(1).getSingleResult();
-            servMin = true;
-        } catch (NoResultException e) {
-        }
-        try {
-            getEntityManager().createNamedQuery("ServiceTemplate.getMimimumRTUsed").setMaxResults(1).getSingleResult();
             servMin = true;
         } catch (NoResultException e) {
         }

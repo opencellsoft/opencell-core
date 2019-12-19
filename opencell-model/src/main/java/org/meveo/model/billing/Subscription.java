@@ -18,41 +18,6 @@
  */
 package org.meveo.model.billing;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -83,6 +48,40 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 
+import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Subscription
  * 
@@ -107,9 +106,9 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate"),
         @NamedQuery(name = "Subscription.listByBillingRun", query = "select s from Subscription s where s.billingRun.id=:billingRunId order by s.id"),
         @NamedQuery(name = "Subscription.getMimimumRTUsed", query = "select s.minimumAmountEl from Subscription s where s.minimumAmountEl is not null"),
-        @NamedQuery(name = "Subscription.getSubscriptionsWithMinAmountBySubscription", query = "select s from Subscription s where (s.minimumAmountEl is not null or s.offer.minimumAmountEl is not null) AND s.status = org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE AND s=:subscription"),
-        @NamedQuery(name = "Subscription.getSubscriptionsWithMinAmountByBA", query = "select s from Subscription s where (s.minimumAmountEl is not null or s.offer.minimumAmountEl is not null) AND s.status = org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE AND s.userAccount.billingAccount=:billingAccount"),
-        @NamedQuery(name = "Subscription.getSellersByBA", query = "select distinct s.seller from Subscription s where s.userAccount.billingAccount=:billingAccount") 
+        @NamedQuery(name = "Subscription.getSubscriptionsWithMinAmountBySubscription", query = "select s from Subscription s where s.minimumAmountEl is not null  AND s.status = org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE AND s=:subscription"),
+        @NamedQuery(name = "Subscription.getSubscriptionsWithMinAmountByBA", query = "select s from Subscription s where s.minimumAmountEl is not null AND s.status = org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE AND s.userAccount.billingAccount=:billingAccount"),
+        @NamedQuery(name = "Subscription.getSellersByBA", query = "select distinct s.seller from Subscription s where s.userAccount.billingAccount=:billingAccount")
 
 })
 public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
@@ -658,6 +657,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
         this.minimumLabelElSpark = minimumLabelElSpark;
     }
 
+    @Override
     public BillingCycle getBillingCycle() {
         return billingCycle;
     }
@@ -782,42 +782,52 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
         }
     }
 
+    @Override
     public BillingRun getBillingRun() {
         return billingRun;
     }
 
+    @Override
     public void setBillingRun(BillingRun billingRun) {
         this.billingRun = billingRun;
     }
 
+    @Override
     public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
         minRatedTransactions = ratedTransactions;
     }
 
+    @Override
     public List<RatedTransaction> getMinRatedTransactions() {
         return minRatedTransactions;
     }
 
+    @Override
     public BigDecimal getTotalInvoicingAmountWithoutTax() {
         return totalInvoicingAmountWithoutTax;
     }
 
+    @Override
     public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
         this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
     }
 
+    @Override
     public BigDecimal getTotalInvoicingAmountWithTax() {
         return totalInvoicingAmountWithTax;
     }
 
+    @Override
     public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
         this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
     }
 
+    @Override
     public BigDecimal getTotalInvoicingAmountTax() {
         return totalInvoicingAmountTax;
     }
 
+    @Override
     public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
         this.totalInvoicingAmountTax = totalInvoicingAmountTax;
     }
@@ -1019,6 +1029,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      * 
      * @return a map of counters
      */
+    @Override
     public Map<String, CounterInstance> getCounters() {
         return counters;
     }
