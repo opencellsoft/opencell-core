@@ -42,8 +42,7 @@
 						for="serviceTemplates"></p:outputLabel>
 					<p:pickList id="serviceTemplates" required="true"
 						value="#{businessOfferModelBean.serviceDualListModel}" var="st"
-						itemLabel="#{st.code}" itemValue="#{st}">
-						<hftl:objectConverter />
+						itemLabel="#{st.code}" itemValue="#{st}" converter="org.jboss.seam.faces.conversion.ObjectConverter">
 					</p:pickList>
 				</h:panelGroup>
 			</h:panelGroup>

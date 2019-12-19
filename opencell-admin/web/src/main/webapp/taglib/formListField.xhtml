@@ -82,13 +82,13 @@
                 <c:set var="elements" value="#{dualListModel}" />
                 <!--                 </c:if> -->
                 <c:if test="#{not empty(valueLabelField2)}">
-                    <p:pickList required="#{required}" id="#{id}" value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]} #{elem[valueLabelField2]}" itemValue="#{elem}">
-                        <hftl:objectConverter />
+                    <p:pickList required="#{required}" id="#{id}" value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]} #{elem[valueLabelField2]}"
+                                itemValue="#{elem}" converter="org.jboss.seam.faces.conversion.ObjectConverter">
                     </p:pickList>
                 </c:if>
                 <c:if test="#{empty(valueLabelField2)}">
-                    <p:pickList required="#{required}" id="#{id}" value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem}">
-                        <hftl:objectConverter />
+                    <p:pickList required="#{required}" id="#{id}" value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem}"
+                                converter="org.jboss.seam.faces.conversion.ObjectConverter">
                     </p:pickList>
                 </c:if>
 
