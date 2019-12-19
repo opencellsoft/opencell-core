@@ -322,8 +322,8 @@
                     <p:fieldset legend="#{messages['customFieldTemplate.childEntity.fieldset']}" styleClass="clearLeft"
                         rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CHILD_ENTITY and customFieldTemplateBean.entity.entityClazzCetCode!=null}">
                         <hftl:decorateFormField fieldId="cheFields" required="true" label="#{messages['customFieldTemplate.childEntity.fields']}">
-                            <p:pickList id="cheFields" value="#{customFieldTemplateBean.childEntityFieldListModel}" required="true" var="item" itemLabel="#{item.label}" itemValue="#{item}">
-                                <hftl:objectConverter />
+                            <p:pickList id="cheFields" value="#{customFieldTemplateBean.childEntityFieldListModel}" required="true" var="item" itemLabel="#{item.label}" itemValue="#{item}"
+                            converter="org.jboss.seam.faces.conversion.ObjectConverter">
                             </p:pickList>
                         </hftl:decorateFormField>
                     </p:fieldset>
