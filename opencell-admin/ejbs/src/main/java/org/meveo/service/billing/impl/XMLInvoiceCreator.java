@@ -49,6 +49,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -1208,16 +1209,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element paymentMethod = doc.createElement("paymentMethod");
         parent.appendChild(paymentMethod);
 
-        PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
-        if (preferedPaymentMethod != null) {
-            paymentMethod.setAttribute("type", preferedPaymentMethod.getPaymentType().name());
+        PaymentMethod preferredPaymentMethod = PersistenceUtils.initializeAndUnproxy(customerAccount.getPreferredPaymentMethod());
+        if (preferredPaymentMethod != null) {
+            paymentMethod.setAttribute("type", preferredPaymentMethod.getPaymentType().name());
         }
 
-        if (paymentMethod instanceof DDPaymentMethod) {
-            BankCoordinates bankCoordinates = null;
-            if (paymentMethod instanceof DDPaymentMethod) {
-                bankCoordinates = ((DDPaymentMethod) paymentMethod).getBankCoordinates();
-            }
+        if (preferredPaymentMethod != null && PaymentMethodEnum.DIRECTDEBIT.equals(preferredPaymentMethod.getPaymentType())) {
+            BankCoordinates bankCoordinates = ((DDPaymentMethod) preferredPaymentMethod).getBankCoordinates();
 
             if (bankCoordinates != null) {
                 Element bankCoordinatesElement = doc.createElement("bankCoordinates");
@@ -1227,12 +1225,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 Element accountOwner = doc.createElement("accountOwner");
                 Element key = doc.createElement("key");
                 Element iban = doc.createElement("IBAN");
+                Element bic = doc.createElement("bic");
                 bankCoordinatesElement.appendChild(bankCode);
                 bankCoordinatesElement.appendChild(branchCode);
                 bankCoordinatesElement.appendChild(accountNumber);
                 bankCoordinatesElement.appendChild(accountOwner);
                 bankCoordinatesElement.appendChild(key);
                 bankCoordinatesElement.appendChild(iban);
+                bankCoordinatesElement.appendChild(bic);
                 paymentMethod.appendChild(bankCoordinatesElement);
 
                 String bankCodeData = bankCoordinates.getBankCode();
@@ -1257,9 +1257,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 String ibanData = bankCoordinates.getIban();
                 Text ibanTxt = doc.createTextNode(ibanData != null ? ibanData : "");
                 iban.appendChild(ibanTxt);
+
+                String bicData = bankCoordinates.getBic();
+                Text bicTxt = doc.createTextNode(bicData != null ? bicData : "");
+                bic.appendChild(bicTxt);
             }
 
-        } else if (paymentMethod instanceof CardPaymentMethod) {
+        } else if (preferredPaymentMethod != null && PaymentMethodEnum.CARD.equals(preferredPaymentMethod.getPaymentType())) {
 
             Element cardInformationElement = doc.createElement("cardInformation");
             Element cardType = doc.createElement("cardType");
