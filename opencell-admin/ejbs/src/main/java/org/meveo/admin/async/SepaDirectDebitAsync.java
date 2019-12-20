@@ -160,9 +160,9 @@ public class SepaDirectDebitAsync {
 		if (ddRequestBuilder.getPaymentLevel() == PaymentLevelEnum.AO) {
 			for (AccountOperation ao : listAoToPay) {
 				ao = accountOperationService.refreshOrRetrieve(ao);
-				String errorMsg = getMissingField(ao, ddRequestLOT, appProvider);
-				Name caName = ao.getCustomerAccount().getName();
-				String caFullName = this.getCaFullName(caName);
+				CustomerAccount ca = ao.getCustomerAccount();
+				String errorMsg = getMissingField(ao, ddRequestLOT, appProvider, ca);
+				String caFullName = this.getCaFullName(ca.getName());
 				ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, Arrays.asList(ao)));
 				if (errorMsg != null) {
 					nbItemsKo++;
@@ -190,7 +190,7 @@ public class SepaDirectDebitAsync {
 				CustomerAccount ca = entry.getKey();
 				String caFullName = this.getCaFullName(ca.getName());
 				for (AccountOperation ao : entry.getValue()) {
-					String errorMsg = getMissingField(ao, ddRequestLOT, appProvider);
+					String errorMsg = getMissingField(ao, ddRequestLOT, appProvider, ca);
 					if (errorMsg != null) {
 						allErrorsByItem += errorMsg + " ; ";
 					} else {
@@ -234,12 +234,12 @@ public class SepaDirectDebitAsync {
 	 * @param accountOperation the account operation
 	 * @param ddRequestLOT     the dd request LOT
 	 * @param appProvider      the app provider
+	 * @param ca 
 	 * @return the missing field
 	 * @throws BusinessException the business exception
 	 */
-	public String getMissingField(AccountOperation accountOperation, DDRequestLOT ddRequestLOT, Provider appProvider) throws BusinessException {
+	public String getMissingField(AccountOperation accountOperation, DDRequestLOT ddRequestLOT, Provider appProvider, CustomerAccount ca) throws BusinessException {
 		String prefix = "AO.id:" + accountOperation.getId() + " : ";
-		CustomerAccount ca = accountOperation.getCustomerAccount();
 		if (ca == null) {
 			return prefix + "recordedInvoice.ca";
 		}
