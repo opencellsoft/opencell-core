@@ -1272,16 +1272,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             cardInformationElement.appendChild(expiration);
             paymentMethod.appendChild(cardInformationElement);
 
-            Text cardTypeTxt = doc.createTextNode(((CardPaymentMethod) paymentMethod).getCardType().name());
+            Text cardTypeTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getCardType().name());
             cardType.appendChild(cardTypeTxt);
 
-            Text ownerTxt = doc.createTextNode(((CardPaymentMethod) paymentMethod).getOwner());
+            Text ownerTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getOwner());
             owner.appendChild(ownerTxt);
 
-            Text cardNumberTxt = doc.createTextNode(((CardPaymentMethod) paymentMethod).getHiddenCardNumber());
+            Text cardNumberTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getHiddenCardNumber());
             cardNumber.appendChild(cardNumberTxt);
 
-            Text expirationTxt = doc.createTextNode(((CardPaymentMethod) paymentMethod).getExpirationMonthAndYear());
+            Text expirationTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getExpirationMonthAndYear());
             expiration.appendChild(expirationTxt);
         }
     }
