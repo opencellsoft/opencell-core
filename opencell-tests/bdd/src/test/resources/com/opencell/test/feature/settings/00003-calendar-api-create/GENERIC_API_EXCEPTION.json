@@ -1,0 +1,54 @@
+{
+  "description": "Monthly (1st of the month)",
+  "calendarType": "YEARLY",
+  "days": [
+  {
+    "day": "1",
+    "month": "JANUARY"
+  },
+  {
+    "day": "1",
+    "month": "FEBRUARY"
+  },
+  {
+    "day": "1",
+    "month": "MARCH"
+  },
+  {
+    "day": "1",
+    "month": "APRIL"
+  },
+  {
+    "day": "1",
+    "month": "MAY"
+  },
+  {
+    "day": "1",
+    "month": "JUNE"
+  },
+  {
+    "day": "1",
+    "month": "JULY"
+  },
+  {
+    "day": "1",
+    "month": "AUGUST"
+  },
+  {
+    "day": "1",
+    "month": "SEPTEMBER"
+  },
+  {
+    "day": "1",
+    "month": "OCTOBER"
+  },
+  {
+    "day": "1",
+    "month": "NOVEMBER"
+  },
+  {
+    "day": "1",
+    "month": "DECEMBER"
+  }
+  ]
+}
