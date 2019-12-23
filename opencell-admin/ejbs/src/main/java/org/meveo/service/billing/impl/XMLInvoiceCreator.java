@@ -421,14 +421,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         customerTag.setAttribute("registrationNo", registrationNo != null ? registrationNo : "");
         customerTag.setAttribute("jobTitle", jobTitle != null ? jobTitle : "");
 
-        PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
-
-        String mandateIdentification = null;
-        if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
-            mandateIdentification = ((DDPaymentMethod) preferedPaymentMethod).getMandateIdentification();
-            customerTag.setAttribute("mandateIdentification", mandateIdentification != null ? mandateIdentification : "");
-        }
-
         addCustomFields(customer, doc, customerTag);
         addNameAndAdress(customer, doc, customerTag, billingAccountLanguage);
         customerTag.appendChild(toContactTag(doc, customer.getContactInformation()));
@@ -467,9 +459,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         customerAccountTag.setAttribute("language", prDescription != null ? prDescription : "");
         customerAccountTag.setAttribute("jobTitle", jobTitleCA != null ? jobTitleCA : "");
 
-        if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
-            customerAccountTag.setAttribute("mandateIdentification", mandateIdentification != null ? mandateIdentification : "");
-        }
         addCustomFields(customerAccount, doc, customerAccountTag);
         customerAccountTag.appendChild(toContactTag(doc, customerAccount.getContactInformation()));
         header.appendChild(customerAccountTag);
@@ -1215,7 +1204,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         }
 
         if (preferredPaymentMethod != null && PaymentMethodEnum.DIRECTDEBIT.equals(preferredPaymentMethod.getPaymentType())) {
-            BankCoordinates bankCoordinates = ((DDPaymentMethod) preferredPaymentMethod).getBankCoordinates();
+            DDPaymentMethod directDebitPayment = (DDPaymentMethod) preferredPaymentMethod;
+            BankCoordinates bankCoordinates = directDebitPayment.getBankCoordinates();
 
             if (bankCoordinates != null) {
                 Element bankCoordinatesElement = doc.createElement("bankCoordinates");
@@ -1226,6 +1216,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 Element key = doc.createElement("key");
                 Element iban = doc.createElement("IBAN");
                 Element bic = doc.createElement("bic");
+                Element mandateIdentification = doc.createElement("mandateIdentification");
+                Element mandateDate = doc.createElement("mandateDate");
+                Element bankName = doc.createElement("bankName");
                 bankCoordinatesElement.appendChild(bankCode);
                 bankCoordinatesElement.appendChild(branchCode);
                 bankCoordinatesElement.appendChild(accountNumber);
@@ -1233,6 +1226,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 bankCoordinatesElement.appendChild(key);
                 bankCoordinatesElement.appendChild(iban);
                 bankCoordinatesElement.appendChild(bic);
+                bankCoordinatesElement.appendChild(mandateIdentification);
+                bankCoordinatesElement.appendChild(mandateDate);
+                bankCoordinatesElement.appendChild(bankName);
                 paymentMethod.appendChild(bankCoordinatesElement);
 
                 String bankCodeData = bankCoordinates.getBankCode();
@@ -1261,6 +1257,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 String bicData = bankCoordinates.getBic();
                 Text bicTxt = doc.createTextNode(bicData != null ? bicData : "");
                 bic.appendChild(bicTxt);
+                String bankNameData = bankCoordinates.getBankName();
+                Text bankNameTxt = doc.createTextNode(bankNameData != null ? bankNameData : "");
+                bankName.appendChild(bankNameTxt);
+
+                String mandateIdentificationData = directDebitPayment.getMandateIdentification();
+                Text mandateIdentificationTxt = doc.createTextNode(mandateIdentificationData != null ? mandateIdentificationData : "");
+                mandateIdentification.appendChild(mandateIdentificationTxt);
+
+                String mandateDateData = DateUtils.formatDateWithPattern(directDebitPayment.getMandateDate(), DEFAULT_DATE_TIME_PATTERN);
+                Text mandateDateTxt = doc.createTextNode(mandateDateData != null ? mandateDateData : "");
+                mandateDate.appendChild(mandateDateTxt);
             }
 
         } else if (preferredPaymentMethod != null && PaymentMethodEnum.CARD.equals(preferredPaymentMethod.getPaymentType())) {
