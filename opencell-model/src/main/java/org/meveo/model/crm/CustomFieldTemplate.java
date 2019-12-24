@@ -1,17 +1,25 @@
 package org.meveo.model.crm;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.EnableBusinessEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEnum;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.shared.DateUtils;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -34,27 +42,18 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.EnableBusinessEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ModuleItem;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.RoundingModeEnum;
-import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
-import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
-import org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEnum;
-import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldValue;
-import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.model.shared.DateUtils;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * Custom field template
@@ -62,7 +61,7 @@ import org.meveo.model.shared.DateUtils;
  * @author Andrius Karpavicius
  * @author Khalid HORRI
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 10.0
  */
 @Entity
 @ModuleItem
@@ -338,6 +337,34 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
      */
     @Transient
     private String dbFieldname;
+
+    /**
+     * An EL expression that should resolve into the code of a valid CustomTable.
+     */
+    @Column(name = "custom_table_code_el", length = 2000)
+    @Size(max = 2000)
+    private String customTableCodeEL;
+
+    /**
+     * An EL expression that should resolve into a list of filters as defined by the Search API.
+     */
+    @Column(name = "data_filter_el", length = 2000)
+    @Size(max = 2000)
+    private String dataFilterEL;
+
+    /**
+     * Should resolve into a list of CT fields to be shown for CTW (displayed in GUI, returned by API). It's the "fields" parameter in the CT list API.
+     */
+    @Column(name = "fields_el", length = 2000)
+    @Size(max = 2000)
+    private String fieldsEL;
+
+    /**
+     * which should resolve into an additional filter to apply to the table search.
+     */
+    @Column(name = "version_filter_el", length = 2000)
+    @Size(max = 2000)
+    private String versionFilterEL;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -1099,5 +1126,77 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     public String tableName() {
         return Optional.ofNullable(this.entityClazz).filter(entityClazz -> entityClazz.matches(CUSTOM_TABLE_STRUCTURE_REGEX))
                 .map(tableName -> tableName.split(ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR)[1]).orElse(null);
+    }
+
+    /**
+     * Gets the customTableCodeEL expression.
+     *
+     * @return the customTableCodeEL expression.
+     */
+    public String getCustomTableCodeEL() {
+        return customTableCodeEL;
+    }
+
+    /**
+     * Sets the customTableCodeEL expression.
+     *
+     * @param customTableCodeEL the customTableCodeEL expression.
+     */
+    public void setCustomTableCodeEL(String customTableCodeEL) {
+        this.customTableCodeEL = customTableCodeEL;
+    }
+
+    /**
+     * Gets the dataFilterEL expression.
+     *
+     * @return the dataFilterEL expression.
+     */
+    public String getDataFilterEL() {
+        return dataFilterEL;
+    }
+
+    /**
+     * Sets the dataFilterEL expression.
+     *
+     * @param dataFilterEL the dataFilterEL expression.
+     */
+    public void setDataFilterEL(String dataFilterEL) {
+        this.dataFilterEL = dataFilterEL;
+    }
+
+    /**
+     * Gets the fieldsEL expression.
+     *
+     * @return the fieldsEL expression.
+     */
+    public String getFieldsEL() {
+        return fieldsEL;
+    }
+
+    /**
+     * Sets the fieldsEL expression.
+     *
+     * @param fieldsEL the fieldsEL expression.
+     */
+    public void setFieldsEL(String fieldsEL) {
+        this.fieldsEL = fieldsEL;
+    }
+
+    /**
+     * Gets the versionFilterEL expression.
+     *
+     * @return the versionFilterEL expression.
+     */
+    public String getVersionFilterEL() {
+        return versionFilterEL;
+    }
+
+    /**
+     * Sets the versionFilterEL expression.
+     *
+     * @param versionFilterEL the versionFilterEL expression.
+     */
+    public void setVersionFilterEL(String versionFilterEL) {
+        this.versionFilterEL = versionFilterEL;
     }
 }
