@@ -1,4 +1,4 @@
-@subscriptions
+@user-roles
 Feature: Create a User External by API
 
   Background: The classic offer is already executed
