@@ -20,6 +20,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.admin.exception.ValidationException.ExceptionType;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.custom.CustomTableDataDto;
@@ -159,14 +160,23 @@ public class CustomTableApi extends BaseApi {
         }
         CustomEntityTemplate cet = customTableService.getCET(customTableCode);
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
-        pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
+        CustomTableDataResponseDto result = new CustomTableDataResponseDto();
+        result.setPaging(pagingAndFiltering);
+        result.getCustomTableData().setCustomTableCode(customTableCode);
+        try {
+        	pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
+        }catch (ValidationException e) {
+			if(ExceptionType.DATA.equals(e.getType())) {
+		        pagingAndFiltering.setTotalNumberOfRecords(0);
+		        return result;
+			} else {
+				throw e;
+			}
+		}
         List<String> fields = pagingAndFiltering.getFields()!=null?Arrays.asList(pagingAndFiltering.getFields().split(",")):null;
 		PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, null);
         Long totalCount = customTableService.count(cet.getDbTablename(), paginationConfig);
-        CustomTableDataResponseDto result = new CustomTableDataResponseDto();
-        result.setPaging(pagingAndFiltering);
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
-        result.getCustomTableData().setCustomTableCode(customTableCode);
         List<Map<String, Object>> list = customTableService.list(cet.getDbTablename(), paginationConfig);
         customTableService.completeWithEntities(list, cfts, pagingAndFiltering.getLoadReferenceDepth());
         result.getCustomTableData().setValuesFromListofMap(list);

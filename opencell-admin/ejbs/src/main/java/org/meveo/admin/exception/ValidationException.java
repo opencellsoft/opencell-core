@@ -29,6 +29,8 @@ public class ValidationException extends BusinessException {
     private static final long serialVersionUID = 4921614951372762464L;
 
     private String messageKey;
+    
+    private ExceptionType type;
 
     public ValidationException() {
         super();
@@ -51,6 +53,17 @@ public class ValidationException extends BusinessException {
     public ValidationException(String message, String messageKey) {
         super(message);
         this.messageKey = messageKey;
+    }
+    
+    /**
+     * Exception constructor
+     * 
+     * @param message Message to log or display in GUI if message key is not provided
+     * @param type An optional type of exception to qualify the validation exception
+     */
+    public ValidationException(String message, ExceptionType type) {
+        super(message);
+        this.type = type;
     }
 
     /**
@@ -79,5 +92,27 @@ public class ValidationException extends BusinessException {
     @Override
     public synchronized Throwable fillInStackTrace() {
         return null;
+    }
+    
+    
+    /**
+	 * @return the type
+	 */
+	public ExceptionType getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(ExceptionType type) {
+		this.type = type;
+	}
+
+
+	public enum ExceptionType {
+        DATA,
+        TYPE,
+        REGEXP;
     }
 }
