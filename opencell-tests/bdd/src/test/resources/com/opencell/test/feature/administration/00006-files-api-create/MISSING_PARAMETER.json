@@ -1,7 +1,0 @@
-{
-  "code": "BC_TEST",
-  "description": "BC_TEST",
-  "dueDateDelay": "30",
-  "invoiceDateProductionDelay": "0",
-  "calendar": "MONTHLY"
-}
