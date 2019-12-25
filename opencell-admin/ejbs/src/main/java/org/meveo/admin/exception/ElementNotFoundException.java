@@ -29,4 +29,8 @@ public class ElementNotFoundException extends ValidationException {
     public ElementNotFoundException(String code, String elementName) {
         super(elementName + " with code=" + code + " not found");
     }
+    
+    public ElementNotFoundException(Number id, String elementName) {
+        super(elementName + " with id=" + id + " not found");
+    }
 }

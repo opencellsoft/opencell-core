@@ -1046,7 +1046,7 @@ public class NativePersistenceService extends BaseService {
                 long id = Long.parseLong(value.toString());
                 boolean exist=validateRecordExistance(cft, id);
                 if (!exist) {
-                    throw new ElementNotFoundException(cft.getEntityClazz(),""+id);
+                    throw new ElementNotFoundException(id, cft.getEntityClazz());
                 }
 				return id;
 
