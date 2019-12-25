@@ -163,11 +163,12 @@ public class CustomTableApi extends BaseApi {
         CustomTableDataResponseDto result = new CustomTableDataResponseDto();
         result.setPaging(pagingAndFiltering);
         result.getCustomTableData().setCustomTableCode(customTableCode);
-        try {
-        	pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
-        }catch (ElementNotFoundException e) {
-		        pagingAndFiltering.setTotalNumberOfRecords(0);
-		        return result;
+		try {
+			pagingAndFiltering.setFilters(
+					customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
+		} catch (ElementNotFoundException e) {
+			pagingAndFiltering.setTotalNumberOfRecords(0);
+			return result;
 		}
         List<String> fields = pagingAndFiltering.getFields()!=null?Arrays.asList(pagingAndFiltering.getFields().split(",")):null;
 		PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, null);
