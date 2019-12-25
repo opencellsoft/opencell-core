@@ -158,11 +158,15 @@ public class CustomTableApi extends BaseApi {
         if (pagingAndFiltering == null) {
             pagingAndFiltering = new PagingAndFiltering();
         }
+        
         CustomEntityTemplate cet = customTableService.getCET(customTableCode);
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
         CustomTableDataResponseDto result = new CustomTableDataResponseDto();
         result.setPaging(pagingAndFiltering);
         result.getCustomTableData().setCustomTableCode(customTableCode);
+        List<String> fields = pagingAndFiltering.getFields()!=null?Arrays.asList(pagingAndFiltering.getFields().split(",")):null;
+ 		PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, cfts);
+		paginationConfig.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
 		try {
 			pagingAndFiltering.setFilters(
 					customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
@@ -170,8 +174,6 @@ public class CustomTableApi extends BaseApi {
 			pagingAndFiltering.setTotalNumberOfRecords(0);
 			return result;
 		}
-        List<String> fields = pagingAndFiltering.getFields()!=null?Arrays.asList(pagingAndFiltering.getFields().split(",")):null;
-		PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, null);
         Long totalCount = customTableService.count(cet.getDbTablename(), paginationConfig);
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
         List<Map<String, Object>> list = customTableService.list(cet.getDbTablename(), paginationConfig);
