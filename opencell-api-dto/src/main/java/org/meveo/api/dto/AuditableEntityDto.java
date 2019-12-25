@@ -1,5 +1,7 @@
 package org.meveo.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -25,6 +27,7 @@ public abstract class AuditableEntityDto extends BaseEntityDto {
         setAuditable(e);
     }
 
+    @JsonIgnore
     public void setAuditable(AuditableEntity e) {
         if (e != null && e.getAuditable() != null) {
             auditable = new AuditableDto(e.getAuditable());
