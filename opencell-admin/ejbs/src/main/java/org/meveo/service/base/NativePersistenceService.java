@@ -51,6 +51,7 @@ import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
@@ -1045,7 +1046,7 @@ public class NativePersistenceService extends BaseService {
                 long id = Long.parseLong(value.toString());
                 boolean exist=validateRecordExistance(cft, id);
                 if (!exist) {
-                    throw new ValidationException("Failed to find reference of record on database [ class: "+cft.getEntityClazz()+", id: "+id+"]");
+                    throw new ElementNotFoundException(id, cft.getEntityClazz());
                 }
 				return id;
 
