@@ -30,8 +30,6 @@ public class ValidationException extends BusinessException {
 
     private String messageKey;
     
-    private ExceptionType type;
-
     public ValidationException() {
         super();
     }
@@ -55,17 +53,6 @@ public class ValidationException extends BusinessException {
         this.messageKey = messageKey;
     }
     
-    /**
-     * Exception constructor
-     * 
-     * @param message Message to log or display in GUI if message key is not provided
-     * @param type An optional type of exception to qualify the validation exception
-     */
-    public ValidationException(String message, ExceptionType type) {
-        super(message);
-        this.type = type;
-    }
-
     /**
      * Exception constructor
      * 
@@ -94,25 +81,4 @@ public class ValidationException extends BusinessException {
         return null;
     }
     
-    
-    /**
-	 * @return the type
-	 */
-	public ExceptionType getType() {
-		return type;
-	}
-
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(ExceptionType type) {
-		this.type = type;
-	}
-
-
-	public enum ExceptionType {
-        DATA,
-        TYPE,
-        REGEXP;
-    }
 }
