@@ -19,8 +19,8 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
-import org.meveo.admin.exception.ValidationException.ExceptionType;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.custom.CustomTableDataDto;
@@ -165,13 +165,9 @@ public class CustomTableApi extends BaseApi {
         result.getCustomTableData().setCustomTableCode(customTableCode);
         try {
         	pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
-        }catch (ValidationException e) {
-			if(ExceptionType.DATA.equals(e.getType())) {
+        }catch (ElementNotFoundException e) {
 		        pagingAndFiltering.setTotalNumberOfRecords(0);
 		        return result;
-			} else {
-				throw e;
-			}
 		}
         List<String> fields = pagingAndFiltering.getFields()!=null?Arrays.asList(pagingAndFiltering.getFields().split(",")):null;
 		PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, null);
