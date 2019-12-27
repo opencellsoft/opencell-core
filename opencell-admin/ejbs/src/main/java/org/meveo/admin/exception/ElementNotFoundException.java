@@ -22,11 +22,15 @@ package org.meveo.admin.exception;
  * @author Andrius Karpavicius
  * 
  */
-public class ElementNotFoundException extends BusinessException {
+public class ElementNotFoundException extends ValidationException {
 
     private static final long serialVersionUID = 1L;
 
     public ElementNotFoundException(String code, String elementName) {
         super(elementName + " with code=" + code + " not found");
+    }
+    
+    public ElementNotFoundException(Number id, String elementName) {
+        super(elementName + " with id=" + id + " not found");
     }
 }
