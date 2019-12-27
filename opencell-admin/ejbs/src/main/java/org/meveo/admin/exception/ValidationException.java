@@ -29,7 +29,7 @@ public class ValidationException extends BusinessException {
     private static final long serialVersionUID = 4921614951372762464L;
 
     private String messageKey;
-
+    
     public ValidationException() {
         super();
     }
@@ -52,7 +52,7 @@ public class ValidationException extends BusinessException {
         super(message);
         this.messageKey = messageKey;
     }
-
+    
     /**
      * Exception constructor
      * 
@@ -80,4 +80,5 @@ public class ValidationException extends BusinessException {
     public synchronized Throwable fillInStackTrace() {
         return null;
     }
+    
 }
