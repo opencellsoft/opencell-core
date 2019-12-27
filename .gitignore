@@ -1,0 +1,17 @@
+opencell-tmforum/target/
+
+opencell-security/target/
+
+opencell-model/target/
+
+opencell-client/target/
+
+opencell-api-dto/target/
+
+opencell-api/target/
+
+opencell-admin/web/target/
+
+opencell-admin/ejbs/target/
+
+opencell-admin/web/jboss.server.log.dir_IS_UNDEFINED/audit_log.log
