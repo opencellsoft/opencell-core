@@ -49,6 +49,7 @@ import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.TradingLanguageService;
@@ -77,6 +78,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1225,9 +1227,14 @@ public abstract class BaseApi {
 				fieldClassType = ReflectionUtils.getFieldGenericsType(field);
 			}
 		} else if (cfts != null) {
-			String cftName = cfts.keySet().stream().filter(x->x.equalsIgnoreCase(fieldName)).findFirst().get();
-			CustomFieldTemplate cft = cfts.get(cftName);
-			fieldClassType = cft.getFieldType().getDataClass();
+			Optional<String> field = cfts.keySet().stream().filter(x -> x.equalsIgnoreCase(fieldName)).findFirst();
+			if (field.isPresent()) {
+				String cftName = field.get();
+				CustomFieldTemplate cft = cfts.get(cftName);
+				fieldClassType = cft.getFieldType().getDataClass();
+			} else if (NativePersistenceService.FIELD_ID.equals(fieldName)) {
+				fieldClassType = Long.class;
+			}
 		}
 		return fieldClassType;
 	}
