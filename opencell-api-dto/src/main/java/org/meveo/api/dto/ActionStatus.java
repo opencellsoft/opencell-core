@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.ApiErrorCodeEnum;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -31,6 +32,7 @@ public class ActionStatus {
     /**
      * An error code.
      */
+    @XmlElement(type = MeveoApiErrorCodeEnum.class)
     private ApiErrorCodeEnum errorCode;
 
     /**
