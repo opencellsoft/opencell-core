@@ -4,7 +4,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.meveo.api.ApiErrorCodeEnum;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -22,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(Include.NON_NULL)
-@XmlSeeAlso(MeveoApiErrorCodeEnum.class)
 public class ActionStatus {
 
     /**
@@ -34,6 +32,7 @@ public class ActionStatus {
     /**
      * An error code.
      */
+    @XmlElement(type = MeveoApiErrorCodeEnum.class)
     private ApiErrorCodeEnum errorCode;
 
     /**
