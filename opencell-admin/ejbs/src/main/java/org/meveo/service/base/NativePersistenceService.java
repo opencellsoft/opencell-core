@@ -18,30 +18,6 @@
  */
 package org.meveo.service.base;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
@@ -69,6 +45,29 @@ import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -123,7 +122,6 @@ public class NativePersistenceService extends BaseService {
      * @param id Identifier
      * @return A map of values with field name as a map key and field value as a map value
      */
-    @SuppressWarnings("unchecked")
     public Map<String, Object> findById(String tableName, Long id) {
 
         try {
@@ -591,9 +589,7 @@ public class NativePersistenceService extends BaseService {
      */
     public void remove(String tableName, Set<Long> ids) throws BusinessException {
         ids.stream().forEach(id -> deletionService.checkTablenotreferenced(tableName, id));
-        StringBuilder deleteQuery = new StringBuilder("delete from ")
-                .append(tableName)
-                .append(" where id in:ids");
+        StringBuilder deleteQuery = new StringBuilder("delete from ").append(tableName).append(" where id in (:ids)");
         getEntityManager().createNativeQuery(deleteQuery.toString()).setParameter("ids", ids).executeUpdate();
 
     }
@@ -707,7 +703,6 @@ public class NativePersistenceService extends BaseService {
      * @param config Data filtering, sorting and pagination criteria
      * @return Query builder to filter entities according to pagination configuration data.
      */
-    @SuppressWarnings({ "rawtypes" })
     public QueryBuilder getQuery(String tableName, PaginationConfiguration config) {
         String fileds = (config!=null && config.getFetchFields()!=null)?config.getFetchFields().stream().map(x->" a."+x).collect(Collectors.joining(",")):"*";
 		QueryBuilder queryBuilder = new QueryBuilder("select "+fileds+" from " + tableName + " a ", "a");
@@ -923,7 +918,6 @@ public class NativePersistenceService extends BaseService {
      * @param config Data filtering, sorting and pagination criteria
      * @return A list of map of values for each record
      */
-    @SuppressWarnings("unchecked")
     public List<Map<String, Object>> list(String tableName, PaginationConfiguration config) {
 
         QueryBuilder queryBuilder = getQuery(tableName, config);
@@ -938,7 +932,6 @@ public class NativePersistenceService extends BaseService {
      * @param config Data filtering, sorting and pagination criteria
      * @return A list of Object[] values for each record
      */
-    @SuppressWarnings("unchecked")
     public List<Object[]> listAsObjets(String tableName, PaginationConfiguration config) {
 
         QueryBuilder queryBuilder = getQuery(tableName, config);
@@ -1013,7 +1006,6 @@ public class NativePersistenceService extends BaseService {
      * @return A converted data type
      * @throws ValidationException Value can not be cast to a target class
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected Object castValue(Object value, Class targetClass, boolean expectedList, String[] datePatterns, CustomFieldTemplate cft) throws ValidationException {
 
         // log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
@@ -1263,7 +1255,6 @@ public class NativePersistenceService extends BaseService {
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	public List<BigInteger> filterExistingRecordsOnTable(String tableName,List<Long> ids) {
 		Session session = getEntityManager().unwrap(Session.class);
 		StringBuilder selectQuery = new StringBuilder("select ")

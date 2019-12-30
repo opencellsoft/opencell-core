@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui" xmlns:cc="http://xmlns.jcp.org/jsf/composite" xmlns:o="http://omnifaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+>
+
+
+<!-- 
+    A tag to display a single custom field
+    Makes part of custom field management tag group 
+
+    Attributes
+        prefix - prefix for component to distinguish when used multiple times in save page
+        entity - entity, custom fields are related to
+        edit - edit mode. Inherited from formPanel otherwise
+        datePattern - date pattern for date entry/display
+        dateTimePattern - date time pattern for period date display
+        messagesId - an ID of messages component for validation messages
+        cft - custom field template
+
+ -->
+
+<cc:interface>
+    <cc:attribute name="entity" required="true"/>
+    <cc:attribute name="cft" required="true"/>
+    <cc:attribute name="edit" required="true"/>
+    <cc:attribute name="datePattern" required="true"/>
+    <cc:attribute name="dateTimePattern" required="true"/>
+    <cc:attribute name="messagesId" required="true"/>
+    <cc:attribute name="prefix" required="true"/>
+    <cc:attribute name="disabled" default="#{!cc.attrs.entity.transient and !cc.attrs.cft.allowEdit}"/>
+    <cc:attribute name="cfValueHolder" default="#{customFieldDataEntryBean.getFieldValueHolderByUUID(cc.attrs.entity.uuid)}"/>
+</cc:interface>
+
+<cc:implementation>
+
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum"/>
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum"/>
+    <o:importFunctions type="org.meveo.model.crm.custom.CustomFieldValue" var="cfv"/>
+
+
+    <!--c:if test="#{cc.attrs.cft.fieldType eq CustomFieldTypeEnum.CHECKBOX_LIST}">
+        <c:set var="inheritedValue" value="#{customFieldDataEntryBean.getInheritedCFValue(cc.attrs.entity, cc.attrs.cft.code)}"/>
+
+        <hftl:decorateFormField
+                label="#{cc.attrs.cft.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}#{cc.attrs.cft.valueRequired and inheritedValue ==null?' *':''}"
+                componentWidth="25" displayOneLine="false">
+            <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code)}"
+                                        entity="#{cc.attrs.entity}"
+                                        disabled="#{cc.attrs.disabled}" datePattern="#{cc.attrs.datePattern}" hasInheritedValue="#{inheritedValue !=null}"/>
+        </hftl:decorateFormField>
+    </c:if-->
+    <p:panel width="100" id="ctw">
+
+        <p:dataTable id="ctSearchResults" value="#{customFieldDataEntryBean.getCustomTableWrapperValues(cc.attrs.entity, cc.attrs.cft)}" var="cet"
+                     lazy="true"
+                     widgetVar="ctTable"
+                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                     paginator="true"
+                     rows="10"
+                     rowsPerPageTemplate="10,15,20,50"
+                     resizableColumns="true"
+                     styleClass="custom-grid"
+                     editable="#{cc.attrs.edit and !cc.attrs.disabled}"
+                     editMode="cell"
+                     selection="#{customFieldDataEntryBean.selectedValues}"
+                     sortBy="id">
+            <p:ajax event="cellEdit" listener="#{customFieldDataEntryBean.onCellEdit}"
+                    update="@this"
+                    partialSubmit="true"
+                    partialSubmitFilter=":not([name*='addNewFields'])"/>/>
+            <p:ajax event="cellEditCancel" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])"/>/>
+
+            <p:column id="multiSelect" selectionMode="multiple" width="4%" exportable="false" toggleable="false"/>
+            <p:column headerText="id" sortBy="#{id}">
+                <h:outputText value="#{cet['id']}"/>
+            </p:column>
+            <p:columns value="#{customFieldDataEntryBean.getFields(cc.attrs.entity, cc.attrs.cft)}" var="field"
+                       headerText="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}"
+                       sortBy="#{field.dbFieldname}">
+                <p:cellEditor>
+                    <f:facet name="output">
+                        <h:outputText id="#{cet[field.dbFieldname]}_out_date" value="#{cet[field.dbFieldname]}" styleClass="field-value"
+                                      rendered="#{field.fieldType eq CustomFieldTypeEnum.DATE}">
+                            <f:convertDateTime type="date" pattern="#{field.displayFormat!=null? field.displayFormat:paramBean.dateFormat}"/>
+                        </h:outputText>
+                        <h:outputText id="#{cet[field.dbFieldname]}_out" value="#{cet[field.dbFieldname]}" styleClass="field-value"
+                                      rendered="#{field.fieldType eq CustomFieldTypeEnum.STRING or field.fieldType eq CustomFieldTypeEnum.LIST or field.fieldType eq CustomFieldTypeEnum.LONG}"/>
+
+                        <h:outputText id="#{cet[field.dbFieldname]}_out_double" value="#{cet[field.dbFieldname]}" styleClass="field-value"
+                                      rendered="#{field.fieldType eq CustomFieldTypeEnum.DOUBLE}">
+                            <f:converter converterId="javax.faces.Double"/>
+                        </h:outputText>
+                        <h:outputText id="#{cet[field.dbFieldname]}_out_boolean" value="#{cet[field.dbFieldname]}" styleClass="field-value"
+                                      rendered="#{field.fieldType eq CustomFieldTypeEnum.BOOLEAN}">
+                            <f:converter converterId="javax.faces.Boolean"/>
+                        </h:outputText>
+                        <h:outputText id="#{cet[field.dbFieldname]}_out_entity" value="#{cet[field.dbFieldname]}" styleClass="field-value"
+                                      rendered="#{field.fieldType eq CustomFieldTypeEnum.ENTITY}">
+                            <f:converter converterId="javax.faces.Long"/>
+                        </h:outputText>
+                    </f:facet>
+                    <f:facet name="input">
+                        <p:inputText id="#{field.dbFieldname}_in_string" value="#{cet[field.dbFieldname]}"
+                                     placeholder="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}"
+                                     label="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}" size="20" maxlength="#{field.maxValue}"
+                                     required="#{field.valueRequired}"
+                                     rendered="#{field.fieldType eq CustomFieldTypeEnum.STRING}"/>
+                        <p:calendar id="#{field.dbFieldname}_in_date" value="#{cet[field.dbFieldname]}"
+                                    placeholder="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}"
+                                    label="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}" showButtonPanel="true"
+                                    pattern="#{field.displayFormat!=null? field.displayFormat:paramBean.dateFormat}" required="#{field.valueRequired}"
+                                    rendered="#{field.fieldType eq CustomFieldTypeEnum.DATE}" size="15"/>
+
+                        <p:inputText id="#{field.dbFieldname}_in_dbl" value="#{cet[field.dbFieldname]}" required="#{field.valueRequired}"
+                                     placeholder="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}"
+                                     label="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}"
+                                     rendered="#{field.fieldType eq CustomFieldTypeEnum.DOUBLE}" size="10">
+                            <f:convertNumber minFractionDigits="2"/>
+                            <c:if test="#{field.minValue!=null and field.maxValue!=null}">
+                                <f:validateLongRange minimum="#{field.minValue}" maximum="#{field.maxValue}"/>
+                            </c:if>
+                            <c:if test="#field.minValue!=null and field.maxValue==null}">
+                                <f:validateLongRange minimum="#{field.minValue}"/>
+                            </c:if>
+                            <c:if test="#{field.minValue==null and field.maxValue!=null}">
+                                <f:validateLongRange maximum="#{field.maxValue}"/>
+                            </c:if>
+                        </p:inputText>
+                        <p:inputText id="#{field.dbFieldname}_in_long" value="#{cet[field.dbFieldname]}" required="#{field.valueRequired}"
+                                     placeholder="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}"
+                                     label="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}"
+                                     rendered="#{field.fieldType eq CustomFieldTypeEnum.LONG}" size="10">
+                            <f:convertNumber integerOnly="true"/>
+                            <c:if test="#{field.minValue!=null and field.maxValue!=null}">
+                                <f:validateLongRange minimum="#{field.minValue}" maximum="#{field.maxValue}"/>
+                            </c:if>
+                            <c:if test="#{field.minValue!=null and field.maxValue==null}">
+                                <f:validateLongRange minimum="#{field.minValue}"/>
+                            </c:if>
+                            <c:if test="#{field.minValue==null and field.maxValue!=null}">
+                                <f:validateLongRange maximum="#{field.maxValue}"/>
+                            </c:if>
+                        </p:inputText>
+                        <p:selectOneMenu id="#{field.dbFieldname}_in_list" value="#{cet[field.dbFieldname]}" required="#{field.valueRequired}"
+                                         placeholder="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}"
+                                         label="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}"
+                                         rendered="#{field.fieldType eq CustomFieldTypeEnum.LIST}">
+                            <f:selectItem itemValue="#{null}" itemLabel=""/>
+                            <f:selectItems value="#{field.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value} (#{listVal.key})"/>
+                        </p:selectOneMenu>
+
+                        <p:selectOneMenu id="#{field.dbFieldname}_in_boolean" value="#{cet[field.dbFieldname]}" required="#{field.valueRequired}" onLabel="true"
+                                         offLabel="false" style="width:60px" rendered="#{field.fieldType eq CustomFieldTypeEnum.BOOLEAN}">
+                            <f:selectItem itemValue="#{null}" itemLabel=""/>
+                            <f:selectItem itemValue="#{true}" itemLabel="true"/>
+                            <f:selectItem itemValue="#{false}" itemLabel="false"/>
+                            <f:converter converterId="javax.faces.Boolean"/>
+                        </p:selectOneMenu>
+
+                    </f:facet>
+                </p:cellEditor>
+            </p:columns>
+            <p:column headerText="#{messages['commons.actions']}" exportable="false">
+                <p:commandButton id="deletelink" icon="ui-icon-trash" action="#{customFieldDataEntryBean.delete(cet['id'],cc.attrs.entity, cc.attrs.cft)}"
+                                 rendered="#{cc.attrs.edit and !cc.attrs.disabled}"
+                                 process="@this" immediate="true"
+                                 update="#{cfde:getCFComponentIds(':offerForm:tabView:cf_panel_group_',null, customFieldDataEntryBean.getGroupedFieldTemplates(cc.attrs.entity).children.size())}">
+                    <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert"/>
+                </p:commandButton>
+            </p:column>
+
+            <c:if test="#{cc.attrs.edit and !cc.attrs.disabled}">
+                <f:facet name="footer" layout="block">
+
+                    <p:messages id="ctNewFieldsMessage" globalOnly="false" redisplay="false"/>
+
+                    <hf:namingContainer id="addNewFields" rendered="#{cc.attrs.edit and !cc.attrs.disabled}">
+                        <c:forEach items="#{customFieldDataEntryBean.getFields(cc.attrs.entity,cc.attrs.cft)}" var="field">
+                            <c:if test="#{field.fieldType eq CustomFieldTypeEnum.STRING}">
+                                <p:inputText id="#{field.dbFieldname}" value="#{customFieldDataEntryBean.newValues[field.dbFieldname]}"
+                                             placeholder="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}" style="margin-left:5px"
+                                             label="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}" size="20" maxlength="#{field.maxValue}"
+                                             required="#{field.valueRequired}"/>
+                            </c:if>
+                            <c:if test="#{field.fieldType eq CustomFieldTypeEnum.BOOLEAN}">
+                                <p:selectBooleanButton id="#{field.dbFieldname}" value="#{customFieldDataEntryBean.newValues[field.dbFieldname]}"
+                                                       placeholder="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}" style="margin-left:5px"
+                                                       onLabel="true"
+                                                       offLabel="false"
+                                                       label="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}" size="20"
+                                                       maxlength="#{field.maxValue}"
+                                                       required="#{field.valueRequired}">
+                                </p:selectBooleanButton>
+                            </c:if>
+                            <c:if test="#{field.fieldType eq CustomFieldTypeEnum.DATE}">
+                                <p:calendar id="#{field.dbFieldname}" value="#{customFieldDataEntryBean.newValues[field.dbFieldname]}"
+                                            placeholder="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}"
+                                            label="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}" showButtonPanel="true"
+                                            pattern="#{field.displayFormat!=null? field.displayFormat:paramBean.dateFormat}" required="#{field.valueRequired}"
+                                            style="margin-left:5px" size="15"/>
+                            </c:if>
+                            <c:if test="#{field.fieldType eq CustomFieldTypeEnum.DOUBLE}">
+                                <p:inputText id="#{field.dbFieldname}" value="#{customFieldDataEntryBean.newValues[field.dbFieldname]}" required="#{field.valueRequired}"
+                                             placeholder="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}" style="margin-left:5px"
+                                             label="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}" size="10">
+                                    <f:convertNumber minFractionDigits="2"/>
+                                    <c:if test="#{field.minValue!=null and field.maxValue!=null}">
+                                        <f:validateLongRange minimum="#{field.minValue}" maximum="#{field.maxValue}"/>
+                                    </c:if>
+                                    <c:if test="#field.minValue!=null and field.maxValue==null}">
+                                        <f:validateLongRange minimum="#{field.minValue}"/>
+                                    </c:if>
+                                    <c:if test="#{field.minValue==null and field.maxValue!=null}">
+                                        <f:validateLongRange maximum="#{field.maxValue}"/>
+                                    </c:if>
+                                </p:inputText>
+                            </c:if>
+                            <c:if test="#{field.fieldType eq CustomFieldTypeEnum.LONG}">
+                                <p:inputText id="#{field.dbFieldname}" value="#{customFieldDataEntryBean.newValues[field.dbFieldname]}" required="#{field.valueRequired}"
+                                             placeholder="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}" style="margin-left:5px"
+                                             label="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}" size="10">
+                                    <f:convertNumber integerOnly="true"/>
+                                    <c:if test="#{field.minValue!=null and field.maxValue!=null}">
+                                        <f:validateLongRange minimum="#{field.minValue}" maximum="#{field.maxValue}"/>
+                                    </c:if>
+                                    <c:if test="#{field.minValue!=null and field.maxValue==null}">
+                                        <f:validateLongRange minimum="#{field.minValue}"/>
+                                    </c:if>
+                                    <c:if test="#{field.minValue==null and field.maxValue!=null}">
+                                        <f:validateLongRange maximum="#{field.maxValue}"/>
+                                    </c:if>
+                                </p:inputText>
+                            </c:if>
+
+                            <c:if test="#{field.fieldType eq CustomFieldTypeEnum.LIST}">
+                                <p:selectOneMenu id="#{field.dbFieldname}" value="#{customFieldDataEntryBean.newValues[field.dbFieldname]}" required="#{field.valueRequired}"
+                                                 placeholder="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}" style="margin-left:5px"
+                                                 label="#{field.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}">
+                                    <f:selectItem itemValue="#{null}" itemLabel=""/>
+                                    <f:selectItems value="#{field.listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}"
+                                                   itemLabel="#{listVal.value} (#{listVal.key})"/>
+                                </p:selectOneMenu>
+                            </c:if>
+                            <c:if test="#{field.fieldType eq CustomFieldTypeEnum.ENTITY}">
+                                <p:selectOneMenu id="#{field.dbFieldname}" value="#{customFieldDataEntryBean.newValues[field.dbFieldname]}" required="#{field.valueRequired}">
+                                    <f:selectItem itemValue="#{null}" itemLabel=""/>
+                                    <f:selectItems value="#{customFieldDataEntryBean.entityTypeColumnDatas(field)}" var="data" itemValue="#{data.id}"
+                                                   itemLabel="#{data.id} (#{data.display()})"/>
+                                    <f:converter converterId="javax.faces.Long"/>
+                                </p:selectOneMenu>
+                            </c:if>
+                        </c:forEach>
+
+                        <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields"
+                                         update="#{cfde:getCFComponentIds(':offerForm:tabView:cf_panel_group_',null, customFieldDataEntryBean.getGroupedFieldTemplates(cc.attrs.entity).children.size())}"
+                                         action="#{customFieldDataEntryBean.addNewValues(cc.attrs.entity)}" style="margin-left:20px">
+                            <p:resetInput target="addNewFields"/>
+                        </p:commandButton>
+
+                    </hf:namingContainer>
+                    <h:panelGroup styleClass="clearLeft" style="margin-top:20px" layout="block">
+                        <p:commandButton id="deleteMany" value="#{messages['commons.deleteMultiple']}" action="#{customFieldDataEntryBean.deleteMany()}" icon="ui-icon-trash"
+                                         process="@this ctSearchResults"
+                                         partialSubmit="true"
+                                         partialSubmitFilter=":not([name*='addNewFields'])"
+                                         update="#{cfde:getCFComponentIds(':offerForm:tabView:cf_panel_group_',null, customFieldDataEntryBean.getGroupedFieldTemplates(cc.attrs.entity).children.size())}">
+                            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDeleteMultiple']}" icon="ui-icon-alert"/>
+                        </p:commandButton>
+                    </h:panelGroup>
+                </f:facet>
+            </c:if>
+        </p:dataTable>
+
+    </p:panel>
+
+
+</cc:implementation>
+</html>
