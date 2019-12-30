@@ -848,12 +848,13 @@ public class CustomTableService extends NativePersistenceService {
             for (Entry<String, Object> valueEntry : values.entrySet()) {
 
                 String key = valueEntry.getKey();
-                if (key.equals(FIELD_ID)) {
+                String[] fieldInfo = key.split(" ");
+                String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1]; // field name here can be a db field name or a custom field code
+                
+                if (fieldName.equals(FIELD_ID)) {
                     continue; // Was handled before already
                 }
                 
-                String[] fieldInfo = key.split(" ");
-                String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1]; // field name here can be a db field name or a custom field code
                 CustomFieldTemplate cft = cftsMap.get(fieldName);  
                 if (cft == null) {
                     throw new ValidationException("No field definition " + fieldName + " was found");
