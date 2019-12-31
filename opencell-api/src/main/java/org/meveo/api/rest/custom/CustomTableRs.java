@@ -1,5 +1,11 @@
 package org.meveo.api.rest.custom;
 
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.custom.CustomTableDataDto;
+import org.meveo.api.dto.custom.CustomTableDataResponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.rest.IBaseRs;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
@@ -7,13 +13,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.custom.CustomTableDataDto;
-import org.meveo.api.dto.custom.CustomTableDataResponseDto;
-import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.rest.IBaseRs;
 
 /**
  * Rest API for custom table data management
@@ -89,11 +90,25 @@ public interface CustomTableRs extends IBaseRs {
 
     /**
      * Mark records as disabled in a custom table. Applies only to those custom tables that contain a field 'disabled'
-     * 
+     *
      * @param dto Custom table data. 'id' field is used to identify an existing record.
      * @return Request processing status
      */
     @POST
     @Path("/disable")
     ActionStatus disable(CustomTableDataDto dto);
+
+    /**
+     * Search in custom tables using CustomTableWrapper
+     *
+     * @param customTableWrapperCode Custom table code - can be either db table's name or a custom entity template code
+     * @param entityClass            The entity's class
+     * @param entityId               The entity's ID
+     * @return Custom table data
+     */
+    @POST
+    @Path("/listFromWrapper/{customTableWrapperCode}")
+    CustomTableDataResponseDto listFromWrapper(@PathParam("customTableWrapperCode") String customTableWrapperCode, @QueryParam("entityClass") String entityClass,
+            @QueryParam("entityId") String entityId);
+
 }
