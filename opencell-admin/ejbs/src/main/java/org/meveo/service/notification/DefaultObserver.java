@@ -41,6 +41,7 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomTableEvent;
 import org.meveo.model.admin.User;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldHistory;
@@ -125,12 +126,17 @@ public class DefaultObserver {
             workflowInstanceService.create(e, genericWorkflow);
         }
     }
+    
+    public void customEntityChange(@Observes @Created CustomTableEvent e) throws BusinessException {
+        log.debug("Defaut observer : CustomEntity {} with id {} created", e.getClass().getName());
+        checkEvent(e.getType(), e);
+    }
 
     public void entityCreated(@Observes @Created BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} created", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.CREATED, e);
     }
-
+    
     public void entityUpdated(@Observes @Updated BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} updated", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.UPDATED, e);

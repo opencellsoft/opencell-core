@@ -44,7 +44,7 @@ public class DeletionService {
     @Inject
     private CustomTableService customTableService;
 
-    public void checkTablenotreferenced(String tableName, Long id){
+    public void checkTableNotreferenced(String tableName, Long id){
         CustomEntityInstance customEntityInstance = new CustomEntityInstance();
         customEntityInstance.setId(id);
         customEntityInstance.setCode(id.toString());

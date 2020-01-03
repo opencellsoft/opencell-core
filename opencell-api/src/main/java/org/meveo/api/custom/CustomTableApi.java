@@ -103,12 +103,12 @@ public class CustomTableApi extends BaseApi {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void update(UnitaryCustomTableDataDto dto) throws MeveoApiException, BusinessException {
-    	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode());  put("value", dto.getValue());}};
+    	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode());  put("value", dto.getValue());put("id", dto.getValue().getId());}};
     	validateParams(toValidate);
         CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
         List<Map<String, Object>> values = customTableService.convertValues(Arrays.asList(dto.getRowValues()), cfts.values(), false);
-        customTableService.update(cet.getDbTablename(), values);
+        customTableService.update(cet.getDbTablename(), values.get(0));
     }
 
 	/**
