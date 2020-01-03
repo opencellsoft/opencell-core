@@ -122,7 +122,6 @@ public class NativePersistenceService extends BaseService {
 	private CustomEntityTemplateService customEntityTemplateService;
     
     @Inject
-    @Created
     protected Event<CustomTableEvent> entityChangeEventProducer;
 
     /**

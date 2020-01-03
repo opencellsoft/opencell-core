@@ -127,7 +127,7 @@ public class DefaultObserver {
         }
     }
     
-    public void customEntityChange(@Observes @Created CustomTableEvent e) throws BusinessException {
+    public void customEntityChange(@Observes CustomTableEvent e) throws BusinessException {
         log.debug("Defaut observer : CustomEntity {} with id {} created", e.getClass().getName());
         checkEvent(e.getType(), e);
     }
