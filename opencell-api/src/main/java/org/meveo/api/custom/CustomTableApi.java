@@ -5,6 +5,7 @@ import static org.meveo.service.base.NativePersistenceService.FIELD_ID;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -102,14 +103,17 @@ public class CustomTableApi extends BaseApi {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void update(UnitaryCustomTableDataDto dto) throws MeveoApiException, BusinessException {
-    	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode());  put("value", dto.getValue());put("id", dto.getValue().getId());}};
-    	validateParams(toValidate);
-        CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
-        Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
-        List<Map<String, Object>> values = customTableService.convertValues(Arrays.asList(dto.getRowValues()), cfts.values(), false);
-        customTableService.update(cet.getDbTablename(), values.get(0));
-    }
+	public void update(UnitaryCustomTableDataDto dto) throws MeveoApiException, BusinessException {
+		Long id = dto.getValue().getId();
+		Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode()); put("value", dto.getValue()); put("id", id);}};
+		validateParams(toValidate);
+		CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
+		Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
+		LinkedHashMap<String, Object> rowValues = dto.getRowValues();
+		rowValues.put(FIELD_ID,id);
+		List<Map<String, Object>> values = customTableService.convertValues(Arrays.asList(rowValues), cfts.values(), false);
+		customTableService.update(cet.getDbTablename(), values.get(0));
+	}
 
 	/**
      * Create new records or update existing ones in a custom table, depending if 'id' value is present
