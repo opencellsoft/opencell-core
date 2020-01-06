@@ -128,16 +128,20 @@ public class CustomTableApi extends BaseApi {
         CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
         Map<Boolean, List<CustomTableRecordDto>> partitionedById = dto.getValues().stream().collect(Collectors.partitioningBy(x->x.getValues().get(FIELD_ID)!=null));
-        //create records without ids
-        List<CustomTableRecordDto> valuesWithoutIds = partitionedById.get(false);
-        if (!valuesWithoutIds.isEmpty()) {
-            customTableService.importData(cet, valuesWithoutIds.stream().map(x -> x.getValues()).collect(toList()), !dto.getOverwrite());
-        }
-        //update records with ids
-        List<CustomTableRecordDto> valuesWithIds = partitionedById.get(true);
-        if (!valuesWithIds.isEmpty()) {
-            customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
-        }
+	    try {
+	    	//create records without ids
+	        List<CustomTableRecordDto> valuesWithoutIds = partitionedById.get(false);
+	        if (!valuesWithoutIds.isEmpty()) {
+	            customTableService.importData(cet, valuesWithoutIds.stream().map(x -> x.getValues()).collect(toList()), !dto.getOverwrite());
+	        }
+	        //update records with ids
+	        List<CustomTableRecordDto> valuesWithIds = partitionedById.get(true);
+	        if (!valuesWithIds.isEmpty()) {
+	            customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
+	        }
+	    }catch (Exception e) {
+			throw getMeveoApiException(e);
+		}
     }
 
     /**
