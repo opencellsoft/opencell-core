@@ -93,11 +93,13 @@ public class InboundServlet extends HttpServlet {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line);
+                    buffer.append("\n");
                 }
             } catch (IOException e2) {
                 e2.printStackTrace();
             }
             String body = buffer.toString();
+            body = body.trim();
             inReq.setBody(body);
 
             inReq.setMethod(req.getMethod());
