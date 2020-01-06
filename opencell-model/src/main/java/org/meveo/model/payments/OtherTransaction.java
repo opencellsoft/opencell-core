@@ -587,11 +587,11 @@ public class OtherTransaction extends AuditableEntity implements ICustomFieldEnt
     }
 
     public String getCode() {
-        return occCode;
+        return getOccCode();
     }
 
     public void setCode(String code) {
-        this.occCode = code;
+        setOccCode(code);
     }
 
     public String getDescription() {

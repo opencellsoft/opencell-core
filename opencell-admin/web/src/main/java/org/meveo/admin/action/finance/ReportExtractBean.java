@@ -1,12 +1,13 @@
 package org.meveo.admin.action.finance;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -20,7 +21,7 @@ import org.meveo.model.finance.ReportExtractResultTypeEnum;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.finance.ReportExtractService;
-import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.ByteArrayContent;
 import org.primefaces.model.StreamedContent;
 
 /**
@@ -37,6 +38,7 @@ import org.primefaces.model.StreamedContent;
 public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
 
     private static final long serialVersionUID = -3817116164208834748L;
+    private static final String PARAMS_FIELD_NAME = "params";
 
     @Inject
     private ReportExtractService reportExtractService;
@@ -50,7 +52,7 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
         entity = super.initEntity();
 
         if (entity.getParams() != null) {
-            extractMapTypeFieldFromEntity(entity.getParams(), "params");
+            extractMapTypeFieldFromEntity(entity.getParams(), PARAMS_FIELD_NAME);
         }
 
         if (entity.getReportExtractResultType() == null) {
@@ -69,7 +71,7 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
         entity = e;
 
         if (entity.getParams() != null) {
-            extractMapTypeFieldFromEntity(entity.getParams(), "params");
+            extractMapTypeFieldFromEntity(entity.getParams(), PARAMS_FIELD_NAME);
         }
     }
 
@@ -80,7 +82,7 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
 
     private void addFileExtension() {
         if (!StringUtils.isBlank(entity.getFilenameFormat()) && entity.getReportExtractResultType() != null) {
-            int pointLastIndex = entity.getFilenameFormat().lastIndexOf(".");
+            int pointLastIndex = entity.getFilenameFormat().lastIndexOf('.');
             if (pointLastIndex > -1) {
                 String fileExtension = entity.getFilenameFormat().substring(pointLastIndex + 1);
                 if (!fileExtension.equalsIgnoreCase(entity.getReportExtractResultType().name())) {
@@ -94,7 +96,7 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
 
     @Override
     @ActionMethod
-    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+    public String saveOrUpdate(boolean killConversation) {
 
         addFileExtension();
 
@@ -103,7 +105,7 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
         } else {
             entity.setSqlQuery(null);
         }
-        updateMapTypeFieldInEntity(entity.getParams(), "params");
+        updateMapTypeFieldInEntity(entity.getParams(), PARAMS_FIELD_NAME);
 
         return super.saveOrUpdate(killConversation);
     }
@@ -140,8 +142,6 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
     }
 
     public StreamedContent getReportFile(ReportExtract entity) {
-        InputStream stream = null;
-
         try {
             String filePath = reportExtractService.getReporFile(entity);
             File file = new File(filePath);
@@ -151,15 +151,16 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
                 mimeType = "text/html";
             }
 
-            return new DefaultStreamedContent(new FileInputStream(file), mimeType, filePath.substring(filePath.lastIndexOf(File.separator) + 1));
+            byte[] byteArrayContent;
+            try (FileInputStream input = new FileInputStream(file)) {
+                byteArrayContent = IOUtils.toByteArray(input);
+            }
+            return new ByteArrayContent(byteArrayContent, mimeType, filePath.substring(filePath.lastIndexOf(File.separator) + 1));
 
         } catch (BusinessException | IOException e) {
             log.error("Failed loading repor file={}", e.getMessage());
             return null;
-        } finally {
-            IOUtils.closeQuietly(stream);   
         }
-
     }
 
 }

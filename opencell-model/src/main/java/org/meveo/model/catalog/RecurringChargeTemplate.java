@@ -29,6 +29,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.QueryHint;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
@@ -88,6 +91,14 @@ public class RecurringChargeTemplate extends ChargeTemplate {
     @Type(type = "numeric_boolean")
     @Column(name = "termination_prorata")
     private Boolean terminationProrata;
+
+    /**
+     * Prorata On Price Change subscribed
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "prorata_on_price_change", nullable = false)
+    @NotNull
+    private boolean prorataOnPriceChange = false;
 
     /**
      * Apply charge in advance - at the beginning of the period. If false, charge will be applied at the end of the period
@@ -341,5 +352,13 @@ public class RecurringChargeTemplate extends ChargeTemplate {
      */
     public void setCalendarCodeEl(String calendarCodeEl) {
         this.calendarCodeEl = calendarCodeEl;
+    }
+
+    public boolean isProrataOnPriceChange() {
+        return prorataOnPriceChange;
+    }
+
+    public void setProrataOnPriceChange(boolean prorataOnPriceChange) {
+        this.prorataOnPriceChange = prorataOnPriceChange;
     }
 }

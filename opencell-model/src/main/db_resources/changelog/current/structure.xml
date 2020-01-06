@@ -2111,6 +2111,25 @@
         <sql>DROP FUNCTION IF EXISTS ${db.schema.adapted}switch_rating_edr_to_partition</sql>       
         
     </changeSet>
+
+
+    <changeSet id="#4490_31102019" author="AbdelmounaimAkadid">
+		<addColumn tableName="billing_charge_instance">
+			<column name="cf_values_accum" type="${type.json}"></column>
+			<column name="cf_values" type="${type.json}"></column>
+			<column name="uuid" type="varchar(60)" />
+		</addColumn>
+	</changeSet>
+
+    <changeSet author="abdelkader.bouazza" id="#4523-Changing-amount-for-a-service-instance-with-prorating">
+        <addColumn tableName="cat_charge_template">
+            <column name="prorata_on_price_change" type="${type.boolean}" defaultValueNumeric="0"></column>
+        </addColumn>
+        <addColumn tableName="cat_price_plan_matrix">
+            <column name="validity_from" type="datetime"></column>
+            <column name="validity_date" type="datetime"></column>
+        </addColumn>
+    </changeSet>
     
         <changeSet id="#3510_20190516" author="MounirBahije">
         <createTable tableName="cat_unit_of_measure">
@@ -2171,4 +2190,47 @@
 
     </changeSet>
     
+    <changeSet id="#4766_20191111" author="MohammedELAZZOUZI">
+    	<addNotNullConstraint tableName="adm_currency" columnName="currency_code" columnDataType="varchar(3)"/>
+    	<addNotNullConstraint tableName="adm_currency" columnName="description_en" columnDataType="varchar(255)"/>
+    	<addNotNullConstraint tableName="adm_language" columnName="description_en" columnDataType="varchar(255)"/>
+    	<addNotNullConstraint tableName="adm_language" columnName="language_code" columnDataType="varchar(3)"/>
+        <addUniqueConstraint columnNames="language_code" constraintName="UniqueConstraint_adm__language_code" tableName="adm_language" />
+        <addUniqueConstraint columnNames="description_en" constraintName="UniqueConstraint_adm_language__description_en" tableName="adm_language" />
+        <addUniqueConstraint columnNames="description_en" constraintName="UniqueConstraint_adm_currency__description_en" tableName="adm_currency" />
+    </changeSet>
+    
+    <changeSet id="#4765_20191112" author="MohammedELAZZOUZI">
+    	<update tableName="billing_cycle">
+	        <column name="billing_cycle_type" value="BILLINGACCOUNT"/>
+	        <where>billing_cycle_type is null</where>
+    	</update>
+        <addNotNullConstraint columnName="billing_cycle_type" tableName="billing_cycle" columnDataType="varchar(256)"/>
+    </changeSet>
+
+    <changeSet id="#4783_20191118" author="MohamedSTITANE" dbms="postgresql">
+        <sql>CREATE INDEX wo_operation_date_index ON ${db.schema.adapted}billing_wallet_operation ((operation_date::DATE))</sql>
+        <sql>CREATE INDEX edr_event_date_index ON ${db.schema.adapted}rating_edr ((event_date::DATE))</sql>
+        <sql>CREATE INDEX rt_usage_date_index ON ${db.schema.adapted}billing_rated_transaction ((usage_date::DATE))</sql>
+    </changeSet>
+
+    <changeSet id="#4412_20191125" author="MohammedELAZZOUZI">
+    	<dropColumn tableName="billing_invoice_configuration" columnName="display_charges_periods"></dropColumn>
+    	<addColumn tableName="billing_invoice_configuration">
+    		<column name="display_wallet_operations" type="${type.boolean}" defaultValueNumeric="0"/>
+    	</addColumn>
+    </changeSet>
+        
+    <changeSet id="#4795_221119" author="Mohammed_ElAzzouzi">
+  		<sql>create index billing_invoice_agregate_tax_invoice_agregate_idx on ${db.schema.adapted}billing_invoice_agregate (tax_invoice_agregate)</sql>
+		<sql>create index billing_invoice_agregate_sub_cat_invoice_agregate_id_idx on ${db.schema.adapted}billing_invoice_agregate (sub_cat_invoice_agregate_id)</sql>
+		<sql>create index ar_account_operation_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (cat_inv_agregate_id)</sql>
+		<sql>create index ar_account_operation_sub_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (sub_cat_inv_agregate_id)</sql>
+    </changeSet>
+
+    <changeSet author="abdelkader.bouazza"  id="#4494-Enable_a_subscription_to_have_the_same_access_point_in_two_or_more_different_periods_of_time">
+        <dropUniqueConstraint tableName="medina_access" constraintName="uk_lca62y5gn9qo1e6jr84i9w3lr"/>
+        <addUniqueConstraint columnNames="acces_user_id, subscription_id, start_date, end_date" constraintName="uk_lca62y5gn9qo1e6jr84i9w3lr" deferrable="false" disabled="false" initiallyDeferred="false" tableName="medina_access" />
+    </changeSet>
 </databaseChangeLog>
+

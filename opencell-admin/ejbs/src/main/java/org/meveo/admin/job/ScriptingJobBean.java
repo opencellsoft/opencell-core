@@ -83,12 +83,12 @@ public class ScriptingJobBean extends BaseJobBean {
 
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void finalize(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context)
+	public void complete(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context)
 			throws BusinessException {
 		ScriptInterface script = null;
 		try {
 			script = scriptInstanceService.getScriptInstance(scriptCode);
-			script.finalize(context);
+			script.terminate(context);
 
 		} catch (Exception e) {
 			log.error("Exception on finalize script", e);

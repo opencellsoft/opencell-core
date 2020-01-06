@@ -50,7 +50,14 @@ import org.meveo.model.catalog.CounterTypeEnum;
 @NamedQueries({
         @NamedQuery(name = "CounterPeriod.findByPeriodDate", query = "SELECT cp FROM CounterPeriod cp WHERE cp.counterInstance=:counterInstance AND cp.periodStartDate<=:date AND cp.periodEndDate>:date"),
         @NamedQuery(name = "CounterPeriod.countPeriodsToPurgeByDate", query = "select count(*) FROM CounterPeriod cp WHERE cp.periodEndDate<=:date"),
-        @NamedQuery(name = "CounterPeriod.purgePeriodsByDate", query = "delete CounterPeriod cp WHERE cp.periodEndDate<=:date") })
+        @NamedQuery(name = "CounterPeriod.purgePeriodsByDate", query = "delete CounterPeriod cp WHERE cp.periodEndDate<=:date"),
+        @NamedQuery(name = "CounterPeriod.findByCounterEntityAndPeriodDate", query = "SELECT cp FROM CounterPeriod cp "
+                + "WHERE (cp.counterInstance.serviceInstance=:serviceInstance OR cp.counterInstance.subscription=:subscription OR cp.counterInstance.billingAccount=:billingAccount OR cp.counterInstance.userAccount=:userAccount) "
+                + "AND cp.periodStartDate<=:date AND cp.periodEndDate>:date AND cp.counterInstance.code=:counterCode"),
+        @NamedQuery(name = "CounterPeriod.findByCounterEntity", query = "SELECT cp FROM CounterPeriod cp "
+                + "WHERE (cp.counterInstance.serviceInstance=:serviceInstance OR cp.counterInstance.subscription=:subscription OR cp.counterInstance.billingAccount=:billingAccount OR cp.counterInstance.userAccount=:userAccount) "
+                + "AND cp.counterInstance.code=:counterCode")
+})
 
 public class CounterPeriod extends BusinessEntity {
     private static final long serialVersionUID = -4924601467998738157L;

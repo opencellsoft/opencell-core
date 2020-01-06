@@ -20,6 +20,7 @@ package org.meveo.commons.utils;
 
 import java.lang.reflect.Field;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -729,9 +730,16 @@ public class QueryBuilder {
         if (convertToMap) {
             result.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
         }
-        for (Map.Entry<String, Object> e : params.entrySet()) {
-            result.setParameter(e.getKey(), e.getValue());
-        }
+		for (Map.Entry<String, Object> e : params.entrySet()) {
+			Object value = e.getValue();
+			if (value.getClass().isArray()) {
+				result.setParameterList(e.getKey(), (Object[]) value);
+			} else if (value instanceof Collection) {
+				result.setParameterList(e.getKey(), (Collection) value);
+			} else {
+				result.setParameter(e.getKey(), value);
+			}
+		}
 
         return result;
     }
@@ -746,9 +754,12 @@ public class QueryBuilder {
         applyOrdering(paginationSortAlias);
 
         String from = "from ";
-        String s = "select " + (alias != null ? alias + "." : "") + "id " + q.toString().substring(q.indexOf(from));
+        StringBuilder s = new StringBuilder("select ")
+                .append(alias != null ? alias + "." : "")
+                .append("id ")
+                .append(q.toString().substring(q.indexOf(from)));
 
-        TypedQuery<Long> result = em.createQuery(s, Long.class);
+        TypedQuery<Long> result = em.createQuery(s.toString(), Long.class);
         applyPagination(result);
 
         for (Map.Entry<String, Object> e : params.entrySet()) {

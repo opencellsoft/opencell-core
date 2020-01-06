@@ -34,7 +34,7 @@ public interface ScriptInterface {
      * @param methodContext Method variables in a form of a map
      * @throws BusinessException business exception.
      */
-    void finalize(Map<String, Object> methodContext) throws BusinessException;
+    void terminate(Map<String, Object> methodContext) throws BusinessException;
 
     /**
      * Get log messages related to script execution (test mode run only)

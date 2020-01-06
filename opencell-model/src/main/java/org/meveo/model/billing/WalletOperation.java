@@ -77,7 +77,7 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "WalletOperation.getWalletOperationsBilled", query = "SELECT o.id FROM WalletOperation o join o.ratedTransaction rt WHERE rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND o.id IN :walletIdList"),
         @NamedQuery(name = "WalletOperation.listByRatedTransactionId", query = "SELECT o FROM WalletOperation o WHERE o.status='TREATED' and o.ratedTransaction.id=:ratedTransactionId"),
 
-        @NamedQuery(name = "WalletOperation.listByBRId", query = "SELECT o FROM WalletOperation o WHERE o.status='TREATED' and o.ratedTransaction.billingRun.id=:brId)"),
+        @NamedQuery(name = "WalletOperation.listByBRId", query = "SELECT o FROM WalletOperation o WHERE o.status='TREATED' and o.ratedTransaction.billingRun.id=:brId"),
 
         @NamedQuery(name = "WalletOperation.listToRateIds", query = "SELECT o.id FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate )"),
         @NamedQuery(name = "WalletOperation.listToRateByBA", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.wallet.userAccount.billingAccount=:billingAccount"),
@@ -91,7 +91,7 @@ import org.meveo.model.rating.EDR;
 
         @NamedQuery(name = "WalletOperation.getOpenByWallet", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and o.wallet=:wallet"),
 
-        @NamedQuery(name = "WalletOperation.setStatusToRerate", query = "UPDATE WalletOperation o SET o.ratedTransaction=NULL, o.status='TO_RERATE', o.updated = :now "
+        @NamedQuery(name = "WalletOperation.setStatusToRerate", query = "UPDATE WalletOperation o SET o.status='TO_RERATE', o.updated = :now "
                 + " WHERE o.status='TREATED' AND o.ratedTransaction.id IN (SELECT o1.ratedTransaction.id FROM WalletOperation o1 WHERE o1.status='TREATED' and o1.id IN :notBilledWalletIdList)"),
 
         @NamedQuery(name = "WalletOperation.setStatusToCanceled", query = "UPDATE WalletOperation o SET o.status='CANCELED', o.updated = :now where o.status<>'TREATED' and o.chargeInstance=:chargeInstance"),
@@ -106,8 +106,10 @@ import org.meveo.model.rating.EDR;
 
         @NamedQuery(name = "WalletOperation.countNbrWalletsOperationByStatus", query = "select o.status, count(o.id) from WalletOperation o group by o.status"),
 
-        @NamedQuery(name = "WalletOperation.listNotOpenedWObetweenTwoDates", query = "SELECT o FROM WalletOperation o  WHERE o.status != 'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate order by o.operationDate desc"),
-        @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status<>'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate") })
+        @NamedQuery(name = "WalletOperation.listNotOpenedWObetweenTwoDates", query = "SELECT o FROM WalletOperation o WHERE o.status != 'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate and o.id >:lastId order by o.id asc"),
+        @NamedQuery(name = "WalletOperation.listWObetweenTwoDatesByStatus", query = "SELECT o FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate and o.id >:lastId order by o.id asc"),
+        @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status<>'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate"),
+        @NamedQuery(name = "WalletOperation.deleteWObetweenTwoDatesByStatus", query = "delete FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate")})
 public class WalletOperation extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

@@ -1,0 +1,19 @@
+{
+	"code": "STD_SEPA_JOB",
+	"jobTemplate": "SepaDirectDebitJob",
+	"jobCategory": "ACCOUNT_RECEIVABLES",
+	"customFields":
+	{
+ 		"customField":
+ 			[
+ 				{
+  					"code": "SepaJob_ddRequestBuilder",
+  					"entityReferenceValue":
+  					{
+     					"classname": "org.meveo.model.payments.DDRequestBuilder",
+     					"code": "Sepa_STD"
+					}
+				}
+ 			]
+	}
+}  

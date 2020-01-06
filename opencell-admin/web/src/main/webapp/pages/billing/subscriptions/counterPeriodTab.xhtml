@@ -1,13 +1,12 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/seam/faces" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org">
 
     <hftl:formPanel formId="counterAccountInfo" backingBean="#{subscriptionBean}" showFormButtons="false" edit="false" showMessages="false">
-        <hftl:formField label="#{messages['businessEntity.code']}" field="code"/>
-        <hftl:formField label="#{messages['billingAccount.status']}" field="status"/>
-        <hftl:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate"/>
-        <hftl:formField id="customerAccountSelectId" label="#{messages['billingAccount.customerAccount']}" field="userAccount.customerAccount" valueLabelField="code"/>
-        <hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate"/>
-        <hftl:formField label="#{messages['billingAccount.terminationDate']}" field="terminationDate"/>
+        <hftl:formField label="#{messages['businessEntity.code']}" field="code" componentWidth="40"/>
+        <hftl:formField label="#{messages['billingAccount.status']}" field="status" componentWidth="10"/>
+        <hftl:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" componentWidth="10"/>
+        <hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" componentWidth="20"/>
+        <hftl:formField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" componentWidth="20"/>
     </hftl:formPanel>
 
     <hftl:decorateFormPanel formId="counters" edit="false" showMessages="false">

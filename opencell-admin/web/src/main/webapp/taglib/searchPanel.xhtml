@@ -66,12 +66,12 @@
                 </h:panelGroup>
 
                 <h:panelGroup layout="block" styleClass="search-panel-actions">
-                    <p:commandButton id="buttonSearch" value="#{messages['commons.search']}" ajax="#{ajax}" action="#{backingBean.search}" update="#{ajaxUpdateIds}" />
+                    <p:commandButton id="buttonSearch" value="#{messages['commons.search']}" ajax="#{ajax}" action="#{backingBean.search}" update="#{ajaxUpdateIds}" process="@form"/>
                     <p:commandButton id="buttonAdvanced" rendered="#{renderAdvancedLink and !backingBean.advanced}" value="#{messages['commons.advancedButton']}"
-                        actionListener="#{backingBean.advancedAction}" update="@form" />
+                        actionListener="#{backingBean.advancedAction}" update="@form" process="@form"/>
                     <p:commandButton id="buttonHideAdvanced" rendered="#{renderHideAdvancedLink and backingBean.advanced}" value="#{messages['commons.hideAdvancedButton']}"
-                        actionListener="#{backingBean.advancedAction}" update="@form" />
-                    <p:commandButton value="#{messages['commons.clean']}" process="@this" update="@form" action="#{backingBean.clean}">
+                        actionListener="#{backingBean.advancedAction}" update="@form" process="@form" />
+                    <p:commandButton value="#{messages['commons.clean']}" process="@form" update="@form #{ajaxUpdateIds}" action="#{backingBean.clean}" >
                         <f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
                     </p:commandButton>
             

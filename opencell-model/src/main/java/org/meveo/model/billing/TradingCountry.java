@@ -56,7 +56,7 @@ import java.util.List;
 @Table(name = "billing_trading_country")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_trading_country_seq"), })
-@NamedQueries({ @NamedQuery(name = "TradingCountry.getByCode", query = "from TradingCountry tr where tr.country.countryCode = :tradingCountryCode) ", hints = {
+@NamedQueries({ @NamedQuery(name = "TradingCountry.getByCode", query = "from TradingCountry tr where tr.country.countryCode = :tradingCountryCode ", hints = {
         @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class TradingCountry extends EnableBusinessCFEntity {
 

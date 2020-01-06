@@ -1,5 +1,7 @@
 package org.meveo.service.index;
 
+import java.util.Arrays;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Lock;
@@ -63,7 +65,7 @@ public class ElasticClientConnection {
             hosts = restUri.split(";");
 
             if (StringUtils.isBlank(restUri) || hosts.length == 0) {
-                log.warn("Elastic search is not enabled. Current settings: hosts={}", hosts.toString());
+                log.warn("Elastic search is not enabled. Current settings: hosts={}", Arrays.toString(hosts));
 
             } else {
                 HttpHost[] httpHosts = new HttpHost[hosts.length];

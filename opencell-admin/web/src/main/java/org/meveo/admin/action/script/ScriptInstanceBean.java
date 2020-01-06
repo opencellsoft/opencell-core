@@ -75,7 +75,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     private String logMessages;
 
     public void initCompilationErrors() {
-        if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
+        if (facesContext.getPartialViewContext().isAjaxRequest()) {
             return;
         }
         if (getObjectId() == null) {

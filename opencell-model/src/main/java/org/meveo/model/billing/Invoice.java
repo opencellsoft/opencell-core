@@ -1035,7 +1035,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     @Override
     public String getCode() {
-        return invoiceNumber;
+        return getInvoiceNumber();
     }
 
     @Override
@@ -1045,7 +1045,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     @Override
     public String getDescription() {
-        return alias;
+        return getAlias();
     }
 
     @Override

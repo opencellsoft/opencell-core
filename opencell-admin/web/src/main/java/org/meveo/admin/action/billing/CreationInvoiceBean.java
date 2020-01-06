@@ -393,8 +393,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         OutputStream out = null;
         InputStream fin = null;
         try {
-            javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
-            HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
+            HttpServletResponse res = (HttpServletResponse) facesContext.getExternalContext().getResponse();
             res.setContentType("application/force-download");
             res.setContentLength((int) file.length());
             res.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");
@@ -410,7 +409,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             fin.close();
             out.flush();
             out.close();
-            context.responseComplete();
+            facesContext.responseComplete();
             log.info("File made available for download");
         } catch (Exception e) {
             log.error("Error: {}, when dowload file: {}", e.getMessage(), file.getAbsolutePath());
@@ -569,7 +568,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     rtCopy.changeStatus(RatedTransactionStatusEnum.BILLED);
                     rtCopy.setInvoice(invoiceCopy);
                     rtCopy.setInvoiceAgregateF(subCatInvAggrCopy);
-                    
+
                     ratedTransactionCopy.add(rtCopy);
                 }
             }
@@ -715,7 +714,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                             rt.getQuantity(), null, null, null, RatedTransactionStatusEnum.BILLED, rt.getWallet(), ua.getBillingAccount(), null, rt.getInvoiceSubCategory(),
                             rt.getParameter1(), rt.getParameter2(), rt.getParameter3(), null, rt.getOrderNumber(), null, null, null, null, null, null, rt.getCode(),
                             rt.getDescription(), rt.getStartDate(), rt.getEndDate(), rt.getSeller(), null, null, null);
-        
+
                         newRT.setInvoice(entity);
 
                         aggregateHandler.addRT(newRT, rt.getInvoiceSubCategory().getDescription(), getFreshUA());

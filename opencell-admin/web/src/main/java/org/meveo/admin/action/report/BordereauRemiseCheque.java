@@ -90,6 +90,9 @@ public class BordereauRemiseCheque {
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
+    @Inject
+    private FacesContext facesContext;
+    
     private Date date = new Date();
 
     public void generateReport() throws BusinessEntityException {
@@ -102,8 +105,7 @@ public class BordereauRemiseCheque {
             JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
             File dataSourceFile = generateDataFile(occCodes);
             if (dataSourceFile != null) {
-                FacesContext context = FacesContext.getCurrentInstance();
-                HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+                HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
                 response.setContentType("application/pdf"); // fill in
                 response.setHeader("Content-disposition", "attachment; filename=" + generateFileName());
 
@@ -117,7 +119,7 @@ public class BordereauRemiseCheque {
                     JasperExportManager.exportReportToPdfStream(jasperPrint, os);
                     os.flush();
                     os.close();
-                    context.responseComplete();
+                    facesContext.responseComplete();
                 } catch (IOException e) {
                     log.error("failed to export report too PdfStream", e);
                 }

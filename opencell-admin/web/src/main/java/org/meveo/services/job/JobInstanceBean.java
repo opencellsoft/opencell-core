@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -235,7 +236,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     /**
      * Get execution history lazy data model
-     * 
+     *
      * @return Execution history lazy data model
      */
     public ServiceBasedLazyDataModel<JobExecutionResultImpl> getExecutionHistory() {

@@ -20,7 +20,7 @@ import org.meveo.commons.utils.StringUtils;
  * @lastModifiedVersion 5.0
  * 
  **/
-@FacesValidator("codeValidator")
+@FacesValidator(value = "codeValidator", managed = true)
 public class CodeValidator implements Validator {
 
     @Inject

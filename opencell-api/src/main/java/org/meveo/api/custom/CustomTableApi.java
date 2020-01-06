@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
@@ -121,6 +122,9 @@ public class CustomTableApi extends BaseApi {
     public void createOrUpdate(CustomTableDataDto dto) throws MeveoApiException, BusinessException {
     	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode());  put("values", dto.getValues());}};
     	validateParams(toValidate);
+    	if (dto.getOverwrite() == null) {
+            dto.setOverwrite(false);
+        }
         CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
         Map<Boolean, List<CustomTableRecordDto>> partitionedById = dto.getValues().stream().collect(Collectors.partitioningBy(x->x.getValues().get(FIELD_ID)!=null));
@@ -154,16 +158,23 @@ public class CustomTableApi extends BaseApi {
         if (pagingAndFiltering == null) {
             pagingAndFiltering = new PagingAndFiltering();
         }
+        
         CustomEntityTemplate cet = customTableService.getCET(customTableCode);
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
-        pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
-        List<String> fields = pagingAndFiltering.getFields()!=null?Arrays.asList(pagingAndFiltering.getFields().split(",")):null;
-		PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, null);
-        Long totalCount = customTableService.count(cet.getDbTablename(), paginationConfig);
         CustomTableDataResponseDto result = new CustomTableDataResponseDto();
         result.setPaging(pagingAndFiltering);
-        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
         result.getCustomTableData().setCustomTableCode(customTableCode);
+        List<String> fields = pagingAndFiltering.getFields()!=null?Arrays.asList(pagingAndFiltering.getFields().split(",")):null;
+ 		PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, cfts);
+		try {
+			pagingAndFiltering.setFilters(
+					customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
+		} catch (ElementNotFoundException e) {
+			pagingAndFiltering.setTotalNumberOfRecords(0);
+			return result;
+		}
+        Long totalCount = customTableService.count(cet.getDbTablename(), paginationConfig);
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
         List<Map<String, Object>> list = customTableService.list(cet.getDbTablename(), paginationConfig);
         customTableService.completeWithEntities(list, cfts, pagingAndFiltering.getLoadReferenceDepth());
         result.getCustomTableData().setValuesFromListofMap(list);

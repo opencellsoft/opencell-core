@@ -58,6 +58,9 @@ public class InvoiceConfigurationDto implements Serializable {
     private Boolean displayOrders;
     
     private Long currentInvoiceNb = 0L;
+    
+    /** display wallet operations. */
+    private Boolean displayWalletOperations = false;
 
     /**
      * Instantiates a new invoice configuration dto.
@@ -79,10 +82,10 @@ public class InvoiceConfigurationDto implements Serializable {
         displayCfAsXML = invoiceConfiguration.getDisplayCfAsXML();
         displayPricePlans = invoiceConfiguration.getDisplayPricePlans();
         displayDetail = invoiceConfiguration.getDisplayDetail();
-        displayChargesPeriods = invoiceConfiguration.getDisplayChargesPeriods();
         displayBillingCycle = invoiceConfiguration.getDisplayBillingCycle();
         displayOrders = invoiceConfiguration.getDisplayOrders();
         currentInvoiceNb = invoiceConfiguration.getCurrentInvoiceNb();
+        displayWalletOperations=invoiceConfiguration.getDisplayWalletOperations();
     }
 
     /**
@@ -316,12 +319,20 @@ public class InvoiceConfigurationDto implements Serializable {
     public void setCurrentInvoiceNb(Long currentInvoiceNb) {
         this.currentInvoiceNb = currentInvoiceNb;
     }
+    
+    public Boolean getDisplayWalletOperations() {
+		return displayWalletOperations;
+	}
+
+	public void setDisplayWalletOperations(Boolean displayWalletOperations) {
+		this.displayWalletOperations = displayWalletOperations;
+	}
 
     @Override
     public String toString() {
         return "InvoiceConfigurationDto [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers
                 + ", displayEdrs=" + displayEdrs + ", displayPricePlans=" + displayPricePlans + ", displayCfAsXML=" + displayCfAsXML + ", displayProvider=" + displayProvider
                 + ", displayDetail=" + displayDetail + ", displayChargesPeriods=" + displayChargesPeriods + ", displayFreeTransacInInvoice=" + displayFreeTransacInInvoice
-                + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders=" + displayOrders + ",currentInvoiceNb="+currentInvoiceNb+"]";
+                + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders=" + displayOrders + ",currentInvoiceNb="+currentInvoiceNb+ ",displayWalletOperations="+displayWalletOperations+"]";
     }
 }

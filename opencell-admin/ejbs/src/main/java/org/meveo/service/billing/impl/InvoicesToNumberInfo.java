@@ -1,6 +1,7 @@
 package org.meveo.service.billing.impl;
 
 import java.util.Date;
+import java.util.Objects;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
@@ -83,8 +84,8 @@ public class InvoicesToNumberInfo {
      * @throws BusinessException business exception.
      */
     public synchronized String nextInvoiceNumber() throws BusinessException {
-        lastInvoiceNumber++;
-        if (lastInvoiceNumber.longValue() > numberingSequence.getCurrentInvoiceNb()) {
+        lastInvoiceNumber = Objects.requireNonNullElse(lastInvoiceNumber, 0).longValue() + 1;
+        if (lastInvoiceNumber > numberingSequence.getCurrentInvoiceNb()) {
             throw new BusinessException("Can not assign an invoice number beyond the number " + numberingSequence.getCurrentInvoiceNb() + " that was reseved");
         }
         return StringUtils.getLongAsNChar(lastInvoiceNumber, numberingSequence.getSequenceSize());

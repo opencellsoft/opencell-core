@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,6 +38,9 @@ import org.slf4j.LoggerFactory;
 public class MonitoringBean implements Serializable {
 
     private org.slf4j.Logger log = LoggerFactory.getLogger(this.getClass());
+    
+    @Inject
+    protected FacesContext facesContext;
 
     private static final long serialVersionUID = 1L;
     private static String versionOutput = null;
@@ -200,8 +204,7 @@ public class MonitoringBean implements Serializable {
     public String getDocUrl() {
         String result = "";
         try {
-            FacesContext ctx = FacesContext.getCurrentInstance();
-            HttpServletRequest servletRequest = (HttpServletRequest) ctx.getExternalContext().getRequest();
+            HttpServletRequest servletRequest = (HttpServletRequest) facesContext.getExternalContext().getRequest();
             String fullURI = servletRequest.getRequestURI();
             if (docUrlMap.containsKey(fullURI)) {
                 result = docUrlMap.get(fullURI);

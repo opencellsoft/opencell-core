@@ -52,7 +52,7 @@ import org.meveo.model.admin.Currency;
 @Table(name = "billing_trading_currency")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_trading_currency_seq"), })
-@NamedQueries({ @NamedQuery(name = "TradingCurrency.getByCode", query = "from TradingCurrency tr where tr.currency.currencyCode = :tradingCurrencyCode) ", hints = {
+@NamedQueries({ @NamedQuery(name = "TradingCurrency.getByCode", query = "from TradingCurrency tr where tr.currency.currencyCode = :tradingCurrencyCode ", hints = {
         @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class TradingCurrency extends EnableEntity {
     private static final long serialVersionUID = 1L;

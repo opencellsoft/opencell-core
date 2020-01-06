@@ -200,7 +200,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         } catch (Exception e) {
             log.error("Failed to load quote item for edit", e);
             messages.error(new BundleKey("messages", "quote.quoteItemEdit.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
         }
     }
 
@@ -368,7 +368,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         } catch (Exception e) {
             log.error("Failed to save quote item ", e);
             messages.error(new BundleKey("messages", "quote.quoteItemSaved.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
         }
     }
 
@@ -400,7 +400,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                 UserAccount itemUa = userAccountService.retrieveIfNotManaged(quoteItem.getUserAccount());
                 if (billingAccount != null && !billingAccount.equals(itemUa.getBillingAccount())) {
                     messages.error(new BundleKey("messages", "quote.billingAccountMissmatch"));
-                    FacesContext.getCurrentInstance().validationFailed();
+                    facesContext.validationFailed();
                     return null;
                 }
             }
@@ -433,7 +433,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         } catch (BusinessException e) {
             log.error("Failed to send quote for processing ", e);
             messages.error(new BundleKey("messages", "quote.sendToProcess.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
         }
 
         return null;

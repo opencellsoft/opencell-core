@@ -6,7 +6,7 @@
 		<groupId>com.opencellsoft</groupId>
 		<artifactId>opencell</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>9.0.0-SNAPSHOT</version>
+		<version>9.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>opencell-api-dto</artifactId>
 	<name>Opencell API DTO</name>
@@ -64,6 +64,21 @@
 
 	<build>
 		<plugins>
+		<plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <useIncrementalCompilation>false</useIncrementalCompilation>
+                    	<release>11</release>
+                    </configuration>
+                   	<dependencies>
+                    	<dependency>
+								<groupId>org.ow2.asm</groupId>
+								<artifactId>asm</artifactId>
+								<version>7.2</version>
+							</dependency>
+					</dependencies>
+                </plugin>         
+                
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>

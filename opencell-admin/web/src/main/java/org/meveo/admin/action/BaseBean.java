@@ -51,8 +51,8 @@ import org.meveo.util.view.ESBasedDataModel;
 import org.meveo.util.view.PagePermission;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.omnifaces.cdi.Param;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.LazyDataModel;
@@ -123,7 +123,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
 
     @Inject
-    private ElasticClient elasticClient;
+    private ElasticClient elasticClient;   
+
+    @Inject
+    protected FacesContext facesContext;
 
     /** Search filters. */
     protected Map<String, Object> filters = new HashMap<>();
@@ -287,11 +290,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             List<String> formFieldsToFetch = getFormFieldsToFetch();
 
             if (formFieldsToFetch == null) {
-                entity = (T) getPersistenceService().findById(getObjectId());
+                entity = (T) getPersistenceService().findById(getObjectId(), true);
             } else {
-                entity = (T) getPersistenceService().findById(getObjectId(), formFieldsToFetch);
+                entity = (T) getPersistenceService().findById(getObjectId(), formFieldsToFetch, true);
             }
-
             loadPartOfModules();
 
         } else {
@@ -467,7 +469,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             result = false;
         }
 
-        RequestContext.getCurrentInstance().addCallbackParam("result", result);
+        PrimeFaces.current().ajax().addCallbackParam("result", result);
         return null;
     }
 
@@ -482,10 +484,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         try {
             String result = saveOrUpdate(false);
             if (result == null) {
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
             }
         } catch (BusinessException e) {
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
             throw e;
         }
 
@@ -545,7 +547,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     public String getTranslation(Object fieldValue, String defaultValue) {
         if (fieldValue instanceof Map<?, ?>) {
-            String lang = FacesContext.getCurrentInstance().getViewRoot().getLocale().getISO3Language().toUpperCase();
+            String lang = facesContext.getViewRoot().getLocale().getISO3Language().toUpperCase();
             Map<String, String> translationMap = (Map<String, String>) fieldValue;
 
             if (translationMap.isEmpty() || StringUtils.isBlank(translationMap.get(lang))) {
@@ -698,7 +700,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                     } else {
                         messages.error(new BundleKey("messages", "error.delete.entityUsed"));
                     }
-                    FacesContext.getCurrentInstance().validationFailed();
+                    facesContext.validationFailed();
                     return false;
                 }
                 cause = cause.getCause();
@@ -1186,7 +1188,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return Currently active locale
      */
     public Locale getCurrentLocale() {
-        return FacesContext.getCurrentInstance().getViewRoot().getLocale();
+        return facesContext.getViewRoot().getLocale();
     }
 
     /**
@@ -1398,7 +1400,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         if (this.writeAccessMap == null) {
             writeAccessMap = Collections.synchronizedMap(new HashMap<String, Boolean>());
         }
-        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        ExternalContext context = facesContext.getExternalContext();
         HttpServletRequest request = (HttpServletRequest) context.getRequest();
         String requestURI = request.getRequestURI();
 
@@ -1522,19 +1524,26 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
             boolean isBusinessEntity = BusinessEntity.class.isAssignableFrom(classFieldInfo.getKey());
 
-            String sql = "select " + (isBusinessEntity ? "code" : "id") + " from " + classFieldInfo.getKey().getName() + " where ";
+            StringBuilder sql = new StringBuilder("select ")
+                    .append(isBusinessEntity ? "code" : "id")
+                    .append(" from ")
+                    .append(classFieldInfo.getKey().getName())
+                    .append(" where ");
+            
             boolean fieldAddedToSql = false;
             for (Field field : classFieldInfo.getValue()) {
                 // For now lets ignore list type fields
                 if (field.getType() == entityClass) {
-                    sql = sql + (fieldAddedToSql ? " or " : " ") + field.getName() + "=:id";
+                    sql.append(fieldAddedToSql ? " or " : " ")
+                    .append(field.getName())
+                    .append("=:id");
                     fieldAddedToSql = true;
                 }
             }
 
             if (fieldAddedToSql) {
 
-                List entitiesMatched = getPersistenceService().getEntityManager().createQuery(sql).setParameter("id", referencedEntity).setMaxResults(10).getResultList();
+                List entitiesMatched = getPersistenceService().getEntityManager().createQuery(sql.toString()).setParameter("id", referencedEntity).setMaxResults(10).getResultList();
                 if (!entitiesMatched.isEmpty()) {
 
                     matchedEntityInfo = (matchedEntityInfo == null ? "" : matchedEntityInfo + "; ") + ReflectionUtils.getHumanClassName(classFieldInfo.getKey().getSimpleName())

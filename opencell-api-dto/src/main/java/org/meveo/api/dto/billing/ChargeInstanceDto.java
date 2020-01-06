@@ -6,12 +6,15 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.ChargeInstance;
 
 /**
  * The Class ChargeInstanceDto.
  *
  * @author Edward P. Legaspi
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 8.2.2
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChargeInstanceDto extends BusinessEntityDto {
@@ -35,6 +38,9 @@ public class ChargeInstanceDto extends BusinessEntityDto {
 
     /** The user account code. */
     private String userAccountCode;
+
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
 
     /**
      * Instantiates a new charge instance dto.
@@ -65,6 +71,17 @@ public class ChargeInstanceDto extends BusinessEntityDto {
                 this.userAccountCode = chargeInstance.getUserAccount().getCode();
             }
         }
+    }
+
+    /**
+     * Instantiates a new charge instance dto.
+     *
+     * @param chargeInstance the ChargeInstance entity
+     * @param customFieldInstances the customFieldDto entity
+     */
+    public ChargeInstanceDto(ChargeInstance chargeInstance, CustomFieldsDto customFieldInstances) {
+        this(chargeInstance);
+        customFields = customFieldInstances;
     }
 
     /**

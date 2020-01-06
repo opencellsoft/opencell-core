@@ -6,6 +6,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.apiv2.generic.ImmutableGenericPaginatedResource;
 import org.meveo.apiv2.services.generic.JsonGenericApiMapper.JsonGenericMapper;
+import org.meveo.model.admin.FileFormat;
+import org.meveo.model.admin.FileType;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -38,7 +40,6 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 
 import static org.junit.Assert.assertTrue;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -47,7 +48,7 @@ public class JsonGenericMapperTest {
 
     @Before
     public void setUp() {
-        jsonGenericMapper = new JsonGenericMapper(null);
+        jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().build();
     }
 
     @Test
@@ -70,7 +71,7 @@ public class JsonGenericMapperTest {
         fields.addAll(Arrays.asList("id"));
         String expected = jsonGenericMapper.toJson(fields, Customer.class, param);
         //Then
-        assertThat(expected).isEqualTo("[{\"id\":0},{\"id\":1},{\"id\":2}]");
+        assertThat(expected).isEqualTo("[0,1,2]");
     }
 
     @Test
@@ -224,7 +225,7 @@ public class JsonGenericMapperTest {
 
     @Test
     public void should_return_only_ids_of_referenced_entities_code() {
-        JsonGenericMapper jsonGenericMapper1 = new JsonGenericMapper(null);
+        JsonGenericMapper jsonGenericMapper1 = JsonGenericMapper.Builder.getBuilder().build();
         //Given
         OfferTemplate offerTemplate=new OfferTemplate();
         OfferTemplate offerTemplate1=new OfferTemplate();
@@ -257,7 +258,7 @@ public class JsonGenericMapperTest {
     public void should_return_the_fields_of_referenced_entities_code() {
         HashSet<String> nestedEntities = new HashSet<>();
         nestedEntities.add("channels");
-        JsonGenericMapper jsonGenericMapper1 = new JsonGenericMapper(nestedEntities);
+        JsonGenericMapper jsonGenericMapper1 = JsonGenericMapper.Builder.getBuilder().withNestedEntities(nestedEntities).build();
         //Given
         OfferTemplate offerTemplate=new OfferTemplate();
 
@@ -296,7 +297,21 @@ public class JsonGenericMapperTest {
         //When
         HashSet<String> fields = new HashSet<>();
         String transform = jsonGenericMapper.toJson(fields, Subscription.class, subscription);
-        assertTrue(transform.contains("\"serviceInstances\":[{\"id\":456"));
+        assertTrue(transform.contains("\"serviceInstances\":[456]"));
+    }
+    @Test
+    public void should_correctly_parse_referenced_ids_From_Json() throws IOException {
+        //Given
+        JsonGenericMapper jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().build();
+        String jsonDto = "{\"code\":\"test\", \"fileTypes\":[5], \"inputDirectory\":\"/test\"}";
+        //When
+        FileType databaseFetchedFileType = new FileType();
+        databaseFetchedFileType.setId(5L);
+        databaseFetchedFileType.setCode("test");
+        databaseFetchedFileType.setDescription("test descr");
+
+        FileFormat resultingEntity = (FileFormat) jsonGenericMapper.parseFromJson(jsonDto, FileFormat.class);
+        assertTrue(resultingEntity.getFileTypes().get(0).getId().equals(5l));
     }
     private Date getDefaultDate() {
         return Date.from(LocalDate.of(2019, 01, 01).atStartOfDay(ZoneId.systemDefault()).toInstant());

@@ -67,17 +67,20 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
     public List<String> getDimensionList(int dimensionIndex, Date fromDate, Date toDate, MeasurableQuantity mq) {
         List<String> result = new ArrayList<>();
         Calendar end = Calendar.getInstance();
-        // result.add("");
+        Calendar start = Calendar.getInstance();
         String dimension = "dimension" + dimensionIndex;
-        String sqlQuery = "SELECT DISTINCT(mv." + dimension + ") FROM " + MeasuredValue.class.getName() + " mv WHERE mv.measurableQuantity=" + mq.getId() + " ";
+        StringBuilder sqlQuery = new StringBuilder("SELECT DISTINCT(mv.")
+                .append(dimension)
+                .append(") FROM ")
+                .append(MeasuredValue.class.getName())
+                .append(" mv WHERE mv.measurableQuantity= :measurableQuantity ");
         if (fromDate != null) {
-            Calendar start = Calendar.getInstance();
             start.setTime(fromDate);
             start.set(Calendar.HOUR, 0);
             start.set(Calendar.MINUTE, 0);
             start.set(Calendar.SECOND, 0);
             start.set(Calendar.MILLISECOND, 0);
-            sqlQuery += " AND (mv.date >= '" + start.getTime() + "')";
+            sqlQuery.append(" AND (mv.date >= :start)");
         }
         if (toDate != null) {
             end.setTime(toDate);
@@ -85,11 +88,20 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
             end.set(Calendar.MINUTE, 0);
             end.set(Calendar.SECOND, 0);
             end.set(Calendar.MILLISECOND, 0);
-            sqlQuery += " AND (mv.date < '" + end.getTime() + "')";
+            sqlQuery.append(" AND (mv.date < :end)");
         }
-        sqlQuery += " AND mv.measurementPeriod = '" + mq.getMeasurementPeriod() + "' ";
-        sqlQuery += " ORDER BY mv." + dimension + " ASC";
-        Query query = getEntityManager().createQuery(sqlQuery);
+        sqlQuery.append(" AND mv.measurementPeriod = :measurementPeriod ");
+        sqlQuery.append(" ORDER BY :dimension ASC");
+        Query query = getEntityManager().createQuery(sqlQuery.toString())
+                .setParameter("dimension", "mv." + dimension)
+                .setParameter("measurableQuantity", mq.getId())
+                .setParameter("measurementPeriod", mq.getMeasurementPeriod());
+        if (fromDate != null) {
+            query.setParameter("start", start.getTime());
+        }
+        if (toDate != null) {
+            query.setParameter("end", end.getTime());
+        }
         List resultList = query.getResultList();
         if (resultList != null) {
             for (Object res : resultList) {

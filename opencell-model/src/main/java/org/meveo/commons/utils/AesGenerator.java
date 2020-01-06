@@ -7,29 +7,22 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.KeyGenerator;
 
-import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class AesGenerator {
-
-	private static final Logger log = LoggerFactory.getLogger(AesGenerator.class);
 
 	public static void writeToFile(String path, byte[] key) throws IOException {
 		File f = new File(path);
 		f.getParentFile().mkdirs();
 
-		FileOutputStream fos = new FileOutputStream(f);
-		fos.write(key);
-		fos.flush();
-		fos.close();
+		try (FileOutputStream fos = new FileOutputStream(f)) {
+			fos.write(key);
+			fos.flush();
+		}
 	}
 
 	public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
 
 		KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
 		keyGenerator.init(256);
-		String key = Base64.encodeBase64String(keyGenerator.generateKey().getEncoded());
 		writeToFile("AESP/aesKey", keyGenerator.generateKey().getEncoded());
 		
 

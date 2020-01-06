@@ -35,8 +35,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -129,12 +127,9 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
-import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.WriteOff;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -3085,65 +3080,64 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             if (discountValue != null) {
                 if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-                    discountAmount = amount.multiply(discountValue.divide(HUNDRED)).setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
+                    discountAmount = amount.abs().multiply(discountValue.negate().divide(HUNDRED)).setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
                 } else {
                     discountAmount = discountValue.negate().setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode());
                 }
-            }
-            if (discountAmount != null && amount.compareTo(BigDecimal.ZERO) > 0) {
-                discountAmount = discountAmount.negate();
-            }
 
-            if (discountAmount != null && discountAmount.abs().negate().compareTo(BigDecimal.ZERO) < 0) {
-                discountAggregate = new SubCategoryInvoiceAgregate(scAggregate.getInvoiceSubCategory(), billingAccount, scAggregate.getUserAccount(), scAggregate.getWallet(),
-                    scAggregate.getTax(), invoice, null);
-
-                discountAggregate.updateAudit(currentUser);
-                discountAggregate.setItemNumber(scAggregate.getItemNumber());
-                discountAggregate.setCategoryInvoiceAgregate(cAggregate);
-
-                discountAggregate.setDiscountAggregate(true);
-                if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
-                    discountAggregate.setDiscountPercent(discountValue);
+                if (!((discountAmount.compareTo(BigDecimal.ZERO) < 0 && amount.compareTo(BigDecimal.ZERO) < 0)
+                        || (discountAmount.compareTo(BigDecimal.ZERO) > 0 && amount.compareTo(BigDecimal.ZERO) > 0))) {
+                    if (discountAmount.abs().compareTo(amount.abs()) > 0) {
+                        discountAmount = amount.negate();
+                    }
                 }
-                discountAggregate.setDiscountPlanItem(discountPlanItem);
-                discountAggregate.setDescription(discountPlanItem.getCode());
 
-                amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, scAggregate.getTaxPercent(), isEnterprise, invoiceRounding,
-                    invoiceRoundingMode.getRoundingMode());
+                if (discountAmount != null && discountAmount.compareTo(BigDecimal.ZERO) != 0) {
+                    discountAggregate = new SubCategoryInvoiceAgregate(scAggregate.getInvoiceSubCategory(), billingAccount, scAggregate.getUserAccount(), scAggregate.getWallet(),
+                        scAggregate.getTax(), invoice, null);
 
-                discountAggregate.setAmountWithoutTax(amounts[0]);
-                discountAggregate.setAmountWithTax(amounts[1]);
-                discountAggregate.setAmountTax(amounts[2]);
+                    discountAggregate.updateAudit(currentUser);
+                    discountAggregate.setItemNumber(scAggregate.getItemNumber());
+                    discountAggregate.setCategoryInvoiceAgregate(cAggregate);
 
-                invoice.addInvoiceAggregate(discountAggregate);
-                return discountAggregate;
+                    discountAggregate.setDiscountAggregate(true);
+                    if (discountPlanItem.getDiscountPlanItemType().equals(DiscountPlanItemTypeEnum.PERCENTAGE)) {
+                        discountAggregate.setDiscountPercent(discountValue);
+                    }
+                    discountAggregate.setDiscountPlanItem(discountPlanItem);
+                    discountAggregate.setDescription(discountPlanItem.getCode());
+
+                    amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, scAggregate.getTaxPercent(), isEnterprise, invoiceRounding,
+                        invoiceRoundingMode.getRoundingMode());
+
+                    discountAggregate.setAmountWithoutTax(amounts[0]);
+                    discountAggregate.setAmountWithTax(amounts[1]);
+                    discountAggregate.setAmountTax(amounts[2]);
+
+                    invoice.addInvoiceAggregate(discountAggregate);
+                    return discountAggregate;
+                }
             }
         }
         return null;
     }
 
     private BigDecimal getDiscountValue(Invoice invoice, SubCategoryInvoiceAgregate scAggregate, BigDecimal amount, DiscountPlanItem discountPlanItem) {
-        BigDecimal discountValue = discountPlanItem.getDiscountValue();
+        BigDecimal computedDiscount = discountPlanItem.getDiscountValue();
 
         final String dpValueEL = discountPlanItem.getDiscountValueEL();
         if (isNotBlank(dpValueEL)) {
             final BigDecimal evalDiscountValue = evaluateDiscountPercentExpression(dpValueEL, scAggregate.getUserAccount(), scAggregate.getWallet(), invoice, amount);
-            log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(), discountValue, amount);
-            if (discountValue != null) {
-                discountValue = evalDiscountValue;
+            log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(), computedDiscount, amount);
+            if (computedDiscount != null) {
+                computedDiscount = evalDiscountValue;
             }
         }
-        if (discountValue == null || amount == null) {
+        if (computedDiscount == null || amount == null) {
             return BigDecimal.ZERO;
         }
-        if (discountValue.compareTo(BigDecimal.ZERO) < 0 && amount.compareTo(BigDecimal.ZERO) < 0 && discountValue.compareTo(HUNDRED.negate()) < 0) {
-            discountValue = HUNDRED.negate();
-        }
-        if (discountValue.compareTo(BigDecimal.ZERO) > 0 && amount.compareTo(BigDecimal.ZERO) > 0 && discountValue.compareTo(HUNDRED) > 0) {
-            discountValue = HUNDRED;
-        }
-        return discountValue;
+
+        return computedDiscount;
     }
 
     private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, List<DiscountPlanInstance> discountPlanInstances, Invoice invoice,
@@ -3337,7 +3331,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Create an invoice from an InvoiceDto
-     * 
+     *
      * @param invoiceDTO
      * @param seller
      * @param billingAccount
@@ -3374,7 +3368,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     throw new EntityDoesNotExistsException(UserAccount.class, catInvAgrDto.getUserAccountCode());
                 } else if (!userAccount.getBillingAccount().equals(billingAccount)) {
                     throw new InvalidParameterException(
-                        "User account code " + catInvAgrDto.getUserAccountCode() + " does not correspond to a Billing account " + billingAccount.getCode());
+                            "User account code " + catInvAgrDto.getUserAccountCode() + " does not correspond to a Billing account " + billingAccount.getCode());
                 }
             } else {
                 userAccount = billingAccount.getUsersAccounts().get(0);
@@ -3434,17 +3428,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
 
                         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(tempAmountWithoutTax, tempAmountWithTax, tax.getPercent(), isEnterprise, invoiceRounding,
-                            invoiceRoundingMode.getRoundingMode());
+                                invoiceRoundingMode.getRoundingMode());
 
                         BigDecimal amountWithoutTax = amounts[0];
                         BigDecimal amountWithTax = amounts[1];
                         BigDecimal amountTax = amounts[2];
 
                         RatedTransaction meveoRatedTransaction = new RatedTransaction(ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(),
-                            ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax,
-                            amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, userAccount, invoiceSubCategory, null, null, null, null, null,
-                            null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(),
-                            ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null);
+                                ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax,
+                                amountWithTax, amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, userAccount, invoiceSubCategory, null, null,
+                                null, null, null, null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(),
+                                ratedTransactionDto.getDescription(), ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null);
 
                         meveoRatedTransaction.setWallet(userAccount.getWallet());
                         // #3355 : setting params 1,2,3
@@ -3491,8 +3485,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 } else {
                     // we add subCatAmountWithoutTax, in the case if there any opened RT to include
-                    BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(subCatInvAgrDTO.getAmountWithoutTax(), subCatInvAgrDTO.getAmountWithTax(), tax.getPercent(),
-                        isEnterprise, invoiceRounding, invoiceRoundingMode.getRoundingMode());
+                    BigDecimal[] amounts = NumberUtils
+                            .computeDerivedAmounts(subCatInvAgrDTO.getAmountWithoutTax(), subCatInvAgrDTO.getAmountWithTax(), tax.getPercent(), isEnterprise, invoiceRounding,
+                                    invoiceRoundingMode.getRoundingMode());
 
                     invoiceAgregateSubcat.setAmountWithoutTax(amounts[0]);
                     invoiceAgregateSubcat.setAmountWithTax(amounts[1]);
@@ -3501,7 +3496,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 // Save invoice subcategory and associate rated transactions
                 List<RatedTransaction> ratedTransactions = invoiceAgregateSubcat.getRatedtransactionsToAssociate();
-                em.persist(invoiceAgregateSubcat);
+                if (invoice.getId() == null) {
+                    create(invoice);
+                } else {
+                    em.persist(invoiceAgregateSubcat);
+                }
+
                 for (RatedTransaction ratedTransaction : ratedTransactions) {
                     if (ratedTransaction.getId() == null) {
                         em.persist(ratedTransaction);
@@ -3537,8 +3537,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 catAmountWithoutTax = catAmountWithoutTax.add(invoiceAgregateSubcat.getAmountWithoutTax());
                 catAmountTax = catAmountTax.add(invoiceAgregateSubcat.getAmountTax());
                 catAmountWithTax = catAmountWithTax.add(invoiceAgregateSubcat.getAmountWithTax());
-            }
 
+            }
+            em.flush();
             invoiceAgregateCat.setAmountWithoutTax(catAmountWithoutTax);
             invoiceAgregateCat.setAmountTax(catAmountTax);
             invoiceAgregateCat.setAmountWithTax(catAmountWithTax);
@@ -3562,7 +3563,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             netToPay = invoice.getAmountWithTax().add(round(balance, invoiceRounding, invoiceRoundingMode));
         }
         invoice.setNetToPay(netToPay);
-
+        if (invoiceDTO.isAutoValidation() == null || invoiceDTO.isAutoValidation()) {
+            invoice = serviceSingleton.assignInvoiceNumberVirtual(invoice);
+        }
         this.postCreate(invoice);
         return invoice;
 
@@ -3577,7 +3580,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setDueDate(invoiceDTO.getDueDate());
         invoice.setDraft(invoiceDTO.isDraft());
         invoice.setAlreadySent(invoiceDTO.isCheckAlreadySent());
-        if(invoiceDTO.isCheckAlreadySent()) {
+        if (invoiceDTO.isCheckAlreadySent()) {
             invoice.setStatus(InvoiceStatusEnum.SENT);
         } else {
             invoice.setStatus(InvoiceStatusEnum.CREATED);
@@ -3600,9 +3603,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.getLinkedInvoices().add(invoiceTmp);
             }
         }
-        if (invoiceDTO.isAutoValidation() == null || invoiceDTO.isAutoValidation()) {
-            invoice = serviceSingleton.assignInvoiceNumber(invoice);
-        }
+
+
         return invoice;
     }
 
@@ -3612,7 +3614,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param billingRun Billing run
      */
     public void deleteInvoices(BillingRun billingRun) {
-        getEntityManager().createNamedQuery("Invoice.deleteByBR").setParameter("billingRun", billingRun).executeUpdate();
+        getEntityManager().createNamedQuery("Invoice.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
     }
 
     /**

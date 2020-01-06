@@ -1,0 +1,9 @@
+{
+    "code": "TEST",
+	"description": "123",
+	"disabled": false,
+	"chartOfAccountTypeEnum": "ASSETS",
+	"chartOfAccountViewTypeEnum": "REGULAR",
+	"migrated": false
+}
+				

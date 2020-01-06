@@ -62,8 +62,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
     // private SimpleDateFormat sdf = new SimpleDateFormat(param.getProperty("excelImport.dateFormat", "dd/MM/yyyy"));
 
-    @Override
-    public void create(PricePlanMatrix pp) throws BusinessException {
+    public void createPP(PricePlanMatrix pp) throws BusinessException {
 
         pp.setCriteria1Value(StringUtils.stripToNull(pp.getCriteria1Value()));
         pp.setCriteria2Value(StringUtils.stripToNull(pp.getCriteria2Value()));
@@ -71,8 +70,26 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         pp.setCriteriaEL(StringUtils.stripToNull(pp.getCriteriaEL()));
         pp.setAmountWithoutTaxEL(StringUtils.stripToNull(pp.getAmountWithoutTaxEL()));
         pp.setAmountWithTaxEL(StringUtils.stripToNull(pp.getAmountWithTaxEL()));
+        validatePricePlan(pp);
+        create(pp);
+    }
 
-        super.create(pp);
+    private void validatePricePlan(PricePlanMatrix pp) {
+        List<PricePlanMatrix> pricePlanMatrices = listByChargeCode(pp.getEventCode());
+        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrices){
+            if(!pricePlanMatrix.getId().equals(pp.getId()) &&
+                    areValidityPeriodsOverlap(pp.getValidityFrom(), pp.getValidityDate(), pricePlanMatrix.getValidityFrom(), pricePlanMatrix.getValidityDate())){
+                throw new BusinessException("price plan validity date overlaps with other charge price plans { "+pricePlanMatrix.getCode()+" } ");
+            }
+        }
+    }
+
+    private boolean areValidityPeriodsOverlap(Date start1, Date end1, Date start2, Date end2){
+        return  (start1 != null && isDateBetween(start1, start2, end2)) || (end1 != null && isDateBetween(end1, start2, end2));
+    }
+
+    private boolean isDateBetween(Date date, Date from, Date to) {
+        return date.equals(from) || (date.after(from) && (to != null && (!date.equals(to) && date.before(to))));
     }
 
     @Override
@@ -84,34 +101,32 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         pp.setCriteriaEL(StringUtils.stripToNull(pp.getCriteriaEL()));
         pp.setAmountWithoutTaxEL(StringUtils.stripToNull(pp.getAmountWithoutTaxEL()));
         pp.setAmountWithTaxEL(StringUtils.stripToNull(pp.getAmountWithTaxEL()));
-
+        validatePricePlan(pp);
         return super.update(pp);
     }
 
-    @SuppressWarnings("deprecation")
     private String getCellAsString(Cell cell) {
         switch (cell.getCellType()) {
-        case Cell.CELL_TYPE_BOOLEAN:
+        case BOOLEAN:
             return cell.getBooleanCellValue() + "";
-        case Cell.CELL_TYPE_ERROR:
-        case Cell.CELL_TYPE_BLANK:
-        case Cell.CELL_TYPE_FORMULA:
+        case ERROR:
+        case BLANK:
+        case FORMULA:
             return null;
-        case Cell.CELL_TYPE_NUMERIC:
+        case NUMERIC:
             return "" + cell.getNumericCellValue();
         default:
             return cell.getStringCellValue();
         }
     }
 
-    @SuppressWarnings("deprecation")
-    private Date getCellAsDate(Cell cell) {
+    private Date getCellAsDate(Cell cell) {        
         switch (cell.getCellType()) {
-        case Cell.CELL_TYPE_ERROR:
-        case Cell.CELL_TYPE_BLANK:
-        case Cell.CELL_TYPE_FORMULA:
+        case ERROR:
+        case BLANK:
+        case FORMULA:
             return null;
-        case Cell.CELL_TYPE_NUMERIC:
+        case NUMERIC:
             return DateUtil.getJavaDate(cell.getNumericCellValue());
         default:
             try {
@@ -460,7 +475,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         }
 
         if (pricePlan.getId() == null) {
-            create(pricePlan);
+            createPP(pricePlan);
         } else {
             updateNoCheck(pricePlan);
         }
@@ -671,6 +686,6 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         pricePlan.setId(null);
         pricePlan.clearUuid();
         pricePlan.setCode(code);
-        create(pricePlan);
+        createPP(pricePlan);
     }
 }

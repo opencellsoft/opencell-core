@@ -10,7 +10,7 @@ import org.beanio.StreamFactory;
 /**
  *
  * @author Abdellatif BARI
- * @lastModifiedVersion 6.0
+ * @lastModifiedVersion 8.3.1
  */
 public class FileParserBeanio implements IFileParser {
 
@@ -59,12 +59,12 @@ public class FileParserBeanio implements IFileParser {
             if (recordContext.getRecord() == null) {
                 return null; // end of file reached
             }
-            recordContext.setLineContent(beanReader.getRecordContext(0).getRecordText());
+            recordContext.setLineContent(getLineContent());
             recordContext.setLineNumber(beanReader.getLineNumber());
 
         } catch (Exception e) {
             try {
-                recordContext.setLineContent(beanReader.getRecordContext(0).getRecordText());
+                recordContext.setLineContent(getLineContent());
             } catch (Exception e2) {
                 recordContext.setLineContent("unparseable line");
             }
@@ -73,6 +73,22 @@ public class FileParserBeanio implements IFileParser {
         }
 
         return recordContext;
+    }
+
+    /**
+     * Get line content
+     *
+     * @return line content
+     */
+    private String getLineContent() {
+        StringBuilder recordContent = new StringBuilder();
+        for (int i = 0; i < beanReader.getRecordCount(); i++) {
+            recordContent.append(beanReader.getRecordContext(i).getRecordText());
+            if (i != beanReader.getRecordCount() - 1) {
+                recordContent.append("\r\n");
+            }
+        }
+        return recordContent.toString();
     }
 
     @Override

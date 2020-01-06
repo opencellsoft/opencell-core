@@ -129,19 +129,26 @@ public class CustomFieldDataEntryBean implements Serializable {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    /** paramBeanFactory */
+    /**
+     * paramBeanFactory
+     */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
     @Inject
     protected Messages messages;
+    
+    @Inject
+    private FacesContext facesContext;
 
     /**
      * Selected item in dataTable.
      */
     private Map<String, Object> selectedItem;
 
-    /** Logger. */
+    /**
+     * Logger.
+     */
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -307,7 +314,6 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param customFieldTemplates Custom field templates applicable for the entity, mapped by a custom CFT code
      * @param cfValuesByCode Custom field values mapped by a CFT code
      * @param entity Entity containing custom field values
-     * 
      * @return Prepared for GUI custom fields instances
      */
     private Map<String, List<CustomFieldValue>> prepareCFIForGUI(Map<String, CustomFieldTemplate> customFieldTemplates, Map<String, List<CustomFieldValue>> cfValuesByCode,
@@ -471,14 +477,14 @@ public class CustomFieldDataEntryBean implements Serializable {
         // Check that two dates are one after another
         if (periodStartDate != null && periodEndDate != null && periodStartDate.compareTo(periodEndDate) >= 0) {
             messages.error(new BundleKey("messages", "customFieldTemplate.periodIntervalIncorrect"));
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
             return;
         }
 
         // Validate that value is set
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && value == null) {
             messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
             return;
         }
 
@@ -488,7 +494,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             if (periodStartDate == null && periodEndDate == null) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.periodDatesBothNull"));
                 entityValueHolder.setValuePeriodMatched(true);
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return;
             }
 
@@ -522,7 +528,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                         cfValue.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(cfValue.getPeriod().getTo(), datePattern));
                     entityValueHolder.setValuePeriodMatched(true);
                 }
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return;
             }
         }
@@ -579,12 +585,12 @@ public class CustomFieldDataEntryBean implements Serializable {
 
                 if (from == null && to == null) {
                     messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
-                    FacesContext.getCurrentInstance().validationFailed();
+                    facesContext.validationFailed();
                     return;
 
                 } else if (from != null && to != null && from.compareTo(to) >= 0) {
                     messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
-                    FacesContext.getCurrentInstance().validationFailed();
+                    facesContext.validationFailed();
                     return;
                 }
                 newKey = (from == null ? "" : from) + CustomFieldValue.RON_VALUE_SEPARATOR + (to == null ? "" : to);
@@ -592,7 +598,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             if (newKey == null) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyNotSpecified"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return;
             }
         }
@@ -600,7 +606,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         Object newValue = entityValueHolder.getNewValue(cft.getCode() + "_value");
         if (newValue == null) {
             messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
             return;
         }
 
@@ -614,11 +620,11 @@ public class CustomFieldDataEntryBean implements Serializable {
         for (Map<String, Object> mapItem : cfv.getMapValuesForGUI()) {
             if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP && mapItem.get(CustomFieldValue.MAP_KEY).equals(newKey)) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyExists"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return;
             } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST && mapItem.get(CustomFieldValue.MAP_VALUE).equals(newValue)) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.listValueExists"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return;
             }
         }
@@ -639,7 +645,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @throws ClassNotFoundException
      */
     public List<BusinessEntity> autocompleteEntityForCFV(String wildcode) throws ClassNotFoundException {
-        String classname = (String) UIComponent.getCurrentComponent(FacesContext.getCurrentInstance()).getAttributes().get("classname");
+        String classname = (String) UIComponent.getCurrentComponent(facesContext).getAttributes().get("classname");
         return customFieldInstanceService.findBusinessEntityForCFVByCode(classname, wildcode);
     }
 
@@ -653,7 +659,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         boolean valid = true;
         boolean isNewEntity = ((IEntity) entity).isTransient();
 
-        FacesContext fc = FacesContext.getCurrentInstance();
+        FacesContext fc = facesContext;
         for (CustomFieldTemplate cft : groupedFieldTemplates.get(entity.getUuid()).getFields()) {
 
             // Ignore the validation on a field when creating entity and CFT.hideOnNew=true or editing entity and CFT.allowEdit=false or when CFT.applicableOnEL expression
@@ -760,7 +766,6 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param entityValueHolder Entity custom field value holder
      * @param cfValue Map value holder
      * @param cft Custom field definition
-     *
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
@@ -790,12 +795,12 @@ public class CustomFieldDataEntryBean implements Serializable {
 
                 if (from == null && to == null) {
                     messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
-                    FacesContext.getCurrentInstance().validationFailed();
+                    facesContext.validationFailed();
                     return;
 
                 } else if (from != null && to != null && from.compareTo(to) >= 0) {
                     messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
-                    FacesContext.getCurrentInstance().validationFailed();
+                    facesContext.validationFailed();
                     return;
                 }
                 newKey = (from == null ? "" : from) + CustomFieldValue.RON_VALUE_SEPARATOR + (to == null ? "" : to);
@@ -808,7 +813,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         if (rowKeysAndValues.isEmpty()) {
             messages.error(new BundleKey("messages", "customFieldTemplate.matrixKeyNotSpecified"));
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
             return;
         }
 
@@ -840,12 +845,12 @@ public class CustomFieldDataEntryBean implements Serializable {
 
                     if (from == null && to == null) {
                         messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
-                        FacesContext.getCurrentInstance().validationFailed();
+                        facesContext.validationFailed();
                         return;
 
                     } else if (from != null && to != null && from.compareTo(to) >= 0) {
                         messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
-                        FacesContext.getCurrentInstance().validationFailed();
+                        facesContext.validationFailed();
                         return;
                     }
                     newValue = (from == null ? "" : from) + CustomFieldValue.RON_VALUE_SEPARATOR + (to == null ? "" : to);
@@ -858,7 +863,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             if (rowValues.isEmpty()) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.valuesNotSpecified"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return;
             }
 
@@ -869,7 +874,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             Object newValue = entityValueHolder.getNewValue(cft.getCode() + "_value");
             if (newValue == null) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return;
             }
 
@@ -893,7 +898,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             if (allMatch) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.matrixKeyExists"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return;
             }
         }
@@ -1061,9 +1066,11 @@ public class CustomFieldDataEntryBean implements Serializable {
                     // Not saving empty values unless template has a default value or is versionable (to prevent that for SINGLE type CFT with a default value, value is
                     // instantiates automatically)
                     // Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
-                    if ((cfValue.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
-                            || ((isNewEntity && cft.isHideOnNew())
-                                    || (entity != null && !ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity)))) {
+                    // escape this control when the CF is Multi CHECKBOX MENU
+                    if (!CustomFieldTypeEnum.CHECKBOX_LIST.name().equals(cft.getFieldType().name()) && (
+                            (cfValue.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
+                                    || ((isNewEntity && cft.isHideOnNew()) || (entity != null && !ValueExpressionWrapper
+                                    .evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity))))) {
                         log.trace("Will ommit from saving cfi {}", cfValue);
 
                         // Existing value update
@@ -1146,7 +1153,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         CustomEntityInstance ceiSameCode = customEntityInstanceService.findByCodeByCet(cei.getCetCode(), cei.getCode());
         if ((cei.isTransient() && ceiSameCode != null) || (!cei.isTransient() && ceiSameCode != null && cei.getId().longValue() != ceiSameCode.getId().longValue())) {
             messages.error(new BundleKey("messages", "commons.uniqueField.code"));
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
             return;
         }
 
@@ -1224,7 +1231,10 @@ public class CustomFieldDataEntryBean implements Serializable {
             // Populate customFieldValue.listValue from mapValuesForGUI field
         } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
 
-            List<Object> listValue = new ArrayList<Object>();
+            List<Object> listValue = new ArrayList<>();
+            if (CustomFieldTypeEnum.CHECKBOX_LIST.name().equalsIgnoreCase(cft.getFieldType().name())) {
+                listValue.addAll(customFieldValue.getListValue());
+            } else {
             for (Map<String, Object> listItem : customFieldValue.getMapValuesForGUI()) {
                 if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
                     listValue.add(new EntityReferenceWrapper((IReferenceEntity) listItem.get(CustomFieldValue.MAP_VALUE)));
@@ -1232,6 +1242,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                 } else {
                     listValue.add(listItem.get(CustomFieldValue.MAP_VALUE));
                 }
+            }
             }
             customFieldValue.setListValue(listValue);
 
@@ -1629,7 +1640,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @return Currently active locale
      */
     public Locale getCurrentLocale() {
-        return FacesContext.getCurrentInstance().getViewRoot().getLocale();
+        return facesContext.getViewRoot().getLocale();
     }
 
     /**
@@ -1672,27 +1683,27 @@ public class CustomFieldDataEntryBean implements Serializable {
                 for(String valueOfRON : ron) {
                     if(!valueOfRON.isEmpty() && !NumberUtils.isParsable(valueOfRON)) {
                         messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
-                        FacesContext.getCurrentInstance().validationFailed();
+                        facesContext.validationFailed();
                         return null;
                     }
                 }
 
                 if (ron[0] == null && ron.length > 1 && ron[1] == null) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return null;
 
                 } else if (ron[0] != null  && !ron[0].isEmpty() && ron.length > 1 && ron[1] != null) {
                 try {
                     if (Double.valueOf(ron[0]).compareTo(Double.valueOf(ron[1])) >= 0) {
                         messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
-                        FacesContext.getCurrentInstance().validationFailed();
+                        facesContext.validationFailed();
                         return null;
                     }
 
                 } catch (NumberFormatException e) {
                     messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
-                    FacesContext.getCurrentInstance().validationFailed();
+                    facesContext.validationFailed();
                     return null;
                 }
                 } else if (ron[0] != null && ron.length == 1) {
@@ -1700,18 +1711,18 @@ public class CustomFieldDataEntryBean implements Serializable {
                         Double.parseDouble(ron[0]);
                     } catch (NumberFormatException e) {
                         messages.error(new BundleKey("messages", "customFieldTemplate.fromOrToOrder"));
-                        FacesContext.getCurrentInstance().validationFailed();
+                        facesContext.validationFailed();
                         return null;
             }
                 }
         } else {
                 messages.error(new BundleKey("messages", "customFieldTemplate.eitherFromOrToRequired"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return null;
             }
         } else {
             messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyNotSpecified"));
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
             return null;
         }
         return ronkey;
@@ -1737,7 +1748,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         }
         if (key == null) {
             messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyNotSpecified"));
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
             return null;
         }
         return key;
@@ -1766,7 +1777,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                 return csvLine.get(CustomFieldValue.MAP_VALUE);
             default:
                 messages.error(new BundleKey("messages", "customFieldTemplate.valueNotSpecified"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return null;
         }
     }
@@ -1785,11 +1796,11 @@ public class CustomFieldDataEntryBean implements Serializable {
         for (Map<String, Object> mapItem : mapValuesForGUI) {
             if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP && mapItem.get(CustomFieldValue.MAP_KEY).equals(key)) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyExists"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return false;
             } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST && mapItem.get(CustomFieldValue.MAP_VALUE).equals(value)) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.listValueExists"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return false;
             }
         }
@@ -1858,12 +1869,12 @@ public class CustomFieldDataEntryBean implements Serializable {
             }
             if (key == null) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyNotSpecified"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return null;
             }
         } catch (ClassCastException | NumberFormatException e) {
             messages.error(new BundleKey("messages", "customFieldTemplate.mapKeyValueIsInvalid"), e.getMessage());
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
             key = null;
         }
         return key;
@@ -1895,7 +1906,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             if (allMatch) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.matrixKeyExists"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return false;
             }
         }
@@ -1923,7 +1934,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         if (matrixKeysItem.isEmpty()) {
             messages.error(new BundleKey("messages", "customFieldTemplate.matrixKeyNotSpecified"));
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
             return null;
         }
         return matrixKeysItem;
@@ -1950,7 +1961,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             if (matrixValuesItem.isEmpty()) {
                 messages.error(new BundleKey("messages", "customFieldTemplate.valuesNotSpecified"));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return null;
             }
             // Single value column

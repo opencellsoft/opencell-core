@@ -65,13 +65,19 @@ import org.meveo.model.billing.Subscription;
         @NamedQuery(name = "EDR.updateWalletOperationForSafeDeletion", query = "update WalletOperation wo set wo.edr=NULL where wo.edr in (select e FROM EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
         @NamedQuery(name = "EDR.updateRatedTransactionForSafeDeletion", query = "update RatedTransaction rt set rt.edr=NULL where rt.edr in (select e FROM EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate)"),
         @NamedQuery(name = "EDR.deleteNotOpenEdrBetweenTwoDate", query = "delete from EDR e where e.status<>'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate"),
+        @NamedQuery(name = "EDR.updateWalletOperationForSafeDeletionByStatus", query = "update WalletOperation wo set wo.edr=NULL where wo.edr in (select e FROM EDR e where e.status in (:status) AND :firstTransactionDate<=e.eventDate and e.eventDate<=:lastTransactionDate)"),
+        @NamedQuery(name = "EDR.updateRatedTransactionForSafeDeletionByStatus", query = "update RatedTransaction rt set rt.edr=NULL where rt.edr in (select e FROM EDR e where e.status in (:status) AND :firstTransactionDate<=e.eventDate and e.eventDate<=:lastTransactionDate)"),
+        @NamedQuery(name = "EDR.deleteEdrBetweenTwoDateByStatus", query = "delete from EDR e where e.status in (:status) AND :firstTransactionDate<=e.eventDate and e.eventDate<=:lastTransactionDate"),
+
+        @NamedQuery(name = "EDR.getNotOpenedEdrBetweenTwoDate", query = "SELECT e from EDR e join fetch e.subscription where e.status != 'OPEN' AND :firstTransactionDate<e.eventDate and e.eventDate<:lastTransactionDate and e.id >:lastId order by e.id"),
+        @NamedQuery(name = "EDR.getEdrsBetweenTwoDateByStatus", query = "SELECT e from EDR e join fetch e.subscription where e.status in (:status) AND :firstTransactionDate<=e.eventDate and e.eventDate<=:lastTransactionDate and e.id >:lastId order by e.id"),
 
         @NamedQuery(name = "EDR.reopenByIds", query = "update EDR e  set e.status='OPEN' where e.status='REJECTED' and e.id in :ids") })
 public class EDR extends BaseEntity {
 
     private static final long serialVersionUID = 1278336655583933747L;
 
-    public static String EDR_TABLE_ORIGIN = "EDR_TABLE";
+    public static final String EDR_TABLE_ORIGIN = "EDR_TABLE";
 
     /**
      * Matched subscription
@@ -586,7 +592,7 @@ public class EDR extends BaseEntity {
 
     /**
      * Deduce quantity left to rate
-     * 
+     *
      * @param quantityToDeduce Amount to deduce by
      * @return A new quantity left to rate value
      */
@@ -611,7 +617,7 @@ public class EDR extends BaseEntity {
 
     /**
      * Change status and update a last updated timestamp
-     * 
+     *
      * @param status Processing status
      */
     public void changeStatus(EDRStatusEnum status) {

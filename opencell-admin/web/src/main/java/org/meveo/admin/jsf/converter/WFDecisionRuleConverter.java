@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import org.meveo.model.wf.WFDecisionRule;
 import org.meveo.service.wf.WFDecisionRuleService;
 
-@FacesConverter("wfDecisionRuleConverter")
+@FacesConverter(value = "wfDecisionRuleConverter", managed = true)
 public class WFDecisionRuleConverter implements Converter {
 
     @Inject

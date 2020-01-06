@@ -324,7 +324,7 @@ public class ExcelConverter {
 		 * documentType.getExtension(), id); url =
 		 * Manager.instance().encodeConversationId(url, viewId);
 		 * DocumentStore.instance().saveData(id, documentData); try {
-		 * FacesContext.getCurrentInstance().getExternalContext().redirect(url);
+		 * facesContext.getExternalContext().redirect(url);
 		 * } catch (IOException e) { try { throw new
 		 * Exception(Interpolator.instance
 		 * ().interpolate("Could not redirect to #0", url), e); } catch

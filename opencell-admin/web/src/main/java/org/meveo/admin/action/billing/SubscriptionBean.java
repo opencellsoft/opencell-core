@@ -96,8 +96,8 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -176,6 +176,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     @Inject
     private CalendarService calendarService;
+    
+    @Inject
+    private FacesContext facesContext;
 
     private ServiceInstance selectedServiceInstance;
 
@@ -349,7 +352,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             String datePattern = paramBeanFactory.getInstance().getDateFormat();
             messages.error(new BundleKey("messages", "subscription.error.offerTemplateInvalidVersion"), entity.getOffer().getValidity().toString(datePattern),
                 DateUtils.formatDateWithPattern(entity.getSubscriptionDate(), datePattern));
-            FacesContext.getCurrentInstance().validationFailed();
+            facesContext.validationFailed();
             return null;
         }
 
@@ -682,7 +685,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 String datePattern = paramBeanFactory.getInstance().getDateFormat();
                 messages.error(new BundleKey("messages", "productInstance.error.productTemplateInvalidVersion"),
                     productInstance.getProductTemplate().getValidity().toString(datePattern), DateUtils.formatDateWithPattern(productInstance.getApplicationDate(), datePattern));
-                FacesContext.getCurrentInstance().validationFailed();
+                facesContext.validationFailed();
                 return;
             }
 
@@ -995,7 +998,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     public void resetFilters() {
-        DataTable dataTable = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent("recurringWalletForm:recurringWalletOperationTable");
+        DataTable dataTable = (DataTable) facesContext.getViewRoot().findComponent("recurringWalletForm:recurringWalletOperationTable");
         if (dataTable != null) {
             dataTable.reset();
         }
@@ -1129,11 +1132,11 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     public List<Seller> listSellers() {
-
-        if (entity != null && entity.getOffer() != null) {
-        	entity = subscriptionService.retrieveIfNotManaged(entity);
-            if (entity.getOffer().getSellers().size() > 0) {
-                return entity.getOffer().getSellers();
+		if (entity != null && entity.getOffer() != null) {
+			OfferTemplate offer = entity.getOffer();
+			offer = offerTemplateService.retrieveIfNotManaged(entity.getOffer());
+            if (offer.getSellers().size() > 0) {
+                return offer.getSellers();
             } else {
                 return sellerService.list();
             }
@@ -1145,7 +1148,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @ActionMethod
     public String cancelSubscriptionRenewal() throws BusinessException {
         subscriptionService.cancelSubscriptionRenewal(entity);
-        RequestContext.getCurrentInstance().reset("subscriptionTab");
+        PrimeFaces.current().resetInputs("subscriptionTab");
         return null;
     }
 

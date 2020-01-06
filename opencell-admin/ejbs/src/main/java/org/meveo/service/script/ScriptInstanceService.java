@@ -280,7 +280,9 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
         if (context == null) {
             context = new HashMap<String, Object>();
         }
-        context.put(Script.CONTEXT_ACTION, scriptCode);
+        if (context.get(Script.CONTEXT_ACTION) == null) {
+            context.put(Script.CONTEXT_ACTION, scriptCode);
+        }
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
@@ -368,7 +370,9 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
         if (context == null) {
             context = new HashMap<String, Object>();
         }
-        context.put(Script.CONTEXT_ACTION, scriptCode);
+        if (context.get(Script.CONTEXT_ACTION) == null) {
+            context.put(Script.CONTEXT_ACTION, scriptCode);
+        }
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
@@ -419,14 +423,16 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
         if (context == null) {
             context = new HashMap<String, Object>();
         }
-        context.put(Script.CONTEXT_ACTION, scriptCode);
+        if (context.get(Script.CONTEXT_ACTION) == null) {
+            context.put(Script.CONTEXT_ACTION, scriptCode);
+        }
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
         ScriptInterface classInstance = getScriptInstance(scriptCode);
         classInstance.init(context);
         classInstance.execute(context);
-        classInstance.finalize(context);
+        classInstance.terminate(context);
 
         log.trace("Script {} executed with parameters {}", scriptCode, context);
         return context;
@@ -453,7 +459,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
 
         compiledScript.init(context);
         compiledScript.execute(context);
-        compiledScript.finalize(context);
+        compiledScript.terminate(context);
 
         log.trace("Script {} executed with parameters {}", compiledScript.getClass(), context);
         return context;

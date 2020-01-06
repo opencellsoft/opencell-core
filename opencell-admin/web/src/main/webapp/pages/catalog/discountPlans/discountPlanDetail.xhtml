@@ -1,6 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
-    xmlns:s="http://jboss.org/seam/faces">
+                xmlns:hftl="http://hftl.org" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui" xmlns:p="http://primefaces.org/ui"
+                template="/layout/template.xhtml"
+>
 
     <ui:define name="metadata">
         <f:metadata>
@@ -75,9 +76,9 @@
                                 </f:facet>
 
                                 <p:commandButton id="editDiscountPlanItemLink" update=":tabView:discountPlanItemPanel :tabView:discountPlanItemdiv"
-                                    action="#{discountPlanBean.setDiscountPlanItem(entity)}" icon="ui-icon-document" />
+                                    action="#{discountPlanBean.setDiscountPlanItem(entity)}" icon="ui-icon-document" process="@this"/>
                                 <p:commandButton id="deleteDiscountPlanItemLink" action="#{discountPlanBean.deleteDiscountPlanItem(entity)}" icon="ui-icon-trash"
-                                    update=":tabView:discountPlanItemPanel :tabView:discountPlanItemdiv" />
+                                    update=":tabView:discountPlanItemPanel :tabView:discountPlanItemdiv" process="@this"/>
                             </p:column>
                         </hftl:dataList>
                     </p:outputPanel>
@@ -130,10 +131,14 @@
                             <ui:define name="buttons">
 
                                 <p:commandButton id="saveButton" rendered="#{discountPlanBean.discountPlanItem.id==null}" value="#{messages['discountPlanItem.addNew']}"
-                                    action="#{discountPlanBean.saveOrUpdateDiscountPlanItem()}" icon="ui-icon-check" update=":tabView:discountPlanItemPanel :tabView:discountPlanItemdiv" />
+                                    action="#{discountPlanBean.saveOrUpdateDiscountPlanItem()}" icon="ui-icon-check"
+                                                 update=":tabView:discountPlanItemPanel :tabView:discountPlanItemdiv" process="@form"/>
                                 <p:commandButton rendered="#{discountPlanBean.discountPlanItem.id!=null}" action="#{discountPlanBean.saveOrUpdateDiscountPlanItem}"
-                                    value="#{messages['discountPlanItem.modifyDiscountPlantItem']}" update=":tabView:discountPlanItemPanel :tabView:discountPlanItemdiv" icon="ui-icon-check" />
-                                <p:commandButton value="#{messages['action.reset']}" action="#{discountPlanBean.newDiscountPlanItem()}" update=":tabView:discountPlanItemdiv" />
+                                    value="#{messages['discountPlanItem.modifyDiscountPlantItem']}"
+                                                 update=":tabView:discountPlanItemPanel :tabView:discountPlanItemdiv" icon="ui-icon-check"
+                                                process="@form"/>
+                                <p:commandButton value="#{messages['action.reset']}" action="#{discountPlanBean.newDiscountPlanItem()}"
+                                                 update=":tabView:discountPlanItemdiv" process="@this" />
 
                                 <p:button id="backButton" value="#{messages['action.back']}" immediate="true" outcome="#{discountPlanBean.back()}" includeViewParams="true">
                                     <c:if test="#{conversation.id != null and not cc.attrs.killConversationOnBack}">

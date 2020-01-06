@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -290,48 +289,51 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
             LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = headerCat.getInvoiceSubCategoryDTOMap();
             for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
-                InvoiceSubCategory invoiceSubCategory = subCatInvoiceAgregate.getInvoiceSubCategory();
-                InvoiceSubCategoryDTO headerSubCat = new InvoiceSubCategoryDTO();
-                headerSubCat.setId(subCatInvoiceAgregate.getId());
-                    headerSubCat.setDescription(invoiceSubCategory.getDescription());
-                    headerSubCat.setCode(invoiceSubCategory.getCode());
-                    headerSubCat.setAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
-                    headerSubCat.setAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
-                headerSubCategories.put(invoiceSubCategory.getId().toString(), headerSubCat);
+                if(!subCatInvoiceAgregate.isDiscountAggregate()) {
+                    InvoiceSubCategory invoiceSubCategory = subCatInvoiceAgregate.getInvoiceSubCategory();
+                    InvoiceSubCategoryDTO headerSubCat = new InvoiceSubCategoryDTO();
+                    headerSubCat.setId(subCatInvoiceAgregate.getId());
+                        headerSubCat.setDescription(invoiceSubCategory.getDescription());
+                        headerSubCat.setCode(invoiceSubCategory.getCode());
+                        headerSubCat.setAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
+                        headerSubCat.setAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
+                    headerSubCategories.put(invoiceSubCategory.getId().toString(), headerSubCat);
 
-                ServiceBasedLazyDataModel<RatedTransaction> rtDM = new ServiceBasedLazyDataModel<RatedTransaction>() {
-
-                    private static final long serialVersionUID = 8879L;
-
-                    @Override
-                    protected Map<String, Object> getSearchCriteria() {
-
-                        Map<String, Object> filters = new HashMap<>();
-                        filters.put("invoice", entity);
-                        filters.put("invoiceAgregateF", subCatInvoiceAgregate);
-                        return filters;
+                    ServiceBasedLazyDataModel<RatedTransaction> rtDM = new ServiceBasedLazyDataModel<RatedTransaction>() {
+    
+                        private static final long serialVersionUID = 8879L;
+    
+                        @Override
+                        protected Map<String, Object> getSearchCriteria() {
+    
+                            Map<String, Object> filters = new HashMap<>();
+                            filters.put("invoice", entity);
+                            filters.put("invoiceAgregateF", subCatInvoiceAgregate);
+                            return filters;
+                        }
+    
+                        @Override
+                        protected String getDefaultSortImpl() {
+                            return "usageDate";
+                        }
+    
+                        @Override
+                        protected IPersistenceService<RatedTransaction> getPersistenceServiceImpl() {
+                            return ratedTransactionService;
+                        }
+    
+                        @Override
+                        protected ElasticClient getElasticClientImpl() {
+                            return null;
+                        }
+                    };
+    
+                    ratedTransactionsDM.put(subCatInvoiceAgregate.getId(), rtDM);
+                    
                 }
 
-                    @Override
-                    protected String getDefaultSortImpl() {
-                        return "usageDate";
             }
-
-                    @Override
-                    protected IPersistenceService<RatedTransaction> getPersistenceServiceImpl() {
-                        return ratedTransactionService;
         }
-
-                    @Override
-                    protected ElasticClient getElasticClientImpl() {
-                        return null;
-                    }
-                };
-
-                ratedTransactionsDM.put(subCatInvoiceAgregate.getId(), rtDM);
-
-                }
-            }
 
         return headerCategories;
     }
@@ -419,8 +421,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         OutputStream out = null;
         InputStream fin = null;
         try {
-            javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
-            HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
+            HttpServletResponse res = (HttpServletResponse) facesContext.getExternalContext().getResponse();
             res.setContentType("application/force-download");
             res.setContentLength((int) file.length());
             res.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");
@@ -436,7 +437,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             fin.close();
             out.flush();
             out.close();
-            context.responseComplete();
+            facesContext.responseComplete();
             log.info("File made available for download");
         } catch (Exception e) {
             log.error("Error:#0, when dowload file: #1", e.getMessage(), file.getAbsolutePath());

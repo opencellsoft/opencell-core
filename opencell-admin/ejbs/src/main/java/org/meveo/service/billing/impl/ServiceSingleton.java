@@ -195,13 +195,16 @@ public class ServiceSingleton {
         seller = seller.findSellerForInvoiceNumberingSequence(cfName, invoiceDate, invoiceType);
 
         InvoiceSequence sequence = incrementInvoiceNumberSequence(invoiceDate, invoiceType, seller, cfName, numberOfInvoices);
-
+        return sequence;
+        
+        /*
         try {
             sequence = (InvoiceSequence) BeanUtils.cloneBean(sequence);
             return sequence;
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
             throw new BusinessException("Failed to close invoice numbering sequence", e);
         }
+        */
     }
 
     /**

@@ -848,12 +848,13 @@ public class CustomTableService extends NativePersistenceService {
             for (Entry<String, Object> valueEntry : values.entrySet()) {
 
                 String key = valueEntry.getKey();
-                if (key.equals(FIELD_ID)) {
+                String[] fieldInfo = key.split(" ");
+                String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1]; // field name here can be a db field name or a custom field code
+                
+                if (fieldName.equals(FIELD_ID)) {
                     continue; // Was handled before already
                 }
                 
-                String[] fieldInfo = key.split(" ");
-                String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1]; // field name here can be a db field name or a custom field code
                 CustomFieldTemplate cft = cftsMap.get(fieldName);  
                 if (cft == null) {
                     throw new ValidationException("No field definition " + fieldName + " was found");
@@ -1040,7 +1041,7 @@ public class CustomTableService extends NativePersistenceService {
 
 		List<Long> invalidList = partitioned.get(false);
 		if(!invalidList.isEmpty()) {
-			throw new BusinessException(prepareErrorMessage(invalidList));
+			throw new EntityDoesNotExistsException(dbTablename, invalidList);
 		}
 	}
 	
@@ -1051,17 +1052,6 @@ public class CustomTableService extends NativePersistenceService {
             return ((Number) id).longValue();
         }
         throw new InvalidParameterException("Invalid id value found: "+id );
-	}
-	
-	private String prepareErrorMessage(List<Long> invalidList) {
-		String errorMessage="";
-		if (!invalidList.isEmpty()) {
-			errorMessage="Exception trying to update/delete inexistant record(s): ";
-			for(Long item:invalidList) {
-				errorMessage=errorMessage+item+", ";
-			}
-		}
-		return errorMessage;
 	}
 	
 }

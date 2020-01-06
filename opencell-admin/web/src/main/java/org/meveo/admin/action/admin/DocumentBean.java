@@ -38,6 +38,7 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
@@ -65,6 +66,9 @@ public class DocumentBean implements Serializable {
     @ApplicationProvider
     private Provider appProvider;
 
+    @Inject
+    protected FacesContext facesContext;
+    
     private String filename;
     private Date fromDate;
     private Date toDate;
@@ -162,8 +166,7 @@ public class DocumentBean implements Serializable {
         
         log.info("start to download...");
         File f = new File(document.getAbsolutePath());
-        javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
-        HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
+        HttpServletResponse res = (HttpServletResponse) facesContext.getExternalContext().getResponse();
         res.setContentType("application/force-download");
         res.setContentLength(document.getSize().intValue());
         res.addHeader("Content-disposition", "attachment;filename=\"" + document.getFilename() + "\"");
@@ -177,7 +180,7 @@ public class DocumentBean implements Serializable {
             }
             
             out.flush();
-            context.responseComplete();
+            facesContext.responseComplete();
             log.info("download over!");
         } catch (Exception e) {
             log.error("Error:#0, when dowload file: #1", e, document.getAbsolutePath());
