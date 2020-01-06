@@ -64,8 +64,8 @@
                 </c:if>
             </p:autoComplete>
         </c:if>
-        <c:if test="#{textArea and edit}">
-            <p:inputTextarea id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" cols="#{cols}" rows="#{rows}" maxlength="#{maxlength}" autoResize="true"
+        <c:if test="#{textArea}">
+            <p:inputTextarea id="#{id}" readonly="${readonly}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" cols="#{cols}" rows="#{rows}" maxlength="#{maxlength}" autoResize="true"
                 style="width:100%;" />
         </c:if>
         <c:if test="#{isHtml and edit}">
@@ -84,7 +84,7 @@
             <p:commandButton id="#{popupId}_selectLink" onclick="PF('dlg_#{popupId}').show()" type="button" icon="ui-icon-search" />
         </c:if>
 
-        <c:if test="#{!edit}">
+        <c:if test="#{!edit and not textArea}">
             <h:outputText id="#{id}" value="#{fieldItem}" styleClass="field-value" />
         </c:if>
     </hftl:decorateFormField>
