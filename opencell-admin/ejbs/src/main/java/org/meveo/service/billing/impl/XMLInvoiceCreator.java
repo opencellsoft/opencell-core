@@ -429,11 +429,20 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Seller seller = invoice.getSeller();
         if(seller != null) {
             Element sellerTag = doc.createElement("seller");
-            sellerTag.setAttribute("code", seller.getCode() != null ? seller.getCode() : "");
-            sellerTag.setAttribute("description", seller.getDescription() != null ? seller.getDescription() : "");
-            sellerTag.setAttribute("vatNo", seller.getVatNo() != null ? seller.getVatNo() : "");
+
+            String codeS = seller.getCode();
+            String descriptionS = seller.getDescription();
+            String vatNoS = seller.getVatNo();
+            String registrationNoS = seller.getRegistrationNo();
+    
+            sellerTag.setAttribute("code", codeS != null ? codeS : "");
+            sellerTag.setAttribute("description", descriptionS != null ? descriptionS : "");
+            sellerTag.setAttribute("vatNo", vatNoS != null ? vatNoS : "");
+            sellerTag.setAttribute("registrationNo", registrationNoS != null ? registrationNoS : "");
+
             addCustomFields(seller, doc, sellerTag);
             addAdress(seller, doc, sellerTag, billingAccountLanguage);
+            
             sellerTag.appendChild(toContactTag(doc, seller.getContactInformation()));
             header.appendChild(sellerTag);
         }
@@ -444,6 +453,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         String externalRef12 = customerAccount.getExternalRef1();
         String externalRef22 = customerAccount.getExternalRef2();
         String jobTitleCA = customerAccount.getJobTitle();
+        String vatNoCA = customerAccount.getVatNo();
+        String registrationNoCA = customerAccount.getRegistrationNo();
         TradingLanguage tradingLanguage = customerAccount.getTradingLanguage();
         String prDescription = null;
         if (tradingLanguage != null) {
@@ -458,6 +469,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         customerAccountTag.setAttribute("currency", currencyCode != null ? currencyCode : "");
         customerAccountTag.setAttribute("language", prDescription != null ? prDescription : "");
         customerAccountTag.setAttribute("jobTitle", jobTitleCA != null ? jobTitleCA : "");
+        customerAccountTag.setAttribute("registrationNo", registrationNoCA != null ? registrationNoCA : "");
+        customerAccountTag.setAttribute("vatNo", vatNoCA != null ? vatNoCA : "");
 
         addCustomFields(customerAccount, doc, customerAccountTag);
         customerAccountTag.appendChild(toContactTag(doc, customerAccount.getContactInformation()));
@@ -484,6 +497,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         String billingExternalRef2 = billingAccount.getExternalRef2();
         String billingExternalRef1 = billingAccount.getExternalRef1();
         String jobTitleBA = billingAccount.getJobTitle();
+        String vatNoBA = billingAccount.getVatNo();
+        String registrationNoBA = billingAccount.getRegistrationNo();
         Element billingAccountTag = doc.createElement("billingAccount");
         if (billingCycle == null) {
             billingCycle = billingAccount.getBillingCycle();
@@ -498,6 +513,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         billingAccountTag.setAttribute("externalRef1", billingExternalRef1 != null ? billingExternalRef1 : "");
         billingAccountTag.setAttribute("externalRef2", billingExternalRef2 != null ? billingExternalRef2 : "");
         billingAccountTag.setAttribute("jobTitle", jobTitleBA != null ? jobTitleBA : "");
+        billingAccountTag.setAttribute("registrationNo", registrationNoBA != null ? registrationNoBA : "");
+        billingAccountTag.setAttribute("vatNo", vatNoBA != null ? vatNoBA : "");
 
 
         if (invoiceConfiguration != null && invoiceConfiguration.getDisplayBillingCycle() != null && invoiceConfiguration.getDisplayBillingCycle()) {
@@ -685,14 +702,22 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         for (UserAccount userAccount : usersAccounts) {
             List<Subscription> subscriptions = userAccount.getSubscriptions();
             Element userAccountTag = doc.createElement("userAccount");
-            userAccountTag.setAttribute("id", userAccount.getId() + "");
+
+            String registrationNoUA = userAccount.getRegistrationNo();
+            String vatNoUA = userAccount.getVatNo();
             String code = userAccount.getCode();
-            userAccountTag.setAttribute("code", code != null ? code : "");
             String jobTitle = userAccount.getJobTitle();
-            userAccountTag.setAttribute("jobTitle", jobTitle != null ? jobTitle : "");
             String description = userAccount.getDescription();
+
+            userAccountTag.setAttribute("id", userAccount.getId() + "");
+            userAccountTag.setAttribute("code", code != null ? code : "");
+            userAccountTag.setAttribute("jobTitle", jobTitle != null ? jobTitle : "");
             userAccountTag.setAttribute("description", description != null ? description : "");
+            userAccountTag.setAttribute("registrationNo", registrationNoUA != null ? registrationNoUA : "");
+            userAccountTag.setAttribute("vatNo", vatNoUA != null ? vatNoUA : "");
+
             addCustomFields(userAccount, doc, userAccountTag);
+
             List<ServiceInstance> allServiceInstances = new ArrayList<ServiceInstance>();
             if (!isVirtual) { // if it is not virtual (not quote) add all subscriptions to XML (DO NOT KNOW if required or NO)
                 allServiceInstances = addSubscriptions(userAccount, doc, userAccountTag, invoiceTag, subscriptions,billingAccountLanguage);
