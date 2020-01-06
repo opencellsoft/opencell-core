@@ -33,6 +33,7 @@
         field and optional childField - a field.childField for data entry/view. E.g. address.email
         required - is field mandatory
         disabled - is data entry control disabled        
+        readonly - is data entry control is read only
 
         edit - should data entry or value output be displayed. If not provided, value is determined from a backing bean (either provided or from parent formPanel)
         allowEdit - allow to edit a field when in edit mode       
@@ -141,6 +142,9 @@
     </c:if>
     <c:if test="${empty(disabled)}">
         <c:set var="disabled" value="false" />
+    </c:if>
+    <c:if test="${empty(readonly)}">
+        <c:set var="readonly" value="false" />
     </c:if>
     <c:if test="${empty(size)}">
         <c:set var="size" value="${field =='description'?80:35}" />
@@ -268,7 +272,7 @@
                 size="${size}" maxlength="${maxlength}" isHtml="${isHtml}" textArea="${textArea}" cols="${cols}" rows="${rows}" isAutocomplete="${isAutocomplete}"
                 autocompleteBean="#{autocompleteBean}" autocompleteMethod="#{autocompleteMethod}" listValues="${listValues}" popup="${popup}" popupId="${popupId}" useConverter="${useConverter}"
                 converter="${converter}" validateUnique="${validateUnique}" validateRib="${validateRib}" validateEmail="${validateEmail}" validatorId="${validatorId}"
-                listenerUpdate="${listenerUpdate}" actionListenerBean="${actionListenerBean}" actionListenerMethod="${actionListenerMethod}" edit="#{edit}" />
+                listenerUpdate="${listenerUpdate}" actionListenerBean="${actionListenerBean}" actionListenerMethod="${actionListenerMethod}" edit="#{edit}" readonly="${readonly}"/>
         </c:if>
 
         <!--  Enter map values -->
