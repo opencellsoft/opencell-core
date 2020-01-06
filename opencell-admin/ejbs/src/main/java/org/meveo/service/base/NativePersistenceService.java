@@ -409,19 +409,15 @@ public class NativePersistenceService extends BaseService {
 					}
 				}
 			}
-            fireNotification(tableName, result, values, fireNotifications, NotificationEventTypeEnum.CREATED);
+			if(fireNotifications) {
+				entityChangeEventProducer.fire(new CustomTableEvent(tableName, result, values, NotificationEventTypeEnum.CREATED));
+			}
             return result;
         } catch (Exception e) {
             log.error("Failed to insert values into OR find ID of table {} {} sql {}", tableName, values, sql, e);
             throw e;
         }
     }
-
-	private void fireNotification(String tableName, Long id, Map<String, Object> values, boolean fireNotifications, NotificationEventTypeEnum type) {
-		if(fireNotifications) {
-			entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, values, type));
-		}
-	}
 
     StringBuffer buildSqlInsertionRequest(String tableName, StringBuffer findIdFields) {
         StringBuffer requestConstruction = new StringBuffer("select id from " + tableName);
@@ -476,7 +472,9 @@ public class NativePersistenceService extends BaseService {
                 }
             }
             query.executeUpdate();
-            fireNotification(tableName, id.longValue(), null, fireNotifications, NotificationEventTypeEnum.UPDATED);
+            if(fireNotifications) {
+				entityChangeEventProducer.fire(new CustomTableEvent(tableName, id.longValue(), value, NotificationEventTypeEnum.UPDATED));
+			}
 
         } catch (Exception e) {
             log.error("Failed to insert values into table {} {} sql {}", tableName, value, sql, e);
@@ -524,7 +522,7 @@ public class NativePersistenceService extends BaseService {
      */
     public void disable(String tableName, Long id) throws BusinessException {
         getEntityManager().createNativeQuery("update " + tableName + " set disabled=1 where id=" + id).executeUpdate();
-        fireNotification(tableName, id, null, true, NotificationEventTypeEnum.DISABLED);
+		entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.DISABLED));
     }
 
     /**
@@ -547,7 +545,7 @@ public class NativePersistenceService extends BaseService {
      */
     public void enable(String tableName, Long id) throws BusinessException {
         getEntityManager().createNativeQuery("update " + tableName + " set disabled=0 where id=" + id).executeUpdate();
-        fireNotification(tableName, id, null, true, NotificationEventTypeEnum.ENABLED);
+        entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.ENABLED));
     }
 
     /**
@@ -577,7 +575,7 @@ public class NativePersistenceService extends BaseService {
     public void remove(String tableName, Long id) throws BusinessException {
         this.deletionService.checkTableNotreferenced(tableName, id);
         getEntityManager().createNativeQuery("delete from " + tableName + " where id=" + id).executeUpdate();
-        fireNotification(tableName, id, null, true, NotificationEventTypeEnum.REMOVED);
+        entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.REMOVED));
     }
 
     /**
@@ -590,7 +588,6 @@ public class NativePersistenceService extends BaseService {
     public void remove(String tableName, Set<Long> ids) throws BusinessException {
         ids.stream().forEach(id -> deletionService.checkTableNotreferenced(tableName, id));
         getEntityManager().createNativeQuery("delete from " + tableName + " where id in:ids").setParameter("ids", ids).executeUpdate();
-
     }
 
     /**
