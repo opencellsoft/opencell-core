@@ -3,6 +3,7 @@ package org.meveo.api.catalog;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -33,6 +34,9 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.service.catalog.impl.BOMInstantiationParameters;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.BusinessProductModelService;
@@ -90,8 +94,8 @@ public class BusinessOfferApi extends BaseApi {
             throw new MeveoApiException("No offer template attached");
         }
 
-        if ((bomOffer.getOfferServiceTemplates() == null || bomOffer.getOfferServiceTemplates().isEmpty())
-                && (bomOffer.getOfferProductTemplates() == null || bomOffer.getOfferProductTemplates().isEmpty())) {
+        if ((bomOffer.getOfferServiceTemplates() == null || bomOffer.getOfferServiceTemplates().isEmpty()) && (bomOffer.getOfferProductTemplates() == null || bomOffer
+                .getOfferProductTemplates().isEmpty())) {
             log.warn("No service or product template attached");
         }
 
@@ -144,12 +148,24 @@ public class BusinessOfferApi extends BaseApi {
                 // Caution the service code also must match that of BusinessOfferModelService.createOfferFromBOM
                 String serviceTemplateCode = constructServiceTemplateCode(newOfferTemplate, ost, serviceTemplate, serviceConfigurationDto);
 
+                // #4865 - [bom] Service CF values should be copied when creating offer from BOM
+                if (serviceTemplateCode.equals(serviceTemplate.getCode()) && serviceConfigurationDto.getCustomFields() == null) {
+                    ServiceTemplate oldService = serviceTemplateService.findByCode(serviceConfigurationDto.getCode());
+                    CustomFieldValues customFieldValues = oldService.getCfValuesNullSafe();
+                    Map<String, List<CustomFieldValue>> cfValues = customFieldValues.getValuesByCode();
+
+                    CustomFieldsDto cfs = entityToDtoConverter.getCustomFieldsDTO(oldService, cfValues, CustomFieldInheritanceEnum.INHERIT_NONE);
+                    serviceConfigurationDto.setCustomFields(cfs.getCustomField());
+                }
+
                 if (serviceTemplateCode.equals(serviceTemplate.getCode()) && serviceConfigurationDto.getCustomFields() != null && !serviceConfigurationDto.isMatch()) {
                     try {
                         CustomFieldsDto cfsDto = new CustomFieldsDto();
                         cfsDto.setCustomField(serviceConfigurationDto.getCustomFields());
-                        populateCustomFields(cfsDto, serviceTemplate, true);
-
+                        // to fix a case when we instantiate a BSM multiple times in the same offer with CF value override,
+                        ServiceTemplate temp = new ServiceTemplate();
+                        populateCustomFields(cfsDto, temp, true);
+                        serviceTemplate.setCfValues(temp.getCfValues());
                         serviceTemplate = serviceTemplateService.update(serviceTemplate);
                         ost.setServiceTemplate(serviceTemplate);
 
@@ -331,7 +347,7 @@ public class BusinessOfferApi extends BaseApi {
 
     /**
      * Instantiates a product from a given BusinessProductModel.
-     * 
+     *
      * @param postData business product model product
      * @return product template's id
      * @throws MeveoApiException meveo api exception
