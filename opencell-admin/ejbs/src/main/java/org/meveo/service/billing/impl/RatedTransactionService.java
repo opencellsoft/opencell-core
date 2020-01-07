@@ -697,14 +697,18 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 if (instantiateMinRtsForBA && isAppliesMinRTForBA(billingAccount, totalInvoiceableAmounts)) {
 
                     Map<String, Amounts> extraAmounts = new HashMap<>();
-                    extraAmounts.putAll(createdAmountSubscription);
-                    for (Map<String, Amounts> serviceAmountInfo : createdAmountServices.values()) {
+                    if (createdAmountSubscription != null) {
+                        extraAmounts.putAll(createdAmountSubscription);
+                    }
+                    if (createdAmountServices != null) {
+                        for (Map<String, Amounts> serviceAmountInfo : createdAmountServices.values()) {
 
-                        for (Entry<String, Amounts> amountInfo : serviceAmountInfo.entrySet()) {
-                            if (extraAmounts.containsKey(amountInfo.getKey())) {
-                                extraAmounts.get(amountInfo.getKey()).addAmounts(amountInfo.getValue());
-                            } else {
-                                extraAmounts.put(amountInfo.getKey(), amountInfo.getValue());
+                            for (Entry<String, Amounts> amountInfo : serviceAmountInfo.entrySet()) {
+                                if (extraAmounts.containsKey(amountInfo.getKey())) {
+                                    extraAmounts.get(amountInfo.getKey()).addAmounts(amountInfo.getValue());
+                                } else {
+                                    extraAmounts.put(amountInfo.getKey(), amountInfo.getValue());
+                                }
                             }
                         }
                     }

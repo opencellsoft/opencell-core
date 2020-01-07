@@ -261,6 +261,10 @@ public class UsageRatingService implements Serializable {
         }
         // CachedCounterPeriod cachedCounterPeriod = ratingCacheContainerProvider.getCounterPeriod(usageChargeInstance.getCounter().getId(), edr.getEventDate());
 
+        if (counterPeriod == null) {
+            return BigDecimal.ZERO;
+        }
+
         CounterValueChangeInfo counterValueChangeInfo = null;
 
         UsageChargeTemplate chargeTemplate = null;
@@ -660,7 +664,7 @@ public class UsageRatingService implements Serializable {
                 if (ratedEDRResult.getWalletOperation() != null) {
                     walletOperations.add(ratedEDRResult.getWalletOperation());
                 }
-                
+
                 if (rateTriggeredEdr && !ratedEDRResult.getTriggeredEDRs().isEmpty()) {
                     walletOperations.addAll(rateTriggeredEDRs(isVirtual, rateTriggeredEdr, maxDeep, currentRatingDepth, ratedEDRResult.getTriggeredEDRs()));
                 }
