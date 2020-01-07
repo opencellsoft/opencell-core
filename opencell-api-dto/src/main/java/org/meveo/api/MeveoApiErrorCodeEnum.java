@@ -7,7 +7,7 @@ package org.meveo.api;
  * @lastModifiedVersion 5.2
  **/
 
-public enum MeveoApiErrorCodeEnum {
+public enum MeveoApiErrorCodeEnum implements ApiErrorCodeEnum {
 
     /**
      * Entity on which action should be performed or referenced, was not found.
