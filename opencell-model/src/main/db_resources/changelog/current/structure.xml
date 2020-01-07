@@ -1947,6 +1947,16 @@
 		<sql>create index billing_rated_transaction_aggregate_id_f_idx on ${db.schema.adapted}billing_rated_transaction (aggregate_id_f)</sql>
     </changeSet>
     
+    <changeSet id="#4766_20191111" author="MohammedELAZZOUZI">
+    	<addNotNullConstraint tableName="adm_currency" columnName="currency_code" columnDataType="varchar(3)"/>
+    	<addNotNullConstraint tableName="adm_currency" columnName="description_en" columnDataType="varchar(255)"/>
+    	<addNotNullConstraint tableName="adm_language" columnName="description_en" columnDataType="varchar(255)"/>
+    	<addNotNullConstraint tableName="adm_language" columnName="language_code" columnDataType="varchar(3)"/>
+        <addUniqueConstraint columnNames="language_code" constraintName="UniqueConstraint_adm__language_code" tableName="adm_language" />
+        <addUniqueConstraint columnNames="description_en" constraintName="UniqueConstraint_adm_language__description_en" tableName="adm_language" />
+        <addUniqueConstraint columnNames="description_en" constraintName="UniqueConstraint_adm_currency__description_en" tableName="adm_currency" />
+    </changeSet>
+    
     <changeSet id="#4765_20191112" author="MohammedELAZZOUZI">
         <update tableName="billing_cycle">
             <column name="billing_cycle_type" value="BILLINGACCOUNT"/>
