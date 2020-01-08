@@ -3,6 +3,7 @@ package org.meveo.api.rest.custom;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.custom.CustomTableDataDto;
 import org.meveo.api.dto.custom.CustomTableDataResponseDto;
+import org.meveo.api.dto.custom.CustomTableWrapperDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.rest.IBaseRs;
 
@@ -13,7 +14,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -107,8 +107,7 @@ public interface CustomTableRs extends IBaseRs {
      * @return Custom table data
      */
     @POST
-    @Path("/listFromWrapper/{customTableWrapperCode}")
-    CustomTableDataResponseDto listFromWrapper(@PathParam("customTableWrapperCode") String customTableWrapperCode, @QueryParam("entityClass") String entityClass,
-            @QueryParam("entityId") String entityId);
+    @Path("/listFromWrapper")
+    CustomTableDataResponseDto listFromWrapper(CustomTableWrapperDto customTableWrapperDto);
 
 }

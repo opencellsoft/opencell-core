@@ -359,12 +359,6 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Size(max = 2000)
     private String fieldsEL;
 
-    /**
-     * which should resolve into an additional filter to apply to the table search.
-     */
-    @Column(name = "version_filter_el", length = 2000)
-    @Size(max = 2000)
-    private String versionFilterEL;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -1182,21 +1176,4 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         this.fieldsEL = fieldsEL;
     }
 
-    /**
-     * Gets the versionFilterEL expression.
-     *
-     * @return the versionFilterEL expression.
-     */
-    public String getVersionFilterEL() {
-        return versionFilterEL;
-    }
-
-    /**
-     * Sets the versionFilterEL expression.
-     *
-     * @param versionFilterEL the versionFilterEL expression.
-     */
-    public void setVersionFilterEL(String versionFilterEL) {
-        this.versionFilterEL = versionFilterEL;
-    }
 }

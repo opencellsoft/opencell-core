@@ -2164,7 +2164,6 @@
             <column name="custom_table_code_el" type="varchar(2000)"/>
             <column name="data_filter_el" type="varchar(2000)"/>
             <column name="fields_el" type="varchar(2000)"/>
-            <column name="version_filter_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
 </databaseChangeLog>

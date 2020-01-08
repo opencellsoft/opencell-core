@@ -314,12 +314,10 @@
                         </h:panelGroup>
                         <h:panelGroup id="customTableWrapper">
                             <hftl:formField label="#{messages['customFieldTemplate.customTableCodeEL']}" field="customTableCodeEL" componentWidth="100" maxlength="2000" rows="1"
-                                            rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CUSTOM_TABLE_WRAPPER}"/>
+                                            rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CUSTOM_TABLE_WRAPPER}" required="true"/>
                             <hftl:formField label="#{messages['customFieldTemplate.dataFilterEL']}" field="dataFilterEL" componentWidth="100" maxlength="2000" rows="1"
                                             rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CUSTOM_TABLE_WRAPPER}"/>
                             <hftl:formField label="#{messages['customFieldTemplate.fieldsEL']}" field="fieldsEL" componentWidth="100" maxlength="2000" rows="1"
-                                            rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CUSTOM_TABLE_WRAPPER}"/>
-                            <hftl:formField label="#{messages['customFieldTemplate.versionFilterEL']}" field="versionFilterEL" componentWidth="100" maxlength="2000" rows="1"
                                             rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CUSTOM_TABLE_WRAPPER}"/>
                         </h:panelGroup>
                     </h:panelGroup>

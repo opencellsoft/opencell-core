@@ -5,6 +5,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.custom.CustomTableDataDto;
 import org.meveo.api.dto.custom.CustomTableDataResponseDto;
+import org.meveo.api.dto.custom.CustomTableWrapperDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.custom.CustomTableRs;
@@ -138,12 +139,12 @@ public class CustomTableRsImpl extends BaseRs implements CustomTableRs {
     }
 
     @Override
-    public CustomTableDataResponseDto listFromWrapper(String customTableWrapperCode, String entityClass, String entityId) {
+    public CustomTableDataResponseDto listFromWrapper(CustomTableWrapperDto customTableWrapperDto) {
         CustomTableDataResponseDto result = new CustomTableDataResponseDto();
 
         try {
 
-            return customTableApi.listFromWrapper(customTableWrapperCode, entityClass, entityId);
+            return customTableApi.listFromWrapper(customTableWrapperDto);
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());

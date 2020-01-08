@@ -9,6 +9,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.custom.CustomTableDataDto;
 import org.meveo.api.dto.custom.CustomTableDataResponseDto;
 import org.meveo.api.dto.custom.CustomTableRecordDto;
+import org.meveo.api.dto.custom.CustomTableWrapperDto;
 import org.meveo.api.dto.custom.UnitaryCustomTableDataDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -49,7 +50,6 @@ import static org.meveo.service.base.NativePersistenceService.FIELD_ID;
  * @lastModifiedVersion 7.0
  **/
 @Stateless
-@SuppressWarnings("serial")
 public class CustomTableApi extends BaseApi {
 
     @Inject
@@ -299,7 +299,6 @@ public class CustomTableApi extends BaseApi {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     private void validateParams(Map<String, Object> toValidate) {
         for (String paramName : toValidate.keySet()) {
             Object value = toValidate.get(paramName);
@@ -322,18 +321,21 @@ public class CustomTableApi extends BaseApi {
      * @throws InvalidParameterException    Invalid parameters passed
      * @throws ValidationException
      */
-    public CustomTableDataResponseDto listFromWrapper(String customTableWrapperCode, String entityClass, String entityId)
+    public CustomTableDataResponseDto listFromWrapper(CustomTableWrapperDto customTableWrapperDto)
             throws MissingParameterException, EntityDoesNotExistsException, InvalidParameterException, ValidationException {
 
-        CustomFieldTemplate cft = customFieldTemplateService.findByCode(customTableWrapperCode);
-        ICustomFieldEntity entity = getEntity(entityClass, Long.valueOf(entityId));
+        CustomFieldTemplate cft = customFieldTemplateService.findByCode(customTableWrapperDto.getCtwCode());
+        ICustomFieldEntity entity = getEntity(customTableWrapperDto.getEntityClass(), Long.valueOf(customTableWrapperDto.getEntityId()));
         String customTableCode = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getCustomTableCodeEL(), "entity", entity);
         Map<String, Object> toValidate = new TreeMap<String, Object>() {{
             put("customTableCode", customTableCode);
         }};
         validateParams(toValidate);
-
-        PagingAndFiltering pagingAndFiltering = getPagingAndFiltering(entity, cft);
+        PagingAndFiltering pagingAndFiltering = customTableWrapperDto.getPagingAndFiltering();
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+        addCTWPagingAndFiltering(entity, cft, pagingAndFiltering);
         CustomEntityTemplate cet = customTableService.getCET(customTableCode);
 
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
@@ -357,11 +359,19 @@ public class CustomTableApi extends BaseApi {
         return (ICustomFieldEntity) entity;
     }
 
-    private PagingAndFiltering getPagingAndFiltering(ICustomFieldEntity entity, CustomFieldTemplate cft) {
+    private PagingAndFiltering addCTWPagingAndFiltering(ICustomFieldEntity entity, CustomFieldTemplate cft, PagingAndFiltering pagingAndFiltering) {
         String filterString = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getDataFilterEL(), "entity", entity);
         String fieldsString = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getFieldsEL(), "entity", entity);
-        String jsonFilter = "{\"filters\": {" + filterString + "},\"fields\":" + fieldsString + "}";
-        PagingAndFiltering pagingAndFiltering = JsonUtils.toObject(jsonFilter, PagingAndFiltering.class);
+        if (filterString == null) {
+            filterString = "";
+        }
+        if (fieldsString == null) {
+            fieldsString = "";
+        }
+        String jsonFilter = "{\"filters\": {" + filterString + "},\"fields\":\"" + fieldsString + "\"}";
+        PagingAndFiltering fieldsAndFiltering = JsonUtils.toObject(jsonFilter, PagingAndFiltering.class);
+        pagingAndFiltering.addFilters(fieldsAndFiltering.getFilters());
+        pagingAndFiltering.addFields(fieldsAndFiltering.getFields());
         return pagingAndFiltering;
     }
 }

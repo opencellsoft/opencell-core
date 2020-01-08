@@ -279,7 +279,6 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
         this.customTableCodeEL = cf.getCustomTableCodeEL();
         this.dataFilterEL = cf.getDataFilterEL();
         this.fieldsEL = cf.getFieldsEL();
-        this.versionFilterEL = cf.getVersionFilterEL();
 
     }
 

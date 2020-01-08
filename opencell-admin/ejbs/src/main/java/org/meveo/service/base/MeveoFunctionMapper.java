@@ -4,14 +4,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
-import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.commons.utils.EjbUtils;
-import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
-import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.CounterPeriodService;
@@ -35,7 +32,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -254,20 +250,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
             addFunction("mv", "getCounterValue", MeveoFunctionMapper.class.getMethod("getCounterValue", ICounterEntity.class, String.class));
             addFunction("mv", "getCounterValueByDate", MeveoFunctionMapper.class.getMethod("getCounterValueByDate", ICounterEntity.class, String.class, Date.class));
-            addFunction("mv", "getCTWValue", MeveoFunctionMapper.class
-                    .getMethod("getCTWValue", ICustomFieldEntity.class, String.class, String.class, String.class, Object.class, String.class, Object.class, String.class,
-                            Object.class, String.class, Object.class, String.class, Object.class));
-            addFunction("mv", "getCTWValues", MeveoFunctionMapper.class
-                    .getMethod("getCTWValues", ICustomFieldEntity.class, String.class, String.class, Object.class, String.class, Object.class, String.class, Object.class,
-                            String.class, Object.class, String.class, Object.class));
-
-            addFunction("mv", "getCTWValueForDate", MeveoFunctionMapper.class
-                    .getMethod("getCTWValueForDate", ICustomFieldEntity.class, String.class, String.class, Date.class, String.class, Object.class, String.class, Object.class,
-                            String.class, Object.class, String.class, Object.class, String.class, Object.class));
-
-            addFunction("mv", "getCTWValuesForDate", MeveoFunctionMapper.class
-                    .getMethod("getCTWValuesForDate", ICustomFieldEntity.class, String.class, Date.class, String.class, Object.class, String.class, Object.class, String.class,
-                            Object.class, String.class, Object.class, String.class, Object.class));
 
             //adding all Math methods with 'math' as prefix
             for (Method method : Math.class.getMethods()) {
@@ -1882,218 +1864,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static BigDecimal getCounterValueByDate(ICounterEntity entity, String counterCode, Date date) {
 
         return getCounterPeriodService().getCounterValueByDate(entity, counterCode, date);
-    }
-
-    /**
-     * Exposes CustomTableService.getValue() function for customTaleWrapper as EL function. See CustomTableService.getValue() function for documentation.
-     * <p>
-     * Accepts up to 5 field name/field value combinations
-     *
-     * @param entity                 The entity related to CustomTable
-     * @param customTableWrapperCode Custom table wrapper code
-     * @param fieldToReturn          Field value to return
-     * @param date                   Record validity date, as expressed by 'valid_from' and 'valid_to' fields, to match
-     * @param fieldName1             Field (or condition) to query
-     * @param fieldValue1            Field search value
-     * @param fieldName2             Field (or condition) to query (optional)
-     * @param fieldValue2            Field search value (optional)
-     * @param fieldName3             Field (or condition) to query (optional)
-     * @param fieldValue3            Field search value (optional)
-     * @param fieldName4             Field (or condition) to query (optional)
-     * @param fieldValue4            Field search value (optional)
-     * @param fieldName5             Field (or condition) to query (optional)
-     * @param fieldValue5            Field search value (optional)
-     * @return A field value
-     * @throws BusinessException General exception
-     */
-    public static Object getCTWValueForDate(ICustomFieldEntity entity, String customTableWrapperCode, String fieldToReturn, Date date, String fieldName1, Object fieldValue1,
-            String fieldName2, Object fieldValue2, String fieldName3, Object fieldValue3, String fieldName4, Object fieldValue4, String fieldName5, Object fieldValue5)
-            throws BusinessException {
-
-        Map<String, Object> queryValues = new HashMap<>();
-
-        queryValues.put(fieldName1, fieldValue1);
-
-        if (fieldName2 != null) {
-            queryValues.put(fieldName2, fieldValue2);
-        }
-        if (fieldName3 != null) {
-            queryValues.put(fieldName3, fieldValue3);
-        }
-        if (fieldName4 != null) {
-            queryValues.put(fieldName4, fieldValue4);
-        }
-        if (fieldName5 != null) {
-            queryValues.put(fieldName5, fieldValue5);
-        }
-        CustomFieldTemplate cft = getCustomFieldTemplateService().findByCode(customTableWrapperCode);
-        String customTableCode = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getCustomTableCodeEL(), "entity", entity);
-        String fieldString = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getFieldsEL(), "entity", entity);
-        if (StringUtils.isBlank(fieldString)) {
-            throw new BusinessException("The fieldsEl is not defined for the customTableWrapper");
-        }
-        List<String> fields = Arrays.asList(fieldString.replaceAll("\\s", "").split(","));
-        if (!fields.contains(fieldToReturn)) {
-            throw new BusinessException("The field to return:" + fieldToReturn + " is not included in the customFieldWrapper's fieldsEL ");
-        }
-        return getCustomTableService().getValue(customTableCode, fieldToReturn, date, queryValues);
-    }
-
-    /**
-     * Exposes CustomTableService.getValue() function for customTaleWrapper as EL function. See CustomTableService.getValue() function for documentation.
-     * <p>
-     * Accepts up to 5 field name/field value combinations
-     *
-     * @param entity                 The entity related to CustomTable
-     * @param customTableWrapperCode Custom table code
-     * @param fieldToReturn          Field value to return
-     * @param fieldName1             Field (or condition) to query
-     * @param fieldValue1            Field search value
-     * @param fieldName2             Field (or condition) to query (optional)
-     * @param fieldValue2            Field search value (optional)
-     * @param fieldName3             Field (or condition) to query (optional)
-     * @param fieldValue3            Field search value (optional)
-     * @param fieldName4             Field (or condition) to query (optional)
-     * @param fieldValue4            Field search value (optional)
-     * @param fieldName5             Field (or condition) to query (optional)
-     * @param fieldValue5            Field search value (optional)
-     * @return A field value
-     * @throws BusinessException General exception
-     */
-    public static Object getCTWValue(ICustomFieldEntity entity, String customTableWrapperCode, String fieldToReturn, String fieldName1, Object fieldValue1, String fieldName2,
-            Object fieldValue2, String fieldName3, Object fieldValue3, String fieldName4, Object fieldValue4, String fieldName5, Object fieldValue5) throws BusinessException {
-
-        Map<String, Object> queryValues = new HashMap<>();
-
-        queryValues.put(fieldName1, fieldValue1);
-
-        if (fieldName2 != null) {
-            queryValues.put(fieldName2, fieldValue2);
-        }
-        if (fieldName3 != null) {
-            queryValues.put(fieldName3, fieldValue3);
-        }
-        if (fieldName4 != null) {
-            queryValues.put(fieldName4, fieldValue4);
-        }
-        if (fieldName5 != null) {
-            queryValues.put(fieldName5, fieldValue5);
-        }
-
-        CustomFieldTemplate cft = getCustomFieldTemplateService().findByCode(customTableWrapperCode);
-        String customTableCode = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getCustomTableCodeEL(), "entity", entity);
-        String fieldString = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getFieldsEL(), "entity", entity);
-        if (StringUtils.isBlank(fieldString)) {
-            throw new BusinessException("The fieldsEl is not defined for the customTableWrapper");
-        }
-        List<String> fields = Arrays.asList(fieldString.replaceAll("\\s", "").split(","));
-        if (!fields.contains(fieldToReturn)) {
-            throw new BusinessException("The field to return:" + fieldToReturn + " is not included in the customFieldWrapper's fieldsEL ");
-        }
-        //@TODO
-        // Which field to retrieve and how to apply filters of CTW
-        return getCustomTableService().getValue(customTableCode, fieldToReturn, queryValues);
-    }
-
-    /**
-     * Exposes CustomTableService.getValue() function for customTaleWrapper as EL function. See CustomTableService.getValue() function for documentation.
-     * <p>
-     * Accepts up to 5 field name/field value combinations
-     *
-     * @param entity                 The entity related to CustomTable
-     * @param customTableWrapperCode Custom table code
-     * @param fieldName1             Field (or condition) to query
-     * @param fieldValue1            Field search value
-     * @param fieldName2             Field (or condition) to query (optional)
-     * @param fieldValue2            Field search value (optional)
-     * @param fieldName3             Field (or condition) to query (optional)
-     * @param fieldValue3            Field search value (optional)
-     * @param fieldName4             Field (or condition) to query (optional)
-     * @param fieldValue4            Field search value (optional)
-     * @param fieldName5             Field (or condition) to query (optional)
-     * @param fieldValue5            Field search value (optional)
-     * @return A map of field values with field name as a key and field value as a value
-     * @throws BusinessException General exception
-     */
-    public static Map<String, Object> getCTWValues(ICustomFieldEntity entity, String customTableWrapperCode, String fieldName1, Object fieldValue1, String fieldName2,
-            Object fieldValue2, String fieldName3, Object fieldValue3, String fieldName4, Object fieldValue4, String fieldName5, Object fieldValue5) throws BusinessException {
-
-        Map<String, Object> queryValues = new HashMap<>();
-
-        queryValues.put(fieldName1, fieldValue1);
-
-        if (fieldName2 != null) {
-            queryValues.put(fieldName2, fieldValue2);
-        }
-        if (fieldName3 != null) {
-            queryValues.put(fieldName3, fieldValue3);
-        }
-        if (fieldName4 != null) {
-            queryValues.put(fieldName4, fieldValue4);
-        }
-        if (fieldName5 != null) {
-            queryValues.put(fieldName5, fieldValue5);
-        }
-        CustomFieldTemplate cft = getCustomFieldTemplateService().findByCode(customTableWrapperCode);
-        String customTableCode = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getCustomTableCodeEL(), "entity", entity);
-
-        return getCustomTableService().getValues(customTableCode, null, queryValues);
-    }
-
-    /**
-     * Exposes CustomTableService.getValue() function for customTaleWrapper as EL function. See CustomTableService.getValue() function for documentation.
-     * <p>
-     * Accepts up to 5 field name/field value combinations
-     *
-     * @param entity                 The entity related to CustomTable
-     * @param customTableWrapperCode Custom table code
-     * @param date                   Record validity date, as expressed by 'valid_from' and 'valid_to' fields, to match
-     * @param fieldName1             Field (or condition) to query
-     * @param fieldValue1            Field search value
-     * @param fieldName2             Field (or condition) to query (optional)
-     * @param fieldValue2            Field search value (optional)
-     * @param fieldName3             Field (or condition) to query (optional)
-     * @param fieldValue3            Field search value (optional)
-     * @param fieldName4             Field (or condition) to query (optional)
-     * @param fieldValue4            Field search value (optional)
-     * @param fieldName5             Field (or condition) to query (optional)
-     * @param fieldValue5            Field search value (optional)
-     * @return A map of field values with field name as a key and field value as a value
-     * @throws BusinessException General exception
-     */
-    public static Map<String, Object> getCTWValuesForDate(ICustomFieldEntity entity, String customTableWrapperCode, Date date, String fieldName1, Object fieldValue1,
-            String fieldName2, Object fieldValue2, String fieldName3, Object fieldValue3, String fieldName4, Object fieldValue4, String fieldName5, Object fieldValue5)
-            throws BusinessException {
-
-        Map<String, Object> queryValues = new HashMap<>();
-
-        queryValues.put(fieldName1, fieldValue1);
-
-        if (fieldName2 != null) {
-            queryValues.put(fieldName2, fieldValue2);
-        }
-        if (fieldName3 != null) {
-            queryValues.put(fieldName3, fieldValue3);
-        }
-        if (fieldName4 != null) {
-            queryValues.put(fieldName4, fieldValue4);
-        }
-        if (fieldName5 != null) {
-            queryValues.put(fieldName5, fieldValue5);
-        }
-        CustomFieldTemplate cft = getCustomFieldTemplateService().findByCode(customTableWrapperCode);
-        //setCTWFiltersAndFields(entity, cft, queryValues, f)
-        String customTableCode = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getCustomTableCodeEL(), "entity", entity);
-
-        return getCustomTableService().getValues(customTableCode, null, date, queryValues);
-    }
-
-    private PagingAndFiltering getPagingAndFiltering(ICustomFieldEntity entity, CustomFieldTemplate cft) {
-        String filterString = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getDataFilterEL(), "entity", entity);
-        String fieldsString = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getFieldsEL(), "entity", entity);
-        String jsonFilter = "{\"filters\": {" + filterString + "},\"fields\":" + fieldsString + "}";
-        PagingAndFiltering pagingAndFiltering = JsonUtils.toObject(jsonFilter, PagingAndFiltering.class);
-        return pagingAndFiltering;
     }
 
 }

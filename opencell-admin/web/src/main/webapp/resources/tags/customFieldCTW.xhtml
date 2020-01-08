@@ -41,17 +41,6 @@
     <o:importFunctions type="org.meveo.model.crm.custom.CustomFieldValue" var="cfv"/>
 
 
-    <!--c:if test="#{cc.attrs.cft.fieldType eq CustomFieldTypeEnum.CHECKBOX_LIST}">
-        <c:set var="inheritedValue" value="#{customFieldDataEntryBean.getInheritedCFValue(cc.attrs.entity, cc.attrs.cft.code)}"/>
-
-        <hftl:decorateFormField
-                label="#{cc.attrs.cft.getDescription(customFieldDataEntryBean.currentLocale.ISO3Language)}#{cc.attrs.cft.valueRequired and inheritedValue ==null?' *':''}"
-                componentWidth="25" displayOneLine="false">
-            <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code)}"
-                                        entity="#{cc.attrs.entity}"
-                                        disabled="#{cc.attrs.disabled}" datePattern="#{cc.attrs.datePattern}" hasInheritedValue="#{inheritedValue !=null}"/>
-        </hftl:decorateFormField>
-    </c:if-->
     <p:panel width="100" id="ctw">
 
         <p:dataTable id="ctSearchResults" value="#{customFieldDataEntryBean.getCustomTableWrapperValues(cc.attrs.entity, cc.attrs.cft)}" var="cet"

@@ -2222,7 +2222,10 @@ public class CustomFieldDataEntryBean implements Serializable {
     private PagingAndFiltering getPagingAndFiltering(ICustomFieldEntity entity, CustomFieldTemplate cft) {
         String filterString = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getDataFilterEL(), "entity", entity);
         String fieldsString = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getFieldsEL(), "entity", entity);
-        String jsonFilter = "{\"filters\": {" + filterString + "},\"fields\":" + fieldsString + "}";
+        if (StringUtils.isBlank(filterString)) {
+            return new PagingAndFiltering();
+        }
+        String jsonFilter = "{\"filters\": {" + filterString + "},\"fields\":\"" + fieldsString + "\"}";
         PagingAndFiltering pagingAndFiltering = JsonUtils.toObject(jsonFilter, PagingAndFiltering.class);
         return pagingAndFiltering;
     }
