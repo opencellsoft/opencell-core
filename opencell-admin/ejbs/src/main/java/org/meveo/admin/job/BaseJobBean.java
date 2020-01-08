@@ -64,7 +64,7 @@ public abstract class BaseJobBean {
      */
     protected <T extends Enum<T>> List<T> getTargetStatusList(JobInstance jobInstance, Class<T> clazz, String cfCode) {
         List<T> formattedStatus = new ArrayList<>();
-        List<String> statusList = (List<String>) this.getParamOrCFValue(jobInstance, cfCode);
+        List<String> statusList = (List<String>) this.getParamOrCFValue(jobInstance, cfCode, new ArrayList<>());
         for (String status : statusList) {
             T statusEnum = Enum.valueOf(clazz, status.toUpperCase());
             formattedStatus.add(statusEnum);
