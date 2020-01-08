@@ -226,53 +226,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<plugins>
-			<!--plugin> <groupId>com.lazerycode.jmeter</groupId> <artifactId>jmeter-maven-plugin</artifactId> 
-				<version>2.7.0</version> <executions> <execution> <id>jmeter-tests</id> <phase>verify</phase> 
-				<goals> <goal>jmeter</goal> </goals> </execution> </executions> <configuration> 
-				<!- <resultsDirectory>/tmp/jmeter</resultsDirectory> -> <testFilesDirectory>${basedir}/jmeter/</testFilesDirectory> 
-				<remoteConfig> <!- <startServersBeforeTests>true</startServersBeforeTests> 
-				-> <!- <serverList>server1,server2</serverList> -> <!- <stopServersAfterTests>true</stopServersAfterTests> 
-				-> <serverList>${remote.jmeter}</serverList> </remoteConfig> <!- <propertiesFilesDirectory>${basedir}/jmeter/</propertiesFilesDirectory> 
-				-> <propertiesUser> <users>${users}</users> <period>${period}</period> <loops>${loops}</loops> 
-				<protocol>${protocol}</protocol> <host>${host}</host> <port>${port}</port> 
-				<thinkTime>${thinkTime}</thinkTime> <firstCustId>${firstCustId}</firstCustId> 
-				</propertiesUser> <!- source file that contains jmeter result data. Needs 
-				to be XML format or a GZIPed XML format -> <!- <source>${project.build.directory}/jmeter/results/*</source> 
-				-> <!- directory where to store analysis report files. At least a file "summary.txt" 
-				will be stored here. -->
-			<!-- <targetDirectory>${project.build.directory}/reports</targetDirectory> 
-				-> </configuration> </plugin -->
-
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.5</version>
-				<executions>
-					<execution>
-						<phase>test</phase>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-						<configuration>
-							<destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
-							<propertyName>surefireArgLine</propertyName>
-						</configuration>
-					</execution>
-					<execution>
-						<id>generate-code-coverage-report</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-						<configuration>
-							<dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
-							<outputDirectory>${basedir}/target/jacoco-reports</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
 	</build>
 	<reporting>
 		<plugins>

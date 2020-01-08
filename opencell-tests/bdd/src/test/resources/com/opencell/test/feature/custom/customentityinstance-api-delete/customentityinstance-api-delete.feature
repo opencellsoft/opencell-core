@@ -1,4 +1,5 @@
-Feature: Delete Custom  Entity Instance by API
+ @ignore
+ Feature: Delete Custom  Entity Instance by API
 
   Background: The classic offer is already executed
               Create Custom  Entity Instance  by API is already executed
@@ -15,6 +16,6 @@ Feature: Delete Custom  Entity Instance by API
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                                          | dto                     | api                          | statusCode | status  | errorCode                        | message                                     |
+      | jsonFile                                                          | dto                     | api                          | statusCode | status  | errorCode                        | message                                                   |
       | custom/customentityinstance-api-delete/SuccessDelete.json         | CustomEntityTemplateDto | /customEntityInstance/test   |        200 | SUCCESS |                                  |                                                           |
       | custom/customentityinstance-api-delete/ENTITY_DOES_NOT_EXIST.json | CustomEntityTemplateDto | /entityCustomization/entity/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | CustomEntityInstance with code=NOT_EXIST does not exists. |
