@@ -7,7 +7,7 @@ package org.meveo.api;
  * @lastModifiedVersion 5.2
  **/
 
-public enum MeveoApiErrorCodeEnum {
+public enum MeveoApiErrorCodeEnum implements ApiErrorCodeEnum {
 
     /**
      * Entity on which action should be performed or referenced, was not found.
@@ -82,5 +82,10 @@ public enum MeveoApiErrorCodeEnum {
     /**
      * Could be a wrong content type or invalid image byte[].
      */
-    INVALID_IMAGE_DATA;
+    INVALID_IMAGE_DATA,
+    
+    /**
+     * database constraint violation.
+     */
+    CONSTRAINT_VIOLATION_EXCEPTION;
 }
