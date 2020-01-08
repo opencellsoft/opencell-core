@@ -6,6 +6,8 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomTableEvent;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.service.base.BusinessService;
@@ -82,12 +84,15 @@ public class GenericNotificationService extends BusinessService<Notification> {
         Class entityClass = entity.getClass();
 
         List<String> classNames = new ArrayList<>();
-
-        while (!entityClass.isAssignableFrom(BusinessCFEntity.class) && !entityClass.isAssignableFrom(BusinessEntity.class) && !entityClass.isAssignableFrom(BaseEntity.class)
-                && !entityClass.isAssignableFrom(AuditableEntity.class) && !entityClass.isAssignableFrom(Object.class)) {
-
-            classNames.add(ReflectionUtils.getCleanClassName(entityClass.getName()));
-            entityClass = entityClass.getSuperclass();
+        if(entity instanceof CustomTableEvent) {
+        	classNames.add(ReflectionUtils.getCleanClassName(CustomEntityInstance.class.getName()));
+        }else {
+	        while (!entityClass.isAssignableFrom(BusinessCFEntity.class) && !entityClass.isAssignableFrom(BusinessEntity.class) && !entityClass.isAssignableFrom(BaseEntity.class)
+	                && !entityClass.isAssignableFrom(AuditableEntity.class) && !entityClass.isAssignableFrom(Object.class)) {
+	
+	            classNames.add(ReflectionUtils.getCleanClassName(entityClass.getName()));
+	            entityClass = entityClass.getSuperclass();
+	        }
         }
 
         return getEntityManager().createNamedQuery("Notification.getActiveNotificationsByEventAndClasses", Notification.class).setParameter("eventTypeFilter", eventType)

@@ -484,7 +484,10 @@ public class CustomFieldValue implements Serializable, Cloneable {
         Iterator iterator = ((List) listValue).iterator();
         Class itemClass = findItemClass(iterator);
 
-        if (itemClass == String.class) {
+        if (itemClass == null) {
+            //#4804 : clear list when un select all form the checkbox menu
+            listStringValue.clear();
+        } else if (itemClass == String.class) {
             listStringValue = new ArrayList<>();
             for (Object listItem : listValue) {
                 //prevent duplicated values

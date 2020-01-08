@@ -53,11 +53,17 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
+                        <useIncrementalCompilation>false</useIncrementalCompilation>
+                    	<release>11</release>
+                </configuration>
+				<dependencies>
+                    	<dependency>
+								<groupId>org.ow2.asm</groupId>
+								<artifactId>asm</artifactId>
+								<version>7.2</version>
+							</dependency>
+					</dependencies>
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>

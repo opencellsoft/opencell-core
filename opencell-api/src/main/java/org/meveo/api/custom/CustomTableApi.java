@@ -3,6 +3,7 @@ package org.meveo.api.custom;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
@@ -35,6 +36,7 @@ import javax.inject.Inject;
 import javax.persistence.Entity;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -125,15 +127,19 @@ public class CustomTableApi extends BaseApi {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void update(UnitaryCustomTableDataDto dto) throws MeveoApiException, BusinessException {
+        Long id = dto.getValue().getId();
         Map<String, Object> toValidate = new TreeMap<String, Object>() {{
             put("customTableCode", dto.getCustomTableCode());
             put("value", dto.getValue());
+            put("id", id);
         }};
         validateParams(toValidate);
         CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
-        List<Map<String, Object>> values = customTableService.convertValues(Arrays.asList(dto.getRowValues()), cfts.values(), false);
-        customTableService.update(cet.getDbTablename(), values);
+        LinkedHashMap<String, Object> rowValues = dto.getRowValues();
+        rowValues.put(FIELD_ID, id);
+        List<Map<String, Object>> values = customTableService.convertValues(Arrays.asList(rowValues), cfts.values(), false);
+        customTableService.update(cet.getDbTablename(), values.get(0));
     }
 
     /**
@@ -156,15 +162,19 @@ public class CustomTableApi extends BaseApi {
         CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
         Map<Boolean, List<CustomTableRecordDto>> partitionedById = dto.getValues().stream().collect(Collectors.partitioningBy(x -> x.getValues().get(FIELD_ID) != null));
-        //create records without ids
-        List<CustomTableRecordDto> valuesWithoutIds = partitionedById.get(false);
-        if (!valuesWithoutIds.isEmpty()) {
-            customTableService.importData(cet, valuesWithoutIds.stream().map(x -> x.getValues()).collect(toList()), !dto.getOverwrite());
-        }
-        //update records with ids
-        List<CustomTableRecordDto> valuesWithIds = partitionedById.get(true);
-        if (!valuesWithIds.isEmpty()) {
-            customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
+        try {
+            //create records without ids
+            List<CustomTableRecordDto> valuesWithoutIds = partitionedById.get(false);
+            if (!valuesWithoutIds.isEmpty()) {
+                customTableService.importData(cet, valuesWithoutIds.stream().map(x -> x.getValues()).collect(toList()), !dto.getOverwrite());
+            }
+            //update records with ids
+            List<CustomTableRecordDto> valuesWithIds = partitionedById.get(true);
+            if (!valuesWithIds.isEmpty()) {
+                customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
+            }
+        } catch (Exception e) {
+            throw getMeveoApiException(e);
         }
     }
 
@@ -188,16 +198,22 @@ public class CustomTableApi extends BaseApi {
         if (pagingAndFiltering == null) {
             pagingAndFiltering = new PagingAndFiltering();
         }
+
         CustomEntityTemplate cet = customTableService.getCET(customTableCode);
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
-        pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
-        List<String> fields = pagingAndFiltering.getFields() != null ? Arrays.asList(pagingAndFiltering.getFields().split(",")) : null;
-        PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, null);
-        Long totalCount = customTableService.count(cet.getDbTablename(), paginationConfig);
         CustomTableDataResponseDto result = new CustomTableDataResponseDto();
         result.setPaging(pagingAndFiltering);
-        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
         result.getCustomTableData().setCustomTableCode(customTableCode);
+        List<String> fields = pagingAndFiltering.getFields() != null ? Arrays.asList(pagingAndFiltering.getFields().split(",")) : null;
+        PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, cfts);
+        try {
+            pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
+        } catch (ElementNotFoundException e) {
+            pagingAndFiltering.setTotalNumberOfRecords(0);
+            return result;
+        }
+        Long totalCount = customTableService.count(cet.getDbTablename(), paginationConfig);
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
         List<Map<String, Object>> list = customTableService.list(cet.getDbTablename(), paginationConfig);
         customTableService.completeWithEntities(list, cfts, pagingAndFiltering.getLoadReferenceDepth());
         result.getCustomTableData().setValuesFromListofMap(list);
@@ -312,9 +328,6 @@ public class CustomTableApi extends BaseApi {
     /**
      * Retrieve custom table data based on CustomTableWrapper and a search criteria
      *
-     * @param customTableWrapperCode Custom table/custom entity template code
-     * @param entityClass            The entity's class
-     * @param entityId               The entity's ID
      * @return Values and pagination information
      * @throws MissingParameterException    Missing parameters
      * @throws EntityDoesNotExistsException Custom table was not matched
@@ -341,7 +354,7 @@ public class CustomTableApi extends BaseApi {
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
         pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
         List<String> fields = pagingAndFiltering.getFields() != null ? Arrays.asList(pagingAndFiltering.getFields().split(",")) : null;
-        PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, null);
+        PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, cfts);
         Long totalCount = customTableService.count(cet.getDbTablename(), paginationConfig);
         CustomTableDataResponseDto result = new CustomTableDataResponseDto();
         result.setPaging(pagingAndFiltering);
@@ -351,6 +364,7 @@ public class CustomTableApi extends BaseApi {
         customTableService.completeWithEntities(list, cfts, pagingAndFiltering.getLoadReferenceDepth());
         result.getCustomTableData().setValuesFromListofMap(list);
         return result;
+
     }
 
     private ICustomFieldEntity getEntity(String entityClass, Long entityId) {

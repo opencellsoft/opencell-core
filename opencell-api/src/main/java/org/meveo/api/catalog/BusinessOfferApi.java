@@ -92,7 +92,7 @@ public class BusinessOfferApi extends BaseApi {
 
         if ((bomOffer.getOfferServiceTemplates() == null || bomOffer.getOfferServiceTemplates().isEmpty())
                 && (bomOffer.getOfferProductTemplates() == null || bomOffer.getOfferProductTemplates().isEmpty())) {
-            throw new MeveoApiException("No service or product template attached");
+            log.warn("No service or product template attached");
         }
 
         // process bsm
