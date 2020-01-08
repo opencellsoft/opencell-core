@@ -10,7 +10,9 @@ import org.meveo.service.base.PersistenceService;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.meveo.apiv2.ValidationUtils.checkEntityClass;
@@ -23,15 +25,14 @@ public abstract class GenericApiService {
     @Inject
     @MeveoJpa
     protected EntityManagerWrapper entityManagerWrapper;
-    protected static Map<String, Class> entitiesByName;
-    
-    static {
-        entitiesByName = ReflectionUtils.getClassesAnnotatedWith(Entity.class).stream().collect(Collectors.toMap(clazz -> clazz.getSimpleName().toLowerCase(), clazz -> clazz));
-    }
     
     public BaseEntity find(Class entityClass, Long id) {
         return checkRecord((BaseEntity) entityManagerWrapper.getEntityManager().find(entityClass, id),
                 entityClass.getSimpleName(), id);
+    }
+
+    public Function<Class, EntityManager> getEntityManager() {
+        return aClass -> getPersistenceService(aClass).getEntityManager();
     }
     
     public PersistenceService getPersistenceService(Class entityClass) {
@@ -39,10 +40,7 @@ public abstract class GenericApiService {
     }
 
     public static Class getEntityClass(String entityName) {
-        checkEntityName(entityName);
-        Class entityClass = entitiesByName.get(entityName.toLowerCase());
-        checkEntityClass(entityClass);
-        return entityClass;
+        return GenericHelper.getEntityClass(entityName);
     }
     
 }
