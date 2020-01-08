@@ -90,7 +90,7 @@ import org.meveo.model.rating.EDR;
 
         @NamedQuery(name = "WalletOperation.getOpenByWallet", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and o.wallet=:wallet"),
 
-        @NamedQuery(name = "WalletOperation.setStatusToRerate", query = "UPDATE WalletOperation o SET o.ratedTransaction=NULL, o.status='TO_RERATE', o.updated = :now "
+        @NamedQuery(name = "WalletOperation.setStatusToRerate", query = "UPDATE WalletOperation o SET o.status='TO_RERATE', o.updated = :now "
                 + " WHERE o.status='TREATED' AND o.ratedTransaction.id IN (SELECT o1.ratedTransaction.id FROM WalletOperation o1 WHERE o1.status='TREATED' and o1.id IN :notBilledWalletIdList)"),
 
         @NamedQuery(name = "WalletOperation.setStatusToCanceled", query = "UPDATE WalletOperation o SET o.status='CANCELED', o.updated = :now where o.status<>'TREATED' and o.chargeInstance=:chargeInstance"),

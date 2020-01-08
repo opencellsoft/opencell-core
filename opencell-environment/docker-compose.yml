@@ -46,6 +46,7 @@ services:
       SMTP_USERNAME: postmaster@my.domain.com
       SMTP_PASSWORD: my-password
       WILDFLY_SERVER_LOG_LEVEL: ERROR
+      ENABLE_JACOCO: ${ENABLE_JACOCO:-"false"}
 #    mem_limit: 5GB
     # Carefull directories log, opencelldata and file opencell-admin.properties must exist and have UID and GID set to 1000
     volumes:

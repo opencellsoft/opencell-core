@@ -1,7 +1,32 @@
 package org.meveo.api;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import javax.ejb.EJB;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -16,6 +41,7 @@ import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.audit.AuditableFieldDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.ConstraintViolationApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
@@ -49,6 +75,7 @@ import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.TradingLanguageService;
@@ -58,29 +85,6 @@ import org.meveo.util.ApplicationProvider;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ejb.EJB;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.nio.file.AccessDeniedException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * @author Edward P. Legaspi
@@ -1115,28 +1119,52 @@ public abstract class BaseApi {
             Class targetClass) throws InvalidParameterException {
 
         if (pagingAndFiltering != null && targetClass != null) {
-            pagingAndFiltering.setFilters(convertFilters(targetClass, pagingAndFiltering.getFilters()));
+            pagingAndFiltering.setFilters(convertFilters(targetClass, pagingAndFiltering.getFilters(), null));
         }
+        PaginationConfiguration paginationConfig = initPaginationConfiguration(defaultSortBy, defaultSortOrder, fetchFields, pagingAndFiltering);
+        return paginationConfig;
+    }    /**
+     * Convert pagination and filtering DTO to a pagination configuration used in services.
+     * 
+     * @param defaultSortBy A default value to sortBy
+     * @param defaultSortOrder A default sort order
+     * @param fetchFields Fields to fetch
+     * @param pagingAndFiltering Paging and filtering criteria
+     * @param targetClass class which is used for pagination.
+     * @return Pagination configuration
+     * @throws InvalidParameterException invalid parameter exception.
+     */
+    @SuppressWarnings("rawtypes")
+    protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering,
+    		Map<String, CustomFieldTemplate> cfts) throws InvalidParameterException {
 
-        PaginationConfiguration paginationConfig = new PaginationConfiguration(pagingAndFiltering != null ? pagingAndFiltering.getOffset() : null,
+        if (pagingAndFiltering != null && cfts != null) {
+            pagingAndFiltering.setFilters(convertFilters(null, pagingAndFiltering.getFilters(),cfts));
+        }
+        PaginationConfiguration paginationConfig = initPaginationConfiguration(defaultSortBy, defaultSortOrder, fetchFields, pagingAndFiltering);
+        return paginationConfig;
+    }
+
+	private PaginationConfiguration initPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder,
+			List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
+		return new PaginationConfiguration(pagingAndFiltering != null ? pagingAndFiltering.getOffset() : null,
             pagingAndFiltering != null ? pagingAndFiltering.getLimit() : null, pagingAndFiltering != null ? pagingAndFiltering.getFilters() : null,
             pagingAndFiltering != null ? pagingAndFiltering.getFullTextFilter() : null, fetchFields,
             pagingAndFiltering != null && pagingAndFiltering.getSortBy() != null ? pagingAndFiltering.getSortBy() : defaultSortBy,
             pagingAndFiltering != null && pagingAndFiltering.getSortOrder() != null ? SortOrder.valueOf(pagingAndFiltering.getSortOrder().name()) : defaultSortOrder);
+	}
 
-        return paginationConfig;
-    }
-
-    /**
+	/**
      * Convert string type filter criteria to a data type corresponding to a particular field
      * 
      * @param targetClass Principal class that filter criteria is targeting
      * @param filtersToConvert Filtering criteria
+	 * @param cfts 
      * @return A converted filter
      * @throws InvalidParameterException
      */
     @SuppressWarnings({ "rawtypes" })
-    private Map<String, Object> convertFilters(Class targetClass, Map<String, Object> filtersToConvert) throws InvalidParameterException {
+    private Map<String, Object> convertFilters(Class targetClass, Map<String, Object> filtersToConvert, Map<String, CustomFieldTemplate> cfts) throws InvalidParameterException {
 
         log.debug("Converting filters {}", filtersToConvert);
 
@@ -1172,16 +1200,8 @@ public abstract class BaseApi {
                 // Determine what the target field type is and convert to that data type
             } else {
 
-                Field field;
-                try {
-                    field = ReflectionUtils.getFieldThrowException(targetClass, fieldName);
-                } catch (NoSuchFieldException e) {
-                    throw new InvalidParameterException(e.getMessage());
-                }
-                Class<?> fieldClassType = field.getType();
-                if (fieldClassType == List.class || fieldClassType == Set.class) {
-                    fieldClassType = ReflectionUtils.getFieldGenericsType(field);
-                }
+            	Class<?> fieldClassType = extractFieldType(targetClass, fieldName, cfts);
+                
 
                 Object valueConverted = castFilterValue(value, fieldClassType, (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition));
                 if (valueConverted != null) {
@@ -1195,7 +1215,33 @@ public abstract class BaseApi {
         return filters;
     }
 
-    /**
+	private Class<?> extractFieldType(Class<?> targetClass, String fieldName, Map<String, CustomFieldTemplate> cfts) {
+		Class<?> fieldClassType = null;
+		if (targetClass != null) {
+			Field field;
+			try {
+				field = ReflectionUtils.getFieldThrowException(targetClass, fieldName);
+			} catch (NoSuchFieldException e) {
+				throw new InvalidParameterException(e.getMessage());
+			}
+			fieldClassType = fieldClassType = field.getType();
+			if (fieldClassType == List.class || fieldClassType == Set.class) {
+				fieldClassType = ReflectionUtils.getFieldGenericsType(field);
+			}
+		} else if (cfts != null) {
+			Optional<String> field = cfts.keySet().stream().filter(x -> x.equalsIgnoreCase(fieldName)).findFirst();
+			if (field.isPresent()) {
+				String cftName = field.get();
+				CustomFieldTemplate cft = cfts.get(cftName);
+				fieldClassType = cft.getFieldType().getDataClass();
+			} else if (NativePersistenceService.FIELD_ID.equals(fieldName)) {
+				fieldClassType = Long.class;
+			}
+		}
+		return fieldClassType;
+	}
+
+	/**
      * Convert value of unknown data type to a target data type. A value of type list is considered as already converted value, as would come only from WS.
      * 
      * @param value Value to convert
@@ -1454,6 +1500,23 @@ public abstract class BaseApi {
         List<AuditableField> auditableFields = auditableFieldService.list(entity);
         List<AuditableFieldDto> auditableFieldsDto = auditableFieldsToDto(auditableFields);
         dto.setAuditableFields(auditableFieldsDto);
+    }
+    
+	public boolean isRootCause(Throwable e, Class<?> clazz) {
+		while (e != null) {
+			if (e.getClass().equals(clazz)) {
+				return true;
+			}
+			e = e.getCause();
+		}
+		return false;
+	}
+    
+    public MeveoApiException getMeveoApiException(Throwable e) {
+    	if(isRootCause(e, ConstraintViolationException.class)) {
+    		return new ConstraintViolationApiException(e.getMessage());
+    	}
+    	return new MeveoApiException(e);
     }
 
 }

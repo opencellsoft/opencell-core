@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Opencell4Docker Installer Script
 #
@@ -38,10 +39,9 @@ docker_path=`which docker.io || which docker`
 
 echo ">>> compiling WAR and create SQL file"
 
-
-docker run  -u ${UID:-1000} --rm -v ${HOME:-$PWD}/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2 -v $PWD/../:/app -w /app  ${MAVEN_IMAGE}:${MAVEN_IMAGE_VERSION} mvn -Dmaven.test.skip=true -B clean package
+docker run  -u ${UID:-1000} --rm -v ${HOME:-$PWD}/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2 -v $PWD/../:/app -w /app  ${MAVEN_IMAGE}:${MAVEN_IMAGE_VERSION} mvn -Duser.home=/var/maven -Dmaven.test.skip=true -B clean install
 rm -fr ../databasechangelog.csv
-docker run  -u ${UID:-1000} --rm -v ${HOME:-$PWD}/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2 -v $PWD/../:/app -w /app  ${MAVEN_IMAGE}:${MAVEN_IMAGE_VERSION} mvn -Dmaven.test.skip=true -B -f opencell-model/pom.xml -Ddb.url=offline:postgresql?outputLiquibaseSql=true -Prebuild liquibase:updateSQL
+docker run  -u ${UID:-1000} --rm -v ${HOME:-$PWD}/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2 -v $PWD/../:/app -w /app  ${MAVEN_IMAGE}:${MAVEN_IMAGE_VERSION} mvn -Duser.home=/var/maven -Dmaven.test.skip=true -B -f opencell-model/pom.xml -Ddb.url=offline:postgresql?outputLiquibaseSql=true -Prebuild liquibase:updateSQL
 
 
 echo "Pulling docker images from docker hub"
@@ -56,11 +56,15 @@ echo ">>> Waiting opencell is ready, don't matter about 404 errors"
 export CONNEXION_TIMEOUT=${CONNEXION_TIMEOUT:-120}
 sleep 5
 i=0;
-until [ "`docker inspect -f {{.State.Health.Status}} opencell-${TENANT:-demo}`"=="healthy" ]; do
+until [ "$(docker inspect --format '{{json .State.Health.Status }}' opencell-${TENANT:-demo})" == "\"healthy\"" ]; do
   echo "$i not yet up"
   sleep 1
+  if [ "${i}" -gt "${CONNEXION_TIMEOUT}"  ]; then
+    echo "Container won't start correctly"
+    exit 1
+  fi
   i=$((i+1))
-done; 
+done
 
 if [ "${i}" -lt "${CONNEXION_TIMEOUT}" ];
  then
@@ -74,7 +78,6 @@ if [ "${i}" -lt "${CONNEXION_TIMEOUT}" ];
     echo ""
     echo "Any problem with this installer, please contact me : antoine.michea@opencellsoft.com"
 
-    break;
  else
     echo "DEPLOY ERROR, please check logs"
 fi

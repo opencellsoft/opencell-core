@@ -38,6 +38,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -51,6 +52,7 @@ import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
@@ -58,12 +60,14 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
+import org.meveo.model.CustomTableEvent;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -115,6 +119,9 @@ public class NativePersistenceService extends BaseService {
 
     @Inject
 	private CustomEntityTemplateService customEntityTemplateService;
+    
+    @Inject
+    protected Event<CustomTableEvent> entityChangeEventProducer;
 
     /**
      * Find record by its identifier
@@ -163,7 +170,7 @@ public class NativePersistenceService extends BaseService {
      */
     public Long create(String tableName, Map<String, Object> values) throws BusinessException {
 
-        Long id = create(tableName, values, true);
+        Long id = create(tableName, values, true, false);
 
         return id;
     }
@@ -316,7 +323,7 @@ public class NativePersistenceService extends BaseService {
      * @param returnId Should identifier be returned - does a lookup in DB by matching same values. If True values will be updated with 'id' field value.
      * @throws BusinessException General exception
      */
-    protected Long create(String tableName, Map<String, Object> values, boolean returnId) throws BusinessException {
+    protected Long create(String tableName, Map<String, Object> values, boolean returnId, boolean fireNotifications) throws BusinessException {
 
         StringBuffer sql = new StringBuffer();
         try {
@@ -373,37 +380,39 @@ public class NativePersistenceService extends BaseService {
                 query.setParameter(fieldName, values.get(fieldName));
             }
             query.executeUpdate();
-
+            
+            
+            Long result=null;
             // Find the identifier of the last inserted record
-            if (returnId) {
-                if (id != null) {
-                	if(id instanceof Number) {
-                		return ((Number) id).longValue();
-                	}
-                    
-                }
-                StringBuffer requestConstruction = buildSqlInsertionRequest(tableName, findIdFields);
-
-                query = getEntityManager().createNativeQuery(requestConstruction.toString()).setMaxResults(1);
-                for (String fieldName : values.keySet()) {
-                    if (values.get(fieldName) == null) {
-                        continue;
-                    }
-                    query.setParameter(fieldName, values.get(fieldName));
-                }
-
-                id = query.getSingleResult();
-                if (id instanceof Number) {
-                    id = ((Number) id).longValue();
-                }
-                values.put(FIELD_ID, id);
-
-                return (Long) id;
-
-            } else {
-                return null;
+            if(fireNotifications) {
+            	returnId=true;
             }
+			if (returnId) {
+				if (id != null) {
+					if (id instanceof Number) {
+						result = ((Number) id).longValue();
+					}
 
+				} else {
+					StringBuffer requestConstruction = buildSqlInsertionRequest(tableName, findIdFields);
+
+					query = getEntityManager().createNativeQuery(requestConstruction.toString()).setMaxResults(1);
+					for (String fieldName : values.keySet()) {
+						if (values.get(fieldName) == null) {
+							continue;
+						}
+						query.setParameter(fieldName, values.get(fieldName));
+					}
+					id = query.getSingleResult();
+					if (id instanceof Number) {
+						result = ((Number) id).longValue();
+					}
+				}
+			}
+			if(fireNotifications) {
+				entityChangeEventProducer.fire(new CustomTableEvent(tableName, result, values, NotificationEventTypeEnum.CREATED));
+			}
+            return result;
         } catch (Exception e) {
             log.error("Failed to insert values into OR find ID of table {} {} sql {}", tableName, values, sql, e);
             throw e;
@@ -424,11 +433,13 @@ public class NativePersistenceService extends BaseService {
      * 
      * @param tableName Table name to update
      * @param value Values. Values must contain an "id" (FIELD_ID) field.
+     * @param b 
      * @throws BusinessException General exception
      */
-    public void update(String tableName, Map<String, Object> value) throws BusinessException {
+    public void update(String tableName, Map<String, Object> value, boolean fireNotifications) throws BusinessException {
 
-        if (value.get(FIELD_ID) == null) {
+        Number id = ((Number)value.get(FIELD_ID));
+		if (id == null) {
             throw new BusinessException("'id' field value not provided to update values in native table");
         }
 
@@ -461,6 +472,9 @@ public class NativePersistenceService extends BaseService {
                 }
             }
             query.executeUpdate();
+            if(fireNotifications) {
+				entityChangeEventProducer.fire(new CustomTableEvent(tableName, id.longValue(), value, NotificationEventTypeEnum.UPDATED));
+			}
 
         } catch (Exception e) {
             log.error("Failed to insert values into table {} {} sql {}", tableName, value, sql, e);
@@ -507,13 +521,8 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void disable(String tableName, Long id) throws BusinessException {
-
-        StringBuilder updateQuery = new StringBuilder("update ")
-                .append(tableName)
-                .append(" set ")
-                .append(FIELD_DISABLED)
-                .append("=1 where id= :id");
-        getEntityManager().createNativeQuery(updateQuery.toString()).setParameter("id", id).executeUpdate();
+        getEntityManager().createNativeQuery("update " + tableName + " set disabled=1 where id=" + id).executeUpdate();
+		entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.DISABLED));
     }
 
     /**
@@ -524,13 +533,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void disable(String tableName, Set<Long> ids) throws BusinessException {
-
-        StringBuilder updateQuery = new StringBuilder("update ")
-                .append(tableName)
-                .append(" set ")
-                .append(FIELD_DISABLED)
-                .append("=1 where id in :ids");
-        getEntityManager().createNativeQuery(updateQuery.toString()).setParameter("ids", ids).executeUpdate();
+       getEntityManager().createNativeQuery("update " + tableName + " set disabled=1 where id in :ids").setParameter("ids", ids).executeUpdate();
     }
 
     /**
@@ -541,13 +544,8 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void enable(String tableName, Long id) throws BusinessException {
-
-        StringBuilder updateQuery = new StringBuilder("update ")
-                .append(tableName)
-                .append(" set ")
-                .append(FIELD_DISABLED)
-                .append("=0 where id= :id");
-        getEntityManager().createNativeQuery(updateQuery.toString()).setParameter("id", id).executeUpdate();
+        getEntityManager().createNativeQuery("update " + tableName + " set disabled=0 where id=" + id).executeUpdate();
+        entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.ENABLED));
     }
 
     /**
@@ -575,11 +573,9 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void remove(String tableName, Long id) throws BusinessException {
-        this.deletionService.checkTablenotreferenced(tableName, id);
-        StringBuilder deleteQuery = new StringBuilder("delete from ")
-                .append(tableName)
-                .append(" where id= :id");
-        getEntityManager().createNativeQuery(deleteQuery.toString()).setParameter("id", id).executeUpdate();
+        this.deletionService.checkTableNotreferenced(tableName, id);
+        getEntityManager().createNativeQuery("delete from " + tableName + " where id=" + id).executeUpdate();
+        entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.REMOVED));
     }
 
     /**
@@ -590,12 +586,8 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void remove(String tableName, Set<Long> ids) throws BusinessException {
-        ids.stream().forEach(id -> deletionService.checkTablenotreferenced(tableName, id));
-        StringBuilder deleteQuery = new StringBuilder("delete from ")
-                .append(tableName)
-                .append(" where id in:ids");
-        getEntityManager().createNativeQuery(deleteQuery.toString()).setParameter("ids", ids).executeUpdate();
-
+        ids.stream().forEach(id -> deletionService.checkTableNotreferenced(tableName, id));
+        getEntityManager().createNativeQuery("delete from " + tableName + " where id in:ids").setParameter("ids", ids).executeUpdate();
     }
 
     /**
@@ -981,11 +973,11 @@ public class NativePersistenceService extends BaseService {
 
             // New record
             if (value.get(FIELD_ID) == null) {
-                create(tableName, value, false);
+                create(tableName, value, false, false);
 
                 // Existing record
             } else {
-                update(tableName, value);
+                update(tableName, value, false);
             }
         }
     }
@@ -1082,7 +1074,7 @@ public class NativePersistenceService extends BaseService {
                 long id = Long.parseLong(value.toString());
                 boolean exist=validateRecordExistance(cft, id);
                 if (!exist) {
-                    throw new ValidationException("Failed to find reference of record on database [ class: "+cft.getEntityClazz()+", id: "+id+"]");
+                    throw new ElementNotFoundException(id, cft.getEntityClazz());
                 }
 				return id;
 

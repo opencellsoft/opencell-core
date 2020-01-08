@@ -49,6 +49,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -420,14 +421,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         customerTag.setAttribute("registrationNo", registrationNo != null ? registrationNo : "");
         customerTag.setAttribute("jobTitle", jobTitle != null ? jobTitle : "");
 
-        PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
-
-        String mandateIdentification = null;
-        if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
-            mandateIdentification = ((DDPaymentMethod) preferedPaymentMethod).getMandateIdentification();
-            customerTag.setAttribute("mandateIdentification", mandateIdentification != null ? mandateIdentification : "");
-        }
-
         addCustomFields(customer, doc, customerTag);
         addNameAndAdress(customer, doc, customerTag, billingAccountLanguage);
         customerTag.appendChild(toContactTag(doc, customer.getContactInformation()));
@@ -436,11 +429,20 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Seller seller = invoice.getSeller();
         if(seller != null) {
             Element sellerTag = doc.createElement("seller");
-            sellerTag.setAttribute("code", seller.getCode() != null ? seller.getCode() : "");
-            sellerTag.setAttribute("description", seller.getDescription() != null ? seller.getDescription() : "");
-            sellerTag.setAttribute("vatNo", seller.getVatNo() != null ? seller.getVatNo() : "");
+
+            String codeS = seller.getCode();
+            String descriptionS = seller.getDescription();
+            String vatNoS = seller.getVatNo();
+            String registrationNoS = seller.getRegistrationNo();
+    
+            sellerTag.setAttribute("code", codeS != null ? codeS : "");
+            sellerTag.setAttribute("description", descriptionS != null ? descriptionS : "");
+            sellerTag.setAttribute("vatNo", vatNoS != null ? vatNoS : "");
+            sellerTag.setAttribute("registrationNo", registrationNoS != null ? registrationNoS : "");
+
             addCustomFields(seller, doc, sellerTag);
             addAdress(seller, doc, sellerTag, billingAccountLanguage);
+            
             sellerTag.appendChild(toContactTag(doc, seller.getContactInformation()));
             header.appendChild(sellerTag);
         }
@@ -451,6 +453,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         String externalRef12 = customerAccount.getExternalRef1();
         String externalRef22 = customerAccount.getExternalRef2();
         String jobTitleCA = customerAccount.getJobTitle();
+        String vatNoCA = customerAccount.getVatNo();
+        String registrationNoCA = customerAccount.getRegistrationNo();
         TradingLanguage tradingLanguage = customerAccount.getTradingLanguage();
         String prDescription = null;
         if (tradingLanguage != null) {
@@ -465,10 +469,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         customerAccountTag.setAttribute("currency", currencyCode != null ? currencyCode : "");
         customerAccountTag.setAttribute("language", prDescription != null ? prDescription : "");
         customerAccountTag.setAttribute("jobTitle", jobTitleCA != null ? jobTitleCA : "");
+        customerAccountTag.setAttribute("registrationNo", registrationNoCA != null ? registrationNoCA : "");
+        customerAccountTag.setAttribute("vatNo", vatNoCA != null ? vatNoCA : "");
 
-        if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
-            customerAccountTag.setAttribute("mandateIdentification", mandateIdentification != null ? mandateIdentification : "");
-        }
         addCustomFields(customerAccount, doc, customerAccountTag);
         customerAccountTag.appendChild(toContactTag(doc, customerAccount.getContactInformation()));
         header.appendChild(customerAccountTag);
@@ -494,6 +497,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         String billingExternalRef2 = billingAccount.getExternalRef2();
         String billingExternalRef1 = billingAccount.getExternalRef1();
         String jobTitleBA = billingAccount.getJobTitle();
+        String vatNoBA = billingAccount.getVatNo();
+        String registrationNoBA = billingAccount.getRegistrationNo();
         Element billingAccountTag = doc.createElement("billingAccount");
         if (billingCycle == null) {
             billingCycle = billingAccount.getBillingCycle();
@@ -508,6 +513,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         billingAccountTag.setAttribute("externalRef1", billingExternalRef1 != null ? billingExternalRef1 : "");
         billingAccountTag.setAttribute("externalRef2", billingExternalRef2 != null ? billingExternalRef2 : "");
         billingAccountTag.setAttribute("jobTitle", jobTitleBA != null ? jobTitleBA : "");
+        billingAccountTag.setAttribute("registrationNo", registrationNoBA != null ? registrationNoBA : "");
+        billingAccountTag.setAttribute("vatNo", vatNoBA != null ? vatNoBA : "");
 
 
         if (invoiceConfiguration != null && invoiceConfiguration.getDisplayBillingCycle() != null && invoiceConfiguration.getDisplayBillingCycle()) {
@@ -695,14 +702,22 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         for (UserAccount userAccount : usersAccounts) {
             List<Subscription> subscriptions = userAccount.getSubscriptions();
             Element userAccountTag = doc.createElement("userAccount");
-            userAccountTag.setAttribute("id", userAccount.getId() + "");
+
+            String registrationNoUA = userAccount.getRegistrationNo();
+            String vatNoUA = userAccount.getVatNo();
             String code = userAccount.getCode();
-            userAccountTag.setAttribute("code", code != null ? code : "");
             String jobTitle = userAccount.getJobTitle();
-            userAccountTag.setAttribute("jobTitle", jobTitle != null ? jobTitle : "");
             String description = userAccount.getDescription();
+
+            userAccountTag.setAttribute("id", userAccount.getId() + "");
+            userAccountTag.setAttribute("code", code != null ? code : "");
+            userAccountTag.setAttribute("jobTitle", jobTitle != null ? jobTitle : "");
             userAccountTag.setAttribute("description", description != null ? description : "");
+            userAccountTag.setAttribute("registrationNo", registrationNoUA != null ? registrationNoUA : "");
+            userAccountTag.setAttribute("vatNo", vatNoUA != null ? vatNoUA : "");
+
             addCustomFields(userAccount, doc, userAccountTag);
+
             List<ServiceInstance> allServiceInstances = new ArrayList<ServiceInstance>();
             if (!isVirtual) { // if it is not virtual (not quote) add all subscriptions to XML (DO NOT KNOW if required or NO)
                 allServiceInstances = addSubscriptions(userAccount, doc, userAccountTag, invoiceTag, subscriptions,billingAccountLanguage);
@@ -1208,16 +1223,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element paymentMethod = doc.createElement("paymentMethod");
         parent.appendChild(paymentMethod);
 
-        PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
-        if (preferedPaymentMethod != null) {
-            paymentMethod.setAttribute("type", preferedPaymentMethod.getPaymentType().name());
+        PaymentMethod preferredPaymentMethod = PersistenceUtils.initializeAndUnproxy(customerAccount.getPreferredPaymentMethod());
+        if (preferredPaymentMethod != null) {
+            paymentMethod.setAttribute("type", preferredPaymentMethod.getPaymentType().name());
         }
 
-        if (paymentMethod instanceof DDPaymentMethod) {
-            BankCoordinates bankCoordinates = null;
-            if (paymentMethod instanceof DDPaymentMethod) {
-                bankCoordinates = ((DDPaymentMethod) paymentMethod).getBankCoordinates();
-            }
+        if (preferredPaymentMethod != null && PaymentMethodEnum.DIRECTDEBIT.equals(preferredPaymentMethod.getPaymentType())) {
+            DDPaymentMethod directDebitPayment = (DDPaymentMethod) preferredPaymentMethod;
+            BankCoordinates bankCoordinates = directDebitPayment.getBankCoordinates();
 
             if (bankCoordinates != null) {
                 Element bankCoordinatesElement = doc.createElement("bankCoordinates");
@@ -1227,12 +1240,20 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 Element accountOwner = doc.createElement("accountOwner");
                 Element key = doc.createElement("key");
                 Element iban = doc.createElement("IBAN");
+                Element bic = doc.createElement("bic");
+                Element mandateIdentification = doc.createElement("mandateIdentification");
+                Element mandateDate = doc.createElement("mandateDate");
+                Element bankName = doc.createElement("bankName");
                 bankCoordinatesElement.appendChild(bankCode);
                 bankCoordinatesElement.appendChild(branchCode);
                 bankCoordinatesElement.appendChild(accountNumber);
                 bankCoordinatesElement.appendChild(accountOwner);
                 bankCoordinatesElement.appendChild(key);
                 bankCoordinatesElement.appendChild(iban);
+                bankCoordinatesElement.appendChild(bic);
+                bankCoordinatesElement.appendChild(mandateIdentification);
+                bankCoordinatesElement.appendChild(mandateDate);
+                bankCoordinatesElement.appendChild(bankName);
                 paymentMethod.appendChild(bankCoordinatesElement);
 
                 String bankCodeData = bankCoordinates.getBankCode();
@@ -1257,9 +1278,24 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 String ibanData = bankCoordinates.getIban();
                 Text ibanTxt = doc.createTextNode(ibanData != null ? ibanData : "");
                 iban.appendChild(ibanTxt);
+
+                String bicData = bankCoordinates.getBic();
+                Text bicTxt = doc.createTextNode(bicData != null ? bicData : "");
+                bic.appendChild(bicTxt);
+                String bankNameData = bankCoordinates.getBankName();
+                Text bankNameTxt = doc.createTextNode(bankNameData != null ? bankNameData : "");
+                bankName.appendChild(bankNameTxt);
+
+                String mandateIdentificationData = directDebitPayment.getMandateIdentification();
+                Text mandateIdentificationTxt = doc.createTextNode(mandateIdentificationData != null ? mandateIdentificationData : "");
+                mandateIdentification.appendChild(mandateIdentificationTxt);
+
+                String mandateDateData = DateUtils.formatDateWithPattern(directDebitPayment.getMandateDate(), DEFAULT_DATE_TIME_PATTERN);
+                Text mandateDateTxt = doc.createTextNode(mandateDateData != null ? mandateDateData : "");
+                mandateDate.appendChild(mandateDateTxt);
             }
 
-        } else if (paymentMethod instanceof CardPaymentMethod) {
+        } else if (preferredPaymentMethod != null && PaymentMethodEnum.CARD.equals(preferredPaymentMethod.getPaymentType())) {
 
             Element cardInformationElement = doc.createElement("cardInformation");
             Element cardType = doc.createElement("cardType");
@@ -1272,16 +1308,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             cardInformationElement.appendChild(expiration);
             paymentMethod.appendChild(cardInformationElement);
 
-            Text cardTypeTxt = doc.createTextNode(((CardPaymentMethod) paymentMethod).getCardType().name());
+            Text cardTypeTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getCardType().name());
             cardType.appendChild(cardTypeTxt);
 
-            Text ownerTxt = doc.createTextNode(((CardPaymentMethod) paymentMethod).getOwner());
+            Text ownerTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getOwner());
             owner.appendChild(ownerTxt);
 
-            Text cardNumberTxt = doc.createTextNode(((CardPaymentMethod) paymentMethod).getHiddenCardNumber());
+            Text cardNumberTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getHiddenCardNumber());
             cardNumber.appendChild(cardNumberTxt);
 
-            Text expirationTxt = doc.createTextNode(((CardPaymentMethod) paymentMethod).getExpirationMonthAndYear());
+            Text expirationTxt = doc.createTextNode(((CardPaymentMethod) preferredPaymentMethod).getExpirationMonthAndYear());
             expiration.appendChild(expirationTxt);
         }
     }

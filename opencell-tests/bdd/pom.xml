@@ -5,7 +5,7 @@
 		<artifactId>opencell</artifactId>
 		<groupId>com.opencellsoft</groupId>
 		<relativePath>../../pom.xml</relativePath>
-		<version>10.0.1-SNAPSHOT</version>
+		<version>9.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>bdd.opencell.tests</groupId>
 	<artifactId>opencell-bdd</artifactId>
@@ -189,18 +189,11 @@
 				will be stored here. -->
 			<!-- <targetDirectory>${project.build.directory}/reports</targetDirectory> 
 				-> </configuration> </plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
+
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.9</version>
+				<version>0.8.5</version>
 				<executions>
 					<execution>
 						<phase>test</phase>

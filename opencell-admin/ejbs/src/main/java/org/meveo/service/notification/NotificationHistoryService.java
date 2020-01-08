@@ -10,7 +10,9 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.event.IEvent;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.CustomTableEvent;
 import org.meveo.model.IEntity;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
@@ -38,18 +40,26 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public NotificationHistory create(Notification notification, Object entityOrEvent, String result, NotificationHistoryStatusEnum status) throws BusinessException {
         IEntity entity = null;
-        if (entityOrEvent instanceof IEntity) {
-            entity = (IEntity) entityOrEvent;
-        } else if (entityOrEvent instanceof IEvent) {
-            entity = ((IEvent) entityOrEvent).getEntity();
-        }
+        String id = null;
+        String className = null;
+		if (entityOrEvent instanceof IEntity) {
+			entity = (IEntity) entityOrEvent;
+			id = entity.getId().toString();
+			className = entity.getClass().getName();
+		} else if (entityOrEvent instanceof IEvent) {
+			entity = ((IEvent) entityOrEvent).getEntity();
+			id = (((IEvent) entityOrEvent).getEntity()).getId().toString();
+			className = entity.getClass().getName();
+		} else if(entityOrEvent instanceof CustomTableEvent) {
+			CustomTableEvent customTableEvent = (CustomTableEvent) entityOrEvent;
+			id=((CustomTableEvent) entityOrEvent).getId().toString();
+			className = CustomEntityInstance.class.getName()+" - "+customTableEvent.getCetCode();
+		}
 
         NotificationHistory history = new NotificationHistory();
         history.setNotification(getEntityManager().getReference(Notification.class, notification.getId()));
-        if (entity != null) {
-            history.setEntityClassName(entity.getClass().getName());
-            history.setSerializedEntity(entity.getId() == null ? entity.toString() : entity.getId().toString());
-        }
+        history.setEntityClassName(className);
+        history.setSerializedEntity(id != null ? id : entityOrEvent.toString());
         history.setResult(result);
         history.setStatus(status);
 
@@ -57,7 +67,7 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
 
         return history;
     }
-
+    
     /**
      * Count Notification history records which date is older then a given date and belong to a given notification (optional)
      * 
