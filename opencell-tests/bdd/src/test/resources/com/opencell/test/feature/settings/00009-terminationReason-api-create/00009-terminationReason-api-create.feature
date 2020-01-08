@@ -1,4 +1,4 @@
-@settings
+@settings @ignore
 Feature: Create Termination reason by API
 
   Background: The system is configured.

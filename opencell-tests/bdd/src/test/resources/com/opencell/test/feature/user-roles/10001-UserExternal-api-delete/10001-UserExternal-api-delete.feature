@@ -1,4 +1,4 @@
-@user-roles
+@user-roles @ignore
 Feature: Delete User External by API
 
   Background: The classic offer is already executed

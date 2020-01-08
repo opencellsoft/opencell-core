@@ -1,4 +1,4 @@
-@user-roles
+@user-roles @ignore
 Feature: Create a User External by API
 
   Background: The classic offer is already executed

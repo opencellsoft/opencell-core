@@ -1,24 +1,20 @@
 package com.opencell.test.bdd.commons;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import org.meveo.api.dto.ActionStatus;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencell.test.utils.JSONParserException;
 import com.opencell.test.utils.JsonParser;
 import com.opencell.test.utils.RestApiUtils;
-import cucumber.api.PendingException;
+
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.BaseEntityDto;
-import org.reflections.Reflections;
-
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class CommonStepDefinition implements En {
 
@@ -116,7 +112,7 @@ public class CommonStepDefinition implements En {
             assertNotNull(base.getResponse());
             assertNotNull(base.getResponse().getActionStatus());
             if(base.getResponse().getActionStatus().getErrorCode() != null) {
-                assertEquals(base.getResponse().getActionStatus().getErrorCode().name(), errorCode);
+                assertEquals(base.getResponse().getActionStatus().getErrorCode().toString(), errorCode);
             }
         });
 

@@ -1,4 +1,4 @@
-@settings
+@settings @ignore
 Feature: Delete termination Reason by API
 
   Background: System is configured.
