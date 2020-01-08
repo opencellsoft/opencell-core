@@ -100,13 +100,11 @@ public class InboundServlet extends HttpServlet {
             }
             res.setStatus(status);
 
-            if (status != HttpURLConnection.HTTP_NOT_FOUND) {
-                // produce the response
-                res.setCharacterEncoding(inReq.getResponseEncoding() == null ? req.getCharacterEncoding() : inReq.getResponseEncoding());
-                res.setContentType(inReq.getResponseContentType() == null ? inReq.getContentType() : inReq.getResponseContentType());
+            // produce the response
+            res.setCharacterEncoding(inReq.getResponseEncoding() == null ? req.getCharacterEncoding() : inReq.getResponseEncoding());
+            res.setContentType(inReq.getResponseContentType() == null ? inReq.getContentType() : inReq.getResponseContentType());
 
-                produceResponse(res, inReq);
-            }
+            produceResponse(res, inReq);
 
             inboundRequestService.update(inReq);
 

@@ -58,7 +58,7 @@ public class DeletionServiceTest {
         //Given
         String tableNAme = "AAA";
         //When
-        sut.checkTablenotreferenced(tableNAme, 5L);
+        sut.checkTableNotreferenced(tableNAme, 5L);
         //Then
         ArgumentCaptor<IEntity> captor = ArgumentCaptor.forClass(IEntity.class);
         verify(sut).checkEntityIsNotreferenced(captor.capture());

@@ -109,7 +109,7 @@ public class CustomTableService extends NativePersistenceService {
     @Override
     public Long create(String tableName, Map<String, Object> values) throws BusinessException {
 
-        Long id = super.create(tableName, values, true); // Force to return ID as we need it to retrieve data for Elastic Search population
+        Long id = super.create(tableName, values, true, true); // Force to return ID as we need it to retrieve data for Elastic Search population
         elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, values, false, true);
 
         return id;
@@ -125,7 +125,7 @@ public class CustomTableService extends NativePersistenceService {
     public void create(String tableName, List<Map<String, Object>> values) throws BusinessException {
 
         for (Map<String, Object> value : values) {
-            Long id = super.create(tableName, value, true); // Force to return ID as we need it to retrieve data for Elastic Search population
+            Long id = super.create(tableName, value, true, false); // Force to return ID as we need it to retrieve data for Elastic Search population
             elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, value, false, false);
         }
 
@@ -154,9 +154,8 @@ public class CustomTableService extends NativePersistenceService {
         }
     }
 
-    @Override
     public void update(String tableName, Map<String, Object> values) throws BusinessException {
-        super.update(tableName, values);
+        super.update(tableName, values, true);
         elasticClient.createOrUpdate(CustomTableRecord.class, tableName, values.get(NativePersistenceService.FIELD_ID), values, false, true);
     }
 
@@ -170,7 +169,7 @@ public class CustomTableService extends NativePersistenceService {
     public void update(String tableName, List<Map<String, Object>> values) throws BusinessException {
 
         for (Map<String, Object> value : values) {
-            super.update(tableName, value);
+            super.update(tableName, value, false);
             elasticClient.createOrUpdate(CustomTableRecord.class, tableName, value.get(NativePersistenceService.FIELD_ID), value, false, false);
         }
         elasticClient.flushChanges();
@@ -214,7 +213,9 @@ public class CustomTableService extends NativePersistenceService {
 
     @Override
     public void remove(String tableName, Long id) throws BusinessException {
-        remove(tableName, new HashSet<>(Arrays.asList(id)));
+    	validateExistance(tableName, Arrays.asList(id));
+    	super.remove(tableName, id);
+    	elasticClient.remove(CustomTableRecord.class, tableName, id, true);
     }
 
     @Override
