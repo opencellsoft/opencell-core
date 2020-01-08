@@ -1,4 +1,4 @@
-@settings
+@settings @ignore
 Feature: Delete Tax by API
 
   Background: The classic offer is already executed

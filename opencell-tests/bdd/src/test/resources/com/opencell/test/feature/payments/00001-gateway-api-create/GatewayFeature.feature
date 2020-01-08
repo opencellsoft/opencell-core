@@ -1,3 +1,4 @@
+@payments @ignore
 Feature: Create a Gateway by API
 
   Background: The classic offer is already executed

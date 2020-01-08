@@ -1,4 +1,4 @@
-@settings
+@settings @ignore
 Feature: Cancel billing run by API
 
   Background: The classic offer is already executed

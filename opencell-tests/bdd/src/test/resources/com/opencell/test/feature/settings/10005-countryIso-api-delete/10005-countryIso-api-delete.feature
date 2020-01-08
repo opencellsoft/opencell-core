@@ -1,4 +1,4 @@
-@settings
+@settings @ignore
 Feature: Delete CountryIso by API
 
   Background: System is configured.
