@@ -101,9 +101,7 @@ public interface CustomTableRs extends IBaseRs {
     /**
      * Search in custom tables using CustomTableWrapper
      *
-     * @param customTableWrapperCode Custom table code - can be either db table's name or a custom entity template code
-     * @param entityClass            The entity's class
-     * @param entityId               The entity's ID
+     * @param customTableWrapperDto Custom table wrapper dto
      * @return Custom table data
      */
     @POST

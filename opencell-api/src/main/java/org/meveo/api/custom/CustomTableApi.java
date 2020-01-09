@@ -328,6 +328,7 @@ public class CustomTableApi extends BaseApi {
     /**
      * Retrieve custom table data based on CustomTableWrapper and a search criteria
      *
+     * @param customTableWrapperDto Custom table Wrapper dto
      * @return Values and pagination information
      * @throws MissingParameterException    Missing parameters
      * @throws EntityDoesNotExistsException Custom table was not matched
@@ -338,6 +339,9 @@ public class CustomTableApi extends BaseApi {
             throws MissingParameterException, EntityDoesNotExistsException, InvalidParameterException, ValidationException {
 
         CustomFieldTemplate cft = customFieldTemplateService.findByCode(customTableWrapperDto.getCtwCode());
+        if (cft == null) {
+            throw new EntityDoesNotExistsException("CustomFieldTemplate", customTableWrapperDto.getCtwCode());
+        }
         ICustomFieldEntity entity = getEntity(customTableWrapperDto.getEntityClass(), Long.valueOf(customTableWrapperDto.getEntityId()));
         String customTableCode = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getCustomTableCodeEL(), "entity", entity);
         Map<String, Object> toValidate = new TreeMap<String, Object>() {{
@@ -379,10 +383,12 @@ public class CustomTableApi extends BaseApi {
         if (filterString == null) {
             filterString = "";
         }
-        if (fieldsString == null) {
-            fieldsString = "";
+        String jsonFilter = "{\"filters\": {" + filterString + "}";
+
+        if (fieldsString != null) {
+            jsonFilter = jsonFilter + ",\"fields\":\"" + fieldsString + "\"}";
         }
-        String jsonFilter = "{\"filters\": {" + filterString + "},\"fields\":\"" + fieldsString + "\"}";
+
         PagingAndFiltering fieldsAndFiltering = JsonUtils.toObject(jsonFilter, PagingAndFiltering.class);
         pagingAndFiltering.addFilters(fieldsAndFiltering.getFilters());
         pagingAndFiltering.addFields(fieldsAndFiltering.getFields());

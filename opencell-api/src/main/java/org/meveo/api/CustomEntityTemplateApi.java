@@ -1,15 +1,5 @@
 package org.meveo.api;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -38,6 +28,14 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.EntityCustomActionService;
 import org.meveo.util.EntityCustomizationUtils;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Andrius Karpavicius
@@ -232,7 +230,6 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         return cetDtos;
     }
 
-    @SuppressWarnings("rawtypes")
     public void customizeEntity(EntityCustomizationDto dto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(dto.getClassname())) {
@@ -331,7 +328,6 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         }
     }
 
-    @SuppressWarnings("rawtypes")
     public EntityCustomizationDto findEntityCustomizations(String customizedEntityClass) throws EntityDoesNotExistsException, MissingParameterException {
         if (StringUtils.isBlank(customizedEntityClass)) {
             missingParameters.add("customizedEntityClass");
@@ -410,7 +406,6 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         handleMissingParameters();
 
-        @SuppressWarnings("rawtypes")
         Class entityClass = null;
         // get all the class annotated with customFieldEntity
         Set<Class<?>> cfClasses = ReflectionUtils.getClassesAnnotatedWith(CustomFieldEntity.class);

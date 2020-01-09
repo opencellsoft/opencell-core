@@ -513,7 +513,7 @@ public class CustomFieldTemplateApi extends BaseApi {
             cft.setDataFilterEL(dto.getDataFilterEL());
         }
         if (dto.getFieldsEL() != null) {
-            cft.setDataFilterEL(dto.getFieldsEL());
+            cft.setFieldsEL(dto.getFieldsEL());
         }
         return cft;
 
