@@ -1527,4 +1527,81 @@ public class ValidateBRScript extends Script {
         </update>
     </changeSet>
     
+    <changeSet id="4745_20200108" author="MohamedSTITANE">
+        <dropColumn tableName="crm_seller">
+            <column name="version"/>
+            <column name="created"/>
+            <column name="updated"/>
+            <column name="code"/>
+            <column name="description"/>
+            <column name="address_1"/>
+            <column name="address_2"/>
+            <column name="address_3"/>
+            <column name="address_city"/>
+            <column name="address_country_id"/>
+            <column name="address_state"/>
+            <column name="address_zipcode"/>
+            <column name="creator"/>
+            <column name="updater"/>
+            <column name="uuid"/>
+            <column name="bam_id"/>
+            <column name="cf_values"/>
+            <column name="cf_values_accum"/>
+            <column name="email"/>
+            <column name="fax"/>
+            <column name="mobile"/>
+            <column name="phone"/>
+            <column name="vat_no"/>
+        </dropColumn>
+        <delete tableName="crm_seller">
+            <where>
+                id in (-1, -2, -3)
+            </where>
+        </delete>
+        <insert tableName="crm_seller">
+            <column name="id" valueNumeric="-1" />
+            <column name="trading_currency_id" valueNumeric="-1" />
+            <column name="trading_language_id" valueNumeric="-1" />
+        </insert>
+        <insert tableName="account_entity">
+            <column name="id" valueNumeric="-1" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2015-03-19 00:04:19.913" />
+            <column name="code" value="MAIN_SELLER" />
+            <column name="description" value="Demo Distributor" />
+            <column name="uuid" value="MAIN_SELLER" />
+            <column name="account_type" value="ACCT_S" />
+        </insert>
+        <insert tableName="crm_seller">
+            <column name="id" valueNumeric="-2" />
+            <column name="parent_seller_id" valueNumeric="-1" />
+            <column name="trading_currency_id" valueNumeric="-1" />
+            <column name="trading_language_id" valueNumeric="-1" />
+        </insert>
+        <insert tableName="account_entity">
+            <column name="id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2015-03-19 00:04:19.934" />
+            <column name="code" value="SELLER_US" />
+            <column name="description" value="US Seller" />
+            <column name="uuid" value="SELLER_US" />
+            <column name="account_type" value="ACCT_S" />
+        </insert>
+        <insert tableName="crm_seller">
+            <column name="id" valueNumeric="-3" />
+            <column name="parent_seller_id" valueNumeric="-1" />
+            <column name="trading_currency_id" valueNumeric="-2" />
+            <column name="trading_language_id" valueNumeric="-2" />
+        </insert>
+        <insert tableName="account_entity">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2015-03-19 00:04:19.955" />
+            <column name="code" value="SELLER_FR" />
+            <column name="description" value="France Seller" />
+            <column name="uuid" value="SELLER_FR" />
+            <column name="account_type" value="ACCT_S" />
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>
