@@ -37,7 +37,7 @@ public interface ProductResource {
                     headers = {
                             @Header (name = "ETag",
                                     description = "a pseudo-unique identifier that represents the version of the data sent back.",
-                                    schema = @Schema(implementation = Integer.class)
+                                    schema = @Schema(type = "integer", format = "int64")
                             )
                     },
                     description = "list of products", content = @Content(schema = @Schema(implementation = Products.class))
@@ -60,7 +60,7 @@ public interface ProductResource {
                             headers = {
                                     @Header (name = "ETag",
                                             description = "a pseudo-unique identifier that represents the version of the data sent back",
-                                            schema = @Schema(implementation = Integer.class)
+                                            schema = @Schema(type = "integer", format = "int64")
                                     )
                             },
                             description = "the searched product", content = @Content(schema = @Schema(implementation = Product.class))
