@@ -63,7 +63,8 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
         history.setResult(result);
         history.setStatus(status);
 
-        create(history);
+        if(notification.isSaveSuccessfulNotifications() || !status.equals(NotificationHistoryStatusEnum.SENT))
+        		create(history);
 
         return history;
     }
