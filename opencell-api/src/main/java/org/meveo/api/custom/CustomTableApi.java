@@ -64,7 +64,11 @@ public class CustomTableApi extends BaseApi {
         if (dto.getOverwrite() == null) {
             dto.setOverwrite(false);
         }
-        customTableService.importData(cet, dto.getValues().stream().map(x->x.getValues()).collect(toList()), !dto.getOverwrite());
+        try {
+        	customTableService.importData(cet, dto.getValues().stream().map(x->x.getValues()).collect(toList()), !dto.getOverwrite());
+	    }catch (Exception e) {
+			throw getMeveoApiException(e);
+		}
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -98,7 +102,11 @@ public class CustomTableApi extends BaseApi {
         if (!valuesWithoutIds.isEmpty()) {
             throw new ValidationException(valuesWithoutIds.size() + " record(s) for update are missing the IDs.");
         }
-        customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
+        try {
+	        customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
+	    }catch (Exception e) {
+			throw getMeveoApiException(e);
+		}
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
