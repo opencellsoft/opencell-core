@@ -1,8 +1,8 @@
 {
-  "code": "testX",
+  "code": "TEST",
   "description": "testXXX",
   "occTemplateCode": "INV_STD",
-  "occTemplateNegativeCode": "XX",
+  "occTemplateNegativeCode": "NOT_EXIST",
   "sequenceDto": {
     "prefixEL": "XX",
     "invoiceSequenceCode": "COM"

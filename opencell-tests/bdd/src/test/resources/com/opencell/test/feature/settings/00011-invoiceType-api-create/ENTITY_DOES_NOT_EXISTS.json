@@ -1,5 +1,5 @@
 {
-  "code": "test2",
+  "code": "TEST",
   "description": "test2",
   "occTemplateCode": "INV_STD",
   "occTemplateNegativeCode": "INV_CRN",
@@ -9,5 +9,5 @@
   },
   "matchingAuto": false,
     "mailingType":"manual",
-  "emailTemplateCode":"test"
+  "emailTemplateCode":"NOT_EXIST"
 }
