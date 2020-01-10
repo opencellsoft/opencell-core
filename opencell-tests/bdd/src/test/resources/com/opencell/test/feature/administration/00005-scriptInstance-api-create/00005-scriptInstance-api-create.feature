@@ -1,4 +1,4 @@
-@administration
+@administration @ignore
 Feature: Create script instance by API
 
   Background: The classic offer is already executed

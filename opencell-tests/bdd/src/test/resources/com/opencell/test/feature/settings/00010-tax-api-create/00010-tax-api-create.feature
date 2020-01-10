@@ -1,4 +1,5 @@
 @settings
+@administration @ignore
 Feature: Create Tax by API
 
   Background: The classic offer is already executed
