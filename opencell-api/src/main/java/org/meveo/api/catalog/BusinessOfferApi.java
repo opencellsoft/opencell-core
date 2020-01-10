@@ -157,6 +157,8 @@ public class BusinessOfferApi extends BaseApi {
                     if (!cfValues.isEmpty()) {
                         CustomFieldsDto cfs = entityToDtoConverter.getCustomFieldsDTO(oldService, cfValues, CustomFieldInheritanceEnum.INHERIT_NONE);
                         serviceConfigurationDto.setCustomFields(cfs.getCustomField());
+                    } else {
+                        log.warn("CF values for service {} is empty ", serviceConfigurationDto.getCode());
                     }
                 }
 
