@@ -154,8 +154,10 @@ public class BusinessOfferApi extends BaseApi {
                     CustomFieldValues customFieldValues = oldService.getCfValuesNullSafe();
                     Map<String, List<CustomFieldValue>> cfValues = customFieldValues.getValuesByCode();
 
-                    CustomFieldsDto cfs = entityToDtoConverter.getCustomFieldsDTO(oldService, cfValues, CustomFieldInheritanceEnum.INHERIT_NONE);
-                    serviceConfigurationDto.setCustomFields(cfs.getCustomField());
+                    if (!cfValues.isEmpty()) {
+                        CustomFieldsDto cfs = entityToDtoConverter.getCustomFieldsDTO(oldService, cfValues, CustomFieldInheritanceEnum.INHERIT_NONE);
+                        serviceConfigurationDto.setCustomFields(cfs.getCustomField());
+                    }
                 }
 
                 if (serviceTemplateCode.equals(serviceTemplate.getCode()) && serviceConfigurationDto.getCustomFields() != null && !serviceConfigurationDto.isMatch()) {
