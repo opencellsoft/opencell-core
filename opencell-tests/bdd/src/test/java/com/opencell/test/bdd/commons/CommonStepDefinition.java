@@ -31,7 +31,12 @@ public class CommonStepDefinition implements En {
         When("^I call the \"([^\"]*)\"$", (String api) -> {
             String bodyRequest = getBodyRequest();
             ValidatableResponse response = RestApiUtils.post(api, bodyRequest);
-            base.setResponse(new ApiResponse(response.extract().statusCode(), response.extract().body().as(ActionStatus.class)));
+            ActionStatus actionStatus = (response.extract().jsonPath().get("actionStatus") == null
+                    ? response.extract().body().as(ActionStatus.class)
+                    : response.extract().jsonPath().getObject("actionStatus", ActionStatus.class));
+            if (actionStatus.getMessage() == null)
+                actionStatus.setMessage("");
+            base.setResponse(new ApiResponse(response.extract().statusCode(), actionStatus));
             assertNotNull(base.getResponse());
             assertNotNull(base.getResponse().getActionStatus());
             assertNotNull(base.getResponse().getHttpStatusCode());
@@ -53,7 +58,12 @@ public class CommonStepDefinition implements En {
                 response = RestApiUtils.delete(api, bodyRequest);
                 break;
             }
-            base.setResponse(new ApiResponse(response.extract().statusCode(), response.extract().body().as(ActionStatus.class)));
+            ActionStatus actionStatus = (response.extract().jsonPath().get("actionStatus") == null
+                    ? response.extract().body().as(ActionStatus.class)
+                    : response.extract().jsonPath().getObject("actionStatus", ActionStatus.class));
+            if (actionStatus.getMessage() == null)
+                actionStatus.setMessage("");
+            base.setResponse(new ApiResponse(response.extract().statusCode(), actionStatus));
             assertNotNull(base.getResponse());
             assertNotNull(base.getResponse().getActionStatus());
             assertNotNull(base.getResponse().getHttpStatusCode());
