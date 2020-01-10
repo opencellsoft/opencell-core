@@ -65,6 +65,7 @@ public interface AccessRs extends IBaseRs {
      *
      * @param accessCode Access code
      * @param subscriptionCode Subscription code
+     * @param usageDate a usage date
      * @return Access
      */
     @GET
