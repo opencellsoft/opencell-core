@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.info.*;
 @ApplicationPath("/api/rest")
 @OpenAPIDefinition(
           security = @SecurityRequirement(name = "auth"))
-@SecurityScheme(type=SecuritySchemeType.HTTP,scheme="basic",name="auth",paramName="auth")
+@SecurityScheme(type=SecuritySchemeType.HTTP,scheme="basic",paramName="auth")
 public class JaxRsActivator extends Application {
 
     private Logger log = LoggerFactory.getLogger(JaxRsActivator.class);
