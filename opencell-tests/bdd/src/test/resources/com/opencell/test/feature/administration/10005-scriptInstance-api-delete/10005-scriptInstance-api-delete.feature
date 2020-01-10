@@ -18,4 +18,4 @@ Feature: Delete script instance by API
     Examples: 
       | jsonFile                                                                  | dto               | api              | statusCode | status  | errorCode                        | message                                                                      |
       | administration/00005-scriptInstance-api-create/Success.json               | ScriptInstanceDto | /scriptInstance/ |        200 | SUCCESS |                                  |                                                                              |
-      | administration/10004-scriptInstance-api-delete/ENTITY_DOES_NOT_EXIST.json | ScriptInstanceDto | /scriptInstance/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | ScriptInstance with code=org.meveo.service.script.NOT_EXIST does not exists. |
+      | administration/10005-scriptInstance-api-delete/ENTITY_DOES_NOT_EXIST.json | ScriptInstanceDto | /scriptInstance/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | ScriptInstance with code=org.meveo.service.script.NOT_EXIST does not exists. |
