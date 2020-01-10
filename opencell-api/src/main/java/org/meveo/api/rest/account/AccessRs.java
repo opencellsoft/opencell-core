@@ -40,7 +40,7 @@ public interface AccessRs extends IBaseRs {
 
     /**
      * Update an existing access
-     * 
+     *
      * @param postData Access data
      * @return Request processing status
      */
@@ -56,8 +56,8 @@ public interface AccessRs extends IBaseRs {
      * @return Access
      */
     @GET
-    @Path("/")
     @Deprecated
+    @Path("/")
     GetAccessResponseDto find(String accessCode, String subscriptionCode);
 
     /**
