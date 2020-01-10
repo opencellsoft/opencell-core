@@ -1,7 +1,9 @@
 {
-   
-        "code":"TEST",
-        "description": "TEST",
-        "parentSeller":"XXX"
-            
-    }
+  "billingCycleCode" : "NOT_EXIST",
+  "billingRunTypeEnum" : "AUTOMATIC",
+  "startDate" : 12345,
+  "endDate" : 12345,
+  "invoiceDate" : 12345,
+  "lastTransactionDate" : 12345,
+  "referenceDate" : "TODAY"
+}
