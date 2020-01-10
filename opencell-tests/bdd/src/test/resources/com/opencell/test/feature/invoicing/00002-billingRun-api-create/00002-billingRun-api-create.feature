@@ -1,4 +1,4 @@
-@settings @ignore
+@settings
 Feature: Create Billing run by API
 
   Background: The classic offer is already executed

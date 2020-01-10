@@ -1,4 +1,4 @@
-@settings @ignore
+@settings
 Feature: Delete Channel by API
 
   Background: System is configured.

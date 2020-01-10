@@ -1,4 +1,4 @@
-@administration @ignore
+@administration
 Feature: Delete script instance by API
 
   Background: The classic offer is already executed

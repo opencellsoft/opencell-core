@@ -1,4 +1,4 @@
-@subscriptions @ignore
+@subscriptions
 Feature: Create subscription Plan by API
 
   Background: The classic offer is already executed

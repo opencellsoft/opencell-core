@@ -1,4 +1,4 @@
-@customers @ignore
+@customers
 Feature: Create a User Account by API
 
   Background: The classic offer is already executed

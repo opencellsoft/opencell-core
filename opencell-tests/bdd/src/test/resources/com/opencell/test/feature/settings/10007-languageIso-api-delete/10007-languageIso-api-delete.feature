@@ -1,4 +1,4 @@
-@settings @ignore
+@settings
 Feature: Delete Language Iso by API
 
   Background: System is configured.

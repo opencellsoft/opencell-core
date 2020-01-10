@@ -1,4 +1,4 @@
-@settings @ignore
+@settings
 Feature: Delete invoice Type by API
 
   Background: The classic offer is already executed
