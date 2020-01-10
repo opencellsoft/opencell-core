@@ -131,7 +131,7 @@ public class Notification extends EnableBusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "save_successful_notif", nullable = false)
     @NotNull
-    private boolean saveSuccessfulNotifications = false;
+    private boolean saveSuccessfulNotifications = true;
 
     public String getClassNameFilter() {
         return classNameFilter;

@@ -67,7 +67,7 @@ public abstract class NotificationDto extends EnableBusinessDto {
     /**
      * Whether this notification will be persisted when successful.
      */
-    private Boolean saveSuccessfulNotifications = false;
+    private Boolean saveSuccessfulNotifications = true;
 
     /**
      * Instantiates a new notification dto.

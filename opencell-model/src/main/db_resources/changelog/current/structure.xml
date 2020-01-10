@@ -1495,6 +1495,12 @@
 		</addColumn>
 	</changeSet>
 	
+	 <changeSet id="#3774_07102019" author="FranckValot">
+		<addColumn tableName="adm_notification">
+			<column name="save_successful_notif" type="${type.boolean}" defaultValueNumeric="1"></column>
+		</addColumn>
+	</changeSet>
+	
 	<changeSet id="#4064_11092019" author="AbdelmounaimAkadid">
 		<addColumn tableName="billing_invoice">
 			<column name="status" type="varchar(50)" />
