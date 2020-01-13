@@ -14,8 +14,8 @@ Feature: Create Invoice Category by API
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                                        | dto                | api                             | statusCode | status  | errorCode         | message                                                                                         |
-      | billing/00001-invoiceCategory-api-create/SuccessTest.json       | InvoiceCategoryDto | /invoiceCategory/createOrUpdate |        200 | SUCCESS |                   |                                                                                                 |
-      | billing/00001-invoiceCategory-api-create/SuccessTest1.json      | InvoiceCategoryDto | /invoiceCategory/createOrUpdate |        200 | SUCCESS |                   |                                                                                                 |
-      | billing/00001-invoiceCategory-api-create/MISSING_PARAMETER.json | InvoiceCategoryDto | /invoiceCategory/createOrUpdate |        400 | FAIL    | MISSING_PARAMETER | The following parameters are required or contain invalid values: code.                          |
-      | billing/00001-invoiceCategory-api-create/INVALID_PARAMETER.json | InvoiceCategoryDto | /invoiceCategory/createOrUpdate |        400 | FAIL    | INVALID_PARAMETER | Can not construct instance of org.meveo.api.dto.CustomFieldsDto: no String-argument constructor |
+      | jsonFile                                                        | dto                | api                             | statusCode | status  | errorCode         | message                                                                |
+      | billing/00001-invoiceCategory-api-create/SuccessTest.json       | InvoiceCategoryDto | /invoiceCategory/createOrUpdate |        200 | SUCCESS |                   |                                                                        |
+      | billing/00001-invoiceCategory-api-create/SuccessTest1.json      | InvoiceCategoryDto | /invoiceCategory/createOrUpdate |        200 | SUCCESS |                   |                                                                        |
+      | billing/00001-invoiceCategory-api-create/MISSING_PARAMETER.json | InvoiceCategoryDto | /invoiceCategory/createOrUpdate |        400 | FAIL    | MISSING_PARAMETER | The following parameters are required or contain invalid values: code. |
+      | billing/00001-invoiceCategory-api-create/INVALID_PARAMETER.json | InvoiceCategoryDto | /invoiceCategory/createOrUpdate |        400 | FAIL    | INVALID_PARAMETER | Cannot construct instance of `org.meveo.api.dto.CustomFieldsDto`       |

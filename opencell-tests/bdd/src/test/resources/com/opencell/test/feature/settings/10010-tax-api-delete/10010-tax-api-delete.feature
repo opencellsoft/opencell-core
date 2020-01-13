@@ -16,6 +16,6 @@ Feature: Delete Tax by API
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                                 | dto    | api   | statusCode | status  | errorCode                        | message                                  |
-      | settings/00010-tax-api-create/SuccessTest.json           | TaxDto | /tax/ |        200 | SUCCESS |                                  |                                          |
-      | settings/10010-tax-api-delete/ENTITY_DOES_NOT_EXIST.json | TaxDto | /tax/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | Tax with code=NOT_EXIST does not exists. |
+      | jsonFile                                                 | dto    | api   | statusCode | status | errorCode                        | message                                  |
+      | settings/00010-tax-api-create/SuccessTest.json           | TaxDto | /tax/ |        500 | FAIL   | GENERIC_API_EXCEPTION            | ERROR: update or delete on table         |
+      | settings/10010-tax-api-delete/ENTITY_DOES_NOT_EXIST.json | TaxDto | /tax/ |        404 | FAIL   | ENTITY_DOES_NOT_EXISTS_EXCEPTION | Tax with code=NOT_EXIST does not exists. |

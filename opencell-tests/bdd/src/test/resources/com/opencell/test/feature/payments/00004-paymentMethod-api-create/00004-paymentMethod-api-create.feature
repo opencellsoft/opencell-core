@@ -18,7 +18,7 @@ Feature: Create Payment Method by API
       | payments/00004-paymentMethod-api-create/SuccessTest.json       | PaymentMethodDto | /payment/paymentMethod/               |        200 | SUCCESS |                                 |                                                                                                 |
       | payments/00004-paymentMethod-api-create/SuccessTest.json       | PaymentMethodDto | /payment/paymentMethod/               |        403 | FAIL    | ENTITY_ALREADY_EXISTS_EXCEPTION | PaymentGateway with code=TEST already exists.                                                   |
       | payments/00004-paymentMethod-api-create/MISSING_PARAMETER.json | PaymentMethodDto | /payment/paymentMethod/createOrUpdate |        400 | FAIL    | MISSING_PARAMETER               | The following parameters are required or contain invalid values: code, type, paymentMethodType. |
-      | payments/00004-paymentMethod-api-create/INVALID_PARAMETER.json | PaymentMethodDto | /payment/paymentMethod/createOrUpdate |        400 | FAIL    | INVALID_PARAMETER               | Can not deserialize value of type org.meveo.model.payments.PaymentGatewayTypeEnum from String   |
+      | payments/00004-paymentMethod-api-create/INVALID_PARAMETER.json | PaymentMethodDto | /payment/paymentMethod/createOrUpdate |        400 | FAIL    | INVALID_PARAMETER               | Cannot deserialize value of type `org.meveo.model.payments.PaymentGatewayTypeEnum` from String   |
 
   #@admin @superadmin
   #Scenario Outline: Update Payment Method by API

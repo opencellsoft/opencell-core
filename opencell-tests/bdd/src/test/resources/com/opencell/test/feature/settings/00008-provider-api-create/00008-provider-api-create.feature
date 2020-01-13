@@ -14,9 +14,9 @@ Feature: Create/Update Provider by API
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                                             | dto         | api        | action | statusCode | status  | errorCode              | message                                                         |
-      | settings/00008-provider-api-create/SuccessTest.json                  | ProviderDto | /provider/ | Create |        500 | FAIL    | BUSINESS_API_EXCEPTION | There should already be a provider setup                        |
-      | settings/00008-provider-api-create/SuccessTest.json                  | ProviderDto | /provider/ | Update |        200 | SUCCESS |                        |                                                                 |
-      | settings/00008-provider-api-create/SuccessTest1.json                 | ProviderDto | /provider/ | Update |        200 | SUCCESS |                        |                                                                 |
-      | settings/00008-provider-api-create/INVALID_PARAMETER_entreprise.json | ProviderDto | /provider/ | Update |        400 | FAIL    | INVALID_PARAMETER      | Can not deserialize value of type java.lang.Boolean from String |
-      | settings/00008-provider-api-create/INVALID_PARAMETER_rounding.json   | ProviderDto | /provider/ | Update |        400 | FAIL    | INVALID_PARAMETER      | Can not deserialize value of type java.lang.Integer from String |
+      | jsonFile                                                             | dto         | api        | action | statusCode | status  | errorCode              | message                                                          |
+      | settings/00008-provider-api-create/SuccessTest.json                  | ProviderDto | /provider/ | Create |        500 | FAIL    | BUSINESS_API_EXCEPTION | There should already be a provider setup                         |
+      | settings/00008-provider-api-create/SuccessTest.json                  | ProviderDto | /provider/ | Update |        200 | SUCCESS |                        |                                                                  |
+      | settings/00008-provider-api-create/SuccessTest1.json                 | ProviderDto | /provider/ | Update |        200 | SUCCESS |                        |                                                                  |
+      | settings/00008-provider-api-create/INVALID_PARAMETER_entreprise.json | ProviderDto | /provider/ | Update |        400 | FAIL    | INVALID_PARAMETER      | Cannot deserialize value of type `java.lang.Boolean` from String |
+      | settings/00008-provider-api-create/INVALID_PARAMETER_rounding.json   | ProviderDto | /provider/ | Update |        400 | FAIL    | INVALID_PARAMETER      | Cannot deserialize value of type `java.lang.Integer` from String |
