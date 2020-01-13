@@ -52,9 +52,8 @@ import org.meveo.model.ExportIdentifier;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "cat_unit_of_measure_seq"), })
 @NamedQueries({
-		@NamedQuery(name = "unitOfMeasure.listBaseUnits", query = "from UnitOfMeasure UOM where UOM.parentUnitOfMeasure is null"), 
-		@NamedQuery(name = "unitOfMeasure.listChildUnits", query = "from UnitOfMeasure UOM where UOM.parentUnitOfMeasure=:parentUnitOfMeasure")
-})
+		@NamedQuery(name = "unitOfMeasure.listBaseUnits", query = "from UnitOfMeasure UOM where UOM.parentUnitOfMeasure is null"),
+		@NamedQuery(name = "unitOfMeasure.listChildUnits", query = "from UnitOfMeasure UOM where UOM.parentUnitOfMeasure=:parentUnitOfMeasure") })
 public class UnitOfMeasure extends BusinessEntity {
 
 	private static final long serialVersionUID = 1278336655583944747L;
@@ -79,12 +78,6 @@ public class UnitOfMeasure extends BusinessEntity {
 	 */
 	@Column(name = "multiplicator")
 	private Long multiplicator = 1l;
-
-//    @OneToMany(mappedBy = "inputUnitOfMeasure", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-//    private List<ChargeTemplate> chargeTemplatesInput = new ArrayList<ChargeTemplate>();
-//
-//    @OneToMany(mappedBy = "ratingUnitOfMeasure", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-//    private List<ChargeTemplate> chargeTemplatesRating = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "parent_id")
@@ -140,22 +133,6 @@ public class UnitOfMeasure extends BusinessEntity {
 		}
 		return descriptionI18n;
 	}
-
-//    public List<ChargeTemplate> getChargeTemplatesInput() {
-//        return chargeTemplatesInput;
-//    }
-//
-//    public void setChargeTemplatesInput(List<ChargeTemplate> chargeTemplatesInput) {
-//        this.chargeTemplatesInput = chargeTemplatesInput;
-//    }
-//
-//    public List<ChargeTemplate> getChargeTemplatesRating() {
-//        return chargeTemplatesRating;
-//    }
-//
-//    public void setChargeTemplatesRating(List<ChargeTemplate> chargeTemplatesRating) {
-//        this.chargeTemplatesRating = chargeTemplatesRating;
-//    }
 
 	public UnitOfMeasure getParentUnitOfMeasure() {
 		return parentUnitOfMeasure;
