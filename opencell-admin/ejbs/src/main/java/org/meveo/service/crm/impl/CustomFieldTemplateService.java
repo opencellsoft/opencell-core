@@ -298,7 +298,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private void updateConstraintKey(CustomEntityTemplate customEntityTemplate, Set<CustomFieldTemplate> allReferences) {
         if(!allReferences.isEmpty()) {
-            String columnNames = allReferences.stream().map(CustomFieldTemplate::getCode).distinct().sorted().collect(Collectors.joining(","));
+            String columnNames = allReferences.stream().map(CustomFieldTemplate::getDbFieldname).distinct().sorted().collect(Collectors.joining(","));
             addConstraintByColumnsName(customEntityTemplate, columnNames);
         }
     }
