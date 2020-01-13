@@ -58,7 +58,7 @@ public interface AccessRs extends IBaseRs {
     @GET
     @Deprecated
     @Path("/")
-    GetAccessResponseDto find(String accessCode, String subscriptionCode);
+    GetAccessResponseDto find(@QueryParam("accessCode") String accessCode, @QueryParam("subscriptionCode") String subscriptionCode);
 
     /**
      * Search for an access with a given access code and subscription code.
@@ -70,7 +70,7 @@ public interface AccessRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    GetAccessResponseDto find(String accessCode, String subscriptionCode, @QueryParam("usageDate") Date usageDate);
+    GetAccessResponseDto find(@QueryParam("accessCode") String accessCode, @QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("usageDate") Date usageDate);
 
     /**
      * Search for an access with a given access code and subscription code.
