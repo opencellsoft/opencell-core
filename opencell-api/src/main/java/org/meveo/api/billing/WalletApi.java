@@ -41,6 +41,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
@@ -562,6 +563,19 @@ public class WalletApi extends BaseApi {
         if (postData.getStatus() != WalletOperationStatusEnum.OPEN) {
             walletOperation.setStatus(postData.getStatus());
         }
+
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), walletOperation, true, true);
+
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+
         walletOperationService.create(walletOperation);
 
         return walletOperation;
@@ -594,7 +608,7 @@ public class WalletApi extends BaseApi {
         if (totalCount > 0) {
             List<WalletOperation> walletOperations = walletOperationService.list(paginationConfig);
             for (WalletOperation wo : walletOperations) {
-                WalletOperationDto woDto = new WalletOperationDto(wo);
+                WalletOperationDto woDto = new WalletOperationDto(wo, entityToDtoConverter.getCustomFieldsDTO(wo, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                 if (includeRatedTransactions) {
                     RatedTransaction rt = this.ratedTransactionService.findByWalletOperationId(wo.getId());
                     if (rt != null) {

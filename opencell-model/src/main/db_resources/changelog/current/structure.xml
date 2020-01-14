@@ -2697,5 +2697,14 @@ END $$;]]>
         </addColumn>
     </changeSet>
 
+    <changeSet author="abdelkader.bouazza"  id="#4893-Add-custom-field-support-to-WalletOperation">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="uuid" type="varchar(60)"/>
+            <column name="cf_values" type="${type.json}" />
+            <column name="cf_values_accum" type="${type.json}" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}billing_wallet_operation set uuid = 'wo'||id</sql>
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="uuid"/>
+    </changeSet>
 </databaseChangeLog>
 
