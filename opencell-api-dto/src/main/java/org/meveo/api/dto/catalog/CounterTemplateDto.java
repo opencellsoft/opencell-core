@@ -1,17 +1,16 @@
 package org.meveo.api.dto.catalog;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
+import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTemplateLevel;
+import org.meveo.model.catalog.CounterTypeEnum;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.EnableBusinessDto;
-import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.catalog.CounterTemplateLevel;
-import org.meveo.model.catalog.CounterTypeEnum;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * The Class CounterTemplateDto.
@@ -22,30 +21,51 @@ import org.meveo.model.catalog.CounterTypeEnum;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CounterTemplateDto extends EnableBusinessDto implements Serializable {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
     private static final long serialVersionUID = 2587489734648000805L;
 
-    /** The calendar. */
+    /**
+     * The calendar.
+     */
     @XmlAttribute(required = true)
     private String calendar;
 
-    /** The unity. */
+    /**
+     * The unity.
+     */
     private String unity;
 
-    /** The type. */
+    /**
+     * The type.
+     */
     private CounterTypeEnum type;
 
-    /** The ceiling. */
+    /**
+     * The ceiling.
+     */
     private BigDecimal ceiling;
 
-    /** The counter level. */
+    /**
+     * The counter level.
+     */
     private CounterTemplateLevel counterLevel;
 
-    /** The ceiling expression el. */
+    /**
+     * The ceiling expression el.
+     */
     private String ceilingExpressionEl;
 
-    /** The notification levels. */
+    /**
+     * The notification levels.
+     */
     private String notificationLevels;
+
+    /**
+     * Is an accumulator counter
+     */
+    private Boolean accumulator;
 
     /**
      * Instantiates a new counter template dto.
@@ -58,7 +78,7 @@ public class CounterTemplateDto extends EnableBusinessDto implements Serializabl
      *
      * @param counterTemplate the CounterTemplate entity
      */
-    public CounterTemplateDto(CounterTemplate counterTemplate) {
+    public CounterTemplateDto(final CounterTemplate counterTemplate) {
         super(counterTemplate);
         unity = counterTemplate.getUnityDescription();
         type = counterTemplate.getCounterType();
@@ -67,6 +87,7 @@ public class CounterTemplateDto extends EnableBusinessDto implements Serializabl
         counterLevel = counterTemplate.getCounterLevel();
         ceilingExpressionEl = counterTemplate.getCeilingExpressionEl();
         notificationLevels = counterTemplate.getNotificationLevels();
+        accumulator = counterTemplate.getAccumulator();
     }
 
     /**
@@ -193,6 +214,24 @@ public class CounterTemplateDto extends EnableBusinessDto implements Serializabl
      */
     public void setNotificationLevels(String notificationLevels) {
         this.notificationLevels = notificationLevels;
+    }
+
+    /**
+     * Check if is an accumulator counter.
+     *
+     * @return true if is an accumulator counter false otherwise
+     */
+    public Boolean getAccumulator() {
+        return accumulator;
+    }
+
+    /**
+     * Sets accumulator counter flag.
+     *
+     * @param accumulator accumulator counter flag
+     */
+    public void setAccumulator(Boolean accumulator) {
+        this.accumulator = accumulator;
     }
 
     @Override
