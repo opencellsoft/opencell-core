@@ -104,7 +104,9 @@ public class EmailNotifier {
                 to.addAll(notification.getEmails());
             }
             emailSender.send(notification.getEmailFrom(), Arrays.asList(notification.getEmailFrom()), to, subject, body, htmlBody);
-            notificationHistoryService.create(notification, entityOrEvent, "", NotificationHistoryStatusEnum.SENT);
+            if (notification.isSaveSuccessfulNotifications()) {
+                notificationHistoryService.create(notification, entityOrEvent, "", NotificationHistoryStatusEnum.SENT);
+            }
         } catch (Exception e) {
             try {
                 log.error("Error occured when sending email", e);
