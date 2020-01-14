@@ -99,8 +99,9 @@ public class InstantMessagingNotifier {
             case YAHOO_MESSENGER:
                 break;
             }
-            notificationHistoryService.create(notification, entityOrEvent, "", NotificationHistoryStatusEnum.SENT);
-
+            if (notification.isSaveSuccessfulNotifications()) {
+                notificationHistoryService.create(notification, entityOrEvent, "", NotificationHistoryStatusEnum.SENT);
+            }
         } catch (Exception e) {
             try {
                 notificationHistoryService.create(notification, entityOrEvent, e.getMessage(), NotificationHistoryStatusEnum.FAILED);
