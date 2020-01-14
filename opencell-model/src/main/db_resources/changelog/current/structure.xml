@@ -1495,6 +1495,12 @@
 		</addColumn>
 	</changeSet>
 	
+	 <changeSet id="#3774_07102019" author="FranckValot">
+		<addColumn tableName="adm_notification">
+			<column name="save_successful_notif" type="${type.boolean}" defaultValueNumeric="1"></column>
+		</addColumn>
+	</changeSet>
+	
 	<changeSet id="#4064_11092019" author="AbdelmounaimAkadid">
 		<addColumn tableName="billing_invoice">
 			<column name="status" type="varchar(50)" />
@@ -2157,5 +2163,10 @@
 		<sql>create index ar_account_operation_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (cat_inv_agregate_id)</sql>
 		<sql>create index ar_account_operation_sub_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (sub_cat_inv_agregate_id)</sql>
     </changeSet>
-
+    
+	 <changeSet id="#3774_07102019" author="FranckValot">
+		<addColumn tableName="adm_notification">
+			<column name="save_successful_notif" type="${type.boolean}"></column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
