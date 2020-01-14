@@ -203,7 +203,7 @@ public class WebHookNotifier {
                     }
                 }
                 log.debug("webhook answer : " + result);
-                if (notification.isSaveSuccessfulNotifications()) {
+                if (webHook.isSaveSuccessfulNotifications()) {
                     notificationHistoryService.create(webHook, entityOrEvent, result, NotificationHistoryStatusEnum.SENT);
                 }
             }
