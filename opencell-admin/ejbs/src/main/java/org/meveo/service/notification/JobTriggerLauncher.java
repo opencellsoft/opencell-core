@@ -76,7 +76,7 @@ public class JobTriggerLauncher {
             jobExecutionService.executeJob(jobInstanceService.retrieveIfNotManaged(jobTrigger.getJobInstance()), params);
             
             log.debug("launch jobTrigger:{} launched", jobTrigger);
-            if (notification.isSaveSuccessfulNotifications()) {
+            if (jobTrigger.isSaveSuccessfulNotifications()) {
                 notificationHistoryService.create(jobTrigger, entityOrEvent, "", NotificationHistoryStatusEnum.SENT);
             }
         } catch (Exception e) {
