@@ -170,6 +170,7 @@ public class BusinessOfferApi extends BaseApi {
                         ServiceTemplate temp = new ServiceTemplate();
                         populateCustomFields(cfsDto, temp, true);
                         serviceTemplate.setCfValues(temp.getCfValues());
+                        serviceTemplate.setCfAccumulatedValues(temp.getCfValues());
                         serviceTemplate = serviceTemplateService.update(serviceTemplate);
                         ost.setServiceTemplate(serviceTemplate);
 
