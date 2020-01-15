@@ -1,4 +1,4 @@
-@settings @ignore
+@settings @ignore @review
 Feature: Delete termination Reason by API
 
   Background: System is configured.
@@ -17,5 +17,5 @@ Feature: Delete termination Reason by API
 
     Examples: 
       | jsonFile                                                               | dto                  | api                 | statusCode | status  | errorCode                        | message                                       |
-      | settings/00009-terminationReason-api-create/SuccessTest.json           | terminationReasonDto | /terminationReason/ |        200 | SUCCESS |                                  |                                               |
-      | settings/10009-terminationReason-api-delete/ENTITY_DOES_NOT_EXIST.json | terminationReasonDto | /terminationReason/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | SubscriptionTerminationReason with code=NOT_EXIST does not exists. |
+      | settings/00012-terminationReason-api-create/SuccessTest.json           | terminationReasonDto | /terminationReason/ |        200 | SUCCESS |                                  |                                               |
+      | settings/10012-terminationReason-api-delete/ENTITY_DOES_NOT_EXIST.json | terminationReasonDto | /terminationReason/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | SubscriptionTerminationReason with code=NOT_EXIST does not exists. |

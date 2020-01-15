@@ -1,4 +1,4 @@
-@settings @ignore
+@settings @ignore @review
 Feature: Create Termination reason by API
 
   Background: The system is configured.
@@ -15,6 +15,6 @@ Feature: Create Termination reason by API
 
     Examples: 
       | jsonFile                                                               | dto                    | api                                    | statusCode | status  | errorCode                       | message                                                                |
-      | settings/00009-terminationReason-api-create/SuccessTest.json           | 	TerminationReasonDto  | /	TerminationReasonDto /createOrUpdate |        200 | SUCCESS |                                 |                                                                        |
-      | settings/00009-terminationReason-api-create/SuccessTest1.json          | 	TerminationReasonDto  | /	TerminationReasonDto /createOrUpdate |        200 | SUCCESS |                                 |                                                                        |
+      | settings/00012-terminationReason-api-create/SuccessTest.json           | 	TerminationReasonDto  | /	TerminationReasonDto /createOrUpdate |        200 | SUCCESS |                                 |                                                                        |
+      | settings/00012-terminationReason-api-create/SuccessTest1.json          | 	TerminationReasonDto  | /	TerminationReasonDto /createOrUpdate |        200 | SUCCESS |                                 |                                                                        |
      
