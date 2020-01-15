@@ -1,4 +1,4 @@
-@settings @ignore
+@settings @review @ignore
 Feature: Create Invoice by API
 
   Background: The classic offer is already executed
