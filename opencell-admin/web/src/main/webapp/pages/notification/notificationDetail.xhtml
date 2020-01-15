@@ -51,10 +51,14 @@
 							field="priority" />
 			<hftl:formField label="#{messages['notification.runAsync']}"
 							field="runAsync" />
+            <hftl:formField label="#{messages['notification.saveSuccessfulNotif']}"
+                            field="saveSuccessfulNotifications"
+                            popup="false"
+                            newLine="true"  />
 			<hftl:formField id="scriptInstanceSelectId"
-										label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
-										valueLabelField="code" required="true" popup="true"
-										popupId="scriptInstancePopup" />
+							label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
+							valueLabelField="code" required="true" popup="true"
+							popupId="scriptInstancePopup"  />
 										
 			<hftl:formField label="#{messages['entity.notification.params']}" field="params" newLine="true" componentWidth="100%" />  
 				

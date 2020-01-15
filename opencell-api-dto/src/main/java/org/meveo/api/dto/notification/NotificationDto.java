@@ -57,11 +57,17 @@ public abstract class NotificationDto extends EnableBusinessDto {
      */
     @Deprecated
     private Boolean active = null;
-    
-    /**
+
+    /** 
      * Whether this notification will be run in async mode.
      */
     private Boolean runAsync = false;
+    
+
+    /**
+     * Whether this notification will be persisted when successful.
+     */
+    private Boolean saveSuccessfulNotifications = true;
 
     /**
      * Instantiates a new notification dto.
@@ -90,6 +96,7 @@ public abstract class NotificationDto extends EnableBusinessDto {
         priority = notification.getPriority();
         active = notification.isActive();
         runAsync = notification.isRunAsync();
+        saveSuccessfulNotifications = notification.isSaveSuccessfulNotifications();
     }
 
     /**
@@ -252,15 +259,33 @@ public abstract class NotificationDto extends EnableBusinessDto {
      * Gets boolean value of whether this notification will be run in async mode.
      * @return true / false
      */
-	public Boolean isRunAsync() {
-		return runAsync;
-	}
+    public Boolean isRunAsync() {
+        return runAsync;
+    }
 
-	/**
+    /**
      * Sets boolean value of whether this notification will be run in async mode.
      * @return true / false
      */
-	public void setRunAsync(Boolean runAsync) {
-		this.runAsync = runAsync;
-	}
+    public void setRunAsync(Boolean runAsync) {
+        this.runAsync = runAsync;
+    }
+    
+    /**
+     * Gets boolean value of whether this notification will be persisted when successful.
+     * @return true / false
+     */
+    public Boolean iSSaveSuccessfulNotifications() {
+        return saveSuccessfulNotifications;
+    }
+
+
+    /**
+     * Set boolean value of whether this notification will be persisted when successful.
+     */
+    public void setSaveSuccessfulNotifications(Boolean saveSuccessfulNotifications) {
+        this.saveSuccessfulNotifications = saveSuccessfulNotifications;
+    }
+    
+    
 }
