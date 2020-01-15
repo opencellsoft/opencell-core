@@ -2163,4 +2163,59 @@
 			<column name="save_successful_notif" type="${type.boolean}" defaultValueNumeric="1"></column>
 		</addColumn>
 	</changeSet>
+    
+    <changeSet id="#4906_Creation_CDR_Table_1" author="anasseh" dbms="mysql">
+            <createTable tableName="rating_cdr_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="rating_cdr_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}rating_cdr_seq values(1)</sql>
+    </changeSet>
+    
+    <changeSet id="#4906_Creation_CDR_Table_2" author="anasseh">
+   		<createSequence sequenceName="rating_cdr_seq" />
+   		<createTable tableName="rating_cdr">
+	         <column name="id" type="bigint" autoIncrement="${id.auto}">
+	             <constraints nullable="false" primaryKey="true" primaryKeyName="rating_cdr_pkey" />
+	         </column>
+	         <column name="version" type="int4" />
+	         <column name="created" type="datetime" />
+	         <column name="event_date" type="datetime" />
+	         <column name="last_updated" type="datetime" />
+	         <column name="origin_batch" type="varchar(255)" />
+	         <column name="origin_record" type="varchar(255)" />
+	         <column name="quantity" type="numeric(23, 12)" />
+	         <column name="reject_reason" type="${type.text}" />
+	         <column name="status" type="varchar(255)" />
+	         <column name="status_date" type="datetime" />	         
+	         <column name="parameter_1" type="varchar(255)" />
+	         <column name="parameter_2" type="varchar(255)" />
+	         <column name="parameter_3" type="varchar(255)" />
+	         <column name="parameter_4" type="varchar(255)" />
+	         <column name="parameter_5" type="varchar(255)" />
+	         <column name="parameter_6" type="varchar(255)" />
+	         <column name="parameter_7" type="varchar(255)" />
+	         <column name="parameter_8" type="varchar(255)" />
+	         <column name="parameter_9" type="varchar(255)" />
+	         <column name="date_parameter_1" type="datetime" />
+	         <column name="date_parameter_2" type="datetime" />
+	         <column name="date_parameter_3" type="datetime" />
+	         <column name="date_parameter_4" type="datetime" />
+	         <column name="date_parameter_5" type="datetime" />
+	         <column name="decimal_parameter_1" type="numeric(23, 12)" />
+	         <column name="decimal_parameter_2" type="numeric(23, 12)" />
+	         <column name="decimal_parameter_3" type="numeric(23, 12)" />
+	         <column name="decimal_parameter_4" type="numeric(23, 12)" />
+	         <column name="decimal_parameter_5" type="numeric(23, 12)" />
+	         <column name="access_code" type="varchar(255)" />
+	         <column name="header_edr_id" type="bigint">
+	             <constraints nullable="true" />
+	         </column>
+	         <column name="extra_parameter" type="text" />
+    	</createTable>    	
+        <sql>CREATE INDEX rating_cdr_index ON ${db.schema.adapted}rating_cdr(origin_batch, origin_record)</sql>
+        <sql>CREATE INDEX rating_cdr_status ON ${db.schema.adapted}rating_cdr(status)</sql>               
+    </changeSet>    
+    
 </databaseChangeLog>
