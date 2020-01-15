@@ -1,6 +1,5 @@
 {
-    "code": "TEST",
-    "description": "Test payment gateway",
-    "type": "INVALID",
-    "paymentMethodType": "CHECK"
+    "paymentMethodType": "CHECK",
+    "customerAccountCode": "ben.ohara",
+    "disabled": "INVALID"
 }

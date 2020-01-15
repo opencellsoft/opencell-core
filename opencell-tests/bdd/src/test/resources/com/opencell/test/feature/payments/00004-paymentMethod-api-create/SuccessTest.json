@@ -1,4 +1,4 @@
-{{
-    "paymentMethodType": "CHECK",
-    "customerAccountCode": "ben.ohara"
+{
+	"paymentMethodType": "CHECK",
+	"customerAccountCode": "ben.ohara"
 }
