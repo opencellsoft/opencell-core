@@ -1,4 +1,4 @@
-@payments @ignore
+@payments @ignore @review
 Feature: Create Payment Method by API
 
   Background: The system is configured

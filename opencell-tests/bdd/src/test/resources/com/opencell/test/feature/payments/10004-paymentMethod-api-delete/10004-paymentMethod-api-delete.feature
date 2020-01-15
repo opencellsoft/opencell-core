@@ -1,4 +1,4 @@
-@payments @ignore
+@payments @ignore @review
 Feature: Delete Payment Method by API
 
   Background: The classic offer is already executed
