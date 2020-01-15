@@ -41,6 +41,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.InvalidReferenceException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.EjbUtils;
@@ -1221,13 +1222,22 @@ public abstract class BaseApi {
             } else if (value instanceof String) {
                 List valuesConverted = new ArrayList<>();
                 String[] valueItems = ((String) value).split(",");
+                boolean invalidReference = false;
                 for (String valueItem : valueItems) {
-                    Object valueConverted = castFilterValue(valueItem, targetClass, false);
-                    if (valueConverted != null) {
-                        valuesConverted.add(valueConverted);
-                    } else {
-                        throw new InvalidParameterException("Filter value " + value + " does not match " + targetClass.getSimpleName());
-                    }
+                	try {
+                		Object valueConverted = castFilterValue(valueItem, targetClass, false);
+                		if (valueConverted != null) {
+                            valuesConverted.add(valueConverted);
+                        } else {
+                            throw new InvalidParameterException("Filter value " + value + " does not match " + targetClass.getSimpleName());
+                        }
+                	}catch (InvalidReferenceException e) {
+                		invalidReference=true;
+                		continue;
+					}
+                }
+                if(invalidReference && valuesConverted.isEmpty()) {
+                	throw new InvalidReferenceException(targetClass.getSimpleName(), valueItems);
                 }
                 return valuesConverted;
 
@@ -1364,7 +1374,7 @@ public abstract class BaseApi {
                     BusinessEntity businessEntity = businessEntityService.findByCode(stringVal);
                     if (businessEntity == null) {
                         // Did not find a way how to pass nonexistant entity to search sql
-                        throw new InvalidParameterException("Entity of type " + targetClass.getSimpleName() + " with code " + stringVal + " not found");
+                        throw new InvalidReferenceException(targetClass.getSimpleName(), stringVal);
                     }
                     return businessEntity;
                 }
