@@ -1,13 +1,13 @@
 package org.meveo.model.rating;
 
-public enum EDRStatusEnum {
+public enum CDRStatusEnum {
 
-	OPEN(1, "edrStatus.open"), RATED(2, "edrStatus.rated"), REJECTED(3, "edrStatus.rejected"), MEDIATING(4, "edrStatus.mediating"), AGGREGATED(5, "edrStatus.aggregated");
+	 OPEN(1, "cdrStatus.open"), PROCESSED(2, "cdrStatus.processed"), CLOSED(3, "cdrStatus.closed"), DISCARDED(4, "cdrStatus.discarded"), ERROR(5, "cdrStatus.error");
 
     private Integer id;
     private String label;
 
-    private EDRStatusEnum(Integer id, String label) {
+    private CDRStatusEnum(Integer id, String label) {
         this.id = id;
         this.label = label;
     }
@@ -20,9 +20,9 @@ public enum EDRStatusEnum {
         return id;
     }
 
-    public static EDRStatusEnum getValue(Integer id) {
+    public static CDRStatusEnum getValue(Integer id) {
         if (id != null) {
-            for (EDRStatusEnum status : values()) {
+            for (CDRStatusEnum status : values()) {
                 if (id.equals(status.getId())) {
                     return status;
                 }
@@ -30,9 +30,9 @@ public enum EDRStatusEnum {
         }
         return null;
     }
-    public static EDRStatusEnum getByLabel(String label) {
+    public static CDRStatusEnum getByLabel(String label) {
         if (label != null) {
-            for (EDRStatusEnum status : values()) {
+            for (CDRStatusEnum status : values()) {
                 if (label.equals(status.getLabel())) {
                     return status;
                 }
