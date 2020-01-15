@@ -8,8 +8,6 @@ import org.meveo.api.dto.ActionStatus;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.opencell.test.utils.JSONParserException;
 import com.opencell.test.utils.JsonParser;
 import com.opencell.test.utils.RestApiUtils;
 
@@ -130,21 +128,11 @@ public class CommonStepDefinition implements En {
 
     private void setJsonObject(String filename, Class klazz) {
         JsonParser<?> jsonParser = new JsonParser<>();
-        try {
-            base.setEntityDto(jsonParser.readValue(filename, klazz));
-        }catch (JSONParserException e){
-            JsonNode json = jsonParser.readValue(filename);
-            base.setJsonObject(json);
-        }
+        JsonNode json = jsonParser.readValue(filename);
+        base.setJsonObject(json);
     }
 
     private String getBodyRequest() throws JsonProcessingException {
-        if(base.getEntityDto() != null){
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(base.getEntityDto());
-        }else {
-            return JsonParser.writeValueAsString(base.getJsonObject());
-        }
+        return JsonParser.writeValueAsString(base.getJsonObject());
     }
-
 }
