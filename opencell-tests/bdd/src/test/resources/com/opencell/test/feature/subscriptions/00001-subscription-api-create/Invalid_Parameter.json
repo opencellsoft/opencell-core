@@ -1,6 +1,6 @@
 {
-    "code":"SUB_TEST_7X",
-    "userAccount": "bob.churn",
-    "offerTemplate":"OF_CLASSIC_TEMPLATE",
-    "subscriptionDate":"2019-01-01"
-    }
+	"code": "SUB_TEST_INVALID",
+	"userAccount": "bob.churn",
+	"offerTemplate": "OF_CLASSIC_TEMPLATE",
+	"subscriptionDate": "INVALID"
+}
