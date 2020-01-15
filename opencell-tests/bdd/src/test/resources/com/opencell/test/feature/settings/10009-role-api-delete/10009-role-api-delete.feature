@@ -1,4 +1,4 @@
-@settings @test
+@settings
 Feature: Delete Role by API
 
   Background: System is configured.

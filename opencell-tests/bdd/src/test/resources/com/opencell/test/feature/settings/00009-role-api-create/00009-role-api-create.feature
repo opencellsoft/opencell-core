@@ -1,4 +1,4 @@
-@settings @test
+@settings
 Feature: Create/Update Role by API
 
   Background: The system is configured.
