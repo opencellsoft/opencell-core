@@ -1526,11 +1526,103 @@ public class ValidateBRScript extends Script {
             <where>id = -24</where>
         </update>
     </changeSet>
-    
+
+    <!--    one shot migration of sellers -->
     <changeSet id="4745_20200108" author="MohamedSTITANE" >
-        <sql>
-            INSERT INTO account_entity (id, version, created, code, description, uuid, account_type)
-            SELECT id, version, created, code, description, uuid, 'ACCT_S' FROM crm_seller;
+        <sql dbms="postgresql" endDelimiter="$$" splitStatements="false">
+            <![CDATA[DO $$
+DECLARE
+	oldSeller RECORD;
+	seqId integer;
+	sellId integer;
+BEGIN
+	 FOR sellId IN SELECT id FROM public.crm_seller
+	 LOOP
+		BEGIN
+			seqId := nextval('account_entity_seq');
+			-- get freshly record because parent seller has changed
+			select * into oldSeller from public.crm_seller where id = sellId;
+			-- Inserted new account entity with id
+			INSERT INTO account_entity (id, version ,created ,updated ,code ,description ,address_1 ,address_2 ,address_3,
+				address_city ,address_country_id ,address_state ,address_zipcode ,creator, updater ,uuid ,bam_id ,
+				cf_values ,cf_values_accum ,email ,fax ,mobile ,phone ,vat_no, registration_no , account_type)
+					VALUES (seqId, oldSeller.version, oldSeller.created, oldSeller.updated, oldSeller.code, oldSeller.description,
+							oldSeller.address_1, oldSeller.address_2, oldSeller.address_3, oldSeller.address_city, oldSeller.address_country_id,
+							oldSeller.address_state, oldSeller.address_zipcode, oldSeller.creator, oldSeller.updater, oldSeller.uuid ,
+							oldSeller.bam_id, oldSeller.cf_values, oldSeller.cf_values_accum, oldSeller.email, oldSeller.fax,
+							oldSeller.mobile, oldSeller.phone, oldSeller.vat_no, oldSeller.registration_no, 'ACCT_S');
+
+			--update code to prevent uk constraint
+			update public.crm_seller set code = concat(code,'_OLD') where id = oldSeller.id;
+
+			-- Insert a seller entity with new id
+			INSERT INTO public.crm_seller(
+				id, version, created, updated, code, description, address_1, address_2, address_3, address_city, address_country_id, address_state, address_zipcode,
+				creator, updater, parent_seller_id, trading_country_id, trading_currency_id, trading_language_id, credit_note_prefix, current_credit_note_nb,
+				credit_note_sequence_size, uuid, bam_id, cf_values, cf_values_accum, email, fax, mobile, phone, vat_no, registration_no, legal_text, legal_type, general_ledger_id)
+				VALUES (seqId, oldSeller.version, oldSeller.created, oldSeller.updated, oldSeller.code, oldSeller.description, oldSeller.address_1, oldSeller.address_2,
+				oldSeller.address_3, oldSeller.address_city, oldSeller.address_country_id, oldSeller.address_state, oldSeller.address_zipcode, oldSeller.creator,
+				oldSeller.updater, oldSeller.parent_seller_id, oldSeller.trading_country_id, oldSeller.trading_currency_id, oldSeller.trading_language_id,
+				oldSeller.credit_note_prefix, oldSeller.current_credit_note_nb, oldSeller.credit_note_sequence_size, oldSeller.uuid, oldSeller.bam_id, oldSeller.cf_values,
+				 oldSeller.cf_values_accum, oldSeller.email, oldSeller.fax, oldSeller.mobile, oldSeller.phone, oldSeller.vat_no, oldSeller.registration_no,
+				 oldSeller.legal_text, oldSeller.legal_type, oldSeller.general_ledger_id);
+
+			-- Update a parent seller entity with new id
+			update public.crm_seller set parent_seller_id = seqId where parent_seller_id = oldSeller.id;
+
+			-- Update table billing_charge_instance fk
+			update public.billing_charge_instance set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table crm_customer fk
+			update public.crm_customer set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table billing_invoice fk
+			update public.billing_invoice set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table billing_product_instance  fk
+			update public.billing_product_instance set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table billing_rated_transaction fk
+			update public.billing_rated_transaction set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table billing_subscription fk
+			update public.billing_subscription  set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table billing_wallet_operation fk
+			update public.billing_wallet_operation  set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table ar_account_operation fk
+			update public.ar_account_operation  set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table billing_seq_invtyp_sell fk
+			update public.billing_seq_invtyp_sell set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table cat_price_plan_matrix fk
+			update public.cat_price_plan_matrix set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table ar_ddrequest_lot fk
+			update public.ar_ddrequest_lot set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table ar_payment_gateway fk
+			update public.ar_payment_gateway set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table ar_ddrequest_lot_op fk
+			update public.ar_ddrequest_lot_op set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table crm_customer_sequence fk
+			update public.crm_customer_sequence set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table cat_product_offer_seller  fk
+			update public.cat_product_offer_seller set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- delete old seller
+			delete from public.crm_seller where id = oldSeller.id;
+
+		EXCEPTION when others then
+			RAISE INFO '%', concat('Error ', SQLSTATE, ' : ', SQLERRM, ' for seller ' , oldSeller.code);
+        END;
+	END LOOP;
+END $$;]]>
         </sql>
         <dropColumn tableName="crm_seller">
             <column name="version"/>
