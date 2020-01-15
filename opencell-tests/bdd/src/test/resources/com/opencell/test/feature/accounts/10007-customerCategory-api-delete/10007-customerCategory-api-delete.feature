@@ -17,5 +17,5 @@ Feature: Delete Customer Category by API
 
     Examples: 
       | jsonFile                                                              | dto                 | api                               | statusCode | status  | errorCode                        | message                                               |
-      | accounts/00006-customerCategory-api-create/SuccessTest.json           | CustomerCategoryDto | /account/customer/removeCategory/ |        200 | SUCCESS |                                  |                                                       |
-      | accounts/10006-customerCategory-api-delete/ENTITY_DOES_NOT_EXIST.json | CustomerCategoryDto | /account/customer/removeCategory/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | CustomerCategory with code=NOT_EXIST does not exists. |
+      | accounts/00007-customerCategory-api-create/SuccessTest.json           | CustomerCategoryDto | /account/customer/removeCategory/ |        200 | SUCCESS |                                  |                                                       |
+      | accounts/10007-customerCategory-api-delete/ENTITY_DOES_NOT_EXIST.json | CustomerCategoryDto | /account/customer/removeCategory/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | CustomerCategory with code=NOT_EXIST does not exists. |

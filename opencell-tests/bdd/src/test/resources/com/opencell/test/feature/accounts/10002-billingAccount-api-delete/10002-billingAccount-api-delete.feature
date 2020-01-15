@@ -18,4 +18,4 @@ Feature: Delete a Billing Account by API
     Examples: 
       | jsonFile                                                            | dto               | api                      | statusCode | status  | errorCode                        | message                                             |
       | accounts/00003-billingAccount-api-create/SuccessTest.json           | BillingAccountDto | /account/billingAccount/ |        200 | SUCCESS |                                  |                                                     |
-      | accounts/10001-billingAccount-api-delete/ENTITY_DOES_NOT_EXIST.json | BillingAccountDto | /account/billingAccount/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | BillingAccount with code=NOT_EXIST does not exists. |
+      | accounts/10002-billingAccount-api-delete/ENTITY_DOES_NOT_EXIST.json | BillingAccountDto | /account/billingAccount/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | BillingAccount with code=NOT_EXIST does not exists. |

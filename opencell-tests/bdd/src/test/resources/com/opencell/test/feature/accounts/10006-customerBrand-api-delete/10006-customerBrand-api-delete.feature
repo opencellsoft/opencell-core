@@ -17,5 +17,5 @@ Feature: Delete Customer Brand by API
 
     Examples: 
       | jsonFile                                                           | dto              | api                            | statusCode | status  | errorCode                        | message                                              |
-      | accounts/00005-customerBrand-api-create/SuccessTest.json           | CustomerBrandDto | /account/customer/removeBrand/ |        200 | SUCCESS |                                  |                                                      |
-      | accounts/10005-customerBrand-api-delete/ENTITY_DOES_NOT_EXIST.json | CustomerBrandDto | /account/customer/removeBrand/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | CustomerBrand with code=NOT_EXIST does not exists. |
+      | accounts/00006-customerBrand-api-create/SuccessTest.json           | CustomerBrandDto | /account/customer/removeBrand/ |        200 | SUCCESS |                                  |                                                      |
+      | accounts/10006-customerBrand-api-delete/ENTITY_DOES_NOT_EXIST.json | CustomerBrandDto | /account/customer/removeBrand/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | CustomerBrand with code=NOT_EXIST does not exists. |
