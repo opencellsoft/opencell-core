@@ -762,5 +762,11 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         }
         return values;
     }
+    
+    
+    public Map<String, CustomFieldTemplate> findCFTsByDbTbleName(String dbTableName){
+    	CustomEntityTemplate cet = customEntityTemplateService.findByDbTablename(dbTableName);
+    	return findByAppliesTo(cet.getAppliesTo());
+    }
 
 }
