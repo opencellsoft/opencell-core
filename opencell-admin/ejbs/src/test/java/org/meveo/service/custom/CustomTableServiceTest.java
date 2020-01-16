@@ -59,7 +59,7 @@ public class CustomTableServiceTest {
         List<Map<String, Object>> givenData = buildListMap(3);
         when(sqlQuery.list()).thenReturn(givenData);
         //When
-        List<CustomTableRecordDto> convertedData = sut.selectAllRecordsOfATableAsRecord("flirtikit");
+        List<CustomTableRecordDto> convertedData = sut.selectAllRecordsOfATableAsRecord("flirtikit",null);
         //Then
         assertThat(convertedData).isNotNull();
         assertThat(convertedData).hasSize(3);
