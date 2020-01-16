@@ -1,4 +1,4 @@
- @ignore
+@custom @ignore
  Feature: Delete Custom  Entity Instance by API
 
   Background: The classic offer is already executed

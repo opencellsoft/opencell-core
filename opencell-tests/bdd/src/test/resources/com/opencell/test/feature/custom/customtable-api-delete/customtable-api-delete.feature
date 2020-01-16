@@ -1,4 +1,4 @@
- @ignore
+@custom @ignore
 Feature: Delete Custom  Table  by API
 
   Background: The classic offer is already executed

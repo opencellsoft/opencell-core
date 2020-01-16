@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.apache.http.HttpStatus;
 import org.meveo.api.dto.response.CustomEntityTemplateResponseDto;
+
 import com.opencell.test.bdd.commons.BaseHook;
 import com.opencell.test.utils.RestApiUtils;
 
@@ -25,6 +26,12 @@ public class EntityCustomizationStepDefinition implements En {
                     assertEquals(code, actualEntity.getCustomEntityTemplate().getCode());
                 }
             });
+        });
+        Then("^The custom table is created$", () -> {
+            // No Get API
+        });
+        Then("^The custom entity instance is created$", () -> {
+            // No Get API
         });
     }
 }
