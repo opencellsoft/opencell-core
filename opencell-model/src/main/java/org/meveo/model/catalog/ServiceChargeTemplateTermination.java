@@ -18,7 +18,11 @@
  */
 package org.meveo.model.catalog;
 
-import java.util.List;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.ExportIdentifier;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
@@ -26,14 +30,10 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.ExportIdentifier;
+import java.util.List;
 
 /**
  * Service template to termination ones hot charge template mapping
@@ -51,6 +51,13 @@ public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneS
     private static final long serialVersionUID = 7811269692204342428L;
 
     /**
+     * Counter associated to a charge template
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counter_template_id")
+    private CounterTemplate counterTemplate;
+
+    /**
      * Prepaid wallet templates to charge on
      */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -59,10 +66,32 @@ public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneS
     @OrderColumn(name = "INDX")
     private List<WalletTemplate> walletTemplates;
 
+    /**
+     * Gets counter template.
+     *
+     * @return a counter template
+     */
+    @Override
+    public CounterTemplate getCounterTemplate() {
+        return counterTemplate;
+    }
+
+    /**
+     * Sets counter template.
+     *
+     * @param counterTemplate a counter template.
+     */
+    @Override
+    public void setCounterTemplate(CounterTemplate counterTemplate) {
+        this.counterTemplate = counterTemplate;
+    }
+
+    @Override
     public List<WalletTemplate> getWalletTemplates() {
         return walletTemplates;
     }
 
+    @Override
     public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
         this.walletTemplates = walletTemplates;
     }
@@ -85,10 +114,12 @@ public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneS
 
         ServiceChargeTemplateTermination other = (ServiceChargeTemplateTermination) obj;
         if (getId() == null) {
-            if (other.getId() != null)
+            if (other.getId() != null) {
                 return false;
-        } else if (!getId().equals(other.getId()))
+            }
+        } else if (!getId().equals(other.getId())) {
             return false;
+        }
         return true;
     }
 

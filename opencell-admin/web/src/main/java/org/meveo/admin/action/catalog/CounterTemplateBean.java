@@ -47,8 +47,6 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
     @Inject
     private CounterTemplateService counterTemplateService;
 
-    private Object[] counterTypes;
-
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -71,11 +69,22 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
 
     /**
      * DataModel for primefaces lazy loading datatable component.
+     *
      * @param counterType counter type enumeration
      * @return LazyDataModel implementation.
      */
     public LazyDataModel<CounterTemplate> getLazyDataModel(CounterTypeEnum counterType) {
         filters.put("counterType", counterType);
+        return getLazyDataModel(filters, false);
+    }
+
+    /**
+     * DataModel for primefaces lazy loading datatable component.
+     *
+     * @return LazyDataModel implementation.
+     */
+    public LazyDataModel<CounterTemplate> getAccumulatorLazyDataModel() {
+        filters.put("accumulator", true);
         return getLazyDataModel(filters, false);
     }
 
@@ -132,7 +141,7 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
     /**
      * Gets counter types depends if the counter is accumulator or not.
      *
-     * @return
+     * @return counter types
      */
     public Object[] getCounterTypes() {
         List<Object> allCounterTypes = Arrays.asList(entity.getCounterType().getClass().getEnumConstants());

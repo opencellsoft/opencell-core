@@ -2165,5 +2165,19 @@
         <addColumn tableName="cat_counter_template">
             <column name="is_accumulator" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
+        <addColumn tableName="cat_serv_trm_charge_template">
+            <column name="counter_template_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="counter_template_id" baseTableName="cat_serv_trm_charge_template" constraintName="fk_serv_trm_charge_template_counter_template"
+                                 deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template"/>
+        <addColumn tableName="cat_serv_sub_charge_template">
+            <column name="counter_template_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="counter_template_id" baseTableName="cat_serv_sub_charge_template" constraintName="fk_serv_sub_charge_template_counter_template"
+                                 deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template"/>
+
+
     </changeSet>
 </databaseChangeLog>
