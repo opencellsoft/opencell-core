@@ -62,7 +62,7 @@ public class CustomTableBeanTest {
         //When
         sut.entityTypeColumnDatas(field);
         //Then
-        verify(customTableService).selectAllRecordsOfATableAsRecord(eq("TABLE_1"));
+        verify(customTableService).selectAllRecordsOfATableAsRecord(eq("TABLE_1"), null);
     }
 
     @Test
