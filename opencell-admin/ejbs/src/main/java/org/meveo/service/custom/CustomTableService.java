@@ -38,6 +38,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.search.sort.SortOrder;
@@ -950,14 +951,14 @@ public class CustomTableService extends NativePersistenceService {
         }
     }
 
-	private List<Map<String, Object>> extractMapListByFields(String tableName, String wildCode, List<String> fields) {
+	public List<Map<String, Object>> extractMapListByFields(String tableName, String wildCode, List<String> fields) {
 		List<String> fetchFields= new ArrayList<>();
 		fetchFields.add(FIELD_ID);
 		fetchFields.addAll(fields);
 		PaginationConfiguration pc = new PaginationConfiguration(null);
 		pc.setFetchFields(fetchFields);
 		QueryBuilder qb = getQuery(tableName, pc );
-		if(wildCode!=null) {
+		if(!StringUtils.isEmpty(wildCode)) {
 			qb.addSql(" cast("+FIELD_ID+" as varchar(100)) like :id");
 		}
 		Query query = qb.getNativeQuery(getEntityManager(), true);
