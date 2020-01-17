@@ -18,7 +18,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.admin.exception.RatingException;
-import org.meveo.admin.parse.csv.CDR;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.billing.CdrListDto;
@@ -32,10 +31,10 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.ReservationService;
-import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
@@ -69,9 +68,6 @@ public class MediationApi extends BaseApi {
     private ReservationService reservationService;
 
     @Inject
-    private SubscriptionService subscriptionService;
-
-    @Inject
     private DefaultObserver defaultObserver;
 
     Map<Long, Timer> timers = new HashMap<Long, Timer>();
@@ -84,9 +80,7 @@ public class MediationApi extends BaseApi {
      * @throws BusinessException business exception.
      */
     public void registerCdrList(CdrListDto postData) throws MeveoApiException, BusinessException {
-
         List<String> cdrLines = postData.getCdr();
-
         if (cdrLines == null || cdrLines.size() == 0) {
             missingParameters.add("cdr");
         }
@@ -114,22 +108,18 @@ public class MediationApi extends BaseApi {
      */
     public ChargeCDRResponseDto chargeCdr(ChargeCDRDto chargeCDRDto) throws MeveoApiException, BusinessException {
         String cdrLine = chargeCDRDto.getCdr();
-
         if (StringUtils.isBlank(cdrLine)) {
             missingParameters.add("cdr");
         }
 
         handleMissingParameters();
-
         CSVCDRParser cdrParser = cdrParsingService.getCDRParser(currentUser.getUserName(), null);
-
+       
         try {
-
-            CDR cdr = cdrParser.parseCDR(cdrLine);
-
+            CDR cdr = cdrParser.parseCDR(cdrLine);           
             List<EDR> edrs = cdrParsingService.getEDRList(cdr);
             List<WalletOperation> walletOperations = new ArrayList<>();
-            for (EDR edr : edrs) {
+            for (EDR edr : edrs) {            	 
                 log.debug("edr={}", edr);
                 edr.setSubscription(edr.getSubscription());
                 if (!chargeCDRDto.isVirtual()) {
