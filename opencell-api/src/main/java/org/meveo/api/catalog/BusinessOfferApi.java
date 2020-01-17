@@ -168,10 +168,13 @@ public class BusinessOfferApi extends BaseApi {
                         CustomFieldsDto cfsDto = new CustomFieldsDto();
                         cfsDto.setCustomField(serviceConfigurationDto.getCustomFields());
                         // to fix a case when we instantiate a BSM multiple times in the same offer with CF value override,
-                        ServiceTemplate temp = (ServiceTemplate) BeanUtils.cloneBean(serviceTemplate);
+                        ServiceTemplate temp = new ServiceTemplate();
                         populateCustomFields(cfsDto, temp, true);
-                        serviceTemplate.setCfValues(temp.getCfValues());
-                        serviceTemplate.setCfAccumulatedValues(temp.getCfValues());
+                        cfsDto = entityToDtoConverter.getCustomFieldsDTO(temp, null, CustomFieldInheritanceEnum.INHERIT_NONE);
+                        ServiceTemplate temp2 = (ServiceTemplate) BeanUtils.cloneBean(serviceTemplate);
+                        populateCustomFields(cfsDto, temp2, true);
+                        serviceTemplate.setCfValues(temp2.getCfValues());
+                        serviceTemplate.setCfAccumulatedValues(temp2.getCfValues());
                         serviceTemplate = serviceTemplateService.update(serviceTemplate);
                         ost.setServiceTemplate(serviceTemplate);
 
