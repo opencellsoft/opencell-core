@@ -15,8 +15,7 @@ import static org.meveo.apiv2.ValidationUtils.checkRecords;
 
 public class GenericApiLoadService extends GenericApiService {
 
-    public String findPaginatedRecords(String entityName, PaginationConfiguration searchConfig, Set<String> genericFields) {
-        Class entityClass = getEntityClass(entityName);
+    public String findPaginatedRecords(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields) {
         PersistenceService persistenceService = getPersistenceService(entityClass);
         ImmutableGenericPaginatedResource genericPaginatedResource = ImmutableGenericPaginatedResource.builder()
                 .data(checkRecords(persistenceService.list(searchConfig), entityClass.getSimpleName()))
