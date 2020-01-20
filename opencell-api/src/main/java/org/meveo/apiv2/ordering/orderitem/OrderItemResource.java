@@ -39,7 +39,7 @@ public interface OrderItemResource {
                             headers = {
                                     @Header(name = "ETag",
                                             description = "a pseudo-unique identifier that represents the version of the data sent back.",
-                                            schema = @Schema(implementation = Integer.class)
+                                            schema = @Schema(type = "integer", format = "int64")
                                     )
                             },
                             description = "list of order-items", content = @Content(schema = @Schema(implementation = OrderItems.class))
@@ -62,7 +62,7 @@ public interface OrderItemResource {
                             headers = {
                                     @Header (name = "ETag",
                                             description = "a pseudo-unique identifier that represents the version of the data sent back",
-                                            schema = @Schema(implementation = Integer.class)
+                                            schema = @Schema(type = "integer", format = "int64")
                                     )
                             },
                             description = "the searched order-Item", content = @Content(schema = @Schema(implementation = OrderItem.class))

@@ -32,14 +32,13 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 import org.meveo.model.persistence.CustomFieldJsonType;
 import org.meveo.model.persistence.JsonBinaryType;
 import org.meveo.model.persistence.JsonStringType;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Base class for all entity classes.
