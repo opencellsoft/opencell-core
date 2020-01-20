@@ -18,15 +18,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -50,9 +41,9 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
+import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
+import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.payments.PaymentScheduleTemplate;
@@ -66,6 +57,14 @@ import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
 import org.meveo.service.payments.impl.PaymentScheduleTemplateService;
 import org.meveo.service.script.service.ServiceModelScriptService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * ServiceInstanceService.
@@ -339,15 +338,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             serviceInstance.getRecurringChargeInstances().add(chargeInstance);
         }
 
-        for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate.getServiceSubscriptionCharges()) {
-            SubscriptionChargeInstance chargeInstance = (SubscriptionChargeInstance) oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance, serviceChargeTemplate.getChargeTemplate(),
-                subscriptionAmount, null, true, isVirtual);
+        for (ServiceChargeTemplateSubscription serviceChargeTemplate : serviceTemplate.getServiceSubscriptionCharges()) {
+            SubscriptionChargeInstance chargeInstance = (SubscriptionChargeInstance) oneShotChargeInstanceService
+                    .oneShotChargeInstanciation(serviceInstance, serviceChargeTemplate, subscriptionAmount, null, true, isVirtual);
             serviceInstance.getSubscriptionChargeInstances().add(chargeInstance);
         }
 
-        for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate.getServiceTerminationCharges()) {
-            TerminationChargeInstance chargeInstance = (TerminationChargeInstance) oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance, serviceChargeTemplate.getChargeTemplate(),
-                terminationAmount, null, false, isVirtual);
+        for (ServiceChargeTemplateTermination serviceChargeTemplate : serviceTemplate.getServiceTerminationCharges()) {
+            TerminationChargeInstance chargeInstance = (TerminationChargeInstance) oneShotChargeInstanceService
+                    .oneShotChargeInstanciation(serviceInstance, serviceChargeTemplate, terminationAmount, null, false, isVirtual);
             serviceInstance.getTerminationChargeInstances().add(chargeInstance);
         }
 

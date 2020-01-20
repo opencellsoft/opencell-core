@@ -2177,6 +2177,16 @@
         <addForeignKeyConstraint baseColumnNames="counter_template_id" baseTableName="cat_serv_sub_charge_template" constraintName="fk_serv_sub_charge_template_counter_template"
                                  deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template"/>
+        <addColumn tableName="billing_counter">
+            <column name="customer_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_billing_counter_customer_id" referencedTableName="crm_customer"
+                                 baseColumnNames="customer_id" baseTableName="billing_counter" referencedColumnNames="id"/>
+        <addColumn tableName="billing_counter">
+            <column name="customer_account_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_billing_counter_customer_account_id" referencedTableName="ar_customer_account"
+                                 baseColumnNames="customer_account_id" baseTableName="billing_counter" referencedColumnNames="id"/>
 
 
     </changeSet>

@@ -18,18 +18,6 @@
  */
 package org.meveo.admin.action.payments;
 
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -39,6 +27,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CheckPaymentMethod;
@@ -53,6 +42,7 @@ import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -60,10 +50,20 @@ import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 /**
  * Standard backing bean for {@link CustomerAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
- * 
+ *
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
@@ -87,7 +87,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     
     @Inject
     private RatedTransactionService ratedTransactionService;
-    
+
     @Inject
     private WalletOperationService walletOperationService;
 
@@ -96,6 +96,9 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
     @Inject
     private PaymentMethodService paymentMethodService;
+
+    @Inject
+    private CounterInstanceService counterInstanceService;
 
     /**
      * Customer Id passed as a parameter. Used when creating new Customer Account from customer account window, so default customer account will be set on newly created customer
@@ -109,6 +112,8 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
     private PaymentMethodEnum newPaymentMethodType = PaymentMethodEnum.CARD;
     private PaymentMethod selectedPaymentMethod;
+
+    private CounterInstance selectedCounterInstance;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -136,7 +141,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
                 }
             }
         }
-
+        selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
         return entity;
     }
     
@@ -244,8 +249,9 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     public BigDecimal getBalanceDue() throws BusinessException {
         if (entity.getId() == null) {
             return new BigDecimal(0);
-        } else
+        } else {
             return customerAccountService.customerAccountBalanceDue(entity, new Date());
+        }
     }
 
     /**
@@ -538,6 +544,21 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
                     throw new Exception("Missing BIC.");
                 }
             }
+        }
+    }
+
+    public CounterInstance getSelectedCounterInstance() {
+        if (entity == null) {
+            initEntity();
+        }
+        return selectedCounterInstance;
+    }
+
+    public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
+        if (selectedCounterInstance != null) {
+            this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
+        } else {
+            this.selectedCounterInstance = null;
         }
     }
 }

@@ -18,25 +18,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -60,13 +41,34 @@ import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTemplateLevel;
 import org.meveo.model.catalog.CounterTemplateLevelAnnotation;
 import org.meveo.model.catalog.CounterTypeEnum;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.notification.Notification;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.payments.impl.CustomerAccountService;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
- * 
  * @author Said Ramli
  * @author Abdellatif BARI
  * @author Khalid HORRI
@@ -78,6 +80,12 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
+
+    @Inject
+    private CustomerAccountService customerAccountService;
+
+    @Inject
+    private CustomerService customerService;
 
     @Inject
     private UserAccountService userAccountService;
@@ -131,7 +139,49 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     /**
      * @param serviceInstance a service instance
      * @param counterTemplate a counter template
-     * @param isVirtual is virtual
+     * @param isVirtual       is virtual
+     * @return a counter instance
+     * @throws BusinessException
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    @CounterTemplateLevelAnnotation(CounterTemplateLevel.CA)
+    public CounterInstance instantiateCustomerCounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
+            throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        if (serviceInstance.getSubscription() == null || serviceInstance.getSubscription().getUserAccount() == null
+                || serviceInstance.getSubscription().getUserAccount().getBillingAccount() == null) {
+            return null;
+        }
+        Customer customer = serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
+        return instantiateCounter(customerService, customer, Customer.class, counterTemplate, isVirtual);
+    }
+
+    /**
+     * @param serviceInstance a service instance
+     * @param counterTemplate a counter template
+     * @param isVirtual       is virtual
+     * @return a counter instance
+     * @throws BusinessException
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    @CounterTemplateLevelAnnotation(CounterTemplateLevel.CA)
+    public CounterInstance instantiateCACounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
+            throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        if (serviceInstance.getSubscription() == null || serviceInstance.getSubscription().getUserAccount() == null
+                || serviceInstance.getSubscription().getUserAccount().getBillingAccount() == null) {
+            return null;
+        }
+        CustomerAccount customerAccount = serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount();
+        return instantiateCounter(customerAccountService, customerAccount, CustomerAccount.class, counterTemplate, isVirtual);
+    }
+
+    /**
+     * @param serviceInstance a service instance
+     * @param counterTemplate a counter template
+     * @param isVirtual       is virtual
      * @return a counter instance
      * @throws BusinessException
      * @throws NoSuchMethodException
@@ -510,9 +560,20 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
                 counterPeriodService.detach(counterPeriod);
             }
             return null;
+            // accumulator counter
+        } else if (counterPeriod.getCounterInstance() != null && counterPeriod.getCounterInstance().getCounterTemplate() != null && counterPeriod.getCounterInstance()
+                .getCounterTemplate().getAccumulator()) {
+            deducedQuantity = deduceBy;
+            counterPeriod.setValue(counterPeriod.getValue().add(deduceBy));
+            counterValueInfo = new CounterValueChangeInfo(previousValue, deducedQuantity, counterPeriod.getValue());
 
-            // Previous value is Zero and deduction is not negative (really its an addition)
-        } else if (previousValue.compareTo(BigDecimal.ZERO) == 0 && deduceBy.compareTo(BigDecimal.ZERO) > 0) {
+            if (!isVirtual) {
+                log.debug("Counter period {} was changed {}", counterPeriod.getId(), counterValueInfo);
+                counterPeriod = counterPeriodService.update(counterPeriod);
+            }
+        }
+        // Previous value is Zero and deduction is not negative (really its an addition)
+        else if (previousValue.compareTo(BigDecimal.ZERO) == 0 && deduceBy.compareTo(BigDecimal.ZERO) > 0) {
             return new CounterValueChangeInfo(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
 
         } else {
@@ -536,7 +597,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         return counterValueInfo;
     }
 
-    @SuppressWarnings("unchecked")
     public List<CounterInstance> findByCounterTemplate(CounterTemplate counterTemplate) {
         QueryBuilder qb = new QueryBuilder(CounterInstance.class, "c");
         qb.addCriterionEntity("counterTemplate", counterTemplate);
