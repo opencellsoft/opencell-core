@@ -924,8 +924,6 @@ public class CustomTableService extends NativePersistenceService {
 			String eol = endOfLine;
 			List<Map<String, Object>> mapList = extractMapListByFields(tableName, wildCode, fields);
 			return mapList.stream().map(x-> new CustomTableRecordDto(getDisplay(tableName, x, eol),x)).collect(Collectors.toList());
-        	/*mapList.stream().collect(Collectors.toMap(Long.valueOf(Function.identity().get(FIELD_ID).toString()), Function.identity()));
-			return mapList.stream().map(x->getDisplay(x,eol)).collect(Collectors.toList());*/
         } catch (Exception ex) {
             return Collections.EMPTY_LIST;
         }
