@@ -16,10 +16,7 @@ import javax.inject.Inject;
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
-import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Channel;
@@ -46,13 +43,10 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
-import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,9 +109,6 @@ public class CatalogHierarchyBuilderService {
 
     @Inject
     private SubscriptionService subscriptionService;
-    
-    @Inject
-    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     @CurrentUser
@@ -414,15 +405,7 @@ public class CatalogHierarchyBuilderService {
             } else if (serviceTemplate.getCfValues() != null) {
                 newServiceTemplate.getCfValuesNullSafe().setValuesByCode(serviceTemplate.getCfValues().getValuesByCode());
             }
-            if (serviceConfiguration != null && serviceConfiguration.getCustomFields() != null) {
-            	CustomFieldsDto cfsDto = new CustomFieldsDto();
-                cfsDto.setCustomField(serviceConfiguration.getCustomFields());
-                // to fix a case when we instantiate a BSM multiple times in the same offer with CF value override,
-                ServiceTemplate temp = new ServiceTemplate();
-                customFieldInstanceService.populateCustomFields(cfsDto, temp, true, new ArrayList());
-                newServiceTemplate.setCfValues(temp.getCfValues());
-                newServiceTemplate.setCfAccumulatedValues(temp.getCfValues());
-            }
+
             // update code if duplicate
             if (instantiatedFromBOM) {
                 Integer serviceConfItemIndex = serviceConfiguration.getItemIndex();
