@@ -227,13 +227,16 @@ public class DefaultNotificationService {
 			// thus
 			// will not be related to inbound request.
 			if (notif instanceof ScriptNotification) {
-				NotificationHistory histo = notificationHistoryService.create(notif, entityOrEvent,
-						(String) context.get(Script.RESULT_VALUE), NotificationHistoryStatusEnum.SENT);
+                NotificationHistory histo = null;
+			    if (notif.isSaveSuccessfulNotifications()) {
+                    histo = notificationHistoryService.create(notif, entityOrEvent,
+                            (String) context.get(Script.RESULT_VALUE), NotificationHistoryStatusEnum.SENT);
+			    }
 
-				if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ && histo != null) {
-					histo.setInboundRequest((InboundRequest) entityOrEvent);
-					((InboundRequest) entityOrEvent).add(histo);
-				}
+                if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ && histo != null) {
+                    histo.setInboundRequest((InboundRequest) entityOrEvent);
+                    ((InboundRequest) entityOrEvent).add(histo);
+                }
 
 			} else if (notif instanceof EmailNotification) {
 				MeveoUser lastCurrentUser = currentUser.unProxy();
