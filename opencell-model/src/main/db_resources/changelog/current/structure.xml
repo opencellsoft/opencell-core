@@ -2217,6 +2217,18 @@
     	</createTable>    	
         <sql>CREATE INDEX rating_cdr_index ON ${db.schema.adapted}rating_cdr(origin_batch, origin_record)</sql>
         <sql>CREATE INDEX rating_cdr_status ON ${db.schema.adapted}rating_cdr(status)</sql>               
-    </changeSet>    
+    </changeSet>
+
+    <changeSet id="#4933_20200117" author="AbdellatifBARI">
+        <dropColumn tableName="adm_file_format">
+            <column name="configuration_template"></column>
+        </dropColumn>
+        <addColumn tableName="adm_file_format">
+            <column name="configuration_template" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="job_code" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
     
 </databaseChangeLog>
