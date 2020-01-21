@@ -2,8 +2,7 @@ package org.meveo.model.catalog;
 
 public enum CounterTypeEnum {
 
-    USAGE(1, "counterTypeEnum.usage", false), NOTIFICATION(2, "counterTypeEnum.notification", false), USAGE_QUANTITY(3, "counterTypeEnum.usageQuantity", true), USAGE_AMOUNT(4,
-            "counterTypeEnum.usageAmount", true), ALL_AMOUNT(5, "counterTypeEnum.allAmount", true);
+    USAGE(1, "counterTypeEnum.usage", false), NOTIFICATION(2, "counterTypeEnum.notification", false), USAGE_AMOUNT(3, "counterTypeEnum.usageAmount", true);
     private Integer id;
     private String label;
     private boolean isAccumulator;

@@ -113,7 +113,7 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
         counterTemplate.setNotificationLevels(postData.getNotificationLevels());
         counterTemplate.setAccumulator(postData.getAccumulator());
-        if (counterTemplate.getAccumulator()) {
+        if (counterTemplate.getAccumulator() != null && counterTemplate.getAccumulator()) {
             counterTemplate.setCeilingExpressionEl(null);
             counterTemplate.setCeiling(BigDecimal.ZERO);
         }
@@ -148,14 +148,12 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         handleMissingParameters(dto);
         CounterTemplateDto counterTemplateDto = (CounterTemplateDto) dto;
         if (counterTemplateDto.getAccumulator() != null) {
-            if (counterTemplateDto.getAccumulator() && (counterTemplateDto.getType().equals(CounterTypeEnum.USAGE) || counterTemplateDto.getType()
-                    .equals(CounterTypeEnum.NOTIFICATION))) {
+            if (counterTemplateDto.getAccumulator() && counterTemplateDto.getType().equals(CounterTypeEnum.NOTIFICATION)) {
                 log.error("The counter type is invalid if the counter is accumulator counter, deactivate the accumulator or change the counter type");
                 throw new InvalidParameterException("The counter type is invalid if the counter is accumulator counter, deactivate the accumulator or change the counter type");
             }
-            if (!counterTemplateDto.getAccumulator() && (counterTemplateDto.getType().equals(CounterTypeEnum.USAGE_QUANTITY) || counterTemplateDto.getType()
-                    .equals(CounterTypeEnum.ALL_AMOUNT) || counterTemplateDto.getType().equals(CounterTypeEnum.USAGE_AMOUNT))) {
-                log.error("The accumulator should be activated if the following counter type are used : {}, {} or {}", CounterTypeEnum.USAGE_QUANTITY.getLabel(),
+            if (!counterTemplateDto.getAccumulator() && (counterTemplateDto.getType().equals(CounterTypeEnum.USAGE_AMOUNT))) {
+                log.error("The accumulator should be activated if the following counter type are used : {}, {} or {}", CounterTypeEnum.USAGE_AMOUNT.getLabel(),
                         CounterTypeEnum.USAGE_AMOUNT.getLabel(), CounterTypeEnum.USAGE_AMOUNT.getLabel());
                 throw new InvalidParameterException("The accumulator must be activated to use the counter type " + counterTemplateDto.getType());
             }

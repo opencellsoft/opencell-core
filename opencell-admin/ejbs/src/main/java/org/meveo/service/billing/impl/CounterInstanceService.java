@@ -146,7 +146,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    @CounterTemplateLevelAnnotation(CounterTemplateLevel.CA)
+    @CounterTemplateLevelAnnotation(CounterTemplateLevel.CUST)
     public CounterInstance instantiateCustomerCounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (serviceInstance.getSubscription() == null || serviceInstance.getSubscription().getUserAccount() == null
@@ -389,6 +389,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         counterPeriod.setLevel(initialValue);
         counterPeriod.setCounterType(counterTemplate.getCounterType());
         counterPeriod.setNotificationLevels(counterTemplate.getNotificationLevels(), initialValue);
+        counterPeriod.setAccumulator(counterTemplate.getAccumulator());
 
         counterPeriod.isCorrespondsToPeriod(chargeDate);
 
@@ -561,9 +562,12 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             }
             return null;
             // accumulator counter
-        } else if (counterPeriod.getCounterInstance() != null && counterPeriod.getCounterInstance().getCounterTemplate() != null && counterPeriod.getCounterInstance()
-                .getCounterTemplate().getAccumulator()) {
+        } else if (counterPeriod.getCounterInstance() != null && counterPeriod.getCounterInstance().getCounterTemplate() != null && counterPeriod.getAccumulator() != null
+                && counterPeriod.getAccumulator()) {
             deducedQuantity = deduceBy;
+            if (counterPeriod.getCounterInstance().getCounterTemplate().getCounterType().equals(CounterTypeEnum.USAGE_AMOUNT)) {
+                return new CounterValueChangeInfo(previousValue, deducedQuantity, counterPeriod.getValue());
+            }
             counterPeriod.setValue(counterPeriod.getValue().add(deduceBy));
             counterValueInfo = new CounterValueChangeInfo(previousValue, deducedQuantity, counterPeriod.getValue());
 

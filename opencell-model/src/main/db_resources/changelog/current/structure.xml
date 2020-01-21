@@ -2194,7 +2194,9 @@
         <addForeignKeyConstraint constraintName="fk_billing_counter_customer_account_id" referencedTableName="ar_customer_account"
                                  baseColumnNames="customer_account_id" baseTableName="billing_counter" referencedColumnNames="id"/>
 
-
+        <addColumn tableName="billing_counter_period">
+            <column name="is_accumulator" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
     </changeSet>
     
     <changeSet id="#4906_Creation_CDR_Table_1" author="anasseh" dbms="mysql">

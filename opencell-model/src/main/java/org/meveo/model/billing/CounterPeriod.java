@@ -1,13 +1,14 @@
 package org.meveo.model.billing;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.JsonUtils;
+import org.meveo.commons.utils.ListUtils;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.catalog.CounterTypeEnum;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -26,15 +27,14 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
-
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.commons.utils.JsonUtils;
-import org.meveo.commons.utils.ListUtils;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.catalog.CounterTypeEnum;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Counter values for a given period
@@ -112,6 +112,13 @@ public class CounterPeriod extends BusinessEntity {
     private String notificationLevels;
 
     /**
+     * Check if is it an accumulator account.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_accumulator")
+    private Boolean accumulator = Boolean.FALSE;
+
+    /**
      * Notification levels mapped by a value. Used for entry in GUI.
      */
     @Transient
@@ -173,9 +180,17 @@ public class CounterPeriod extends BusinessEntity {
         this.notificationLevels = notificationLevels;
     }
 
+    public Boolean getAccumulator() {
+        return accumulator;
+    }
+
+    public void setAccumulator(Boolean accumulator) {
+        this.accumulator = accumulator;
+    }
+
     /**
      * Get notification levels converted to a map of big decimal values with key being an original threshold value (that could have been entered as % or a number)
-     * 
+     *
      * @return A map of big decimal values with original threshold values as a key
      */
     @SuppressWarnings("unchecked")

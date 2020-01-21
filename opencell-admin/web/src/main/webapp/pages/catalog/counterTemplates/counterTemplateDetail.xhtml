@@ -36,8 +36,7 @@
                             listenerUpdate="counterTemplatId:counterType counterTemplatId:counterLevel counterTemplatId:ceiling counterTemplatId:ceilingExpressionEl"
                             actionListenerBean="#{counterTemplateBean}"
                             actionListenerMethod="updateCounterTypeAndCounterLevel"/>
-            <hftl:formField label="#{messages['counterTemplate.counterType']}" id="counterType" field="counterType" required="true"
-                            listValues="#{counterTemplateBean.getCounterTypes()}"/>
+            <hftl:formField label="#{messages['counterTemplate.counterType']}" id="counterType" field="counterType" required="true"/>
             <hftl:formField label="#{messages['billingCycle.calendar']}" field="calendar" valueLabelField="code" required="true" listBean="#{calendarBean}"/>
             <hftl:formField label="#{messages['counterTemplate.counterLevel']}" id="counterLevel" field="counterLevel" required="true"
                             listValues="#{counterTemplateBean.getCounterLevels()}"/>

@@ -384,7 +384,7 @@ public class UsageRatingService implements Serializable {
         WalletOperation walletOperation = rateEDRwithMatchingCharge(edr, quantityToCharge, usageChargeInstance, false, false);
         ratedEDRResult.setWalletOperation(walletOperation);
         // counterPeriod set amount value if the counter is of amount type and accumulator.
-        if (deducedCounter.getCounterPeriod() != null) {
+        if (deducedCounter != null && deducedCounter.getCounterPeriod() != null) {
             setCounterPeriodAmount(deducedCounter.getCounterPeriod(), walletOperation);
         }
         if (!isVirtual) {
@@ -405,8 +405,8 @@ public class UsageRatingService implements Serializable {
     }
 
     private void setCounterPeriodAmount(CounterPeriod counterPeriod, WalletOperation walletOperation) {
-        if (counterPeriod.getCounterInstance() != null && counterPeriod.getCounterInstance().getCounterTemplate() != null && counterPeriod.getCounterInstance().getCounterTemplate()
-                .getAccumulator() && counterPeriod.getCounterInstance().getCounterTemplate().getCounterType().equals(CounterTypeEnum.USAGE_AMOUNT)) {
+        if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator() && counterPeriod.getCounterInstance().getCounterTemplate().getCounterType()
+                .equals(CounterTypeEnum.USAGE_AMOUNT)) {
             if (appProvider.isEntreprise()) {
                 counterPeriod.setValue(counterPeriod.getValue().add(walletOperation.getAmountWithoutTax()));
             } else {

@@ -163,7 +163,7 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
      */
     public void updateCounterTypeAndCounterLevel() {
         if (entity.getId() == null && entity.getAccumulator()) {
-            entity.setCounterType(CounterTypeEnum.USAGE_QUANTITY);
+            entity.setCounterType(CounterTypeEnum.USAGE);
             entity.setCounterLevel(CounterTemplateLevel.BA);
         }
         if (entity.getId() == null && !entity.getAccumulator()) {
