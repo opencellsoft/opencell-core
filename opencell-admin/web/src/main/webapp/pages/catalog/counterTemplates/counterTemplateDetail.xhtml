@@ -36,6 +36,7 @@
             <hftl:formField label="#{messages['counterTemplate.counterLevel']}" field="counterLevel" required="true" />
             <hftl:formField label="#{messages['counterTemplate.level']}" field="ceiling" converter="bigDecimal4DigitsConverter" />
             <hftl:formField label="#{messages['billingCycle.calendar']}" field="calendar" valueLabelField="code" required="true" listBean="#{calendarBean}" />
+            <hftl:formField label="#{messages['billingCycle.calendar']} EL" field="calendarCodeEl" textArea="true" rows="1" maxlength="2000" />	
             <hftl:formField label="#{messages['counterTemplate.ceilingExpressionEl']}" field="ceilingExpressionEl" textArea="true" rows="1" maxlength="2000" />
             <hftl:formField label="#{messages['counterTemplate.notificationLevels']}" field="notificationLevels" />
             <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
