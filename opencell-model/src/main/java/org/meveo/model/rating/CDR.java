@@ -36,7 +36,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 
 /**
@@ -77,7 +76,7 @@ public class CDR extends BaseEntity {
 	/**
 	 * Quantity
 	 */
-	@Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "quantity")
 	private BigDecimal quantity;
 
 	/**
