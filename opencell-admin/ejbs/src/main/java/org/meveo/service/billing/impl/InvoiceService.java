@@ -3303,7 +3303,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             boolean calculateExternalTax) throws BusinessException {
 
         if (isExonerated) {
-            return new Object[] { taxZero, BigDecimal.ZERO, false };
+            return new Object[] { taxZero, false };
 
         } else {
 

@@ -18,13 +18,16 @@
  */
 package org.meveo.service.bi.impl;
 
+import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.FileFormat;
 import org.meveo.model.bi.FileStatusEnum;
 import org.meveo.model.bi.FlatFile;
 import org.meveo.service.base.BusinessService;
-
-import javax.ejb.Stateless;
 
 /**
  * Flat file service
@@ -59,5 +62,16 @@ public class FlatFileService extends BusinessService<FlatFile> {
         flatFile.setErrorMessage(errorMessage);
         flatFile.setStatus(status);
         update(flatFile);
+    }
+
+    public FlatFile find(String currentDirectory, String currentName) {
+        Query query = getEntityManager().createQuery("SELECT ff from FlatFile ff  where  ff.currentDirectory=:currentDirectory and ff.fileCurrentName=:currentName");
+        query.setParameter("currentDirectory", currentDirectory);
+        query.setParameter("currentName", currentName);
+        try {
+            return (FlatFile) query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException e) {
+            return null;
+        }
     }
 }

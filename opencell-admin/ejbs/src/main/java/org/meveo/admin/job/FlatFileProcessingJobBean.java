@@ -34,7 +34,7 @@ import org.slf4j.Logger;
  * 
  * @author anasseh
  * @author Abdellatif BARI
- * @lastModifiedVersion 8.0.0
+ * @lastModifiedVersion 8.4.0
  */
 @Stateless
 public class FlatFileProcessingJobBean {
@@ -182,11 +182,7 @@ public class FlatFileProcessingJobBean {
             }
 
         } finally {
-            if (StringUtils.isBlank(fileCurrentName)) {
-                fileCurrentName = !errors.isEmpty() ? rejectedfileName : processedfileName;
-            }
-            String currentDirectory = !errors.isEmpty() ? rejectDir : outputDir;
-            flatFileProcessing.updateFlatFile(fileName, fileCurrentName, currentDirectory, errors, result.getNbItemsCorrectlyProcessed(), result.getNbItemsProcessedWithError(), result.getJobInstance().getCode());
+            flatFileProcessing.updateFlatFile(fileName, fileCurrentName, rejectedfileName, processedfileName, rejectDir, outputDir, errors, result.getNbItemsCorrectlyProcessed(), result.getNbItemsProcessedWithError(), result.getJobInstance().getCode());
             try {
                 if (fileParser != null) {
                     fileParser.close();
