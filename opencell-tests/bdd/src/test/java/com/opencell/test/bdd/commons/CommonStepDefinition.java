@@ -18,12 +18,15 @@ public class CommonStepDefinition implements En {
 
     private BaseHook base;
 
-
     public CommonStepDefinition(BaseHook base) {
         this.base = base;
         Given("^The entity has the following information \"([^\"]*)\" as \"([^\"]*)\"$", (String filename, String dto) -> {
             Class klazz = base.getEntityClass(dto).get();
-            setJsonObject(filename, klazz);
+                    setJsonObject(filename);
+                    assertTrue(base.getEntityDto() != null || base.getJsonObject() != null);
+                });
+        Given("^The entity has the following information \"([^\"]*)\"$", (String filename) -> {
+            setJsonObject(filename);
             assertTrue(base.getEntityDto() != null || base.getJsonObject() != null);
         });
         When("^I call the \"([^\"]*)\"$", (String api) -> {
@@ -45,7 +48,15 @@ public class CommonStepDefinition implements En {
             switch(action) {
             case "create":
             case "Create":
+            case "Post":
+            case "post":
                 response = RestApiUtils.post(api, bodyRequest);
+                break;
+            case "read":
+            case "Read":
+            case "get":
+            case "Get":
+                response = RestApiUtils.get(api, bodyRequest);
                 break;
             case "update":
             case "Update":
@@ -62,6 +73,7 @@ public class CommonStepDefinition implements En {
             if (actionStatus.getMessage() == null)
                 actionStatus.setMessage("");
             base.setResponse(new ApiResponse(response.extract().statusCode(), actionStatus));
+            base.setJsonresponse(response);
             assertNotNull(base.getResponse());
             assertNotNull(base.getResponse().getActionStatus());
             assertNotNull(base.getResponse().getHttpStatusCode());
@@ -126,7 +138,7 @@ public class CommonStepDefinition implements En {
 
     }
 
-    private void setJsonObject(String filename, Class klazz) {
+    private void setJsonObject(String filename) {
         JsonParser<?> jsonParser = new JsonParser<>();
         JsonNode json = jsonParser.readValue(filename);
         base.setJsonObject(json);
