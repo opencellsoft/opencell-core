@@ -177,31 +177,31 @@ public class CDR extends BaseEntity {
 	/**
 	 * Decimal type parameter
 	 */
-	@Column(name = "decimal_parameter_1", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "decimal_parameter_1")
 	private BigDecimal decimalParam1;
 
 	/**
 	 * Decimal type parameter
 	 */
-	@Column(name = "decimal_parameter_2", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "decimal_parameter_2")
 	private BigDecimal decimalParam2;
 
 	/**
 	 * Decimal type parameter
 	 */
-	@Column(name = "decimal_parameter_3", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "decimal_parameter_3")
 	private BigDecimal decimalParam3;
 
 	/**
 	 * Decimal type parameter
 	 */
-	@Column(name = "decimal_parameter_4", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "decimal_parameter_4")
 	private BigDecimal decimalParam4;
 
 	/**
 	 * Decimal type parameter
 	 */
-	@Column(name = "decimal_parameter_5", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "decimal_parameter_5")
 	private BigDecimal decimalParam5;
 
 	/**
