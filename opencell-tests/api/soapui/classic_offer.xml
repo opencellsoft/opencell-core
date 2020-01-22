@@ -22429,7 +22429,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <record name="header" minOccurs="1" maxOccurs="1" class="map">
       <field name="IDTicketAFS" ignore="true" literal="IDTicketAFS" />
     </record>
-    <record name="cdr"  minOccurs="0" maxOccurs="unbounded" class="org.meveo.admin.parse.csv.CDR">  
+    <record name="cdr"  minOccurs="0" maxOccurs="unbounded" class="org.meveo.model.rating.CDR">  
       <field position="1"  name="param3"  minOccurs="0"/>  <!-- IDClient -->
       <field position="2"  name="access_id"  minOccurs="0"/> <!-- CallingNumberNDI -->
       <field position="4"  name="param2"  minOccurs="0"/> <!-- CalledNumber -->
@@ -23820,7 +23820,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.rating.CDR;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.mediation.Access;
@@ -24103,7 +24103,7 @@ import java.util.Map;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidScriptException;
-import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.rating.CDR;
 import org.meveo.model.admin.User;
 import org.meveo.model.mediation.Access;
 import org.slf4j.Logger;
@@ -24620,7 +24620,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.rating.CDR;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ServiceInstance;
@@ -24863,7 +24863,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.rating.CDR;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ServiceInstance;

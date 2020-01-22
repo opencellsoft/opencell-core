@@ -417,7 +417,6 @@ public class CatalogHierarchyBuilderService {
             if (serviceConfiguration != null && serviceConfiguration.getCustomFields() != null) {
             	CustomFieldsDto cfsDto = new CustomFieldsDto();
                 cfsDto.setCustomField(serviceConfiguration.getCustomFields());
-                // to fix a case when we instantiate a BSM multiple times in the same offer with CF value override,
                 ServiceTemplate temp = new ServiceTemplate();
                 customFieldInstanceService.populateCustomFields(cfsDto, temp, true, new ArrayList());
                 newServiceTemplate.setCfValues(temp.getCfValues());
