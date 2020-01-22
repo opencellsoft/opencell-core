@@ -1,7 +1,5 @@
 package org.meveo.api.account;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -10,7 +8,6 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.SellersDto;
@@ -49,6 +46,8 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 /**
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
@@ -58,7 +57,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
-public class SellerApi extends BaseApi {
+public class SellerApi extends AccountEntityApi {
 
     @Inject
     private SellerService sellerService;

@@ -1526,5 +1526,5 @@ public class ValidateBRScript extends Script {
             <where>id = -24</where>
         </update>
     </changeSet>
-    
+
 </databaseChangeLog>
