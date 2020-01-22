@@ -1,7 +1,6 @@
 package org.meveo.service.crm.impl;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,6 +36,7 @@ import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.custom.CustomTableRecordDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -44,7 +44,6 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.PersistenceUtils;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.CFEndPeriodEvent;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
@@ -71,6 +70,7 @@ import org.meveo.service.base.BaseService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.service.custom.CustomTableService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -111,10 +111,13 @@ public class CustomFieldInstanceService extends BaseService {
     private ParamBeanFactory paramBeanFactory;
 
     @Inject
-	private CustomEntityInstanceService customEntityInstanceService;
+	private CustomTableService customTableService;
+    
+    @Inject
+    private CustomEntityInstanceService customEntityInstanceService;
 
     @Inject
-	private CustomFieldTemplateService customFieldTemplateService;
+    private CustomFieldTemplateService customFieldTemplateService;
 
     static boolean accumulateCF = true;
 
@@ -152,9 +155,8 @@ public class CustomFieldInstanceService extends BaseService {
 	            query.setParameter("cetCode", cetCode);
 	            query.setParameter("lowerCode", cetCode.toLowerCase());
             } else {
-                    QueryBuilder queryBuilder = new QueryBuilder("select id from " + cet.getDbTablename() + " e where cast(e.id as varchar(100)) like :id", "e");
-                    List<Map<String,BigInteger>> result = queryBuilder.getNativeQuery(getEntityManager(), true).setParameter("id", "%" + wildcode.toLowerCase() + "%").list();
-            	return result.stream().map(record-> initTempEntityInstance(record.get("id"),cet.getDbTablename())).collect(Collectors.toList());
+                List<CustomTableRecordDto> result = customTableService.selectAllRecordsOfATableAsRecord(cet.getDbTablename(),wildcode);
+            	return result.stream().map(record-> initTempEntityInstance(record.getId(), record.display())).collect(Collectors.toList());
             }
         } else if (clazz.isInstance(BusinessEntity.class)) {
             query = getEntityManager().createQuery("select e from " + classNameAndCode + " e where lower(e.code) like :code");
@@ -180,11 +182,10 @@ public class CustomFieldInstanceService extends BaseService {
         return entities;
     }
 
-     private CustomEntityInstance initTempEntityInstance(BigInteger id, String tableName) {
-    	 CustomEntityInstance cet= new CustomEntityInstance();
-    	 cet.setReferenceCode(""+id);
- 		cet.setDescription("CUSTOM TABLE : "+tableName);
- 		cet.setCetCode(tableName);
+	private CustomEntityInstance initTempEntityInstance(Long id, String details) {
+		CustomEntityInstance cet = new CustomEntityInstance();
+		cet.setReferenceCode("" + id);
+		cet.setDescription(details);
 		return cet;
 	}
 
