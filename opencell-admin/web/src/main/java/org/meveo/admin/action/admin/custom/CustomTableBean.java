@@ -361,7 +361,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
     public List<CustomTableRecordDto> entityTypeColumnDatas(CustomFieldTemplate field) {
         CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(field.tableName());
         if (relatedEntity != null && relatedEntity.isStoreAsTable()) {
-            return customTableService.selectAllRecordsOfATableAsRecord(field.tableName());
+            return customTableService.selectAllRecordsOfATableAsRecord(field.tableName(),null);
         }
         return getFromCustomEntity(field);
     }
@@ -370,7 +370,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
 
         return Optional.ofNullable(field.tableName())
                 .map(tableName -> customEntityInstanceService.listByCet(field.tableName()).stream().map(customEntityInstanceService::customEntityInstanceAsMap)
-                        .map(CustomTableRecordDto::new).collect(Collectors.toList())).orElse(loadFromBusinessEntity(field));
+                        .map(x-> new CustomTableRecordDto(x,tableName)).collect(Collectors.toList())).orElse(loadFromBusinessEntity(field));
     }
 
     List<CustomTableRecordDto> loadFromBusinessEntity(CustomFieldTemplate field) {
@@ -380,7 +380,7 @@ public class CustomTableBean extends BaseBean<CustomEntityTemplate> {
             return persistenceService.list().stream()
                     .filter(Objects::nonNull)
                     .map(this::mapToMap)
-                    .map(CustomTableRecordDto::new)
+                    .map(x-> new CustomTableRecordDto(x,field.tableName()))
                     .collect(Collectors.toList());
         } catch (ClassNotFoundException e) {
             return Collections.EMPTY_LIST;

@@ -2185,7 +2185,7 @@
 	         <column name="last_updated" type="datetime" />
 	         <column name="origin_batch" type="varchar(255)" />
 	         <column name="origin_record" type="varchar(255)" />
-	         <column name="quantity" type="numeric(23, 12)" />
+	         <column name="quantity" type="numeric" />
 	         <column name="reject_reason" type="${type.text}" />
 	         <column name="status" type="varchar(255)" />
 	         <column name="status_date" type="datetime" />	         
@@ -2203,11 +2203,11 @@
 	         <column name="date_parameter_3" type="datetime" />
 	         <column name="date_parameter_4" type="datetime" />
 	         <column name="date_parameter_5" type="datetime" />
-	         <column name="decimal_parameter_1" type="numeric(23, 12)" />
-	         <column name="decimal_parameter_2" type="numeric(23, 12)" />
-	         <column name="decimal_parameter_3" type="numeric(23, 12)" />
-	         <column name="decimal_parameter_4" type="numeric(23, 12)" />
-	         <column name="decimal_parameter_5" type="numeric(23, 12)" />
+	         <column name="decimal_parameter_1" type="numeric" />
+	         <column name="decimal_parameter_2" type="numeric" />
+	         <column name="decimal_parameter_3" type="numeric" />
+	         <column name="decimal_parameter_4" type="numeric" />
+	         <column name="decimal_parameter_5" type="numeric" />
 	         <column name="access_code" type="varchar(255)" />
 	         <column name="header_edr_id" type="bigint">
 	             <constraints nullable="true" />

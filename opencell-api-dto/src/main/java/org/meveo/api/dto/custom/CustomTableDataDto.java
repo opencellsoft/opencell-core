@@ -94,7 +94,7 @@ public class CustomTableDataDto extends BaseEntityDto {
         values = new ArrayList<>();
 
         for (Map<String, Object> item : list) {
-            values.add(new CustomTableRecordDto(item));
+            values.add(new CustomTableRecordDto(item, customTableCode));
         }
     }
 }
