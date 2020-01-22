@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -167,8 +168,10 @@ public class BusinessOfferApi extends BaseApi {
                     try {
                         CustomFieldsDto cfsDto = new CustomFieldsDto();
                         cfsDto.setCustomField(serviceConfigurationDto.getCustomFields());
+
                         // to fix a case when we instantiate a BSM multiple times in the same offer with CF value override,
                         populateCFsWithClonedServiceTemplate(cfsDto, serviceTemplate, true);
+
                         serviceTemplate = serviceTemplateService.update(serviceTemplate);
                         ost.setServiceTemplate(serviceTemplate);
 
@@ -403,17 +406,16 @@ public class BusinessOfferApi extends BaseApi {
      */
     private ServiceTemplate populateCFsWithClonedServiceTemplate(CustomFieldsDto customFieldsDto, ServiceTemplate entity, boolean isNewEntity) throws MeveoApiException {
         try {
-            ServiceTemplate clonedEntity = (ServiceTemplate) BeanUtils.cloneBean(entity);
-            clonedEntity.setId(null);
-            clonedEntity.setId(null);
-            clonedEntity.setId(null);
-            clonedEntity.clearCfValues();
+            ServiceTemplate temp = (ServiceTemplate) BeanUtils.cloneBean(entity);
+            temp.setCfValues(null);
+            temp.setUuid(UUID.randomUUID().toString());
+            temp.setCfAccumulatedValues(null);
 
-            clonedEntity = (ServiceTemplate) populateCustomFields(customFieldsDto, clonedEntity, isNewEntity, true);
-            entity.setCfValues(clonedEntity.getCfValues());
-            entity.setCfAccumulatedValues(clonedEntity.getCfAccumulatedValues());
+            populateCustomFields(customFieldsDto, temp, isNewEntity);
+            entity.setCfValues(temp.getCfValues());
+            entity.setCfAccumulatedValues(temp.getCfValues());
         } catch (Exception e) {
-            log.error("Error when cloning object" + entity, e);
+            log.error("Error when cloning object:" + entity, e);
         }
         return entity;
     }
@@ -430,20 +432,21 @@ public class BusinessOfferApi extends BaseApi {
      */
     private void populateCFsWithClonedOfferTemplate(CustomFieldsDto customFieldsDto, OfferTemplate entity, boolean isNewEntity) throws MeveoApiException {
         try {
-            OfferTemplate clonedEntity = (OfferTemplate) BeanUtils.cloneBean(entity);
-            clonedEntity.setId(null);
-            clonedEntity.setId(null);
-            clonedEntity.clearCfValues();
+            OfferTemplate temp = (OfferTemplate) BeanUtils.cloneBean(entity);
+            temp.setUuid(UUID.randomUUID().toString());
+            temp.setCfValues(null);
+            temp.setCfAccumulatedValues(null);
 
-            clonedEntity = (OfferTemplate) populateCustomFields(customFieldsDto, clonedEntity, isNewEntity, true);
-            entity.setCfValues(clonedEntity.getCfValues());
-            entity.setCfAccumulatedValues(clonedEntity.getCfAccumulatedValues());
+            populateCustomFields(customFieldsDto, temp, true);
+            entity.setCfValues(temp.getCfValues());
+            entity.setCfAccumulatedValues(temp.getCfValues());
         } catch (Exception e) {
             log.error("Error setting CF values to the cloning object:" + entity, e);
         }
     }
 
     /**
+     *
      * Special populate custom field values from product template DTO.
      * <p>
      * To avoid overridden Cf values. see #4865, #4929
@@ -455,13 +458,14 @@ public class BusinessOfferApi extends BaseApi {
      */
     private ProductTemplate populateCFsWithClonedProductTemplate(CustomFieldsDto customFieldsDto, ProductTemplate entity, boolean isNewEntity) throws MeveoApiException {
         try {
-            ProductTemplate clonedEntity = (ProductTemplate) BeanUtils.cloneBean(entity);
-            clonedEntity.setId(null);
-            clonedEntity.clearCfValues();
+            ProductTemplate temp = (ProductTemplate) BeanUtils.cloneBean(entity);
+            temp.setUuid(UUID.randomUUID().toString());
+            temp.setCfValues(null);
+            temp.setCfAccumulatedValues(null);
 
-            clonedEntity = (ProductTemplate) populateCustomFields(customFieldsDto, clonedEntity, isNewEntity, true);
-            entity.setCfValues(clonedEntity.getCfValues());
-            entity.setCfAccumulatedValues(clonedEntity.getCfAccumulatedValues());
+            populateCustomFields(customFieldsDto, temp, true);
+            entity.setCfValues(temp.getCfValues());
+            entity.setCfAccumulatedValues(temp.getCfValues());
         } catch (Exception e) {
             log.error("Error when cloning object" + entity, e);
         }
