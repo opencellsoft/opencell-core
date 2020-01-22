@@ -68,6 +68,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.BaseService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableService;
 import org.slf4j.Logger;
@@ -111,6 +112,12 @@ public class CustomFieldInstanceService extends BaseService {
 
     @Inject
 	private CustomTableService customTableService;
+    
+    @Inject
+    private CustomEntityInstanceService customEntityInstanceService;
+
+    @Inject
+    private CustomFieldTemplateService customFieldTemplateService;
 
     static boolean accumulateCF = true;
 
