@@ -446,7 +446,6 @@ public class BusinessOfferApi extends BaseApi {
     }
 
     /**
-     *
      * Special populate custom field values from product template DTO.
      * <p>
      * To avoid overridden Cf values. see #4865, #4929
