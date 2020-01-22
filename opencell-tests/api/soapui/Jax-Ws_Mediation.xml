@@ -3138,7 +3138,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>77</con:value>
+        <con:value>73</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -4562,7 +4562,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>76</con:value>
+        <con:value>72</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -6020,7 +6020,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>73</con:value>
+        <con:value>69</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -7475,7 +7475,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>80</con:value>
+        <con:value>76</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -7870,7 +7870,7 @@ public class Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_C
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>18</con:value>
+        <con:value>16</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
