@@ -30,7 +30,7 @@ import java.util.zip.ZipOutputStream;
  * @author Wassim Drira
  * @author Youssef IZEM
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.3.0
+ * @lastModifiedVersion 8.4.0
  */
 @Stateless
 public class FilesApi extends BaseApi {
@@ -135,7 +135,7 @@ public class FilesApi extends BaseApi {
             }
 
             if (!StringUtils.isBlank(fileFormat)) {
-                flatFileValidator.validateAndLogFile(file, filename, fileFormat, null);
+                flatFileValidator.validateAndLogFile(file, filename, fileFormat);
             }
 
         } catch (Exception e) {
