@@ -18,6 +18,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.rating.CDR;
 import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
 import org.meveo.service.medina.impl.CSVCDRParser;
 import org.meveo.service.medina.impl.InvalidAccessException;
@@ -230,9 +231,9 @@ public class MEVEOCdrParser implements CSVCDRParser {
                 }
 
                 if (fields.length <= 22 || "".equals(fields[22])) {
-                    cdr.setExtraParam(null);
+                    cdr.setExtraParameter(null);
                 } else {
-                    cdr.setExtraParam(fields[22]);
+                    cdr.setExtraParameter(fields[22]);
                 }
             }
 
@@ -240,11 +241,12 @@ public class MEVEOCdrParser implements CSVCDRParser {
             cdr.setOriginRecord(getOriginRecord(line));
 
             if (cdr.getAccess_id() == null || cdr.getAccess_id().trim().length() == 0) {
-                cdr.setRejectReason(new InvalidAccessException(line, "userId is empty"));
+                cdr.setRejectReasonException(new InvalidAccessException(line, "userId is empty"));
             }
 
         } catch (Exception e) {
-            cdr.setRejectReason(new InvalidFormatException(line, e));
+            cdr.setRejectReasonException(new InvalidFormatException(line, e));
+            cdr.setRejectReason(e.getMessage());
         }
         return cdr;
     }

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
@@ -155,8 +156,8 @@ public class BusinessOfferApi extends BaseApi {
                     Map<String, List<CustomFieldValue>> cfValues = customFieldValues.getValuesByCode();
 
                     if (!cfValues.isEmpty()) {
-                    CustomFieldsDto cfs = entityToDtoConverter.getCustomFieldsDTO(oldService, cfValues, CustomFieldInheritanceEnum.INHERIT_NONE);
-                    serviceConfigurationDto.setCustomFields(cfs.getCustomField());
+                        CustomFieldsDto cfs = entityToDtoConverter.getCustomFieldsDTO(oldService, cfValues, CustomFieldInheritanceEnum.INHERIT_NONE);
+                        serviceConfigurationDto.setCustomFields(cfs.getCustomField());
                     } else {
                         log.warn("CF values for service {} is empty ", serviceConfigurationDto.getCode());
                     }
@@ -167,9 +168,10 @@ public class BusinessOfferApi extends BaseApi {
                         CustomFieldsDto cfsDto = new CustomFieldsDto();
                         cfsDto.setCustomField(serviceConfigurationDto.getCustomFields());
                         // to fix a case when we instantiate a BSM multiple times in the same offer with CF value override,
-                        ServiceTemplate temp = new ServiceTemplate();
+                        ServiceTemplate temp = (ServiceTemplate) BeanUtils.cloneBean(serviceTemplate);
                         populateCustomFields(cfsDto, temp, true);
                         serviceTemplate.setCfValues(temp.getCfValues());
+                        serviceTemplate.setCfAccumulatedValues(temp.getCfValues());
                         serviceTemplate = serviceTemplateService.update(serviceTemplate);
                         ost.setServiceTemplate(serviceTemplate);
 
@@ -178,7 +180,7 @@ public class BusinessOfferApi extends BaseApi {
                         throw e;
                     } catch (Exception e) {
                         log.error("Failed to associate custom field instance to an entity", e);
-                        throw e;
+                        throw new BusinessException(e);
                     }
                     serviceConfigurationDto.setMatch(true);
                     break;

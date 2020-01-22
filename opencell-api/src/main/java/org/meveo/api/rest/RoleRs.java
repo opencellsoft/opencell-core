@@ -51,12 +51,12 @@ public interface RoleRs extends IBaseRs {
 
     /**
      * Remove role.
-     * 
+     *
      * @param roleName Role name
      * @return action status.
      */
     @DELETE
-    @Path("/{roleName}/{provider}") 
+    @Path("/{roleName}")
     ActionStatus remove(@PathParam("roleName") String roleName);
 
     /**

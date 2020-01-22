@@ -124,6 +124,15 @@ public class Notification extends EnableBusinessCFEntity {
     @NotNull
     private boolean runAsync = false;
 
+
+    /**
+     * Save successful notifications?
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "save_successful_notif", nullable = false)
+    @NotNull
+    private boolean saveSuccessfulNotifications = true;
+
     public String getClassNameFilter() {
         return classNameFilter;
     }
@@ -233,4 +242,20 @@ public class Notification extends EnableBusinessCFEntity {
     public void setRunAsync(boolean runAsync) {
         this.runAsync = runAsync;
     }
+    
+
+    /**
+     * Gets boolean value of whether this notification will be run in async mode.
+     * 
+     * @return true / false
+     */
+    public boolean isSaveSuccessfulNotifications() {
+        return saveSuccessfulNotifications;
+    }
+
+    public void setSaveSuccessfulNotifications(boolean saveSuccessfulNotifications) {
+        this.saveSuccessfulNotifications = saveSuccessfulNotifications;
+    }
+    
+    
 }
