@@ -1,3 +1,4 @@
+@ignore
 Feature: Create a new subcategory and its associated taxe  by API
 Background:  System is configured.
 

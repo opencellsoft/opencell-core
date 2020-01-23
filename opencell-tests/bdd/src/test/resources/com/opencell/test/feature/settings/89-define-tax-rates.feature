@@ -1,3 +1,4 @@
+@ignore
 Feature: Define Tax Rates so that they are used to calculate VAT for the respective customers 
 
 

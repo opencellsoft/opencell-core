@@ -54,4 +54,13 @@ public class RestApiUtils {
                 .when()
                 .delete(uri+api).then();
     }
+
+    public static ValidatableResponse put(String api, String body) {
+        return RestAssured.given()
+                .auth().oauth2(KeyCloakAuthenticationHook.getToken())
+                .contentType("application/json")
+                .body(body)
+                .when()
+                .put(uri+api).then();
+    }
 }

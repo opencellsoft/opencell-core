@@ -1,0 +1,13 @@
+{
+    "code": "TEST",
+    "description": "Test payment schedule template",
+    "calendarCode": "NOT_EXIST",
+    "serviceTemplateCode": "SE_REC_FLAT_REBATE",
+    "paymentDayInMonth": "1",
+    "amount": "100",
+    "paymentLabel": "Test Label",
+    "advancePaymentInvoiceTypeCode": "CLASSIC_ADJ",
+    "advancePaymentInvoiceSubCategoryCode": "CMP_DATA",
+    "generateAdvancePaymentInvoice": "true",
+    "doPayment": "true"
+}

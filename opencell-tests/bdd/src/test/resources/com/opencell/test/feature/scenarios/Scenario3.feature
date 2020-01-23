@@ -1,3 +1,4 @@
+@ignore
 Feature: Generate invoice on SC
 
 Background:  System is configured.

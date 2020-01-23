@@ -1,3 +1,4 @@
+@ignore
 Feature: Creation of a new billing cycle
 
    Background:  System is configured.

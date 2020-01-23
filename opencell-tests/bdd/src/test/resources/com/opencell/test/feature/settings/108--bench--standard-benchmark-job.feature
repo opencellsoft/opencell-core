@@ -1,3 +1,4 @@
+@ignore
 Feature: Standard Benchmarking job
 
     A job that rates the performance of the system.

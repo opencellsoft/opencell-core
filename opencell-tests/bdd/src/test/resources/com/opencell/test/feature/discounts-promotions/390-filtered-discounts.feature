@@ -1,3 +1,4 @@
+@ignore
 Feature: Discount by filter
     Allow invoicing discounts to apply to a set of rated transactions, selected using a Filter entity on RT.
     Background:

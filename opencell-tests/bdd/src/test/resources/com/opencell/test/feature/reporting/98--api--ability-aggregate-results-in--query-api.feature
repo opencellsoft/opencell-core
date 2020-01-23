@@ -1,3 +1,4 @@
+@ignore
 Feature: Allow to use "group by" in HQL query sent by API
     In order to be able to easily display aggregated data
     As an API user (typically the portal)
