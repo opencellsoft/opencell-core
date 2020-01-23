@@ -7,17 +7,27 @@ import org.meveo.model.BaseEntity;
 
 import javax.persistence.EntityManager;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 public interface FactoryMapper {
     default FilterMapper create(String property, Object value, Class clazz, Function<Class, EntityManager> entityManagerResolver) {
-        Field field = FieldUtils.getField(clazz, property, true);
         if("id".equalsIgnoreCase(property) || "type_class".equalsIgnoreCase(property) || clazz != null && clazz.getSimpleName().equalsIgnoreCase(property)){
             return resolveType(property, value, clazz, entityManagerResolver);
         }
+        Field field = FieldUtils.getField(clazz, property, true);
         if(field != null){
+            if(List.class.isAssignableFrom(field.getType())){
+                Type type = field.getGenericType();
+                if (type instanceof ParameterizedType) {
+                    Type[] pt = ((ParameterizedType) type).getActualTypeArguments();
+                    return resolveType(property, value, (Class) pt[0], entityManagerResolver);
+                }
+            }
             return resolveType(property, value, field.getType(), entityManagerResolver);
         }
         throw new IllegalArgumentException("Invalid argument : " + property);
