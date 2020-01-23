@@ -159,8 +159,6 @@ public class BusinessOfferApi extends BaseApi {
                     if (!cfValues.isEmpty()) {
                         CustomFieldsDto cfs = entityToDtoConverter.getCustomFieldsDTO(oldService, cfValues, CustomFieldInheritanceEnum.INHERIT_NONE);
                         serviceConfigurationDto.setCustomFields(cfs.getCustomField());
-                    } else {
-                        log.warn("CF values for service {} is empty ", serviceConfigurationDto.getCode());
                     }
                 }
 
@@ -194,6 +192,18 @@ public class BusinessOfferApi extends BaseApi {
                 // Caution the productCode building algo must match that of
                 // BusinessOfferModelService.createOfferFromBOM
                 String productCode = opt.getOfferTemplate().getId() + "_" + productCodeDto.getCode();
+
+                // #4941 - [bom] Product CF with no override should be copied from offer template's product
+                if (productCode.equals(productTemplate.getCode()) && productCodeDto.getCustomFields() == null) {
+                    ProductTemplate oldProduct = productTemplateService.findByCode(productCodeDto.getCode());
+                    CustomFieldValues customFieldValues = oldProduct.getCfValuesNullSafe();
+                    Map<String, List<CustomFieldValue>> cfValues = customFieldValues.getValuesByCode();
+
+                    if (!cfValues.isEmpty()) {
+                        CustomFieldsDto cfs = entityToDtoConverter.getCustomFieldsDTO(oldProduct, cfValues, CustomFieldInheritanceEnum.INHERIT_NONE);
+                        productCodeDto.setCustomFields(cfs.getCustomField());
+                    }
+                }
                 if (productCode.equals(productTemplate.getCode())) {
                     if (productCodeDto.getCustomFields() != null) {
                         try {
