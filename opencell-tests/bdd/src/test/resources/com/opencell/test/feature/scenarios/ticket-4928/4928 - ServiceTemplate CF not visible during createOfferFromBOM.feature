@@ -1,4 +1,4 @@
-@#4928-BDD @test
+@#4928-BDD @test @ignore
 Feature: Create a CustomField applied on service template 
 
      @admin @superadmin
@@ -17,7 +17,7 @@ Examples:
 | jsonFile                          | dto                    | api                                | statusCode | status  | errorCode | message |
 |scenario/ticket-4928/createCF.json | CustomFieldTemplateDto | /customFieldTemplate/createOrUpdate|        200 | SUCCESS |           |         |
 
-Feature: Create a CustomField applied on service template with applicableOnEL
+#Feature: Create a CustomField applied on service template with applicableOnEL
 
 Scenario Outline: Create a CustomField applied on service template with applicableOnEL
     Given The entity has the following information "<jsonFile>" as "<dto>"
@@ -33,7 +33,7 @@ Examples:
 | jsonFile                             | dto                    | api                                | statusCode | status  | errorCode | message |
 | scenario/ticket-4928/createCF_EL.json| CustomFieldTemplateDto | /customFieldTemplate/createOrUpdate|        200 | SUCCESS |           |         |
 
-Feature: Create a CustomField applied on offer template
+#Feature: Create a CustomField applied on offer template
 
 Scenario Outline: Create a CustomField applied on offer template
     Given The entity has the following information "<jsonFile>" as "<dto>"
@@ -49,7 +49,7 @@ Examples:
 | jsonFile                             | dto                    | api                                | statusCode | status  | errorCode | message |
 | scenario/ticket-4928/createCF_OF.json| CustomFieldTemplateDto | /customFieldTemplate/createOrUpdate|        200 | SUCCESS |           |         |
 
-Feature: Create a CustomField applied on offer template with applicableOnEL
+#Feature: Create a CustomField applied on offer template with applicableOnEL
 
 Scenario Outline: Create a CustomField applied on offer template with applicableOnEL
     Given The entity has the following information "<jsonFile>" as "<dto>"
@@ -65,7 +65,7 @@ Examples:
 | jsonFile                                | dto                    | api                                | statusCode | status  | errorCode | message |
 | scenario/ticket-4928/createCF_EL_OF.json| CustomFieldTemplateDto | /customFieldTemplate/createOrUpdate|        200 | SUCCESS |           |         |
 
-Feature: Create an empty service template and fill custom fields's values
+#Feature: Create an empty service template and fill custom fields's values
 
 Scenario Outline: Create a service template and fill custom fields's values
     Given The entity has the following information "<jsonFile>" as "<dto>"
@@ -81,7 +81,7 @@ Examples:
 | jsonFile                                | dto                    | api                                    | statusCode | status  | errorCode | message |
 | scenario/ticket-4928/create_service.json| ServiceTemplateDto     | /catalog/serviceTemplate/createOrUpdate|        200 | SUCCESS |           |         |
 
-Feature: Create a Business Service Model
+#Feature: Create a Business Service Model
 
 Scenario Outline: Create a Business Service Model
     Given The entity has the following information "<jsonFile>" as "<dto>"
@@ -97,7 +97,7 @@ Examples:
 | jsonFile                             | dto                    | api                                         | statusCode | status  | errorCode | message |
 | scenario/ticket-4928/create_BSM.json | BusinessServiceModelDto| /catalog/businessServiceModel/createOrUpdate|        200 | SUCCESS |           |         |
 
-Feature: Create an offer template with custom field
+#Feature: Create an offer template with custom field
 
 Scenario Outline: Create an offer template with custom field and empty service with custom field
     Given The entity has the following information "<jsonFile>" as "<dto>"
@@ -113,7 +113,7 @@ Examples:
 | jsonFile                              | dto                    | api                                         | statusCode | status  | errorCode | message |
 | scenario/ticket-4928/create_offer.json| OfferTemplateDto       | /catalog/offerTemplate/createOrUpdate       |        200 | SUCCESS |           |         |
 
-Feature: Create a BOM with BSM
+#Feature: Create a BOM with BSM
 
 Scenario Outline: Create a BOM with BSM
     Given The entity has the following information "<jsonFile>" as "<dto>"
@@ -129,7 +129,7 @@ Examples:
 | jsonFile                             | dto                    | api                                         | statusCode | status  | errorCode | message |
 | scenario/ticket-4928/create_BOM.json | 	BusinessOfferModelDto | /catalog/businessOfferModel/createOrUpdate  |        200 | SUCCESS |           |         |
 
-Feature: Install BOM with BSM
+#Feature: Install BOM with BSM
 
 Scenario Outline: Install BOM with BSM
     Given The entity has the following information "<jsonFile>" as "<dto>"
@@ -145,7 +145,7 @@ Examples:
 | jsonFile                             | dto                    | api                                         | statusCode | status  | errorCode | message |
 | scenario/ticket-4928/install_BOM.json| BusinessOfferModelDto  | /catalog/businessOfferModel/createOrUpdate  |        200 | SUCCESS |           |         |
 
-Feature: Create offer from BOM using the ServiceTemplate with no CF override 
+#Feature: Create offer from BOM using the ServiceTemplate with no CF override 
 
 Scenario Outline: Create offer from BOM using the ServiceTemplate with no CF override
     Given The entity has the following information "<jsonFile>" as "<dto>"
@@ -161,7 +161,7 @@ Examples:
 | jsonFile                                   | dto                    | api                                         | statusCode | status  | errorCode | message |
 |scenario/ticket-4928/OF_SE_NO_OVERRIDE.json | BomOfferDto            | /catalogManagement/createOfferFromBOM       |        200 |         |           |         |
 
-Feature: Create offer from BOM using the ServiceTemplate and no CF override 
+#Feature: Create offer from BOM using the ServiceTemplate and no CF override 
 
 Scenario Outline: Create offer from BOM using the ServiceTemplate with CF override
     Given The entity has the following information "<jsonFile>" as "<dto>"
@@ -177,7 +177,7 @@ Examples:
 | jsonFile                                      | dto                    | api                                         | statusCode | status  | errorCode | message |
 | scenario/ticket-4928/OF_SE_OVERRIDE.json.json | BomOfferDto            | /catalogManagement/createOfferFromBOM       |        200 |         |           |         |
 
-Feature: Create offer from BOM using BusinessServiceModel with no CF override 
+#Feature: Create offer from BOM using BusinessServiceModel with no CF override 
 
 Scenario Outline: Create offer from BOM using BusinessServiceModel with no CF override
     Given The entity has the following information "<jsonFile>" as "<dto>"
@@ -193,7 +193,7 @@ Examples:
 | jsonFile                                      | dto                    | api                                         | statusCode | status  | errorCode | message |
 | scenario/ticket-4928/OF_BSM_NO_OVERRIDE.json  | BomOfferDto            | /catalogManagement/createOfferFromBOM       |        200 |         |           |         |
 
-Feature: Create offer from BOM using BusinessServiceModel instantiated once ,with CF override 
+#Feature: Create offer from BOM using BusinessServiceModel instantiated once ,with CF override 
 
 Scenario Outline: Create offer from BOM using BusinessServiceModel instantiated once, with CF override
     Given The entity has the following information "<jsonFile>" as "<dto>"
@@ -209,7 +209,7 @@ Examples:
 | jsonFile                                        | dto                    | api                                         | statusCode | status  | errorCode | message |
 | scenario/ticket-4928/OF_BSM_SINGLE_OVERRIDE.json| BomOfferDto            | /catalogManagement/createOfferFromBOM       |        200 |         |           |         |
 
-Feature: Create offer from BOM using BusinessServiceModel instantiated several times, with CF override 
+#Feature: Create offer from BOM using BusinessServiceModel instantiated several times, with CF override 
 
 Scenario Outline: Create offer from BOM using BusinessServiceModel instantiated several times, with CF override
     Given The entity has the following information "<jsonFile>" as "<dto>"
@@ -225,7 +225,7 @@ Examples:
 | jsonFile                                        | dto                    | api                                         | statusCode | status  | errorCode | message |
 | scenario/ticket-4928/OF_BSM_MULTI_OVERRIDE.json | BomOfferDto            | /catalogManagement/createOfferFromBOM       |        200 |         |           |         |
 
-Feature: Check that ServiceTemplate CF are visible during createOfferFromBOM
+#Feature: Check that ServiceTemplate CF are visible during createOfferFromBOM
 
   Scenario Outline: Check that ServiceTemplate CF are visible during createOfferFromBOM
     Given The entity has the following information "<jsonFile>"
