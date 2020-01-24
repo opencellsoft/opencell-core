@@ -960,7 +960,7 @@ public class CustomTableService extends NativePersistenceService {
 			qb.addSql(" cast("+FIELD_ID+" as varchar(100)) like :id");
 		}
 		Query query = qb.getNativeQuery(getEntityManager(), true);
-		if(wildCode!=null) {
+		if(!StringUtils.isEmpty(wildCode)) {
 			query.setParameter("id", "%" + wildCode.toLowerCase() + "%");
 		}
 		return  query.list();
