@@ -439,9 +439,9 @@ public class CustomTableCreatorService implements Serializable {
 
         DatabaseChangeLog dbLog = new DatabaseChangeLog("path");
 
-        // Remove field
+		// Remove field
         ChangeSet changeSet = new ChangeSet(dbTableName + "_CT_" + constraintName + "_DC_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
-        changeSet.setFailOnError(false);
+        changeSet.setFailOnError(true);
 
         
         DropUniqueConstraintChange dropUniqueConstraintStatement = new DropUniqueConstraintChange();
@@ -484,10 +484,10 @@ public class CustomTableCreatorService implements Serializable {
 
 
         DatabaseChangeLog dbLog = new DatabaseChangeLog("path");
-        String constraintName = dbTableName+ "__" +(columnNames.replaceAll(",", "_"));
+        String constraintName = extractConstraintName(dbTableName, columnNames);
         // Remove field
         ChangeSet changeSet = new ChangeSet(dbTableName + "_CT_" + constraintName + "_DC_" + System.currentTimeMillis(), "Opencell", false, false, "opencell", "", "", dbLog);
-        changeSet.setFailOnError(false);
+        changeSet.setFailOnError(true);
 
         
         AddUniqueConstraintChange addUniqueConstraintStatement = new AddUniqueConstraintChange();
@@ -521,4 +521,9 @@ public class CustomTableCreatorService implements Serializable {
         });
         return constraintName;
     }
+
+	public String extractConstraintName(String dbTableName, String columnNames) {
+		String constraintName = dbTableName+ "__" +(columnNames.replaceAll(",", "_"));
+		return constraintName;
+	}
 }
