@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.BSMConfigurationDto;
 import org.meveo.api.dto.catalog.BomOfferDto;
@@ -151,14 +153,14 @@ public class BusinessOfferApi extends BaseApi {
                 String serviceTemplateCode = constructServiceTemplateCode(newOfferTemplate, ost, serviceTemplate, serviceConfigurationDto);
 
                 // #4865 - [bom] Service CF values should be copied when creating offer from BOM
-                if (serviceTemplateCode.equals(serviceTemplate.getCode()) && serviceConfigurationDto.getCustomFields() == null) {
+                if (serviceTemplateCode.equals(serviceTemplate.getCode())) {
                     ServiceTemplate oldService = serviceTemplateService.findByCode(serviceConfigurationDto.getCode());
                     CustomFieldValues customFieldValues = oldService.getCfValuesNullSafe();
                     Map<String, List<CustomFieldValue>> cfValues = customFieldValues.getValuesByCode();
 
                     if (!cfValues.isEmpty()) {
                         CustomFieldsDto cfs = entityToDtoConverter.getCustomFieldsDTO(oldService, cfValues, CustomFieldInheritanceEnum.INHERIT_NONE);
-                        serviceConfigurationDto.setCustomFields(cfs.getCustomField());
+                        addNoExistingCFToNewList(serviceConfigurationDto, cfs);
                     }
                 }
 
@@ -196,14 +198,14 @@ public class BusinessOfferApi extends BaseApi {
                 String productCode = opt.getOfferTemplate().getId() + "_" + productCodeDto.getCode();
 
                 // #4941 - [bom] Product CF with no override should be copied from offer template's product
-                if (productCode.equals(productTemplate.getCode()) && productCodeDto.getCustomFields() == null) {
+                if (productCode.equals(productTemplate.getCode())) {
                     ProductTemplate oldProduct = productTemplateService.findByCode(productCodeDto.getCode());
                     CustomFieldValues customFieldValues = oldProduct.getCfValuesNullSafe();
                     Map<String, List<CustomFieldValue>> cfValues = customFieldValues.getValuesByCode();
 
                     if (!cfValues.isEmpty()) {
                         CustomFieldsDto cfs = entityToDtoConverter.getCustomFieldsDTO(oldProduct, cfValues, CustomFieldInheritanceEnum.INHERIT_NONE);
-                        productCodeDto.setCustomFields(cfs.getCustomField());
+                        addNoExistingCFToNewList(productCodeDto, cfs);
                     }
                 }
                 if (productCode.equals(productTemplate.getCode())) {
@@ -479,5 +481,30 @@ public class BusinessOfferApi extends BaseApi {
             log.error("Error when cloning object" + entity, e);
         }
         return entity;
+    }
+
+    /***
+     * skip copy Cfs from old service if it is overridden
+     * @param serviceConfigurationDto a new service
+     * @param cfs old cfs
+     */
+    private void addNoExistingCFToNewList(ServiceConfigurationDto serviceConfigurationDto, CustomFieldsDto cfs) {
+        List<CustomFieldDto> newCustomFields = Optional.ofNullable(serviceConfigurationDto.getCustomFields()).orElse(new ArrayList<>());
+        List<CustomFieldDto> oldCustomFields = Optional.ofNullable(cfs.getCustomField()).orElse(new ArrayList<>());
+        List<CustomFieldDto> combinedList = new ArrayList<>(newCustomFields);
+        // add CFs from old service
+        for (CustomFieldDto customField : oldCustomFields) {
+            boolean found = false;
+            for (CustomFieldDto field : newCustomFields) {
+                if (field.getCode().equalsIgnoreCase(customField.getCode())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                combinedList.add(customField);
+            }
+        }
+        serviceConfigurationDto.setCustomFields(combinedList);
     }
 }
