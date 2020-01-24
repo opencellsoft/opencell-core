@@ -5,6 +5,7 @@ import static org.meveo.service.base.NativePersistenceService.FIELD_ID;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,7 +65,11 @@ public class CustomTableApi extends BaseApi {
         if (dto.getOverwrite() == null) {
             dto.setOverwrite(false);
         }
-        customTableService.importData(cet, dto.getValues().stream().map(x->x.getValues()).collect(toList()), !dto.getOverwrite());
+        try {
+        	customTableService.importData(cet, dto.getValues().stream().map(x->x.getValues()).collect(toList()), !dto.getOverwrite());
+	    }catch (Exception e) {
+			throw getMeveoApiException(e);
+		}
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -98,18 +103,25 @@ public class CustomTableApi extends BaseApi {
         if (!valuesWithoutIds.isEmpty()) {
             throw new ValidationException(valuesWithoutIds.size() + " record(s) for update are missing the IDs.");
         }
-        customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
+        try {
+	        customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
+	    }catch (Exception e) {
+			throw getMeveoApiException(e);
+		}
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void update(UnitaryCustomTableDataDto dto) throws MeveoApiException, BusinessException {
-    	Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode());  put("value", dto.getValue());}};
-    	validateParams(toValidate);
-        CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
-        Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
-        List<Map<String, Object>> values = customTableService.convertValues(Arrays.asList(dto.getRowValues()), cfts.values(), false);
-        customTableService.update(cet.getDbTablename(), values);
-    }
+	public void update(UnitaryCustomTableDataDto dto) throws MeveoApiException, BusinessException {
+		Long id = dto.getValue().getId();
+		Map<String, Object> toValidate = new TreeMap<String, Object>() {{put("customTableCode", dto.getCustomTableCode()); put("value", dto.getValue()); put("id", id);}};
+		validateParams(toValidate);
+		CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
+		Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
+		LinkedHashMap<String, Object> rowValues = dto.getRowValues();
+		rowValues.put(FIELD_ID,id);
+		List<Map<String, Object>> values = customTableService.convertValues(Arrays.asList(rowValues), cfts.values(), false);
+		customTableService.update(cet.getDbTablename(), values.get(0));
+	}
 
 	/**
      * Create new records or update existing ones in a custom table, depending if 'id' value is present
@@ -128,16 +140,20 @@ public class CustomTableApi extends BaseApi {
         CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
         Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
         Map<Boolean, List<CustomTableRecordDto>> partitionedById = dto.getValues().stream().collect(Collectors.partitioningBy(x->x.getValues().get(FIELD_ID)!=null));
-        //create records without ids
-        List<CustomTableRecordDto> valuesWithoutIds = partitionedById.get(false);
-        if (!valuesWithoutIds.isEmpty()) {
-            customTableService.importData(cet, valuesWithoutIds.stream().map(x -> x.getValues()).collect(toList()), !dto.getOverwrite());
-        }
-        //update records with ids
-        List<CustomTableRecordDto> valuesWithIds = partitionedById.get(true);
-        if (!valuesWithIds.isEmpty()) {
-            customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
-        }
+	    try {
+	    	//create records without ids
+	        List<CustomTableRecordDto> valuesWithoutIds = partitionedById.get(false);
+	        if (!valuesWithoutIds.isEmpty()) {
+	            customTableService.importData(cet, valuesWithoutIds.stream().map(x -> x.getValues()).collect(toList()), !dto.getOverwrite());
+	        }
+	        //update records with ids
+	        List<CustomTableRecordDto> valuesWithIds = partitionedById.get(true);
+	        if (!valuesWithIds.isEmpty()) {
+	            customTableService.updateRecords(cet.getDbTablename(), cfts.values(), valuesWithIds);
+	        }
+	    }catch (Exception e) {
+			throw getMeveoApiException(e);
+		}
     }
 
     /**

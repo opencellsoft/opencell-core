@@ -1,5 +1,0 @@
-{
-    "code": "INGENICO_OGONE_CARD_RELA5083458009",
-    "type" : "NATIF",
-    "paymentMethodType" :  "CARD"
-}

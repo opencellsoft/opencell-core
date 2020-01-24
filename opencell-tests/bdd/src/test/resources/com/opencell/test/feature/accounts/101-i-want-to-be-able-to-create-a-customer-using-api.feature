@@ -1,3 +1,4 @@
+@ignore
 
 Feature: API feature
 Scenario: Create a new customer with API

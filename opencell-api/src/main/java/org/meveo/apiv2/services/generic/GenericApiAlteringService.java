@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import static org.meveo.apiv2.ValidationUtils.checkEntityClass;
 import static org.meveo.apiv2.ValidationUtils.checkEntityName;
+import static org.meveo.apiv2.services.generic.GenericHelper.getEntityClass;
 
 public class GenericApiAlteringService extends GenericApiService {
     private static final Logger logger = LoggerFactory.getLogger(GenericApiAlteringService.class);
@@ -26,7 +27,7 @@ public class GenericApiAlteringService extends GenericApiService {
     
     public Optional<String> update(String entityName, Long id, String jsonDto) {
         checkEntityName(entityName).checkId(id).checkDto(jsonDto);
-        Class entityClass = entitiesByName.get(entityName.toLowerCase());
+        Class entityClass = getEntityClass(entityName.toLowerCase());
         checkEntityClass(entityClass);
         BaseEntity entityById = find(entityClass, id);
         JsonGenericMapper jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().build();
@@ -42,7 +43,7 @@ public class GenericApiAlteringService extends GenericApiService {
 
     public Long create(String entityName, String jsonDto) {
         checkEntityName(entityName).checkDto(jsonDto);
-        Class entityClass = entitiesByName.get(entityName.toLowerCase());
+        Class entityClass = GenericHelper.getEntityClass(entityName.toLowerCase());
         checkEntityClass(entityClass);
         BaseEntity entityToCreate = JsonGenericMapper.Builder
                 .getBuilder().build().parseFromJson(jsonDto, entityClass);
@@ -54,7 +55,7 @@ public class GenericApiAlteringService extends GenericApiService {
 
     public Optional<String> delete(String entityName, Long id) {
         checkEntityName(entityName).checkId(id);
-        Class entityClass = entitiesByName.get(entityName.toLowerCase());
+        Class entityClass = getEntityClass(entityName.toLowerCase());
         checkEntityClass(entityClass);
         BaseEntity entity = find(entityClass, id);
         PersistenceService service = getPersistenceService(entityClass);

@@ -18,10 +18,9 @@
  */
 package org.meveo.model.admin;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.ExportIdentifier;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -33,9 +32,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
 
 /**
  * File format entity
@@ -64,15 +65,13 @@ public class FileFormat extends BusinessEntity {
      * File type.
      */
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "adm_file_format_file_type",
-            joinColumns = @JoinColumn(name = "file_format_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "file_type_id", referencedColumnName = "id"))
+    @JoinTable(name = "adm_file_format_file_type", joinColumns = @JoinColumn(name = "file_format_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "file_type_id", referencedColumnName = "id"))
     private List<FileType> fileTypes = new ArrayList<>();
 
     /**
      * Configuration template.
      */
-    @Column(name = "configuration_template", columnDefinition = "TEXT")
+    @Column(name = "configuration_template", columnDefinition = "TEXT", nullable = false)
     private String configurationTemplate;
 
     /**
@@ -110,6 +109,13 @@ public class FileFormat extends BusinessEntity {
     @Column(name = "archive_directory", length = 255)
     @Size(max = 255)
     private String archiveDirectory;
+
+    /**
+     * Job name (e.g : CDR_job).
+     */
+    @Column(name = "job_code", length = 255)
+    @Size(max = 255)
+    private String jobCode;
 
     /**
      * Gets the code
@@ -271,6 +277,24 @@ public class FileFormat extends BusinessEntity {
      */
     public void setArchiveDirectory(String archiveDirectory) {
         this.archiveDirectory = archiveDirectory;
+    }
+
+    /**
+     * Gets the jobCode
+     *
+     * @return the jobCode
+     */
+    public String getJobCode() {
+        return jobCode;
+    }
+
+    /**
+     * Sets the jobCode.
+     *
+     * @param jobCode the new jobCode
+     */
+    public void setJobCode(String jobCode) {
+        this.jobCode = jobCode;
     }
 
     @Override

@@ -1,0 +1,16 @@
+{
+  "code": "TEST",
+  "description": "TVA 20%",
+  "percent": "20",
+  "accountingCode": null,
+  "languageDescriptions": [
+  {
+    "languageCode": "FRA",
+    "description": "TVA 20%"
+  },
+  {
+    "languageCode": "ENG",
+    "description": "VAT 20%"
+  }
+  ]
+}

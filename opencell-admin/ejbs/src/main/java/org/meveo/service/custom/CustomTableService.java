@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +38,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.search.sort.SortOrder;
@@ -86,6 +86,8 @@ public class CustomTableService extends NativePersistenceService {
     public static final String FILE_APPEND = "_append";
 
     public static final String ONLY_DIGIT_REGEX = "^-{0,1}[0-9]*$";
+
+	private static final int MAX_DISPLAY_COLUMNS = 5;
     
     @Inject
     private ElasticClient elasticClient;
@@ -109,7 +111,7 @@ public class CustomTableService extends NativePersistenceService {
     @Override
     public Long create(String tableName, Map<String, Object> values) throws BusinessException {
 
-        Long id = super.create(tableName, values, true); // Force to return ID as we need it to retrieve data for Elastic Search population
+        Long id = super.create(tableName, values, true, true); // Force to return ID as we need it to retrieve data for Elastic Search population
         elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, values, false, true);
 
         return id;
@@ -125,7 +127,7 @@ public class CustomTableService extends NativePersistenceService {
     public void create(String tableName, List<Map<String, Object>> values) throws BusinessException {
 
         for (Map<String, Object> value : values) {
-            Long id = super.create(tableName, value, true); // Force to return ID as we need it to retrieve data for Elastic Search population
+            Long id = super.create(tableName, value, true, false); // Force to return ID as we need it to retrieve data for Elastic Search population
             elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, value, false, false);
         }
 
@@ -154,9 +156,8 @@ public class CustomTableService extends NativePersistenceService {
         }
     }
 
-    @Override
     public void update(String tableName, Map<String, Object> values) throws BusinessException {
-        super.update(tableName, values);
+        super.update(tableName, values, true);
         elasticClient.createOrUpdate(CustomTableRecord.class, tableName, values.get(NativePersistenceService.FIELD_ID), values, false, true);
     }
 
@@ -170,7 +171,7 @@ public class CustomTableService extends NativePersistenceService {
     public void update(String tableName, List<Map<String, Object>> values) throws BusinessException {
 
         for (Map<String, Object> value : values) {
-            super.update(tableName, value);
+            super.update(tableName, value, false);
             elasticClient.createOrUpdate(CustomTableRecord.class, tableName, value.get(NativePersistenceService.FIELD_ID), value, false, false);
         }
         elasticClient.flushChanges();
@@ -214,7 +215,9 @@ public class CustomTableService extends NativePersistenceService {
 
     @Override
     public void remove(String tableName, Long id) throws BusinessException {
-        remove(tableName, new HashSet<>(Arrays.asList(id)));
+    	validateExistance(tableName, Arrays.asList(id));
+    	super.remove(tableName, id);
+    	elasticClient.remove(CustomTableRecord.class, tableName, id, true);
     }
 
     @Override
@@ -904,22 +907,64 @@ public class CustomTableService extends NativePersistenceService {
         return (Map<String, Object>) query.uniqueResult();
     }
 
-    public List<CustomTableRecordDto> selectAllRecordsOfATableAsRecord(String tableName) {
-        return selectAllRecordsOfATableAsMap(tableName).stream()
-                .map(CustomTableRecordDto::new)
-                .collect(Collectors.toList());
-    }
+    public List<CustomTableRecordDto> selectAllRecordsOfATableAsRecord(String tableName, String wildCode) {
 
-    @SuppressWarnings("unchecked")
-	public List<Map<String, Object>> selectAllRecordsOfATableAsMap(String tableName) {
+		try {
+			String endOfLine = "}";
+			Map<String, CustomFieldTemplate> cftl = customFieldTemplateService.findCFTsByDbTbleName(tableName);
+			List<String> fields = cftl.values().stream().filter(x -> x.isUniqueConstraint())
+					.map(x -> x.getDbFieldname()).collect(Collectors.toList());
+			if (fields.isEmpty()) {
+				fields = cftl.values().stream().filter(x -> x.getGUIFieldPosition() < MAX_DISPLAY_COLUMNS)
+						.map(x -> x.getDbFieldname()).collect(Collectors.toList());
+				if (cftl.size() > MAX_DISPLAY_COLUMNS) {
+					endOfLine = ", ... }";
+				}
+			}
+			String eol = endOfLine;
+			List<Map<String, Object>> mapList = extractMapListByFields(tableName, wildCode, fields);
+			return mapList.stream().map(x-> new CustomTableRecordDto(getDisplay(tableName, x, eol),x)).collect(Collectors.toList());
+        } catch (Exception ex) {
+            return Collections.EMPTY_LIST;
+        }
+	}
+	
+    private String getDisplay(String tableName, Map<String, Object> line, String endOfLine) {
+    	String vals = line.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+        .collect(Collectors.joining(","));
+		return tableName + " {"+vals+endOfLine;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Map<String, Object>> selectAllRecordsOfATableAsMap(String tableName, String wildCode) {
         try {
-            return getQuery(tableName, null)
-                    .getNativeQuery(getEntityManager(), true)
-                    .list();
+        	Map<String, CustomFieldTemplate> cftl = customFieldTemplateService.findCFTsByDbTbleName(tableName);
+        	List<String> fields = cftl.values().stream().filter(x->x.isUniqueConstraint() ).map(x->x.getDbFieldname()).collect(Collectors.toList());
+    		if(fields.isEmpty()) {
+    			fields= cftl.values().stream().filter(x->x.getGUIFieldPosition()<MAX_DISPLAY_COLUMNS).map(x->x.getDbFieldname()).collect(Collectors.toList());
+    		}
+        	return extractMapListByFields(tableName, wildCode, fields);
         } catch (Exception ex) {
             return Collections.EMPTY_LIST;
         }
     }
+
+	public List<Map<String, Object>> extractMapListByFields(String tableName, String wildCode, List<String> fields) {
+		List<String> fetchFields= new ArrayList<>();
+		fetchFields.add(FIELD_ID);
+		fetchFields.addAll(fields);
+		PaginationConfiguration pc = new PaginationConfiguration(null);
+		pc.setFetchFields(fetchFields);
+		QueryBuilder qb = getQuery(tableName, pc );
+		if(!StringUtils.isEmpty(wildCode)) {
+			qb.addSql(" cast("+FIELD_ID+" as varchar(100)) like :id");
+		}
+		Query query = qb.getNativeQuery(getEntityManager(), true);
+		if(wildCode!=null) {
+			query.setParameter("id", "%" + wildCode.toLowerCase() + "%");
+		}
+		return  query.list();
+	}
     
     public boolean containsRecordOfTableByColumn(String tableName, String columnName, Long id) {
         QueryBuilder queryBuilder = getQuery(tableName, null);

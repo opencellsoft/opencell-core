@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
-import org.meveo.admin.parse.csv.CDR;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.NotifiableEntity;
 import org.meveo.model.ObservableEntity;
@@ -24,6 +23,7 @@ import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 
 /**

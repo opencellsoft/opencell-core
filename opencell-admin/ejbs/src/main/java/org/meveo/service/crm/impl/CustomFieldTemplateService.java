@@ -298,7 +298,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private void updateConstraintKey(CustomEntityTemplate customEntityTemplate, Set<CustomFieldTemplate> allReferences) {
         if(!allReferences.isEmpty()) {
-            String columnNames = allReferences.stream().map(CustomFieldTemplate::getCode).distinct().sorted().collect(Collectors.joining(","));
+            String columnNames = allReferences.stream().map(CustomFieldTemplate::getDbFieldname).distinct().sorted().collect(Collectors.joining(","));
             addConstraintByColumnsName(customEntityTemplate, columnNames);
         }
     }
@@ -761,6 +761,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
             }
         }
         return values;
+    }
+    
+    
+    public Map<String, CustomFieldTemplate> findCFTsByDbTbleName(String dbTableName){
+    	CustomEntityTemplate cet = customEntityTemplateService.findByDbTablename(dbTableName);
+    	return findByAppliesTo(cet.getAppliesTo());
     }
 
 }

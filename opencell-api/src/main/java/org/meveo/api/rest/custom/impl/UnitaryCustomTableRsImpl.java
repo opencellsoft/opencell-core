@@ -22,7 +22,7 @@ import org.meveo.apiv2.models.Resource;
 @Interceptors({ WsRestApiInterceptor.class })
 public class UnitaryCustomTableRsImpl extends BaseRs implements UnitaryCustomTableRS {
 
-    private static final String ENTITY_NAME = "unitaryCustomTable";
+    private static final String BASE_NAME = "/unitaryCustomTable/";
 
     @Inject
     private CustomTableApi customTableApi;
@@ -58,11 +58,11 @@ public class UnitaryCustomTableRsImpl extends BaseRs implements UnitaryCustomTab
     }
 
     List<Link> asHeatoeas(String tableName, Long id) {
-        return Arrays.asList(Link.fromUri("/unitaryCustomTable/{tableName}/{id}").rel("remove").type("DELETE").build(tableName, id),
-                Link.fromUri("/unitaryCustomTable/{tableName}/{id}/enable").rel("enable").type("POST").build(tableName, id),
-                Link.fromUri("/unitaryCustomTable/{tableName}/{id}/disable").rel("disable").type("POST").build(tableName, id),
-                Link.fromUri("/unitaryCustomTable/").rel("create").title("create a row using a request body").type("POST").build(),
-                Link.fromUri("/unitaryCustomTable/").rel("update").title("update a row by giving the columns and values in the request body ").type("POST").build());
+        return Arrays.asList(Link.fromUri(BASE_NAME+"{tableName}/{id}").rel("remove").type("DELETE").build(tableName, id),
+                Link.fromUri(BASE_NAME+"{tableName}/{id}/enable").rel("enable").type("POST").build(tableName, id),
+                Link.fromUri(BASE_NAME+"{tableName}/{id}/disable").rel("disable").type("POST").build(tableName, id),
+                Link.fromUri(BASE_NAME).rel("create").title("create a row using a request body").type("POST").build(),
+                Link.fromUri(BASE_NAME).rel("update").title("update a row by giving the columns and values in the request body ").type("POST").build());
     }
 
     private Resource getDeleteResource(String tableName, Long id) {
@@ -76,7 +76,7 @@ public class UnitaryCustomTableRsImpl extends BaseRs implements UnitaryCustomTab
             @Nullable
             @Override
             public List<Link> getLinks() {
-                return Collections.singletonList(Link.fromUri("/unitaryCustomTable/").rel("POST").title("create").type("application/json").build());
+                return Collections.singletonList(Link.fromUri(BASE_NAME).rel("POST").title("create").type("application/json").build());
             }
         };
     }

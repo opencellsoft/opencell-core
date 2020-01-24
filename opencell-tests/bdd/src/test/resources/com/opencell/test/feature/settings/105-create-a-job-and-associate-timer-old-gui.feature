@@ -1,3 +1,4 @@
+@ignore
 Feature: Creation of a new Job and associate timer  on opencell Admin
 
    Background: The system is configured 

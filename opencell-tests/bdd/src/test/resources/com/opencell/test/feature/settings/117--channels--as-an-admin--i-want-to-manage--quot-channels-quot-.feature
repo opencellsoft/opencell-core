@@ -1,3 +1,4 @@
+@ignore
 Feature: Create, modify and delete channels
 
    

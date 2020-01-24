@@ -1,7 +1,32 @@
 package org.meveo.api;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import javax.ejb.EJB;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -16,9 +41,11 @@ import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.audit.AuditableFieldDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.ConstraintViolationApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.InvalidReferenceException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.EjbUtils;
@@ -59,30 +86,6 @@ import org.meveo.util.ApplicationProvider;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ejb.EJB;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.nio.file.AccessDeniedException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * @author Edward P. Legaspi
@@ -1267,13 +1270,22 @@ public abstract class BaseApi {
             } else if (value instanceof String) {
                 List valuesConverted = new ArrayList<>();
                 String[] valueItems = ((String) value).split(",");
+                boolean invalidReference = false;
                 for (String valueItem : valueItems) {
-                    Object valueConverted = castFilterValue(valueItem, targetClass, false);
-                    if (valueConverted != null) {
-                        valuesConverted.add(valueConverted);
-                    } else {
-                        throw new InvalidParameterException("Filter value " + value + " does not match " + targetClass.getSimpleName());
-                    }
+                	try {
+                		Object valueConverted = castFilterValue(valueItem, targetClass, false);
+                		if (valueConverted != null) {
+                            valuesConverted.add(valueConverted);
+                        } else {
+                            throw new InvalidParameterException("Filter value " + value + " does not match " + targetClass.getSimpleName());
+                        }
+                	}catch (InvalidReferenceException e) {
+                		invalidReference=true;
+                		continue;
+					}
+                }
+                if(invalidReference && valuesConverted.isEmpty()) {
+                	throw new InvalidReferenceException(targetClass.getSimpleName(), valueItems);
                 }
                 return valuesConverted;
 
@@ -1411,7 +1423,7 @@ public abstract class BaseApi {
                     BusinessEntity businessEntity = businessEntityService.findByCode(stringVal);
                     if (businessEntity == null) {
                         // Did not find a way how to pass nonexistant entity to search sql
-                        throw new InvalidParameterException("Entity of type " + targetClass.getSimpleName() + " with code " + stringVal + " not found");
+                        throw new InvalidReferenceException(targetClass.getSimpleName(), stringVal);
                     }
                     return businessEntity;
                 }
@@ -1498,6 +1510,23 @@ public abstract class BaseApi {
         List<AuditableField> auditableFields = auditableFieldService.list(entity);
         List<AuditableFieldDto> auditableFieldsDto = auditableFieldsToDto(auditableFields);
         dto.setAuditableFields(auditableFieldsDto);
+    }
+    
+	public boolean isRootCause(Throwable e, Class<?> clazz) {
+		while (e != null) {
+			if (e.getClass().equals(clazz)) {
+				return true;
+			}
+			e = e.getCause();
+		}
+		return false;
+	}
+    
+    public MeveoApiException getMeveoApiException(Throwable e) {
+    	if(isRootCause(e, ConstraintViolationException.class)) {
+    		return new ConstraintViolationApiException(e.getMessage());
+    	}
+    	return new MeveoApiException(e);
     }
 
 }

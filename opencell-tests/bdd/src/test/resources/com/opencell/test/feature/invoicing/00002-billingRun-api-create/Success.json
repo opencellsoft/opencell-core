@@ -1,0 +1,9 @@
+{
+  "billingCycleCode" : "CYC_INV_MT_1",
+  "billingRunTypeEnum" : "AUTOMATIC",
+  "startDate" : 12345,
+  "endDate" : 12345,
+  "invoiceDate" : 12345,
+  "lastTransactionDate" : 12345,
+  "referenceDate" : "TODAY"
+}

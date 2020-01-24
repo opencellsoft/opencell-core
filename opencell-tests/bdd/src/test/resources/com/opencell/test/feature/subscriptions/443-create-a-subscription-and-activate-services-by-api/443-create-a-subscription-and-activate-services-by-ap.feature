@@ -1,3 +1,4 @@
+@ignore
 Feature:  Subscribe And Activate Services by API
 
 Background: The classic offer is already executed
