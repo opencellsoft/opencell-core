@@ -1,0 +1,36 @@
+{
+    "bomCode": "BOM_WITH_BSM",
+    "code": "OF_BSM_SINGLE_OVERRIDE",
+    "name": "Offer BSM Single override",
+    "description": "Offer instantiating a BSM once, WITH OVERRIDE 1579603022",
+    "parameter": [
+        {
+            "code": "aString",
+            "stringValue": "OF_BSM_SINGLE_OVERRIDE"
+        },
+        {
+            "code": "aStringFiltered",
+            "stringValue": "OF_BSM_SINGLE_OVERRIDE"
+        }
+    ],
+    "businessServiceModel": [
+        {
+            "code": "BSM_EMPTY_WITH_CF",
+            "service": {
+                "code": "SE_EMPTY_WITH_CF",
+                "description": "1 from BSM with CF override",
+                "mandatory": true,
+                "parameter": [
+                    {
+                        "code": "aString",
+                        "stringValue": "OF_BSM_SINGLE_OVERRIDE"
+                    },
+                    {
+                        "code": "aStringFiltered",
+                        "stringValue": "OF_BSM_SINGLE_OVERRIDE"
+                    }
+                ]
+            }
+        }
+    ]
+}

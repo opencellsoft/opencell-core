@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -25,6 +25,7 @@ import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,12 +34,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -76,11 +76,13 @@ import org.meveo.model.shared.ContactInformation;
 @Cacheable
 @CustomFieldEntity(cftCodePrefix = "Seller", inheritCFValuesFrom = "seller", inheritFromProvider = true)
 @ExportIdentifier({ "code" })
-@Table(name = "crm_seller", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@DiscriminatorValue(value = "ACCT_S")
+@Table(name = "crm_seller")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "crm_seller_seq"), })
-public class Seller extends BusinessCFEntity implements IWFEntity {
+public class Seller extends AccountEntity implements IWFEntity {
 
+    public static final String ACCOUNT_TYPE = Seller.class.getAnnotation(DiscriminatorValue.class).value();
     private static final long serialVersionUID = 1L;
 
     /**
@@ -181,7 +183,7 @@ public class Seller extends BusinessCFEntity implements IWFEntity {
     private GeneralLedger generalLedger;
 
     public Seller() {
-        super();
+        accountType = ACCOUNT_TYPE;
     }
 
     public TradingCurrency getTradingCurrency() {

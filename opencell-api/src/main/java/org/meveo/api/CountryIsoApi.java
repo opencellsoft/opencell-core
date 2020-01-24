@@ -55,12 +55,12 @@ public class CountryIsoApi extends BaseApi {
 
         Language language = languageService.findByCode(postData.getLanguageCode());
         if (language == null) {
-            throw new EntityDoesNotExistsException(Calendar.class, postData.getLanguageCode());
+            throw new EntityDoesNotExistsException(Language.class, postData.getLanguageCode());
         }
 
         Currency currency = currencyService.findByCode(postData.getCurrencyCode());
         if (currency == null) {
-            throw new EntityDoesNotExistsException(Calendar.class, postData.getCurrencyCode());
+            throw new EntityDoesNotExistsException(Currency.class, postData.getCurrencyCode());
         }
 
         Country country = new Country();

@@ -1,17 +1,17 @@
 package com.opencell.test.bdd.commons;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import cucumber.api.java.Before;
-import org.meveo.api.dto.ActionStatus;
+import java.util.Optional;
+import java.util.Set;
+
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.reflections.Reflections;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import cucumber.api.java.Before;
+import io.restassured.response.ValidatableResponse;
 
 public class BaseHook {
 
@@ -19,6 +19,8 @@ public class BaseHook {
     private WebResponse webResponse;
     private BaseEntityDto entityDto;
     private JsonNode jsonObject;
+    private ValidatableResponse jsonresponse;
+
     private static Set<Class<? extends BaseEntityDto>> dtoClasses;
 
     @Before
@@ -91,4 +93,26 @@ public class BaseHook {
         }
         return Optional.empty();
     }
+
+    public Optional<String> getField(String field){
+        if(entityDto != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            jsonObject = mapper.valueToTree(entityDto);
+        }
+        if(jsonObject != null && jsonObject.get(field) != null){
+            return Optional.of(jsonObject.get(field).asText());
+        }
+        return Optional.empty();
+    }
+
+    public ValidatableResponse getJsonresponse() {
+        return jsonresponse;
+    }
+
+    public void setJsonresponse(ValidatableResponse jsonresponse) {
+        this.jsonresponse = jsonresponse;
+    }
+
 }
+
+
