@@ -2211,6 +2211,18 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 		<redirect include-view-params="true" />
 	</navigation-case>
 	<navigation-case>
+		<from-outcome>unitOfMeasures</from-outcome>
+		<to-view-id>/pages/catalog/unitOfMeasures/unitOfMeasures.xhtml
+		</to-view-id>
+		<redirect include-view-params="true" />
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>unitOfMeasureDetail</from-outcome>
+		<to-view-id>/pages/catalog/unitOfMeasures/unitOfMeasureDetail.xhtml
+		</to-view-id>
+		<redirect include-view-params="true" />
+	</navigation-case>
+	<navigation-case>
 		<from-outcome>digitalResources</from-outcome>
 		<to-view-id>/pages/catalog/digitalResources/digitalResources.xhtml
 		</to-view-id>
