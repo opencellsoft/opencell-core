@@ -1965,4 +1965,10 @@
         <addNotNullConstraint columnName="billing_cycle_type" tableName="billing_cycle" columnDataType="varchar(256)"/>
     </changeSet>
     
+    <changeSet id="#4879_20190121" author="AmineBENAICHA">
+       <addColumn tableName="cat_counter_template">
+           <column name="calendar_code_el" type="varchar(2000)" />
+       </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
