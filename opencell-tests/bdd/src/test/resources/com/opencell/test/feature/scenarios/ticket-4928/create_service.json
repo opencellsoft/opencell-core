@@ -1,17 +1,17 @@
 {
-    "code": "SE_EMPTY_WITH_CF",
-    "customFields": {
-        "customField": [
-            {
-                "code": "aString",
-                "stringValue": "From 'template' ServiceTemplate"
-            },
-            {
-                "code": "aStringFiltered",
-                "stringValue": "From 'template' ServiceTemplate"
-            }
-        ]
-    },
-    "description": "Empty service with a CF 1579603017",
-    "mandatory": true
+	"code": "SE_EMPTY_WITH_CF",
+	"customFields": {
+		"customField": [
+			{
+				"code": "aString",
+				"stringValue": "From 'template' ServiceTemplate"
+			},
+			{
+				"code": "aStringFiltered",
+				"stringValue": "From 'template' ServiceTemplate"
+			}
+		]
+	},
+	"description": "Empty service with a CF 1579603017",
+	"mandatory": true
 }

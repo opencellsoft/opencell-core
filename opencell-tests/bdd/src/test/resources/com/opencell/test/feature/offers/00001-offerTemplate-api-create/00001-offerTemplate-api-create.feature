@@ -7,7 +7,7 @@ Feature: Create offer template by API
   Scenario Outline: Create offer template by API
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<api>"
-    Then The offer is created
+    Then The offer template is created
     And Validate that the statusCode is "<statusCode>"
     And The status is "<status>"
     And The message  is "<message>"

@@ -7,7 +7,7 @@ Feature: Check that ServiceTemplate CF are visible during createOfferFromBOM
   Scenario Outline: Check that ServiceTemplate CF are visible during createOfferFromBOM
     Given The entity has the following information "<jsonFile>"
     When I call the "<action>" "<api>"
-    Then I get the Service template  with a custom fields
+    Then I get the Service template with a custom fields
     And Service template contains the following CF "<Val_aString_attendue>"
     And Service template contains the following CF "<Val_aStringFiltered_attendue>"
 

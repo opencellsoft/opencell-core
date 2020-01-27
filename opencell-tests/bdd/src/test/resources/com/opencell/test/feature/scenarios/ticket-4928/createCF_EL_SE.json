@@ -1,5 +1,5 @@
 {
-    "code": "aString",
+    "code": "aStringFiltered",
     "description": "A string on ServiceTemplate",
     "fieldType": "STRING",
     "appliesTo": "ServiceTemplate",
