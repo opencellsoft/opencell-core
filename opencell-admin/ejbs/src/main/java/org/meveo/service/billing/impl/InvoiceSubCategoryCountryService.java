@@ -402,8 +402,17 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         return tax;
     }
 
+    /**
+     * evaluate tax
+     * 
+ 	 * @param taxCodeEL
+ 	 * @param userAccount
+ 	 * @param billingAccount
+ 	 * @param invoice
+ 	 * @return
+ 	 */
     @SuppressWarnings("deprecation")
-    private Tax evaluateTaxCodeEL(String expression, UserAccount userAccount, BillingAccount billingAccount, Invoice invoice) throws BusinessException {
+    public Tax evaluateTaxCodeEL(String expression, UserAccount userAccount, BillingAccount billingAccount, Invoice invoice) throws BusinessException {
         Tax result = null;
         if (StringUtils.isBlank(expression)) {
             return result;
