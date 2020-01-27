@@ -58,7 +58,7 @@ public class QueryBuilder {
 
     protected String alias;
 
-    private Map<String, Object> params;
+    protected Map<String, Object> params;
 
     private boolean hasOneOrMoreCriteria;
 
@@ -874,7 +874,7 @@ public class QueryBuilder {
      * 
      * @param alias alias of column?
      */
-    private void applyOrdering(String alias) {
+    protected void applyOrdering(String alias) {
         if (paginationConfiguration == null) {
             return;
         }
@@ -889,7 +889,7 @@ public class QueryBuilder {
      * 
      * @param query JPA query to apply pagination to
      */
-    private void applyPagination(Query query) {
+    protected void applyPagination(Query query) {
         if (paginationConfiguration == null) {
             return;
         }
@@ -918,7 +918,7 @@ public class QueryBuilder {
      * 
      * @param query Hibernate query to apply pagination to
      */
-    private void applyPagination(SQLQuery query) {
+    protected void applyPagination(SQLQuery query) {
         if (paginationConfiguration == null) {
             return;
         }
