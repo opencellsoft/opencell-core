@@ -67,7 +67,8 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
     public List<String> getDimensionList(int dimensionIndex, Date fromDate, Date toDate, MeasurableQuantity mq) {
 
         String dimension = "dimension" + dimensionIndex;
-        StringBuilder sb = new StringBuilder("SELECT DISTINCT(mv.").append(dimension).append(") FROM ").append(MeasuredValue.class.getName()).append(" mv WHERE mv.measurableQuantity.id=:mqId ");
+        StringBuilder sb = new StringBuilder("SELECT DISTINCT(mv.").append(dimension).append(") FROM ").append(MeasuredValue.class.getName())
+        		.append(" mv WHERE mv.measurableQuantity.id=:mqId AND mv.").append(dimension).append(" IS NOT NULL");
         Map<String, Object> params = new HashMap<>();
         params.put("mqId", mq.getId());
         params.put("mqMeasurementPeriod", mq.getMeasurementPeriod());
