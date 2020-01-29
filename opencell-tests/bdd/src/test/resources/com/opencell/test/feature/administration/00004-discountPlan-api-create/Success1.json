@@ -1,5 +1,8 @@
 {
-    "code": "DP",
+    "code": "TEST",
+    "description": "TEST Updated",
+    "durationUnit": "1",
+    "startDate":"2019-03-03",
+    "endDate":"2019-03-04",
     "defaultDuration": "1"
-    
 }

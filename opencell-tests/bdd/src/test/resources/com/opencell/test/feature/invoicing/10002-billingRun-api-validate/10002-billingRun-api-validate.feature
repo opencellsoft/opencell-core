@@ -1,4 +1,4 @@
-@settings @ignore @review
+@invoicing @ignore @review
 Feature: Validate billing run by API
 
   Background: The classic offer is already executed

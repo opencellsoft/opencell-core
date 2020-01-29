@@ -1,12 +1,12 @@
 @administration
-Feature: Create Job Instance by API
+Feature: Create/Update Job Instance by API
 
   Background: The classic offer is already executed
 
   @admin @superadmin
-  Scenario Outline: Create Job Instance by API
+  Scenario Outline: <action> Job Instance by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
-    When I call the "<api>"
+    When I call the "<action>" "<api>"
     Then The jobInstance is created
     And Validate that the statusCode is "<statusCode>"
     And The status is "<status>"
@@ -14,8 +14,11 @@ Feature: Create Job Instance by API
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                                                          | dto            | api                         | statusCode | status  | errorCode                        | message                                                                                    |
-      | administration/00003-jobInstance-api-create/Success.json                          | JobInstanceDto | /jobInstance/createOrUpdate |        200 | SUCCESS |                                  |                                                                                            |
-      | administration/00003-jobInstance-api-create/Success1.json                         | JobInstanceDto | /jobInstance/createOrUpdate |        200 | SUCCESS |                                  |                                                                                            |
-      | administration/00003-jobInstance-api-create/MISSING_PARAMETER.json                | JobInstanceDto | /jobInstance/createOrUpdate |        400 | FAIL    | MISSING_PARAMETER                | The following parameters are required or contain invalid values: SepaJob_ddRequestBuilder. |
-      | administration/00003-jobInstance-api-create/ENTITY_DOES_NOT_EXISTS_EXCEPTION.json | JobInstanceDto | /jobInstance/createOrUpdate |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | JobTemplate with code 'XXX' doesn't exist                                                  |
+      | jsonFile                                                                          | dto            | api                         | action         | statusCode | status  | errorCode                        | message                                                                                    |
+      | administration/00003-jobInstance-api-create/Success.json                          | JobInstanceDto | /jobInstance/createOrUpdate | CreateOrUpdate |        200 | SUCCESS |                                  |                                                                                            |
+      | administration/00003-jobInstance-api-create/Success.json                          | JobInstanceDto | /jobInstance/create         | Create         |        403 | FAIL    | ENTITY_ALREADY_EXISTS_EXCEPTION  | JobInstance with code=TEST already exists.                                                 |
+      | administration/00003-jobInstance-api-create/DO_NOT_EXIST.json                     | JobInstanceDto | /jobInstance/update         | Post           |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | JobInstance with code=NOT_EXIST does not exists.                                           |
+      | administration/00003-jobInstance-api-create/Success1.json                         | JobInstanceDto | /jobInstance/update         | Post           |        200 | SUCCESS |                                  |                                                                                            |
+      | administration/00003-jobInstance-api-create/Success1.json                         | JobInstanceDto | /jobInstance/createOrUpdate | CreateOrUpdate |        200 | SUCCESS |                                  |                                                                                            |
+      | administration/00003-jobInstance-api-create/MISSING_PARAMETER.json                | JobInstanceDto | /jobInstance/createOrUpdate | CreateOrUpdate |        400 | FAIL    | MISSING_PARAMETER                | The following parameters are required or contain invalid values: SepaJob_ddRequestBuilder. |
+      | administration/00003-jobInstance-api-create/ENTITY_DOES_NOT_EXISTS_EXCEPTION.json | JobInstanceDto | /jobInstance/createOrUpdate | CreateOrUpdate |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | JobTemplate with code 'XXX' doesn't exist                                                  |

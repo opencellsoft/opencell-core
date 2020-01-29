@@ -6,9 +6,9 @@ Feature: Delete invoice subcategory by API
 
 
   @admin @superadmin
-  Scenario Outline: Delete invoice subcategory by API
+  Scenario Outline: <action> invoice subcategory by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
-    When I call the delete "<api>"
+    When I call the "<action>" "<api>"
     Then The entity is deleted
     And Validate that the statusCode is "<statusCode>"
     And The status is "<status>"
@@ -16,6 +16,6 @@ Feature: Delete invoice subcategory by API
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                                               | dto                   | api                  | statusCode | status  | errorCode                        | message                                                 |
-      | billing/00003-invoiceSubcategory-api-create/SuccessTest.json           | InvoiceSubCategoryDto | /invoiceSubCategory/ |        200 | SUCCESS |                                  |                                                         |
-      | billing/10002-invoiceSubcategory-api-delete/ENTITY_DOES_NOT_EXIST.json | InvoiceSubCategoryDto | /invoiceSubCategory/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | InvoiceSubCategory with code=NOT_EXIST does not exists. |
+      | jsonFile                                                      | dto                   | api                  | action | statusCode | status  | errorCode                        | message                                                 |
+      | billing/00003-invoiceSubcategory-api-create/SuccessTest.json  | InvoiceSubCategoryDto | /invoiceSubCategory/ | Delete |        200 | SUCCESS |                                  |                                                         |
+      | billing/00003-invoiceSubcategory-api-create/DO_NOT_EXIST.json | InvoiceSubCategoryDto | /invoiceSubCategory/ | Delete |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | InvoiceSubCategory with code=NOT_EXIST does not exists. |

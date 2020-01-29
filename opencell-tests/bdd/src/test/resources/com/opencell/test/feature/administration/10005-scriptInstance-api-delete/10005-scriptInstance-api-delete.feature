@@ -6,9 +6,9 @@ Feature: Delete script instance by API
 
 
   @admin @superadmin
-  Scenario Outline: Delete script instance by API
+  Scenario Outline: <action> script instance by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
-    When I call the delete "<api>"
+    When I call the "<action>" "<api>"
     Then The entity is deleted
     And Validate that the statusCode is "<statusCode>"
     And The status is "<status>"
@@ -16,6 +16,6 @@ Feature: Delete script instance by API
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                                                  | dto               | api              | statusCode | status  | errorCode                        | message                                                                      |
-      | administration/00005-scriptInstance-api-create/Success.json               | ScriptInstanceDto | /scriptInstance/ |        200 | SUCCESS |                                  |                                                                              |
-      | administration/10005-scriptInstance-api-delete/ENTITY_DOES_NOT_EXIST.json | ScriptInstanceDto | /scriptInstance/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | ScriptInstance with code=org.meveo.service.script.NOT_EXIST does not exists. |
+      | jsonFile                                                         | dto               | api              | action | statusCode | status  | errorCode                        | message                                                                      |
+      | administration/00005-scriptInstance-api-create/Success.json      | ScriptInstanceDto | /scriptInstance/ | Delete |        200 | SUCCESS |                                  |                                                                              |
+      | administration/00005-scriptInstance-api-create/DO_NOT_EXIST.json | ScriptInstanceDto | /scriptInstance/ | Delete |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | ScriptInstance with code=NOT_EXIST does not exists. |

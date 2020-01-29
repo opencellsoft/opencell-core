@@ -1,0 +1,7 @@
+{
+  "name": "NOT_EXIST",
+  "description": "Test role",
+  "permission" : [ 
+        { "permission" : "cc-module-read", "name" : "cc-module-read" }
+   ]
+}

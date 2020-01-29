@@ -1,4 +1,4 @@
-@#4928-BDD @test @ignore
+@#4928-BDD @core @ignore
 Feature: Check that ServiceTemplate CF are visible during createOfferFromBOM
 
   Background: 4928-BDD.json is executed

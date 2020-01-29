@@ -1,4 +1,4 @@
-@administration
+@administration @ignore
 Feature: Upload file by API
 
   Background: The classic offer is already executed

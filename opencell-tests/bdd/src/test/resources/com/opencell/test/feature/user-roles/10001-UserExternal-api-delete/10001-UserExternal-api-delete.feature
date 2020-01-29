@@ -16,6 +16,6 @@ Feature: Delete User External by API
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                                            | dto     | api             | statusCode | status  | errorCode                        | message                                          |
-      | user-roles/00001-UserExternal-api-create/Success.json               | UserDto | /user/external/ |        200 | SUCCESS |                                  |                                                  |
-      | user-roles/10001-UserExternal-api-delete/ENTITY_DOES_NOT_EXIST.json | UserDto | /user/external/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION |User with username=NOT_EXIST does not exists.     |
+      | jsonFile                                                   | dto     | api             | statusCode | status  | errorCode                        | message                                       |
+      | user-roles/00001-UserExternal-api-create/Success.json      | UserDto | /user/external/ |        200 | SUCCESS |                                  |                                               |
+      | user-roles/00001-UserExternal-api-create/DO_NOT_EXIST.json | UserDto | /user/external/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | User with username=NOT_EXIST does not exists. |

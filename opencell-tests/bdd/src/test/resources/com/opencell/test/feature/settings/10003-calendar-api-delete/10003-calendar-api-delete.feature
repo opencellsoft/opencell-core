@@ -6,9 +6,9 @@ Feature: Delete Calendar by API
 
 
   @admin @superadmin
-  Scenario Outline: Delete Calendar by API
+  Scenario Outline: <action> Calendar by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
-    When I call the delete "<api>"
+    When I call the "<action>" "<api>"
     Then The entity is deleted
     And Validate that the statusCode is "<statusCode>"
     And The status is "<status>"
@@ -16,6 +16,6 @@ Feature: Delete Calendar by API
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                                      | dto         | api        | statusCode | status  | errorCode                        | message                                       |
-      | settings/00003-calendar-api-create/SuccessTest.json           | CalendarDto | /calendar/ |        200 | SUCCESS |                                  |                                               |
-      | settings/10003-calendar-api-delete/ENTITY_DOES_NOT_EXIST.json | CalendarDto | /calendar/ |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | Calendar with code=NOT_EXIST does not exists. |
+      | jsonFile                                             | dto         | api        | action | statusCode | status  | errorCode                        | message                                       |
+      | settings/00003-calendar-api-create/SuccessTest.json  | CalendarDto | /calendar/ | Delete |        200 | SUCCESS |                                  |                                               |
+      | settings/00003-calendar-api-create/DO_NOT_EXIST.json | CalendarDto | /calendar/ | Delete |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | Calendar with code=NOT_EXIST does not exists. |

@@ -8,7 +8,7 @@ Feature: Create and assigned a tax category to a billing account by API
   @admin @superadmin
   Scenario Outline: Create and assigned a tax category to a billing account by API
     Given The entity has the following information "<jsonFile>" as "<dto>"
-    When I call the "<api>"
+    When I call the "<action>" "<api>"
     Then The tax subcategory is created
     And Validate that the statusCode is "<statusCode>"
     And The status is "<status>"

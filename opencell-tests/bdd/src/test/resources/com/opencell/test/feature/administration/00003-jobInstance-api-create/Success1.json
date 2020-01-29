@@ -1,5 +1,5 @@
 {
-	"code": "STD_SEPA_JOB",
+	"code": "TEST",
 	"description" : "Edited",
 	"jobTemplate": "SepaDirectDebitJob",
 	"jobCategory": "ACCOUNT_RECEIVABLES",
