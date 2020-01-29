@@ -1,3 +1,4 @@
+@ignore
 Feature: Becnhmarking process
 
     The step used for a bench run.

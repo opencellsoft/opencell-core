@@ -1,3 +1,4 @@
+@ignore
 Feature: Manipulation on MarketingManger module
    
    Background:  System is configured.

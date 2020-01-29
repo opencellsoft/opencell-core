@@ -18,7 +18,9 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +29,14 @@ import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
+import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
+
 
 /**
  * Charge Template service implementation.
@@ -40,6 +47,9 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 
     @Inject
     private TriggeredEDRTemplateService edrTemplateService;
+    
+    @Inject
+    private UnitOfMeasureService unitOfMeasureService;
 
     public synchronized void duplicate(P chargeTemplate) throws BusinessException {
 
@@ -246,4 +256,65 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
     public synchronized int removeServiceLinkChargeUsage(Long chargeId) throws BusinessException {
         return this.remove("cat_serv_usage_charge_template", chargeId);
     }
+    
+    
+    @Override
+    public void create(P entity) throws BusinessException {
+    	validateEntity(entity);
+    	super.create(entity);
+    }
+    
+    @Override
+    public P updateNoCheck(P entity) throws BusinessException {
+    	validateEntity(entity);
+    	return super.updateNoCheck(entity);
+    }
+    
+    @Override
+    public P update(P entity) throws BusinessException {
+    	validateEntity(entity);
+    	return super.update(entity);
+    }
+    
+	public java.math.BigDecimal evaluateUnitRating(ChargeTemplate chargeTemplate) throws BusinessException {
+		UnitOfMeasure inputUnitFromEL = getUOMfromEL(chargeTemplate.getInputUnitEL());
+		UnitOfMeasure outputUnitFromEL = getUOMfromEL(chargeTemplate.getOutputUnitEL());
+		if (inputUnitFromEL != null || outputUnitFromEL != null) {
+			inputUnitFromEL = inputUnitFromEL != null ? inputUnitFromEL : chargeTemplate.getInputUnitOfMeasure();
+			outputUnitFromEL = outputUnitFromEL != null ? outputUnitFromEL : chargeTemplate.getRatingUnitOfMeasure();
+			if (inputUnitFromEL != null && outputUnitFromEL != null ) {
+				if(inputUnitFromEL.isCompatibleWith(outputUnitFromEL)) {
+					return BigDecimal.valueOf(inputUnitFromEL.getMultiplicator()).divide( BigDecimal.valueOf(outputUnitFromEL.getMultiplicator()), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+				}
+				else {
+					throw new BusinessException("incompatible input/rating UnitOfMeasures: "+inputUnitFromEL+"/"+outputUnitFromEL);
+				}
+			}
+		}
+		return chargeTemplate.getUnitMultiplicator();
+	}
+
+	private UnitOfMeasure getUOMfromEL(String expression) throws BusinessException {
+		UnitOfMeasure unitFromEL = null;
+		if (!StringUtils.isBlank(expression)) {
+			String code = "";
+			code = ValueExpressionWrapper.evaluateToStringMultiVariable(expression);
+			unitFromEL = unitOfMeasureService.findByCode(code);
+			if (unitFromEL == null) {
+				throw new BusinessException("Cannot find unitOfMeasure by code '" + code + "', el was : " + expression);
+			}
+		}
+		return unitFromEL;
+	}
+	
+	private void validateEntity(P entity) throws BusinessException {
+		UnitOfMeasure ratingUnitOfMeasure = entity.getRatingUnitOfMeasure();
+		UnitOfMeasure inputUnitOfMeasure = entity.getInputUnitOfMeasure();
+		if (inputUnitOfMeasure != null && ratingUnitOfMeasure != null) {
+			if (!inputUnitOfMeasure.isCompatibleWith(ratingUnitOfMeasure)) {
+				throw new BusinessException("incompatible input/rating UnitOfMeasures: "+inputUnitOfMeasure+"/"+ratingUnitOfMeasure);
+			}
+		}
+	}
+	
 }

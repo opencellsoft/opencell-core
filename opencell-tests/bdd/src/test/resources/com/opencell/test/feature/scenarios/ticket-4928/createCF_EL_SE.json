@@ -1,0 +1,17 @@
+{
+    "code": "aString",
+    "description": "A string on ServiceTemplate",
+    "fieldType": "STRING",
+    "appliesTo": "ServiceTemplate",
+    "defaultValue": "CFT default value",
+    "storageType": "SINGLE",
+    "valueRequired": false,
+    "maxValue": 100,
+    "versionable": false,
+    "triggerEndPeriodEvent": false,
+    "allowEdit": true,
+    "hideOnNew": false,
+    "cacheValue": false,
+    "applicableOnEl":"",
+    "guiPosition": null
+}

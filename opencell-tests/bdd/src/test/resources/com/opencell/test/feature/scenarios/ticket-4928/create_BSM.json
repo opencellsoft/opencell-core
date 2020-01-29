@@ -1,0 +1,6 @@
+{
+    "code": "BSM_EMPTY_WITH_CF",
+    "description": "BSM EMPTY_WITH_CF",
+    "license": "COM",
+    "serviceTemplate": { "code": "SE_EMPTY_WITH_CF" }
+}

@@ -54,7 +54,7 @@ public interface CountryIsoRs extends IBaseRs {
      * @return action status
      */
     @DELETE
-    @Path("/")
+    @Path("/{countryCode}")
     ActionStatus remove(@PathParam("countryCode") String countryCode);
 
     /**

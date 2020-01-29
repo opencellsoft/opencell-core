@@ -1,3 +1,4 @@
+@ignore
 Feature: Rating process
    
    Background:  System is configured.

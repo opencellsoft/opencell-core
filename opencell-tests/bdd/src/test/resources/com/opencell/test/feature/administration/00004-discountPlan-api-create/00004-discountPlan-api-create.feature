@@ -14,7 +14,7 @@ Feature: Create discount Plan by API
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                                                | dto             | api                                  | statusCode | status  | errorCode         | message                                                      |
-      | administration/00004-discountPlan-api-create/Success.json           | DiscountPlanDto | /catalog/discountPlan/createOrUpdate |        200 | SUCCESS |                   |                                                              |
-      | administration/00004-discountPlan-api-create/Success1.json          | DiscountPlanDto | /catalog/discountPlan/createOrUpdate |        200 | SUCCESS |                   |                                                              |
-      | administration/00004-discountPlan-api-create/INVALID_PARAMETER.json | DiscountPlanDto | /catalog/discountPlan/createOrUpdate |        400 | FAIL    | INVALID_PARAMETER | Can not deserialize value of type java.util.Date from String |
+      | jsonFile                                                            | dto             | api                                  | statusCode | status  | errorCode         | message                                                       |
+      | administration/00004-discountPlan-api-create/Success.json           | DiscountPlanDto | /catalog/discountPlan/createOrUpdate |        200 | SUCCESS |                   |                                                               |
+      | administration/00004-discountPlan-api-create/Success1.json          | DiscountPlanDto | /catalog/discountPlan/createOrUpdate |        200 | SUCCESS |                   |                                                               |
+      | administration/00004-discountPlan-api-create/INVALID_PARAMETER.json | DiscountPlanDto | /catalog/discountPlan/createOrUpdate |        400 | FAIL    | INVALID_PARAMETER | Cannot deserialize value of type `java.util.Date` from String |

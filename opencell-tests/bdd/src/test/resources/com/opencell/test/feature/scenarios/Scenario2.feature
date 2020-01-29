@@ -1,3 +1,4 @@
+@ignore
 Feature: Generate a pro-forma on CC module
    
    Background:  System is configured.

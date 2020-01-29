@@ -23,10 +23,10 @@ import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
-import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.AccountService;
 
 @Stateless
-public class SellerService extends BusinessService<Seller> {
+public class SellerService extends AccountService<Seller> {
 
     public boolean hasChildren(Seller seller) {
         QueryBuilder qb = new QueryBuilder(Seller.class, "s");

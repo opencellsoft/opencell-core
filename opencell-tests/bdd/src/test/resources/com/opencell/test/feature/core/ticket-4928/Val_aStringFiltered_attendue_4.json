@@ -1,0 +1,6 @@
+{
+	"code": "aStringFiltered",
+	"description": "A string on ServiceTemplate with applicableOnEL",
+	"fieldType": "STRING",
+	"stringValue": "From 'template' ServiceTemplate"
+}
