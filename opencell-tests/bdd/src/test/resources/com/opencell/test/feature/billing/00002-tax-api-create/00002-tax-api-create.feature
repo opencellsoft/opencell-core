@@ -4,7 +4,7 @@ Feature: Create/Update a tax by API
   Background: The classic offer is executed
 
   @admin @superadmin
-  Scenario Outline: <action> a tax by API <errorCode>
+  Scenario Outline: <status> <action> a tax by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The tax is created

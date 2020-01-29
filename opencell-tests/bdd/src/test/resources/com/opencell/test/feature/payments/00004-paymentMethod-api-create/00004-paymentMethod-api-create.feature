@@ -4,7 +4,7 @@ Feature: Create/Update Payment Method by API
   Background: The system is configured
 
   @admin @superadmin
-  Scenario Outline: <action> Payment Method by API
+  Scenario Outline: <status> <action> Payment Method by API
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The payment method is created

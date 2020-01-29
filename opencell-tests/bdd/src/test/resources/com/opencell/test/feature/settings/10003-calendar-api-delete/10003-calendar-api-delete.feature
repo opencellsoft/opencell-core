@@ -6,7 +6,7 @@ Feature: Delete Calendar by API
 
 
   @admin @superadmin
-  Scenario Outline: <action> Calendar by API <errorCode>
+  Scenario Outline: <status> <action> Calendar by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The entity is deleted

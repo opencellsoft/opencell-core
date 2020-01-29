@@ -4,7 +4,7 @@ Feature: Create/Update Account Operation by API
   Background: The classic offer is already executed
 
   @admin @superadmin
-  Scenario Outline: <action> Account Operation by API
+  Scenario Outline: <status> <action> Account Operation by API
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The account operation is created

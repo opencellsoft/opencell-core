@@ -6,7 +6,7 @@ Feature: Delete Customer Category by API
 
 
   @admin @superadmin
-  Scenario Outline: <action> Customer Category by API <errorCode>
+  Scenario Outline: <status> <action> Customer Category by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The entity is deleted

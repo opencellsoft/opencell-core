@@ -6,7 +6,7 @@ Feature: Create/Update Payment Schedule Template by API
 
 
   @admin @superadmin
-  Scenario Outline: <action> Payment Schedule Template by API
+  Scenario Outline: <status> <action> Payment Schedule Template by API
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The payment schedule template is created

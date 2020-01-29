@@ -4,7 +4,7 @@ Feature: Create/Update Payment Gateway by API
   Background: The system is configured
 
   @admin @superadmin
-  Scenario Outline: <action> Payment Gateway by API
+  Scenario Outline: <status> <action> Payment Gateway by API
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The payment gateway is created

@@ -4,7 +4,7 @@ Feature: Create/Update invoice Type by API
   Background: The classic offer is already executed
 
   @admin @superadmin
-  Scenario Outline: <action> invoice Type by API <errorCode>
+  Scenario Outline: <status> <action> invoice Type by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The invoice type is created

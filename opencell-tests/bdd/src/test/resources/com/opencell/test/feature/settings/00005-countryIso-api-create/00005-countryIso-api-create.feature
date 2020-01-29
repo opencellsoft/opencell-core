@@ -4,7 +4,7 @@ Feature: Create/Update CountryIso by API
   Background: The system is configured
 
   @admin @superadmin
-  Scenario Outline: <action> CountryIso by API <errorCode>
+  Scenario Outline: <status> <action> CountryIso by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The country iso is created

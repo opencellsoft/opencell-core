@@ -4,7 +4,7 @@ Feature: Create/Update a Billing Account by API
   Background: The classic offer is already executed
 
   @admin @superadmin
-  Scenario Outline: <action> a Billing Account by API <errorCode>
+  Scenario Outline: <status> <action> a Billing Account by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The billing account is created

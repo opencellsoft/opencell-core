@@ -4,7 +4,7 @@ Feature: Create/Update seller Plan by API
   Background: The classic offer is already executed
 
   @admin @superadmin
-  Scenario Outline: <action> seller Plan by API <errorCode>
+  Scenario Outline: <status> <action> seller Plan by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The seller is created

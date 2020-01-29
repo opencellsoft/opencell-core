@@ -6,7 +6,7 @@ Feature: Delete Role by API
 
 
   @admin @superadmin
-  Scenario Outline: <action> Role by API <errorCode>
+  Scenario Outline: <status> <action> Role by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>" with identifier "name"
     Then Validate that the statusCode is "<statusCode>"

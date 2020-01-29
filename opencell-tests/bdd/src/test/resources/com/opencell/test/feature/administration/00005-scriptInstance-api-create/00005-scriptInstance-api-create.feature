@@ -4,7 +4,7 @@ Feature: Create/Update script instance by API
   Background: The classic offer is already executed
 
   @admin @superadmin
-  Scenario Outline: <action> script instance by API <errorCode>
+  Scenario Outline: <status> <action> script instance by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The script instance is created

@@ -4,7 +4,7 @@ Feature: Create/Update Role by API
   Background: The system is configured.
 
   @admin @superadmin
-  Scenario Outline: <action> Role by API <errorCode>
+  Scenario Outline: <status> <action> Role by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The role is created

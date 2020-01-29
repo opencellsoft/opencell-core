@@ -4,7 +4,7 @@ Feature: Create/Update Currency Iso by API
   Background: The system is configured.
 
   @admin @superadmin
-  Scenario Outline: <action> Currency Iso by API <errorCode>
+  Scenario Outline: <status> <action> Currency Iso by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The currency iso is created

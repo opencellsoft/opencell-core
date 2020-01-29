@@ -4,7 +4,7 @@ Feature: Create/Update Invoice Category by API
   Background: The classic offer is already executed
 
   @admin @superadmin
-  Scenario Outline: <action> Invoice Category by API <errorCode>
+  Scenario Outline: <status> <action> Invoice Category by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The invoice category is created

@@ -6,7 +6,7 @@ Feature: Delete Billing Cycle by API
 
 
   @admin @superadmin
-  Scenario Outline: <action> Billing Cycle by API <errorCode>
+  Scenario Outline: <status> <action> Billing Cycle by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The entity is deleted

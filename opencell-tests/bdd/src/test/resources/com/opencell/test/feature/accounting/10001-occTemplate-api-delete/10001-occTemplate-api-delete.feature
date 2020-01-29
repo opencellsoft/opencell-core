@@ -6,7 +6,7 @@ Feature: Delete OCC Template code by API
 
 
   @admin @superadmin
-  Scenario Outline: <action> OCC Template by API <errorCode>
+  Scenario Outline: <status> <action> OCC Template by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The entity is deleted

@@ -6,7 +6,7 @@ Feature: Delete Job Instance by API
 
 
   @admin @superadmin
-  Scenario Outline: <action> Job Instance by API <errorCode>
+  Scenario Outline: <status> <action> Job Instance by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The entity is deleted

@@ -4,7 +4,7 @@ Feature: Create/Update Termination reason by API
   Background: The system is configured.
 
   @admin @superadmin
-  Scenario Outline: <action> Termination reason by API <errorCode>
+  Scenario Outline: <status> <action> Termination reason by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The Termination reason is created

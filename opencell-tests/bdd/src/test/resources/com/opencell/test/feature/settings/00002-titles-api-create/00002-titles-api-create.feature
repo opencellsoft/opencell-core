@@ -4,7 +4,7 @@ Feature: Create/Update Title and civility
   Background: System is configured.
 
   @admin @superadmin
-  Scenario Outline: <action> a title and civilities by API <errorCode>
+  Scenario Outline: <status> <action> a title and civilities by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The title and civility is created

@@ -4,7 +4,7 @@ Feature: Create/Update an invoice subcategory country by API
   Background: The classic offer is executed
 
   @admin @superadmin
-  Scenario Outline: <action> an invoice subcategory country by API <errorCode>
+  Scenario Outline: <status> <action> an invoice subcategory country by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The invoiceSubCategoryCountry is created

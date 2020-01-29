@@ -4,7 +4,7 @@ Feature: Create OCC Template by API
   Background: The classic offer is already executed
 
   @admin @superadmin
-  Scenario Outline: <action> OCC Template by API <errorCode>
+  Scenario Outline: <status> <action> OCC Template by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The occ template is created

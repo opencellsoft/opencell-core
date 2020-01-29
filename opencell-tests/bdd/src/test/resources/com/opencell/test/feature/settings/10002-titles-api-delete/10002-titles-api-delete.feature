@@ -6,7 +6,7 @@ Feature: Create, modify and delete Title and civility
 
 
   @admin @superadmin
-  Scenario Outline: <action> title and civilities by API <errorCode>
+  Scenario Outline: <status> <action> title and civilities by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The entity is deleted

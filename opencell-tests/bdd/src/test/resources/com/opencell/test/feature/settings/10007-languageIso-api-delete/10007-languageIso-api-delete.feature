@@ -6,7 +6,7 @@ Feature: Delete Language Iso by API
 
 
   @admin @superadmin
-  Scenario Outline: <action> Language Iso by API <errorCode>
+  Scenario Outline: <status> <action> Language Iso by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The entity is deleted

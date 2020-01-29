@@ -4,7 +4,7 @@ Feature: Create/Update offer template by API
   Background: The classic offer is executed
 
   @admin @superadmin
-  Scenario Outline: <action> offer template by API <errorCode>
+  Scenario Outline: <status> <action> offer template by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The offer template is created

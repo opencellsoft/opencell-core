@@ -6,7 +6,7 @@ Feature: Delete a Customer Account by API
 
 
   @admin @superadmin
-  Scenario Outline: <action> a Customer Account by API <errorCode>
+  Scenario Outline: <status> <action> a Customer Account by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The entity is deleted

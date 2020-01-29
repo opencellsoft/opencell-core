@@ -6,7 +6,7 @@ Feature: Create/Update a User Account by API
 
 
   @admin @superadmin
-  Scenario Outline: <action> a User Account by API <errorCode>
+  Scenario Outline: <status> <action> a User Account by API <errorCode>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
     Then The user account is created
