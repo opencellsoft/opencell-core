@@ -1,0 +1,13 @@
+{
+    "bomCode": "BOM_WITH_BSM",
+    "code": "OF_SE_NO_OVERRIDE",
+    "name": "Offer ServiceTemplate",
+    "description": "Offer using the ServiceTemplate NO CF OVERRIDE 1579603020",
+    "serviceToActivate": [
+        {
+            "code": "SE_EMPTY_WITH_CF",
+            "description": "From ServiceTemplate with no CF override",
+            "mandatory": true
+        }
+    ]
+}
