@@ -691,9 +691,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             } else {
                 amount = amount.add(wo.getAmountWithTax());
             }
-            chargeApplicationRatingService.incrementCounter(chargeInstance, wo.getOperationDate(), quantity, amount, isVirtual);
-        }
 
+        }
+        chargeApplicationRatingService.incrementCounter(chargeInstance, quantity, amount, isVirtual);
 
     }
 

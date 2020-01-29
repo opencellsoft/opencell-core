@@ -384,14 +384,15 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * Increment an accumulator counter.
      *
      * @param chargeInstance   The charge instance
-     * @param walletOperations the Wallet operations
+     * @param quantity the quantity of Wallet operations
+     * @param amount the amount of Wallet operations
      * @param isVirtual        check if rating is virtual
      */
-    public void incrementCounter(ChargeInstance chargeInstance, Date opDate, BigDecimal quantity, BigDecimal amount, boolean isVirtual) {
+    public void incrementCounter(ChargeInstance chargeInstance, BigDecimal quantity, BigDecimal amount, boolean isVirtual) {
         CounterInstance counterInstance = chargeInstance.getCounter();
         if (counterInstance != null) {
             // get the counter period of charge instance
-            CounterPeriod counterPeriod = counterInstanceService.getCounterPeriod(counterInstance, opDate);
+            CounterPeriod counterPeriod = counterInstanceService.getCounterPeriod(counterInstance, chargeInstance.getChargeDate());
             if (counterPeriod == null || counterPeriod.getValue() == null || !counterPeriod.getValue().equals(BigDecimal.ZERO)) {
                 // The counter will be incremented by charge quantity
                 if (counterPeriod == null) {
