@@ -1,4 +1,4 @@
-@#4928-BDD @test
+@#4928-BDD
 Feature: Create a CustomField applied on service template
 
   @admin @superadmin

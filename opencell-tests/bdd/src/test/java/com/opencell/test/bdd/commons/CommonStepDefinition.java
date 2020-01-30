@@ -50,21 +50,29 @@ public class CommonStepDefinition implements En {
             case "Create":
             case "Post":
             case "post":
+            case "POST":
             case "CreateOrUpdate":
                 response = RestApiUtils.post(api, bodyRequest);
                 break;
             case "read":
             case "Read":
-            case "get":
             case "Get":
+            case "get":
+            case "GET":
                 response = RestApiUtils.get(api, bodyRequest);
                 break;
             case "update":
             case "Update":
+            case "Put":
+            case "put":
+            case "PUT":
                 response = RestApiUtils.put(api, bodyRequest);
                 break;
             case "delete":
             case "Delete":
+            case "Del":
+            case "del":
+            case "DEL":
                 response = RestApiUtils.delete(api + base.getCode().get(), bodyRequest);
                 break;
             }
@@ -88,21 +96,29 @@ public class CommonStepDefinition implements En {
                     case "Create":
                     case "Post":
                     case "post":
+                    case "POST":
                     case "CreateOrUpdate":
                         response = RestApiUtils.post(api + base.getField(field).get(), bodyRequest);
                         break;
                     case "read":
                     case "Read":
-                    case "get":
                     case "Get":
+                    case "get":
+                    case "GET":
                         response = RestApiUtils.get(api + base.getField(field).get(), bodyRequest);
                         break;
                     case "update":
                     case "Update":
+                    case "Put":
+                    case "put":
+                    case "PUT":
                         response = RestApiUtils.put(api + base.getField(field).get(), bodyRequest);
                         break;
                     case "delete":
                     case "Delete":
+                    case "Del":
+                    case "del":
+                    case "DEL":
                         response = RestApiUtils.delete(api + base.getField(field).get(), bodyRequest);
                         break;
                     }
