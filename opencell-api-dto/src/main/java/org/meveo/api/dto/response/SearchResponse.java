@@ -24,6 +24,23 @@ public abstract class SearchResponse extends BaseResponse {
     private PagingAndFiltering paging;
 
     /**
+     * Generic constructor
+     */
+    public SearchResponse() {
+        super();
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param paging Paging and filtering criteria containing total record cound
+     */
+    public SearchResponse(PagingAndFiltering paging) {
+        super();
+        this.paging = paging;
+    }
+
+    /**
      * Sets the paging.
      *
      * @param paging the new paging
