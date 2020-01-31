@@ -127,6 +127,13 @@ public class WalletOperation extends BaseEntity {
     private String description;
 
     /**
+     * creation timestamp
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created")
+    private Date created;
+    
+    /**
      * Last status change timestamp
      */
     @Temporal(TemporalType.TIMESTAMP)
@@ -507,6 +514,7 @@ public class WalletOperation extends BaseEntity {
         this.billingAccount = userAccount.getBillingAccount();
 
         this.status = WalletOperationStatusEnum.OPEN;
+        this.created = new Date();
         this.updated = new Date();
     }
 
@@ -590,6 +598,7 @@ public class WalletOperation extends BaseEntity {
             this.offerCode = offerTemplate.getCode();
         }
         this.status = status != null ? status : WalletOperationStatusEnum.OPEN;
+        this.created = new Date();
         this.updated = new Date();
     }
 
@@ -892,6 +901,7 @@ public class WalletOperation extends BaseEntity {
         result.setWallet(wallet);
         result.setEdr(edr);
         result.setSubscription(subscription);
+        result.setCreated(created);
         result.setUpdated(updated);
 
         return result;
@@ -1071,5 +1081,19 @@ public class WalletOperation extends BaseEntity {
      */
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+    
+    /**
+     * @return creation date
+     */
+    public Date getCreated() {
+        return created;
+    }
+
+    /**
+     * @param created creation date
+     */
+    public void setCreated(Date created) {
+        this.created = created;
     }
 }
