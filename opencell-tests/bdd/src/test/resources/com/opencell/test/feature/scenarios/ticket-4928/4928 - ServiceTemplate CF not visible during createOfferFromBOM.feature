@@ -1,4 +1,4 @@
-@#4928-BDD
+@#4928-BDD @ignore
 Feature: Create a CustomField applied on service template
 
   @admin @superadmin
