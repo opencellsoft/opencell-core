@@ -2219,13 +2219,8 @@
     </changeSet>
 
     <changeSet id="#4933_20200117" author="AbdellatifBARI">
-        <dropColumn tableName="adm_file_format">
-            <column name="configuration_template"></column>
-        </dropColumn>
+        <addNotNullConstraint tableName="adm_file_format" columnName="configuration_template" columnDataType="varchar(255)"/>
         <addColumn tableName="adm_file_format">
-            <column name="configuration_template" type="text">
-                <constraints nullable="false" />
-            </column>
             <column name="job_code" type="varchar(255)" />
         </addColumn>
     </changeSet>
