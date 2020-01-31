@@ -24,9 +24,8 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -40,6 +39,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.JobCategoryEnumCoverter;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
@@ -81,7 +81,7 @@ public class JobInstance extends EnableBusinessCFEntity {
     /**
      * Job category
      */
-    @Enumerated(EnumType.STRING)
+    @Convert(converter=JobCategoryEnumCoverter.class)
     @Column(name = "job_category")
     private JobCategoryEnum jobCategoryEnum;
 
