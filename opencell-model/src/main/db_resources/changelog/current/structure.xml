@@ -229,6 +229,7 @@
     </changeSet>
 
 
+
     <changeSet id="#4282_20190520" author="AndriusKarpavicius">
         <addColumn tableName="billing_rated_transaction">
             <column name="service_instance_id" type="bigInt"/>
@@ -1226,13 +1227,12 @@
         <sql>insert into ${db.schema.adapted}flat_file_seq values(1)</sql>
     </changeSet>
 
-    <changeSet id="#4371_20190620_4" author="AbdellatifBARI">
+	<changeSet id="#4371_20190620_4" author="AbdellatifBARI">
         <createSequence sequenceName="flat_file_seq" startValue="1" />
         <createTable tableName="flat_file">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="flat_file_pkey" />
             </column>
-
             <column name="version" type="int4" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
@@ -1245,13 +1245,28 @@
             <column name="file_name" type="varchar(255)" />
             <column name="status" type="varchar(255)" />
             <column name="file_format_id" type="bigint" />
+            <column name="processed" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="error_message" type="text" />
         </createTable>
         <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari6yr9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="flat_file" />
         <addForeignKeyConstraint baseColumnNames="file_format_id" baseTableName="flat_file" constraintName="fk_d4iavkklx1qg1ani36bari5o5i" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_format" />
-        <sql dbms="mysql">CREATE INDEX flat_file_code_index ON ${db.schema.adapted}flat_file(code)</sql>
     </changeSet>
+    
+    <!--<changeSet id="#3510_20190712_4" author="Mohammed_EL-AZZOUZI">
+                                 
+        <sql>INSERT INTO ${db.schema.adapted}cat_unit_of_measure(id, version, code, created, symbol, description)
+                (SELECT nextval( 'cat_unit_of_measure_seq'), 0, FR.rating_unit_description, current_date, FR.rating_unit_description, FR.rating_unit_description||' MIG-R ' FROM (SELECT DISTINCT rating_unit_description
+                    FROM ${db.schema.adapted}cat_charge_template CT where rating_unit_description is not null) FR);</sql>
+        <sql>INSERT INTO ${db.schema.adapted}cat_unit_of_measure(id, version, code, created, symbol, description, multiplicator, parent_id)
+                (SELECT nextval( 'cat_unit_of_measure_seq'), 0, FR.input_unit_description, current_date, FR.input_unit_description, FR.input_unit_description||' MIG-I ', FR.unit_multiplicator,
+                         (select id from ${db.schema.adapted}cat_unit_of_measure UOM where UOM.code=FR.rating_unit_description AND UOM.description=UOM.code||' MIG-R ' ) 
+                 FROM (SELECT DISTINCT input_unit_description, rating_unit_description, unit_multiplicator FROM ${db.schema.adapted}cat_charge_template CT where input_unit_description is not null and unit_multiplicator is not null) FR);</sql>
+        <sql>UPDATE ${db.schema.adapted}cat_charge_template CT SET rating_unitofmeasure = (SELECT UOM.id FROM ${db.schema.adapted}cat_unit_of_measure UOM 
+                WHERE UOM.code=CT.rating_unit_description AND UOM.description=UOM.code||' MIG-R ' ) WHERE rating_unitofmeasure IS null AND rating_unit_description IS NOT null;</sql>
+        <sql>UPDATE ${db.schema.adapted}cat_charge_template CT SET input_unitofmeasure = (SELECT UOM.id FROM ${db.schema.adapted}cat_unit_of_measure UOM 
+                WHERE UOM.code=CT.input_unit_description AND UOM.description=UOM.code||' MIG-I ' ) WHERE input_unitofmeasure IS null AND input_unit_description IS NOT null;</sql>
+    </changeSet>-->
     <changeSet id="#4371_20190620_5" author="AbdellatifBARI" dbms="postgresql">
         <sql>CREATE INDEX flat_file_code_index ON ${db.schema.adapted} flat_file(lower(code))</sql>
     </changeSet>
@@ -2122,6 +2137,65 @@
         </addColumn>
     </changeSet>
     
+        <changeSet id="#3510_20190516" author="MounirBahije">
+        <createTable tableName="cat_unit_of_measure">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_unit_of_measure_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+<!--            <column name="multiplicator" type="bigint" />-->
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="symbol" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+            <column name="multiplicator" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="parent_id" type="bigint" />
+        </createTable>
+
+        <addColumn tableName="cat_charge_template">
+            <column name="input_unitofmeasure" type="bigint"/>
+            <column name="rating_unitofmeasure" type="bigint"/>
+            <column name="input_unit_el" type="varchar(2000)"/>
+            <column name="output_unit_el" type="varchar(2000)"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="cat_charge_template" constraintName="fk_input_cat_charge_template_cat_unit_of_measure" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
+
+        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="cat_charge_template" constraintName="fk_rating_cat_charge_template_cat_unit_of_measure" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
+
+        <addColumn tableName="billing_wallet_operation">
+            <column name="input_unitofmeasure" type="bigint"/>
+            <column name="rating_unitofmeasure" type="bigint"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="billing_wallet_operation" constraintName="fk_input_billing_wallet_operation_cat_unit_of_measure" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
+
+        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="billing_wallet_operation" constraintName="fk_rating_billing_wallet_operation_cat_unit_of_measure" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
+
+
+        <addNotNullConstraint columnDataType="bigint" tableName="cat_unit_of_measure" columnName="multiplicator"/>
+        <addDefaultValue tableName="cat_unit_of_measure" columnName="multiplicator" defaultValueNumeric="1"/>
+
+    </changeSet>
+    
     <changeSet id="#4766_20191111" author="MohammedELAZZOUZI">
     	<addNotNullConstraint tableName="adm_currency" columnName="currency_code" columnDataType="varchar(3)"/>
     	<addNotNullConstraint tableName="adm_currency" columnName="description_en" columnDataType="varchar(255)"/>
@@ -2345,15 +2419,11 @@ END $$;]]>
     </changeSet>
 
     <changeSet id="#4933_20200117" author="AbdellatifBARI">
-        <dropColumn tableName="adm_file_format">
-            <column name="configuration_template"></column>
-        </dropColumn>
+        <addNotNullConstraint tableName="adm_file_format" columnName="configuration_template" columnDataType="varchar(255)"/>
         <addColumn tableName="adm_file_format">
-            <column name="configuration_template" type="text">
-                <constraints nullable="false" />
-            </column>
             <column name="job_code" type="varchar(255)" />
         </addColumn>
     </changeSet>
 
 </databaseChangeLog>
+

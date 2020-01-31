@@ -5983,6 +5983,609 @@
 					"response": []
 				}
 			]
-		}
+		},
+        {
+            "name": "UnitOfMeasureTests",
+            "item": [
+                {
+                    "name": "create UnitOfMeasure",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "id": "f5bfe740-bc56-4dcb-92b6-19fc5d736e1b",
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "id": "a910d11c-cf6e-4a84-a883-ca5f8225f3f4",
+                                "exec": [
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "basic",
+                            "basic": [
+                                {
+                                    "key": "username",
+                                    "value": "{{opencell.username}}",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "password",
+                                    "value": "{{opencell.password}}",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "saveHelperData",
+                                    "value": true,
+                                    "type": "boolean"
+                                },
+                                {
+                                    "key": "showPassword",
+                                    "value": false,
+                                    "type": "boolean"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{ \n\t\t\"symbol\": \"Min\",\n\t\t\"code\": \"Minute\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{opencell.url}}/catalog/unitOfMeasure",
+                            "host": [
+                                "{{opencell.url}}"
+                            ],
+                            "path": [
+                                "catalog",
+                                "unitOfMeasure"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "update UnitOfMeasure",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "id": "f5bfe740-bc56-4dcb-92b6-19fc5d736e1b",
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "id": "a910d11c-cf6e-4a84-a883-ca5f8225f3f4",
+                                "exec": [
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "basic",
+                            "basic": [
+                                {
+                                    "key": "username",
+                                    "value": "{{opencell.username}}",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "password",
+                                    "value": "{{opencell.password}}",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "saveHelperData",
+                                    "value": true,
+                                    "type": "boolean"
+                                },
+                                {
+                                    "key": "showPassword",
+                                    "value": false,
+                                    "type": "boolean"
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{ \n\t\t\"symbol\": \"Min\",\n\t\t\"code\": \"Minute\",\n\t\t\"description\": \"minutes, unit of measure of time.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{opencell.url}}/catalog/unitOfMeasure",
+                            "host": [
+                                "{{opencell.url}}"
+                            ],
+                            "path": [
+                                "catalog",
+                                "unitOfMeasure"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "find UnitOfMeasure",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "id": "f5bfe740-bc56-4dcb-92b6-19fc5d736e1b",
+                                "exec": [
+                                    "var uom = pm.response.json().unitOfMeasure;",
+                                    "",
+                                    "pm.test('check created UnitOfMeasure fields', function() {",
+                                    "    pm.expect(uom.symbol).to.eql(\"Min\");",
+                                    "    pm.expect(uom.code).to.eql(\"Minute\");",
+                                    "    pm.expect(uom.description).to.eql(\"minutes, unit of measure of time.\");",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "id": "a910d11c-cf6e-4a84-a883-ca5f8225f3f4",
+                                "exec": [
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "auth": {
+                            "type": "basic",
+                            "basic": [
+                                {
+                                    "key": "username",
+                                    "value": "{{opencell.username}}",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "password",
+                                    "value": "{{opencell.password}}",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "saveHelperData",
+                                    "value": true,
+                                    "type": "boolean"
+                                },
+                                {
+                                    "key": "showPassword",
+                                    "value": false,
+                                    "type": "boolean"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{ \n\t\t\"symbol\": \"Min\",\n\t\t\"code\": \"Minute\",\n\t\t\"description\": \"minutes, unit of measure of time\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{opencell.url}}/catalog/unitOfMeasure?unitOfMeasureCode=Minute",
+                            "host": [
+                                "{{opencell.url}}"
+                            ],
+                            "path": [
+                                "catalog",
+                                "unitOfMeasure"
+                            ],
+                            "query": [
+                                {
+                                    "key": "unitOfMeasureCode",
+                                    "value": "Minute"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "delete UnitOfMeasure",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "id": "f5bfe740-bc56-4dcb-92b6-19fc5d736e1b",
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "id": "a910d11c-cf6e-4a84-a883-ca5f8225f3f4",
+                                "exec": [
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "basic",
+                            "basic": [
+                                {
+                                    "key": "username",
+                                    "value": "{{opencell.username}}",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "password",
+                                    "value": "{{opencell.password}}",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "saveHelperData",
+                                    "value": true,
+                                    "type": "boolean"
+                                },
+                                {
+                                    "key": "showPassword",
+                                    "value": false,
+                                    "type": "boolean"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{ \n\t\t\"symbol\": \"Min\",\n\t\t\"code\": \"Minute\",\n\t\t\"description\": \"minutes, unit of measure of time\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{opencell.url}}/catalog/unitOfMeasure/Minute",
+                            "host": [
+                                "{{opencell.url}}"
+                            ],
+                            "path": [
+                                "catalog",
+                                "unitOfMeasure",
+                                "Minute"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "createOrUpdate-create UnitOfMeasure",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "id": "f5bfe740-bc56-4dcb-92b6-19fc5d736e1b",
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "id": "a910d11c-cf6e-4a84-a883-ca5f8225f3f4",
+                                "exec": [
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "basic",
+                            "basic": [
+                                {
+                                    "key": "username",
+                                    "value": "{{opencell.username}}",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "password",
+                                    "value": "{{opencell.password}}",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "saveHelperData",
+                                    "value": true,
+                                    "type": "boolean"
+                                },
+                                {
+                                    "key": "showPassword",
+                                    "value": false,
+                                    "type": "boolean"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{ \n\t\t\"symbol\": \"Sec\",\n\t\t\"code\": \"Second\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{opencell.url}}/catalog/unitOfMeasure/createOrUpdate",
+                            "host": [
+                                "{{opencell.url}}"
+                            ],
+                            "path": [
+                                "catalog",
+                                "unitOfMeasure",
+                                "createOrUpdate"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "createOrUpdate-update UnitOfMeasure",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "id": "f5bfe740-bc56-4dcb-92b6-19fc5d736e1b",
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "id": "a910d11c-cf6e-4a84-a883-ca5f8225f3f4",
+                                "exec": [
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "basic",
+                            "basic": [
+                                {
+                                    "key": "username",
+                                    "value": "{{opencell.username}}",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "password",
+                                    "value": "{{opencell.password}}",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "saveHelperData",
+                                    "value": true,
+                                    "type": "boolean"
+                                },
+                                {
+                                    "key": "showPassword",
+                                    "value": false,
+                                    "type": "boolean"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{ \n\t\t\"symbol\": \"S\",\n\t\t\"code\": \"Second\",\n\t\t\"description\": \"seconds, base unit of measure of time.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{opencell.url}}/catalog/unitOfMeasure/createOrUpdate",
+                            "host": [
+                                "{{opencell.url}}"
+                            ],
+                            "path": [
+                                "catalog",
+                                "unitOfMeasure",
+                                "createOrUpdate"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "list UnitOfMeasure Copy",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "id": "f5bfe740-bc56-4dcb-92b6-19fc5d736e1b",
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "var rep = pm.response.json();",
+                                    "",
+                                    "pm.test('check created and deleted UnitOfMeasure', function() {",
+                                    "    pm.expect(rep.listUnitOfMeasure.length).to.be.above(0);",
+                                    "    let matched1=\"false\"",
+                                    "    let matched2=\"false\"",
+                                    "    _.forEach(rep.listUnitOfMeasure, (uom, index) => {",
+                                    "        if (uom.code === \"Second\") { ",
+                                    "            matched1=\"true\"",
+                                    "            pm.expect(uom.symbol).to.eql(\"S\");",
+                                    "        }",
+                                    "        if (uom.code === \"Minute\") { ",
+                                    "            matched2=\"true\"",
+                                    "        }",
+                                    "    });",
+                                    "    pm.expect(matched1).to.eql(\"true\");",
+                                    "    pm.expect(matched2).to.eql(\"false\");",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "id": "a910d11c-cf6e-4a84-a883-ca5f8225f3f4",
+                                "exec": [
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "auth": {
+                            "type": "basic",
+                            "basic": [
+                                {
+                                    "key": "username",
+                                    "value": "{{opencell.username}}",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "password",
+                                    "value": "{{opencell.password}}",
+                                    "type": "string"
+                                },
+                                {
+                                    "key": "saveHelperData",
+                                    "value": true,
+                                    "type": "boolean"
+                                },
+                                {
+                                    "key": "showPassword",
+                                    "value": false,
+                                    "type": "boolean"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{ \n\t\t\"symbol\": \"S\",\n\t\t\"code\": \"Seconds\",\n\t\t\"description\": \"seconds, base unit of measure of time.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{opencell.url}}/catalog/unitOfMeasure/list",
+                            "host": [
+                                "{{opencell.url}}"
+                            ],
+                            "path": [
+                                "catalog",
+                                "unitOfMeasure",
+                                "list"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
 	]
 }

@@ -56,6 +56,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.rating.EDR;
 
 /**
@@ -326,6 +327,21 @@ public class WalletOperation extends BaseEntity {
     @Size(max = 20)
     private String ratingUnitDescription;
 
+
+    /**
+     * input_unit_unitOfMeasure
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "input_unitofmeasure")
+    private UnitOfMeasure inputUnitOfMeasure;
+
+    /**
+     * rating_unit_unitOfMeasure
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rating_unitofmeasure")
+    private UnitOfMeasure ratingUnitOfMeasure;
+
     /**
      * Input quantity
      */
@@ -441,8 +457,12 @@ public class WalletOperation extends BaseEntity {
         this.code = chargeTemplate.getCode();
         this.description = chargeInstance.getDescription();
         this.chargeInstance = chargeInstance;
-        this.ratingUnitDescription = chargeTemplate.getRatingUnitDescription();
-        this.inputUnitDescription = chargeTemplate.getInputUnitDescription();
+        UnitOfMeasure CTInputUnitOfMeasure = chargeTemplate.getInputUnitOfMeasure();
+        UnitOfMeasure CTRatingUnitOfMeasure = chargeTemplate.getRatingUnitOfMeasure();
+        this.ratingUnitDescription = CTRatingUnitOfMeasure != null ? CTRatingUnitOfMeasure.getCode() : chargeTemplate.getRatingUnitDescription();
+        this.inputUnitDescription = CTInputUnitOfMeasure != null ? CTInputUnitOfMeasure.getCode() : chargeTemplate.getInputUnitDescription();
+        this.inputUnitOfMeasure=CTInputUnitOfMeasure;
+		this.ratingUnitOfMeasure=CTRatingUnitOfMeasure;
         this.operationDate = operationDate;
         this.orderNumber = orderNumber;
         this.parameter1 = criteria1;
@@ -1071,5 +1091,22 @@ public class WalletOperation extends BaseEntity {
      */
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public UnitOfMeasure getInputUnitOfMeasure() {
+        return inputUnitOfMeasure;
+    }
+
+    public void setInput_unitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
+        this.inputUnitOfMeasure = inputUnitOfMeasure;
+    }
+
+    public UnitOfMeasure getRatingUnitOfMeasure() {
+        return ratingUnitOfMeasure;
+    }
+
+    public void setRatingUnitOfMeasure(UnitOfMeasure ratingUnitOfMeasure) {
+        this.ratingUnitOfMeasure = ratingUnitOfMeasure;
+
     }
 }
