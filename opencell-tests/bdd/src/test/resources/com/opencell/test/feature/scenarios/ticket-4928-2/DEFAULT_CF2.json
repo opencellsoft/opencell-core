@@ -1,0 +1,17 @@
+{
+    "code": "aLong",
+    "description": "A long on ServiceTemplate",
+    "fieldType": "LONG",
+    "appliesTo": "ServiceTemplate",
+    "defaultValue": "-3",
+    "storageType": "SINGLE",
+    "valueRequired": false,
+    "maxValue": 100,
+    "versionable": false,
+    "triggerEndPeriodEvent": false,
+    "allowEdit": true,
+    "hideOnNew": false,
+    "cacheValue": false,
+    "applicableOnEl":"#{true}",
+    "guiPosition": null
+}

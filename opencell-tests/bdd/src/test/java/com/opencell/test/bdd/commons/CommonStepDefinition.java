@@ -50,21 +50,30 @@ public class CommonStepDefinition implements En {
             case "Create":
             case "Post":
             case "post":
+            case "POST":
+            case "CreateOrUpdate":
                 response = RestApiUtils.post(api, bodyRequest);
                 break;
             case "read":
             case "Read":
-            case "get":
             case "Get":
+            case "get":
+            case "GET":
                 response = RestApiUtils.get(api, bodyRequest);
                 break;
             case "update":
             case "Update":
+            case "Put":
+            case "put":
+            case "PUT":
                 response = RestApiUtils.put(api, bodyRequest);
                 break;
             case "delete":
             case "Delete":
-                response = RestApiUtils.delete(api, bodyRequest);
+            case "Del":
+            case "del":
+            case "DEL":
+                response = RestApiUtils.delete(api + base.getCode().get(), bodyRequest);
                 break;
             }
             ActionStatus actionStatus = (response.extract().jsonPath().get("actionStatus") == null
@@ -78,6 +87,52 @@ public class CommonStepDefinition implements En {
             assertNotNull(base.getResponse().getActionStatus());
             assertNotNull(base.getResponse().getHttpStatusCode());
         });
+        When("^I call the \"([^\"]*)\" \"([^\"]*)\" with identifier \"([^\"]*)\"$",
+                (String action, String api, String field) -> {
+                    String bodyRequest = getBodyRequest();
+                    ValidatableResponse response = null;
+                    switch (action) {
+                    case "create":
+                    case "Create":
+                    case "Post":
+                    case "post":
+                    case "POST":
+                    case "CreateOrUpdate":
+                        response = RestApiUtils.post(api + base.getField(field).get(), bodyRequest);
+                        break;
+                    case "read":
+                    case "Read":
+                    case "Get":
+                    case "get":
+                    case "GET":
+                        response = RestApiUtils.get(api + base.getField(field).get(), bodyRequest);
+                        break;
+                    case "update":
+                    case "Update":
+                    case "Put":
+                    case "put":
+                    case "PUT":
+                        response = RestApiUtils.put(api + base.getField(field).get(), bodyRequest);
+                        break;
+                    case "delete":
+                    case "Delete":
+                    case "Del":
+                    case "del":
+                    case "DEL":
+                        response = RestApiUtils.delete(api + base.getField(field).get(), bodyRequest);
+                        break;
+                    }
+                    ActionStatus actionStatus = (response.extract().jsonPath().get("actionStatus") == null
+                            ? response.extract().body().as(ActionStatus.class)
+                            : response.extract().jsonPath().getObject("actionStatus", ActionStatus.class));
+                    if (actionStatus.getMessage() == null)
+                        actionStatus.setMessage("");
+                    base.setResponse(new ApiResponse(response.extract().statusCode(), actionStatus));
+                    base.setJsonresponse(response);
+                    assertNotNull(base.getResponse());
+                    assertNotNull(base.getResponse().getActionStatus());
+                    assertNotNull(base.getResponse().getHttpStatusCode());
+                });
         When("^I call the delete \"([^\"]*)\"$", (String api) -> {
             String bodyRequest = getBodyRequest();
             base.getCode().ifPresent( code ->{

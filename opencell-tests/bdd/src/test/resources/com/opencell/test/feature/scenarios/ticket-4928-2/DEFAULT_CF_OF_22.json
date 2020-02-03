@@ -1,0 +1,17 @@
+{
+    "code": "aLongFiltered",
+    "description": "A long on OfferTemplate with applicableOnEL",
+    "fieldType": "LONG",
+    "appliesTo": "OfferTemplate",
+    "defaultValue": "-3",
+    "storageType": "SINGLE",
+    "valueRequired": false,
+    "maxValue": 100,
+    "versionable": false,
+    "triggerEndPeriodEvent": false,
+    "allowEdit": true,
+    "hideOnNew": false,
+    "cacheValue": false,
+    "applicableOnEl":"#{ entity.businessOfferModel.code.contains('BOM_') || entity.code.contains('OF_')}",
+    "guiPosition": null
+}

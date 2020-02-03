@@ -1,0 +1,17 @@
+{
+    "code": "aStringFiltered",
+    "description": "A string on ServiceTemplate with applicableOnEL",
+    "fieldType": "STRING",
+    "appliesTo": "ServiceTemplate",
+    "defaultValue": "CFT default value",
+    "storageType": "SINGLE",
+    "valueRequired": false,
+    "maxValue": 100,
+    "versionable": false,
+    "triggerEndPeriodEvent": false,
+    "allowEdit": true,
+    "hideOnNew": false,
+    "cacheValue": false,
+    "applicableOnEl":"#{ entity.businessServiceModel.code.contains('BSM_') || entity.code.contains('SE_')}",
+    "guiPosition": null
+}
