@@ -52,10 +52,10 @@ import java.util.Map.Entry;
         @NamedQuery(name = "CounterPeriod.countPeriodsToPurgeByDate", query = "select count(*) FROM CounterPeriod cp WHERE cp.periodEndDate<=:date"),
         @NamedQuery(name = "CounterPeriod.purgePeriodsByDate", query = "delete CounterPeriod cp WHERE cp.periodEndDate<=:date"),
         @NamedQuery(name = "CounterPeriod.findByCounterEntityAndPeriodDate", query = "SELECT cp FROM CounterPeriod cp "
-                + "WHERE (cp.counterInstance.serviceInstance=:serviceInstance OR cp.counterInstance.subscription=:subscription OR cp.counterInstance.billingAccount=:billingAccount OR cp.counterInstance.userAccount=:userAccount) "
+                + "WHERE (cp.counterInstance.serviceInstance=:serviceInstance OR cp.counterInstance.subscription=:subscription OR cp.counterInstance.billingAccount=:billingAccount OR cp.counterInstance.userAccount=:userAccount OR cp.counterInstance.customerAccount=:customerAccount OR cp.counterInstance.customer=:customer) "
                 + "AND cp.periodStartDate<=:date AND cp.periodEndDate>:date AND cp.counterInstance.code=:counterCode"),
         @NamedQuery(name = "CounterPeriod.findByCounterEntity", query = "SELECT cp FROM CounterPeriod cp "
-                + "WHERE (cp.counterInstance.serviceInstance=:serviceInstance OR cp.counterInstance.subscription=:subscription OR cp.counterInstance.billingAccount=:billingAccount OR cp.counterInstance.userAccount=:userAccount) "
+                + "WHERE (cp.counterInstance.serviceInstance=:serviceInstance OR cp.counterInstance.subscription=:subscription OR cp.counterInstance.billingAccount=:billingAccount OR cp.counterInstance.userAccount=:userAccount OR cp.counterInstance.customerAccount=:customerAccount OR cp.counterInstance.customer=:customer) "
                 + "AND cp.counterInstance.code=:counterCode")
 })
 

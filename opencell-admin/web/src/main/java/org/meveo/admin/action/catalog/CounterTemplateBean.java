@@ -179,7 +179,7 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
      */
     public Object[] getCounterLevels() {
         List<Object> counterLevels = Arrays.asList(entity.getCounterLevel().getClass().getEnumConstants());
-        if (!entity.getAccumulator()) {
+        if (entity.getAccumulator() == null || !entity.getAccumulator()) {
             counterLevels = counterLevels.stream()
                     .filter(counterLevel -> counterLevel.equals(CounterTemplateLevel.SI) || counterLevel.equals(CounterTemplateLevel.SU) || counterLevel
                             .equals(CounterTemplateLevel.UA) || counterLevel.equals(CounterTemplateLevel.BA)).sorted(Comparator.comparing(Object::toString))

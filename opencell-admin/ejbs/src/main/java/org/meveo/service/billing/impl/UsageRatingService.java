@@ -9,6 +9,7 @@ import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.SubscriptionNotFoundException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.event.CounterPeriodEvent;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.jpa.EntityManagerWrapper;
@@ -383,9 +384,9 @@ public class UsageRatingService implements Serializable {
 
         WalletOperation walletOperation = rateEDRwithMatchingCharge(edr, quantityToCharge, usageChargeInstance, false, false);
         ratedEDRResult.setWalletOperation(walletOperation);
-        // counterPeriod set amount value if the counter is of amount type and accumulator.
+        // Set the amount instead of quantity if the counter is accumulator.
         if (deducedCounter != null && deducedCounter.getCounterPeriod() != null) {
-            setCounterPeriodAmount(deducedCounter.getCounterPeriod(), walletOperation);
+            setCounterPeriodAmount(deducedCounter.getCounterPeriod(), walletOperation, null);
         }
         if (!isVirtual) {
             walletOperationService.chargeWalletOperation(walletOperation);
@@ -404,15 +405,24 @@ public class UsageRatingService implements Serializable {
         return ratedEDRResult;
     }
 
-    private void setCounterPeriodAmount(CounterPeriod counterPeriod, WalletOperation walletOperation) {
-        if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator() && counterPeriod.getCounterInstance().getCounterTemplate().getCounterType()
-                .equals(CounterTypeEnum.USAGE_AMOUNT)) {
+    private void setCounterPeriodAmount(CounterPeriod counterPeriod, WalletOperation walletOperation, Reservation reservation) {
+        BigDecimal amount = BigDecimal.ZERO;
+        if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator() && counterPeriod.getCounterType().equals(CounterTypeEnum.USAGE_AMOUNT)) {
             if (appProvider.isEntreprise()) {
-                counterPeriod.setValue(counterPeriod.getValue().add(walletOperation.getAmountWithoutTax()));
+                amount = walletOperation.getAmountWithoutTax();
             } else {
-                counterPeriod.setValue(counterPeriod.getValue().add(walletOperation.getAmountWithTax()));
+                amount = walletOperation.getAmountWithTax();
+            }
+            counterPeriod.setValue(counterPeriod.getValue().add(amount));
+            if (reservation != null) {
+                BigDecimal previousAmount = reservation.getCounterPeriodValues().get(counterPeriod.getId());
+                if (previousAmount == null) {
+                    previousAmount = BigDecimal.ZERO;
+                }
+                reservation.getCounterPeriodValues().put(counterPeriod.getId(), previousAmount.add(amount));
             }
         }
+
     }
 
     /**
@@ -530,6 +540,7 @@ public class UsageRatingService implements Serializable {
         BigDecimal deducedQuantity = null;
         DeducedCounter deducedCounter = null;
 
+
         if (usageChargeInstance.getCounter() != null) {
             // if the charge is associated to a counter, we decrement it. If decremented by the full quantity, rating is finished.
             // If decremented partially or none - proceed with another charge
@@ -561,6 +572,10 @@ public class UsageRatingService implements Serializable {
         reservation.setAmountWithoutTax(reservation.getAmountWithoutTax().add(walletOperation.getAmountWithoutTax()));
         reservation.setAmountWithTax(reservation.getAmountWithoutTax().add(walletOperation.getAmountWithTax()));
 
+        // Set the amount instead of quantity if the counter is an accumulator.
+        if (deducedCounter != null && deducedCounter.getCounterPeriod() != null) {
+            setCounterPeriodAmount(deducedCounter.getCounterPeriod(), walletOperation, reservation);
+        }
         walletOperationService.chargeWalletOperation(walletOperation);
 
         return stopEDRRating;
@@ -854,8 +869,7 @@ public class UsageRatingService implements Serializable {
 
                     UsageChargeTemplate chargeTemplate = null;
                     for (UsageChargeInstance usageChargeInstance : charges) {
-
-                        chargeTemplate = (UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
+                        chargeTemplate = (UsageChargeTemplate) PersistenceUtils.initializeAndUnproxy(usageChargeInstance.getChargeTemplate());
                         log.trace("Try  templateCache {}", chargeTemplate.getCode());
             try {
                         if (isChargeMatch(usageChargeInstance, edr, true)) {

@@ -11,11 +11,13 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
+import org.meveo.api.dto.billing.CounterInstanceDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
+import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
@@ -23,10 +25,14 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.CustomerRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -363,5 +369,21 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 
 		return result;
 	}
-	
+
+    @Override
+    public GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(String customerCode, Date date) {
+        GetCountersInstancesResponseDto result = new GetCountersInstancesResponseDto();
+
+        try {
+            List<CounterInstance> counters = customerApi.filterCountersByPeriod(customerCode, date);
+            for (CounterInstance ci : counters) {
+                result.getCountersInstances().getCounterInstance().add(new CounterInstanceDto(ci));
+            }
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
 }

@@ -21,11 +21,15 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
+import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.api.serialize.RestDateParam;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import java.util.Date;
 
 /**
  * @author Edward P. Legaspi
@@ -294,5 +298,17 @@ public interface CustomerRs extends IBaseRs {
 	@POST
 	@Path("/sequence/{code}/next")
 	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@PathParam("code") String code);
-	
+
+    /**
+     * Filter counters by period date.
+     *
+     * @param customerCode The customer's code
+     * @param date The date corresponding to the period
+     * @return counter instances.
+     */
+    @GET
+    @Path("/filterCountersByPeriod")
+    GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(@QueryParam("customerCode") String customerCode, @QueryParam("date") @RestDateParam Date date);
+
+
 }

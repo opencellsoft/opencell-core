@@ -10,6 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -55,6 +57,8 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.export.CustomBigDecimalConverter;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
@@ -828,4 +832,17 @@ public class CustomerApi extends AccountEntityApi {
         return result;
     }
 
+    public List<CounterInstance> filterCountersByPeriod(String customerCode, Date date) {
+        Customer customer = customerService.findByCode(customerCode);
+
+        if (customer == null) {
+            throw new EntityDoesNotExistsException(BillingAccount.class, customerCode);
+        }
+
+        if (StringUtils.isBlank(date)) {
+            throw new BusinessApiException("date is null");
+        }
+
+        return new ArrayList<>(customerService.filterCountersByPeriod(customer.getCounters(), date).values());
+    }
 }

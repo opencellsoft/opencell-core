@@ -8,6 +8,7 @@ import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -20,6 +21,7 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
@@ -708,4 +710,23 @@ public class CustomerAccountApi extends AccountEntityApi {
                 transferCustomerAccountDto.getAmount());
     }
 
+    /**
+     * Returns list of counters at a given date for a customer account.
+     * @param customerAccountCode the customer account code
+     * @param date the selected date
+     * @return a counter instance list
+     */
+    public List<CounterInstance> filterCountersByPeriod(String customerAccountCode, Date date) {
+        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
+
+        if (customerAccount == null) {
+            throw new EntityDoesNotExistsException(BillingAccount.class, customerAccountCode);
+        }
+
+        if (StringUtils.isBlank(date)) {
+            throw new BusinessApiException("date is null");
+        }
+
+        return new ArrayList<>(customerAccountService.filterCountersByPeriod(customerAccount.getCounters(), date).values());
+    }
 }
