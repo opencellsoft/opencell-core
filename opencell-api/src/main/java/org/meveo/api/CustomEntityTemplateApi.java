@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -121,7 +120,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
                 cftDto.setDisabled(dto.isDisabled());
                 customFieldTemplateApi.createWithoutUniqueConstraint(cftDto, cet.getAppliesTo());
             }
-			String columnNames = dto.getFields().stream().filter(x->x.getUniqueConstraint()!= null && x.getUniqueConstraint()).map(x-> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
+			String columnNames = dto.getFields().stream().filter(x->x.getUniqueConstraint()!= null && x.getUniqueConstraint()).map(x-> CustomFieldTemplate.getDbFieldname(x.getCode())).distinct().sorted().collect(Collectors.joining(","));
 			customFieldTemplateService.addConstraintByColumnsName(cet, columnNames);
         }
 
@@ -258,7 +257,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesToNoCache(appliesTo);
 		String oldConstraintColumns = cetFields.values().stream().filter(x -> x.isUniqueConstraint())
-				.map(x -> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
+				.map(x -> x.getDbFieldname()).distinct().sorted().collect(Collectors.joining(","));
         
         // Create, update or remove fields as necessary
         List<CustomFieldTemplate> cftsToRemove = new ArrayList<CustomFieldTemplate>();
@@ -326,7 +325,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         if(cet !=null) {
 			String newConstraintColumns = CollectionUtils.isEmpty(fields) ? ""
 					: fields.stream().filter(x -> x.getUniqueConstraint() != null && x.getUniqueConstraint())
-							.map(x -> x.getCode()).distinct().sorted().collect(Collectors.joining(","));
+							.map(x -> CustomFieldTemplate.getDbFieldname(x.getCode())).distinct().sorted().collect(Collectors.joining(","));
 			customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns);
         }
     }
