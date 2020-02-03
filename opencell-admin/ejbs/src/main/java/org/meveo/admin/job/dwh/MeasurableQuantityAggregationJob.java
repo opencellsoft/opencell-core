@@ -20,6 +20,7 @@ import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
@@ -107,6 +108,6 @@ public class MeasurableQuantityAggregationJob extends Job {
 
     @Override
     public JobCategoryEnum getJobCategory() {
-        return JobCategoryEnum.DWH;
+        return MeveoJobCategoryEnum.DWH;
     }
 }

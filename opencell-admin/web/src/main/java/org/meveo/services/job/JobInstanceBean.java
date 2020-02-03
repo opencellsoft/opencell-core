@@ -1,11 +1,11 @@
 package org.meveo.services.job;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -18,6 +18,7 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.EnumBuilder;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -74,7 +75,11 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     }
 
     public List<JobCategoryEnum> getJobCategoryEnumValues() {
-        return Arrays.asList(JobCategoryEnum.values());
+    	List<Object> categories = EnumBuilder.values(JobCategoryEnum.class);
+        if (categories != null) {
+           return categories.stream().map(cat -> (JobCategoryEnum) cat).collect(Collectors.toList());
+        }
+        return null;
     }
 
     /**

@@ -12,6 +12,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.MeveoJobCategoryEnum;
 
 /**
  * The Class WorkflowJob execute the given workflow on each entity entity return by the given filter.
@@ -36,7 +37,7 @@ public class WorkflowJob /* extends Job */ {
 
     // @Override
     public JobCategoryEnum getJobCategory() {
-        return JobCategoryEnum.UTILS;
+        return MeveoJobCategoryEnum.UTILS;
     }
 
     // @Override

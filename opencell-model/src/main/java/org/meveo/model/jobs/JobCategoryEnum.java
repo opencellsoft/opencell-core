@@ -18,40 +18,18 @@
  */
 package org.meveo.model.jobs;
 
-public enum JobCategoryEnum {
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-    RATING(1, "jobCategoryEnum.rating"), INVOICING(2, "jobCategoryEnum.invoicing"), IMPORT_HIERARCHY(3, "jobCategoryEnum.importHierarchy"), DWH(4,
-            "jobCategoryEnum.dwh"), ACCOUNT_RECEIVABLES(5,
-                    "jobCategoryEnum.accountReceivables"), WALLET(6, "jobCategoryEnum.wallet"), UTILS(7, "jobCategoryEnum.utils"), MEDIATION(8, "jobCategoryEnum.mediation");
+import org.meveo.commons.utils.JobCategoryTypeAdapter;
+import org.meveo.commons.utils.MeveoEnum;
 
-    private Integer id;
-    private String label;
+@XmlJavaTypeAdapter(JobCategoryTypeAdapter.class)
+@MeveoEnum(identifier = JobCategoryEnum.class)
+public interface JobCategoryEnum<E extends Enum<E>> {
+	String getLabel();
 
-    private JobCategoryEnum(Integer id, String label) {
-        this.id = id;
-        this.label = label;
-    }
+	Integer getId();
 
-    public String getLabel() {
-        return label;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public static JobCategoryEnum getValue(Integer id) {
-        if (id != null) {
-            for (JobCategoryEnum status : values()) {
-                if (id.equals(status.getId())) {
-                    return status;
-                }
-            }
-        }
-        return null;
-    }
-
-    public String toString() {
-        return label.toString();
-    }
+	String getName();
 }
