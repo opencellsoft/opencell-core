@@ -1,7 +1,12 @@
 {
-    "code": "DC_REQUIRED_FIELD",
-    "invoiceDateDelay": "0",
-    "dueDateDelay": "30",
-    "calendar": "MONTHLY"
-
+  "code": "TEST",
+  "description": "TEST Updated",
+  "billingTemplateName": "TEST",
+  "invoiceDateDelay": "0",
+  "dueDateDelay": "30",
+  "invoiceDateProductionDelay": "0",
+  "transactionDateDelay": "0",
+  "invoicingThreshold": 0.01,
+  "calendar": "MONTHLY",
+  "invoiceTypeCode": "ADJ"
 }
