@@ -1,19 +1,20 @@
 package org.meveocrm.services.dwh;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.BeanUtils;
 import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
-
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author Wassim Drira
@@ -63,54 +64,29 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
      * @param mq MeasurableQuantity
      * @return list
      */
-    @SuppressWarnings("rawtypes")
     public List<String> getDimensionList(int dimensionIndex, Date fromDate, Date toDate, MeasurableQuantity mq) {
-        List<String> result = new ArrayList<>();
-        Calendar end = Calendar.getInstance();
-        Calendar start = Calendar.getInstance();
+
         String dimension = "dimension" + dimensionIndex;
-        StringBuilder sqlQuery = new StringBuilder("SELECT DISTINCT(mv.")
-                .append(dimension)
-                .append(") FROM ")
-                .append(MeasuredValue.class.getName())
-                .append(" mv WHERE mv.measurableQuantity= :measurableQuantity ");
-        if (fromDate != null) {
-            start.setTime(fromDate);
-            start.set(Calendar.HOUR, 0);
-            start.set(Calendar.MINUTE, 0);
-            start.set(Calendar.SECOND, 0);
-            start.set(Calendar.MILLISECOND, 0);
-            sqlQuery.append(" AND (mv.date >= :start)");
+        StringBuilder sb = new StringBuilder("SELECT DISTINCT(mv.").append(dimension).append(") FROM ").append(MeasuredValue.class.getName())
+        		.append(" mv WHERE mv.measurableQuantity.id=:mqId AND mv.").append(dimension).append(" IS NOT NULL");
+        Map<String, Object> params = new HashMap<>();
+        params.put("mqId", mq.getId());
+        params.put("mqMeasurementPeriod", mq.getMeasurementPeriod());
+        Date end = DateUtils.setDateToStartOfDay(toDate);
+        Date start = DateUtils.setDateToStartOfDay(fromDate);
+        if (start != null) {
+            sb.append(" AND (mv.date >=:startDate) ");
+            params.put("startDate", start);
         }
-        if (toDate != null) {
-            end.setTime(toDate);
-            end.set(Calendar.HOUR, 0);
-            end.set(Calendar.MINUTE, 0);
-            end.set(Calendar.SECOND, 0);
-            end.set(Calendar.MILLISECOND, 0);
-            sqlQuery.append(" AND (mv.date < :end)");
+        if (end != null) {
+            sb.append(" AND (mv.date <:endDate) ");
+            params.put("endDate", end);
         }
-        sqlQuery.append(" AND mv.measurementPeriod = :measurementPeriod ");
-        sqlQuery.append(" ORDER BY :dimension ASC");
-        Query query = getEntityManager().createQuery(sqlQuery.toString())
-                .setParameter("dimension", "mv." + dimension)
-                .setParameter("measurableQuantity", mq.getId())
-                .setParameter("measurementPeriod", mq.getMeasurementPeriod());
-        if (fromDate != null) {
-            query.setParameter("start", start.getTime());
-        }
-        if (toDate != null) {
-            query.setParameter("end", end.getTime());
-        }
-        List resultList = query.getResultList();
-        if (resultList != null) {
-            for (Object res : resultList) {
-                if (res != null) {
-                    result.add(res.toString());
-                }
-            }
-        }
-        return result;
+        sb.append(" AND mv.measurementPeriod=:mqMeasurementPeriod ORDER BY mv.").append(dimension).append(" ASC");
+        Query query = getEntityManager().createQuery(sb.toString());
+        params.entrySet().forEach(param -> query.setParameter(param.getKey(), param.getValue()));
+
+        return query.getResultList();
     }
 
     /**
