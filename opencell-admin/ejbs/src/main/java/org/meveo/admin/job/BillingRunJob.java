@@ -1,24 +1,20 @@
 package org.meveo.admin.job;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
 
@@ -42,7 +38,7 @@ public class BillingRunJob extends Job {
    
     @Override
     public JobCategoryEnum getJobCategory() {
-        return JobCategoryEnum.INVOICING;
+        return MeveoJobCategoryEnum.INVOICING;
     }
 
    
