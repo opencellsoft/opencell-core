@@ -1,4 +1,4 @@
-@#4928-BDD @test
+@#4928-BDD @scenarios
 Feature: Inherit or Override CustomField values when creating Offer from BOM
 
   Background: System is installed
@@ -91,12 +91,9 @@ Feature: Inherit or Override CustomField values when creating Offer from BOM
 
   Scenario Outline: Create offer <OF_Name>
     Given The entity has the following information "<jsonFile>" as "<dto>"
-    When I call the "<action>" "<api>"
-    Then The offer from bom is created
+    When I call the create offer from bom "<api>"
+    Then The offer template is created
     And Validate that the statusCode is "<statusCode>"
-    And The status is "<status>"
-    And The message  is "<message>"
-    And The errorCode  is "<errorCode>"
 
     Examples: 
       | OF_Name                | jsonFile                                            | dto         | action | api                                   | statusCode | status | errorCode | message |

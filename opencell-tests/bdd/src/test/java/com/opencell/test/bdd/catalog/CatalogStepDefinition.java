@@ -8,7 +8,9 @@ import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 
+import com.opencell.test.bdd.commons.ApiResponse;
 import com.opencell.test.bdd.commons.BaseHook;
+import com.opencell.test.utils.JsonParser;
 import com.opencell.test.utils.RestApiUtils;
 
 import cucumber.api.java8.En;
@@ -45,8 +47,15 @@ public class CatalogStepDefinition implements En {
                 }
             });
         });
+        When("^I call the create offer from bom \"([^\"]*)\"$", (String api) -> {
+            String bodyRequest = JsonParser.writeValueAsString(base.getJsonObject());
+            ValidatableResponse response = RestApiUtils.post(api, bodyRequest);
+            base.setResponse(new ApiResponse(response.extract().statusCode(), null));
+            assertNotNull(base.getResponse());
+            assertNotNull(base.getResponse().getHttpStatusCode());
+        });
         Then("^The offer from bom is created$", () -> {
-            base.getField("bomCode").ifPresent(code -> {
+            base.getCode().ifPresent(code -> {
                 if (base.getResponse().getHttpStatusCode() == HttpStatus.SC_OK) {
                     ValidatableResponse response = RestApiUtils
                             .get("/catalog/offerTemplate?offerTemplateCode=" + code, "");
