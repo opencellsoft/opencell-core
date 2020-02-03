@@ -21,7 +21,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
@@ -304,7 +303,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
                 customFieldInstanceService = (CustomFieldInstanceService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
 
             } catch (NamingException e) {
-                Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
                 log.error("Unable to access CustomFieldInstanceService", e);
                 throw new RuntimeException(e);
             }
@@ -324,7 +322,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
                 scriptInstanceService = (ScriptInstanceService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
 
             } catch (NamingException e) {
-                Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
                 log.error("Unable to access ScriptInstanceService", e);
                 throw new RuntimeException(e);
             }
@@ -344,7 +341,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
                 customTableService = (CustomTableService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
 
             } catch (NamingException e) {
-                Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
                 log.error("Unable to access CustomTableService", e);
                 throw new RuntimeException(e);
             }
@@ -381,7 +377,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCFValue(ICustomFieldEntity entity, String code) {
 
         Object cfValue = getCustomFieldInstanceService().getCFValue(entity, code);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} for {}/{}", cfValue, entity, code);
 
         return cfValue;
@@ -398,7 +393,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCFValue(ICustomFieldEntity entity, String code, Date date) {
 
         Object cfValue = getCustomFieldInstanceService().getCFValue(entity, code, date);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} for {}/{} for {}", cfValue, entity, code, date);
 
         return cfValue;
@@ -415,7 +409,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCFValueByClosestMatch(ICustomFieldEntity entity, String code, String keyToMatch) {
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByClosestMatch(entity, code, keyToMatch);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} by closest match for key {} for {}/{}", cfValue, keyToMatch, entity, code);
 
         return cfValue;
@@ -433,7 +426,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCFValueByClosestMatch(ICustomFieldEntity entity, String code, Date date, String keyToMatch) {
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByClosestMatch(entity, code, date, keyToMatch);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} by closest match for key {} for {}/{} for {}", cfValue, keyToMatch, entity, code, date);
 
         return cfValue;
@@ -459,7 +451,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
         }
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByRangeOfNumbers(entity, code, numberToMatch);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} by range of numbers for number {} for {}/{}", cfValue, numberToMatch, entity, code);
 
         return cfValue;
@@ -486,7 +477,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
         }
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByRangeOfNumbers(entity, code, date, numberToMatch);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} by range of numbers for number {} for {}/{} for {}", cfValue, numberToMatch, entity, code, date);
 
         return cfValue;
@@ -507,8 +497,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
         }
 
         Object cfValue = null;
-
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
 
         if (concatenatedKeysOrSingleKey instanceof String) {
             String[] keys = ((String) concatenatedKeysOrSingleKey).split("\\|");
@@ -534,7 +522,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCFValueByKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo) {
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByKey(entity, code, keyOne, keyTwo);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} by key for keys {}/{} for {}/{}", cfValue, keyOne, keyTwo, entity, code);
 
         return cfValue;
@@ -553,7 +540,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCFValueByKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree) {
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByKey(entity, code, keyOne, keyTwo, keyThree);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} by key for keys {}/{}/{} for {}/{}", cfValue, keyOne, keyTwo, keyThree, entity, code);
 
         return cfValue;
@@ -573,7 +559,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCFValueByKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree, Object keyFour) {
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByKey(entity, code, keyOne, keyTwo, keyThree, keyFour);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} by key for keys {}/{}/{}/{} for {}/{}", cfValue, keyOne, keyTwo, keyThree, keyFour, entity, code);
 
         return cfValue;
@@ -594,7 +579,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCFValueByKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree, Object keyFour, Object keyFive) {
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByKey(entity, code, keyOne, keyTwo, keyThree, keyFour, keyFive);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} by key for keys {}/{}/{}/{}/{} for {}/{}", cfValue, keyOne, keyTwo, keyThree, keyFour, keyFive, entity, code);
 
         return cfValue;
@@ -616,8 +600,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
         }
 
         Object cfValue = null;
-
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
 
         if (concatenatedKeysOrSingleKey instanceof String) {
             String[] keys = ((String) concatenatedKeysOrSingleKey).split("\\|");
@@ -644,7 +626,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCFValueByKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo) {
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByKey(entity, code, date, keyOne, keyTwo);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} by key for keys {}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, entity, code, date);
 
         return cfValue;
@@ -664,7 +645,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCFValueByKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree) {
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByKey(entity, code, date, keyOne, keyTwo, keyThree);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} by key for keys {}/{}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, keyThree, entity, code, date);
 
         return cfValue;
@@ -685,7 +665,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCFValueByKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree, Object keyFour) {
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByKey(entity, code, date, keyOne, keyTwo, keyThree, keyFour);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} by key for keys {}/{}/{}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, keyThree, keyFour, entity, code, date);
 
         return cfValue;
@@ -707,7 +686,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getCFValueByKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree, Object keyFour, Object keyFive) {
 
         Object cfValue = getCustomFieldInstanceService().getCFValueByKey(entity, code, date, keyOne, keyTwo, keyThree, keyFour, keyFive);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} by key for keys {}/{}/{}/{}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, keyThree, keyFour, keyFive, entity, code, date);
 
         return cfValue;
@@ -722,7 +700,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
      */
     public static Object getInheritedCFValue(ICustomFieldEntity entity, String code) {
 
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         // log.debug("AKK start getInheritedCFvalue for entity {}", entity.getClass());
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValue(entity, code);
         log.trace("Obtained inherited CF value {} for {}/{}", cfValue, entity, code);
@@ -741,7 +718,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getInheritedCFValue(ICustomFieldEntity entity, String code, Date date) {
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValue(entity, code, date);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained inherited CF value {} for {}/{} for {}", cfValue, entity, code, date);
 
         return cfValue;
@@ -759,7 +735,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getInheritedCFValueByClosestMatch(ICustomFieldEntity entity, String code, String keyToMatch) {
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByClosestMatch(entity, code, keyToMatch);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained inherited CF value {} by closest match for key {} for {}/{}", cfValue, keyToMatch, entity, code);
 
         return cfValue;
@@ -778,7 +753,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getInheritedCFValueByClosestMatch(ICustomFieldEntity entity, String code, Date date, String keyToMatch) {
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByClosestMatch(entity, code, date, keyToMatch);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained inherited CF value {} by closest match for key {} for {}/{} for {}", cfValue, keyToMatch, entity, code, date);
 
         return cfValue;
@@ -796,7 +770,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getInheritedCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Object numberToMatch) {
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByRangeOfNumbers(entity, code, numberToMatch);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained inherited CF value {} by range of numbers for number {} for {}/{}", cfValue, numberToMatch, entity, code);
 
         return cfValue;
@@ -815,7 +788,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getInheritedCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Date date, Object numberToMatch) {
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByRangeOfNumbers(entity, code, date, numberToMatch);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained inherited CF value {} by range of numbers for number {} for {}/{} for {}", cfValue, numberToMatch, entity, code, date);
 
         return cfValue;
@@ -837,8 +809,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
         }
 
         Object cfValue = null;
-
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
 
         if (concatenatedKeysOrSingleKey instanceof String) {
             String[] keys = ((String) concatenatedKeysOrSingleKey).split("\\|");
@@ -864,7 +834,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getInheritedCFValueByKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo) {
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByKey(entity, code, keyOne, keyTwo);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained inherited CF value {} by key for keys {}/{} for {}/{}", cfValue, keyOne, keyTwo, entity, code);
 
         return cfValue;
@@ -883,7 +852,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getInheritedCFValueByKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree) {
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByKey(entity, code, keyOne, keyTwo, keyThree);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained inherited CF value {} by key for keys {}/{}/{} for {}/{}", cfValue, keyOne, keyTwo, keyThree, entity, code);
 
         return cfValue;
@@ -903,7 +871,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getInheritedCFValueByKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree, Object keyFour) {
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByKey(entity, code, keyOne, keyTwo, keyThree, keyFour);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained inherited CF value {} by key for keys {}/{}/{}/{} for {}/{}", cfValue, keyOne, keyTwo, keyThree, keyFour, entity, code);
 
         return cfValue;
@@ -924,7 +891,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getInheritedCFValueByKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree, Object keyFour, Object keyFive) {
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByKey(entity, code, keyOne, keyTwo, keyThree, keyFour, keyFive);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained inherited CF value {} by key for keys {}/{}/{}/{}/{} for {}/{}", cfValue, keyOne, keyTwo, keyThree, keyFour, keyFive, entity, code);
 
         return cfValue;
@@ -946,8 +912,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
         }
 
         Object cfValue = null;
-
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
 
         if (concatenatedKeysOrSingleKey instanceof String) {
             String[] keys = ((String) concatenatedKeysOrSingleKey).split("\\|");
@@ -973,7 +937,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getInheritedCFValueByKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo) {
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByKey(entity, code, date, keyOne, keyTwo);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained inherited CF value {} by key for keys {}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, entity, code, date);
 
         return cfValue;
@@ -993,7 +956,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getInheritedCFValueByKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree) {
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByKey(entity, code, date, keyOne, keyTwo, keyThree);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained inherited CF value {} by key for keys {}/{}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, keyThree, entity, code, date);
 
         return cfValue;
@@ -1014,7 +976,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object getInheritedCFValueByKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree, Object keyFour) {
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByKey(entity, code, date, keyOne, keyTwo, keyThree, keyFour);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained inherited CF value {} by key for keys {}/{}/{}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, keyThree, keyFour, entity, code, date);
 
         return cfValue;
@@ -1037,7 +998,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             Object keyFive) {
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByKey(entity, code, date, keyOne, keyTwo, keyThree, keyFour, keyFive);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+        
         log.trace("Obtained inherited CF value {} by key for keys {}/{}/{}/{}/{} for {}/{} for {}", cfValue, keyOne, keyTwo, keyThree, keyFour, keyFive, entity, code, date);
 
         return cfValue;
@@ -1054,19 +1015,11 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static Object executeScript(IEntity entity, String scriptCode, String encodedParameters) {
 
         Map<String, Object> result = null;
-
         try {
-            try {
-                result = getScriptInstanceService().execute(entity, scriptCode, encodedParameters);
-            } catch (ElementNotFoundException enf) {
-                result = null;
-            }
-
-        } catch (BusinessException e) {
-            Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
-            log.error("Failed to execute a script {} on entity {}", scriptCode, entity, e);
+            result = getScriptInstanceService().execute(entity, scriptCode, encodedParameters);
+        } catch (ElementNotFoundException enf) {
+            result = null;
         }
-
         if (result != null && result.containsKey(Script.RESULT_VALUE)) {
             return result.get(Script.RESULT_VALUE);
         }
@@ -1154,8 +1107,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
         boolean hasKey = false;
 
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
-
         if (concatenatedKeysOrSingleKey instanceof String) {
             String[] keys = ((String) concatenatedKeysOrSingleKey).split("\\|");
             hasKey = getCustomFieldInstanceService().isCFValueHasKey(entity, code, (Object[]) keys);
@@ -1180,7 +1131,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static boolean isCFValueHasKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo) {
 
         boolean hasKey = getCustomFieldInstanceService().isCFValueHasKey(entity, code, keyOne, keyTwo);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("CF value has {} key for keys {}/{} for {}/{}", hasKey, keyOne, keyTwo, entity, code);
 
         return hasKey;
@@ -1199,7 +1149,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static boolean isCFValueHasKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree) {
 
         boolean hasKey = getCustomFieldInstanceService().isCFValueHasKey(entity, code, keyOne, keyTwo, keyThree);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("CF value has {} key for keys {}/{}/{} for {}/{}", hasKey, keyOne, keyTwo, keyThree, entity, code);
 
         return hasKey;
@@ -1219,7 +1168,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static boolean isCFValueHasKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree, Object keyFour) {
 
         boolean hasKey = getCustomFieldInstanceService().isCFValueHasKey(entity, code, keyOne, keyTwo, keyThree, keyFour);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("CF value has {} key for keys {}/{}/{}/{} for {}/{}", hasKey, keyOne, keyTwo, keyThree, keyFour, entity, code);
 
         return hasKey;
@@ -1240,7 +1188,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static boolean isCFValueHasKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree, Object keyFour, Object keyFive) {
 
         boolean hasKey = getCustomFieldInstanceService().isCFValueHasKey(entity, code, keyOne, keyTwo, keyThree, keyFour, keyFive);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("CF value has {} key for keys {}/{}/{}/{}/{} for {}/{}", hasKey, keyOne, keyTwo, keyThree, keyFour, keyFive, entity, code);
 
         return hasKey;
@@ -1262,8 +1209,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
         }
 
         boolean hasKey = false;
-
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
 
         if (concatenatedKeysOrSingleKey instanceof String) {
             String[] keys = ((String) concatenatedKeysOrSingleKey).split("\\|");
@@ -1290,7 +1235,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static boolean isCFValueHasKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo) {
 
         boolean hasKey = getCustomFieldInstanceService().isCFValueHasKey(entity, code, date, keyOne, keyTwo);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("CF value has {} key for keys {}/{} for {}/{} for {}", hasKey, keyOne, keyTwo, entity, code, date);
 
         return hasKey;
@@ -1310,7 +1254,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static boolean isCFValueHasKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree) {
 
         boolean hasKey = getCustomFieldInstanceService().isCFValueHasKey(entity, code, date, keyOne, keyTwo, keyThree);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("CF value has {} key for keys {}/{}/{} for {}/{} for {}", hasKey, keyOne, keyTwo, keyThree, entity, code, date);
 
         return hasKey;
@@ -1331,7 +1274,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static boolean isCFValueHasKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree, Object keyFour) {
 
         boolean hasKey = getCustomFieldInstanceService().isCFValueHasKey(entity, code, date, keyOne, keyTwo, keyThree, keyFour);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("CF value has {} key for keys {}/{}/{}/{} for {}/{} for {}", hasKey, keyOne, keyTwo, keyThree, keyFour, entity, code, date);
 
         return hasKey;
@@ -1353,7 +1295,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static boolean isCFValueHasKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree, Object keyFour, Object keyFive) {
 
         boolean hasKey = getCustomFieldInstanceService().isCFValueHasKey(entity, code, date, keyOne, keyTwo, keyThree, keyFour, keyFive);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("CF value has {} key for keys {}/{}/{}/{}/{} for {}/{} for {}", hasKey, keyOne, keyTwo, keyThree, keyFour, keyFive, entity, code, date);
 
         return hasKey;
@@ -1374,8 +1315,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
         }
 
         boolean hasKey = false;
-
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
 
         if (concatenatedKeysOrSingleKey instanceof String) {
             String[] keys = ((String) concatenatedKeysOrSingleKey).split("\\|");
@@ -1401,7 +1340,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static boolean isInheritedCFValueHasKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo) {
 
         boolean hasKey = getCustomFieldInstanceService().isInheritedCFValueHasKey(entity, code, keyOne, keyTwo);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Inherited CF value has {} key for keys {}/{} for {}/{}", hasKey, keyOne, keyTwo, entity, code);
 
         return hasKey;
@@ -1420,7 +1358,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static boolean isInheritedCFValueHasKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree) {
 
         boolean hasKey = getCustomFieldInstanceService().isInheritedCFValueHasKey(entity, code, keyOne, keyTwo, keyThree);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Inherited CF value has {} key for keys {}/{}/{} for {}/{}", hasKey, keyOne, keyTwo, keyThree, entity, code);
 
         return hasKey;
@@ -1440,7 +1377,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static boolean isInheritedCFValueHasKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree, Object keyFour) {
 
         boolean hasKey = getCustomFieldInstanceService().isInheritedCFValueHasKey(entity, code, keyOne, keyTwo, keyThree, keyFour);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Inherited CF value has {} key for keys {}/{}/{}/{} for {}/{}", hasKey, keyOne, keyTwo, keyThree, keyFour, entity, code);
 
         return hasKey;
@@ -1461,7 +1397,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static boolean isInheritedCFValueHasKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree, Object keyFour, Object keyFive) {
 
         boolean hasKey = getCustomFieldInstanceService().isInheritedCFValueHasKey(entity, code, keyOne, keyTwo, keyThree, keyFour, keyFive);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Inherited CF value has {} key for keys {}/{}/{}/{}/{} for {}/{}", hasKey, keyOne, keyTwo, keyThree, keyFour, keyFive, entity, code);
 
         return hasKey;
@@ -1483,8 +1418,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
         }
 
         boolean hasKey = false;
-
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
 
         if (concatenatedKeysOrSingleKey instanceof String) {
             String[] keys = ((String) concatenatedKeysOrSingleKey).split("\\|");
@@ -1511,7 +1444,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static boolean isInheritedCFValueHasKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo) {
 
         boolean hasKey = getCustomFieldInstanceService().isInheritedCFValueHasKey(entity, code, date, keyOne, keyTwo);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Inherited CF value has {} key for keys {}/{} for {}/{} for {}", hasKey, keyOne, keyTwo, entity, code, date);
 
         return hasKey;
@@ -1531,7 +1463,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static boolean isInheritedCFValueHasKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree) {
 
         boolean hasKey = getCustomFieldInstanceService().isInheritedCFValueHasKey(entity, code, date, keyOne, keyTwo, keyThree);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Inherited CF value has {} key for keys {}/{}/{} for {}/{} for {}", hasKey, keyOne, keyTwo, keyThree, entity, code, date);
 
         return hasKey;
@@ -1552,7 +1483,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
     public static boolean isInheritedCFValueHasKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree, Object keyFour) {
 
         boolean hasKey = getCustomFieldInstanceService().isInheritedCFValueHasKey(entity, code, date, keyOne, keyTwo, keyThree, keyFour);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Inherited CF value has {} key for keys {}/{}/{}/{} for {}/{} for {}", hasKey, keyOne, keyTwo, keyThree, keyFour, entity, code, date);
 
         return hasKey;
@@ -1575,7 +1505,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
             Object keyFive) {
 
         boolean hasKey = getCustomFieldInstanceService().isInheritedCFValueHasKey(entity, code, date, keyOne, keyTwo, keyThree, keyFour, keyFive);
-        Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Inherited CF value has {} key for keys {}/{}/{}/{}/{} for {}/{} for {}", hasKey, keyOne, keyTwo, keyThree, keyFour, keyFive, entity, code, date);
 
         return hasKey;
@@ -1786,6 +1715,13 @@ public class MeveoFunctionMapper extends FunctionMapper {
         return getCustomTableService().getValues(customTableCode, null, date, queryValues);
     }
 
+    /**
+     * Extract a field value from a referenced entity
+     * 
+	 * @param entity
+	 * @param customTableCode
+	 * @param fieldToReturn
+	 */
     public static Object getCFRefValue(ICustomFieldEntity entity, String customTableCode, String fieldToReturn) throws BusinessException {
         Object cfValue = getCFValue(entity, customTableCode);
         if (fieldToReturn.contains(".")) {
