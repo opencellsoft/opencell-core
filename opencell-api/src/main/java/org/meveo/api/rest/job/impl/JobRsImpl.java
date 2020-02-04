@@ -23,7 +23,7 @@ import org.meveo.api.job.TimerEntityApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.job.JobRs;
-import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.jobs.MeveoJobCategoryEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -213,7 +213,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     public JobCategoriesResponseDto listCategories() {
         JobCategoriesResponseDto result = new JobCategoriesResponseDto();
         try {
-            result.setJobCategories(JobCategoryEnum.values());
+            result.setJobCategories(MeveoJobCategoryEnum.values());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
