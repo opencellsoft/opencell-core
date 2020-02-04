@@ -14073,14 +14073,15 @@ public class Action1 extends Script {
           <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">1</value>
         </entry>
         <entry>
-          <key>*_field1</key>
-          <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">*_OFFER1</value>
+          <key>*_ctw_field1</key>
+          <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">CF_103_OFFER1</value>
         </entry>
         <entry>
-          <key>*_field2</key>
+          <key>*_ctw_field2</key>
           <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">123</value>
         </entry>
       </values>
+      <tableName>${#Project#baseEntityPrefix}_CTW_CustomTable</tableName>
     </record>
     <record>
       <id>2</id>
@@ -14090,14 +14091,15 @@ public class Action1 extends Script {
           <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">2</value>
         </entry>
         <entry>
-          <key>*_field1</key>
+          <key>*_ctw_field1</key>
           <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">OF</value>
         </entry>
         <entry>
-          <key>*_field2</key>
+          <key>*_ctw_field2</key>
           <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">1234</value>
         </entry>
       </values>
+      <tableName>${#Project#baseEntityPrefix}_CTW_CustomTable</tableName>
     </record>
     <record>
       <id>3</id>
@@ -14107,14 +14109,15 @@ public class Action1 extends Script {
           <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">3</value>
         </entry>
         <entry>
-          <key>*_field1</key>
+          <key>*_ctw_field1</key>
           <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">OF1</value>
         </entry>
         <entry>
-          <key>*_field2</key>
+          <key>*_ctw_field2</key>
           <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">1235</value>
         </entry>
       </values>
+      <tableName>${#Project#baseEntityPrefix}_CTW_CustomTable</tableName>
     </record>
   </records>
 </tableData>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
