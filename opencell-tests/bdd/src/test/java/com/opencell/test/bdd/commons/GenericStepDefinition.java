@@ -80,6 +80,10 @@ public class GenericStepDefinition implements En {
             String fieldValue = base.getResponse().getJsonResponse().get(fieldName).toString();
             assertEquals(value, fieldValue);
         });
+        And("^The field \"([^\"]*)\" exists$", (String fieldName) -> {
+            String fieldValue = base.getResponse().getJsonResponse().get(fieldName).toString();
+            assertNotNull(fieldValue);
+        });
     }
 
     private String getBodyRequest() throws JsonProcessingException {
