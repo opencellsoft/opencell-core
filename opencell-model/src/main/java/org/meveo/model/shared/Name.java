@@ -109,7 +109,7 @@ public class Name implements Serializable, Cloneable {
     }
 
     public String getFullName() {
-        return (title != null ? (title.getDescription() != null ? title.getDescription() : title.getCode()) + " " : "") + (firstName != null ? firstName + " " : "")
+        return "" + (title != null ? (title.getDescription() != null ? title.getDescription() : title.getCode()) + " " : "") + (firstName != null ? firstName + " " : "")
                 + (lastName != null ? lastName : "");
     }
 

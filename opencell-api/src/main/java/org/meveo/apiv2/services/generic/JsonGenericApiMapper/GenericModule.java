@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.apiv2.generic.GenericPaginatedResource;
 import org.meveo.model.BaseEntity;
@@ -21,6 +22,8 @@ import java.util.Set;
 class GenericModule extends SimpleModule {
     private static final String NAME = "GenericModule";
     private static final VersionUtil VERSION_UTIL = new VersionUtil() {};
+    // to passe as constructor param from JsonGenericMapper
+    private static final String DATA_ROOT_ELEMENT = "data";
     private final Set<String> nestedEntities;
 
     GenericModule(Set<String> nestedEntities) {
@@ -42,7 +45,13 @@ class GenericModule extends SimpleModule {
 
          @Override
          public void serialize(HibernateProxy value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-             gen.writeObject(value.getHibernateLazyInitializer().getIdentifier());
+             if(DATA_ROOT_ELEMENT.equals(gen.getOutputContext().getParent().getCurrentName())){
+                 Hibernate.initialize(value);
+                 Object implementation = value.getHibernateLazyInitializer().getImplementation();
+                 gen.writeObject(implementation);
+             } else {
+                 gen.writeObject(value.getHibernateLazyInitializer().getIdentifier());
+             }
          }
      }
 

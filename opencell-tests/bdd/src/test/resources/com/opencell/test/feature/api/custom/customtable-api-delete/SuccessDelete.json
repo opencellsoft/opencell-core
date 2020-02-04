@@ -1,0 +1,11 @@
+{
+  "customTableCode" : "CT_TEST",
+  "overwrite" : true,
+  "record" : [ {
+   
+    "values" : {
+      "id" :2
+    }
+  
+  } ]
+}

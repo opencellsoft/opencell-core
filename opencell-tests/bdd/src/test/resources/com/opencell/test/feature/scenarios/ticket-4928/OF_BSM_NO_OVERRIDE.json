@@ -1,0 +1,17 @@
+{
+    "bomCode": "BOM_WITH_BSM",
+    "code": "OF_BSM_NO_OVERRIDE",
+    "name": "Offer BusinessServiceModel",
+    "description": "Offer using the BusinessServiceModel, NO CF OVERRIDE 1579603021",
+    "businessServiceModel": [
+        {
+            "code": "BSM_EMPTY_WITH_CF",
+            "service": {
+                "code": "SE_EMPTY_WITH_CF",
+                "description": "From BSM with no CF override",
+                "mandatory": true,
+                "parameter": null
+            }
+        }
+    ]
+}

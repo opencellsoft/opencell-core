@@ -1,0 +1,6 @@
+{
+    "code": "TEST",
+    "description": "Test payment gateway Updated",
+    "type": "CUSTOM",
+    "paymentMethodType": "CHECK"
+}

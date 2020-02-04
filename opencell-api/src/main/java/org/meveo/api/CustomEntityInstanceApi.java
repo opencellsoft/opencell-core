@@ -238,7 +238,7 @@ public class CustomEntityInstanceApi extends BaseApi {
      * @param ceiToUpdate CustomEntityInstance to update with values from dto, or if null create a new one
      * @return A new or updated CustomEntityInstance instance
      */
-    private CustomEntityInstance convertFromDTO(CustomEntityInstanceDto dto, CustomEntityInstance ceiToUpdate) {
+    public CustomEntityInstance convertFromDTO(CustomEntityInstanceDto dto, CustomEntityInstance ceiToUpdate) {
 
         CustomEntityInstance cei = ceiToUpdate;
         if (ceiToUpdate == null) {

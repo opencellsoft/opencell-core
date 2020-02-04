@@ -1,17 +1,16 @@
 package com.opencell.test.bdd.administration;
 
-import com.opencell.test.bdd.commons.BaseHook;
-import com.opencell.test.utils.RestApiUtils;
-import cucumber.api.PendingException;
-import cucumber.api.java.en.Then;
-import cucumber.api.java8.En;
-import io.restassured.response.ValidatableResponse;
-import org.apache.http.HttpStatus;
-import org.meveo.api.dto.response.billing.AccountingCodeGetResponseDto;
-import org.meveo.api.dto.response.module.MeveoModuleDtoResponse;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import org.apache.http.HttpStatus;
+import org.meveo.api.dto.response.module.MeveoModuleDtoResponse;
+
+import com.opencell.test.bdd.commons.BaseHook;
+import com.opencell.test.utils.RestApiUtils;
+
+import cucumber.api.java8.En;
+import io.restassured.response.ValidatableResponse;
 
 
 

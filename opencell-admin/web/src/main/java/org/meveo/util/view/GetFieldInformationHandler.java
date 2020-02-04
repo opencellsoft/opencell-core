@@ -26,6 +26,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.commons.utils.EnumBuilder;
+import org.meveo.commons.utils.MeveoEnum;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.IEntity;
@@ -192,17 +194,24 @@ public class GetFieldInformationHandler extends TagHandler {
         } else if (fieldClassType == Date.class) {
             fieldInfo.fieldType = FieldTypeEnum.Date;
 
-        } else if (fieldClassType.isEnum()) {
+        } else if (fieldClassType.isEnum() || fieldClassType.isAnnotationPresent(MeveoEnum.class)) {
             fieldInfo.fieldType = FieldTypeEnum.Enum;
             fieldInfo.enumClassname = field.getType().getName();
 
-            Object[] objArr = field.getType().getEnumConstants();
-            Arrays.sort(objArr, new Comparator<Object>() {
-                @Override
-                public int compare(Object o1, Object o2) {
-                    return o1.toString().compareTo(o2.toString());
-                }
-            });
+            Object[] objArr = null;
+             if (fieldClassType.isEnum()) {
+                 objArr = field.getType().getEnumConstants();
+                 Arrays.sort(objArr, new Comparator<Object>() {
+                     @Override
+                     public int compare(Object o1, Object o2) {
+                         return o1.toString().compareTo(o2.toString());
+                     }
+                 });
+             } else if( fieldClassType.isAnnotationPresent(MeveoEnum.class) ) {
+                 MeveoEnum meveoEnum = fieldClassType.getAnnotation(MeveoEnum.class);
+                 fieldInfo.enumClassname = meveoEnum.identifier().getName();
+                 objArr = EnumBuilder.values(fieldInfo.enumClassname);
+             }
 
             fieldInfo.enumListValues = objArr;
 

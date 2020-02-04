@@ -2628,7 +2628,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 String subject = ValueExpressionWrapper.evaluateExpression(emailTemplate.getSubject(), params, String.class);
                 String content = ValueExpressionWrapper.evaluateExpression(emailTemplate.getTextContent(), params, String.class);
                 String contentHtml = ValueExpressionWrapper.evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
-                emailSender.send(seller.getContactInformation().getEmail(), to, to, cc, null, subject, content, contentHtml, files, null);
+                String from = seller.getContactInformation().getEmail();
+				emailSender.send(from, Arrays.asList(from), to, cc, null, subject, content, contentHtml, files, null);
                 invoice.setStatus(InvoiceStatusEnum.SENT);
                 invoice.setAlreadySent(true);
                 update(invoice);

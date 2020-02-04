@@ -1,0 +1,12 @@
+{
+  "code": "TEST",
+  "description": "testXXX",
+  "occTemplateCode": "INV_STD",
+  "occTemplateNegativeCode": "NOT_EXIST",
+  "sequenceDto": {
+    "prefixEL": "XX",
+    "invoiceSequenceCode": "COM"
+  },
+  "matchingAuto": false,
+    "mailingType":"XX"
+}

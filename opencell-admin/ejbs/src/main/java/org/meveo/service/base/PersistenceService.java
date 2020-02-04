@@ -175,7 +175,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     protected Event<BaseEntity> entityRemovedEventProducer;
 
     @EJB
-    private CustomFieldInstanceService customFieldInstanceService;
+    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private DeletionService deletionService;
@@ -1124,6 +1124,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                         } else if (filterValue instanceof List) {
                             queryBuilder.addSqlCriterion("a." + fieldName + ("ne".equals(condition) ? " not in  " : " in ") + ":" + fieldName, fieldName, filterValue);
+                        }else if ("auditable".equalsIgnoreCase(fieldName) && filterValue instanceof Map) {
+                            QueryBuilder queryBuilderHolder = queryBuilder;
+                            ((Map) filterValue).forEach((k, value) -> queryBuilderHolder.addCriterionDate("a.auditable."+k, (Date) value));
                         }
                     }
                 }

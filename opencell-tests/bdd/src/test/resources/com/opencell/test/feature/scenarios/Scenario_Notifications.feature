@@ -1,3 +1,4 @@
+@ignore
 Feature: Create a wotkflow history
    
    Background:  System is configured.

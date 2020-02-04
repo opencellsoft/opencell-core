@@ -33,6 +33,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
 
@@ -58,7 +59,7 @@ public class InvoicingJob extends Job {
 
     @Override
     public JobCategoryEnum getJobCategory() {
-        return JobCategoryEnum.INVOICING;
+        return MeveoJobCategoryEnum.INVOICING;
     }
 
 

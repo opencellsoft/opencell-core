@@ -36,8 +36,10 @@
             <hftl:formField label="#{messages['operation.wallet']}" field="wallet" valueLabelField="code" />
             <hftl:formField label="#{messages['walletOperation.operationDate']}" field="operationDate" />
             <hftl:formField label="#{messages['accountOperation.type']}" field="type" isMessage="true" />
-            <hftl:formField label="#{messages['walletOperation.ratingUnitDescription']}" field="ratingUnitDescription"/>
-			<hftl:formField label="#{messages['walletOperation.inputUnitDescription']}" field="inputUnitDescription"/>
+
+            <hftl:formField label="#{messages['walletOperation.ratingUnitOfMeasure']}" field="ratingUnitDescription" valueLabelField="symbol" />
+			<hftl:formField label="#{messages['walletOperation.inputUnitOfMeasure']}" field="inputUnitDescription" valueLabelField="symbol" />
+
             <hftl:formField label="#{messages['walletOperation.quantity']}" field="quantity" converter="bigDecimal4DigitsConverter" />
             <hftl:formField label="#{messages['walletOperation.unitAmountWithoutTax']}" field="unitAmountWithoutTax" converter="bigDecimal4DigitsConverter"/>
             <hftl:formField label="#{messages['walletOperation.unitAmountWithTax']}" field="unitAmountWithTax" converter="bigDecimal4DigitsConverter"/>

@@ -962,7 +962,7 @@ public class OrderApi extends BaseApi {
      * @return Order DTO object
      * @throws BusinessException business exception.
      */
-    private ProductOrder orderToDto(Order order) throws BusinessException {
+    public ProductOrder orderToDto(Order order) throws BusinessException {
 
         ProductOrder productOrder = new ProductOrder();
 
