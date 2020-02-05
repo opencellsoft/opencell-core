@@ -1,5 +1,24 @@
 package org.meveo.model.crm.custom;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import org.meveo.commons.utils.CustomDateSerializer;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.IReferenceEntity;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.shared.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -14,26 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
-import org.meveo.commons.utils.CustomDateSerializer;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.IReferenceEntity;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.shared.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Encapsulates a custom field value. Supports the following data types:
@@ -265,6 +264,23 @@ public class CustomFieldValue implements Serializable, Cloneable {
     private Object datasetForGUI;
 
     /**
+     * Custom Table Code.
+     */
+    @JsonProperty("customTableCode")
+    private String customTableCode;
+    /**
+     * Filters for custom table wrapper.
+     */
+    @JsonProperty("dataFilter")
+    private String dataFilter;
+
+    /**
+     * Fields for custom table wrapper.
+     */
+    @JsonProperty("fields")
+    private String fields;
+
+    /**
      * Custom field value instance
      */
     public CustomFieldValue() {
@@ -272,7 +288,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     /**
      * Instantiate Custom field value with a given value
-     * 
+     *
      * @param value Value to assign
      */
     public CustomFieldValue(Object value) {
@@ -440,7 +456,6 @@ public class CustomFieldValue implements Serializable, Cloneable {
     /**
      * @return List type value
      */
-    @SuppressWarnings("rawtypes")
     public List getListValue() {
         if (listStringValue != null) {
             return listStringValue;
@@ -464,7 +479,6 @@ public class CustomFieldValue implements Serializable, Cloneable {
      * 
      * @param listValue list of values to set.
      */
-    @SuppressWarnings({ "rawtypes" })
     public void setListValue(List listValue) {
 
         Iterator iterator = ((List) listValue).iterator();
@@ -526,7 +540,6 @@ public class CustomFieldValue implements Serializable, Cloneable {
     /**
      * @return Map type value
      */
-    @SuppressWarnings("rawtypes")
     public Map getMapValue() {
         if (mapStringValue != null && !mapStringValue.isEmpty()) {
             return mapStringValue;
@@ -551,7 +564,6 @@ public class CustomFieldValue implements Serializable, Cloneable {
      * 
      * @param mapValue A map of values
      */
-    @SuppressWarnings({ "rawtypes" })
     public void setMapValue(Map<String, Object> mapValue) {
 
         Map<String, Object> mapCopy = null;
@@ -733,9 +745,63 @@ public class CustomFieldValue implements Serializable, Cloneable {
     }
 
     /**
+     * Gets custom table code
+     *
+     * @return the custom table code
+     */
+    public String getCustomTableCode() {
+        return customTableCode;
+    }
+
+    /**
+     * Sets custom table code
+     *
+     * @param customTableCode the custom table code
+     */
+    public void setCustomTableCode(String customTableCode) {
+        this.customTableCode = customTableCode;
+    }
+
+    /**
+     * Gets filters for custom table wrapper
+     *
+     * @return customTableWrapper's filters
+     */
+    public String getDataFilter() {
+        return dataFilter;
+    }
+
+    /**
+     * Gets filters for custom table wrapper
+     *
+     * @param dataFilter
+     */
+    public void setDataFilter(String dataFilter) {
+        this.dataFilter = dataFilter;
+    }
+
+    /**
+     * Gets CustomTableWrapper's fields
+     *
+     * @return CustomTableWrapper's fields
+     */
+    public String getFields() {
+        return fields;
+    }
+
+    /**
+     * Sets CustomTableWrapper's fields
+     *
+     * @param fields CustomTableWrapper's fields
+     */
+    public void setFields(String fields) {
+        this.fields = fields;
+    }
+
+    /**
      * Set value of a given type
-     * 
-     * @param value value object
+     *
+     * @param value     value object
      * @param fieldType field type.
      */
     public void setSingleValue(Object value, CustomFieldTypeEnum fieldType) {
@@ -800,7 +866,6 @@ public class CustomFieldValue implements Serializable, Cloneable {
      * @param sdf Date format if applicable
      * @return Value as string
      */
-    @SuppressWarnings("rawtypes")
     public String toXmlText(SimpleDateFormat sdf) {
 
         if (stringValue != null) {
@@ -856,7 +921,6 @@ public class CustomFieldValue implements Serializable, Cloneable {
      * @param dateFormat Date format
      * @return Return formated value when storage type is Single and concatenated values when storage type is multiple
      */
-    @SuppressWarnings("unchecked")
     public static String getShortRepresentationOfValueObj(Object value, String dateFormat) {
         if (value == null) {
             return null;
@@ -1144,7 +1208,6 @@ public class CustomFieldValue implements Serializable, Cloneable {
      * @param cft Custom field template
      * @param valueToSerialize Value to serialize
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     private static String serializeValueToString(CustomFieldTemplate cft, Object valueToSerialize) {
 
         if (valueToSerialize == null) {
@@ -1231,7 +1294,6 @@ public class CustomFieldValue implements Serializable, Cloneable {
     /**
      * Get the data type of the first item. If the type is Integer check for further item in the list to see if a Double item exists.
      */
-    @SuppressWarnings("rawtypes")
     private static Class findItemClass(Iterator iterator) {
         if (!iterator.hasNext()) {
             return null;
@@ -1437,7 +1499,6 @@ public class CustomFieldValue implements Serializable, Cloneable {
      * 
      * @param value Value to set
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void setValue(Object value) {
 
         dateValue = null;
@@ -1659,7 +1720,6 @@ public class CustomFieldValue implements Serializable, Cloneable {
      * 
      * @return True if List or Map value exceeds 20K rows
      */
-    @SuppressWarnings("rawtypes")
     public boolean isExcessiveInSize() {
         List listValue = getListValue();
 

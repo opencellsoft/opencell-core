@@ -1,20 +1,5 @@
 package org.meveo.service.base;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.el.FunctionMapper;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -28,11 +13,26 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.CounterPeriodService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomTableService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.el.FunctionMapper;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Provides custom functions for Meveo application. The following functions are provided:
@@ -55,6 +55,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
     private static CustomTableService customTableService;
 
     private static CounterPeriodService counterPeriodService;
+
+    private static CustomFieldTemplateService customFieldTemplateService;
 
     private static Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
 
@@ -291,7 +293,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
         functionMap.put(key, method);
     }
 
-    @SuppressWarnings("unchecked")
     private static CustomFieldInstanceService getCustomFieldInstanceService() {
 
         if (customFieldInstanceService == null) {
@@ -310,7 +311,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
         return customFieldInstanceService;
     }
 
-    @SuppressWarnings("unchecked")
     private static ScriptInstanceService getScriptInstanceService() {
 
         if (scriptInstanceService == null) {
@@ -329,7 +329,6 @@ public class MeveoFunctionMapper extends FunctionMapper {
         return scriptInstanceService;
     }
 
-    @SuppressWarnings("unchecked")
     private static CustomTableService getCustomTableService() {
 
         if (customTableService == null) {
@@ -365,6 +364,24 @@ public class MeveoFunctionMapper extends FunctionMapper {
             }
         }
         return counterPeriodService;
+    }
+
+    private static CustomFieldTemplateService getCustomFieldTemplateService() {
+        if (customFieldTemplateService == null) {
+            try {
+                InitialContext initialContext = new InitialContext();
+                BeanManager beanManager = (BeanManager) initialContext.lookup("java:comp/BeanManager");
+
+                Bean<CustomFieldTemplateService> bean = (Bean<CustomFieldTemplateService>) beanManager.resolve(beanManager.getBeans(CustomFieldTemplateService.class));
+                customFieldTemplateService = (CustomFieldTemplateService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
+
+            } catch (NamingException e) {
+                Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+                log.error("Unable to access CustomFieldTemplateService", e);
+                throw new RuntimeException(e);
+            }
+        }
+        return customFieldTemplateService;
     }
 
     /**
