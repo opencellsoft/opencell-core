@@ -70,29 +70,36 @@
 					label="#{messages['accountOperation.title']}"
 					dataModel="#{accountingWritingListBean.getAccountOperations()}">
 
-					<p:column width="6%">
+					<p:column width="5%">
 						<f:facet name="header">
 							<h:outputText value="#{messages['accountOperation.type']}" />
 						</f:facet>
 						<h:outputText value="#{entity.type}" />
 					</p:column>
 
-					<p:column width="9%">
+					<p:column width="8%">
 						<f:facet name="header">
 							<h:outputText value="#{messages['accountOperation.occCode']}" />
 						</f:facet>
 						<h:outputText value="#{entity.code}" />
 					</p:column>
 
-					<p:column width="18%">
+					<p:column width="14%">
 						<f:facet name="header">
 							<h:outputText
 								value="#{messages['accountOperation.occDescription']}" />
 						</f:facet>
 						<h:outputText value="#{entity.description}" />
 					</p:column>
+					
+					<p:column width="10%">
+						<f:facet name="header">
+							<h:outputText value="#{messages['accountOperation.customerAccount']}" />
+						</f:facet>
+						<h:outputText value="#{entity.customerAccount.code}" />
+					</p:column>
 
-					<p:column width="14%">
+					<p:column width="10%">
 						<f:facet name="header">
 							<h:outputText value="#{messages['invoice.invoiceNumber']}" />
 						</f:facet>
