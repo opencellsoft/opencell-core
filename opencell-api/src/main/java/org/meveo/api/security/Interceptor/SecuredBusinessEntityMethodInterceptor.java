@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -152,7 +153,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         for (Object obj : values) {
             if (obj instanceof PagingAndFiltering) {
                 PagingAndFiltering pagingAndFiltering = (PagingAndFiltering) obj;
-                Map<String, Object> filters = pagingAndFiltering.getFilters();
+                Map<String, Object> filters = Optional.ofNullable(pagingAndFiltering.getFilters()).orElse(new HashMap<>());
                 for (Map.Entry<Class<?>, Set<SecuredEntity>> entry : allSecuredEntitiesMap.entrySet()) {
                     final Set<SecuredEntity> value = entry.getValue();
                     for (SecuredEntity securedEntity : value) {
