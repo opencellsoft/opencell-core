@@ -1,41 +1,18 @@
 package org.meveo.admin.action.admin.custom;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -59,16 +36,21 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
+import org.meveo.service.custom.CustomTableService;
 import org.meveo.service.custom.EntityCustomActionService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptUtils;
 import org.meveo.util.EntityCustomizationUtils;
 import org.meveo.util.view.LazyDataModelWSize;
+import org.meveo.util.view.NativeTableBasedDataModel;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -76,9 +58,35 @@ import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 /**
  * Provides support for custom field value data entry
- * 
+ *
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Said Ramli
@@ -126,6 +134,9 @@ public class CustomFieldDataEntryBean implements Serializable {
     private CustomEntityInstanceService customEntityInstanceService;
 
     @Inject
+    private CustomTableService customTableService;
+
+    @Inject
     @CurrentUser
     protected MeveoUser currentUser;
 
@@ -137,7 +148,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     @Inject
     protected Messages messages;
-    
+
     @Inject
     private FacesContext facesContext;
 
@@ -145,6 +156,18 @@ public class CustomFieldDataEntryBean implements Serializable {
      * Selected item in dataTable.
      */
     private Map<String, Object> selectedItem;
+    /**
+     * Custom table data model
+     */
+    private LazyDataModel<Map<String, Object>> customTableBasedDataModel;
+
+    private List<Map<String, Object>> selectedValues;
+
+    private String customTableName;
+
+    private Map<String, Object> newValues = new HashMap<>();
+
+    private List<CustomFieldTemplate> fields;
 
     /**
      * Logger.
@@ -154,7 +177,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Explicitly refresh fields and action definitions. Should be used on some field value change event when that field is used to determine what fields and actions apply. E.g.
      * Job template.
-     * 
+     *
      * @param entity Entity to [re]load definitions and field values for
      */
     public void refreshFieldsAndActions(ICustomFieldEntity entity) {
@@ -237,7 +260,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     private static <K, V> Map<K, V> sortByValue(Map<K, V> map) {
         List<Entry<K, V>> list = new LinkedList<>(map.entrySet());
         Collections.sort(list, new Comparator<Object>() {
-            @SuppressWarnings("unchecked")
+            @Override
             public int compare(Object o1, Object o2) {
                 return ((Comparable<V>) ((Map.Entry<K, V>) (o1)).getValue()).compareTo(((Map.Entry<K, V>) (o2)).getValue());
             }
@@ -1350,7 +1373,6 @@ public class CustomFieldDataEntryBean implements Serializable {
      * 
      * @param cft Custom field template
      */
-    @SuppressWarnings("unchecked")
     private void deserializeForGUI(CustomFieldValue customFieldValue, CustomFieldTemplate cft) {
 
         // Convert just Entity type field to a JPA object - just Single storage fields
@@ -2095,12 +2117,10 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     }
 
-    @SuppressWarnings("rawtypes")
     public LazyDataModel getValueDataset(CustomFieldValue cfv, CustomFieldStorageTypeEnum storageType) {
         return getValueDataset(cfv, storageType, null, false);
     }
 
-    @SuppressWarnings("rawtypes")
     public LazyDataModel getValueDataset(CustomFieldValue cfv, CustomFieldStorageTypeEnum storageType, Map<String, Object> inputFilters, boolean forceReload) {
         if (cfv == null) {
             return null;
@@ -2112,7 +2132,6 @@ public class CustomFieldDataEntryBean implements Serializable {
 
                 private static final long serialVersionUID = -5796910936316457322L;
 
-                @SuppressWarnings("unchecked")
                 @Override
                 public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
                     List valueList = storageType == CustomFieldStorageTypeEnum.MATRIX ? cfv.getMatrixValuesForGUI() : cfv.getMapValuesForGUI();
@@ -2163,4 +2182,189 @@ public class CustomFieldDataEntryBean implements Serializable {
         valueList.remove(mapValues);
         cfv.setDatasetForGUI(null);
     }
+
+    public LazyDataModel<Map<String, Object>> getCustomTableWrapperValues(ICustomFieldEntity entity, CustomFieldTemplate cft) {
+        if (cft == null) {
+            return null;
+        }
+        setCustomTableName(entity, cft);
+        PagingAndFiltering pagingAndFiltering = getPagingAndFiltering(entity, cft);
+        if (customTableBasedDataModel == null && customTableName != null) {
+
+            customTableBasedDataModel = new NativeTableBasedDataModel() {
+
+                @Override
+                protected Map<String, Object> getSearchCriteria() {
+                    return pagingAndFiltering.getFilters();
+                }
+
+                @Override
+                protected List<String> getListFieldsToFetchImpl() {
+                    return (pagingAndFiltering.getFields() != null) ? Arrays.asList(pagingAndFiltering.getFields().split(",")) : null;
+
+                }
+
+                @Override
+                protected CustomTableService getPersistenceServiceImpl() {
+                    return customTableService;
+                }
+
+                @Override
+                protected String getTableName() {
+                    return customTableName;
+                }
+            };
+        }
+
+        return customTableBasedDataModel;
+    }
+
+    private PagingAndFiltering getPagingAndFiltering(ICustomFieldEntity entity, CustomFieldTemplate cft) {
+        String filterString = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getDataFilterEL(), "entity", entity);
+        String fieldsString = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getFieldsEL(), "entity", entity);
+        if (StringUtils.isBlank(filterString)) {
+            return new PagingAndFiltering();
+        }
+        String jsonFilter = "{\"filters\": {" + filterString + "},\"fields\":\"" + fieldsString + "\"}";
+        PagingAndFiltering pagingAndFiltering = JsonUtils.toObject(jsonFilter, PagingAndFiltering.class);
+        return pagingAndFiltering;
+    }
+
+    public List<CustomFieldTemplate> getFields(ICustomFieldEntity entity, CustomFieldTemplate cft) {
+
+        String customTableCode = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getCustomTableCodeEL(), "entity", entity);
+        String fieldsString = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getFieldsEL(), "entity", entity);
+        List<String> includedFields = new ArrayList<>();
+        if (!StringUtils.isBlank(fieldsString)) {
+            fieldsString = fieldsString.replaceAll("[\\s\"]+", "");
+            includedFields = Arrays.asList(fieldsString.split(","));
+        }
+
+        CustomEntityTemplate cet = customTableService.getCET(customTableCode);
+        if (cet == null) {
+            throw new BusinessException("Custom Entity Template not found for the Custom Table:" + customTableCode);
+        }
+
+        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
+        if (cfts != null) {
+            fields = new ArrayList<>(cfts.values());
+            //Exclude fields not included in fieldsEl
+            if (!includedFields.isEmpty()) {
+                List<CustomFieldTemplate> toBeRemoved = new ArrayList<>();
+                for (CustomFieldTemplate cf : fields) {
+                    if (!includedFields.contains(cf.getCode())) {
+                        toBeRemoved.add(cf);
+                    }
+                }
+                fields.removeAll(toBeRemoved);
+            }
+            Collections.sort(fields, new Comparator<CustomFieldTemplate>() {
+
+                @Override
+                public int compare(CustomFieldTemplate cft1, CustomFieldTemplate cft2) {
+                    int pos1 = cft1.getGUIFieldPosition();
+                    int pos2 = cft2.getGUIFieldPosition();
+
+                    return pos1 - pos2;
+                }
+            });
+        }
+        return fields;
+    }
+
+    @ActionMethod
+    public void delete(Long id, ICustomFieldEntity entity, CustomFieldTemplate cft) throws BusinessException {
+        String customTableCode = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getCustomTableCodeEL(), "entity", entity);
+        CustomEntityTemplate cet = customTableService.getCET(customTableCode);
+        if (cet == null) {
+            throw new BusinessException("Custom Entity Template not found for the Custom Table:" + customTableCode);
+        }
+        customTableService.remove(cet.getDbTablename(), id);
+        customTableBasedDataModel = null;
+        messages.info(new BundleKey("messages", "delete.successful"));
+
+    }
+
+    public List<Map<String, Object>> getSelectedValues() {
+        return selectedValues;
+    }
+
+    public void setSelectedValues(List<Map<String, Object>> selectedValues) {
+        this.selectedValues = selectedValues;
+    }
+
+    public Map<String, Object> getNewValues() {
+        return newValues;
+    }
+
+    public void setNewValues(Map<String, Object> newValues) {
+        this.newValues = newValues;
+    }
+
+    @ActionMethod
+    public void onCellEdit(CellEditEvent event) throws BusinessException {
+
+        DataTable o = (DataTable) event.getSource();
+        Map<String, Object> mapValue = (Map<String, Object>) o.getRowData();
+        customTableService.update(customTableName, mapValue);
+        messages.info(new BundleKey("messages", "customTable.valuesSaved"));
+    }
+
+    private String setCustomTableName(ICustomFieldEntity entity, CustomFieldTemplate cft) {
+        if (customTableName == null) {
+            String customTableCode = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getCustomTableCodeEL(), "entity", entity);
+            CustomEntityTemplate cet = customTableService.getCET(customTableCode);
+            if (cet == null) {
+                throw new BusinessException("Custom Entity Template not found for the Custom Table:" + customTableCode);
+            }
+            customTableName = cet.getDbTablename();
+        }
+        return customTableName;
+    }
+
+    /**
+     * Add new values to a map of values, setting a default value if applicable
+     *
+     * @throws BusinessException General exception
+     */
+    @ActionMethod
+    public void addNewValues(BusinessEntity entity) throws BusinessException {
+
+        Map<String, Object> convertedValues = customTableService.convertValue(newValues, fields, false, null);
+        if (convertedValues != null && convertedValues.containsValue(entity.getCode())) {
+            customTableService.create(customTableName, convertedValues);
+            messages.info(new BundleKey("messages", "customTable.valuesSaved"));
+            newValues = new HashMap<>();
+            customTableBasedDataModel = null;
+        } else {
+            messages.error(new BundleKey("messages", "customTable.invalidValues"));
+        }
+    }
+
+    @ActionMethod
+    public void deleteMany() throws BusinessException {
+
+        if (selectedValues == null || selectedValues.isEmpty()) {
+            messages.warn(new BundleKey("messages", "delete.entitities.noSelection"));
+            return;
+        }
+        Set<Long> ids = new HashSet<>();
+
+        for (Map<String, Object> values : selectedValues) {
+
+            Object id = values.get(NativePersistenceService.FIELD_ID);
+            if (id instanceof String) {
+                id = Long.parseLong((String) id);
+            } else if (id instanceof Number) {
+                id = ((Number) id).longValue();
+            }
+            ids.add((long) id);
+
+        }
+
+        customTableService.remove(customTableName, ids);
+        customTableBasedDataModel = null;
+        messages.info(new BundleKey("messages", "delete.entitities.successful"));
+    }
+
 }

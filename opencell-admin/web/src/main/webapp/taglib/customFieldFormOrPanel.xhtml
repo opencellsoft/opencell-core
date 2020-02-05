@@ -3,8 +3,8 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-    xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+      xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:hftl="http://hftl.org" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+>
 
 <!--
     A tag to manage custom field values of an entity
@@ -27,24 +27,28 @@
 
     <c:forEach items="${cfTab.children}" var="cfFieldOrFg">
         <c:if test="#{cfFieldOrFg.type == 'field'}">
-            <c:set var="cft" value="#{cfFieldOrFg.data}" />
+
+            <c:set var="cft" value="#{cfFieldOrFg.data}"/>
             <c:if
-                test="#{!cft.hideInGUI and ((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBooleanOneVariable(cft.applicableOnEl,'entity',entity)}">
-                <hf:customField entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
+                    test="#{!cft.hideInGUI and ((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBooleanOneVariable(cft.applicableOnEl,'entity',entity)}">
+                <hf:customField entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" dateTimePattern="#{dateTimePattern}"
+                                prefix="#{prefix}"/>
             </c:if>
         </c:if>
         <c:if test="#{cfFieldOrFg.type == 'fieldGroup'}">
             <c:if test="${cfFieldOrFg.hasVisibleCustomFields(entity, cfValueHolder)}">
                 <p:fieldset legend="#{cfFieldOrFg.data.getLabel(customFieldDataEntryBean.currentLocale.ISO3Language)}">
                     <c:forEach items="${cfFieldOrFg.children}" var="cfField">
-                        <c:set var="cft" value="#{cfField.data}" />
+                        <c:set var="cft" value="#{cfField.data}"/>
                         <c:if
-                            test="#{!cft.hideInGUI and ((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBooleanOneVariable(cft.applicableOnEl,'entity',entity)}">
-                            <hf:customField entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" dateTimePattern="#{dateTimePattern}"
-                                prefix="#{prefix}" />
+                                test="#{!cft.hideInGUI and ((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBooleanOneVariable(cft.applicableOnEl,'entity',entity)}">
+                            <hf:customField entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}"
+                                            dateTimePattern="#{dateTimePattern}"
+                                            prefix="#{prefix}"/>
                         </c:if>
                     </c:forEach>
                 </p:fieldset>
+
             </c:if>
         </c:if>
     </c:forEach>

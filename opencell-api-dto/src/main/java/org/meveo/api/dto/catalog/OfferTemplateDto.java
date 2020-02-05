@@ -1,17 +1,16 @@
 package org.meveo.api.dto.catalog;
 
-import java.util.List;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.billing.SubscriptionRenewalDto;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.OfferTemplate;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.billing.SubscriptionRenewalDto;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.OfferTemplate;
+import java.util.List;
 
 /**
  * The Class OfferTemplateDto.
@@ -100,10 +99,12 @@ public class OfferTemplateDto extends ProductOfferingDto {
         }
     }
 
+    @Override
     public CustomFieldsDto getCustomFields() {
         return customFields;
     }
 
+    @Override
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
@@ -302,4 +303,5 @@ public class OfferTemplateDto extends ProductOfferingDto {
     public void setAutoEndOfEngagement(Boolean autoEndOfEngagement) {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
+
 }

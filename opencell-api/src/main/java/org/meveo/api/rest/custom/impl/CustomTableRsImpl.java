@@ -1,18 +1,19 @@
 package org.meveo.api.rest.custom.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.custom.CustomTableApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.custom.CustomTableDataDto;
 import org.meveo.api.dto.custom.CustomTableDataResponseDto;
+import org.meveo.api.dto.custom.CustomTableWrapperDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.custom.CustomTableRs;
 import org.meveo.api.rest.impl.BaseRs;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * Rest API implementation for custom table data management
@@ -132,6 +133,21 @@ public class CustomTableRsImpl extends BaseRs implements CustomTableRs {
 
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public CustomTableDataResponseDto listFromWrapper(CustomTableWrapperDto customTableWrapperDto) {
+        CustomTableDataResponseDto result = new CustomTableDataResponseDto();
+
+        try {
+
+            return customTableApi.listFromWrapper(customTableWrapperDto);
+
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;

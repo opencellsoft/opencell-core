@@ -1,11 +1,12 @@
 package org.meveo.model.crm.custom;
 
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.model.crm.CustomTableWrapper;
+import org.meveo.model.crm.EntityReferenceWrapper;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.meveo.model.crm.EntityReferenceWrapper;
 
 /**
  * @author Edward P. Legaspi
@@ -65,7 +66,12 @@ public enum CustomFieldTypeEnum {
     /**
      * A boolean value
      */
-    BOOLEAN(false, Boolean.class, "boolean default false");
+    BOOLEAN(false, Boolean.class, "boolean default false"),
+
+    /**
+     * A reference to an entity
+     */
+    CUSTOM_TABLE_WRAPPER(true, CustomTableWrapper.class, StringUtils.EMPTY);
 
     /**
      * Is value stored in a serialized form in DB
@@ -75,12 +81,11 @@ public enum CustomFieldTypeEnum {
     /**
      * Corresponding class to field type for conversion to json
      */
-    @SuppressWarnings("rawtypes")
     private Class dataClass;
     
     private String dataType;
 
-    CustomFieldTypeEnum(boolean storedSerialized, @SuppressWarnings("rawtypes") Class dataClass, String dataType) {
+    CustomFieldTypeEnum(boolean storedSerialized, Class dataClass, String dataType) {
         this.storedSerialized = storedSerialized;
         this.dataClass = dataClass;
         this.dataType = dataType;
@@ -94,7 +99,6 @@ public enum CustomFieldTypeEnum {
         return storedSerialized;
     }
 
-    @SuppressWarnings("rawtypes")
     public Class getDataClass() {
         return dataClass;
     }
