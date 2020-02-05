@@ -158,7 +158,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
                     for (SecuredEntity securedEntity : value) {
                         final String entityClass = securedEntity.getEntityClass();
                         //extract the field name from entity class, I supposed that the field name is the same as the Class name.
-                        final String fieldName = entityClass.substring(entityClass.lastIndexOf(".") + 1).toLowerCase();
+                        final String fieldName = entityClass.substring(entityClass.lastIndexOf('.') + 1).toLowerCase();
                         log.debug("Code = {} for entity = {}", securedEntity.getCode(), fieldName);
                         final String keyInList = "inList " + fieldName + ".code";
                         if (filters.containsKey(fieldName)) {
@@ -174,6 +174,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
                     }
                 }
                 pagingAndFiltering.setFilters(filters);
+                break;
             }
         }
     }
