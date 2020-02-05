@@ -14,7 +14,6 @@ public class AccountingStepDefinition implements En {
 
     public AccountingStepDefinition(BaseHook base) {
         Then("^The accounting code is created$", () -> {
-
             base.getCode().ifPresent( code ->{
                 if(base.getResponse().getHttpStatusCode() == HttpStatus.SC_OK) {
                     ValidatableResponse response = RestApiUtils.get("/billing/accountingCode?accountingCode=" + code, "");

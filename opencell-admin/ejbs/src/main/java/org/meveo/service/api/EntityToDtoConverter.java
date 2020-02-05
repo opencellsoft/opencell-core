@@ -1,18 +1,5 @@
 package org.meveo.service.api;
 
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldFormattedValueDto;
@@ -23,7 +10,6 @@ import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
@@ -32,10 +18,24 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * The Class EntityToDtoConverter.
@@ -243,7 +243,24 @@ public class EntityToDtoConverter {
                 }
             }
         }
+        List<CustomFieldTemplate> cftsCustomTableWrapper = cfts.values().stream().filter(cft -> {
+            return cft.getFieldType().equals(CustomFieldTypeEnum.CUSTOM_TABLE_WRAPPER);
+        }).collect(Collectors.toList());
 
+        if (cftsCustomTableWrapper != null && !cftsCustomTableWrapper.isEmpty()) {
+            cftsCustomTableWrapper.forEach(cft -> {
+                CustomFieldValue cfValue = new CustomFieldValue();
+                String customTableCode = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getCustomTableCodeEL(), "entity", entity);
+                String filters = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getDataFilterEL(), "entity", entity);
+                String fields = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getFieldsEL(), "entity", entity);
+                cfValue.setCustomTableCode(customTableCode);
+                cfValue.setDataFilter(filters);
+                cfValue.setFields(fields);
+                CustomFieldDto dto = customFieldToDTO(cft.getCode(), cfValue, cft);
+                currentEntityCFs.getCustomField().add(dto);
+            });
+
+        }
         return currentEntityCFs.isEmpty() ? null : currentEntityCFs;
     }
 
@@ -343,9 +360,9 @@ public class EntityToDtoConverter {
         }
     }
 
-    private void setFormattedListValue(CustomFieldDto dto, CustomFieldTemplate cft, @SuppressWarnings("rawtypes") List listValue) {
-        if (!StringUtils.isBlank(cft.getDisplayFormat())
-                && (cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.DATE)) {
+    private void setFormattedListValue(CustomFieldDto dto, CustomFieldTemplate cft, List listValue) {
+        if (!StringUtils.isBlank(cft.getDisplayFormat()) && (cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE
+                || cft.getFieldType() == CustomFieldTypeEnum.DATE)) {
             if (listValue != null && !listValue.isEmpty()) {
                 CustomFieldFormattedValueDto formattedValueDto = new CustomFieldFormattedValueDto();
                 List<String> listFormattedValue = new ArrayList<String>();
@@ -382,7 +399,6 @@ public class EntityToDtoConverter {
      * @param cft the cft
      * @return the custom field dto
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public CustomFieldDto customFieldToDTO(String cfCode, Object value, boolean isChildEntityTypeField, CustomFieldTemplate cft) {
 
         CustomFieldDto dto = new CustomFieldDto();
@@ -425,7 +441,6 @@ public class EntityToDtoConverter {
      * @param cft the cft
      * @return the custom field dto
      */
-    @SuppressWarnings("unchecked")
     private CustomFieldDto customFieldToDTO(String cfCode, CustomFieldValue cfValue, CustomFieldTemplate cft) {
 
         boolean isChildEntityTypeField = cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY;
@@ -451,27 +466,29 @@ public class EntityToDtoConverter {
         dto.setListValue(customFieldValueToDTO(cfValue.getListValue(), isChildEntityTypeField));
         dto.setMapValue(customFieldValueToDTO(cfValue.getMapValue()));
 
-        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && dto.getMapValue() != null && !dto.getMapValue().isEmpty()
-                && !dto.getMapValue().containsKey(CustomFieldValue.MAP_KEY)) {
-            dto.getMapValue().put(CustomFieldValue.MAP_KEY,
-                new CustomFieldValueDto(StringUtils.concatenate(CustomFieldValue.MATRIX_COLUMN_NAME_SEPARATOR, cft.getMatrixColumnCodes())));
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && dto.getMapValue() != null && !dto.getMapValue().isEmpty() && !dto.getMapValue()
+                .containsKey(CustomFieldValue.MAP_KEY)) {
+            dto.getMapValue()
+                    .put(CustomFieldValue.MAP_KEY, new CustomFieldValueDto(StringUtils.concatenate(CustomFieldValue.MATRIX_COLUMN_NAME_SEPARATOR, cft.getMatrixColumnCodes())));
         }
 
         if (cfValue.getEntityReferenceValue() != null) {
             dto.setEntityReferenceValue(new EntityReferenceDto(cfValue.getEntityReferenceValue()));
         }
-
+        dto.setCustomTableCode(cfValue.getCustomTableCode());
+        dto.setDataFilter(cfValue.getDataFilter());
+        dto.setFields(cfValue.getFields());
         return dto;
     }
 
     /**
      * Custom field value to DTO.
      *
-     * @param listValue the list value
+     * @param listValue              the list value
      * @param isChildEntityTypeField the is child entity type field
      * @return the list
      */
-    private List<CustomFieldValueDto> customFieldValueToDTO(@SuppressWarnings("rawtypes") List listValue, boolean isChildEntityTypeField) {
+    private List<CustomFieldValueDto> customFieldValueToDTO(List listValue, boolean isChildEntityTypeField) {
 
         if (listValue == null) {
             return null;

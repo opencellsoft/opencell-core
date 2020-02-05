@@ -1,0 +1,17 @@
+{
+    "code": "aLongFiltered",
+    "description": "A long on ServiceTemplate with applicableOnEL",
+    "fieldType": "LONG",
+    "appliesTo": "ServiceTemplate",
+    "defaultValue": "-3",
+    "storageType": "SINGLE",
+    "valueRequired": false,
+    "maxValue": 100,
+    "versionable": false,
+    "triggerEndPeriodEvent": false,
+    "allowEdit": true,
+    "hideOnNew": false,
+    "cacheValue": false,
+    "applicableOnEl":"#{ entity.businessServiceModel.code.contains('BSM_') || entity.code.contains('SE_')}",
+    "guiPosition": null
+}

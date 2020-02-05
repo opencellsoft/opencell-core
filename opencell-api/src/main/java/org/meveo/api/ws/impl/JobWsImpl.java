@@ -21,7 +21,7 @@ import org.meveo.api.job.JobInstanceApi;
 import org.meveo.api.job.TimerEntityApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.JobWs;
-import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.jobs.MeveoJobCategoryEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -264,7 +264,7 @@ public class JobWsImpl extends BaseWs implements JobWs {
     public JobCategoriesResponseDto listCategories() {
         JobCategoriesResponseDto result = new JobCategoriesResponseDto();
         try {
-            result.setJobCategories(JobCategoryEnum.values());
+            result.setJobCategories(MeveoJobCategoryEnum.values());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
