@@ -150,34 +150,56 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
      * @param values                the context parameter
      */
     private void addSecuredEntitiesToFilters(Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap, Object[] values) {
+        log.debug("Adding a secured entities code to the filters for paging");
+        final List<SecuredEntity> securedEntities = allSecuredEntitiesMap.values().parallelStream().flatMap(Set::stream).collect(Collectors.toList());
         for (Object obj : values) {
             if (obj instanceof PagingAndFiltering) {
                 PagingAndFiltering pagingAndFiltering = (PagingAndFiltering) obj;
-                Map<String, Object> filters = Optional.ofNullable(pagingAndFiltering.getFilters()).orElse(new HashMap<>());
-                for (Map.Entry<Class<?>, Set<SecuredEntity>> entry : allSecuredEntitiesMap.entrySet()) {
-                    final Set<SecuredEntity> value = entry.getValue();
-                    for (SecuredEntity securedEntity : value) {
-                        final String entityClass = securedEntity.getEntityClass();
-                        //extract the field name from entity class, I supposed that the field name is the same as the Class name.
-                        final String fieldName = entityClass.substring(entityClass.lastIndexOf('.') + 1).toLowerCase();
-                        log.debug("Code = {} for entity = {}", securedEntity.getCode(), fieldName);
-                        final String keyInList = "inList " + fieldName + ".code";
-                        if (filters.containsKey(fieldName)) {
-                            final Object initialValue = filters.get(fieldName);
-                            filters.put(keyInList, StringUtils.concat(initialValue, ",", securedEntity.getCode()));
-                            filters.remove(fieldName);
-                        } else if (filters.containsKey(keyInList)) {
-                            final Object initialList = filters.get(keyInList);
-                            filters.replace(keyInList, StringUtils.concat(initialList, ",", securedEntity.getCode()));
-                        } else {
-                            filters.put(fieldName, securedEntity.getCode());
-                        }
-                    }
-                }
-                pagingAndFiltering.setFilters(filters);
+                updateFilters(securedEntities, pagingAndFiltering);
                 break;
             }
         }
+    }
+
+    /**
+     * Adding a secured entities code to the filters
+     *
+     * @param securedEntities    a secured entities
+     * @param pagingAndFiltering a paging and filtering object
+     * @return
+     */
+    private void updateFilters(List<SecuredEntity> securedEntities, PagingAndFiltering pagingAndFiltering) {
+        if (isNotNull(pagingAndFiltering)) {
+            Map<String, Object> filters = Optional.ofNullable(pagingAndFiltering.getFilters()).orElse(new HashMap<>());
+            for (SecuredEntity securedEntity : securedEntities) {
+                final String entityClass = securedEntity.getEntityClass();
+                //extract the field name from entity class, I supposed that the field name is the same as the Class name.
+                final String fieldName = entityClass.substring(entityClass.lastIndexOf('.') + 1).toLowerCase();
+                log.debug("Code = {} for entity = {}", securedEntity.getCode(), fieldName);
+                final String keyInList = "inList " + fieldName + ".code";
+                if (filters.containsKey(fieldName)) {
+                    final Object initialValue = filters.get(fieldName);
+                    filters.put(keyInList, StringUtils.concat(initialValue, ",", securedEntity.getCode()));
+                    filters.remove(fieldName);
+                } else if (filters.containsKey(keyInList)) {
+                    final Object initialList = filters.get(keyInList);
+                    filters.replace(keyInList, StringUtils.concat(initialList, ",", securedEntity.getCode()));
+                } else {
+                    filters.put(fieldName, securedEntity.getCode());
+                }
+            }
+            pagingAndFiltering.setFilters(filters);
+        }
+    }
+
+    /**
+     * check if the object is null
+     *
+     * @param pagingAndFiltering a paging and filtering object
+     * @return true or false
+     */
+    private boolean isNotNull(PagingAndFiltering pagingAndFiltering) {
+        return pagingAndFiltering != null && pagingAndFiltering.getLimit() != null && pagingAndFiltering.getOffset() != null;
     }
 
     /**
