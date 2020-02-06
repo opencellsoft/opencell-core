@@ -62,16 +62,6 @@ public class InvoiceCategoryBean extends CustomFieldBean<InvoiceCategory> {
 	}
 
 	@Override
-	protected String getListViewName() {
-		return "invoiceCategories";
-	}
-
-	@Override
-	public String getNewViewName() {
-		return "invoiceCategoryDetail";
-	}
-
-	@Override
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("invoiceSubCategories");
 	}

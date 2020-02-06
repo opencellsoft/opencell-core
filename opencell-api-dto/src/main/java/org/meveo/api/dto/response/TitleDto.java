@@ -43,6 +43,7 @@ public class TitleDto extends BusinessEntityDto {
     public TitleDto(Title title) {
         super(title);
         isCompany = title.getIsCompany();
+        setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(title.getDescriptionI18n()));
     }
 
     /**
