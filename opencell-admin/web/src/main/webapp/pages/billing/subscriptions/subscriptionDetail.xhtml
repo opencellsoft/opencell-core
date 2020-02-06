@@ -1085,10 +1085,9 @@
 							</p:column>
 							<p:column rendered="#{!appProvider.entreprise}" sortBy="#{shotApplication.amountWithTax}">
 								<f:facet name="header">
-									<h:outputText
-										value="#{messages['walletOperation.amountWithTax']}" converter="bigDecimal12DigitsConverter" />
+									<h:outputText value="#{messages['walletOperation.amountWithTax']}" />
 								</f:facet>
-								<h:outputText value="#{shotApplication.amountWithTax}" />
+								<h:outputText value="#{shotApplication.amountWithTax}" converter="bigDecimal12DigitsConverter" />
 							</p:column>
 							<p:column width="44px;"  sortBy="#{shotApplication.status}">
 								<f:facet name="header">
