@@ -64,6 +64,7 @@ import org.meveo.model.notification.Notification;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.CalendarService;
 
 /**
  * 
@@ -81,6 +82,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
     @Inject
     private UserAccountService userAccountService;
+
+    @Inject
+    private CalendarService calendarService;
 
     @Inject
     private BillingAccountService billingAccountService;
@@ -319,6 +323,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
         CounterPeriod counterPeriod = new CounterPeriod();
         Calendar cal = counterTemplate.getCalendar();
+        if (!StringUtils.isBlank(counterTemplate.getCalendarCodeEl())) {
+            cal = getCalendarFromEl(counterTemplate.getCalendarCodeEl(), chargeInstance, serviceInstance, chargeInstance.getSubscription());
+        }
         cal.setInitDate(initDate);
         Date startDate = cal.previousCalendarDate(chargeDate);
         if (startDate == null) {
@@ -541,6 +548,55 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         QueryBuilder qb = new QueryBuilder(CounterInstance.class, "c");
         qb.addCriterionEntity("counterTemplate", counterTemplate);
         return qb.find(getEntityManager());
+    }
+
+    /**
+     * Gets the calendar from EL
+     *
+     * @param calendarCodeEl the calendar code EL
+     * @param chargeInstance
+     * @param serviceInstance
+     * @param subscription
+     * @return
+     * @throws BusinessException
+     */
+    public Calendar getCalendarFromEl(String calendarCodeEl, ChargeInstance chargeInstance, ServiceInstance serviceInstance, Subscription subscription) throws BusinessException {
+        String calendarCode = evaluateCalendarElExpression(calendarCodeEl, chargeInstance, serviceInstance, subscription);
+        Calendar calendar = calendarService.findByCode(calendarCode);
+        if (calendar == null) {
+            throw new BusinessException("Cant found calendar by code:" + calendarCode);
+        }
+        return calendar;
+    }
+
+    public String evaluateCalendarElExpression(String expression, ChargeInstance chargeInstance, ServiceInstance serviceInstance, Subscription subscription)
+            throws BusinessException {
+
+        String result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        if (expression.indexOf("charge") >= 0 || expression.indexOf("ci") >= 0) {
+            userMap.put("charge", chargeInstance);
+            userMap.put("ci", chargeInstance);
+        }
+        if (expression.indexOf("service") >= 0 || expression.indexOf("serviceInstance") >= 0) {
+            userMap.put("service", serviceInstance);
+            userMap.put("serviceInstance", serviceInstance);
+        }
+        if (expression.indexOf("sub") >= 0) {
+            userMap.put("sub", subscription);
+        }
+
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
+        try {
+            result = (String) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to String but " + res);
+        }
+        return result;
     }
 
     public BigDecimal evaluateCeilingElExpression(String expression, ChargeInstance chargeInstance, ServiceInstance serviceInstance, Subscription subscription)
