@@ -18,31 +18,6 @@
  */
 package org.meveo.service.base;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
@@ -74,6 +49,7 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -96,6 +72,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -609,7 +586,7 @@ public class NativePersistenceService extends BaseService {
      */
     public void remove(String tableName, Set<Long> ids) throws BusinessException {
         ids.stream().forEach(id -> deletionService.checkTableNotreferenced(tableName, id));
-        getEntityManager().createNativeQuery("delete from " + tableName + " where id in:ids").setParameter("ids", ids).executeUpdate();
+        getEntityManager().createNativeQuery("delete from " + tableName + " where id in :ids").setParameter("ids", ids).executeUpdate();
     }
 
     /**
