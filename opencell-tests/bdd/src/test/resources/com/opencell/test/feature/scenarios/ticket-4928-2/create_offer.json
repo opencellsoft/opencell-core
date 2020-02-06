@@ -1,0 +1,30 @@
+{
+    "code": "OF_WITH_CF",
+    "description": "Offer with CF and empty service with CF 1579603018",
+    "disabled": false,
+    "lifeCycleStatus": "ACTIVE",
+    "bomCode": null,
+    "offerTemplateCategoryCode": null,
+    "offerProductTemplate": null,
+    "offerServiceTemplate": [
+        {
+            "serviceTemplate": {
+                "code": "SE_EMPTY_WITH_CF"
+            },
+            "mandatory": true,
+            "incompatibleServiceTemplate": []
+        }
+    ],
+    "customFields": {
+        "customField": [
+            {
+                "code": "aString",
+                "stringValue": "From 'template' OfferTemplate"
+            },
+            {
+                "code": "aStringFiltered",
+                "stringValue": "From 'template' OfferTemplate"
+            }
+        ]
+    }
+}

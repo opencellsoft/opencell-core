@@ -1,0 +1,7 @@
+{
+	"code": "CF_REBATE_PRICE_REC",
+	"description": "Rebate amount",
+	"fieldType": "DOUBLE",
+	"doubleValue": 10.0,
+	"guiPosition": "tab:Rebate:0;field:1"
+}

@@ -229,6 +229,7 @@
     </changeSet>
 
 
+
     <changeSet id="#4282_20190520" author="AndriusKarpavicius">
         <addColumn tableName="billing_rated_transaction">
             <column name="service_instance_id" type="bigInt"/>
@@ -1226,13 +1227,12 @@
         <sql>insert into ${db.schema.adapted}flat_file_seq values(1)</sql>
     </changeSet>
 
-    <changeSet id="#4371_20190620_4" author="AbdellatifBARI">
+	<changeSet id="#4371_20190620_4" author="AbdellatifBARI">
         <createSequence sequenceName="flat_file_seq" startValue="1" />
         <createTable tableName="flat_file">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="flat_file_pkey" />
             </column>
-
             <column name="version" type="int4" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
@@ -1245,13 +1245,28 @@
             <column name="file_name" type="varchar(255)" />
             <column name="status" type="varchar(255)" />
             <column name="file_format_id" type="bigint" />
+            <column name="processed" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="error_message" type="text" />
         </createTable>
         <addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpdbari6yr9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="flat_file" />
         <addForeignKeyConstraint baseColumnNames="file_format_id" baseTableName="flat_file" constraintName="fk_d4iavkklx1qg1ani36bari5o5i" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_format" />
-        <sql dbms="mysql">CREATE INDEX flat_file_code_index ON ${db.schema.adapted}flat_file(code)</sql>
     </changeSet>
+
+    <!--<changeSet id="#3510_20190712_4" author="Mohammed_EL-AZZOUZI">
+
+        <sql>INSERT INTO ${db.schema.adapted}cat_unit_of_measure(id, version, code, created, symbol, description)
+                (SELECT nextval( 'cat_unit_of_measure_seq'), 0, FR.rating_unit_description, current_date, FR.rating_unit_description, FR.rating_unit_description||' MIG-R ' FROM (SELECT DISTINCT rating_unit_description
+                    FROM ${db.schema.adapted}cat_charge_template CT where rating_unit_description is not null) FR);</sql>
+        <sql>INSERT INTO ${db.schema.adapted}cat_unit_of_measure(id, version, code, created, symbol, description, multiplicator, parent_id)
+                (SELECT nextval( 'cat_unit_of_measure_seq'), 0, FR.input_unit_description, current_date, FR.input_unit_description, FR.input_unit_description||' MIG-I ', FR.unit_multiplicator,
+                         (select id from ${db.schema.adapted}cat_unit_of_measure UOM where UOM.code=FR.rating_unit_description AND UOM.description=UOM.code||' MIG-R ' )
+                 FROM (SELECT DISTINCT input_unit_description, rating_unit_description, unit_multiplicator FROM ${db.schema.adapted}cat_charge_template CT where input_unit_description is not null and unit_multiplicator is not null) FR);</sql>
+        <sql>UPDATE ${db.schema.adapted}cat_charge_template CT SET rating_unitofmeasure = (SELECT UOM.id FROM ${db.schema.adapted}cat_unit_of_measure UOM
+                WHERE UOM.code=CT.rating_unit_description AND UOM.description=UOM.code||' MIG-R ' ) WHERE rating_unitofmeasure IS null AND rating_unit_description IS NOT null;</sql>
+        <sql>UPDATE ${db.schema.adapted}cat_charge_template CT SET input_unitofmeasure = (SELECT UOM.id FROM ${db.schema.adapted}cat_unit_of_measure UOM
+                WHERE UOM.code=CT.input_unit_description AND UOM.description=UOM.code||' MIG-I ' ) WHERE input_unitofmeasure IS null AND input_unit_description IS NOT null;</sql>
+    </changeSet>-->
     <changeSet id="#4371_20190620_5" author="AbdellatifBARI" dbms="postgresql">
         <sql>CREATE INDEX flat_file_code_index ON ${db.schema.adapted} flat_file(lower(code))</sql>
     </changeSet>
@@ -1494,7 +1509,13 @@
 			<column name="uuid" type="varchar(60)" />
 		</addColumn>
 	</changeSet>
-	
+
+	 <changeSet id="#3774_07102019" author="FranckValot">
+		<addColumn tableName="adm_notification">
+			<column name="save_successful_notif" type="${type.boolean}" defaultValueNumeric="1"></column>
+		</addColumn>
+	</changeSet>
+
 	<changeSet id="#4064_11092019" author="AbdelmounaimAkadid">
 		<addColumn tableName="billing_invoice">
 			<column name="status" type="varchar(50)" />
@@ -1880,6 +1901,7 @@
               id bigint NOT NULL DEFAULT nextval('billing_wallet_operation_seq'),
               operation_type character varying(31) NOT NULL,
               version integer,
+              created timestamp without time zone,
               updated timestamp without time zone,
               code character varying(255) NOT NULL,
               description character varying(255),
@@ -1986,8 +2008,8 @@
 
         <sql>insert into ${db.schema.adapted}rating_edr (id,version,created,event_date,last_updated,origin_batch,origin_record,parameter_1,parameter_2,parameter_3,parameter_4,quantity,reject_reason,status,subscription_id,parameter_5,parameter_6,parameter_7,parameter_8,parameter_9,date_parameter_1,date_parameter_2,date_parameter_3,date_parameter_4,date_parameter_5,decimal_parameter_1,decimal_parameter_2,decimal_parameter_3,decimal_parameter_4,decimal_parameter_5,access_code,header_edr_id,extra_parameter) 
                 (select id,version,created,event_date,last_updated,origin_batch,origin_record,parameter_1,parameter_2,parameter_3,parameter_4,quantity,reject_reason,status,subscription_id,parameter_5,parameter_6,parameter_7,parameter_8,parameter_9,date_parameter_1,date_parameter_2,date_parameter_3,date_parameter_4,date_parameter_5,decimal_parameter_1,decimal_parameter_2,decimal_parameter_3,decimal_parameter_4,decimal_parameter_5,access_code,header_edr_id,extra_parameter from ${db.schema.adapted}rating_edr_tmp) </sql>       
-        <sql>insert into ${db.schema.adapted}billing_wallet_operation (id,operation_type,version,updated,code,description,amount_tax,amount_with_tax,amount_without_tax,end_date,offer_code,operation_date,parameter_1,parameter_2,parameter_3,quantity,start_date,status,subscription_date,tax_percent,credit_debit_flag,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,charge_instance_id,counter_id,currency_id,priceplan_id,reratedwalletoperation_id,seller_id,wallet_id,reservation_id,invoicing_date,input_quantity,input_unit_description,rating_unit_description,edr_id,order_number,parameter_extra,raw_amount_without_tax,raw_amount_with_tax,invoice_sub_category_id,subscription_id,tax_id,rated_transaction_id,service_instance_id,offer_id) 
-                (select id,operation_type,version,updated,code,description,amount_tax,amount_with_tax,amount_without_tax,end_date,offer_code,operation_date,parameter_1,parameter_2,parameter_3,quantity,start_date,status,subscription_date,tax_percent,credit_debit_flag,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,charge_instance_id,counter_id,currency_id,priceplan_id,reratedwalletoperation_id,seller_id,wallet_id,reservation_id,invoicing_date,input_quantity,input_unit_description,rating_unit_description,edr_id,order_number,parameter_extra,raw_amount_without_tax,raw_amount_with_tax,invoice_sub_category_id,subscription_id,tax_id,rated_transaction_id,service_instance_id,offer_id from ${db.schema.adapted}billing_wallet_operation_tmp)</sql>
+        <sql>insert into ${db.schema.adapted}billing_wallet_operation (id,operation_type,version,created,updated,code,description,amount_tax,amount_with_tax,amount_without_tax,end_date,offer_code,operation_date,parameter_1,parameter_2,parameter_3,quantity,start_date,status,subscription_date,tax_percent,credit_debit_flag,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,charge_instance_id,counter_id,currency_id,priceplan_id,reratedwalletoperation_id,seller_id,wallet_id,reservation_id,invoicing_date,input_quantity,input_unit_description,rating_unit_description,edr_id,order_number,parameter_extra,raw_amount_without_tax,raw_amount_with_tax,invoice_sub_category_id,subscription_id,tax_id,rated_transaction_id,service_instance_id,offer_id)
+                (select id,operation_type,version,created,updated,code,description,amount_tax,amount_with_tax,amount_without_tax,end_date,offer_code,operation_date,parameter_1,parameter_2,parameter_3,quantity,start_date,status,subscription_date,tax_percent,credit_debit_flag,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,charge_instance_id,counter_id,currency_id,priceplan_id,reratedwalletoperation_id,seller_id,wallet_id,reservation_id,invoicing_date,input_quantity,input_unit_description,rating_unit_description,edr_id,order_number,parameter_extra,raw_amount_without_tax,raw_amount_with_tax,invoice_sub_category_id,subscription_id,tax_id,rated_transaction_id,service_instance_id,offer_id from ${db.schema.adapted}billing_wallet_operation_tmp)</sql>
         <sql>insert into ${db.schema.adapted}billing_rated_transaction (id,version,amount_tax,amount_with_tax,amount_without_tax,code,description,do_not_trigger_invoicing,parameter_1,parameter_2,parameter_3,quantity,status,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,unity_description,usage_date,billing_account__id,billing_run_id,invoice_id,aggregate_id_f,invoice_sub_category_id,priceplan_id,wallet_id,edr_id,adjusted_rated_tx,order_number,rating_unit_description,parameter_extra,start_date,end_date,subscription_id,seller_id,charge_instance_id,tax_id,tax_percent,user_account_id,offer_id,service_instance_id, updated) 
                 (select id,version,amount_tax,amount_with_tax,amount_without_tax,code,description,do_not_trigger_invoicing,parameter_1,parameter_2,parameter_3,quantity,status,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,unity_description,usage_date,billing_account__id,billing_run_id,invoice_id,aggregate_id_f,invoice_sub_category_id,priceplan_id,wallet_id,edr_id,adjusted_rated_tx,order_number,rating_unit_description,parameter_extra,start_date,end_date,subscription_id,seller_id,charge_instance_id,tax_id,tax_percent,user_account_id,offer_id,service_instance_id, now() from ${db.schema.adapted}billing_rated_transaction_tmp)</sql>
     
@@ -2116,6 +2138,65 @@
         </addColumn>
     </changeSet>
     
+        <changeSet id="#3510_20190516" author="MounirBahije">
+        <createTable tableName="cat_unit_of_measure">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_unit_of_measure_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)" />
+<!--            <column name="multiplicator" type="bigint" />-->
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="symbol" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="description_i18n" type="text">
+                <constraints nullable="true" />
+            </column>
+            <column name="multiplicator" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="parent_id" type="bigint" />
+        </createTable>
+
+        <addColumn tableName="cat_charge_template">
+            <column name="input_unitofmeasure" type="bigint"/>
+            <column name="rating_unitofmeasure" type="bigint"/>
+            <column name="input_unit_el" type="varchar(2000)"/>
+            <column name="output_unit_el" type="varchar(2000)"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="cat_charge_template" constraintName="fk_input_cat_charge_template_cat_unit_of_measure" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
+
+        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="cat_charge_template" constraintName="fk_rating_cat_charge_template_cat_unit_of_measure" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
+
+        <addColumn tableName="billing_wallet_operation">
+            <column name="input_unitofmeasure" type="bigint"/>
+            <column name="rating_unitofmeasure" type="bigint"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="billing_wallet_operation" constraintName="fk_input_billing_wallet_operation_cat_unit_of_measure" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
+
+        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="billing_wallet_operation" constraintName="fk_rating_billing_wallet_operation_cat_unit_of_measure" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
+
+
+        <addNotNullConstraint columnDataType="bigint" tableName="cat_unit_of_measure" columnName="multiplicator"/>
+        <addDefaultValue tableName="cat_unit_of_measure" columnName="multiplicator" defaultValueNumeric="1"/>
+
+    </changeSet>
+
     <changeSet id="#4766_20191111" author="MohammedELAZZOUZI">
     	<addNotNullConstraint tableName="adm_currency" columnName="currency_code" columnDataType="varchar(3)"/>
     	<addNotNullConstraint tableName="adm_currency" columnName="description_en" columnDataType="varchar(255)"/>
@@ -2146,17 +2227,211 @@
     		<column name="display_wallet_operations" type="${type.boolean}" defaultValueNumeric="0"/>
     	</addColumn>
     </changeSet>
-
+        
     <changeSet id="#4795_221119" author="Mohammed_ElAzzouzi">
-  		<sql>create index billing_invoice_agregate_tax_invoice_agregate_idx on ${db.schema.adapted}billing_invoice_agregate (tax_invoice_agregate)</sql>
-		<sql>create index billing_invoice_agregate_sub_cat_invoice_agregate_id_idx on ${db.schema.adapted}billing_invoice_agregate (sub_cat_invoice_agregate_id)</sql>
-		<sql>create index ar_account_operation_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (cat_inv_agregate_id)</sql>
-		<sql>create index ar_account_operation_sub_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (sub_cat_inv_agregate_id)</sql>
+        <sql>create index billing_invoice_agregate_tax_invoice_agregate_idx on ${db.schema.adapted}billing_invoice_agregate (tax_invoice_agregate)</sql>
+        <sql>create index billing_invoice_agregate_sub_cat_invoice_agregate_id_idx on ${db.schema.adapted}billing_invoice_agregate (sub_cat_invoice_agregate_id)</sql>
+        <sql>create index ar_account_operation_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (cat_inv_agregate_id)</sql>
+        <sql>create index ar_account_operation_sub_cat_inv_agregate_id_idx on ${db.schema.adapted}ar_account_operation (sub_cat_inv_agregate_id)</sql>
     </changeSet>
 
-    <changeSet author="abdelkader.bouazza"  id="#4494-Enable_a_subscription_to_have_the_same_access_point_in_two_or_more_different_periods_of_time">
+    <changeSet author="abdelkader.bouazza" id="#4494-Enable_a_subscription_to_have_the_same_access_point_in_two_or_more_different_periods_of_time">
         <dropUniqueConstraint tableName="medina_access" constraintName="uk_lca62y5gn9qo1e6jr84i9w3lr"/>
-        <addUniqueConstraint columnNames="acces_user_id, subscription_id, start_date, end_date" constraintName="uk_lca62y5gn9qo1e6jr84i9w3lr" deferrable="false" disabled="false" initiallyDeferred="false" tableName="medina_access" />
+        <addUniqueConstraint columnNames="acces_user_id, subscription_id, start_date, end_date" constraintName="uk_lca62y5gn9qo1e6jr84i9w3lr" deferrable="false" disabled="false"
+                             initiallyDeferred="false" tableName="medina_access"/>
+    </changeSet>
+    <changeSet id="#4712_20191223" author="khalidHORRI">
+        <addColumn tableName="crm_custom_field_tmpl">
+            <column name="custom_table_code_el" type="varchar(2000)"/>
+            <column name="data_filter_el" type="varchar(2000)"/>
+            <column name="fields_el" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
+
+    <!--    one shot migration of sellers -->
+    <changeSet id="4745_20200108" author="MohamedSTITANE" >
+        <sql dbms="postgresql" endDelimiter="$$" splitStatements="false">
+            <![CDATA[DO $$
+DECLARE
+	oldSeller RECORD;
+	seqId integer;
+	sellId integer;
+BEGIN
+	 FOR sellId IN SELECT id FROM public.crm_seller
+	 LOOP
+		BEGIN
+			seqId := nextval('account_entity_seq');
+			-- get freshly record because parent seller has changed
+			select * into oldSeller from public.crm_seller where id = sellId;
+			-- Inserted new account entity with id
+			INSERT INTO account_entity (id, version ,created ,updated ,code ,description ,address_1 ,address_2 ,address_3,
+				address_city ,address_country_id ,address_state ,address_zipcode ,creator, updater ,uuid ,bam_id ,
+				cf_values ,cf_values_accum ,email ,fax ,mobile ,phone ,vat_no, registration_no , account_type)
+					VALUES (seqId, oldSeller.version, oldSeller.created, oldSeller.updated, oldSeller.code, oldSeller.description,
+							oldSeller.address_1, oldSeller.address_2, oldSeller.address_3, oldSeller.address_city, oldSeller.address_country_id,
+							oldSeller.address_state, oldSeller.address_zipcode, oldSeller.creator, oldSeller.updater, oldSeller.uuid ,
+							oldSeller.bam_id, oldSeller.cf_values, oldSeller.cf_values_accum, oldSeller.email, oldSeller.fax,
+							oldSeller.mobile, oldSeller.phone, oldSeller.vat_no, oldSeller.registration_no, 'ACCT_S');
+
+			--update code to prevent uk constraint
+			update public.crm_seller set code = concat(code,'_OLD') where id = oldSeller.id;
+
+			-- Insert a seller entity with new id
+			INSERT INTO public.crm_seller(
+				id, version, created, updated, code, description, address_1, address_2, address_3, address_city, address_country_id, address_state, address_zipcode,
+				creator, updater, parent_seller_id, trading_country_id, trading_currency_id, trading_language_id, credit_note_prefix, current_credit_note_nb,
+				credit_note_sequence_size, uuid, bam_id, cf_values, cf_values_accum, email, fax, mobile, phone, vat_no, registration_no, legal_text, legal_type, general_ledger_id)
+				VALUES (seqId, oldSeller.version, oldSeller.created, oldSeller.updated, oldSeller.code, oldSeller.description, oldSeller.address_1, oldSeller.address_2,
+				oldSeller.address_3, oldSeller.address_city, oldSeller.address_country_id, oldSeller.address_state, oldSeller.address_zipcode, oldSeller.creator,
+				oldSeller.updater, oldSeller.parent_seller_id, oldSeller.trading_country_id, oldSeller.trading_currency_id, oldSeller.trading_language_id,
+				oldSeller.credit_note_prefix, oldSeller.current_credit_note_nb, oldSeller.credit_note_sequence_size, oldSeller.uuid, oldSeller.bam_id, oldSeller.cf_values,
+				 oldSeller.cf_values_accum, oldSeller.email, oldSeller.fax, oldSeller.mobile, oldSeller.phone, oldSeller.vat_no, oldSeller.registration_no,
+				 oldSeller.legal_text, oldSeller.legal_type, oldSeller.general_ledger_id);
+
+			-- Update a parent seller entity with new id
+			update public.crm_seller set parent_seller_id = seqId where parent_seller_id = oldSeller.id;
+
+			-- Update table billing_charge_instance fk
+			update public.billing_charge_instance set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table crm_customer fk
+			update public.crm_customer set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table billing_invoice fk
+			update public.billing_invoice set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table billing_product_instance  fk
+			update public.billing_product_instance set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table billing_rated_transaction fk
+			update public.billing_rated_transaction set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table billing_subscription fk
+			update public.billing_subscription  set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table billing_wallet_operation fk
+			update public.billing_wallet_operation  set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table ar_account_operation fk
+			update public.ar_account_operation  set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table billing_seq_invtyp_sell fk
+			update public.billing_seq_invtyp_sell set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table cat_price_plan_matrix fk
+			update public.cat_price_plan_matrix set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table ar_ddrequest_lot fk
+			update public.ar_ddrequest_lot set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table ar_payment_gateway fk
+			update public.ar_payment_gateway set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table ar_ddrequest_lot_op fk
+			update public.ar_ddrequest_lot_op set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table crm_customer_sequence fk
+			update public.crm_customer_sequence set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- Update table cat_product_offer_seller  fk
+			update public.cat_product_offer_seller set seller_id = seqId where seller_id = oldSeller.id;
+
+			-- delete old seller
+			delete from public.crm_seller where id = oldSeller.id;
+
+		EXCEPTION when others then
+			RAISE INFO '%', concat('Error ', SQLSTATE, ' : ', SQLERRM, ' for seller ' , oldSeller.code);
+        END;
+	END LOOP;
+END $$;]]>
+        </sql>
+        <dropColumn tableName="crm_seller">
+            <column name="version"/>
+            <column name="created"/>
+            <column name="updated"/>
+            <column name="code"/>
+            <column name="description"/>
+            <column name="address_1"/>
+            <column name="address_2"/>
+            <column name="address_3"/>
+            <column name="address_city"/>
+            <column name="address_country_id"/>
+            <column name="address_state"/>
+            <column name="address_zipcode"/>
+            <column name="creator"/>
+            <column name="updater"/>
+            <column name="uuid"/>
+            <column name="bam_id"/>
+            <column name="cf_values"/>
+            <column name="cf_values_accum"/>
+            <column name="email"/>
+            <column name="fax"/>
+            <column name="mobile"/>
+            <column name="phone"/>
+            <column name="vat_no"/>
+        </dropColumn>
+    </changeSet>
+
+
+    <changeSet id="#4906_Creation_CDR_Table_1" author="anasseh" dbms="mysql">
+            <createTable tableName="rating_cdr_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="rating_cdr_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}rating_cdr_seq values(1)</sql>
+    </changeSet>
+
+    <changeSet id="#4906_Creation_CDR_Table_2" author="anasseh">
+   		<createSequence sequenceName="rating_cdr_seq" />
+   		<createTable tableName="rating_cdr">
+	         <column name="id" type="bigint" autoIncrement="${id.auto}">
+	             <constraints nullable="false" primaryKey="true" primaryKeyName="rating_cdr_pkey" />
+	         </column>
+	         <column name="version" type="int4" />
+	         <column name="created" type="datetime" />
+	         <column name="event_date" type="datetime" />
+	         <column name="last_updated" type="datetime" />
+	         <column name="origin_batch" type="varchar(255)" />
+	         <column name="origin_record" type="varchar(255)" />
+	         <column name="quantity" type="numeric" />
+	         <column name="reject_reason" type="${type.text}" />
+	         <column name="status" type="varchar(255)" />
+	         <column name="status_date" type="datetime" />
+	         <column name="parameter_1" type="varchar(255)" />
+	         <column name="parameter_2" type="varchar(255)" />
+	         <column name="parameter_3" type="varchar(255)" />
+	         <column name="parameter_4" type="varchar(255)" />
+	         <column name="parameter_5" type="varchar(255)" />
+	         <column name="parameter_6" type="varchar(255)" />
+	         <column name="parameter_7" type="varchar(255)" />
+	         <column name="parameter_8" type="varchar(255)" />
+	         <column name="parameter_9" type="varchar(255)" />
+	         <column name="date_parameter_1" type="datetime" />
+	         <column name="date_parameter_2" type="datetime" />
+	         <column name="date_parameter_3" type="datetime" />
+	         <column name="date_parameter_4" type="datetime" />
+	         <column name="date_parameter_5" type="datetime" />
+	         <column name="decimal_parameter_1" type="numeric" />
+	         <column name="decimal_parameter_2" type="numeric" />
+	         <column name="decimal_parameter_3" type="numeric" />
+	         <column name="decimal_parameter_4" type="numeric" />
+	         <column name="decimal_parameter_5" type="numeric" />
+	         <column name="access_code" type="varchar(255)" />
+	         <column name="header_edr_id" type="bigint">
+	             <constraints nullable="true" />
+	         </column>
+	         <column name="extra_parameter" type="text" />
+    	</createTable>
+        <sql>CREATE INDEX rating_cdr_index ON ${db.schema.adapted}rating_cdr(origin_batch, origin_record)</sql>
+        <sql>CREATE INDEX rating_cdr_status ON ${db.schema.adapted}rating_cdr(status)</sql>
+    </changeSet>
+
+    <changeSet id="#4933_20200117" author="AbdellatifBARI">
+        <addNotNullConstraint tableName="adm_file_format" columnName="configuration_template" columnDataType="varchar(255)"/>
+        <addColumn tableName="adm_file_format">
+            <column name="job_code" type="varchar(255)" />
+        </addColumn>
     </changeSet>
     <changeSet author="khalid.horri" id="#4757_20191118">
         <addColumn tableName="billing_user_account">
@@ -2183,3 +2458,4 @@
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account"/>
     </changeSet>
 </databaseChangeLog>
+

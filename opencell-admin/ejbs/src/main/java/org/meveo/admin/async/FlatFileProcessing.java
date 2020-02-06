@@ -22,6 +22,7 @@ import org.meveo.admin.job.UnitFlatFileProcessingJobBean;
 import org.meveo.admin.util.FlatFileValidator;
 import org.meveo.commons.parsers.IFileParser;
 import org.meveo.commons.parsers.RecordContext;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.bi.FileStatusEnum;
 import org.meveo.model.bi.FlatFile;
@@ -42,7 +43,7 @@ import org.slf4j.Logger;
  * 
  * @author Abdelhadi
  * @author Abdellatif BARI
- * @lastModifiedVersion 8.0.0
+ * @lastModifiedVersion 8.4.0
  */
 @Stateless
 public class FlatFileProcessing {
@@ -217,20 +218,30 @@ public class FlatFileProcessing {
     }
 
     /**
+     *
      * Update flat file record with information on errors
      *
      * @param fileOriginalName file original name that was processed
      * @param fileCurrentName file current name that was processed
-     * @param currentDirectory current directory
-     * @param errors Processed flat file errors
+     * @param rejectedfileName file name that was rejected
+     * @param processedfileName file name that was rejected
+     * @param rejectDir reject directory name
+     * @param outputDir output directory name
+     * @param errors processed flat file errors
      * @param processSuccess Number of items processed successfully
      * @param processedError Number of items processed with failure
      * @param jobCode Job code that processed the file
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void updateFlatFile(String fileOriginalName, String fileCurrentName, String currentDirectory, List<String> errors, long processSuccess, long processedError, String jobCode) {
+    public void updateFlatFile(String fileOriginalName, String fileCurrentName, String rejectedfileName, String processedfileName, String rejectDir, String outputDir,
+            List<String> errors, long processSuccess, long processedError, String jobCode) {
         try {
+            if (StringUtils.isBlank(fileCurrentName)) {
+                fileCurrentName = !errors.isEmpty() ? rejectedfileName : processedfileName;
+            }
+            String currentDirectory = !errors.isEmpty() ? rejectDir : outputDir;
+
             String[] param = fileOriginalName.split("_");
             String code = param.length > 0 ? param[0] : null;
 
@@ -242,9 +253,14 @@ public class FlatFileProcessing {
                 errorMessage = String.join(",", errors.subList(0, maxErrors));
             }
             FlatFile flatFile = flatFileService.findByCode(code);
+            // case that mean the processed file wasn't uploaded with file Format
+            if (flatFile == null) {
+                // we check if this file is already processed and that it is in error.
+                flatFile = flatFileService.find(rejectDir, rejectedfileName);
+            }
             if (flatFile == null) {
                 flatFileService.create(fileOriginalName, fileCurrentName, currentDirectory, null, errorMessage, status, jobCode, 1, new Long(processSuccess).intValue(),
-                        new Long(processedError).intValue());
+                    new Long(processedError).intValue());
             } else {
                 flatFile.setFileCurrentName(fileCurrentName);
                 flatFile.setCurrentDirectory(currentDirectory);

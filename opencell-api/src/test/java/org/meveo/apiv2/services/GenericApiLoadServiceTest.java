@@ -201,7 +201,7 @@ public class GenericApiLoadServiceTest {
         //Given
         String entityName = null;
         PaginationConfiguration searchConfig = new PaginationConfiguration(Collections.emptyMap());
-        assertFindPaginateRecords(entityName, searchConfig, null, EntityDoesNotExistsException.class, "The entityName should not be null or empty");
+        assertFindPaginateRecords(null, searchConfig, null, EntityDoesNotExistsException.class, "The entityName should not be null or empty");
     }
 
     @Test
@@ -209,7 +209,7 @@ public class GenericApiLoadServiceTest {
         //Given
         String entityName = "";
         PaginationConfiguration searchConfig = new PaginationConfiguration(Collections.emptyMap());
-        assertFindPaginateRecords(entityName, searchConfig, null, EntityDoesNotExistsException.class, "The entityName should not be null or empty");
+        assertFindPaginateRecords(null, searchConfig, null, EntityDoesNotExistsException.class, "The entityName should not be null or empty");
     }
 
     @Test
@@ -241,15 +241,15 @@ public class GenericApiLoadServiceTest {
                 "id", org.primefaces.model.SortOrder.valueOf(SortOrder.DESCENDING.name()));
         when(persistenceService.list(any(PaginationConfiguration.class))).thenReturn(customers);
         //When
-        String response = sut.findPaginatedRecords("customer", paginationConfiguration, Collections.emptySet());
+        String response = sut.findPaginatedRecords(Customer.class, paginationConfiguration, Collections.emptySet());
         //Then
         assertThat(response).contains("{\"id\":0,\"defaultLevel\":true,\"accountType\":\"ACCT_CUST\",\"addressbook\":{\"id\":0},\"parentEntityType\":\"org.meveo.model.admin.Seller\",\"contactInformationNullSafe\":{}},{\"id\":1,\"defaultLevel\":true,\"accountType\":\"ACCT_CUST\",\"addressbook\":{\"id\":1},\"parentEntityType\":\"org.meveo.model.admin.Seller\",\"contactInformationNullSafe\":{}}");
     }
 
-    private void assertFindPaginateRecords(String entityName, PaginationConfiguration searchConfig, Set<String> genericFields, Class exception, String message) {
+    private void assertFindPaginateRecords(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Class exception, String message) {
         try {
             //When
-            sut.findPaginatedRecords(entityName, searchConfig, genericFields);
+            sut.findPaginatedRecords(entityClass, searchConfig, genericFields);
         } catch (Exception ex) {
             assertThat(ex).isInstanceOf(exception);
             assertThat(ex.getMessage()).isEqualTo(message);

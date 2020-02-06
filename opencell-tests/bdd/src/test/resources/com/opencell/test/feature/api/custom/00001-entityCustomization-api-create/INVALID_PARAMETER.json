@@ -1,0 +1,7 @@
+{
+    "code": "TEST",
+    "description": "Test entity customization",
+    "disabled": "false",
+    "name": "Name",
+    "storeAsTable": "INVALID"
+}

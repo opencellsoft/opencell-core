@@ -1,17 +1,5 @@
 package org.meveo.api.dto;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
@@ -20,12 +8,24 @@ import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * The Class CustomFieldTemplateDto.
  *
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.2.1
+ * @author Khalid HORRI
+ * @lastModifiedVersion 10.0
  */
 @XmlRootElement(name = "CustomFieldTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -190,10 +190,36 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
      * Tags assigned to custom field template.
      */
     private String tags;
-    
-    /** display format. */
+
+    /**
+     * display format.
+     */
     @XmlElement
     protected String displayFormat;
+
+    /**
+     * An EL expression that should resolve into the code of a valid CustomTable.
+     */
+    @XmlElement
+    private String customTableCodeEL;
+
+    /**
+     * An EL expression that should resolve into a list of filters as defined by the Search API.
+     */
+    @XmlElement
+    private String dataFilterEL;
+
+    /**
+     * Should resolve into a list of CT fields to be shown for CTW (displayed in GUI, returned by API). It's the "fields" parameter in the CT list API.
+     */
+    @XmlElement
+    private String fieldsEL;
+
+    /**
+     * which should resolve into an additional filter to apply to the table search.
+     */
+    @XmlElement
+    private String versionFilterEL;
 
     /**
      * Instantiates a new custom field template dto.
@@ -250,6 +276,9 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
             childEntityFieldsForSummary = Arrays.asList(cf.getChildEntityFieldsAsList());
         }
         this.uniqueConstraint = cf.isUniqueConstraint();
+        this.customTableCodeEL = cf.getCustomTableCodeEL();
+        this.dataFilterEL = cf.getDataFilterEL();
+        this.fieldsEL = cf.getFieldsEL();
 
     }
 
@@ -807,5 +836,77 @@ public class CustomFieldTemplateDto extends EnableBusinessDto {
 
     public void setUniqueConstraint(Boolean uniqueConstraint) {
         this.uniqueConstraint = uniqueConstraint;
+    }
+
+    /**
+     * Gets the customTableCodeEL expression.
+     *
+     * @return the customTableCodeEL expression.
+     */
+    public String getCustomTableCodeEL() {
+        return customTableCodeEL;
+    }
+
+    /**
+     * Sets the customTableCodeEL expression.
+     *
+     * @param customTableCodeEL the customTableCodeEL expression.
+     */
+    public void setCustomTableCodeEL(String customTableCodeEL) {
+        this.customTableCodeEL = customTableCodeEL;
+    }
+
+    /**
+     * Gets the dataFilterEL expression.
+     *
+     * @return the dataFilterEL expression.
+     */
+    public String getDataFilterEL() {
+        return dataFilterEL;
+    }
+
+    /**
+     * Sets the dataFilterEL expression.
+     *
+     * @param dataFilterEL the dataFilterEL expression.
+     */
+    public void setDataFilterEL(String dataFilterEL) {
+        this.dataFilterEL = dataFilterEL;
+    }
+
+    /**
+     * Gets the fieldsEL expression.
+     *
+     * @return the fieldsEL expression.
+     */
+    public String getFieldsEL() {
+        return fieldsEL;
+    }
+
+    /**
+     * Sets the fieldsEL expression.
+     *
+     * @param fieldsEL the fieldsEL expression.
+     */
+    public void setFieldsEL(String fieldsEL) {
+        this.fieldsEL = fieldsEL;
+    }
+
+    /**
+     * Gets the versionFilterEL expression.
+     *
+     * @return the versionFilterEL expression.
+     */
+    public String getVersionFilterEL() {
+        return versionFilterEL;
+    }
+
+    /**
+     * Sets the versionFilterEL expression.
+     *
+     * @param versionFilterEL the versionFilterEL expression.
+     */
+    public void setVersionFilterEL(String versionFilterEL) {
+        this.versionFilterEL = versionFilterEL;
     }
 }

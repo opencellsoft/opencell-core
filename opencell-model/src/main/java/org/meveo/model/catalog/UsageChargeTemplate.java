@@ -171,12 +171,12 @@ public class UsageChargeTemplate extends ChargeTemplate {
         if (edrUnitValue == null) {
             return BigDecimal.ZERO;
         }
-        BigDecimal result = NumberUtils.getInChargeUnit(edrUnitValue, unitMultiplicator, unitNbDecimal, roundingMode);
+        BigDecimal result = NumberUtils.getInChargeUnit(edrUnitValue, getUnitMultiplicator(), unitNbDecimal, roundingMode);
         return result;
     }
 
     public BigDecimal getInEDRUnit(BigDecimal chargeUnitValue) {
-        return chargeUnitValue.divide(unitMultiplicator, getRoundingEdrNbDecimal(), RoundingMode.HALF_UP);
+        return chargeUnitValue.divide(getUnitMultiplicator(), getRoundingEdrNbDecimal(), RoundingMode.HALF_UP);
     }
 
     @PostLoad

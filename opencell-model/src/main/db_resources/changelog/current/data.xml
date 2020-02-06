@@ -1527,4 +1527,161 @@ public class ValidateBRScript extends Script {
         </update>
     </changeSet>
     
+    
+    <changeSet author="Mohammed_ELAZZOUZI" id="rebuild-data-cat_unit_of_measure">
+        <insert tableName="cat_unit_of_measure">
+            <column name="created" valueDate="2019-11-19 12:00:00.000" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="0" />
+            
+            <column name="id" valueNumeric="-1" />
+            <column name="symbol" value="B" />
+            <column name="code" value="byte" />
+            <column name="description" value="Byte" />
+            <column name="multiplicator" valueNumeric="1" />
+        </insert>
+        <insert tableName="cat_unit_of_measure">
+            <column name="created" valueDate="2019-11-19 12:00:00.000" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="0" />
+            
+            <column name="id" valueNumeric="-2" />
+            <column name="symbol" value="KB" />
+            <column name="code" value="kilobyte" />
+            <column name="description" value="Kilobyte" />
+            <column name="parent_id" valueNumeric="-1" />
+            <column name="multiplicator" valueNumeric="1000" />
+        </insert>
+        <insert tableName="cat_unit_of_measure">
+            <column name="created" valueDate="2019-11-19 12:00:00.000" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="0" />
+            
+            <column name="id" valueNumeric="-3" />
+            <column name="symbol" value="MB" />
+            <column name="code" value="megabyte" />
+            <column name="description" value="Megabyte" />
+            <column name="parent_id" valueNumeric="-1" />
+            <column name="multiplicator" valueNumeric="1000000" />
+        </insert>
+        <insert tableName="cat_unit_of_measure">
+            <column name="created" valueDate="2019-11-19 12:00:00.000" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="0" />
+            
+            <column name="id" valueNumeric="-4" />
+            <column name="symbol" value="GB" />
+            <column name="code" value="gigabyte" />
+            <column name="description" value="Gigabyte" />
+            <column name="parent_id" valueNumeric="-1" />
+            <column name="multiplicator" valueNumeric="1000000000" />
+        </insert>
+        <insert tableName="cat_unit_of_measure">
+            <column name="created" valueDate="2019-11-19 12:00:00.000" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="0" />
+            
+            <column name="id" valueNumeric="-5" />
+            <column name="symbol" value="TB" />
+            <column name="code" value="terabyte" />
+            <column name="description" value="Terabyte" />
+            <column name="parent_id" valueNumeric="-1" />
+            <column name="multiplicator" valueNumeric="1000000000000" />
+        </insert>
+                <insert tableName="cat_unit_of_measure">
+            <column name="created" valueDate="2019-11-19 12:00:00.000" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="0" />
+            
+            <column name="id" valueNumeric="-6" />
+            <column name="symbol" value="KiB" />
+            <column name="code" value="kibi" />
+            <column name="description" value="Kibibyte" />
+            <column name="parent_id" valueNumeric="-1" />
+            <column name="multiplicator" valueNumeric="1024" />
+        </insert>
+        <insert tableName="cat_unit_of_measure">
+            <column name="created" valueDate="2019-11-19 12:00:00.000" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="0" />
+            
+            <column name="id" valueNumeric="-7" />
+            <column name="symbol" value="MiB" />
+            <column name="code" value="mebibyte" />
+            <column name="description" value="Mebibyte" />
+            <column name="parent_id" valueNumeric="-1" />
+            <column name="multiplicator" valueNumeric="1048576" />
+        </insert>
+        <insert tableName="cat_unit_of_measure">
+            <column name="created" valueDate="2019-11-19 12:00:00.000" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="0" />
+            
+            <column name="id" valueNumeric="-8" />
+            <column name="symbol" value="GiB" />
+            <column name="code" value="gibibyte" />
+            <column name="description" value="Gibibyte" />
+            <column name="parent_id" valueNumeric="-1" />
+            <column name="multiplicator" valueNumeric="1073741824" />
+        </insert>
+        <insert tableName="cat_unit_of_measure">
+            <column name="created" valueDate="2019-11-19 12:00:00.000" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="0" />
+            
+            <column name="id" valueNumeric="-9" />
+            <column name="symbol" value="TiB" />
+            <column name="code" value="tebibyte" />
+            <column name="description" value="Tebibyte" />
+            <column name="parent_id" valueNumeric="-1" />
+            <column name="multiplicator" valueNumeric="1099511627776" />
+        </insert>
+        <insert tableName="cat_unit_of_measure">
+            <column name="created" valueDate="2019-11-19 12:00:00.000" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="0" />
+            
+            <column name="id" valueNumeric="-10" />
+            <column name="symbol" value="s" />
+            <column name="code" value="second" />
+            <column name="description" value="Second" />
+            <column name="multiplicator" valueNumeric="1" />
+        </insert>
+        <insert tableName="cat_unit_of_measure">
+            <column name="created" valueDate="2019-11-19 12:00:00.000" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="0" />
+            
+            <column name="id" valueNumeric="-11" />
+            <column name="symbol" value="min" />
+            <column name="code" value="minute" />
+            <column name="description" value="Minute" />
+            <column name="multiplicator" valueNumeric="60" />
+            <column name="parent_id" valueNumeric="-10" />
+        </insert>
+        <insert tableName="cat_unit_of_measure">
+            <column name="created" valueDate="2019-11-19 12:00:00.000" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="0" />
+            
+            <column name="id" valueNumeric="-12" />
+            <column name="symbol" value="h" />
+            <column name="code" value="hour" />
+            <column name="description" value="Hour" />
+            <column name="multiplicator" valueNumeric="3600" />
+            <column name="parent_id" valueNumeric="-10" />
+        </insert>
+        <insert tableName="cat_unit_of_measure">
+            <column name="created" valueDate="2019-11-19 12:00:00.000" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="0" />
+            
+            <column name="id" valueNumeric="-13" />
+            <column name="symbol" value="msg" />
+            <column name="code" value="message" />
+            <column name="description" value="Message" />
+            <column name="multiplicator" valueNumeric="1" />
+        </insert>
+    </changeSet>
+    
 </databaseChangeLog>

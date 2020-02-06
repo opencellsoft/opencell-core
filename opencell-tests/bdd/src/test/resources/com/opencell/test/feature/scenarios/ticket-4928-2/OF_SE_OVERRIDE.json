@@ -1,0 +1,33 @@
+{
+    "bomCode": "BOM_WITH_BSM",
+    "code": "OF_SE_OVERRIDE",
+    "name": "Offer ServiceTemplate OVERRIDE",
+    "description": "Offer using the ServiceTemplate WITH CF OVERRIDE 1579603021",
+    "parameter": [
+        {
+            "code": "aString",
+            "stringValue": "OF_SE_OVERRIDE"
+        },
+        {
+            "code": "aStringFiltered",
+            "stringValue": "OF_SE_OVERRIDE"
+        }
+    ],
+    "serviceToActivate": [
+        {
+            "code": "SE_EMPTY_WITH_CF",
+            "description": "From ServiceTemplate with CF override",
+            "mandatory": true,
+            "parameter": [
+                {
+                    "code": "aString",
+                    "stringValue": "OF_SE_OVERRIDE"
+                },
+                {
+                    "code": "aStringFiltered",
+                    "stringValue": "OF_SE_OVERRIDE"
+                }
+            ]
+        }
+    ]
+}

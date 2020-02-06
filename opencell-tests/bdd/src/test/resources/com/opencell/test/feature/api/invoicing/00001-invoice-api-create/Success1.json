@@ -1,0 +1,14 @@
+{   
+    "code":"TEST",
+    "description": "TEST Updated",
+    "parentSeller":"SELLER_FR",
+    "address": {
+        "address1": "14 rue Crespin du Gast",
+        "address2": null,
+        "address3": null,
+        "zipCode": "75011",
+        "city": "PARIS",
+        "country": "FR",
+        "state": "Paris Area"
+    }
+}

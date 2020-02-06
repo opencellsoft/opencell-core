@@ -88,7 +88,7 @@ import java.util.Map.Entry;
 
 /**
  * RatedTransactionService : A class for Rated transaction persistence services.
- *
+ * 
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @author Abdelmounaim Akadid
@@ -140,10 +140,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Check if Billing account has any not yet billed Rated transactions
-     *
-     * @param billingAccount       billing account
+     * 
+     * @param billingAccount billing account
      * @param firstTransactionDate date of first transaction
-     * @param lastTransactionDate  date of last transaction
+     * @param lastTransactionDate date of last transaction
      * @return true/false
      */
     public Boolean isBillingAccountBillable(BillingAccount billingAccount, Date firstTransactionDate, Date lastTransactionDate) {
@@ -153,13 +153,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
         TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedOpenByBA", Long.class);
         count = q.setParameter("billingAccount", billingAccount).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
-                .getSingleResult();
+            .getSingleResult();
         log.debug("isBillingAccountBillable code={},lastTransactionDate={}) : {}", billingAccount.getCode(), lastTransactionDate, count);
         return count > 0 ? true : false;
     }
 
     /**
-     * @param invoice            invoice
+     * @param invoice invoice
      * @param invoiceSubCategory sub category invoice
      * @return list of rated transaction
      */
@@ -168,14 +168,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
         return getEntityManager().createNamedQuery("RatedTransaction.getListByInvoiceAndSubCategory", RatedTransaction.class).setParameter("invoice", invoice)
-                .setParameter("invoiceSubCategory", invoiceSubCategory).getResultList();
+            .setParameter("invoiceSubCategory", invoiceSubCategory).getResultList();
     }
 
     /**
      * Convert Wallet operations to Rated transactions for a given billable entity up to a given date
-     *
+     * 
      * @param entityToInvoice Entity to invoice
-     * @param invoicingDate   Invoicing date
+     * @param invoicingDate Invoicing date
      * @throws BusinessException General business exception.
      */
     public void createRatedTransaction(IBillableEntity entityToInvoice, Date invoicingDate) throws BusinessException {
@@ -188,9 +188,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Create Rated transaction from wallet operation.
-     *
+     * 
      * @param walletOperation Wallet operation
-     * @param isVirtual       Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
+     * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
      * @return Rated transaction
      * @throws BusinessException business exception
      */
@@ -208,10 +208,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Create a {@link RatedTransaction} from a group of wallet operations.
-     *
-     * @param aggregatedWo       aggregated wallet operations
+     * 
+     * @param aggregatedWo aggregated wallet operations
      * @param aggregatedSettings aggregation settings of wallet operations
-     * @param invoicingDate      the invoicing date
+     * @param invoicingDate the invoicing date
      * @return created {@link RatedTransaction}
      * @throws BusinessException Exception when RT is not create successfully
      * @see WalletOperation
@@ -222,13 +222,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * @param aggregatedWo        aggregated wallet operations
+     * 
+     * @param aggregatedWo aggregated wallet operations
      * @param aggregationSettings aggregation settings of wallet operations
-     * @param isVirtual           is virtual
-     * @param invoicingDate       the invoicing date
+     * @param isVirtual is virtual
+     * @param invoicingDate the invoicing date
      * @return {@link RatedTransaction}
      * @throws BusinessException Exception when RT is not create successfully
      */
+    @SuppressWarnings({ "unchecked", "deprecation" })
     public RatedTransaction createRatedTransaction(AggregatedWalletOperation aggregatedWo, RatedTransactionsJobAggregationSetting aggregationSettings, Date invoicingDate,
             boolean isVirtual) throws BusinessException {
         RatedTransaction ratedTransaction = new RatedTransaction();
@@ -245,10 +247,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         Calendar cal = Calendar.getInstance();
         if (aggregationSettings.isAggregateByDay()) {
-            cal.set(Calendar.YEAR, aggregatedWo.getYear(), aggregatedWo.getMonth(), aggregatedWo.getDay(), 0, 0);
+            cal.set(aggregatedWo.getYear(), aggregatedWo.getMonth(), aggregatedWo.getDay(), 0, 0, 0);
             ratedTransaction.setUsageDate(cal.getTime());
         } else {
-            cal.set(Calendar.YEAR, aggregatedWo.getYear(), aggregatedWo.getMonth(), 1, 0, 0);
+            cal.set(aggregatedWo.getYear(), aggregatedWo.getMonth(), 1, 0, 0, 0);
             ratedTransaction.setUsageDate(cal.getTime());
 
         }
@@ -370,13 +372,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * List unprocessed Rated transactions from a given wallet instance (user account) and invoice subcategory
-     *
-     * @param walletInstance     Wallet instance
+     * 
+     * @param walletInstance Wallet instance
      * @param invoiceSubCategory Invoice sub category. Optional.
-     * @param from               Date range - from. Optional.
-     * @param to                 Date range - to. Optional.
+     * @param from Date range - from. Optional.
+     * @param to Date range - to. Optional.
      * @return A list of rated transactions
      */
+    @SuppressWarnings("unchecked")
     public List<RatedTransaction> openRTbySubCat(WalletInstance walletInstance, InvoiceSubCategory invoiceSubCategory, Date from, Date to) {
         QueryBuilder qb = new QueryBuilder("select rt from RatedTransaction rt ", "rt");
         if (invoiceSubCategory != null) {
@@ -434,7 +437,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public RatedTransaction findByWalletOperationId(Long walletOperationId) {
         try {
             return (RatedTransaction) getEntityManager().createNamedQuery("RatedTransaction.findByWalletOperationId").setParameter("walletOperationId", walletOperationId)
-                    .getSingleResult();
+                .getSingleResult();
 
         } catch (NoResultException e) {
             log.warn("No ratedTransaction found with the given walletOperation.id. {}", e.getMessage());
@@ -444,7 +447,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Call RatedTransaction.setStatusToCanceledByRsCodes Named query to cancel just opened RatedTransaction of all passed RatedTransaction ids.
-     *
+     * 
      * @param rsToCancelIds rated transactions to cancel
      */
     public void cancelRatedTransactions(List<Long> rsToCancelIds) {
@@ -456,11 +459,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * Calculate billable amount per entity, create additional rated transactions to reach a minimum invoiceable amount and link billable entity with a Billing run
      *
-     * @param entity                           Entity to invoice
-     * @param billingRun                       the billing run
-     * @param instantiateMinRtsForService      Should rated transactions to reach minimum invoicing amount be checked and instantiated on service level.
+     * @param entity Entity to invoice
+     * @param billingRun the billing run
+     * @param instantiateMinRtsForService Should rated transactions to reach minimum invoicing amount be checked and instantiated on service level.
      * @param instantiateMinRtsForSubscription Should rated transactions to reach minimum invoicing amount be checked and instantiated on subscription level.
-     * @param instantiateMinRtsForBA           Should rated transactions to reach minimum invoicing amount be checked and instantiated on Billing account level.
+     * @param instantiateMinRtsForBA Should rated transactions to reach minimum invoicing amount be checked and instantiated on Billing account level.
      * @return Updated entity
      * @throws BusinessException the business exception
      */
@@ -484,9 +487,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (entity instanceof Order) {
             entity = orderService.findById((Long) entity.getId());
             if ((((Order) entity).getUserAccounts() != null) && !((Order) entity).getUserAccounts().isEmpty()) {
-                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ?
-                        (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() :
-                        null;
+                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null
+                        ? (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount()
+                        : null;
             }
         }
         //MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts(instantiateMinRtsForBA, false, instantiateMinRtsForSubscription, instantiateMinRtsForService);
@@ -504,12 +507,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             if (invoicingThreshold != null && invoicingThreshold.compareTo(invoiceAmount) > 0) {
                 log.debug("Invoicing threshold {}/{} was not met for {}. Entity will not be invoiced", invoiceAmount, invoicingThreshold, entity.getClass().getSimpleName(),
-                        entity.getCode());
+                    entity.getCode());
                 return null;
             }
 
             log.debug("{}/{} will be updated with BR amount {}. Invoice threshold applied {}", entity.getClass().getSimpleName(), entity.getId(), invoiceAmount,
-                    invoicingThreshold);
+                invoicingThreshold);
         }
 
         entity.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
@@ -531,8 +534,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * Calculate billable amount per entity, create additional rated transactions to reach a minimum invoiceable amount and link billable entity with a Billing run
      *
-     * @param entityId     ID of an entity to invoice
-     * @param billingRun   The billing run
+     * @param entityId ID of an entity to invoice
+     * @param billingRun The billing run
      * @param totalAmounts Amounts to invoice
      * @return Updated entity
      * @throws BusinessException The business exception
@@ -558,9 +561,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         case ORDER:
             entity = orderService.findById(entityId);
             if ((((Order) entity).getUserAccounts() != null) && !((Order) entity).getUserAccounts().isEmpty()) {
-                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ?
-                        (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() :
-                        null;
+                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null
+                        ? (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount()
+                        : null;
             }
             break;
         }
@@ -579,7 +582,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         if (invoicingThreshold != null && invoicingThreshold.compareTo(invoiceAmount) > 0) {
             log.debug("Invoicing threshold {}/{} was not met for {}. Entity will not be invoiced", invoiceAmount, invoicingThreshold, entity.getClass().getSimpleName(),
-                    entity.getCode());
+                entity.getCode());
             return null;
         }
 
@@ -602,9 +605,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * Create min amounts rated transactions and set invoiceable amounts to the billable entity
      *
-     * @param billableEntity                 The billable entity
-     * @param lastTransactionDate            Last transaction date
-     * @param firstTransactionDate           first transaction Date
+     * @param billableEntity The billable entity
+     * @param lastTransactionDate Last transaction date
      * @param calculateAndUpdateTotalAmounts Should total amounts be calculated and entity updated with those amounts
      * @param minAmountForAccounts           Booleans to knows if an accounts has minimum amount activated
      * @throws BusinessException General business exception
@@ -674,9 +676,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * Create Rated transactions to reach minimum invoiced amount per subscription level. Only those subscriptions that have minimum invoice amount rule are considered. Updates
      * minAmountTransactions parameter.
-     *
-     * @param billableEntity      Entity to bill - entity for which minimum rated transactions should be created
-     * @param billingAccount      Billing account to associate new minimum amount Rated transactions with
+     * 
+     * @param billableEntity Entity to bill - entity for which minimum rated transactions should be created
+     * @param billingAccount Billing account to associate new minimum amount Rated transactions with
      * @param lastTransactionDate Last transaction date
      * @param minRatingDate       Date to assign to newly created minimum amount Rated transactions
      * @param extraMinAmounts     Additional Rated transaction amounts created to reach minimum invoicing amount per service. A map of amounts created with subscription id
@@ -1130,26 +1132,26 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Summed rated transaction amounts for a given billing account
-     *
-     * @param billingAccount       Billing account
+     * 
+     * @param billingAccount Billing account
      * @param firstTransactionDate First transaction date.
-     * @param lastTransactionDate  Last transaction date
+     * @param lastTransactionDate Last transaction date
      * @return Amounts with and without tax, tax amount
      */
     private Amounts computeTotalInvoiceableAmountForBillingAccount(BillingAccount billingAccount, Date firstTransactionDate, Date lastTransactionDate) {
 
-        //      boolean ignorePrepaidWallets = false;  TODO AKK if (prePaidWalletsIds != null && !prePaidWalletsIds.isEmpty()) {
+//      boolean ignorePrepaidWallets = false;  TODO AKK if (prePaidWalletsIds != null && !prePaidWalletsIds.isEmpty()) {
         String query = "RatedTransaction.sumTotalInvoiceableByBA";
-        //      if (ignorePrepaidWallets) {
-        //          query = "RatedTransaction.sumTotalInvoiceableByBAExcludePrepaidWO";
-        //      }
+//      if (ignorePrepaidWallets) {
+//          query = "RatedTransaction.sumTotalInvoiceableByBAExcludePrepaidWO";
+//      }        
 
         Query q = getEntityManager().createNamedQuery(query).setParameter("billingAccount", billingAccount).setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate);
+            .setParameter("lastTransactionDate", lastTransactionDate);
 
-        //      if (ignorePrepaidWallets) {
-        //          q = q.setParameter("walletsIds", prePaidWalletsIds);
-        //      }
+//      if (ignorePrepaidWallets) {
+//          q = q.setParameter("walletsIds", prePaidWalletsIds);
+//      }        
 
         return (Amounts) q.getSingleResult();
     }
@@ -1157,11 +1159,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private List<BusinessEntity> getServicesWithMinAmount(IBillableEntity billableEntity) {
 
         if (billableEntity instanceof Subscription) {
-            Query q = getEntityManager().createNamedQuery("ServiceInstance.getServicesWithMinAmountBySubscription").setParameter("subscription", (Subscription) billableEntity);
+            Query q = getEntityManager().createNamedQuery("ServiceInstance.getServicesWithMinAmountBySubscription")
+                    .setParameter("subscription", (Subscription) billableEntity);
             return q.getResultList();
 
         } else if (billableEntity instanceof BillingAccount) {
-            Query q = getEntityManager().createNamedQuery("ServiceInstance.getServicesWithMinAmountByBA").setParameter("billingAccount", (BillingAccount) billableEntity);
+            Query q = getEntityManager().createNamedQuery("ServiceInstance.getServicesWithMinAmountByBA") 
+                    .setParameter("billingAccount", (BillingAccount) billableEntity);;
             return q.getResultList();
         }
         return null;
@@ -1170,16 +1174,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private List<BusinessEntity> getSubscriptionsWithMinAmount(IBillableEntity billableEntity) {
 
         if (billableEntity instanceof Subscription) {
-            Query q = getEntityManager().createNamedQuery("Subscription.getSubscriptionsWithMinAmountBySubscription").setParameter("subscription", (Subscription) billableEntity);
+            Query q = getEntityManager().createNamedQuery("Subscription.getSubscriptionsWithMinAmountBySubscription")
+                    .setParameter("subscription", (Subscription) billableEntity);
             return q.getResultList();
 
         } else if (billableEntity instanceof BillingAccount) {
-            Query q = getEntityManager().createNamedQuery("Subscription.getSubscriptionsWithMinAmountByBA").setParameter("billingAccount", (BillingAccount) billableEntity);
+            Query q = getEntityManager().createNamedQuery("Subscription.getSubscriptionsWithMinAmountByBA") 
+                    .setParameter("billingAccount", (BillingAccount) billableEntity);;
             return q.getResultList();
         }
         return null;
     }
-
+    
+    @SuppressWarnings("unchecked")
     private List<Seller> getSellersByBillingAccount(BillingAccount billingAccount) {
         Query q = getEntityManager().createNamedQuery("Subscription.getSellersByBA").setParameter("billingAccount", billingAccount);
         return q.getResultList();
@@ -1187,24 +1194,25 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Summed rated transaction amounts applied on services, that have minimum invoiceable amount rule, grouped by invoice subCategory for a given billable entity.
-     *
-     * @param billableEntity       Billable entity
+     * 
+     * @param billableEntity Billable entity
      * @param firstTransactionDate First transaction date.
-     * @param lastTransactionDate  Last transaction date
+     * @param lastTransactionDate Last transaction date
      * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, invoice subcategory id, serviceInstance
      */
+    @SuppressWarnings("unchecked")
     private List<Object[]> computeInvoiceableAmountForServicesWithMinAmountRule(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
 
         if (billableEntity instanceof Subscription) {
             Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableByServiceWithMinAmountBySubscription")
-                    .setParameter("subscription", (Subscription) billableEntity).setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate);
+                .setParameter("subscription", (Subscription) billableEntity).setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate);
             return q.getResultList();
 
         } else if (billableEntity instanceof BillingAccount) {
             Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableByServiceWithMinAmountByBA")
-                    .setParameter("billingAccount", (BillingAccount) billableEntity).setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate);
+                .setParameter("billingAccount", (BillingAccount) billableEntity).setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate);
             return q.getResultList();
         }
         return null;
@@ -1212,24 +1220,25 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Summed rated transaction amounts applied on subscriptions, that have minimum invoiceable amount rule, grouped by invoice subCategory for a given billable entity.
-     *
-     * @param billableEntity       Billable entity
+     * 
+     * @param billableEntity Billable entity
      * @param firstTransactionDate First transaction date.
-     * @param lastTransactionDate  Last transaction date
+     * @param lastTransactionDate Last transaction date
      * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, invoice subcategory id, subscription
      */
+    @SuppressWarnings("unchecked")
     private List<Object[]> computeInvoiceableAmountForSubscriptions(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
 
         if (billableEntity instanceof Subscription) {
             Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableBySubscriptionWithMinAmountBySubscription")
-                    .setParameter("subscription", (Subscription) billableEntity).setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate);
+                .setParameter("subscription", (Subscription) billableEntity).setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate);
             return q.getResultList();
 
         } else if (billableEntity instanceof BillingAccount) {
             Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableBySubscriptionWithMinAmountByBA")
-                    .setParameter("billingAccount", (BillingAccount) billableEntity).setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate);
+                .setParameter("billingAccount", (BillingAccount) billableEntity).setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate);
             return q.getResultList();
         }
         return null;
@@ -1303,7 +1312,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      *
      * @param billableEntity       BillingAccount or subscription
      * @param firstTransactionDate First transaction date.
-     * @param lastTransactionDate  Last transaction date
+     * @param lastTransactionDate Last transaction date
      * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, invoice subcategory id, seller id
      */
     private List<Object[]> computeInvoiceableAmountForCustomer(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
@@ -1322,9 +1331,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * Evaluate double expression. Either ba, subscription or service instance must be specified.
      *
-     * @param expression      EL expression
-     * @param ba              Billing account
-     * @param subscription    Subscription
+     * @param expression EL expression
+     * @param ba Billing account
+     * @param subscription Subscription
      * @param serviceInstance serviceInstance
      * @return evaluated expression
      * @throws BusinessException business exception
@@ -1401,7 +1410,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * Evaluate string expression.
      *
      * @param expression EL expression
-     * @param ba         billing account
+     * @param ba billing account
      * @return evaluated expression
      * @throws BusinessException business exception
      */
@@ -1418,9 +1427,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * Construct EL context of variables
      *
-     * @param expression      EL expression
-     * @param ba              Billing account
-     * @param subscription    Subscription
+     * @param expression EL expression
+     * @param ba Billing account
+     * @param subscription Subscription
      * @param serviceInstance Service instance
      * @return Context of variable
      */
@@ -1485,10 +1494,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Compute the invoice amount for order.
-     *
-     * @param order                order
+     * 
+     * @param order order
      * @param firstTransactionDate first transaction date.
-     * @param lastTransactionDate  last transaction date
+     * @param lastTransactionDate last transaction date
      * @return computed order's invoice amount.
      */
     private Amounts computeTotalOrderInvoiceAmount(Order order, Date firstTransactionDate, Date lastTransactionDate) {
@@ -1511,15 +1520,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Get a list of invoiceable Rated transactions for a given billable entity and date range or from a filter
-     *
-     * @param entityToInvoice        Entity to invoice (subscription, billing account or order)
-     * @param firstTransactionDate   Usage date range - start date
-     * @param lastTransactionDate    Usage date range - end date
+     * 
+     * @param entityToInvoice Entity to invoice (subscription, billing account or order)
+     * @param firstTransactionDate Usage date range - start date
+     * @param lastTransactionDate Usage date range - end date
      * @param ratedTransactionFilter Filter returning a list of rated transactions
-     * @param rtPageSize             Number of records to return
+     * @param rtPageSize Number of records to return
      * @return A list of RT entities
      * @throws BusinessException General exception
      */
+    @SuppressWarnings("unchecked")
     public List<RatedTransaction> listRTsToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTransactionFilter,
             int rtPageSize) throws BusinessException {
 
@@ -1528,18 +1538,18 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         } else if (entityToInvoice instanceof Subscription) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class)
-                    .setParameter("subscriptionId", entityToInvoice.getId()).setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
+                .setParameter("subscriptionId", entityToInvoice.getId()).setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
 
         } else if (entityToInvoice instanceof BillingAccount) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", RatedTransaction.class)
-                    .setParameter("billingAccountId", entityToInvoice.getId()).setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
+                .setParameter("billingAccountId", entityToInvoice.getId()).setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
 
         } else if (entityToInvoice instanceof Order) {
             return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class)
-                    .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber()).setParameter("firstTransactionDate", firstTransactionDate)
-                    .setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
+                .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber()).setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
         }
 
         return new ArrayList<>();
@@ -1547,7 +1557,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Determine if minimum RT transactions functionality is used at service level
-     *
+     * 
      * @return True if exists any serviceInstance with minimumAmountEl value
      */
     @Deprecated
@@ -1563,7 +1573,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Determine if minimum RT transactions functionality is used at subscription level
-     *
+     * 
      * @return True if exists any subscription with minimumAmountEl value
      */
     @Deprecated
@@ -1579,7 +1589,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Determine if minimum RT transactions functionality is used at billing account level
-     *
+     * 
      * @return True if exists any billing account with minimumAmountEl value
      */
     @Deprecated
@@ -1594,10 +1604,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Determine if minimum RT transactions functionality is used at all. A check is done on serviceInstance, subscription, userAccount or billing account entities for minimumAmountEl field
+     * Determine if minimum RT transactions functionality is used at all. A check is done on serviceInstance, subscription or billing account entities for minimumAmountEl field
      * value presence.
-     *
-     * @return An array of booleans indicating if minimum invoicing amount rule exists on service, subscription, userAccount and billingAccount levels, in that particular order.
+     * 
+     * @return An array of booleans indicating if minimum invoicing amount rule exists on service, subscription and billingAccount levels, in that particular order.
      */
     public boolean[] isMinRTsUsed() {
 
@@ -1673,21 +1683,24 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public List<RatedTransaction> getNotOpenedRatedTransactionBetweenTwoDates(Date firstTransactionDate, Date lastTransactionDate, long lastId, int max) {
         return getEntityManager().createNamedQuery("RatedTransaction.listNotOpenedBetweenTwoDates", RatedTransaction.class)
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("lastId", lastId)
-                .setMaxResults(max).getResultList();
+                .setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate)
+                .setParameter("lastId", lastId)
+                .setMaxResults(max)
+                .getResultList();
 
     }
 
     /**
      * Remove All not open rated transaction between two date.
-     *
+     * 
      * @param firstTransactionDate first operation date
-     * @param lastTransactionDate  last operation date
+     * @param lastTransactionDate last operation date
      * @return the number of deleted entities
      */
     public long purge(Date firstTransactionDate, Date lastTransactionDate) {
         return getEntityManager().createNamedQuery("RatedTransaction.deleteNotOpenBetweenTwoDates").setParameter("firstTransactionDate", firstTransactionDate)
-                .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+            .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
     }
 
     public void importRatedTransaction(List<RatedTransactionDto> ratedTransactions) throws BusinessException {
@@ -1767,7 +1780,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Retrieve rated transactions associated to an invoice
-     *
+     * 
      * @param invoice Invoice
      * @return A list of rated transactions
      */
@@ -1785,7 +1798,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Retrieve rated transactions associated to an invoice aggregate
-     *
+     * 
      * @param subCategoryInvoiceAgregate Invoice
      * @return A list of rated transactions
      */
@@ -1796,7 +1809,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         return getEntityManager().createNamedQuery("RatedTransaction.listByInvoiceSubCategoryAggr", RatedTransaction.class)
-                .setParameter("invoice", subCategoryInvoiceAgregate.getInvoice()).setParameter("invoiceAgregateF", subCategoryInvoiceAgregate).getResultList();
+            .setParameter("invoice", subCategoryInvoiceAgregate.getInvoice()).setParameter("invoiceAgregateF", subCategoryInvoiceAgregate).getResultList();
     }
 
 	/**

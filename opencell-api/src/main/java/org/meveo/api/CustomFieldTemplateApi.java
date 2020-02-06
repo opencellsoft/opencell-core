@@ -1,11 +1,5 @@
 package org.meveo.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldMatrixColumnDto;
@@ -27,10 +21,16 @@ import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
 import org.meveo.util.EntityCustomizationUtils;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.2.1
+ * @author Khalid HORRI
+ * @lastModifiedVersion 10.0
  */
 
 @Stateless
@@ -502,11 +502,21 @@ public class CustomFieldTemplateApi extends BaseApi {
             cft.setRoundingMode(dto.getRoundingMode());
         }
 
-        if(dto.getUniqueConstraint() != null){
+        if (dto.getUniqueConstraint() != null) {
             cft.setUniqueConstraint(dto.getUniqueConstraint());
         }
 
+        if (dto.getCustomTableCodeEL() != null) {
+            cft.setCustomTableCodeEL(dto.getCustomTableCodeEL());
+        }
+        if (dto.getDataFilterEL() != null) {
+            cft.setDataFilterEL(dto.getDataFilterEL());
+        }
+        if (dto.getFieldsEL() != null) {
+            cft.setFieldsEL(dto.getFieldsEL());
+        }
         return cft;
+
     }
 
     private List<String> getCustomizedEntitiesAppliesTo() {

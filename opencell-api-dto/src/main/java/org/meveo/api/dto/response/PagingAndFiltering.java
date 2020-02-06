@@ -1,5 +1,7 @@
 package org.meveo.api.dto.response;
 
+import org.meveo.commons.utils.StringUtils;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
@@ -118,23 +120,39 @@ public class PagingAndFiltering implements Serializable {
      * Sorting - sort order.
      */
     private SortOrder sortOrder;
-    
+
     /**
      * Total number of records. Note - filled on response only.
      */
     private Integer totalNumberOfRecords;
 
     private int loadReferenceDepth;
-    
+
+    /**
+     * Add fields
+     *
+     * @param fields fields
+     */
+    public void addFields(String fields) {
+
+        if (!StringUtils.isBlank(fields)) {
+            this.fields = (StringUtils.isBlank(this.fields)) ? fields : this.fields + "," + fields;
+        }
+    }
+
     /**
      * The Enum SortOrder.
      */
     public enum SortOrder {
 
-        /** The ascending. */
+        /**
+         * The ascending.
+         */
         ASCENDING,
-        /** The descending. */
-        DESCENDING;
+        /**
+         * The descending.
+         */
+        DESCENDING
     }
     
     /**
@@ -370,7 +388,7 @@ public class PagingAndFiltering implements Serializable {
         if (filters == null) {
             filters = new HashMap<>();
         }
-        
+
         filters.put(key, value);
     }
 
@@ -380,5 +398,17 @@ public class PagingAndFiltering implements Serializable {
 
     public void setLoadReferenceDepth(int loadReferenceDepth) {
         this.loadReferenceDepth = loadReferenceDepth;
+    }
+
+    /**
+     * Add a Set of filters.
+     *
+     * @param filters filters Map
+     */
+    public void addFilters(Map<String, Object> filters) {
+        if (filters == null) {
+            filters = new HashMap<>();
+        }
+        filters.putAll(filters);
     }
 }
