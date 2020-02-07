@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -1140,7 +1141,6 @@ public abstract class BaseApi {
      * @return Pagination configuration
      * @throws InvalidParameterException invalid parameter exception.
      */
-    @SuppressWarnings("rawtypes")
     protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering,
     		Map<String, CustomFieldTemplate> cfts) throws InvalidParameterException {
 
@@ -1207,28 +1207,7 @@ public abstract class BaseApi {
             } else {
 
             	Class<?> fieldClassType = extractFieldType(targetClass, fieldName, cfts);
-                Object valueConverted =null;
-                
-                boolean expectedList = (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition);
-                
-				if ("cfValues".equals(key)) {
-                	String stringVal = (String) value;
-    				String[] vals = stringVal.split("=");
-    				String cfkey = vals[0];
-    				String cfValue = vals[1];
-    				valueConverted =castFilterValue(cfValue, cfts.get(cfkey).getFieldType().getDataClass(), expectedList, cfts);
-    				CustomFieldValue  cfv = new CustomFieldValue(valueConverted);
-    				Map<String, Object> map=cfv.getkeyValueMap();
-    				String type = (String) map.keySet().toArray()[0];
-    				valueConverted = map.values().toArray()[0];
-    				String castType = getCustomFieldDataType(valueConverted.getClass());
-    				//key="(a.cfValues::json ->'" + fieldName + "'->0->>'"+type+"'::"+castType+")";
-    				String functionPrefix=castType.split("\\(")[0];
-    				key = functionPrefix+"FromJson(a.cfValues,"+cfkey+","+type+","+castType+")";
-    			} else {
-    				valueConverted = castFilterValue(value, fieldClassType, expectedList, cfts);
-    			}
-    				
+                Object valueConverted =castFilterValue(value, fieldClassType, (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition), cfts);
     			if (valueConverted != null) {
                     filters.put(key, valueConverted);
                 } else {
@@ -1249,7 +1228,7 @@ public abstract class BaseApi {
 			} catch (NoSuchFieldException e) {
 				throw new InvalidParameterException(e.getMessage());
 			}
-			fieldClassType = fieldClassType = field.getType();
+			fieldClassType = field.getType();
 			if (fieldClassType == List.class || fieldClassType == Set.class) {
 				fieldClassType = ReflectionUtils.getFieldGenericsType(field);
 			}
@@ -1467,6 +1446,17 @@ public abstract class BaseApi {
                     }
                     return role;
                 }
+			} else if (CustomFieldValues.class.isAssignableFrom(targetClass)) {
+				String[] vals = stringVal.split("=");
+				String key = vals[0];
+				String cfValue = vals[1];
+				Map<String, List<CustomFieldValue>> map = new TreeMap<String, List<CustomFieldValue>>();
+				Class dataClass = cfts.get(key).getFieldType().getDataClass();
+				Object valueConverted =castFilterValue(cfValue, dataClass, expectedList, cfts);
+				//if value converted is good (not null) we use it, else we filter cf using the original value (as String)
+				map.put(key, Arrays.asList(new CustomFieldValue(valueConverted!=null?valueConverted:cfValue)));
+				CustomFieldValues customFieldsValues = new CustomFieldValues(map);
+				return customFieldsValues;
 			}
         } catch (NumberFormatException e) {
             // Swallow - validation will take care of it later
@@ -1552,16 +1542,4 @@ public abstract class BaseApi {
     	}
     	return new MeveoApiException(e);
     }
-    
-	public String getCustomFieldDataType(Class clazz) {
-		if (clazz == Double.class || clazz == Date.class || clazz == Long.class) {
-			for (CustomFieldTypeEnum cft : CustomFieldTypeEnum.values()) {
-				if (cft.getDataClass().equals(clazz)) {
-					return cft.getDataType();
-				}
-			}
-		}
-		return "varchar";
-	}
-
 }
