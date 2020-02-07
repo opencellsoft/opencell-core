@@ -35,7 +35,7 @@
   </con:settings>
   <con:interface xsi:type="con:WsdlInterface" id="6525abb5-8ba3-41fe-82de-1f972b44d134" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/AccountWs</con:endpoint>
     </con:endpoints>
     <con:operation id="b2e65184-0a07-4efe-b806-cf19123b4dd3" isOneWay="false" action="" name="addLitigation" bindingOperationName="addLitigation" type="Request-Response" outputName="addLitigationResponse" inputName="addLitigation" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -257,7 +257,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0452a833-b399-485e-ad93-15f1e0a8ca1f" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/CatalogWs</con:endpoint>
     </con:endpoints>
     <con:operation id="72a49db8-bcef-486e-9671-de5b708d7070" isOneWay="false" action="" name="createBusinessOfferModel" bindingOperationName="createBusinessOfferModel" type="Request-Response" outputName="createBusinessOfferModelResponse" inputName="createBusinessOfferModel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -461,7 +461,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="b037c488-90b4-4d4f-80d6-b060bc44907c" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="ae9cb189-0221-4e04-bf8f-dfb88acf74a3" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -536,7 +536,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="32ff6d91-bacd-454b-b5de-4a57ecf8c57f" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/JobWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/JobWs</con:endpoint>
     </con:endpoints>
     <con:operation id="4ffe8a54-5903-483e-b0c1-8647717699f1" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -581,7 +581,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="4ec8e092-5cf5-4d58-99b8-1820735211c8" wsaVersion="NONE" name="ModuleWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ModuleWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/ModuleWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/ModuleWs</con:endpoint>
     </con:endpoints>
     <con:operation id="d448977e-a42b-4430-a185-07dc5987ccca" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -608,7 +608,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="dd5ee2d6-be0e-43bb-9323-e7b7fbcb62a4" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/SettingsWs</con:endpoint>
     </con:endpoints>
     <con:operation id="76101927-a2ad-47ed-9128-eeb6341b1df1" isOneWay="false" action="" name="createBillingCycle" bindingOperationName="createBillingCycle" type="Request-Response" outputName="createBillingCycleResponse" inputName="createBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -920,7 +920,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="5bc32de0-5b17-4a66-b85b-746eb0521c91" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/SubscriptionWs</con:endpoint>
     </con:endpoints>
     <con:operation id="01920c32-0161-4c09-84a7-528acd168aea" isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -959,8 +959,8 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="03f488f9-f60e-4aef-ad70-b3cdb58831b8" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://localhost:8080" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
-      <con:endpoint>http://localhost:8080</con:endpoint>
+    <con:endpoints>
+      <con:endpoint>${#Project#opencell.url}</con:endpoint>
     </con:endpoints>
     <con:resource name="Customer" path="/api/rest/account/customer" id="1224e4ed-0996-4503-b004-a449dd20884d">
       <con:settings/>
@@ -1014,8 +1014,10 @@
           <con:element>html</con:element>
         </con:representation>
         <con:request name="Request 1" id="8416cdbc-93a8-4f29-8d4d-2c97eb9d8269" mediaType="application/json" postQueryString="false">
-          <con:settings/>
-          <con:endpoint>http://localhost:8080</con:endpoint>
+          <con:settings>
+            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+          </con:settings>
+          <con:endpoint xsi:nil="true"/>
           <con:request/>
           <con:credentials>
             <con:authType>No Authorization</con:authType>
@@ -1067,10 +1069,100 @@
         </con:representation>
       </con:method>
     </con:resource>
+    <con:resource name="CustomTable" path="/api/rest/customTable/listFromWrapper" id="1224e4ed-0996-4503-b004-a449dd20884d">
+      <con:settings/>
+      <con:parameters/>
+      <con:method name="listFromWrapper" id="0121542d-fded-40cb-84f6-72c77321bc15" method="POST">
+        <con:settings/>
+        <con:parameters/>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/json</con:mediaType>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>401 400 500 404</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element xmlns:cus="http://localhost/opencell/api/rest/account/customerAccount">cus:Response</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>text/html;charset=utf-8</con:mediaType>
+          <con:status>404</con:status>
+          <con:params/>
+          <con:element>html</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>text/html;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>html</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:request name="Request 1" id="8416cdbc-93a8-4f29-8d4d-2c97eb9d8269" mediaType="application/json" postQueryString="false">
+          <con:settings>
+            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+          </con:settings>
+          <con:endpoint>${#Project#opencell.url}</con:endpoint>
+          <con:request/>
+          <con:credentials>
+            <con:authType>No Authorization</con:authType>
+          </con:credentials>
+          <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+          <con:jmsPropertyConfig/>
+          <con:parameters/>
+        </con:request>
+      </con:method>
+    </con:resource>
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/InvoiceWs?wsdl" id="3d2d8e46-81dd-4e9b-868b-1da64fe62cc2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://192.168.10.14:8080/opencell/InvoiceWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/opencell/InvoiceWs</con:endpoint>
       <con:endpoint>http://localhost:8080/opencell/InvoiceWs</con:endpoint>
@@ -1108,7 +1200,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="113af333-62db-47ab-b545-ba7add0056c2" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/NotificationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/NotificationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="b0e86045-32da-40b4-8faa-4dd1aef403ce" isOneWay="false" action="" name="createEmailNotification" bindingOperationName="createEmailNotification" type="Request-Response" outputName="createEmailNotificationResponse" inputName="createEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1168,7 +1260,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="6d7ccb5c-e1f9-4338-bf86-f62b3673643b" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/ScriptInstanceWs</con:endpoint>
     </con:endpoints>
     <con:operation id="f9f2f711-974a-4052-b02d-9b3c68b71f86" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1192,7 +1284,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="6606b221-c407-4821-9c32-6a6b4b4769d5" wsaVersion="NONE" name="AccountingWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountingWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountingWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
     </con:endpoints>
     <con:operation id="4db59560-9a43-4034-b85e-0536393d1729" isOneWay="false" action="" name="createAccountingCode" bindingOperationName="createAccountingCode" type="Request-Response" outputName="createAccountingCodeResponse" inputName="createAccountingCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -13753,6 +13845,412 @@ public class Action1 extends Script {
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create customTable" id="dacd9eeb-3cf8-4877-b9ae-d747503dd9ab">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="Create customTable" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createEntityTemplate>\r
+         <customEntityTemplate code="${#Project#baseEntityPrefix}_CTW_CustomTable" name="Custom Table Wrapper" storeAsTable="true" description="Custom table Wrapper template ">\r
+            <fields>\r
+               <field code="${#Project#baseEntityPrefix}_CTW_field1" description="Entity field1">\r
+                  <fieldType>STRING</fieldType>\r
+                  <defaultValue>Hello</defaultValue>\r
+                  <storageType>SINGLE</storageType>\r
+                  <valueRequired>true</valueRequired>\r
+                  <versionable>false</versionable>\r
+               </field>\r
+               <field code="${#Project#baseEntityPrefix}_CTW_field2" description="Entity field2">\r
+                  <fieldType>LONG</fieldType>\r
+                  <defaultValue>15</defaultValue>\r
+                  <storageType>SINGLE</storageType>\r
+                  <valueRequired>false</valueRequired>\r
+                  <versionable>false</versionable>\r
+               </field>\r
+            </fields>\r
+         </customEntityTemplate>\r
+      </ws:createEntityTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find custom table" id="588d424e-2526-4b01-b2c9-bef076f6d46d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>findEntityTemplate</con:operation>
+          <con:request name="Find custom table" id="7c716c95-7f19-4dfe-be43-9ff1cf4d4d1b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findEntityTemplate>\r
+         <code>${#Project#baseEntityPrefix}_CTW_CustomTable</code>\r
+      </ws:findEntityTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="dc02b508-ddde-4feb-9c03-cc19140c611d"/>
+            <con:assertion type="Simple Contains" id="9bcba2be-3ac5-4070-873a-1d75da961b57" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d0893b65-c072-4669-a2a3-131564d9edc8" name="XPath Match">
+              <con:configuration>
+                <path>//field[@code="${#Project#baseEntityPrefix}_CTW_field1"]</path>
+                <content><![CDATA[<field id="*" code="${#Project#baseEntityPrefix}_CTW_field1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <auditable created="*" creator="*"/>
+  <disabled>false</disabled>
+  <fieldType>STRING</fieldType>
+  <accountLevel>CE_${#Project#baseEntityPrefix}_CTW_CustomTable</accountLevel>
+  <appliesTo>CE_${#Project#baseEntityPrefix}_CTW_CustomTable</appliesTo>
+  <defaultValue>Hello</defaultValue>
+  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+  <storageType>SINGLE</storageType>
+  <valueRequired>true</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
+  <versionable>false</versionable>
+  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+  <allowEdit>true</allowEdit>
+  <hideOnNew>false</hideOnNew>
+  <maxValue>50</maxValue>
+  <guiPosition>tab:Custom Table Wrapper:0;field:0</guiPosition>
+  <indexType>INDEX_NOT_ANALYZE</indexType>
+</field>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="26431a3f-ad67-455b-877f-30a910f89c9b" name="XPath Match 1">
+              <con:configuration>
+                <path>//field[@code="${#Project#baseEntityPrefix}_CTW_field2"]</path>
+                <content><![CDATA[<field id="*" code="${#Project#baseEntityPrefix}_CTW_field2" description="Entity field2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <auditable created="*" creator="*"/>
+  <disabled>false</disabled>
+  <fieldType>LONG</fieldType>
+  <accountLevel>CE_${#Project#baseEntityPrefix}_CTW_CustomTable</accountLevel>
+  <appliesTo>CE_${#Project#baseEntityPrefix}_CTW_CustomTable</appliesTo>
+  <defaultValue>15</defaultValue>
+  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+  <storageType>SINGLE</storageType>
+  <valueRequired>false</valueRequired>
+  <uniqueConstraint>false</uniqueConstraint>
+  <versionable>false</versionable>
+  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+  <allowEdit>true</allowEdit>
+  <hideOnNew>false</hideOnNew>
+  <guiPosition>tab:Custom Table Wrapper:0;field:1</guiPosition>
+  <indexType>INDEX_NOT_ANALYZE</indexType>
+</field>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="3c406cc5-85a0-4e66-8c66-32f2f654ac7c">
+              <con:configuration/>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="b785fdac-49a7-4726-a5ef-af9da60f38da" name="XPath Match 3">
+              <con:configuration>
+                <path>exists(//customEntityTemplate[@name="Custom Table Wrapper" and @code="${#Project#baseEntityPrefix}_CTW_CustomTable" and @description="Custom table Wrapper template "])</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="add data to customTable" id="8b2dba17-f5e1-443b-982f-9303685a5a31">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="add data to customTable" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:appendTableData>\r
+         <tableData customTableCode="${#Project#baseEntityPrefix}_CTW_CustomTable">
+            <records>
+               <record>
+                  <values>
+                     <entry>
+                        <key>${#Project#baseEntityPrefix}_CTW_field1</key>
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">${#Project#entityPrefix}_${#TestSuite#index}_OFFER1</value>
+                     </entry>
+                     <entry>
+                        <key>${#Project#baseEntityPrefix}_CTW_field2</key>
+                        <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">123</value>
+                     </entry>
+                  </values>
+               </record>
+			   <record>
+                  <values>
+                     <entry>
+                        <key>${#Project#baseEntityPrefix}_CTW_field1</key>
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">OF</value>
+                     </entry>
+                     <entry>
+                        <key>${#Project#baseEntityPrefix}_CTW_field2</key>
+                        <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">1234</value>
+                     </entry>
+                  </values>
+               </record>
+			   <record>
+                  <values>
+                     <entry>
+                        <key>${#Project#baseEntityPrefix}_CTW_field1</key>
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">OF1</value>
+                     </entry>
+                     <entry>
+                        <key>${#Project#baseEntityPrefix}_CTW_field2</key>
+                        <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">1235</value>
+                     </entry>
+                  </values>
+               </record>
+
+            </records>
+         </tableData>
+      </ws:appendTableData>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find data for custom table" id="77aa0fe8-16a3-4160-9509-d78779855682">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>findEntityTemplate</con:operation>
+          <con:request name="Find data for custom table" id="7c716c95-7f19-4dfe-be43-9ff1cf4d4d1b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:listTableData>\r
+         <customTableCode>${#Project#baseEntityPrefix}_CTW_CustomTable</customTableCode>\r
+      </ws:listTableData>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="dc02b508-ddde-4feb-9c03-cc19140c611d"/>
+            <con:assertion type="Simple Contains" id="9bcba2be-3ac5-4070-873a-1d75da961b57" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d0893b65-c072-4669-a2a3-131564d9edc8" name="XPath Match">
+              <con:configuration>
+                <path>//tableData[@customTableCode="${#Project#baseEntityPrefix}_CTW_CustomTable"]</path>
+                <content><![CDATA[<tableData customTableCode="${#Project#baseEntityPrefix}_CTW_CustomTable" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <records>
+    <record>
+      <id>1</id>
+      <values>
+        <entry>
+          <key>id</key>
+          <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">1</value>
+        </entry>
+        <entry>
+          <key>*_ctw_field1</key>
+          <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">CF_${#TestSuite#index}_OFFER1</value>
+        </entry>
+        <entry>
+          <key>*_ctw_field2</key>
+          <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">123</value>
+        </entry>
+      </values>
+      <tableName>${#Project#baseEntityPrefix}_CTW_CustomTable</tableName>
+    </record>
+    <record>
+      <id>2</id>
+      <values>
+        <entry>
+          <key>id</key>
+          <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">2</value>
+        </entry>
+        <entry>
+          <key>*_ctw_field1</key>
+          <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">OF</value>
+        </entry>
+        <entry>
+          <key>*_ctw_field2</key>
+          <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">1234</value>
+        </entry>
+      </values>
+      <tableName>${#Project#baseEntityPrefix}_CTW_CustomTable</tableName>
+    </record>
+    <record>
+      <id>3</id>
+      <values>
+        <entry>
+          <key>id</key>
+          <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">3</value>
+        </entry>
+        <entry>
+          <key>*_ctw_field1</key>
+          <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">OF1</value>
+        </entry>
+        <entry>
+          <key>*_ctw_field2</key>
+          <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">1235</value>
+        </entry>
+      </values>
+      <tableName>${#Project#baseEntityPrefix}_CTW_CustomTable</tableName>
+    </record>
+  </records>
+</tableData>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="List from CTW" id="38e62b25-093e-4adc-92ec-93526c800c96">
+        <con:settings/>
+        <con:config service="http://localhost:8080" resourcePath="/api/rest/customTable/listFromWrapper" methodName="listFromWrapper" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="List from CTW" id="8416cdbc-93a8-4f29-8d4d-2c97eb9d8269" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:endpoint>${#Project#opencell.url}</con:endpoint>
+            <con:request>{
+    "ctwCode": "${#Project#baseEntityPrefix}_OfferTemplate_CTW",
+    "entityId": 2,
+    "entityClass": "OfferTemplate",
+    "pagingAndFiltering":{
+	    "filters": {
+	        "${#Project#baseEntityPrefix}_CTW_field1": "OF"
+	    },
+	    "fields": "",
+	    "offset": null,
+	    "limit": 100,
+	    "sortBy": null,
+	    "sortOrder": null,
+	    "loadReferenceDepth": 0
+    }
+}</con:request>
+            <con:originalUri>http://localhost/opencell/api/rest/customTable</con:originalUri>
+            <con:assertion type="JsonPath Match" id="532f43ae-5eab-4a0b-be5e-f30a8c23df11" name="JsonPath Match">
+              <con:configuration>
+                <path>actionStatus.status</path>
+                <content>SUCCESS</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="532f43ae-5eab-4a0b-be5e-f30a8c23df11" name="JsonPath Match 1">
+              <con:configuration>
+                <path>tableData.customTableCode</path>
+                <content>${#Project#baseEntityPrefix}_CTW_CustomTable</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="532f43ae-5eab-4a0b-be5e-f30a8c23df11" name="JsonPath Match 2">
+              <con:configuration>
+                <path>tableData.record[0].id</path>
+                <content>2</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
       <con:properties/>
       <con:reportParameters/>
     </con:testCase>
@@ -14936,7 +15434,16 @@ public class Action1 extends Script {
                      <matrixColumn columnUse="USE_VALUE" code="VAL_1" position="1" label="Value One" keyType="STRING"/>
                      <matrixColumn columnUse="USE_VALUE" code="VAL_2" position="2" label="Value Two" keyType="DOUBLE"/>
                   </matrixColumns>
-               </field>               
+               </field>
+               <field code="${#Project#baseEntityPrefix}_${#TestCase#cfType}_CTW" description="${#TestCase#cfType} Custom table wrapper">
+                  <fieldType>CUSTOM_TABLE_WRAPPER</fieldType>
+                  <storageType>SINGLE</storageType>
+                  <valueRequired>false</valueRequired>
+                  <versionable>false</versionable>
+			   <customTableCodeEL>${#Project#baseEntityPrefix}_CTW_CustomTable</customTableCodeEL>
+			    <dataFilterEL>"${#Project#baseEntityPrefix}_CTW_field1": "#{entity.code}"</dataFilterEL>
+			    <fieldsEL>id,${#Project#baseEntityPrefix}_CTW_field1,${#Project#baseEntityPrefix}_CTW_field2</fieldsEL>
+               </field>
             </fields>\r
          </entityCustomization>\r
       </ws:customizeEntity>\r
@@ -33874,9 +34381,21 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       <fieldType>STRING</fieldType>
       <stringValue>CHILD_SELLER</stringValue>
     </customField>
+    <customField code="${#Project#baseEntityPrefix}_Seller_CTW" description="Seller Custom table wrapper">
+      <fieldType>CUSTOM_TABLE_WRAPPER</fieldType>
+      <customTableCode>${#Project#baseEntityPrefix}_CTW_CustomTable</customTableCode>
+      <dataFilter>"${#Project#baseEntityPrefix}_CTW_field1": "${#Project#entityPrefix}_${#TestSuite#index}_INHERITED_CHILD_SELLER"</dataFilter>
+      <fields>id,${#Project#baseEntityPrefix}_CTW_field1,${#Project#baseEntityPrefix}_CTW_field2</fields>
+    </customField>
     <inheritedCustomField code="${#Project#baseEntityPrefix}_Seller_STRING_SINGLE_NV" description="Seller_STRING_SINGLE_NV field">
       <fieldType>STRING</fieldType>
       <stringValue>PARENT_SELLER</stringValue>
+    </inheritedCustomField>
+    <inheritedCustomField code="${#Project#baseEntityPrefix}_Seller_CTW" description="Seller Custom table wrapper">
+      <fieldType>CUSTOM_TABLE_WRAPPER</fieldType>
+      <customTableCode>${#Project#baseEntityPrefix}_CTW_CustomTable</customTableCode>
+      <dataFilter>"${#Project#baseEntityPrefix}_CTW_field1": "${#Project#entityPrefix}_${#TestSuite#index}_INHERITED_PARENT_SELLER"</dataFilter>
+      <fields>id,${#Project#baseEntityPrefix}_CTW_field1,${#Project#baseEntityPrefix}_CTW_field2</fields>
     </inheritedCustomField>
   </customFields>
   <invoiceTypeSequences/>
@@ -34297,6 +34816,35 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:assertion type="Simple Contains" id="7a845b2b-2023-4ea0-8e6a-e78c3a815985" name="Contains 2">
               <con:configuration>
                 <token><![CDATA[<customFields>
+                  <customField code="${#Project#baseEntityPrefix}_INHERITED_MAP_NV" description="${#Project#baseEntityPrefix}_INHERITED_MAP_NV field">
+                     <fieldType>STRING</fieldType>
+                     <mapValue>
+                        <entry>
+                           <key>a</key>
+                           <value>
+                              <stringValue>SUBSCRIPTION_STRING_VALUE_02</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>b</key>
+                           <value>
+                              <stringValue>SUBSCRIPTION_STRING_VALUE_07</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>
+                  <customField code="${#Project#baseEntityPrefix}_Subscription_CTW" description="Subscription Custom table wrapper">
+                     <fieldType>CUSTOM_TABLE_WRAPPER</fieldType>
+                     <customTableCode>${#Project#baseEntityPrefix}_CTW_CustomTable</customTableCode>
+                     <dataFilter>"${#Project#baseEntityPrefix}_CTW_field1": "${#Project#entityPrefix}_${#TestSuite#index}_INHERITED_SUBSCRIPTION"</dataFilter>
+                     <fields>id,${#Project#baseEntityPrefix}_CTW_field1,${#Project#baseEntityPrefix}_CTW_field2</fields>
+                  </customField>
+               </customFields>
+               <accesses>
+                  <access code="${#Project#entityPrefix}_${#TestSuite#index}_INHERITED_ACCESS">
+                     <subscription>${#Project#entityPrefix}_${#TestSuite#index}_INHERITED_SUBSCRIPTION</subscription>
+                     <startDate>2017-10-13T00:00:00Z</startDate>
+                     <customFields>
                         <customField code="${#Project#baseEntityPrefix}_INHERITED_MAP_NV" description="${#Project#baseEntityPrefix}_INHERITED_MAP_NV field">
                            <fieldType>STRING</fieldType>
                            <mapValue>
@@ -34307,6 +34855,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                                  </value>
                               </entry>
                            </mapValue>
+                        </customField>
+                        <customField code="${#Project#baseEntityPrefix}_Access_CTW" description="Access Custom table wrapper">
+                           <fieldType>CUSTOM_TABLE_WRAPPER</fieldType>
+                           <customTableCode>${#Project#baseEntityPrefix}_CTW_CustomTable</customTableCode>
+                           <fields>id,${#Project#baseEntityPrefix}_CTW_field1,${#Project#baseEntityPrefix}_CTW_field2</fields>
                         </customField>
                         <inheritedCustomField code="${#Project#baseEntityPrefix}_INHERITED_MAP_NV" description="${#Project#baseEntityPrefix}_INHERITED_MAP_NV field">
                            <fieldType>STRING</fieldType>
@@ -34391,7 +34944,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>88</con:value>
+        <con:value>103</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -37023,7 +37576,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>128</con:value>
+        <con:value>138</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -38572,7 +39125,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>91</con:value>
+        <con:value>92</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39795,7 +40348,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>80</con:value>
+        <con:value>81</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

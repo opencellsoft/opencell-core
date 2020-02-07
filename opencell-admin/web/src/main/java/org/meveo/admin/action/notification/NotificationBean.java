@@ -277,14 +277,4 @@ public class NotificationBean extends BaseNotificationBean<ScriptNotification> {
             }
         }
     }
-
-    @Override
-    public String getEditViewName() {
-        return "notificationDetail";
-    }
-
-    @Override
-    protected String getListViewName() {
-        return "notifications";
-    }
 }

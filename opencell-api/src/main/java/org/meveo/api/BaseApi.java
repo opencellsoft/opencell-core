@@ -548,8 +548,7 @@ public abstract class BaseApi {
                                     + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
                         }
                     } else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
-                    	Boolean booleanValue = null;
-                    	booleanValue = Boolean.valueOf(valueToCheck.toString());
+                    	Boolean booleanValue = Boolean.valueOf(valueToCheck.toString());
 
                     } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
                         // Just in case, set CET code to whatever CFT definition
@@ -699,7 +698,7 @@ public abstract class BaseApi {
      * 
      * @throws MeveoApiException meveo api exception.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes", "unchecked", "deprecation" })
     protected void convertDtoToEntityWithChildProcessing(Object entityToPopulate, Object dto, boolean partialUpdate) throws MeveoApiException {
 
         String dtoClassName = dto.getClass().getName();
@@ -1135,7 +1134,6 @@ public abstract class BaseApi {
      * @return Pagination configuration
      * @throws InvalidParameterException invalid parameter exception.
      */
-    @SuppressWarnings("rawtypes")
     protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering,
     		Map<String, CustomFieldTemplate> cfts) throws InvalidParameterException {
 
@@ -1225,7 +1223,7 @@ public abstract class BaseApi {
 			} catch (NoSuchFieldException e) {
 				throw new InvalidParameterException(e.getMessage());
 			}
-			fieldClassType = fieldClassType = field.getType();
+			fieldClassType = field.getType();
 			if (fieldClassType == List.class || fieldClassType == Set.class) {
 				fieldClassType = ReflectionUtils.getFieldGenericsType(field);
 			}

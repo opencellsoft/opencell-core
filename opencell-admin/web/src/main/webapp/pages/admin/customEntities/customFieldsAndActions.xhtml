@@ -271,7 +271,7 @@
 
                     <h:panelGroup>
                         <hftl:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="30"
-                            listenerUpdate="listValuesField defaultValueField displayFormat entityClazzField validations versioning storageType_enum matrixColumns childEntityFields protectableField"
+                            listenerUpdate="listValuesField defaultValueField displayFormat entityClazzField validations versioning storageType_enum matrixColumns childEntityFields protectableField customTableWrapper"
                             actionListenerBean="#{customFieldTemplateBean}" actionListenerMethod="updateDefaultValues" listValues="#{customEntityTemplateBean.fieldTypes}" allowEdit="false" />
                         <!--                 <hftl:formField label="#{messages['customFieldTemplate.appliesTo']}" field="appliesTo" componentWidth="20" edit="false" /> -->
                         <!--                 <hftl:formField label="#{messages['customFieldTemplate.guipos']}" field="guiPosition" componentWidth="20" edit="false" /> -->
@@ -311,6 +311,14 @@
                                 autocompleteMethod="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CHILD_ENTITY?'autocompleteClassNamesCEIOnly':'autocompleteClassNames'}"
                                 newLine="true" componentWidth="100" listenerUpdate="childEntityFields" actionListenerBean="#{customFieldTemplateBean}" actionListenerMethod="resetChildEntityFields"
                                 rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.ENTITY or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CHILD_ENTITY}" />
+                        </h:panelGroup>
+                        <h:panelGroup id="customTableWrapper">
+                            <hftl:formField label="#{messages['customFieldTemplate.customTableCodeEL']}" field="customTableCodeEL" componentWidth="100" maxlength="2000" rows="1"
+                                            rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CUSTOM_TABLE_WRAPPER}" required="true"/>
+                            <hftl:formField label="#{messages['customFieldTemplate.dataFilterEL']}" field="dataFilterEL" componentWidth="100" maxlength="2000" rows="1"
+                                            rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CUSTOM_TABLE_WRAPPER}"/>
+                            <hftl:formField label="#{messages['customFieldTemplate.fieldsEL']}" field="fieldsEL" componentWidth="100" maxlength="2000" rows="1"
+                                            rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CUSTOM_TABLE_WRAPPER}"/>
                         </h:panelGroup>
                     </h:panelGroup>
 

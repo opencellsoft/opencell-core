@@ -1,13 +1,12 @@
 package org.meveo.api;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.api.dto.module.ModulePropertyFlagLoader;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BaseEntity;
 
 /**
  * An interface of CRUD API service class
@@ -18,10 +17,10 @@ import org.meveo.model.BusinessEntity;
  * @param <E> Entity class
  * @param <T> Dto class
  */
-public interface ApiService<E extends BusinessEntity, T extends BusinessEntityDto> {
+public interface ApiService<E extends BaseEntity, T extends BaseEntityDto> {
 
     /**
-     * Find entity identified by code.
+     * Find entity identified by code
      * 
      * @param code Entity code
      * 
@@ -30,20 +29,17 @@ public interface ApiService<E extends BusinessEntity, T extends BusinessEntityDt
      * @throws MeveoApiException Any other exception is wrapped to MeveoApiException
      */
     T find(String code) throws MeveoApiException;
-    
+
     /**
-     * Find entity identified by code.
+     * Find entity identified by ID
      * 
-     * @param code Entity code
-     * @param modulePropertyFlagLoader list of boolean fields that when set loads a certain field
+     * @param id Entity id
      * 
      * @return A DTO of entity
      * @throws EntityDoesNotExistsException Entity was not found
-     * @throws InvalidParameterException Some search parameter is incorrect
-     * @throws MissingParameterException A parameter, necessary to find an entity, was not provided
      * @throws MeveoApiException Any other exception is wrapped to MeveoApiException
      */
-    T find(String code, ModulePropertyFlagLoader modulePropertyFlagLoader) throws MeveoApiException;
+    T find(Long id) throws MeveoApiException;
 
     /**
      * Find entity identified by code. Return null if not found
@@ -56,6 +52,18 @@ public interface ApiService<E extends BusinessEntity, T extends BusinessEntityDt
      * @throws MeveoApiException Any other exception is wrapped to MeveoApiException
      */
     T findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException;
+
+    /**
+     * Find entity identified by ID. Return null if not found
+     * 
+     * @param id Entity ID
+     * 
+     * @return A DTO of entity or NULL if not found
+     * @throws InvalidParameterException Some search parameter is incorrect
+     * @throws MissingParameterException A parameter, necessary to find an entity, was not provided
+     * @throws MeveoApiException Any other exception is wrapped to MeveoApiException
+     */
+    T findIgnoreNotFound(Long id) throws MissingParameterException, InvalidParameterException, MeveoApiException;
 
     /**
      * Create or update an entity from DTO.
@@ -88,7 +96,7 @@ public interface ApiService<E extends BusinessEntity, T extends BusinessEntityDt
     E update(T dtoData) throws MeveoApiException, BusinessException;
 
     /**
-     * Enable or disable entity
+     * Enable or disable entity by code
      * 
      * @param code Entity code
      * @param enable Should entity be enabled
@@ -99,7 +107,18 @@ public interface ApiService<E extends BusinessEntity, T extends BusinessEntityDt
     void enableOrDisable(String code, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException;
 
     /**
-     * Remove entity
+     * Enable or disable entity by ID
+     * 
+     * @param id Entity ID
+     * @param enable Should entity be enabled
+     * @throws EntityDoesNotExistsException Entity does not exist
+     * @throws MissingParameterException A parameter, necessary to find an entity, was not provided
+     * @throws BusinessException A general business exception
+     */
+    void enableOrDisable(Long id, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException;
+
+    /**
+     * Remove entity by code
      * 
      * @param code Entity code
      * @throws MissingParameterException A parameter, necessary to find an entity, was not provided
@@ -107,5 +126,15 @@ public interface ApiService<E extends BusinessEntity, T extends BusinessEntityDt
      * @throws BusinessException A general business exception
      */
     void remove(String code) throws MissingParameterException, EntityDoesNotExistsException, BusinessException;
+
+    /**
+     * Remove entity by ID
+     * 
+     * @param id Entity ID
+     * @throws MissingParameterException A parameter, necessary to find an entity, was not provided
+     * @throws EntityDoesNotExistsException Entity does not exist
+     * @throws BusinessException A general business exception
+     */
+    void remove(Long id) throws MissingParameterException, EntityDoesNotExistsException, BusinessException;
 
 }

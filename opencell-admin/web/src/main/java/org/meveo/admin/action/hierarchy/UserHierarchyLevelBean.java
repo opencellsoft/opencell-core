@@ -44,8 +44,6 @@ import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Standard backing bean for {@link org.meveo.model.hierarchy.UserHierarchyLevel} (extends {@link org.meveo.admin.action.BaseBean} that provides almost all common methods to handle
@@ -88,11 +86,6 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
 
     protected List<String> getFormFieldsToFetch() {
         return Arrays.asList("users", "childLevels");
-    }
-
-    @Override
-    protected String getListViewName() {
-        return "userGroupHierarchy";
     }
 
     @Override

@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.IEntityDto;
 
 /**
  * The Class ServiceToUpdateDto.
@@ -21,7 +22,7 @@ import org.meveo.api.dto.CustomFieldsDto;
  */
 @XmlRootElement(name = "ServiceToUpdate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceToUpdateDto implements Serializable {
+public class ServiceToUpdateDto implements Serializable, IEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3815026205495621916L;

@@ -1,21 +1,27 @@
 package org.meveo.api.security.Interceptor;
 
 import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collector;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
-import javax.persistence.Query;
 
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.api.security.filter.SecureMethodResultFilter;
 import org.meveo.api.security.filter.SecureMethodResultFilterFactory;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.api.security.parameter.SecureMethodParameterHandler;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
@@ -29,13 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
  * This will handle the processing of {@link SecuredBusinessEntityMethod} annotated methods.
  * 
  * @author Tony Alejandro
  * @author Wassim Drira
+ * @author mohamed stitane
  * @lastModifiedVersion 5.0
- *
  */
 public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
@@ -109,6 +114,9 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
         Object[] values = context.getParameters();
 
+        List<SecuredEntity> securedEntities = allSecuredEntitiesMap.values().stream().flatMap(Set::stream).collect(Collectors.toList());
+        addSecuredEntitiesToFilters(securedEntities, values);
+
         SecureMethodParameter[] parametersForValidation = annotation.validate();
         for (SecureMethodParameter parameter : parametersForValidation) {
             BusinessEntity entity = parameterHandler.getParameterValue(parameter, values, BusinessEntity.class);
@@ -168,5 +176,61 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
             // do nothing
         }
         return securedEntitiesMap;
+    }
+    /**
+     * Adding a secured entities code to the filters for paging
+     *
+     * @param securedEntities all secured entities
+     * @param values          the context parameter
+     */
+    private void addSecuredEntitiesToFilters(List<SecuredEntity> securedEntities, Object[] values) {
+        log.debug("Adding a secured entities code to the filters for paging");
+        for (Object obj : values) {
+            if (obj instanceof PagingAndFiltering) {
+                PagingAndFiltering pagingAndFiltering = (PagingAndFiltering) obj;
+                updateFilters(securedEntities, pagingAndFiltering);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Adding a secured entities code to the filters
+     *
+     * @param securedEntities    a secured entities
+     * @param pagingAndFiltering a paging and filtering object
+     */
+    private void updateFilters(List<SecuredEntity> securedEntities, PagingAndFiltering pagingAndFiltering) {
+        if (isNotNull(pagingAndFiltering)) {
+            Map<String, Object> filters = Optional.ofNullable(pagingAndFiltering.getFilters()).orElse(new HashMap<>());
+            for (SecuredEntity securedEntity : securedEntities) {
+                final String entityClass = securedEntity.getEntityClass();
+                //extract the field name from entity class, I supposed that the field name is the same as the Class name.
+                final String fieldName = entityClass.substring(entityClass.lastIndexOf('.') + 1).toLowerCase();
+                log.debug("Code = {} for entity = {}", securedEntity.getCode(), fieldName);
+                final String keyInList = "inList " + fieldName + ".code";
+                if (filters.containsKey(fieldName)) {
+                    final Object initialValue = filters.get(fieldName);
+                    filters.put(keyInList, StringUtils.concat(initialValue, ",", securedEntity.getCode()));
+                    filters.remove(fieldName);
+                } else if (filters.containsKey(keyInList)) {
+                    final Object initialList = filters.get(keyInList);
+                    filters.replace(keyInList, StringUtils.concat(initialList, ",", securedEntity.getCode()));
+                } else {
+                    filters.put(fieldName, securedEntity.getCode());
+                }
+            }
+            pagingAndFiltering.setFilters(filters);
+        }
+    }
+
+    /**
+     * check if the object is null
+     *
+     * @param pagingAndFiltering a paging and filtering object
+     * @return true or false
+     */
+    private boolean isNotNull(PagingAndFiltering pagingAndFiltering) {
+        return pagingAndFiltering != null && pagingAndFiltering.getLimit() != null && pagingAndFiltering.getOffset() != null;
     }
 }
