@@ -1,0 +1,19 @@
+ {
+    "code": "TEST",
+    "description": "Test Recurring service",
+    "customFields": null,
+    "imageBase64": null,
+    "imagePath": null,
+    "invoicingCalendar": null,
+    "longDescription": null,
+    "mandatory": "INVALID",
+    "serviceChargeTemplateUsages": null,
+    "serviceChargeTemplateRecurrings": {
+      "serviceChargeTemplateRecurring": [
+        { "code": "TEST", "wallets": null }
+      ]
+    },
+    "serviceChargeTemplateSubscriptions": null,
+    "serviceChargeTemplateTerminations": null,
+    "somCode": null
+}

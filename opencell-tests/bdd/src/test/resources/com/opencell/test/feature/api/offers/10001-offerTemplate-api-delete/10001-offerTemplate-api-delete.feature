@@ -2,7 +2,7 @@
 Feature: Delete offer template by API
 
   Background: The classic offer is already executed
-              Create offer template by API is already executed
+              Create/Update offer template by API is already executed
 
 
   @admin @superadmin
