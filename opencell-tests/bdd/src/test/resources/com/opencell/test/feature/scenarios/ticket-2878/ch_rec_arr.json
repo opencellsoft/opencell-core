@@ -1,0 +1,15 @@
+{
+	"code": "CH_REC_ARR",
+	"description": "Recurring charge ARREAR",
+	"invoiceSubCategory": "ISCAT_REC",
+	"disabled": false,
+	"unitNbDecimal": 4,
+	"roundingModeDtoEnum": "NEAREST",
+	"calendar": "CAL_MONTHLY_1ST",
+	"durationTermInMonth": null,
+	"subscriptionProrata": true,
+	"terminationProrata": true,
+	"applyInAdvance": false,
+	"filterExpression": "#{ true }",
+	"triggeredEdrs": null
+}
