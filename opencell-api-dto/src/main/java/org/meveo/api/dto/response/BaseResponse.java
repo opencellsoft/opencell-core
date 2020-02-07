@@ -64,6 +64,6 @@ public abstract class BaseResponse implements Serializable {
 
     @Override
     public String toString() {
-        return "BaseResponse [actionStatus=" + actionStatus + "]";
+        return "actionStatus=" + actionStatus;
     }
 }

@@ -103,11 +103,6 @@ public class SellerBean extends CustomFieldBean<Seller> {
     }
 
     @Override
-    protected String getListViewName() {
-        return "sellers";
-    }
-
-    @Override
     protected String getDefaultSort() {
         return "code";
     }

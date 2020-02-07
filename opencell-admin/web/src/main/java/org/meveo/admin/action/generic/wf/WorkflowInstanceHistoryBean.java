@@ -71,11 +71,6 @@ public class WorkflowInstanceHistoryBean extends BaseBean<WorkflowInstanceHistor
     }
 
     @Override
-    protected String getListViewName() {
-        return "workflowInstanceHistories";
-    }
-
-    @Override
     protected String getDefaultSort() {
         return "actionDate";
     }

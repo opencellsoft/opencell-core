@@ -133,10 +133,6 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         return getEditViewName();
     }
 
-    protected String getListViewName() {
-        return "jobInstances";
-    }
-
     /**
      * Get JobInstance name from a jobId
      * 

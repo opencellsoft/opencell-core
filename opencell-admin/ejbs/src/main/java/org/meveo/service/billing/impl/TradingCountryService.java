@@ -30,10 +30,23 @@ public class TradingCountryService extends PersistenceService<TradingCountry> {
     /**
      * Find TradingCountry by its trading country code.
      * 
+     * Deprecated in 9.0.1. Use findByCode instead.
+     * 
      * @param tradingCountryCode Trading Country Code
      * @return Trading country found or null.
      */
+    
+    @Deprecated
     public TradingCountry findByTradingCountryCode(String tradingCountryCode) {
+        return findByCode(tradingCountryCode);
+    }
+    /**
+     * Find TradingCountry by its trading country code.
+     * 
+     * @param tradingCountryCode Trading Country Code
+     * @return Trading country found or null.
+     */
+    public TradingCountry findByCode(String tradingCountryCode) {
         try {
             return getEntityManager().createNamedQuery("TradingCountry.getByCode", TradingCountry.class).setParameter("tradingCountryCode", tradingCountryCode).getSingleResult();
 
@@ -42,5 +55,4 @@ public class TradingCountryService extends PersistenceService<TradingCountry> {
             return null;
         }
     }
-
 }

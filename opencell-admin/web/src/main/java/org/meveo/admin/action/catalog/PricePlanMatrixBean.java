@@ -161,11 +161,6 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
         return pricePlanMatrixService;
     }
 
-    @Override
-    protected String getListViewName() {
-        return "pricePlanMatrixes";
-    }
-
     public void onChargeSelect(SelectEvent event) {
         if (event.getObject() instanceof ChargeTemplate) {
             ChargeTemplate chargeTemplate = (ChargeTemplate) event.getObject();
