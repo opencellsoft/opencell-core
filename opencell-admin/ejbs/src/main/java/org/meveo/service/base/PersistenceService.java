@@ -874,25 +874,19 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     if (condition != null) {
                         fields = Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
                     }
-                    String fieldWAlias =fieldName.contains("a.cfValues")? fieldName:"a." + fieldName;
-					
-					
-					
-					
+                    String fieldWAlias = "a." + fieldName;
 					
 					if(filterValue instanceof CustomFieldValues) {
 						CustomFieldValues customFieldValues= (CustomFieldValues) filterValue;
 						Map<String, List<CustomFieldValue>> valuesByCode = customFieldValues.getValuesByCode();
 						fieldName=(String) valuesByCode.keySet().toArray()[0];
 						CustomFieldValue  cfv = valuesByCode.get(fieldName).get(0);
-						Map<String,Object> map = cfv.getkeyValueMap();
-						String type = (String) map.keySet().toArray()[0];
-						Object value = map.values().toArray()[0];
-						String castType = getCustomFieldDataType(value.getClass());
-						//queryBuilder.startOrClause();
-						fieldWAlias = "parseJson(a.cfValues,"+fieldName+","+type+","+castType+")";// = '"+value+"'";
-						//queryBuilder.addSql(fieldWAlias);
-                        //queryBuilder.endOrClause();
+						Map<String, Object> map=cfv.getkeyValueMap();
+	    				String type = (String) map.keySet().toArray()[0];
+	    				Object value = map.values().toArray()[0];
+	    				String castType = getCustomFieldDataType(value.getClass());
+	    				String functionPrefix=castType.split("\\(")[0];
+						fieldWAlias = functionPrefix+"FromJson(a.cfValues,"+fieldName+","+type+","+castType+")";
                         filterValue=value;
 					}
 					
@@ -1401,7 +1395,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	public String getCustomFieldDataType(Class clazz) {
 		if (clazz == Double.class || clazz == Date.class || clazz == Long.class) {
 			for (CustomFieldTypeEnum cft : CustomFieldTypeEnum.values()) {
-				if (cft.getClass().equals(clazz)) {
+				if (cft.getDataClass().equals(clazz)) {
 					return cft.getDataType();
 				}
 			}
