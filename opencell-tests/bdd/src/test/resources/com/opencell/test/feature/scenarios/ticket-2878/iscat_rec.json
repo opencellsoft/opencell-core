@@ -1,0 +1,6 @@
+{
+	"code": "ISCAT_REC",
+	"description": "Recurring default sub-category",
+	"invoiceCategory": "ICAT_REC",
+	"customFields": null
+}
