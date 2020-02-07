@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
@@ -140,6 +141,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * Entity list search parameter name - parameter's value contains filter parameters
      */
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
+    
+    
+    public static final String FROM_JSON_FUNCTION = "FromJson(a.cfValues,";
 
     protected static boolean accumulateCF = true;
 
@@ -857,7 +861,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 Map<CustomFieldTemplate, Object> parameterMap = (Map<CustomFieldTemplate, Object>) filters.get(SEARCH_FILTER_PARAMETERS);
                 queryBuilder = new FilteredQueryBuilder(filter, parameterMap, false, false);
             } else {
-
+            	
+            	Map<String, Object> cfFilters = extractCustomFieldsFilters(filters);
+				filters.putAll(cfFilters);
+				
                 for (String key : filters.keySet()) {
 
                     Object filterValue = filters.get(key);
@@ -875,22 +882,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     if (condition != null) {
                         fields = Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
                     }
-                    String fieldWAlias = "a." + fieldName;
-					
-					if(filterValue instanceof CustomFieldValues) {
-						CustomFieldValues customFieldValues= (CustomFieldValues) filterValue;
-						Map<String, List<CustomFieldValue>> valuesByCode = customFieldValues.getValuesByCode();
-						fieldName=(String) valuesByCode.keySet().toArray()[0];
-						CustomFieldValue  cfv = valuesByCode.get(fieldName).get(0);
-						Map<String, Object> map=cfv.getkeyValueMap();
-	    				String type = (String) map.keySet().toArray()[0];
-	    				Object value = map.values().toArray()[0];
-	    				String castType = getCustomFieldDataType(value.getClass());
-	    				String functionPrefix=castType.split("\\(")[0];
-						fieldWAlias = functionPrefix+"FromJson(a.cfValues,"+fieldName+","+type+","+castType+")";
-                        filterValue=value;
-					}
-					
+                    String fieldWAlias = fieldName.contains(FROM_JSON_FUNCTION)? fieldName : "a." + fieldName;
+										
 					// if ranged search - field value in between from - to values. Specifies "from" value: e.g value<=field.value
 					if ("fromRange".equals(condition)) {
                         if (filterValue instanceof Double) {
@@ -1149,6 +1142,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         }
                     }
                 }
+				for (String cft : cfFilters.keySet()) {
+					filters.remove(cft);
+				}
             }
         }
 
@@ -1164,6 +1160,27 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // log.trace("Query params are {}", queryBuilder.getParams());
         return queryBuilder;
     }
+
+	private Map<String, Object> extractCustomFieldsFilters(Map<String, Object> filters) {
+		Map<String, Object> cftFilters = new TreeMap();
+		for (Object filterValue : filters.values()) {
+			if(filterValue instanceof CustomFieldValues) {
+				CustomFieldValues customFieldValues= (CustomFieldValues) filterValue;
+				Map<String, List<CustomFieldValue>> valuesByCode = customFieldValues.getValuesByCode();
+				for (String fieldName: valuesByCode.keySet()) {
+					CustomFieldValue  cfv = valuesByCode.get(fieldName).get(0);
+					Map<String, Object> map=cfv.getkeyValueMap();
+					String type = (String) map.keySet().toArray()[0];
+					Object value = map.values().toArray()[0];
+					String castType = getCustomFieldDataType(value.getClass());
+					String functionPrefix=castType.split("\\(")[0];
+					String fieldWAlias = functionPrefix + FROM_JSON_FUNCTION + fieldName + "," + type + "," + castType + ")";
+					cftFilters.put(fieldWAlias,value);
+				}
+			}
+		}
+		return cftFilters;
+	}
 
     /**
      * add a creterion to check if all filterValue (Array) elements are elements of the fieldName (Array)

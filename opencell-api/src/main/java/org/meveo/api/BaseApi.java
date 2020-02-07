@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1310,6 +1311,7 @@ public abstract class BaseApi {
         Boolean booleanVal = null;
         Date dateVal = null;
         List listVal = null;
+        Map<String,Object> mapVal=null;
 
         if (value instanceof Number) {
             numberVal = (Number) value;
@@ -1323,6 +1325,8 @@ public abstract class BaseApi {
             stringVal = (String) value;
         } else if (value instanceof List) {
             listVal = (List) value;
+        } else if (value instanceof Map) {
+        	mapVal = (Map) value;
         } else {
             throw new InvalidParameterException("Unrecognized data type for filter criteria value " + value);
         }
@@ -1447,16 +1451,30 @@ public abstract class BaseApi {
                     return role;
                 }
 			} else if (CustomFieldValues.class.isAssignableFrom(targetClass)) {
-				String[] vals = stringVal.split("=");
-				String key = vals[0];
-				String cfValue = vals[1];
-				Map<String, List<CustomFieldValue>> map = new TreeMap<String, List<CustomFieldValue>>();
-				Class dataClass = cfts.get(key).getFieldType().getDataClass();
-				Object valueConverted =castFilterValue(cfValue, dataClass, expectedList, cfts);
-				//if value converted is good (not null) we use it, else we filter cf using the original value (as String)
-				map.put(key, Arrays.asList(new CustomFieldValue(valueConverted!=null?valueConverted:cfValue)));
-				CustomFieldValues customFieldsValues = new CustomFieldValues(map);
-				return customFieldsValues;
+				if(mapVal!=null) {
+					Map<String, List<CustomFieldValue>> cfvMap = new TreeMap<String, List<CustomFieldValue>>();
+					for(String key : mapVal.keySet()) {
+						Object cfValue = mapVal.get(key);
+						CustomFieldTemplate customFieldTemplate = cfts.get(key);
+						if(customFieldTemplate!=null) {
+							Class dataClass = customFieldTemplate.getFieldType().getDataClass();
+							Object valueConverted =castFilterValue(cfValue, dataClass, expectedList, cfts);
+							if(valueConverted==null) {
+								if(cfValue instanceof Collection) {
+									//if value converted is good (not null) we use it, else we filter cf using the original value (as String)
+									valueConverted=cfValue;
+								}else {
+									throw new BusinessException("Not able to cast filter value '"+cfValue+"' of custom field '"+key+"' to "+dataClass);
+								}
+							}
+							cfvMap.put(key, Arrays.asList(new CustomFieldValue(valueConverted!=null?valueConverted:cfValue)));
+						} else {
+							throw new BusinessException("No custom field found with name :"+key);
+						}
+					}
+					CustomFieldValues customFieldsValues = new CustomFieldValues(cfvMap);
+					return customFieldsValues;
+				}
 			}
         } catch (NumberFormatException e) {
             // Swallow - validation will take care of it later
