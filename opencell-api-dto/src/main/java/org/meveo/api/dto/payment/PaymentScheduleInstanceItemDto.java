@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.AuditableEntityDto;
+import org.meveo.api.dto.IEntityDto;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 
 /**
@@ -20,7 +21,7 @@ import org.meveo.model.payments.PaymentScheduleInstanceItem;
 
 @XmlRootElement(name = "PaymentScheduleInstanceItemDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PaymentScheduleInstanceItemDto extends AuditableEntityDto {
+public class PaymentScheduleInstanceItemDto extends AuditableEntityDto implements IEntityDto {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;

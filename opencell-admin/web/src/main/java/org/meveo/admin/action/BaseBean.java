@@ -123,7 +123,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
 
     @Inject
-    private ElasticClient elasticClient;   
+    private ElasticClient elasticClient;
 
     @Inject
     protected FacesContext facesContext;
@@ -633,7 +633,15 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         char[] dst = new char[1];
         sb.getChars(0, 1, dst, 0);
         sb.replace(0, 1, new String(dst).toLowerCase());
-        sb.append("s");
+        if (className.endsWith("y")) {
+            sb.deleteCharAt(sb.length());
+            sb.append("ies");
+        } else if (className.endsWith("s") || className.endsWith("x")) {
+            sb.append("es");
+        } else {
+            sb.append("s");
+        }
+
         return sb.toString();
     }
 
@@ -1524,26 +1532,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
             boolean isBusinessEntity = BusinessEntity.class.isAssignableFrom(classFieldInfo.getKey());
 
-            StringBuilder sql = new StringBuilder("select ")
-                    .append(isBusinessEntity ? "code" : "id")
-                    .append(" from ")
-                    .append(classFieldInfo.getKey().getName())
-                    .append(" where ");
-            
+            StringBuilder sql = new StringBuilder("select ").append(isBusinessEntity ? "code" : "id").append(" from ").append(classFieldInfo.getKey().getName()).append(" where ");
+
             boolean fieldAddedToSql = false;
             for (Field field : classFieldInfo.getValue()) {
                 // For now lets ignore list type fields
                 if (field.getType() == entityClass) {
-                    sql.append(fieldAddedToSql ? " or " : " ")
-                    .append(field.getName())
-                    .append("=:id");
+                    sql.append(fieldAddedToSql ? " or " : " ").append(field.getName()).append("=:id");
                     fieldAddedToSql = true;
                 }
             }
 
             if (fieldAddedToSql) {
 
-                List entitiesMatched = getPersistenceService().getEntityManager().createQuery(sql.toString()).setParameter("id", referencedEntity).setMaxResults(10).getResultList();
+                List entitiesMatched = getPersistenceService().getEntityManager().createQuery(sql.toString()).setParameter("id", referencedEntity).setMaxResults(10)
+                    .getResultList();
                 if (!entitiesMatched.isEmpty()) {
 
                     matchedEntityInfo = (matchedEntityInfo == null ? "" : matchedEntityInfo + "; ") + ReflectionUtils.getHumanClassName(classFieldInfo.getKey().getSimpleName())

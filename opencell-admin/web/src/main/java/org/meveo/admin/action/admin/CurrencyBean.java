@@ -61,11 +61,6 @@ public class CurrencyBean extends BaseBean<Currency> {
 		return currency;
 	}
 
-	@Override
-	protected String getListViewName() {
-		return "currencies";
-	}
-
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */

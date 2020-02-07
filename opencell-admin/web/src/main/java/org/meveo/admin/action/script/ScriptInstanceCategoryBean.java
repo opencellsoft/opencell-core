@@ -17,28 +17,17 @@ import org.meveo.service.script.ScriptInstanceCategoryService;
 @ViewScoped
 public class ScriptInstanceCategoryBean extends BaseBean<ScriptInstanceCategory> {
 
-	private static final long serialVersionUID = 4315061097389241940L;
+    private static final long serialVersionUID = 4315061097389241940L;
 
-	@Inject
-	private ScriptInstanceCategoryService scriptInstanceCategoryService;
+    @Inject
+    private ScriptInstanceCategoryService scriptInstanceCategoryService;
 
-	public ScriptInstanceCategoryBean() {
-		super(ScriptInstanceCategory.class);
-	}
+    public ScriptInstanceCategoryBean() {
+        super(ScriptInstanceCategory.class);
+    }
 
-	@Override
-	protected String getListViewName() {
-		return "scriptInstanceCategories";
-	}
-	
-	@Override
-	public String getEditViewName() {
-		return "scriptInstanceCategoryDetail";
-	}
-
-	@Override
-	protected IPersistenceService<ScriptInstanceCategory> getPersistenceService() {
-		return scriptInstanceCategoryService;
-	}
-
+    @Override
+    protected IPersistenceService<ScriptInstanceCategory> getPersistenceService() {
+        return scriptInstanceCategoryService;
+    }
 }

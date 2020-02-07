@@ -86,11 +86,6 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
         return measurableQuantityService;
     }
 
-    @Override
-    protected String getListViewName() {
-        return "measurableQuantities";
-    }
-
     public void exportToFile() throws Exception {
 
         CsvBuilder csv = new CsvBuilder();
