@@ -1,0 +1,22 @@
+{
+	"code": "SE_REC_ARR",
+	"description": "Recurring service ARREAR",
+	"customFields": null,
+	"imageBase64": null,
+	"imagePath": null,
+	"invoicingCalendar": null,
+	"longDescription": null,
+	"mandatory": true,
+	"serviceChargeTemplateUsages": null,
+	"serviceChargeTemplateRecurrings": {
+		"serviceChargeTemplateRecurring": [
+			{
+				"code": "CH_REC_ARR",
+				"wallets": null
+			}
+		]
+	},
+	"serviceChargeTemplateSubscriptions": null,
+	"serviceChargeTemplateTerminations": null,
+	"somCode": null
+}

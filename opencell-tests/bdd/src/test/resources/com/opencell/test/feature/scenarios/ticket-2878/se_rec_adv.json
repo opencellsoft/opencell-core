@@ -1,0 +1,22 @@
+{
+	"code": "SE_REC_ADV",
+	"description": "Recurring service ADVANCE",
+	"customFields": null,
+	"imageBase64": null,
+	"imagePath": null,
+	"invoicingCalendar": null,
+	"longDescription": null,
+	"mandatory": true,
+	"serviceChargeTemplateUsages": null,
+	"serviceChargeTemplateRecurrings": {
+		"serviceChargeTemplateRecurring": [
+			{
+				"code": "CH_REC_ADV",
+				"wallets": null
+			}
+		]
+	},
+	"serviceChargeTemplateSubscriptions": null,
+	"serviceChargeTemplateTerminations": null,
+	"somCode": null
+}
