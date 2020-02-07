@@ -1,5 +1,8 @@
 package com.opencell.test.bdd.commons;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -79,6 +82,14 @@ public class GenericStepDefinition implements En {
         And("^The field \"([^\"]*)\" is equal to \"([^\"]*)\"$", (String fieldName, String value) -> {
             String fieldValue = base.getResponse().getJsonResponse().get(fieldName).toString();
             assertEquals(value, fieldValue);
+        });
+        And("^The field \"([^\"]*)\" is greater than \"([^\"]*)\"$", (String fieldName, String value) -> {
+            String fieldValue = base.getResponse().getJsonResponse().get(fieldName).toString();
+            assertThat(Long.parseLong(fieldValue), greaterThan(Long.parseLong(value)));
+        });
+        And("^The field \"([^\"]*)\" is less than \"([^\"]*)\"$", (String fieldName, String value) -> {
+            String fieldValue = base.getResponse().getJsonResponse().get(fieldName).toString();
+            assertThat(Long.parseLong(fieldValue), lessThan(Long.parseLong(value)));
         });
         And("^The field \"([^\"]*)\" exists$", (String fieldName) -> {
             String fieldValue = base.getResponse().getJsonResponse().get(fieldName).toString();
