@@ -2246,8 +2246,6 @@
             <column name="data_filter_el" type="varchar(2000)"/>
             <column name="fields_el" type="varchar(2000)"/>
         </addColumn>
-        <addUniqueConstraint columnNames="acces_user_id, subscription_id, start_date, end_date" constraintName="uk_lca62y5gn9qo1e6jr84i9w3lr" deferrable="false" disabled="false"
-                             initiallyDeferred="false" tableName="medina_access"/>
     </changeSet>
 
     <changeSet id="#4791_20200113" author="KhalidHORRI">
