@@ -149,10 +149,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeAndTriggerEDRs(chargeInstance, ApplicationTypeEnum.PUNCTUAL, applicationDate,
             chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantityInChargeUnits, tax, orderNumberOverride, null, null, null, false,
             isVirtual);
-        // @TODO K.H Apply the counter here
-        List<WalletOperation> wos = new ArrayList<>();
-        wos.add(chargeApplication);
-        applyAccumulatorCounter(chargeInstance, wos, isVirtual);
         return chargeApplication;
     }
 
@@ -205,6 +201,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 billingAccountService.update(billingAccount);
             }
         }
+        applyAccumulatorCounter(chargeInstance, Collections.singletonList(walletOperation), isVirtual);
         return walletOperation;
     }
 
@@ -686,18 +683,24 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     private void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
-        BigDecimal quantity = BigDecimal.ZERO;
-        BigDecimal amount = BigDecimal.ZERO;
-        for (WalletOperation wo : walletOperations) {
-            quantity = quantity.add(wo.getQuantity());
-            if (appProvider.isEntreprise()) {
-                amount = amount.add(wo.getAmountWithoutTax());
-            } else {
-                amount = amount.add(wo.getAmountWithTax());
-            }
 
+        CounterInstance counterInstance = chargeInstance.getCounter();
+        CounterPeriod counterPeriod = null;
+        if (counterInstance != null) {
+            // get the counter period of charge instance
+            counterPeriod = counterInstanceService.getCounterPeriod(counterInstance, chargeInstance.getChargeDate());
+            if (counterPeriod == null || counterPeriod.getValue() == null || !counterPeriod.getValue().equals(BigDecimal.ZERO)) {
+                // The counter will be incremented by charge quantity
+                if (counterPeriod == null) {
+                    counterPeriod = counterInstanceService
+                            .getOrCreateCounterPeriod(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
+                                    chargeInstance.getServiceInstance());
+                }
+            }
         }
-        chargeApplicationRatingService.incrementCounter(chargeInstance, quantity, amount, isVirtual);
+        for (WalletOperation wo : walletOperations) {
+            counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
+        }
 
     }
 
@@ -902,7 +905,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         chargeInstance.setChargeDate(applyChargeOnDate);
         Date nextChargeDate = cal.nextCalendarDate(applyChargeOnDate);
         chargeInstance.setNextChargeDate(nextChargeDate);
-
+        if (!reimbursement) {
+            applyAccumulatorCounter(chargeInstance, walletOperations, false);
+        }
         return walletOperations;
     }
 
@@ -995,6 +1000,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
             // create(chargeApplication);
             applyChargeOnDate = nextChargeDate;
+
         }
 
         chargeInstance.setChargeDate(applyChargeOnDate);
@@ -1365,6 +1371,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 }
                 if (counterPeriod != null) {
                     CounterValueChangeInfo counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterPeriod, recurringChargeInstance.getQuantity(), false);
+                    if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator()) {
+                        for (WalletOperation wo : resultingWalletOperations) {
+                            counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, false);
+                        }
+                    }
                     counterInstanceService.triggerCounterPeriodEvent(counterValueChangeInfo, counterPeriod);
                 }
 

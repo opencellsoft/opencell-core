@@ -28,7 +28,6 @@ import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
@@ -249,8 +248,7 @@ public class UsageRatingService implements Serializable {
      */
     private DeducedCounter deduceCounter(EDR edr, UsageChargeInstance usageChargeInstance, Reservation reservation, boolean isVirtual) throws BusinessException {
 
-        DeducedCounter deducedCounter = new DeducedCounter();
-        CounterPeriod counterPeriod = null;
+        CounterPeriod counterPeriod;
         BigDecimal deducedQuantityInEDRUnit = BigDecimal.ZERO;
 
         // In case of virtual operation only instantiate a counter period, don't create it
@@ -260,7 +258,7 @@ public class UsageRatingService implements Serializable {
 
         } else {
             counterPeriod = counterInstanceService.getOrCreateCounterPeriod(usageChargeInstance.getCounter(), edr.getEventDate(),
-                usageChargeInstance.getServiceInstance().getSubscriptionDate(), usageChargeInstance, usageChargeInstance.getServiceInstance());
+                    usageChargeInstance.getServiceInstance().getSubscriptionDate(), usageChargeInstance, usageChargeInstance.getServiceInstance());
         }
         // CachedCounterPeriod cachedCounterPeriod = ratingCacheContainerProvider.getCounterPeriod(usageChargeInstance.getCounter().getId(), edr.getEventDate());
 
@@ -300,7 +298,7 @@ public class UsageRatingService implements Serializable {
             } else {
                 deducedQuantityInEDRUnit = edr.getQuantityLeftToRate();
             }
-            if (reservation != null) {
+            if (reservation != null && (counterPeriod.getAccumulator() == null || !counterPeriod.getAccumulator())) {
                 reservation.getCounterPeriodValues().put(counterPeriod.getId(), deducedQuantity);
             }
         }
@@ -374,7 +372,7 @@ public class UsageRatingService implements Serializable {
         }
 
         BigDecimal quantityToCharge = null;
-        if (deducedQuantity == null) {
+        if (useFullQuantity(deducedCounter)) {
             quantityToCharge = edr.getQuantityLeftToRate();
 
         } else {
@@ -384,9 +382,9 @@ public class UsageRatingService implements Serializable {
 
         WalletOperation walletOperation = rateEDRwithMatchingCharge(edr, quantityToCharge, usageChargeInstance, false, false);
         ratedEDRResult.setWalletOperation(walletOperation);
-        // Set the amount instead of quantity if the counter is accumulator.
+        // Set the accumulator counter value
         if (deducedCounter != null && deducedCounter.getCounterPeriod() != null) {
-            setCounterPeriodAmount(deducedCounter.getCounterPeriod(), walletOperation, null);
+            counterInstanceService.accumulatorCounterPeriodValue(deducedCounter.getCounterPeriod(), walletOperation, null, isVirtual);
         }
         if (!isVirtual) {
             walletOperationService.chargeWalletOperation(walletOperation);
@@ -405,25 +403,19 @@ public class UsageRatingService implements Serializable {
         return ratedEDRResult;
     }
 
-    private void setCounterPeriodAmount(CounterPeriod counterPeriod, WalletOperation walletOperation, Reservation reservation) {
-        BigDecimal amount = BigDecimal.ZERO;
-        if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator() && counterPeriod.getCounterType().equals(CounterTypeEnum.USAGE_AMOUNT)) {
-            if (appProvider.isEntreprise()) {
-                amount = walletOperation.getAmountWithoutTax();
-            } else {
-                amount = walletOperation.getAmountWithTax();
-            }
-            counterPeriod.setValue(counterPeriod.getValue().add(amount));
-            if (reservation != null) {
-                BigDecimal previousAmount = reservation.getCounterPeriodValues().get(counterPeriod.getId());
-                if (previousAmount == null) {
-                    previousAmount = BigDecimal.ZERO;
-                }
-                reservation.getCounterPeriodValues().put(counterPeriod.getId(), previousAmount.add(amount));
-            }
+    private boolean useFullQuantity(DeducedCounter deducedCounter) {
+        if (deducedCounter == null) {
+            return true;
         }
-
+        if (deducedCounter.getDeducedQuantity() == null) {
+            return true;
+        }
+        if (deducedCounter.getCounterPeriod() != null && deducedCounter.getCounterPeriod().getAccumulator() != null && deducedCounter.getCounterPeriod().getAccumulator()) {
+            return true;
+        }
+        return false;
     }
+
 
     /**
      * Create a new EDR if charge has triggerEDRTemplate.
@@ -574,7 +566,7 @@ public class UsageRatingService implements Serializable {
 
         // Set the amount instead of quantity if the counter is an accumulator.
         if (deducedCounter != null && deducedCounter.getCounterPeriod() != null) {
-            setCounterPeriodAmount(deducedCounter.getCounterPeriod(), walletOperation, reservation);
+            counterInstanceService.accumulatorCounterPeriodValue(deducedCounter.getCounterPeriod(), walletOperation, reservation, false);
         }
         walletOperationService.chargeWalletOperation(walletOperation);
 
@@ -702,7 +694,7 @@ public class UsageRatingService implements Serializable {
                     walletOperations.add(ratedEDRResult.getWalletOperation());
                 }
 
-                if (rateTriggeredEdr && !ratedEDRResult.getTriggeredEDRs().isEmpty()) {
+                if (rateTriggeredEdr && ratedEDRResult.getTriggeredEDRs() != null && !ratedEDRResult.getTriggeredEDRs().isEmpty()) {
                     walletOperations.addAll(rateTriggeredEDRs(isVirtual, rateTriggeredEdr, maxDeep, currentRatingDepth, ratedEDRResult.getTriggeredEDRs()));
                 }
 

@@ -14,14 +14,11 @@ import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
@@ -39,7 +36,6 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -380,42 +376,6 @@ public class RatingService extends PersistenceService<WalletOperation> {
         return walletOperation;
     }
 
-    /**
-     * Increment an accumulator counter.
-     *
-     * @param chargeInstance   The charge instance
-     * @param quantity the quantity of Wallet operations
-     * @param amount the amount of Wallet operations
-     * @param isVirtual        check if rating is virtual
-     */
-    public void incrementCounter(ChargeInstance chargeInstance, BigDecimal quantity, BigDecimal amount, boolean isVirtual) {
-        CounterInstance counterInstance = chargeInstance.getCounter();
-        if (counterInstance != null) {
-            // get the counter period of charge instance
-            CounterPeriod counterPeriod = counterInstanceService.getCounterPeriod(counterInstance, chargeInstance.getChargeDate());
-            if (counterPeriod == null || counterPeriod.getValue() == null || !counterPeriod.getValue().equals(BigDecimal.ZERO)) {
-                // The counter will be incremented by charge quantity
-                if (counterPeriod == null) {
-                    counterPeriod = counterInstanceService
-                            .getOrCreateCounterPeriod(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
-                                    chargeInstance.getServiceInstance());
-                }
-                if (counterPeriod != null && counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator()) {
-                    CounterValueChangeInfo counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterPeriod, quantity, isVirtual);
-                    if (counterPeriod.getCounterType().equals(CounterTypeEnum.USAGE_AMOUNT)) {
-                        counterPeriod.setValue(counterPeriod.getValue().add(amount));
-                        counterValueChangeInfo = new CounterValueChangeInfo(counterValueChangeInfo.getPreviousValue(), counterValueChangeInfo.getDeltaValue(),
-                                counterPeriod.getValue());
-                        if (!isVirtual) {
-                            counterPeriodService.update(counterPeriod);
-                        }
-                    }
-                    counterInstanceService.triggerCounterPeriodEvent(counterValueChangeInfo, counterPeriod);
-                }
-
-            }
-        }
-    }
 
     /**
      * used to rate or rerate a bareWalletOperation.

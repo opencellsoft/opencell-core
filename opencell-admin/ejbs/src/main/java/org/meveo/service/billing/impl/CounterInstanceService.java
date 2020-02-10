@@ -37,6 +37,7 @@ import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTemplateLevel;
@@ -558,30 +559,19 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
         BigDecimal deducedQuantity = null;
         BigDecimal previousValue = counterPeriod.getValue();
-
+        // if is an accumulator counter, return the full quantity
+        if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator()) {
+            return new CounterValueChangeInfo(previousValue, deduceBy, counterPeriod.getValue());
+        }
         // No initial value, so no need to track present value (will always be able to deduce by any amount) and thus no need to update
         if (counterPeriod.getLevel() == null) {
             if (!isVirtual) {
                 counterPeriodService.detach(counterPeriod);
             }
             return null;
-            // accumulator counter
-        } else if (counterPeriod.getCounterInstance() != null && counterPeriod.getCounterInstance().getCounterTemplate() != null && counterPeriod.getAccumulator() != null
-                && counterPeriod.getAccumulator()) {
-            deducedQuantity = deduceBy;
-            if (counterPeriod.getCounterInstance().getCounterTemplate().getCounterType().equals(CounterTypeEnum.USAGE_AMOUNT)) {
-                return new CounterValueChangeInfo(previousValue, deducedQuantity, counterPeriod.getValue());
-            }
-            counterPeriod.setValue(counterPeriod.getValue().add(deduceBy));
-            counterValueInfo = new CounterValueChangeInfo(previousValue, deducedQuantity, counterPeriod.getValue());
 
-            if (!isVirtual) {
-                log.debug("Counter period {} was changed {}", counterPeriod.getId(), counterValueInfo);
-                counterPeriod = counterPeriodService.update(counterPeriod);
-            }
-        }
-        // Previous value is Zero and deduction is not negative (really its an addition)
-        else if (previousValue.compareTo(BigDecimal.ZERO) == 0 && deduceBy.compareTo(BigDecimal.ZERO) > 0) {
+            // Previous value is Zero and deduction is not negative (really its an addition)
+        } else if (previousValue.compareTo(BigDecimal.ZERO) == 0 && deduceBy.compareTo(BigDecimal.ZERO) > 0) {
             return new CounterValueChangeInfo(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
 
         } else {
@@ -598,7 +588,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
             if (!isVirtual) {
                 log.debug("Counter period {} was changed {}", counterPeriod.getId(), counterValueInfo);
-                counterPeriod = counterPeriodService.update(counterPeriod);
+                counterPeriodService.update(counterPeriod);
             }
         }
 
@@ -708,6 +698,49 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             log.debug("Counter period {} was incremented by {} to {}", counterPeriod.getId(), incrementBy, counterPeriod.getValue());
             return counterPeriod.getValue();
         }
+    }
+
+    /**
+     * Set the accumulator counter period value.
+     *
+     * @param counterPeriod   the counter period
+     * @param walletOperation the wallet operation
+     * @param reservation     the reservation
+     * @param isVirtual       whether the operation is virtual or not
+     */
+    public void accumulatorCounterPeriodValue(CounterPeriod counterPeriod, WalletOperation walletOperation, Reservation reservation, boolean isVirtual) {
+        BigDecimal value = BigDecimal.ZERO;
+        BigDecimal previousValue = counterPeriod.getValue();
+        if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator()) {
+            if (counterPeriod.getCounterType().equals(CounterTypeEnum.USAGE_AMOUNT)) {
+
+                if (appProvider.isEntreprise()) {
+                    value = walletOperation.getAmountWithoutTax();
+                } else {
+                    value = walletOperation.getAmountWithTax();
+                }
+            } else if (counterPeriod.getCounterType().equals(CounterTypeEnum.USAGE)) {
+                value = walletOperation.getQuantity();
+            }
+
+            if (reservation != null) {
+                previousValue = reservation.getCounterPeriodValues().get(counterPeriod.getId());
+                if (previousValue == null) {
+                    previousValue = BigDecimal.ZERO;
+                }
+                reservation.getCounterPeriodValues().put(counterPeriod.getId(), previousValue.add(value));
+                counterPeriod.setValue(reservation.getCounterPeriodValues().get(counterPeriod.getId()));
+            } else {
+                counterPeriod.setValue(counterPeriod.getValue().add(value));
+            }
+            if (!isVirtual) {
+                log.debug("Counter period {} was changed {}", counterPeriod.getId(), counterPeriod.getValue());
+                counterPeriodService.update(counterPeriod);
+            }
+            CounterValueChangeInfo counterValueChangeInfo = new CounterValueChangeInfo(previousValue, value, counterPeriod.getValue());
+            triggerCounterPeriodEvent(counterValueChangeInfo, counterPeriod);
+        }
+
     }
 
 }
