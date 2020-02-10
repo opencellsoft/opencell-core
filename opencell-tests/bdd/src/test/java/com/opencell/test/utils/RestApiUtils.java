@@ -17,14 +17,13 @@ public class RestApiUtils {
      */
     public static ValidatableResponse post(String api, String body) {
         RestAssured.defaultParser = Parser.JSON;
-        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         return RestAssured.given()
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
                 .body(body)
                 .when()
                 .log().all()
-                .post(uri+api).then();
+                .post(uri + api).then().log().all();
     }
 
     /**
@@ -38,9 +37,8 @@ public class RestApiUtils {
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
                 .body(body)
-                .when()
-                .log().all()
-                .get(uri+api).then();
+                .when().log().all()
+                .get(uri + api).then().log().all();
     }
     
     
@@ -55,9 +53,8 @@ public class RestApiUtils {
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
                 .body(body)
-                .when()
-                .log().all()
-                .delete(uri+api).then();
+                .when().log().all()
+                .delete(uri + api).then().log().all();
     }
 
     public static ValidatableResponse put(String api, String body) {
@@ -65,8 +62,7 @@ public class RestApiUtils {
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
                 .body(body)
-                .when()
-                .log().all()
-                .put(uri+api).then();
+                .when().log().all()
+                .put(uri + api).then().log().all();
     }
 }
