@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import cucumber.api.java.Before;
 import cucumber.runtime.CucumberException;
+import io.restassured.RestAssured;
 
 public class KeyCloakAuthenticationHook {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
