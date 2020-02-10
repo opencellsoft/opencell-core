@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1460,9 +1459,8 @@ public abstract class BaseApi {
 							Class dataClass = customFieldTemplate.getFieldType().getDataClass();
 							Object valueConverted =castFilterValue(cfValue, dataClass, expectedList, cfts);
 							if(valueConverted==null) {
-								if(cfValue instanceof Collection) {
-									//if value converted is good (not null) we use it, else we filter cf using the original value (as String)
-									valueConverted=cfValue;
+								if(!CustomFieldStorageTypeEnum.SINGLE .equals( customFieldTemplate.getStorageType())) {
+									throw new BusinessException("Only CustomFields with SINGLE storageType are accepted on filters. Cannot filter using custom field '"+key+"'");
 								}else {
 									throw new BusinessException("Not able to cast filter value '"+cfValue+"' of custom field '"+key+"' to "+dataClass);
 								}
