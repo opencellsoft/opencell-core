@@ -88,7 +88,6 @@ public class CommonStepDefinition implements En {
                 System.out.println("DEBUG - Error parsing");
                 System.out.println("DEBUG - Cannot parse: " + response.extract().body().asString());
             }
-
             base.setResponse(
                     new ApiResponse(response.extract().statusCode(), actionStatus, response.extract().jsonPath()));
             base.setJsonresponse(response);
@@ -183,7 +182,7 @@ public class CommonStepDefinition implements En {
         });    
         And("^Validate that the statusCode is \"([^\"]*)\"$", (String statusCode) -> {
             assertNotNull(base.getResponse());
-            assertEquals(base.getResponse().getActionStatus().getMessage(), Integer.valueOf(statusCode).intValue(),
+            assertEquals(Integer.valueOf(statusCode).intValue(),
                     base.getResponse().getHttpStatusCode());
         });
         And("^The status is \"([^\"]*)\"$", (String actionStatus) -> {

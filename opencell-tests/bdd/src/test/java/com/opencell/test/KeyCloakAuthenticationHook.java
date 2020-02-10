@@ -38,18 +38,21 @@ public class KeyCloakAuthenticationHook {
 
     private void setToken(String login, String password) {
         if (token == null) {
-            if(tokens.get(login) != null){
+            RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+            if (tokens.get(login) != null) {
                 token = tokens.get(login);
                 return;
             }
             Map<String, Object> clientCredentials = new HashMap<>();
             clientCredentials.put("secret", System.getProperty("opencell.keycloak.secret"));
-            Configuration config = new Configuration(System.getProperty("opencell.keycloak.url"), System.getProperty("opencell.keycloak.realm"), System.getProperty("opencell.keycloak.clientId"), clientCredentials, HttpClients.createDefault()) ;
+            Configuration config = new Configuration(System.getProperty("opencell.keycloak.url"),
+                    System.getProperty("opencell.keycloak.realm"), System.getProperty("opencell.keycloak.clientId"),
+                    clientCredentials, HttpClients.createDefault());
             AuthzClient authzClient = AuthzClient.create(config);
             AccessTokenResponse response = authzClient.obtainAccessToken(login, password);
             if (response.getToken() != null) {
                 token = response.getToken();
-                tokens.put(login,token);
+                tokens.put(login, token);
             } else {
                 throw new CucumberException("Could not acquire the KC token, please check if the KC is running");
             }

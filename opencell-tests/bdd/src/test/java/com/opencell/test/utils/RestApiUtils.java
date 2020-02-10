@@ -22,8 +22,7 @@ public class RestApiUtils {
                 .contentType("application/json")
                 .body(body)
                 .when()
-                .log().all()
-                .post(uri + api).then().log().all();
+                .post(uri + api).then();
     }
 
     /**
@@ -37,8 +36,7 @@ public class RestApiUtils {
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
                 .body(body)
-                .when().log().all()
-                .get(uri + api).then().log().all();
+                .when().get(uri + api).then();
     }
     
     
@@ -53,8 +51,7 @@ public class RestApiUtils {
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
                 .body(body)
-                .when().log().all()
-                .delete(uri + api).then().log().all();
+                .when().delete(uri + api).then();
     }
 
     public static ValidatableResponse put(String api, String body) {
@@ -62,7 +59,7 @@ public class RestApiUtils {
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
                 .body(body)
-                .when().log().all()
-                .put(uri + api).then().log().all();
+                .when()
+                .put(uri + api).then();
     }
 }
