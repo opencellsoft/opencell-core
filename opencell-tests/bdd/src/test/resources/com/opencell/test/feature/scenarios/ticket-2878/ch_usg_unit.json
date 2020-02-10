@@ -1,0 +1,14 @@
+{
+	"code": "CH_USG_UNIT",
+	"description": "Unit usage",
+	"invoiceSubCategory": "ISCAT_USG",
+	"disabled": false,
+	"amountEditable": true,
+	"inputUnitDescription": "unit",
+	"ratingUnitDescription": "unit",
+	"unitMultiplicator": 1,
+	"unitNbDecimal": 6,
+	"roundingModeDtoEnum": "NEAREST",
+	"filterParam1": "UNIT",
+	"priority": 1
+}

@@ -1,0 +1,14 @@
+{
+	"subscription": "SU",
+	"servicesToActivate": {
+		"service": [
+			{
+				"code": "SE_REC_ADV",
+				"quantity": 1,
+				"subscriptionDate": "2017-01-01",
+				"rateUntilDate": "2017-06-01",
+				"customFields": null
+			}
+		]
+	}
+}

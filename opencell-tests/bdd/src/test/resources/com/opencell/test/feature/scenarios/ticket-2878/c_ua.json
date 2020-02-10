@@ -1,0 +1,31 @@
+{
+	"crmAccountType": "C_UA",
+	"crmParentCode": "MAIN_SELLER",
+	"code": "C_UA",
+	"description": "C_UA",
+	"name": {
+		"title": "MR",
+		"lastName": "Clive",
+		"firstName": "Gildarts"
+	},
+	"address": {
+		"address1": "Fairy tail",
+		"address2": "Gildarts configuration",
+		"zipCode": "99999",
+		"city": "Magnolia",
+		"country": "FR"
+	},
+	"contactInformation": {
+		"email": "gildarts@chambrin.fr",
+		"mobile": "+33123546789"
+	},
+	"email": "gildarts@chambrin.fr",
+	"language": "FRA",
+	"paymentMethod": "CHECK",
+	"customerCategory": "CLIENT",
+	"currency": "EUR",
+	"billingCycle": "BC_MONTHLY_1ST",
+	"country": "FR",
+	"electronicBilling": "true",
+	"customFields": null
+}
