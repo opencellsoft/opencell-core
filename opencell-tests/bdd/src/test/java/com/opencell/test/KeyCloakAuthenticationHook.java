@@ -1,23 +1,27 @@
 package com.opencell.test;
 
-import cucumber.api.java.Before;
-import cucumber.runtime.CucumberException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.http.impl.client.HttpClients;
 import org.keycloak.authorization.client.AuthzClient;
 import org.keycloak.authorization.client.Configuration;
 import org.keycloak.representations.AccessTokenResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import cucumber.api.java.Before;
+import cucumber.runtime.CucumberException;
 
 public class KeyCloakAuthenticationHook {
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
     private static Map<String,String> tokens = new HashMap<>();
     private static String token;
 
 
     @Before("@admin")
     public void authenticateAsAdmin() {
-        //setProperties();// TODO to be removed after test, just for debug
+        // setProperties();// TODO to be removed after test, just for debug
         String adminUser = System.getProperty("adminUsername");
         String adminPassword = System.getProperty("adminPassword");
         setToken(adminUser,adminPassword);
@@ -26,7 +30,7 @@ public class KeyCloakAuthenticationHook {
 
     @Before("@superAdmin")
     public void authenticateAsSuperAdmin() {
-        //setProperties();// TODO to be removed after test, just for debug
+        // setProperties();// TODO to be removed after test, just for debug
         String superAdminUser = System.getProperty("superUsername");
         String superAdminPassword = System.getProperty("superPassword");
         setToken(superAdminUser,superAdminPassword);
@@ -46,7 +50,9 @@ public class KeyCloakAuthenticationHook {
             if (response.getToken() != null) {
                 token = response.getToken();
                 tokens.put(login,token);
+                log.debug("DEBUG - Acquired the following token: " + response.getToken());
             } else {
+                log.debug("DEBUG - Could not acquire the KC token, please check if the KC is running");
                 throw new CucumberException("Could not acquire the KC token, please check if the KC is running");
             }
         }
