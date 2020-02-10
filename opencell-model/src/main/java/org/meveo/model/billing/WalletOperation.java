@@ -58,6 +58,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.tax.TaxClass;
 
 /**
  * Consumption operation
@@ -68,8 +69,7 @@ import org.meveo.model.rating.EDR;
  */
 @Entity
 @Table(name = "billing_wallet_operation")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_wallet_operation_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_wallet_operation_seq"), })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "operation_type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")
@@ -109,7 +109,7 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "WalletOperation.listNotOpenedWObetweenTwoDates", query = "SELECT o FROM WalletOperation o WHERE o.status != 'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate and o.id >:lastId order by o.id asc"),
         @NamedQuery(name = "WalletOperation.listWObetweenTwoDatesByStatus", query = "SELECT o FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate and o.id >:lastId order by o.id asc"),
         @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status<>'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate"),
-        @NamedQuery(name = "WalletOperation.deleteWObetweenTwoDatesByStatus", query = "delete FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate")})
+        @NamedQuery(name = "WalletOperation.deleteWObetweenTwoDatesByStatus", query = "delete FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate") })
 public class WalletOperation extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -133,7 +133,7 @@ public class WalletOperation extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created")
     private Date created;
-    
+
     /**
      * Last status change timestamp
      */
@@ -334,7 +334,6 @@ public class WalletOperation extends BaseEntity {
     @Size(max = 20)
     private String ratingUnitDescription;
 
-
     /**
      * input_unit_unitOfMeasure
      */
@@ -430,8 +429,15 @@ public class WalletOperation extends BaseEntity {
      * Processing status
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private WalletOperationStatusEnum status = WalletOperationStatusEnum.OPEN;
+
+    /**
+     * Charge tax class
+     **/
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_class_id", nullable = false)
+    private TaxClass taxClass;
 
     /**
      * Constructor
@@ -456,8 +462,8 @@ public class WalletOperation extends BaseEntity {
      * @param endDate Operation date range - end date
      */
     @SuppressWarnings("deprecation")
-    public WalletOperation(ChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date operationDate, String orderNumber, String criteria1,
-            String criteria2, String criteria3, String criteriaExtra, Tax tax, Date startDate, Date endDate) {
+    public WalletOperation(ChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date operationDate, String orderNumber, String criteria1, String criteria2, String criteria3,
+            String criteriaExtra, Tax tax, Date startDate, Date endDate, TaxClass taxClass) {
 
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 
@@ -468,14 +474,15 @@ public class WalletOperation extends BaseEntity {
         UnitOfMeasure CTRatingUnitOfMeasure = chargeTemplate.getRatingUnitOfMeasure();
         this.ratingUnitDescription = CTRatingUnitOfMeasure != null ? CTRatingUnitOfMeasure.getCode() : chargeTemplate.getRatingUnitDescription();
         this.inputUnitDescription = CTInputUnitOfMeasure != null ? CTInputUnitOfMeasure.getCode() : chargeTemplate.getInputUnitDescription();
-        this.inputUnitOfMeasure=CTInputUnitOfMeasure;
-		this.ratingUnitOfMeasure=CTRatingUnitOfMeasure;
+        this.inputUnitOfMeasure = CTInputUnitOfMeasure;
+        this.ratingUnitOfMeasure = CTRatingUnitOfMeasure;
         this.operationDate = operationDate;
         this.orderNumber = orderNumber;
         this.parameter1 = criteria1;
         this.parameter2 = criteria2;
         this.parameter3 = criteria3;
         this.inputQuantity = inputQuantity;
+        this.taxClass = taxClass;
 
         if (chargeInstance instanceof RecurringChargeInstance) {
             this.subscriptionDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
@@ -571,12 +578,12 @@ public class WalletOperation extends BaseEntity {
      * @param orderNumber Order number
      * @param invoiceSubCategory Invoice sub category
      * @param status Status
+     * @param taxClass taxClass
      */
-    public WalletOperation(String code, String description, WalletInstance wallet, Date operationDate, Date invoicingDate, OperationTypeEnum type, Currency currency, Tax tax,
-            BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax,
-            BigDecimal amountTax, String parameter1, String parameter2, String parameter3, String parameterExtra, Date startDate, Date endDate, Date subscriptionDate,
-            OfferTemplate offerTemplate, Seller seller, String inputUnitDescription, String ratingUnitDescription, BigDecimal inputQuantity, String orderNumber,
-            InvoiceSubCategory invoiceSubCategory, WalletOperationStatusEnum status) {
+    public WalletOperation(String code, String description, WalletInstance wallet, Date operationDate, Date invoicingDate, OperationTypeEnum type, Currency currency, Tax tax, BigDecimal unitAmountWithoutTax,
+            BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, String parameter1, String parameter2,
+            String parameter3, String parameterExtra, Date startDate, Date endDate, Date subscriptionDate, OfferTemplate offerTemplate, Seller seller, String inputUnitDescription, String ratingUnitDescription,
+            BigDecimal inputQuantity, String orderNumber, InvoiceSubCategory invoiceSubCategory, WalletOperationStatusEnum status, TaxClass taxClass) {
         super();
         this.code = code;
         this.description = description;
@@ -607,6 +614,7 @@ public class WalletOperation extends BaseEntity {
         this.inputQuantity = inputQuantity;
         this.orderNumber = orderNumber;
         this.invoiceSubCategory = invoiceSubCategory;
+        this.taxClass = taxClass;
 
         if (chargeInstance != null) {
             this.serviceInstance = chargeInstance.getServiceInstance();
@@ -1116,7 +1124,7 @@ public class WalletOperation extends BaseEntity {
     public void setCreated(Date created) {
         this.created = created;
     }
-    
+
     public UnitOfMeasure getInputUnitOfMeasure() {
         return inputUnitOfMeasure;
     }
@@ -1131,6 +1139,19 @@ public class WalletOperation extends BaseEntity {
 
     public void setRatingUnitOfMeasure(UnitOfMeasure ratingUnitOfMeasure) {
         this.ratingUnitOfMeasure = ratingUnitOfMeasure;
+    }
 
+    /**
+     * @return Charge tax class
+     */
+    public TaxClass getTaxClass() {
+        return taxClass;
+    }
+
+    /**
+     * @param taxClass Charge tax class
+     */
+    public void setTaxClass(TaxClass taxClass) {
+        this.taxClass = taxClass;
     }
 }

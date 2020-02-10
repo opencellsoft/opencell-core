@@ -1,0 +1,39 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" xmlns:o="http://omnifaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{taxMappingBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+                <p:menuitem outcome="taxMappings" value="#{messages['menu.taxMappings']}" />
+                <p:menuitem value="#{messages['commons.new']} #{messages['taxMapping']}" disabled="true" rendered="#{taxMappingBean.entity.transient}" />
+                <p:menuitem value="#{messages['taxMapping']} - #{taxMappingBean.entity.id}" disabled="true" rendered="#{!taxMappingBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
+
+        <hftl:formPanel label="#{messages['taxMapping.panel']}" backingBean="#{taxMappingBean}">
+            <hftl:formField label="#{messages['taxMapping.accountTaxCategory']}" field="accountTaxCategory" valueLabelField="descriptionOrCode" listBean="#{taxCategoryBean}" />
+            <hftl:formField label="#{messages['taxMapping.chargeTaxClass']}" field="chargeTaxClass" valueLabelField="descriptionOrCode" listBean="#{taxClassBean}" />
+            <o:validateMultiple components="valid_date valid_date_toRange" validator="#{taxMappingBean.validateDateRange}" message="#{messages['validator.dateRange.incorrectOrder']}" />
+            <hftl:formField label="#{messages['commons.valid']}" field="valid" time="true" displayOneLine="true" labelWidth="100" />
+            <hftl:formField label="#{messages['taxMapping.sellerCountry']}" field="sellerCountry" valueLabelField="descriptionOrCode" listBean="#{tradingCountryBean}" />
+            <hftl:formField label="#{messages['taxMapping.buyerCountry']}" field="buyerCountry" valueLabelField="descriptionOrCode" listBean="#{tradingCountryBean}" />
+            <hftl:formField label="#{messages['taxMapping.filterEL']}" field="filterEL" />
+            <hftl:formField label="#{messages['taxMapping.filterELSpark']}" field="filterELSpark" />
+            <hftl:formField label="#{messages['taxMapping.tax']}" field="tax" valueLabelField="descriptionOrCode" listBean="#{taxBean}" />
+            <hftl:formField label="#{messages['taxMapping.taxEL']}" field="taxEL" />
+            <hftl:formField label="#{messages['taxMapping.taxELSpark']}" field="taxELSpark" />
+            <hftl:formField label="#{messages['taxMapping.taxScript']}" field="taxScript" valueLabelField="descriptionOrCode" listBean="#{scriptInstanceBean}" />
+            <hftl:formField label="#{messages['taxMapping.priority']}" field="priority" spinner="false"/>
+            <hftl:formField label="#{messages['taxMapping.source']}" field="source" edit="false"/>
+            <hftl:formField label="#{messages['taxMapping.originId']}" field="originId" spinner="false" edit="false" />
+
+        </hftl:formPanel>
+    </ui:define>
+</ui:composition>

@@ -61,9 +61,12 @@
 			<p:menuitem id="billingCycles"
 				rendered="#{currentUser.hasRole('billingVisualization')}"
 				outcome="billingCycles" value="#{messages['menu.billingCycles']}" />
-			<p:menuitem id="taxes"
-				rendered="#{currentUser.hasRole('administrationVisualization')}"
-				outcome="taxes" value="#{messages['menu.taxes']}" />
+            <p:submenu id="taxes" label="#{messages['menu.taxes']}" rendered="#{currentUser.hasRole('administrationVisualization')}">
+                <p:menuitem id="taxCategories" outcome="taxCategories" value="#{messages['menu.taxCategories']}" />
+                <p:menuitem id="taxClasses" outcome="taxClasses" value="#{messages['menu.taxClasses']}" />
+                <p:menuitem id="taxMapping" outcome="taxMappings" value="#{messages['menu.taxMappings']}" />
+                <p:menuitem id="taxRates" outcome="taxes" value="#{messages['menu.taxRates']}" />
+            </p:submenu>
 			<p:menuitem id="invoiceCategories"
 				rendered="#{currentUser.hasRole('catalogVisualization')}"
 				outcome="invoiceCategories"

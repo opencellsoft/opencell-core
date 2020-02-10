@@ -144,6 +144,7 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.billing.TaxScriptService;
+import org.meveo.service.tax.TaxMappingService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -249,7 +250,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private InvoiceSubCategoryService invoiceSubcategoryService;
 
     @Inject
-    private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
+    private TaxMappingService taxMappingService;
 
     @Inject
     private TaxScriptService taxScriptService;

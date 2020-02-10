@@ -18,18 +18,25 @@
  */
 package org.meveo.model.crm;
 
-import javax.persistence.*;
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.tax.TaxCategory;
 
 /**
  * Customer category
@@ -41,8 +48,7 @@ import org.meveo.model.billing.AccountingCode;
 @CustomFieldEntity(cftCodePrefix = "CustomerCategory")
 @ExportIdentifier({ "code" })
 @Table(name = "crm_customer_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "crm_customer_category_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "crm_customer_category_seq"), })
 public class CustomerCategory extends BusinessCFEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;
@@ -81,6 +87,27 @@ public class CustomerCategory extends BusinessCFEntity implements ISearchable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
+
+    /**
+     * Account tax category
+     **/
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_category_id")
+    private TaxCategory taxCategory;
+
+    /**
+     * Expression to determine tax category
+     */
+    @Column(name = "tax_category_el", length = 2000)
+    @Size(max = 2000)
+    private String taxCategoryEl;
+
+    /**
+     * Expression to determine tax category - for Spark
+     */
+    @Column(name = "tax_category_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String taxCategorySpark;
 
     /**
      * @return True if account is exonerated from taxes
@@ -152,4 +179,45 @@ public class CustomerCategory extends BusinessCFEntity implements ISearchable {
         this.accountingCode = accountingCode;
     }
 
+    /**
+     * @return Account tax category
+     */
+    public TaxCategory getTaxCategory() {
+        return taxCategory;
+    }
+
+    /**
+     * @param taxCategory Account tax category
+     */
+    public void setTaxCategory(TaxCategory taxCategory) {
+        this.taxCategory = taxCategory;
+    }
+
+    /**
+     * @return Expression to determine tax category
+     */
+    public String getTaxCategoryEl() {
+        return taxCategoryEl;
+    }
+
+    /**
+     * @param taxCategoryEl Expression to determine tax category
+     */
+    public void setTaxCategoryEl(String taxCategoryEl) {
+        this.taxCategoryEl = taxCategoryEl;
+    }
+
+    /**
+     * @return Expression to determine tax category - for Spark
+     */
+    public String getTaxCategorySpark() {
+        return taxCategorySpark;
+    }
+
+    /**
+     * @param taxCategorySpark Expression to determine tax category - for Spark
+     */
+    public void setTaxCategorySpark(String taxCategorySpark) {
+        this.taxCategorySpark = taxCategorySpark;
+    }
 }

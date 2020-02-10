@@ -78,6 +78,7 @@ import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OrderService;
+import org.meveo.service.tax.TaxMappingService;
 
 /**
  * RatedTransactionService : A class for Rated transaction persistence services.
@@ -101,7 +102,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private UserAccountService userAccountService;
 
     @Inject
-    private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
+    private TaxMappingService taxMappingService;
 
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;

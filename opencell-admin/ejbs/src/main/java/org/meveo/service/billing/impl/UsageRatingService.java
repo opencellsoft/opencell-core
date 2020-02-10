@@ -198,18 +198,18 @@ public class UsageRatingService implements Serializable {
             tax = taxService.getZeroTax();
         } else {
             tax = invoiceSubCategoryCountryService.determineTax(chargeInstance, edr.getEventDate());
-            }
+        }
 
         WalletOperation walletOperation = null;
 
         if (isReservation) {
             walletOperation = new WalletReservation(chargeInstance, quantityToCharge, null, edr.getEventDate(), chargeInstance.getOrderNumber(), edr.getParameter1(),
                 edr.getParameter2(), edr.getParameter3(), edr.getParameter4(), tax, null, null);
-            } else {
+        } else {
             // we set here the wallet to the principal wallet but it will later be overridden by charging algorithm
             walletOperation = new WalletOperation(chargeInstance, quantityToCharge, null, edr.getEventDate(), chargeInstance.getOrderNumber(), edr.getParameter1(),
                 edr.getParameter2(), edr.getParameter3(), edr.getParameter4(), tax, null, null);
-            }
+        }
 
         walletOperation.setEdr(edr);
 

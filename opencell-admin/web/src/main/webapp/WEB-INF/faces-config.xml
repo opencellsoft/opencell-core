@@ -2413,8 +2413,43 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 		<from-outcome>addressBook</from-outcome>
 		<to-view-id>/pages/intcrm/addressBook.xhtml</to-view-id>
 		<redirect />
-	</navigation-case>
-	
+	</navigation-case>	 
+    
+    <navigation-case>
+        <from-outcome>taxCategories</from-outcome>
+        <to-view-id>/pages/admin/taxes/taxCategories.xhtml</to-view-id>
+        <redirect />
+    </navigation-case>
+
+    <navigation-case>
+        <from-outcome>taxCategoryDetail</from-outcome>
+        <to-view-id>/pages/admin/taxes/taxCategoryDetail.xhtml</to-view-id>
+        <redirect include-view-params="true" />
+    </navigation-case>
+
+    <navigation-case>
+        <from-outcome>taxClasses</from-outcome>
+        <to-view-id>/pages/admin/taxes/taxClasses.xhtml</to-view-id>
+        <redirect />
+    </navigation-case>
+
+    <navigation-case>
+        <from-outcome>taxClassDetail</from-outcome>
+        <to-view-id>/pages/admin/taxes/taxClassDetail.xhtml</to-view-id>
+        <redirect include-view-params="true" />
+    </navigation-case>
+
+    <navigation-case>
+        <from-outcome>taxMappings</from-outcome>
+        <to-view-id>/pages/admin/taxes/taxMappings.xhtml</to-view-id>
+        <redirect />
+    </navigation-case>
+
+    <navigation-case>
+        <from-outcome>taxMappingDetail</from-outcome>
+        <to-view-id>/pages/admin/taxes/taxMappingDetail.xhtml</to-view-id>
+        <redirect include-view-params="true" />
+    </navigation-case>
 	
 </navigation-rule>
 
