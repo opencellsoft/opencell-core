@@ -77,11 +77,18 @@ public class CommonStepDefinition implements En {
                 response = RestApiUtils.delete(api + base.getCode().get(), bodyRequest);
                 break;
             }
-            ActionStatus actionStatus = (response.extract().jsonPath().get("actionStatus") == null
-                    ? response.extract().body().as(ActionStatus.class)
-                    : response.extract().jsonPath().getObject("actionStatus", ActionStatus.class));
-            if (actionStatus.getMessage() == null)
-                actionStatus.setMessage("");
+            ActionStatus actionStatus = null;
+            try {
+                actionStatus = (response.extract().jsonPath().get("actionStatus") == null
+                        ? response.extract().body().as(ActionStatus.class)
+                        : response.extract().jsonPath().getObject("actionStatus", ActionStatus.class));
+                if (actionStatus.getMessage() == null)
+                    actionStatus.setMessage("");
+            } catch (Exception jpe) {
+                System.out.println("DEBUG - Error parsing");
+                System.out.println("DEBUG - Cannot parse: " + response.extract().body().asString());
+            }
+
             base.setResponse(
                     new ApiResponse(response.extract().statusCode(), actionStatus, response.extract().jsonPath()));
             base.setJsonresponse(response);
@@ -176,24 +183,28 @@ public class CommonStepDefinition implements En {
         });    
         And("^Validate that the statusCode is \"([^\"]*)\"$", (String statusCode) -> {
             assertNotNull(base.getResponse());
-            assertEquals(Integer.valueOf(statusCode).intValue(), base.getResponse().getHttpStatusCode());
+            assertEquals(base.getResponse().getActionStatus().getMessage(), Integer.valueOf(statusCode).intValue(),
+                    base.getResponse().getHttpStatusCode());
         });
         And("^The status is \"([^\"]*)\"$", (String actionStatus) -> {
             assertNotNull(base.getResponse());
             assertNotNull(base.getResponse().getActionStatus());
-            assertEquals(base.getResponse().getActionStatus().getStatus().name(),actionStatus);
+            assertEquals(base.getResponse().getActionStatus().getStatus().toString(),
+                    base.getResponse().getActionStatus().getStatus().name(), actionStatus);
         });
         And("^The message  is \"([^\"]*)\"$", (String message) -> {
             assertNotNull(base.getResponse());
             assertNotNull(base.getResponse().getActionStatus());
             assertNotNull(base.getResponse().getActionStatus().getMessage());
-            assertTrue(base.getResponse().getActionStatus().getMessage().contains(message));
+            assertTrue(base.getResponse().getActionStatus().getMessage(),
+                    base.getResponse().getActionStatus().getMessage().contains(message));
         });
         And("^The errorCode  is \"([^\"]*)\"$", (String errorCode) -> {
             assertNotNull(base.getResponse());
             assertNotNull(base.getResponse().getActionStatus());
             if(base.getResponse().getActionStatus().getErrorCode() != null) {
-                assertEquals(base.getResponse().getActionStatus().getErrorCode().toString(), errorCode);
+                assertEquals(base.getResponse().getActionStatus().getErrorCode().toString(),
+                        base.getResponse().getActionStatus().getErrorCode().toString(), errorCode);
             }
         });
 

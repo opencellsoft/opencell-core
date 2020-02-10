@@ -1,6 +1,7 @@
 package com.opencell.test.utils;
 
 import com.opencell.test.KeyCloakAuthenticationHook;
+
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
 import io.restassured.response.ValidatableResponse;
@@ -16,6 +17,7 @@ public class RestApiUtils {
      */
     public static ValidatableResponse post(String api, String body) {
         RestAssured.defaultParser = Parser.JSON;
+        System.out.println("DEBUG - POST to url : " + uri + api);
         return RestAssured.given()
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
@@ -31,6 +33,7 @@ public class RestApiUtils {
      * @return
      */
     public static ValidatableResponse get(String api, String body) {
+        System.out.println("DEBUG - GET  to url : " + uri + api);
         return RestAssured.given()
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
@@ -47,6 +50,7 @@ public class RestApiUtils {
     * @return
     */
     public static ValidatableResponse delete(String api, String body) {
+        System.out.println("DEBUG - DEL  to url : " + uri + api);
         return RestAssured.given()
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
@@ -56,6 +60,7 @@ public class RestApiUtils {
     }
 
     public static ValidatableResponse put(String api, String body) {
+        System.out.println("DEBUG - PUT  to url : " + uri + api);
         return RestAssured.given()
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
