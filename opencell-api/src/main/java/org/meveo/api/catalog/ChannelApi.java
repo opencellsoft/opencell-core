@@ -59,7 +59,7 @@ public class ChannelApi extends BaseCrudApi<Channel, ChannelDto> {
 
         Channel channel = channelService.findByCode(postData.getCode());
         if (channel == null) {
-            throw new EntityAlreadyExistsException(Channel.class, postData.getCode());
+            throw new EntityDoesNotExistsException(Channel.class, postData.getCode());
         }
 
         channel.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());

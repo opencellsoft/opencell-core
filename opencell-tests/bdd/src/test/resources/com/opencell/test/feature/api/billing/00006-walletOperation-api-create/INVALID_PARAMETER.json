@@ -1,0 +1,10 @@
+{
+    "code": "TEST",
+    "description": "Wallet operation test",
+    "subscription": "ben.ohara",
+    "subscriptionDate": "INVALID",
+    "chargeInstance": "CH_CLASSIC_REC_FLAT",
+    "currency": "EUR",
+    "taxCode": "TAX_CLASSIC_HIGH",
+    "status": "TREATED"
+}

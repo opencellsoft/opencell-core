@@ -26,8 +26,4 @@ public class TimerEntityBean extends BaseBean<TimerEntity> {
     protected IPersistenceService<TimerEntity> getPersistenceService() {
         return timerEntityservice;
     }
-
-    protected String getListViewName() {
-        return "timerEntities";
-    }
 }

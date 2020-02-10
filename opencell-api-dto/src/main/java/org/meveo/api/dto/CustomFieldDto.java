@@ -1,10 +1,10 @@
 package org.meveo.api.dto;
 
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -13,13 +13,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
-import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 
 
@@ -121,14 +119,28 @@ public class CustomFieldDto {
     /**
      * Where field should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;fieldGroup:&lt;fieldgroup name&gt;:&lt;fieldgroup relative
      * position&gt;;field:&lt;field relative position in fieldgroup/tab&gt;
-     *
+     * <p>
      * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;
-     *
+     * <p>
      * e.g. tab:Tab default title|FRA=Title in french|ENG=Title in english:0;fieldGroup:Field group default label|FRA=Field group label in french|ENG=Field group label in
      * english:0;field:0 OR tab:Second tab:1;field:1
      */
     protected String guiPosition;
-    
+
+    /**
+     * Custom Table Code.
+     */
+    private String customTableCode;
+    /**
+     * Filters for custom table wrapper.
+     */
+    private String dataFilter;
+
+    /**
+     * Fields for cutsom table wrapper.
+     */
+    private String fields;
+
     /**
      * Instantiates a new custom field dto.
      */
@@ -597,15 +609,70 @@ public class CustomFieldDto {
 
     /**
      * Sets the guiPosition
+     *
      * @param guiPosition the guiPosition
      */
     public void setGuiPosition(String guiPosition) {
         this.guiPosition = guiPosition;
     }
 
+    /**
+     * Gets custom table code
+     *
+     * @return the custom table code
+     */
+    public String getCustomTableCode() {
+        return customTableCode;
+    }
+
+    /**
+     * Sets custom table code
+     *
+     * @param customTableCode the custom table code
+     */
+    public void setCustomTableCode(String customTableCode) {
+        this.customTableCode = customTableCode;
+    }
+
+    /**
+     * Gets filters for custom table wrapper
+     *
+     * @return customTableWrapper's filters
+     */
+    public String getDataFilter() {
+        return dataFilter;
+    }
+
+    /**
+     * Gets filters for custom table wrapper
+     *
+     * @param dataFilter
+     */
+    public void setDataFilter(String dataFilter) {
+        this.dataFilter = dataFilter;
+    }
+
+    /**
+     * Gets CustomTableWrapper's fields
+     *
+     * @return CustomTableWrapper's fields
+     */
+    public String getFields() {
+        return fields;
+    }
+
+    /**
+     * Sets CustomTableWrapper's fields
+     *
+     * @param fields CustomTableWrapper's fields
+     */
+    public void setFields(String fields) {
+        this.fields = fields;
+    }
+
     /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("CustomFieldDto{");

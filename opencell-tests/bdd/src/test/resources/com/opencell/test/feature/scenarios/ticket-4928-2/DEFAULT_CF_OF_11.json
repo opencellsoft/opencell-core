@@ -1,0 +1,17 @@
+{
+    "code": "aStringFiltered",
+    "description": "A string on OfferTemplate with applicableOnEL",
+    "fieldType": "STRING",
+    "appliesTo": "OfferTemplate",
+    "defaultValue": "CFT default value",
+    "storageType": "SINGLE",
+    "valueRequired": false,
+    "maxValue": 100,
+    "versionable": false,
+    "triggerEndPeriodEvent": false,
+    "allowEdit": true,
+    "hideOnNew": false,
+    "cacheValue": false,
+    "applicableOnEl":"#{ entity.businessOfferModel.code.contains('BOM_') || entity.code.contains('OF_')}",
+    "guiPosition": null
+}

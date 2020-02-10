@@ -18,31 +18,6 @@
  */
 package org.meveo.service.base;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
@@ -73,6 +48,31 @@ import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
+
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -119,7 +119,7 @@ public class NativePersistenceService extends BaseService {
 
     @Inject
 	private CustomEntityTemplateService customEntityTemplateService;
-    
+
     @Inject
     protected Event<CustomTableEvent> entityChangeEventProducer;
 
@@ -130,7 +130,6 @@ public class NativePersistenceService extends BaseService {
      * @param id Identifier
      * @return A map of values with field name as a map key and field value as a map value
      */
-    @SuppressWarnings("unchecked")
     public Map<String, Object> findById(String tableName, Long id) {
 
         try {
@@ -380,8 +379,8 @@ public class NativePersistenceService extends BaseService {
                 query.setParameter(fieldName, values.get(fieldName));
             }
             query.executeUpdate();
-            
-            
+
+
             Long result=null;
             // Find the identifier of the last inserted record
             if(fireNotifications) {
@@ -433,7 +432,7 @@ public class NativePersistenceService extends BaseService {
      * 
      * @param tableName Table name to update
      * @param value Values. Values must contain an "id" (FIELD_ID) field.
-     * @param b 
+     * @param b
      * @throws BusinessException General exception
      */
     public void update(String tableName, Map<String, Object> value, boolean fireNotifications) throws BusinessException {
@@ -587,7 +586,7 @@ public class NativePersistenceService extends BaseService {
      */
     public void remove(String tableName, Set<Long> ids) throws BusinessException {
         ids.stream().forEach(id -> deletionService.checkTableNotreferenced(tableName, id));
-        getEntityManager().createNativeQuery("delete from " + tableName + " where id in:ids").setParameter("ids", ids).executeUpdate();
+        getEntityManager().createNativeQuery("delete from " + tableName + " where id in :ids").setParameter("ids", ids).executeUpdate();
     }
 
     /**

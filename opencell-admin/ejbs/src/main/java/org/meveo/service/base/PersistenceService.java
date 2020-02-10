@@ -175,7 +175,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     protected Event<BaseEntity> entityRemovedEventProducer;
 
     @EJB
-    private CustomFieldInstanceService customFieldInstanceService;
+    protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private DeletionService deletionService;

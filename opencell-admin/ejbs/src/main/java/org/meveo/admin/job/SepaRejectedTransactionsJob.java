@@ -23,6 +23,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.service.job.Job;
 import org.meveo.service.payments.impl.DDRequestBuilderFactory;
@@ -107,7 +108,7 @@ public class SepaRejectedTransactionsJob extends Job {
 
     @Override
     public JobCategoryEnum getJobCategory() {
-        return JobCategoryEnum.ACCOUNT_RECEIVABLES;
+        return MeveoJobCategoryEnum.ACCOUNT_RECEIVABLES;
     }
 
     @Override

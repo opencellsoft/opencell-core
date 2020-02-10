@@ -138,16 +138,6 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 	}
 
 	@Override
-	protected String getListViewName() {
-		return "tradingCurrencies";
-	}
-
-	@Override
-	public String getNewViewName() {
-		return "tradingCurrencyDetail";
-	}
-
-	@Override
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("currency");
 	}

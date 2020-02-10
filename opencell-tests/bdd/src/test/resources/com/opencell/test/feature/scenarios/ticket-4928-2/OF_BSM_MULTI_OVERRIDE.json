@@ -1,0 +1,72 @@
+{
+    "bomCode": "BOM_WITH_BSM",
+    "code": "OF_BSM_MULTI_OVERRIDE",
+    "name": "Offer BSM Multi override",
+    "description": "Offer instantiating a BSM several times, WITH OVERRIDE 1579603023",
+    "parameter": [
+        {
+            "code": "aString",
+            "stringValue": "OF_BSM_MULTI_OVERRIDE"
+        },
+        {
+            "code": "aStringFiltered",
+            "stringValue": "OF_BSM_MULTI_OVERRIDE"
+        }
+    ],
+    "businessServiceModel": [
+        {
+            "code": "BSM_EMPTY_WITH_CF",
+            "service": {
+                "code": "SE_EMPTY_WITH_CF",
+                "description": "1 from BSM with CF override",
+                "mandatory": true,
+                "parameter": [
+                    {
+                        "code": "aString",
+                        "stringValue": "ONE"
+                    },
+                    {
+                        "code": "aStringFiltered",
+                        "stringValue": "ONE"
+                    }
+                ]
+            }
+        },
+        {
+            "code": "BSM_EMPTY_WITH_CF",
+            "service": {
+                "code": "SE_EMPTY_WITH_CF",
+                "description": "2 from BSM with CF override",
+                "mandatory": true,
+                "parameter": [
+                    {
+                        "code": "aString",
+                        "stringValue": "TWO"
+                    },
+                    {
+                        "code": "aStringFiltered",
+                        "stringValue": "TWO"
+                    }
+                ]
+            }
+        },
+        {
+            "code": "BSM_EMPTY_WITH_CF",
+            "service": {
+                "code": "SE_EMPTY_WITH_CF",
+                "description": "3 from BSM with CF override",
+                "mandatory": true,
+                "parameter": [
+                    {
+                        "code": "aString",
+                        "stringValue": "THREE"
+                    },
+                    {
+                        "code": "aStringFiltered",
+                        "stringValue": "THREE"
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -256,11 +256,6 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 		}
 	}
 
-	@Override
-	protected String getListViewName() {
-		return "invoiceSubCategories";
-	}
-
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */

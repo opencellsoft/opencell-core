@@ -934,8 +934,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     public TitlesResponseDto listTitle() {
         TitlesResponseDto result = new TitlesResponseDto();
 
+        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering();
+        pagingAndFiltering.addFilter("disabled", false);
+
         try {
-            result.setTitles(titleApi.list());
+            result = new TitlesResponseDto(titleApi.search(pagingAndFiltering));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

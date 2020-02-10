@@ -27,16 +27,41 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.custom.CustomTableDataDto;
 import org.meveo.api.dto.custom.CustomTableDataResponseDto;
 import org.meveo.api.dto.custom.CustomTableRecordDto;
+import org.meveo.api.dto.custom.CustomTableWrapperDto;
 import org.meveo.api.dto.custom.UnitaryCustomTableDataDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.JsonUtils;
+import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomTableService;
 import org.primefaces.model.SortOrder;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.Entity;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static org.meveo.service.base.NativePersistenceService.FIELD_ID;
 
 /**
  * @author Andrius Karpavicius
@@ -44,11 +69,17 @@ import org.primefaces.model.SortOrder;
  * @lastModifiedVersion 7.0
  **/
 @Stateless
-@SuppressWarnings("serial")
 public class CustomTableApi extends BaseApi {
 
     @Inject
     private CustomTableService customTableService;
+
+    @Inject
+    private CustomFieldTemplateService customFieldTemplateService;
+
+    @Inject
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
 
     /**
      * Create new records in a custom table with an option of deleting existing data first
@@ -294,4 +325,73 @@ public class CustomTableApi extends BaseApi {
 		handleMissingParameters();
 	}
 
+    /**
+     * Retrieve custom table data based on CustomTableWrapper and a search criteria
+     *
+     * @param customTableWrapperDto Custom table Wrapper dto
+     * @return Values and pagination information
+     * @throws MissingParameterException    Missing parameters
+     * @throws EntityDoesNotExistsException Custom table was not matched
+     * @throws InvalidParameterException    Invalid parameters passed
+     * @throws ValidationException
+     */
+    public CustomTableDataResponseDto listFromWrapper(CustomTableWrapperDto customTableWrapperDto)
+            throws MissingParameterException, EntityDoesNotExistsException, InvalidParameterException, ValidationException {
+
+        CustomFieldTemplate cft = customFieldTemplateService.findByCode(customTableWrapperDto.getCtwCode());
+        if (cft == null) {
+            throw new EntityDoesNotExistsException("CustomFieldTemplate", customTableWrapperDto.getCtwCode());
+        }
+        ICustomFieldEntity entity = getEntity(customTableWrapperDto.getEntityClass(), Long.valueOf(customTableWrapperDto.getEntityId()));
+        String customTableCode = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getCustomTableCodeEL(), "entity", entity);
+        Map<String, Object> toValidate = new TreeMap<String, Object>() {{
+            put("customTableCode", customTableCode);
+        }};
+        validateParams(toValidate);
+        PagingAndFiltering pagingAndFiltering = customTableWrapperDto.getPagingAndFiltering();
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+        addCTWPagingAndFiltering(entity, cft, pagingAndFiltering);
+        CustomEntityTemplate cet = customTableService.getCET(customTableCode);
+
+        Map<String, CustomFieldTemplate> cfts = customTableService.validateCfts(cet, false);
+        pagingAndFiltering.setFilters(customTableService.convertValue(pagingAndFiltering.getFilters(), cfts.values(), true, null));
+        List<String> fields = pagingAndFiltering.getFields() != null ? Arrays.asList(pagingAndFiltering.getFields().split(",")) : null;
+        PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, fields, pagingAndFiltering, cfts);
+        Long totalCount = customTableService.count(cet.getDbTablename(), paginationConfig);
+        CustomTableDataResponseDto result = new CustomTableDataResponseDto();
+        result.setPaging(pagingAndFiltering);
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+        result.getCustomTableData().setCustomTableCode(customTableCode);
+        List<Map<String, Object>> list = customTableService.list(cet.getDbTablename(), paginationConfig);
+        customTableService.completeWithEntities(list, cfts, pagingAndFiltering.getLoadReferenceDepth());
+        result.getCustomTableData().setValuesFromListofMap(list);
+        return result;
+
+    }
+
+    private ICustomFieldEntity getEntity(String entityClass, Long entityId) {
+        Class clazz = ReflectionUtils.getClassBySimpleNameAndAnnotation(entityClass, Entity.class);
+        Object entity = emWrapper.getEntityManager().getReference(clazz, entityId);
+        return (ICustomFieldEntity) entity;
+    }
+
+    private PagingAndFiltering addCTWPagingAndFiltering(ICustomFieldEntity entity, CustomFieldTemplate cft, PagingAndFiltering pagingAndFiltering) {
+        String filterString = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getDataFilterEL(), "entity", entity);
+        String fieldsString = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getFieldsEL(), "entity", entity);
+        if (filterString == null) {
+            filterString = "";
+        }
+        String jsonFilter = "{\"filters\": {" + filterString + "}";
+
+        if (fieldsString != null) {
+            jsonFilter = jsonFilter + ",\"fields\":\"" + fieldsString + "\"}";
+        }
+
+        PagingAndFiltering fieldsAndFiltering = JsonUtils.toObject(jsonFilter, PagingAndFiltering.class);
+        pagingAndFiltering.addFilters(fieldsAndFiltering.getFilters());
+        pagingAndFiltering.addFields(fieldsAndFiltering.getFields());
+        return pagingAndFiltering;
+    }
 }
