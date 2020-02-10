@@ -272,11 +272,6 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
     }
 
     @Override
-    protected String getListViewName() {
-        return "billingRuns";
-    }
-
-    @Override
     protected String getDefaultSort() {
         return "id";
     }

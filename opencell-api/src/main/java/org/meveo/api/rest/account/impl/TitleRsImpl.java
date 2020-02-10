@@ -7,6 +7,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.api.account.TitleApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.dto.response.account.TitleResponseDto;
 import org.meveo.api.dto.response.account.TitlesResponseDto;
@@ -90,8 +91,11 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
     public TitlesResponseDto list() {
         TitlesResponseDto result = new TitlesResponseDto();
 
+        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering();
+        pagingAndFiltering.addFilter("disabled", false);
+
         try {
-            result.setTitles(titleApi.list());
+            result = new TitlesResponseDto(titleApi.search(pagingAndFiltering));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

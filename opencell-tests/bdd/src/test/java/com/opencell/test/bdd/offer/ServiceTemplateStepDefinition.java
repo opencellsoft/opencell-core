@@ -1,4 +1,4 @@
-package com.opencell.test.bdd.core;
+package com.opencell.test.bdd.offer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -47,7 +47,7 @@ public class ServiceTemplateStepDefinition implements En {
             List<Object> customFields = base.getJsonresponse().extract().jsonPath()
                     .get("listServiceTemplate.customFields.customField[0]");
             Object expectedObject = expectedJson.getMap("");
-            
+
             assertTrue(customFields.contains(expectedObject));
         });
     }

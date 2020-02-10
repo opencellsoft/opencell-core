@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.IEnableDto;
+import org.meveo.api.dto.IEntityDto;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -32,7 +33,7 @@ import org.meveo.security.MeveoUser;
  */
 @XmlRootElement(name = "PaymentMethod")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PaymentMethodDto extends BaseEntityDto implements IEnableDto {
+public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4815935377652350103L;

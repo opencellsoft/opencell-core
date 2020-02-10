@@ -42,7 +42,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @XmlRootElement(name = "RatedTransaction")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RatedTransactionDto extends BaseEntityDto {
+public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7627662294414998797L;

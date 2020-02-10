@@ -73,11 +73,6 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     }
 
     @Override
-    protected String getListViewName() {
-        return "providers";
-    }
-
-    @Override
     protected String getDefaultSort() {
         return "code";
     }

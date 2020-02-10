@@ -70,14 +70,7 @@ public class CountryBean extends BaseBean<Country> {
 	protected String getDefaultSort() {
 		return "description";
 	}
-	@Override
-	protected String getListViewName() {
-		return "countries";
-	}
-	@Override
-	public String getNewViewName() {
-		return "countryDetail";
-	}
+
 	@Override
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("language","currency");

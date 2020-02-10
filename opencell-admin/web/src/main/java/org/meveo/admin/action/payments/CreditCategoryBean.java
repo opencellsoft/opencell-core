@@ -26,11 +26,6 @@ public class CreditCategoryBean extends BaseBean<CreditCategory> {
 	}
 	
 	@Override
-	protected String getListViewName() {
-		return "creditCategories";
-	}
-
-	@Override
 	protected IPersistenceService<CreditCategory> getPersistenceService() {
 		return creditCategoryService;
 	}

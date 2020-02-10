@@ -75,11 +75,6 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
     }
 
     @Override
-    protected String getListViewName() {
-        return "offerTemplateCategories";
-    }
-
-    @Override
     public String getEditViewName() {
         return "offerTemplateCategories";
     }

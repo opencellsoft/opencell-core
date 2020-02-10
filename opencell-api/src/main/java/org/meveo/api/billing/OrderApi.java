@@ -793,10 +793,10 @@ public class OrderApi extends BaseApi {
                     value = new BigDecimal((String) value);
 
                 } else if (valueClass == Integer.class) {
-                    value = new Integer((String) value);
+                    value = Integer.parseInt((String) value);
 
                 } else if (valueClass == Long.class) {
-                    value = new Long((String) value);
+                    value = Long.parseLong((String) value);
 
                 } else if (valueClass == Date.class) {
                     String originalValue = (String) value;
@@ -806,7 +806,7 @@ public class OrderApi extends BaseApi {
                     }
 
                 } else if (valueClass == Boolean.class) {
-                    value = new Boolean((String) value);
+                    value =  Boolean.parseBoolean((String) value);
 
                 } else if (valueClass.isEnum()) {
                     value = Enum.valueOf(valueClass, (String) value);
