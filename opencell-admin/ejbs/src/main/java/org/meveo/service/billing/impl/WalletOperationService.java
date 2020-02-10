@@ -697,10 +697,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                                     chargeInstance.getServiceInstance());
                 }
             }
+            for (WalletOperation wo : walletOperations) {
+                counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
+            }
         }
-        for (WalletOperation wo : walletOperations) {
-            counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
-        }
+
 
     }
 
