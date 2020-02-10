@@ -17,12 +17,13 @@ public class RestApiUtils {
      */
     public static ValidatableResponse post(String api, String body) {
         RestAssured.defaultParser = Parser.JSON;
-        System.out.println("DEBUG - POST to url : " + uri + api);
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         return RestAssured.given()
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
                 .body(body)
                 .when()
+                .log().all()
                 .post(uri+api).then();
     }
 
@@ -33,12 +34,12 @@ public class RestApiUtils {
      * @return
      */
     public static ValidatableResponse get(String api, String body) {
-        System.out.println("DEBUG - GET  to url : " + uri + api);
         return RestAssured.given()
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
                 .body(body)
                 .when()
+                .log().all()
                 .get(uri+api).then();
     }
     
@@ -50,22 +51,22 @@ public class RestApiUtils {
     * @return
     */
     public static ValidatableResponse delete(String api, String body) {
-        System.out.println("DEBUG - DEL  to url : " + uri + api);
         return RestAssured.given()
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
                 .body(body)
                 .when()
+                .log().all()
                 .delete(uri+api).then();
     }
 
     public static ValidatableResponse put(String api, String body) {
-        System.out.println("DEBUG - PUT  to url : " + uri + api);
         return RestAssured.given()
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
                 .body(body)
                 .when()
+                .log().all()
                 .put(uri+api).then();
     }
 }

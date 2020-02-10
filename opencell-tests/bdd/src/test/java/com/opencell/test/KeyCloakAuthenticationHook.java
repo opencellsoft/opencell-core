@@ -50,11 +50,7 @@ public class KeyCloakAuthenticationHook {
             if (response.getToken() != null) {
                 token = response.getToken();
                 tokens.put(login,token);
-                log.debug("DEBUG - Acquired the following token: " + response.getToken());
-                System.out.println("DEBUG - Acquired the following token: " + response.getToken());
             } else {
-                log.debug("DEBUG - Could not acquire the KC token, please check if the KC is running");
-                System.out.println("DEBUG - Could not acquire the KC token, please check if the KC is running");
                 throw new CucumberException("Could not acquire the KC token, please check if the KC is running");
             }
         }
