@@ -12,6 +12,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTemplateLevel;
 import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
@@ -156,6 +157,12 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
                 log.error("The accumulator should be activated if the following counter type are used : {}, {} or {}", CounterTypeEnum.USAGE_AMOUNT.getLabel(),
                         CounterTypeEnum.USAGE_AMOUNT.getLabel(), CounterTypeEnum.USAGE_AMOUNT.getLabel());
                 throw new InvalidParameterException("The accumulator must be activated to use the counter type " + counterTemplateDto.getType());
+            }
+            if (!counterTemplateDto.getAccumulator() && counterTemplateDto.getType().equals(CounterTypeEnum.USAGE)
+                    && (counterTemplateDto.getCounterLevel().equals(CounterTemplateLevel.CA) || counterTemplateDto.getCounterLevel().equals(CounterTemplateLevel.CUST))) {
+                log.error("The accumulator should be activated if the following counter level are used : {}, {}", CounterTemplateLevel.CA.getLabel(),
+                        CounterTemplateLevel.CUST.getLabel());
+                throw new InvalidParameterException("The accumulator must be activated to use the counter level " + counterTemplateDto.getCounterLevel());
             }
         }
     }
