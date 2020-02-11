@@ -112,12 +112,12 @@ Feature: Inherit or Override CustomField values when creating Offer from BOM
     And Service template contains the following CF "<Val_aStringFiltered_attendue>"
 
     Examples: 
-      | jsonFile                                  | api                           | action | statusCode | status  | Val_aString_attendue                         | Val_aStringFiltered_attendue                         |
-      | scenarios/ticket-4928-2/SuccessTest1.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928/Val_aString_attendue_1.json | core/ticket-4928/Val_aStringFiltered_attendue_1.json |
-      | scenarios/ticket-4928-2/SuccessTest2.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928/Val_aString_attendue_2.json | core/ticket-4928/Val_aStringFiltered_attendue_2.json |
-      | scenarios/ticket-4928-2/SuccessTest3.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928/Val_aString_attendue_3.json | core/ticket-4928/Val_aStringFiltered_attendue_3.json |
-      | scenarios/ticket-4928-2/SuccessTest5.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928/Val_aString_attendue_4.json | core/ticket-4928/Val_aStringFiltered_attendue_4.json |
-      | scenarios/ticket-4928-2/SuccessTest5.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928/Val_aString_attendue_5.json | core/ticket-4928/Val_aStringFiltered_attendue_5.json |
-      | scenarios/ticket-4928-2/SuccessTest6.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928/Val_aString_attendue_6.json | core/ticket-4928/Val_aStringFiltered_attendue_6.json |
-      | scenarios/ticket-4928-2/SuccessTest7.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928/Val_aString_attendue_7.json | core/ticket-4928/Val_aStringFiltered_attendue_7.json |
-      | scenarios/ticket-4928-2/SuccessTest8.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928/Val_aString_attendue_8.json | core/ticket-4928/Val_aStringFiltered_attendue_8.json |
+      | jsonFile                                  | api                           | action | statusCode | status  | Val_aString_attendue                           | Val_aStringFiltered_attendue                           |
+      | scenarios/ticket-4928-2/SuccessTest1.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928-2/Val_aString_attendue_1.json | core/ticket-4928-2/Val_aStringFiltered_attendue_1.json |
+      | scenarios/ticket-4928-2/SuccessTest2.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928-2/Val_aString_attendue_2.json | core/ticket-4928-2/Val_aStringFiltered_attendue_2.json |
+      | scenarios/ticket-4928-2/SuccessTest3.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928-2/Val_aString_attendue_3.json | core/ticket-4928-2/Val_aStringFiltered_attendue_3.json |
+      | scenarios/ticket-4928-2/SuccessTest5.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928-2/Val_aString_attendue_4.json | core/ticket-4928-2/Val_aStringFiltered_attendue_4.json |
+      | scenarios/ticket-4928-2/SuccessTest5.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928-2/Val_aString_attendue_5.json | core/ticket-4928-2/Val_aStringFiltered_attendue_5.json |
+      | scenarios/ticket-4928-2/SuccessTest6.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928-2/Val_aString_attendue_6.json | core/ticket-4928-2/Val_aStringFiltered_attendue_6.json |
+      | scenarios/ticket-4928-2/SuccessTest7.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928-2/Val_aString_attendue_7.json | core/ticket-4928-2/Val_aStringFiltered_attendue_7.json |
+      | scenarios/ticket-4928-2/SuccessTest8.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | core/ticket-4928-2/Val_aString_attendue_8.json | core/ticket-4928-2/Val_aStringFiltered_attendue_8.json |
