@@ -182,7 +182,10 @@ public class CommonStepDefinition implements En {
         });    
         And("^Validate that the statusCode is \"([^\"]*)\"$", (String statusCode) -> {
             assertNotNull(base.getResponse());
-            assertEquals(Integer.valueOf(statusCode).intValue(),
+            assertEquals(
+                    (base.getResponse().getActionStatus() != null ? base.getResponse().getActionStatus().getMessage()
+                            : null),
+                    Integer.valueOf(statusCode).intValue(),
                     base.getResponse().getHttpStatusCode());
         });
         And("^The status is \"([^\"]*)\"$", (String actionStatus) -> {
