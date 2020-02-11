@@ -234,7 +234,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			CreatePaymentResponse response = getClient().merchant(paymentGateway.getMarchandId()).payments().create(body);
 
 			if (response != null) {
-				log.info("RESPONSE:" + marshaller.marshal(response));
+				log.info("doPayment RESPONSE:" + marshaller.marshal(response));
 				PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
 				doPaymentResponseDto.setPaymentID(response.getPayment().getId());
 				doPaymentResponseDto.setPaymentStatus(mappingStaus(response.getPayment().getStatus()));
@@ -250,7 +250,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 						List<APIError> errors = statusOutput.getErrors();
 						if (CollectionUtils.isNotEmpty(errors)) {
 							doPaymentResponseDto.setErrorMessage(errors.toString());
-							doPaymentResponseDto.setErrorCode(errors.get(0).getCode());
+							doPaymentResponseDto.setErrorCode(errors.get(0).getId());
 						}
 					}
 				}
@@ -260,14 +260,14 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			}
 
 		} catch (ApiException e) {
-			log.info("REJECT PSP RESPONSE:" + e.getResponseBody());
+			log.error("doPayment REJECT PSP RESPONSE:" + e.getResponseBody());
 			PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
 			doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.REJECTED);
 			doPaymentResponseDto.setErrorMessage(e.getResponseBody());
 			List<APIError> errors = e.getErrors();
 			if (errors != null) {
 				if (CollectionUtils.isNotEmpty(errors)) {
-					doPaymentResponseDto.setErrorCode(errors.get(0).getCode());
+					doPaymentResponseDto.setErrorCode(errors.get(0).getId());
 				}
 			}
 			return doPaymentResponseDto;
@@ -484,7 +484,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			CreatePayoutRequest body = new CreatePayoutRequest();
 			body.setAmountOfMoney(amountOfMoney);
 			body.setCardPayoutMethodSpecificInput(cardPayoutMethodSpecificInput);
-			body.setReferences(references);			
+			body.setReferences(references);
 			getClient();
 			log.info("REQUEST:" + marshaller.marshal(body));
 			PayoutResponse response = client.merchant(paymentGateway.getMarchandId()).payouts().create(body);
@@ -502,7 +502,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 					List<APIError> errors = statusOutput.getErrors();
 					if (CollectionUtils.isNotEmpty(errors)) {
 						doPaymentResponseDto.setErrorMessage(errors.toString());
-						doPaymentResponseDto.setErrorCode(errors.get(0).getCode());
+						doPaymentResponseDto.setErrorCode(errors.get(0).getId());
 					}
 				}
 				return doPaymentResponseDto;
@@ -510,14 +510,14 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 				throw new BusinessException("Gateway response is null");
 			}
 		} catch (ApiException e) {
-			log.info("REJECT PSP RESPONSE:" + e.getResponseBody());
+			log.error("doRefundToken REJECT PSP RESPONSE:" + e.getResponseBody());
 			PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
 			doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.REJECTED);
 			doPaymentResponseDto.setErrorMessage(e.getResponseBody());
 			List<APIError> errors = e.getErrors();
 			if (errors != null) {
 				if (CollectionUtils.isNotEmpty(errors)) {
-					doPaymentResponseDto.setErrorCode(errors.get(0).getCode());
+					doPaymentResponseDto.setErrorCode(errors.get(0).getId());
 				}
 			}
 			return doPaymentResponseDto;
@@ -573,7 +573,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			customer.setBillingAddress(billingAddress);
 
 			OrderReferences orderReferences = new OrderReferences();
-			orderReferences.setMerchantReference(StringUtils.truncate(timeMillisWithcustomerAccountId, 40, false) );
+			orderReferences.setMerchantReference(StringUtils.truncate(timeMillisWithcustomerAccountId, 40, false));
 
 			Order order = new Order();
 			order.setAmountOfMoney(amountOfMoney);
