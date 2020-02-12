@@ -1,0 +1,15 @@
+{
+    "code": "SUB_4689",
+    "userAccount": "UA_4689",
+    "offerTemplate": "OF_CLASSIC_TEMPLATE",
+    "subscriptionDate": "2019-01-01T22:00:00Z",
+    "servicesToActivate": {
+        "service": [
+            {
+                "code": "SE_CLASSIC_REC_FLAT",
+                "subscriptionDate": "2019-01-01T22:00:00Z",
+                "quantity": 1
+            }
+        ]
+    }
+}
