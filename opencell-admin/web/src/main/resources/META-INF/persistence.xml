@@ -24,7 +24,7 @@
 
             <property name="hibernate.ejb.interceptor" value="org.meveo.interceptor.FieldAuditInterceptor" />
             <property name="hibernate.ejb.event.create" value="org.meveo.jpa.event.CreateEventListener" />
-            <property name="hibernate.dialect" value="org.meveo.commons.utils.MeveoSQLDialect" />
+            <property name="hibernate.dialect" value="org.meveo.commons.persistence.MeveoSQLDialect" />
         </properties>
     </persistence-unit>
 

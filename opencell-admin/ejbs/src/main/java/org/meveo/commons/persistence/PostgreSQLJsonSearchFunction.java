@@ -1,4 +1,4 @@
-package org.meveo.commons.utils;
+package org.meveo.commons.persistence;
 
 
 
