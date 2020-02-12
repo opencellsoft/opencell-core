@@ -2,7 +2,7 @@
 Feature: Test all URLs of Admin
 
   @admin @superadmin
-  Scenario Outline: Open Configuration pages
+  Scenario Outline: Open Configuration pages url : <url>
     When I go to this "<url>"
     Then I should be on "<pageName>"
     And Validate that the statusCode is "<statusCode>"
