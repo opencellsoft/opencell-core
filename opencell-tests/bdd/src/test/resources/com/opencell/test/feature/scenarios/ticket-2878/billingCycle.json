@@ -1,0 +1,11 @@
+{
+	"code": "BC_MONTHLY_1ST",
+	"description": "Monthly 1st",
+	"billingTemplateName": "MAIN_SELLER",
+	"invoiceDateDelay": "0",
+	"dueDateDelay": "30",
+	"invoiceDateProductionDelay": "0",
+	"transactionDateDelay": "0",
+	"invoicingThreshold": 0.01,
+	"calendar": "CAL_MONTHLY_1ST"
+}

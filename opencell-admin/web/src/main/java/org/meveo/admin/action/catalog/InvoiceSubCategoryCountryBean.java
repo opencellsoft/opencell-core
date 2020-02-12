@@ -62,11 +62,6 @@ public class InvoiceSubCategoryCountryBean extends
 	}
 
 	@Override
-	protected String getListViewName() {
-		return "invoiceSubCategoryCountries";
-	}
-
-	@Override
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("invoiceSubCategory", "tradingCountry", "tax");
 	}

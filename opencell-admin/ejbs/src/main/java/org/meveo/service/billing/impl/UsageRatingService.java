@@ -25,7 +25,6 @@ import org.meveo.admin.exception.NoChargeException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.SubscriptionNotFoundException;
-import org.meveo.admin.parse.csv.CDR;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.event.CounterPeriodEvent;
@@ -50,6 +49,7 @@ import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRRejectReasonEnum;
 import org.meveo.model.rating.EDRStatusEnum;
@@ -260,6 +260,10 @@ public class UsageRatingService implements Serializable {
                 usageChargeInstance.getServiceInstance().getSubscriptionDate(), usageChargeInstance, usageChargeInstance.getServiceInstance());
         }
         // CachedCounterPeriod cachedCounterPeriod = ratingCacheContainerProvider.getCounterPeriod(usageChargeInstance.getCounter().getId(), edr.getEventDate());
+
+        if (counterPeriod == null) {
+            return BigDecimal.ZERO;
+        }
 
         CounterValueChangeInfo counterValueChangeInfo = null;
 
@@ -660,7 +664,7 @@ public class UsageRatingService implements Serializable {
                 if (ratedEDRResult.getWalletOperation() != null) {
                     walletOperations.add(ratedEDRResult.getWalletOperation());
                 }
-                
+
                 if (rateTriggeredEdr && !ratedEDRResult.getTriggeredEDRs().isEmpty()) {
                     walletOperations.addAll(rateTriggeredEDRs(isVirtual, rateTriggeredEdr, maxDeep, currentRatingDepth, ratedEDRResult.getTriggeredEDRs()));
                 }

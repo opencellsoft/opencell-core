@@ -20,6 +20,7 @@ package org.meveo.commons.utils;
 
 import java.lang.reflect.Field;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,7 +58,7 @@ public class QueryBuilder {
 
     protected String alias;
 
-    private Map<String, Object> params;
+    protected Map<String, Object> params;
 
     private boolean hasOneOrMoreCriteria;
 
@@ -729,9 +730,16 @@ public class QueryBuilder {
         if (convertToMap) {
             result.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
         }
-        for (Map.Entry<String, Object> e : params.entrySet()) {
-            result.setParameter(e.getKey(), e.getValue());
-        }
+		for (Map.Entry<String, Object> e : params.entrySet()) {
+			Object value = e.getValue();
+			if (value.getClass().isArray()) {
+				result.setParameterList(e.getKey(), (Object[]) value);
+			} else if (value instanceof Collection) {
+				result.setParameterList(e.getKey(), (Collection) value);
+			} else {
+				result.setParameter(e.getKey(), value);
+			}
+		}
 
         return result;
     }
@@ -869,7 +877,7 @@ public class QueryBuilder {
      * 
      * @param alias alias of column?
      */
-    private void applyOrdering(String alias) {
+    protected void applyOrdering(String alias) {
         if (paginationConfiguration == null) {
             return;
         }
@@ -884,7 +892,7 @@ public class QueryBuilder {
      * 
      * @param query JPA query to apply pagination to
      */
-    private void applyPagination(Query query) {
+    protected void applyPagination(Query query) {
         if (paginationConfiguration == null) {
             return;
         }
@@ -913,7 +921,7 @@ public class QueryBuilder {
      * 
      * @param query Hibernate query to apply pagination to
      */
-    private void applyPagination(SQLQuery query) {
+    protected void applyPagination(SQLQuery query) {
         if (paginationConfiguration == null) {
             return;
         }

@@ -56,6 +56,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.rating.EDR;
 
 /**
@@ -90,7 +91,7 @@ import org.meveo.model.rating.EDR;
 
         @NamedQuery(name = "WalletOperation.getOpenByWallet", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and o.wallet=:wallet"),
 
-        @NamedQuery(name = "WalletOperation.setStatusToRerate", query = "UPDATE WalletOperation o SET o.ratedTransaction=NULL, o.status='TO_RERATE', o.updated = :now "
+        @NamedQuery(name = "WalletOperation.setStatusToRerate", query = "UPDATE WalletOperation o SET o.status='TO_RERATE', o.updated = :now "
                 + " WHERE o.status='TREATED' AND o.ratedTransaction.id IN (SELECT o1.ratedTransaction.id FROM WalletOperation o1 WHERE o1.status='TREATED' and o1.id IN :notBilledWalletIdList)"),
 
         @NamedQuery(name = "WalletOperation.setStatusToCanceled", query = "UPDATE WalletOperation o SET o.status='CANCELED', o.updated = :now where o.status<>'TREATED' and o.chargeInstance=:chargeInstance"),
@@ -126,6 +127,13 @@ public class WalletOperation extends BaseEntity {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    /**
+     * creation timestamp
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created")
+    private Date created;
+    
     /**
      * Last status change timestamp
      */
@@ -326,6 +334,21 @@ public class WalletOperation extends BaseEntity {
     @Size(max = 20)
     private String ratingUnitDescription;
 
+
+    /**
+     * input_unit_unitOfMeasure
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "input_unitofmeasure")
+    private UnitOfMeasure inputUnitOfMeasure;
+
+    /**
+     * rating_unit_unitOfMeasure
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rating_unitofmeasure")
+    private UnitOfMeasure ratingUnitOfMeasure;
+
     /**
      * Input quantity
      */
@@ -441,8 +464,12 @@ public class WalletOperation extends BaseEntity {
         this.code = chargeTemplate.getCode();
         this.description = chargeInstance.getDescription();
         this.chargeInstance = chargeInstance;
-        this.ratingUnitDescription = chargeTemplate.getRatingUnitDescription();
-        this.inputUnitDescription = chargeTemplate.getInputUnitDescription();
+        UnitOfMeasure CTInputUnitOfMeasure = chargeTemplate.getInputUnitOfMeasure();
+        UnitOfMeasure CTRatingUnitOfMeasure = chargeTemplate.getRatingUnitOfMeasure();
+        this.ratingUnitDescription = CTRatingUnitOfMeasure != null ? CTRatingUnitOfMeasure.getCode() : chargeTemplate.getRatingUnitDescription();
+        this.inputUnitDescription = CTInputUnitOfMeasure != null ? CTInputUnitOfMeasure.getCode() : chargeTemplate.getInputUnitDescription();
+        this.inputUnitOfMeasure=CTInputUnitOfMeasure;
+		this.ratingUnitOfMeasure=CTRatingUnitOfMeasure;
         this.operationDate = operationDate;
         this.orderNumber = orderNumber;
         this.parameter1 = criteria1;
@@ -507,6 +534,7 @@ public class WalletOperation extends BaseEntity {
         this.billingAccount = userAccount.getBillingAccount();
 
         this.status = WalletOperationStatusEnum.OPEN;
+        this.created = new Date();
         this.updated = new Date();
     }
 
@@ -590,6 +618,7 @@ public class WalletOperation extends BaseEntity {
             this.offerCode = offerTemplate.getCode();
         }
         this.status = status != null ? status : WalletOperationStatusEnum.OPEN;
+        this.created = new Date();
         this.updated = new Date();
     }
 
@@ -892,6 +921,7 @@ public class WalletOperation extends BaseEntity {
         result.setWallet(wallet);
         result.setEdr(edr);
         result.setSubscription(subscription);
+        result.setCreated(created);
         result.setUpdated(updated);
 
         return result;
@@ -1071,5 +1101,36 @@ public class WalletOperation extends BaseEntity {
      */
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    /**
+     * @return creation date
+     */
+    public Date getCreated() {
+        return created;
+    }
+
+    /**
+     * @param created creation date
+     */
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+    
+    public UnitOfMeasure getInputUnitOfMeasure() {
+        return inputUnitOfMeasure;
+    }
+
+    public void setInput_unitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
+        this.inputUnitOfMeasure = inputUnitOfMeasure;
+    }
+
+    public UnitOfMeasure getRatingUnitOfMeasure() {
+        return ratingUnitOfMeasure;
+    }
+
+    public void setRatingUnitOfMeasure(UnitOfMeasure ratingUnitOfMeasure) {
+        this.ratingUnitOfMeasure = ratingUnitOfMeasure;
+
     }
 }

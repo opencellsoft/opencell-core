@@ -58,11 +58,6 @@ public class BusinessOfferModelBean extends GenericModuleBean<BusinessOfferModel
         return businessOfferModelService;
     }
 
-    @Override
-    protected String getListViewName() {
-        return "businessOfferModels";
-    }
-
     public void createOfferFromBOMPopup() {
         Map<String, Object> options = new HashMap<String, Object>();
         options.put("resizable", false);

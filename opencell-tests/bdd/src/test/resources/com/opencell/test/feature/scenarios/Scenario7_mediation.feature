@@ -1,3 +1,4 @@
+@ignore
 Feature: Rating + mediation process
    
    Background:  System is configured.

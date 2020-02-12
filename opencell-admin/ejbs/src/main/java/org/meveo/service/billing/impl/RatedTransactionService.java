@@ -193,6 +193,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         if (!isVirtual) {
             create(ratedTransaction);
+            walletOperation.setRatedTransaction(ratedTransaction);
         }
         return ratedTransaction;
     }
@@ -238,10 +239,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         Calendar cal = Calendar.getInstance();
         if (aggregationSettings.isAggregateByDay()) {
-            cal.set(Calendar.YEAR, aggregatedWo.getYear(), aggregatedWo.getMonth(), aggregatedWo.getDay(), 0, 0);
+            cal.set(aggregatedWo.getYear(), aggregatedWo.getMonth(), aggregatedWo.getDay(), 0, 0, 0);
             ratedTransaction.setUsageDate(cal.getTime());
         } else {
-            cal.set(Calendar.YEAR, aggregatedWo.getYear(), aggregatedWo.getMonth(), 1, 0, 0);
+            cal.set(aggregatedWo.getYear(), aggregatedWo.getMonth(), 1, 0, 0, 0);
             ratedTransaction.setUsageDate(cal.getTime());
 
         }
@@ -696,14 +697,18 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 if (instantiateMinRtsForBA && isAppliesMinRTForBA(billingAccount, totalInvoiceableAmounts)) {
 
                     Map<String, Amounts> extraAmounts = new HashMap<>();
-                    extraAmounts.putAll(createdAmountSubscription);
-                    for (Map<String, Amounts> serviceAmountInfo : createdAmountServices.values()) {
+                    if (createdAmountSubscription != null) {
+                        extraAmounts.putAll(createdAmountSubscription);
+                    }
+                    if (createdAmountServices != null) {
+                        for (Map<String, Amounts> serviceAmountInfo : createdAmountServices.values()) {
 
-                        for (Entry<String, Amounts> amountInfo : serviceAmountInfo.entrySet()) {
-                            if (extraAmounts.containsKey(amountInfo.getKey())) {
-                                extraAmounts.get(amountInfo.getKey()).addAmounts(amountInfo.getValue());
-                            } else {
-                                extraAmounts.put(amountInfo.getKey(), amountInfo.getValue());
+                            for (Entry<String, Amounts> amountInfo : serviceAmountInfo.entrySet()) {
+                                if (extraAmounts.containsKey(amountInfo.getKey())) {
+                                    extraAmounts.get(amountInfo.getKey()).addAmounts(amountInfo.getValue());
+                                } else {
+                                    extraAmounts.put(amountInfo.getKey(), amountInfo.getValue());
+                                }
                             }
                         }
                     }

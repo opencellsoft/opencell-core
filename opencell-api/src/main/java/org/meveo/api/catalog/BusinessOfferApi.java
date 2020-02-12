@@ -3,14 +3,19 @@ package org.meveo.api.catalog;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.BSMConfigurationDto;
 import org.meveo.api.dto.catalog.BomOfferDto;
@@ -33,6 +38,9 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.service.catalog.impl.BOMInstantiationParameters;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.BusinessProductModelService;
@@ -90,9 +98,9 @@ public class BusinessOfferApi extends BaseApi {
             throw new MeveoApiException("No offer template attached");
         }
 
-        if ((bomOffer.getOfferServiceTemplates() == null || bomOffer.getOfferServiceTemplates().isEmpty())
-                && (bomOffer.getOfferProductTemplates() == null || bomOffer.getOfferProductTemplates().isEmpty())) {
-            throw new MeveoApiException("No service or product template attached");
+        if ((bomOffer.getOfferServiceTemplates() == null || bomOffer.getOfferServiceTemplates().isEmpty()) && (bomOffer.getOfferProductTemplates() == null || bomOffer
+                .getOfferProductTemplates().isEmpty())) {
+            log.warn("No service or product template attached");
         }
 
         // process bsm
@@ -144,12 +152,24 @@ public class BusinessOfferApi extends BaseApi {
                 // Caution the service code also must match that of BusinessOfferModelService.createOfferFromBOM
                 String serviceTemplateCode = constructServiceTemplateCode(newOfferTemplate, ost, serviceTemplate, serviceConfigurationDto);
 
+                // #4865 - [bom] Service CF values should be copied when creating offer from BOM
+                if (serviceTemplateCode.equals(serviceTemplate.getCode())) {
+                    ServiceTemplate oldService = serviceTemplateService.findByCode(serviceConfigurationDto.getCode());
+                    CustomFieldValues customFieldValues = oldService.getCfValuesNullSafe();
+                    Map<String, List<CustomFieldValue>> cfValues = customFieldValues.getValuesByCode();
+
+                    if (!cfValues.isEmpty()) {
+                        CustomFieldsDto cfs = entityToDtoConverter.getCustomFieldsDTO(oldService, cfValues, CustomFieldInheritanceEnum.INHERIT_NONE);
+                        addNoExistingCFToNewList(serviceConfigurationDto, cfs);
+                    }
+                }
+
                 if (serviceTemplateCode.equals(serviceTemplate.getCode()) && serviceConfigurationDto.getCustomFields() != null && !serviceConfigurationDto.isMatch()) {
                     try {
                         CustomFieldsDto cfsDto = new CustomFieldsDto();
                         cfsDto.setCustomField(serviceConfigurationDto.getCustomFields());
-                        populateCustomFields(cfsDto, serviceTemplate, true);
-
+                        // to fix a case when we instantiate a BSM multiple times in the same offer with CF value override,
+                        populateCFsWithClonedServiceTemplate(cfsDto, serviceTemplate, true);
                         serviceTemplate = serviceTemplateService.update(serviceTemplate);
                         ost.setServiceTemplate(serviceTemplate);
 
@@ -158,7 +178,7 @@ public class BusinessOfferApi extends BaseApi {
                         throw e;
                     } catch (Exception e) {
                         log.error("Failed to associate custom field instance to an entity", e);
-                        throw e;
+                        throw new BusinessException(e);
                     }
                     serviceConfigurationDto.setMatch(true);
                     break;
@@ -174,12 +194,25 @@ public class BusinessOfferApi extends BaseApi {
                 // Caution the productCode building algo must match that of
                 // BusinessOfferModelService.createOfferFromBOM
                 String productCode = opt.getOfferTemplate().getId() + "_" + productCodeDto.getCode();
+
+                // #4941 - [bom] Product CF with no override should be copied from offer template's product
+                if (productCode.equals(productTemplate.getCode())) {
+                    ProductTemplate oldProduct = productTemplateService.findByCode(productCodeDto.getCode());
+                    CustomFieldValues customFieldValues = oldProduct.getCfValuesNullSafe();
+                    Map<String, List<CustomFieldValue>> cfValues = customFieldValues.getValuesByCode();
+
+                    if (!cfValues.isEmpty()) {
+                        CustomFieldsDto cfs = entityToDtoConverter.getCustomFieldsDTO(oldProduct, cfValues, CustomFieldInheritanceEnum.INHERIT_NONE);
+                        addNoExistingCFToNewList(productCodeDto, cfs);
+                    }
+                }
                 if (productCode.equals(productTemplate.getCode())) {
                     if (productCodeDto.getCustomFields() != null) {
                         try {
                             CustomFieldsDto cfsDto = new CustomFieldsDto();
                             cfsDto.setCustomField(productCodeDto.getCustomFields());
-                            populateCustomFields(cfsDto, productTemplate, true);
+                            // to fix a case when we instantiate a BSM multiple times in the same offer with CF value override,
+                            populateCFsWithClonedProductTemplate(cfsDto, productTemplate, true);
 
                             productTemplate = productTemplateService.update(productTemplate);
                             opt.setProductTemplate(productTemplate);
@@ -202,13 +235,14 @@ public class BusinessOfferApi extends BaseApi {
             try {
                 CustomFieldsDto cfsDto = new CustomFieldsDto();
                 cfsDto.setCustomField(postData.getCustomFields());
-                populateCustomFields(cfsDto, newOfferTemplate, true);
+                // to fix a case when we instantiate a BSM multiple times in the same offer with CF value override,
+                populateCFsWithClonedOfferTemplate(cfsDto, newOfferTemplate, true);
             } catch (MissingParameterException e) {
                 log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
                 throw e;
             } catch (Exception e) {
                 log.error("Failed to associate custom field instance to an entity", e);
-                throw e;
+                throw new BusinessException("Failed to associate custom field instance to an entity", e);
             }
         }
 
@@ -274,7 +308,7 @@ public class BusinessOfferApi extends BaseApi {
                     throw new EntityDoesNotExistsException(BusinessServiceModel.class, bsmConfig.getCode());
                 }
                 ServiceConfigurationDto serviceConfigurationDto = bsmConfig.getServiceConfiguration();
-                if (!bsm.getServiceTemplate().getCode().equals(serviceConfigurationDto.getCode())) {
+                if (bsm.getServiceTemplate() == null || !bsm.getServiceTemplate().getCode().equals(serviceConfigurationDto.getCode())) {
                     throw new MeveoApiException("Service template with code=" + serviceConfigurationDto.getCode() + " is not linked to BSM with code=" + bsm.getCode());
                 }
                 serviceConfigurationDto.setInstantiatedFromBSM(true);
@@ -331,7 +365,7 @@ public class BusinessOfferApi extends BaseApi {
 
     /**
      * Instantiates a product from a given BusinessProductModel.
-     * 
+     *
      * @param postData business product model product
      * @return product template's id
      * @throws MeveoApiException meveo api exception
@@ -369,4 +403,105 @@ public class BusinessOfferApi extends BaseApi {
         return newProducTemplate.getId();
     }
 
+    /**
+     * Special populate custom field values from service template DTO.
+     * <p>
+     * To avoid overridden Cf values. see #4865, #4928, #4929
+     *
+     * @param customFieldsDto Custom field values
+     * @param entity          Entity
+     * @param isNewEntity     Is entity a newly saved entity
+     * @throws MeveoApiException meveo api exception.
+     */
+    private ServiceTemplate populateCFsWithClonedServiceTemplate(CustomFieldsDto customFieldsDto, ServiceTemplate entity, boolean isNewEntity) throws MeveoApiException {
+        try {
+            ServiceTemplate temp = (ServiceTemplate) BeanUtils.cloneBean(entity);
+            temp.setCfValues(null);
+            temp.setUuid(UUID.randomUUID().toString());
+            temp.setCfAccumulatedValues(null);
+
+            populateCustomFields(customFieldsDto, temp, isNewEntity);
+            entity.setCfValues(temp.getCfValues());
+            entity.setCfAccumulatedValues(temp.getCfValues());
+        } catch (Exception e) {
+            log.error("Error when cloning object:" + entity, e);
+        }
+        return entity;
+    }
+
+    /**
+     * Special populate custom field values from offer template DTO.
+     * <p>
+     * To avoid overridden Cf values. see #4865, #4928, #4929
+     *
+     * @param customFieldsDto Custom field values
+     * @param entity          Entity
+     * @param isNewEntity     Is entity a newly saved entity
+     * @throws MeveoApiException meveo api exception.
+     */
+    private void populateCFsWithClonedOfferTemplate(CustomFieldsDto customFieldsDto, OfferTemplate entity, boolean isNewEntity) throws MeveoApiException {
+        try {
+            OfferTemplate temp = (OfferTemplate) BeanUtils.cloneBean(entity);
+            temp.setUuid(UUID.randomUUID().toString());
+            temp.setCfValues(null);
+            temp.setCfAccumulatedValues(null);
+
+            populateCustomFields(customFieldsDto, temp, true);
+            entity.setCfValues(temp.getCfValues());
+            entity.setCfAccumulatedValues(temp.getCfValues());
+        } catch (Exception e) {
+            log.error("Error setting CF values to the cloning object:" + entity, e);
+        }
+    }
+
+    /**
+     * Special populate custom field values from product template DTO.
+     * <p>
+     * To avoid overridden Cf values. see #4865, #4929
+     *
+     * @param customFieldsDto Custom field values
+     * @param entity          Entity
+     * @param isNewEntity     Is entity a newly saved entity
+     * @throws MeveoApiException meveo api exception.
+     */
+    private ProductTemplate populateCFsWithClonedProductTemplate(CustomFieldsDto customFieldsDto, ProductTemplate entity, boolean isNewEntity) throws MeveoApiException {
+        try {
+            ProductTemplate temp = (ProductTemplate) BeanUtils.cloneBean(entity);
+            temp.setUuid(UUID.randomUUID().toString());
+            temp.setCfValues(null);
+            temp.setCfAccumulatedValues(null);
+
+            populateCustomFields(customFieldsDto, temp, true);
+            entity.setCfValues(temp.getCfValues());
+            entity.setCfAccumulatedValues(temp.getCfValues());
+        } catch (Exception e) {
+            log.error("Error when cloning object" + entity, e);
+        }
+        return entity;
+    }
+
+    /***
+     * skip copy Cfs from old service if it is overridden
+     * @param serviceConfigurationDto a new service
+     * @param cfs old cfs
+     */
+    private void addNoExistingCFToNewList(ServiceConfigurationDto serviceConfigurationDto, CustomFieldsDto cfs) {
+        List<CustomFieldDto> newCustomFields = Optional.ofNullable(serviceConfigurationDto.getCustomFields()).orElse(new ArrayList<>());
+        List<CustomFieldDto> oldCustomFields = Optional.ofNullable(cfs.getCustomField()).orElse(new ArrayList<>());
+        List<CustomFieldDto> combinedList = new ArrayList<>(newCustomFields);
+        // add CFs from old service
+        for (CustomFieldDto customField : oldCustomFields) {
+            boolean found = false;
+            for (CustomFieldDto field : newCustomFields) {
+                if (field.getCode().equalsIgnoreCase(customField.getCode())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                combinedList.add(customField);
+            }
+        }
+        serviceConfigurationDto.setCustomFields(combinedList);
+    }
 }

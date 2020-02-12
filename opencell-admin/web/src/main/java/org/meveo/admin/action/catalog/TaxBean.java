@@ -178,11 +178,6 @@ public class TaxBean extends CustomFieldBean<Tax> {
     }
 
     @Override
-    protected String getListViewName() {
-        return "taxes";
-    }
-
-    @Override
     protected String getDefaultSort() {
         return "code";
     }

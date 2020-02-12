@@ -290,11 +290,14 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
 
             counterPeriod = instantiateCounterPeriod(counterTemplate, chargeDate, initDate, chargeInstance, serviceInstance);
-            counterPeriod.setCounterInstance(counterInstance);
-            counterPeriodService.create(counterPeriod);
 
-            counterInstance.getCounterPeriods().add(counterPeriod);
-            counterInstance.updateAudit(currentUser);
+            if (counterPeriod != null) {
+                counterPeriod.setCounterInstance(counterInstance);
+                counterPeriodService.create(counterPeriod);
+
+                counterInstance.getCounterPeriods().add(counterPeriod);
+                counterInstance.updateAudit(currentUser);
+            }
         }
 
         return counterPeriod;
@@ -311,8 +314,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return a counter period.
      * @throws BusinessException the business exception
      */
-    public CounterPeriod instantiateCounterPeriod(CounterTemplate counterTemplate, Date chargeDate, Date initDate, ChargeInstance chargeInstance, 
-            ServiceInstance serviceInstance) throws BusinessException {
+    public CounterPeriod instantiateCounterPeriod(CounterTemplate counterTemplate, Date chargeDate, Date initDate, ChargeInstance chargeInstance, ServiceInstance serviceInstance)
+            throws BusinessException {
 
         CounterPeriod counterPeriod = new CounterPeriod();
         Calendar cal = counterTemplate.getCalendar();
@@ -326,8 +329,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         BigDecimal initialValue = counterTemplate.getCeiling();
         log.debug("create counter period from {} to {}", startDate, endDate);
         if (!StringUtils.isBlank(counterTemplate.getCeilingExpressionEl()) && chargeInstance != null) {
-            initialValue = evaluateCeilingElExpression(counterTemplate.getCeilingExpressionEl(), chargeInstance, serviceInstance,
-                chargeInstance.getSubscription());
+            initialValue = evaluateCeilingElExpression(counterTemplate.getCeilingExpressionEl(), chargeInstance, serviceInstance, chargeInstance.getSubscription());
         }
         counterPeriod.setPeriodStartDate(startDate);
         counterPeriod.setPeriodEndDate(endDate);
@@ -381,8 +383,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         }
     }
 
-    private CounterPeriod getCounterPeriodByDate(CounterInstance counterInstance, Date date)
-            throws NoResultException {
+    private CounterPeriod getCounterPeriodByDate(CounterInstance counterInstance, Date date) throws NoResultException {
         Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
         query.setParameter("counterInstance", counterInstance);
         query.setParameter("date", date, TemporalType.TIMESTAMP);

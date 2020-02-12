@@ -101,7 +101,7 @@ public class ScriptInstanceRsImpl extends BaseRs implements ScriptInstanceRs {
 
         try {
                 result = scriptInstanceApi.execute(scriptInstanceCode, context);
-                responseBuilder = Response.ok().entity(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+                responseBuilder = Response.ok().entity(result);
         } catch (MeveoApiException e) {
             log.error(e.getLocalizedMessage());
             responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(result);

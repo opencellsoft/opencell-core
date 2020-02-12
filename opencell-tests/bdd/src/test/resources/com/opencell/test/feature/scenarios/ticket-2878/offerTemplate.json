@@ -1,0 +1,34 @@
+{
+	"code": "OF",
+	"description": "Global offer",
+	"disabled": false,
+	"bomCode": null,
+	"offerTemplateCategoryCode": null,
+	"offerServiceTemplate": [
+		{
+			"serviceTemplate": {
+				"code": "SE_REC_ADV",
+				"customFields": null
+			},
+			"mandatory": false,
+			"incompatibleServiceTemplate": []
+		},
+		{
+			"serviceTemplate": {
+				"code": "SE_REC_ARR",
+				"customFields": null
+			},
+			"mandatory": false,
+			"incompatibleServiceTemplate": []
+		},
+		{
+			"serviceTemplate": {
+				"code": "SE_USG_UNIT",
+				"customFields": null
+			},
+			"mandatory": false,
+			"incompatibleServiceTemplate": []
+		}
+	],
+	"customFields": null
+}

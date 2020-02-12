@@ -4,7 +4,7 @@
     <parent>
         <artifactId>opencell-admin</artifactId>
         <groupId>com.opencellsoft</groupId>
-        <version>10.0.1-SNAPSHOT</version>
+        <version>9.1.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>opencell-admin-ejbs</artifactId>
@@ -142,7 +142,15 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
                         <useIncrementalCompilation>false</useIncrementalCompilation>
+                    	<release>11</release>
                     </configuration>
+                    <dependencies>
+                    	<dependency>
+								<groupId>org.ow2.asm</groupId>
+								<artifactId>asm</artifactId>
+								<version>7.2</version>
+							</dependency>
+					</dependencies>
                 </plugin>            
         </plugins>
         <pluginManagement>
@@ -248,13 +256,7 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        <!-- Apache Cassandra -->
-        <dependency>
-            <groupId>com.datastax.cassandra</groupId>
-            <artifactId>cassandra-driver-mapping</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-
+        
         <!-- Log4j2 -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.IEvent;
+import org.meveo.model.CustomTableEvent;
 import org.meveo.model.IEntity;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.InboundRequest;
@@ -189,15 +190,7 @@ public class DefaultNotificationService {
 			return false;
 		}
 
-		IEntity entity = null;
-		if (entityOrEvent instanceof IEntity) {
-			entity = (IEntity) entityOrEvent;
-
-		} else if (entityOrEvent instanceof IEvent) {
-			entity = ((IEvent) entityOrEvent).getEntity();
-		}
-
-		log.debug("Fire Notification for notif with {} and entity with id={}", notif, entity.getId());
+		log.debug("Fire Notification for notif with {} and entity with id={}", notif, extractId(entityOrEvent));
 		try {
 			if (!matchExpression(notif.getElFilter(), entityOrEvent)) {
 				log.debug("Expression {} does not match", notif.getElFilter());
@@ -234,13 +227,16 @@ public class DefaultNotificationService {
 			// thus
 			// will not be related to inbound request.
 			if (notif instanceof ScriptNotification) {
-				NotificationHistory histo = notificationHistoryService.create(notif, entityOrEvent,
-						(String) context.get(Script.RESULT_VALUE), NotificationHistoryStatusEnum.SENT);
+                NotificationHistory histo = null;
+			    if (notif.isSaveSuccessfulNotifications()) {
+                    histo = notificationHistoryService.create(notif, entityOrEvent,
+                            (String) context.get(Script.RESULT_VALUE), NotificationHistoryStatusEnum.SENT);
+			    }
 
-				if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ && histo != null) {
-					histo.setInboundRequest((InboundRequest) entityOrEvent);
-					((InboundRequest) entityOrEvent).add(histo);
-				}
+                if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ && histo != null) {
+                    histo.setInboundRequest((InboundRequest) entityOrEvent);
+                    ((InboundRequest) entityOrEvent).add(histo);
+                }
 
 			} else if (notif instanceof EmailNotification) {
 				MeveoUser lastCurrentUser = currentUser.unProxy();
@@ -281,5 +277,17 @@ public class DefaultNotificationService {
 		}
 
 		return true;
+	}
+
+	private Object extractId(Object entityOrEvent) {
+		Object id = null;
+		if (entityOrEvent instanceof IEntity) {
+			id = ((IEntity) entityOrEvent).getId();
+		} else if (entityOrEvent instanceof IEvent) {
+			id = (((IEvent) entityOrEvent).getEntity()).getId();
+		} else if(entityOrEvent instanceof CustomTableEvent) {
+			id=((CustomTableEvent) entityOrEvent).getId();
+		}
+		return id;
 	}
 }

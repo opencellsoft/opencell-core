@@ -143,16 +143,6 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	}
 
 	@Override
-	protected String getListViewName() {
-		return "tradingCountries";
-	}
-
-	@Override
-	public String getNewViewName() {
-		return "tradingCountryDetail";
-	}
-
-	@Override
 	protected String getDefaultSort() {
 		return "country.countryCode";
 	}

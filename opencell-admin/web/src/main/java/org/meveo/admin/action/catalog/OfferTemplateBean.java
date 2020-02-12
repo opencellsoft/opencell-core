@@ -991,13 +991,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         log.info("save AllowedDiscountPlan getObjectId={}", getObjectId());
 
         try {
-            if (allowedDiscountPlan == null || entity.getAllowedDiscountPlans().contains(allowedDiscountPlan)) {
+            if (entity.getAllowedDiscountPlans() != null && entity.getAllowedDiscountPlans().contains(allowedDiscountPlan)) {
                 messages.error(new BundleKey("messages", "save.unsuccessful.duplicate"));
             } else {
                 entity.addAnAllowedDiscountPlan(allowedDiscountPlan);
                 messages.info(new BundleKey("messages", "offerTemplate.allowedDiscountPlan.create.successful"));
             }
-
         } catch (Exception e) {
             log.error("exception when saving Discount Plan !", e.getMessage());
             messages.error(new BundleKey("messages", "save.unsuccessful"));

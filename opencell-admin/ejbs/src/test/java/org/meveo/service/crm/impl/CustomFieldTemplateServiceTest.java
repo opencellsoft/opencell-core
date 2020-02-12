@@ -1,75 +1,87 @@
 package org.meveo.service.crm.impl;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.customEntities.CustomEntityTemplate;
-import org.meveo.service.custom.CustomEntityTemplateService;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.service.custom.CustomTableCreatorService;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;;
+
 @RunWith(MockitoJUnitRunner.class)
 public class CustomFieldTemplateServiceTest {
-    @InjectMocks
-    private CustomFieldTemplateService sut;
 
-    @Mock
-    private CustomEntityTemplateService customEntityTemplateService;
+	private static final String COLUMN_NAME_1 = "CT_1";
+	private static final String COLUMN_NAME_2 = "CT_2";
+	private static final String CODE = "cet";
+	private static final String NO_CONSTRAINT = "";
 
-    @Test
-    public void should_not_do_anything_if_cft_is_null() {
-        //Given
-        CustomFieldTemplate cft = null;
-        //When
-        sut.checkAndUpdateUniqueConstraint(cft);
-        //Then
-        verify(customEntityTemplateService, never()).findByCode(anyString());
-    }
+	@InjectMocks
+	private CustomFieldTemplateService customFieldTemplateService;
 
-    @Test
-    public void should_not_do_anything_if_cft_is_not_custom_table() {
-        //Given
-        CustomFieldTemplate cft = mock(CustomFieldTemplate.class);
-        when(cft.tableName()).thenReturn(StringUtils.EMPTY);
-        //When
-        sut.checkAndUpdateUniqueConstraint(cft);
-        //Then
-        verify(customEntityTemplateService, never()).findByCode(anyString());
-    }
+	@Mock
+	private CustomTableCreatorService customTableCreatorService;
 
-    @Test
-    public void should_not_do_anything_if_custom_entity_is_not_store_as_table() {
-        //Given
-        CustomFieldTemplate cft = mock(CustomFieldTemplate.class);
-        when(cft.tableName()).thenReturn("TABLE_1");
-        CustomEntityTemplate customEntityTemplate = mock(CustomEntityTemplate.class);
-        when(customEntityTemplateService.findByCode(cft.tableName())).thenReturn(customEntityTemplate);
+	@Mock
+	CustomEntityTemplate cet;
 
-        //When
-        sut.checkAndUpdateUniqueConstraint(cft);
-        //Then
-        verify(customEntityTemplate, never()).setUniqueContraintName(anyString());
-    }
+	@Before
+	public void init() {
+		when(cet.getDbTablename()).thenReturn(CODE);
+	}
 
-    @Test
-    public void should_removePrefixe() {
-        //Given
-        String table1 = "CE_TABLE_1";
-        String table2 = "CE_CE_TABLE_2";
-        //When
-        String removePrefixeFromTableName1 = sut.removePrefixeFromTableName(table1);
-        String removePrefixeFromTableName2 = sut.removePrefixeFromTableName(table2);
-        //Then
-        assertThat(removePrefixeFromTableName1).isEqualTo("TABLE_1");
-        assertThat(removePrefixeFromTableName2).isEqualTo("CE_TABLE_2");
-    }
+	@Test
+	public void should_not_update_or_drop_the_same_constraint() {
+		String oldConstraintColumns = COLUMN_NAME_1;
+		String newConstraintColumns = COLUMN_NAME_1;
+		// Given
+		// When
+		customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns);
+		// Then
+		verify(customTableCreatorService, never()).addUniqueConstraint(anyString(), anyString());
+		verify(customTableCreatorService, never()).dropUniqueConstraint(anyString(), anyString());
+	}
+
+	@Test
+	public void should_drop_old_and_create_new_if_constraint_changed() {
+		String oldConstraintColumns = COLUMN_NAME_1;
+		String newConstraintColumns = COLUMN_NAME_2;
+		// Given
+		// When
+		customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns);
+		// Then
+		verify(customTableCreatorService, times(1)).addUniqueConstraint(CODE, COLUMN_NAME_2);
+		verify(customTableCreatorService, times(1)).dropUniqueConstraint(CODE, COLUMN_NAME_1);
+	}
+
+	@Test
+	public void should_only_drop_constraint_if_cancelled() {
+		String oldConstraintColumns = COLUMN_NAME_1;
+		String newConstraintColumns = NO_CONSTRAINT;
+		// Given
+		// When
+		customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns);
+		// Then
+		verify(customTableCreatorService, never()).addUniqueConstraint(anyString(), anyString());
+		verify(customTableCreatorService, times(1)).dropUniqueConstraint(CODE, COLUMN_NAME_1);
+	}
+
+	@Test
+	public void should_only_create_constraint_if_new() {
+		String oldConstraintColumns = NO_CONSTRAINT;
+		String newConstraintColumns = COLUMN_NAME_1;
+		// Given
+		// When
+		customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns);
+		// Then
+		verify(customTableCreatorService, never()).dropUniqueConstraint(anyString(), anyString());
+		verify(customTableCreatorService, times(1)).addUniqueConstraint(CODE, COLUMN_NAME_1);
+	}
 }

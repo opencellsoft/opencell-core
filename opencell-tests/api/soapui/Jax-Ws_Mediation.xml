@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="be765fc2-377f-4484-9193-ff119e423633" activeEnvironment="Default" name="Mediation - wildfly" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="be765fc2-377f-4484-9193-ff119e423633" activeEnvironment="Default" name="Mediation - wildfly" resourceRoot="" soapui-version="5.5.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountWs?wsdl" id="ea4ccfc5-0bef-4d4a-8963-dd86a6dcf499" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
@@ -1186,7 +1186,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.rating.CDR;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -1481,7 +1481,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.rating.CDR;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.script.ScriptInterface;
@@ -1778,7 +1778,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.rating.CDR;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Subscription;
@@ -1919,7 +1919,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.rating.CDR;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.admin.User;
 import org.meveo.model.mediation.Access;
@@ -3138,7 +3138,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>73</con:value>
+        <con:value>75</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -3176,7 +3176,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.rating.CDR;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.admin.User;
 import org.meveo.model.mediation.Access;
@@ -3302,7 +3302,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.rating.CDR;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Subscription;
@@ -3454,7 +3454,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
         <record-ident>
         </record-ident>
         <record-definition>
-            <bean name="cdr" class="org.meveo.admin.parse.csv.CDR"/>
+            <bean name="cdr" class="org.meveo.model.rating.CDR"/>
            <line delimit=";">
                 <record-element length="0" beanref="cdr.timestamp" type="date">
                     <conversion-option name="format" value="yyyy-MM-dd'T'HH:mm:ss"/>
@@ -4562,7 +4562,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>72</con:value>
+        <con:value>74</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -4597,7 +4597,7 @@ import java.util.Map;
 import java.util.List;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.rating.CDR;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Subscription;
@@ -4739,7 +4739,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.rating.CDR;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.admin.User;
 import org.meveo.model.mediation.Access;
@@ -6020,7 +6020,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>69</con:value>
+        <con:value>71</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -6055,7 +6055,7 @@ import java.util.Map;
 import java.util.List;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.rating.CDR;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Subscription;
@@ -6192,7 +6192,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.rating.CDR;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.admin.User;
 import org.meveo.model.mediation.Access;
@@ -7475,7 +7475,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>76</con:value>
+        <con:value>78</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -7547,7 +7547,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             <script><![CDATA[
             package org.meveo.service.script;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.rating.CDR;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.model.crm.Customer;
 
@@ -7613,7 +7613,7 @@ public class Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_C
    <soapenv:Body>
       <ws:createOrUpdateNotification>
          <notification code="${#Project#baseEntityPrefix}_${#TestSuite#index}_Mediation_Reject_CDR">
-            <classNameFilter>org.meveo.admin.parse.csv.CDR</classNameFilter>
+            <classNameFilter>org.meveo.model.rating.CDR</classNameFilter>
             <eventTypeFilter>REJECTED_CDR</eventTypeFilter>
             <scriptInstanceCode>org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_CDR</scriptInstanceCode>           
          </notification>
@@ -7687,6 +7687,12 @@ public class Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_C
             <con:wsaConfig mustUnderstand="NONE" version="200508"/>
             <con:wsrmConfig version="1.2"/>
           </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="delay" name="Delay" id="f5fe5ff0-83be-4bd8-b45e-cc3ca4916654">
+        <con:settings/>
+        <con:config>
+          <delay>2000</delay>
         </con:config>
       </con:testStep>
       <con:testStep type="request" name="Find customer" id="06dc578a-a9ac-4299-8002-64d921246774">
@@ -7870,7 +7876,7 @@ public class Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_C
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>16</con:value>
+        <con:value>17</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

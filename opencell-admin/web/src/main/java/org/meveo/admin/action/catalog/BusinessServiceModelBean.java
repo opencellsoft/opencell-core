@@ -37,11 +37,6 @@ public class BusinessServiceModelBean extends GenericModuleBean<BusinessServiceM
         return businessServiceModelService;
     }
 
-    @Override
-    protected String getListViewName() {
-        return "businessServiceModels";
-    }
-
     public List<BusinessOfferModel> getBusinessOfferModels(BusinessServiceModel bsmEntity) {
         List<BusinessOfferModel> result = new ArrayList<>();
 

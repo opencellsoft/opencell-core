@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+            <f:viewParam name="objectId" value="#{unitOfMeasureBean.objectId}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+				<p:menuitem outcome="unitOfMeasures" value="#{messages['menu.unitOfMeasures']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['unitOfMeasure']}"
+					disabled="true" rendered="#{unitOfMeasureBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['unitOfMeasure']} - #{unitOfMeasureBean.entity.code}"
+					disabled="true" rendered="#{!unitOfMeasureBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:formPanel label="#{messages['menu.unitOfMeasures']}"
+			backingBean="#{unitOfMeasureBean}">
+
+			<hftl:formField label="#{messages['businessEntity.code']}"
+				field="code" required="true" validateUnique="true" />
+			<hftl:formField label="#{messages['businessEntity.description']}"
+				field="description" id="description" />
+			<hftl:formField label="#{messages['unitOfMeasure.symbol']}"
+							field="symbol" required="true" id="symbol" />
+			<hftl:formField label="#{messages['unitOfMeasure.multiplicator']}"
+							field="multiplicator" id="multiplicator" />
+			<hftl:formField id="parentUnitOfMeasureId"
+							label="#{messages['unitOfMeasure.parentUnitOfMeasure']}" field="parentUnitOfMeasure"
+							valueLabelField="code" fkToEntity="true" listElements="#{unitOfMeasureBean.listBaseUnits()}"/>
+
+		</hftl:formPanel>
+
+	</ui:define>
+</ui:composition>

@@ -2,16 +2,26 @@ package org.meveo.api;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.api.dto.module.ModulePropertyFlagLoader;
+import org.meveo.api.dto.IEntityDto;
+import org.meveo.api.dto.response.GenericSearchResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.PersistenceService;
+import org.primefaces.model.SortOrder;
 
 /**
  * Base API service for CRUD operations on entity
@@ -24,12 +34,12 @@ import org.meveo.service.base.BusinessService;
  * @param <E> Entity class
  * @param <T> Dto class
  */
-public abstract class BaseCrudApi<E extends BusinessEntity, T extends BusinessEntityDto> extends BaseApi implements ApiService<E, T> {
+public abstract class BaseCrudApi<E extends BaseEntity, T extends BaseEntityDto> extends BaseApi implements ApiService<E, T> {
 
     /**
      * Persistence service corresponding to a entity that API implementation corresponds to
      */
-    private BusinessService<E> ps;
+    private PersistenceService<E> ps;
 
     /**
      * Entity class that API implementation corresponds to
@@ -55,7 +65,7 @@ public abstract class BaseCrudApi<E extends BusinessEntity, T extends BusinessEn
         }
 
         try {
-            ps = (BusinessService<E>) getPersistenceService(entityClass, true);
+            ps = (PersistenceService<E>) getPersistenceService(entityClass, true);
         } catch (BusinessException e) {
             log.error("Failed to obtain a persistenceService for {}", getClass());
         }
@@ -71,9 +81,27 @@ public abstract class BaseCrudApi<E extends BusinessEntity, T extends BusinessEn
     }
 
     @Override
+    public T findIgnoreNotFound(Long id) throws MeveoApiException {
+        try {
+            return find(id);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
     public E createOrUpdate(T dataDto) throws MeveoApiException, BusinessException {
 
-        if (ps.findByCode(dataDto.getCode()) == null) {
+        BaseEntity entity = null;
+
+        if (dataDto instanceof BusinessEntityDto && ((BusinessEntityDto) dataDto).getCode() != null) {
+            entity = ((BusinessService) ps).findByCode(((BusinessEntityDto) dataDto).getCode());
+        } else if (dataDto instanceof IEntityDto && ((IEntityDto)dataDto).getId() != null) {
+            entity = ps.findById(((IEntityDto)dataDto).getId());
+        }
+
+        if (entity == null) {
             return create(dataDto);
         } else {
             return update(dataDto);
@@ -102,6 +130,27 @@ public abstract class BaseCrudApi<E extends BusinessEntity, T extends BusinessEn
     }
 
     @Override
+    public void enableOrDisable(Long id, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
+
+        if (id == null) {
+            missingParameters.add("id");
+        }
+
+        handleMissingParameters();
+
+        E entity = ps.findById(id);
+        if (entity == null) {
+            throw new EntityDoesNotExistsException(entityClass, id);
+        }
+        if (enable) {
+            ps.enable((E) entity);
+        } else {
+            ps.disable((E) entity);
+        }
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Override
     public void remove(String code) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
@@ -110,7 +159,7 @@ public abstract class BaseCrudApi<E extends BusinessEntity, T extends BusinessEn
 
         handleMissingParameters();
 
-        E entity = ps.findByCode(code);
+        E entity = (E) ((BusinessService) ps).findByCode(code);
 
         if (entity == null) {
             throw new EntityDoesNotExistsException(entityClass, code);
@@ -118,14 +167,116 @@ public abstract class BaseCrudApi<E extends BusinessEntity, T extends BusinessEn
 
         ps.remove(entity);
     }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
-     */
+
     @Override
-    public T find(String code, ModulePropertyFlagLoader modulePropertyFlagLoader) throws MeveoApiException {
-        throw new UnsupportedOperationException();
+    public void remove(Long id) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+
+        if (id == null) {
+            missingParameters.add("id");
+        }
+
+        handleMissingParameters();
+
+        E entity = ps.findById(id);
+
+        if (entity == null) {
+            throw new EntityDoesNotExistsException(entityClass, id);
+        }
+
+        ps.remove(entity);
+    }
+
+    /**
+     * Returns Entity DTO based on its code.
+     * 
+     * @param code Entity code
+     * @return DTO object
+     * @throws MeveoApiException Meveo api exception.
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public T find(String code) throws MeveoApiException {
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+        handleMissingParameters();
+
+        E entity = (E) ((BusinessService) ps).findByCode(code);
+        if (entity == null) {
+            throw new EntityDoesNotExistsException(entityClass, code);
+        }
+
+        return getEntityToDtoFunction().apply(entity);
+    }
+
+    /**
+     * Returns Entity DTO based on its ID.
+     * 
+     * @param id Entity ID
+     * @return DTO object
+     * @throws MeveoApiException API related exception
+     */
+    public T find(Long id) throws MeveoApiException {
+        if (id == null) {
+            missingParameters.add("id");
+        }
+        handleMissingParameters();
+
+        E entity = (E) ps.findById(id);
+        if (entity == null) {
+            throw new EntityDoesNotExistsException(entityClass, id);
+        }
+
+        return getEntityToDtoFunction().apply(entity);
+    }
+
+    /**
+     * Perform a paginated search returning a list of entity DTOs matched
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return Search results including repeated pagination and filtering criteria plus total record count
+     * @throws MeveoApiException API related exception
+     */
+    public GenericSearchResponse<T> search(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+        return search(pagingAndFiltering, getEntityToDtoFunction());
+    }
+
+    /**
+     * Perform a paginated search returning a list of DTOs matched
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @param entityToDtoFunction A function definition to convert entity to dto object
+     * @return Search results including repeated pagination and filtering criteria plus total record count
+     * @throws MeveoApiException Api related exception
+     */
+    protected GenericSearchResponse<T> search(PagingAndFiltering pagingAndFiltering, Function<E, T> entityToDtoFunction) throws MeveoApiException {
+
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, null, pagingAndFiltering, entityClass);
+
+        Long totalCount = ps.count(paginationConfig);
+
+        pagingAndFiltering.setTotalNumberOfRecords(totalCount.intValue());
+
+        List<T> dtos = new ArrayList<T>();
+        if (totalCount > 0) {
+            List<E> entityList = ps.list(paginationConfig);
+            for (E wo : entityList) {
+                dtos.add(entityToDtoFunction.apply(wo));
+            }
+        }
+
+        GenericSearchResponse<T> response = new GenericSearchResponse<T>(dtos, pagingAndFiltering);
+        return response;
+    }
+
+    /**
+     * @return A function to convert entity object to DTO object
+     */
+    protected Function<E, T> getEntityToDtoFunction() {
+
+        return null;
     }
 }

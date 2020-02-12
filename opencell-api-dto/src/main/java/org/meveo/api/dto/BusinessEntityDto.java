@@ -16,7 +16,7 @@ import org.meveo.model.BusinessEntity;
  **/
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BusinessEntityDto extends AuditableEntityDto {
+public class BusinessEntityDto extends AuditableEntityDto implements IEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4451119256601996946L;
@@ -56,7 +56,7 @@ public class BusinessEntityDto extends AuditableEntityDto {
     public BusinessEntityDto(BusinessEntity e) {
         super(e);
         if (e != null) {
-        	id=e.getId();
+            id = e.getId();
             code = e.getCode();
             description = e.getDescription();
         }
