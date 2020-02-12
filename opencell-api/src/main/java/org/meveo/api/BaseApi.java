@@ -1527,4 +1527,7 @@ public abstract class BaseApi {
     	return new MeveoApiException(e);
     }
 
+    public ICustomFieldEntity populateCustomFieldsForGenericApi(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
+        return populateCustomFields(customFieldsDto, entity, isNewEntity, true);
+    }
 }
