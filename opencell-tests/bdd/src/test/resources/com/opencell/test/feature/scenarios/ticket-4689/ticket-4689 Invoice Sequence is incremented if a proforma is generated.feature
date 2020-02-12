@@ -99,6 +99,6 @@ Feature: Invoice Sequence is incremented if a proforma is generated
 
     Examples: 
       | jsonFile                                    | dto                       | api                           | action | statusCode | status  | errorCode | message | field                                     | value                 |
-      | scenarios/ticket-4689/generateInvoice1.json | GenerateInvoiceRequestDto | /invoice/generateInvoice      | POST   |        200 | SUCCESS |           |         | generateInvoiceResultDto[0].invoiceNumber | INV-CLASSIC-000000008 |
-      | scenarios/ticket-4689/generateProforma.json | GenerateInvoiceRequestDto | /invoice/generateDraftInvoice | POST   |        200 | SUCCESS |           |         | generateInvoiceResultDto[0].invoiceNumber | DRAFT_00005           |
-      | scenarios/ticket-4689/generateInvoice2.json | GenerateInvoiceRequestDto | /invoice/generateInvoice      | POST   |        200 | SUCCESS |           |         | generateInvoiceResultDto[0].invoiceNumber | INV-CLASSIC-000000009 |
+      | scenarios/ticket-4689/generateInvoice1.json | GenerateInvoiceRequestDto | /invoice/generateInvoice      | POST   |        200 | SUCCESS |           |         | generateInvoiceResultDto[0].invoiceNumber | INV-CLASSIC-000000009 |
+      | scenarios/ticket-4689/generateProforma.json | GenerateInvoiceRequestDto | /invoice/generateDraftInvoice | POST   |        200 | SUCCESS |           |         | generateInvoiceResultDto[0].invoiceNumber | DRAFT_00001           |
+      | scenarios/ticket-4689/generateInvoice2.json | GenerateInvoiceRequestDto | /invoice/generateInvoice      | POST   |        200 | SUCCESS |           |         | generateInvoiceResultDto[0].invoiceNumber | INV-CLASSIC-000000010 |
