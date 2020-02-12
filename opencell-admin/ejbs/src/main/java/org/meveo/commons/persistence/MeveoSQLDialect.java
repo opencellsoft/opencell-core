@@ -1,9 +1,9 @@
-package org.meveo.commons.utils;
+package org.meveo.commons.persistence;
 
 import org.hibernate.dialect.PostgreSQL94Dialect;
 
 /**
- * @author Mohammed
+ * @author M.ELAZZOUZI
  *
  */
 public class MeveoSQLDialect extends PostgreSQL94Dialect {
@@ -11,6 +11,7 @@ public class MeveoSQLDialect extends PostgreSQL94Dialect {
 		registerFunction("numericFromJson", new DoublePostgreSQLJsonSearchFunction());
 		registerFunction("varcharFromJson", new PostgreSQLJsonSearchFunction());
 		registerFunction("bigIntFromJson", new LongPostgreSQLJsonSearchFunction());
-		registerFunction("datetimeFromJson", new DatePostgreSQLJsonSearchFunction());
+		registerFunction("timestampFromJson", new DatePostgreSQLJsonSearchFunction());
+		registerFunction("booleanFromJson", new BooleanPostgreSQLJsonSearchFunction());
 	}
 }

@@ -1453,21 +1453,34 @@ public abstract class BaseApi {
 					Map<String, List<CustomFieldValue>> cfvMap = new TreeMap<String, List<CustomFieldValue>>();
 					for(String key : mapVal.keySet()) {
 						Object cfValue = mapVal.get(key);
-						CustomFieldTemplate customFieldTemplate = cfts.get(key);
-						if(customFieldTemplate!=null) {
-							Class dataClass = customFieldTemplate.getFieldType().getDataClass();
-							Object valueConverted =castFilterValue(cfValue, dataClass, expectedList, cfts);
-							if(valueConverted==null) {
-								if(!CustomFieldStorageTypeEnum.SINGLE .equals( customFieldTemplate.getStorageType())) {
-									throw new BusinessException("Only CustomFields with SINGLE storageType are accepted on filters. Cannot filter using custom field '"+key+"'");
-								}else {
-									throw new BusinessException("Not able to cast filter value '"+cfValue+"' of custom field '"+key+"' to "+dataClass);
+						String[] fieldInfo = key.split(" ");
+	                    String[] fields = fieldInfo.length == 1 ? fieldInfo : Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
+	                    Class dataClass = null;
+	                    CustomFieldStorageTypeEnum storageType = null;
+						for (String f : fields) {
+							CustomFieldTemplate customFieldTemplate = cfts.get(f);
+							if (customFieldTemplate == null) {
+								throw new BusinessException("No custom field found with name :" + f);
+							}
+							storageType = customFieldTemplate.getStorageType();
+							Class tempDataClass = customFieldTemplate.getFieldType().getDataClass();
+							if (dataClass == null) {
+								dataClass = tempDataClass;
+							} else {
+								if (!dataClass.equals(tempDataClass)) {
+									throw new BusinessException("Different data type used in the same filter : " + key);
 								}
 							}
-							cfvMap.put(key, Arrays.asList(new CustomFieldValue(valueConverted!=null?valueConverted:cfValue)));
-						} else {
-							throw new BusinessException("No custom field found with name :"+key);
 						}
+	                    Object valueConverted =castFilterValue(cfValue, dataClass, expectedList, cfts);
+						if(valueConverted==null) {
+							if(!CustomFieldStorageTypeEnum.SINGLE .equals( storageType)) {
+								throw new BusinessException("Only CustomFields with SINGLE storageType are accepted on filters. Cannot use filter '"+key+"'");
+							}else {
+								throw new BusinessException("Not able to cast filter value '"+cfValue+"' of custom field '"+key+"' to "+dataClass);
+							}
+						}
+						cfvMap.put(key, Arrays.asList(new CustomFieldValue(valueConverted)));
 					}
 					CustomFieldValues customFieldsValues = new CustomFieldValues(cfvMap);
 					return customFieldsValues;
