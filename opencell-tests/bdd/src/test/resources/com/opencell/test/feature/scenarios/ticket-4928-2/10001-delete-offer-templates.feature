@@ -1,4 +1,4 @@
-@scenarios
+@scenarios @ignore
 Feature: Delete offer template created by scenario 4928 by API
 
   Background: Scenario 4928 is executed

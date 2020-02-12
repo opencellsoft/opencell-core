@@ -1,4 +1,4 @@
-@#4928-BDD @scenarios
+@#4928-BDD @scenarios @ignore
 Feature: Inherit or Override CustomField values when creating Offer from BOM
 
   Background: System is installed
