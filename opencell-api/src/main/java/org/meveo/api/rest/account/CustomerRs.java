@@ -1,17 +1,5 @@
 package org.meveo.api.rest.account;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
@@ -29,6 +17,17 @@ import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import java.util.Date;
 
 /**
@@ -303,12 +302,12 @@ public interface CustomerRs extends IBaseRs {
      * Filter counters by period date.
      *
      * @param customerCode The customer's code
-     * @param date The date corresponding to the period
+     * @param date         The date corresponding to the period
      * @return counter instances.
      */
     @GET
     @Path("/filterCountersByPeriod")
-    GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(@QueryParam("customerCode") String customerCode, @QueryParam("date") @RestDateParam Date date);
+    GetCountersInstancesResponseDto filterCustomerCountersByPeriod(@QueryParam("customerCode") String customerCode, @QueryParam("date") @RestDateParam Date date);
 
 
 }

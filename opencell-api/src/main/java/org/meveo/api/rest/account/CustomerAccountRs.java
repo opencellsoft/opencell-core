@@ -136,11 +136,11 @@ public interface CustomerAccountRs extends IBaseRs {
      * Filter counters by period date.
      *
      * @param customerAccountCode The customer account's code
-     * @param date The date corresponding to the period
+     * @param date                The date corresponding to the period
      * @return counter instances.
      */
     @GET
     @Path("/filterCountersByPeriod")
-    GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("date") @RestDateParam Date date);
+    GetCountersInstancesResponseDto filterCustomerAccountCountersByPeriod(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("date") @RestDateParam Date date);
 
 }

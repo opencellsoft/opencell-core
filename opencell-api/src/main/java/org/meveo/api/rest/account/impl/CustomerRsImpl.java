@@ -1,9 +1,5 @@
 package org.meveo.api.rest.account.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.account.CustomerApi;
 import org.meveo.api.account.CustomerSequenceApi;
 import org.meveo.api.dto.ActionStatus;
@@ -27,10 +23,11 @@ import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.CustomerBrand;
-import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import java.util.Date;
 import java.util.List;
 
@@ -371,7 +368,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 	}
 
     @Override
-    public GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(String customerCode, Date date) {
+    public GetCountersInstancesResponseDto filterCustomerCountersByPeriod(String customerCode, Date date) {
         GetCountersInstancesResponseDto result = new GetCountersInstancesResponseDto();
 
         try {

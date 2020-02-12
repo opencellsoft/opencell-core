@@ -161,7 +161,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
     }
 
     @Override
-    public GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(String customerAccountCode, Date date) {
+    public GetCountersInstancesResponseDto filterCustomerAccountCountersByPeriod(String customerAccountCode, Date date) {
         GetCountersInstancesResponseDto result = new GetCountersInstancesResponseDto();
 
         try {

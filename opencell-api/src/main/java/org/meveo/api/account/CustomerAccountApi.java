@@ -720,7 +720,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
 
         if (customerAccount == null) {
-            throw new EntityDoesNotExistsException(BillingAccount.class, customerAccountCode);
+            throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
         }
 
         if (StringUtils.isBlank(date)) {
