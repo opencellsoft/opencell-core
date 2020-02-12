@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="allSuites" parallel="none">
+	<suite-files>
+        <suite-file path="customer.xml" />
+		<suite-file path="finance.xml" />
+		<suite-file path="payments.xml" />
+		<suite-file path="setUp.xml" />
+		<suite-file path="Administration.xml" />
+		<suite-file path="offers.xml" />
+	</suite-files>
+</suite>	

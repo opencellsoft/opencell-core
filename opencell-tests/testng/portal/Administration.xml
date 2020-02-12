@@ -1,0 +1,23 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="TestAll" preserve-order="true">
+	<parameter name="language" value="fr" />
+	<test name="Login" enabled="true">
+		<classes>
+			<class
+				name="com.opencellsoft.testng.tests.offers.TestAdminLoginKC" />
+		</classes>
+	</test>
+	<test name="Configuration" enabled="true">
+
+		<classes>
+
+		 <class
+				name="com.opencellsoft.testng.tests.administration.TestJobInstances" />  
+				<class
+				name="com.opencellsoft.testng.tests.administration.TestModule" />
+					</classes>
+	</test>
+
+
+</suite>
