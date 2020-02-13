@@ -996,13 +996,18 @@ public class AccountHierarchyApi extends BaseApi {
             if (!StringUtils.isBlank(billingAccountCode)) {
                 BillingAccount minimumTargetAccount = billingAccountService.findByCode(billingAccountCode);
                 ((BillingAccount) accountEntity).getCustomerAccount().getCustomer().setMinimumTargetAccount(minimumTargetAccount);
+            }else {
+                ((BillingAccount) accountEntity).getCustomerAccount().getCustomer().setMinimumTargetAccount(null);
             }
+
         }
         if (postData.getMinimumAmountEl() != null && postData.getMinimumAmountEl().getCustomerAccountMinimumTargetAccount() != null) {
             String billingAccountCode = postData.getMinimumAmountEl().getCustomerAccountMinimumTargetAccount();
             if (!StringUtils.isBlank(billingAccountCode)) {
                 BillingAccount minimumTargetAccount = billingAccountService.findByCode(billingAccountCode);
                 ((BillingAccount) accountEntity).getCustomerAccount().setMinimumTargetAccount(minimumTargetAccount);
+            }else {
+                ((BillingAccount) accountEntity).getCustomerAccount().setMinimumTargetAccount(null);
             }
         }
         customerService.update(((BillingAccount) accountEntity).getCustomerAccount().getCustomer());
