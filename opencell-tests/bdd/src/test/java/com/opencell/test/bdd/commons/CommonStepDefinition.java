@@ -37,7 +37,8 @@ public class CommonStepDefinition implements En {
                     : response.extract().jsonPath().getObject("actionStatus", ActionStatus.class));
             if (actionStatus.getMessage() == null)
                 actionStatus.setMessage("");
-            base.setResponse(new ApiResponse(response.extract().statusCode(), actionStatus));
+            base.setResponse(
+                    new ApiResponse(response.extract().statusCode(), actionStatus, response.extract().jsonPath()));
             assertNotNull(base.getResponse());
             assertNotNull(base.getResponse().getActionStatus());
             assertNotNull(base.getResponse().getHttpStatusCode());
@@ -81,7 +82,8 @@ public class CommonStepDefinition implements En {
                     : response.extract().jsonPath().getObject("actionStatus", ActionStatus.class));
             if (actionStatus.getMessage() == null)
                 actionStatus.setMessage("");
-            base.setResponse(new ApiResponse(response.extract().statusCode(), actionStatus));
+            base.setResponse(
+                    new ApiResponse(response.extract().statusCode(), actionStatus, response.extract().jsonPath()));
             base.setJsonresponse(response);
             assertNotNull(base.getResponse());
             assertNotNull(base.getResponse().getActionStatus());
@@ -127,7 +129,8 @@ public class CommonStepDefinition implements En {
                             : response.extract().jsonPath().getObject("actionStatus", ActionStatus.class));
                     if (actionStatus.getMessage() == null)
                         actionStatus.setMessage("");
-                    base.setResponse(new ApiResponse(response.extract().statusCode(), actionStatus));
+                    base.setResponse(new ApiResponse(response.extract().statusCode(), actionStatus,
+                            response.extract().jsonPath()));
                     base.setJsonresponse(response);
                     assertNotNull(base.getResponse());
                     assertNotNull(base.getResponse().getActionStatus());
@@ -167,6 +170,9 @@ public class CommonStepDefinition implements En {
         });
         Then("^The entity is deleted$", () -> {
             assertNotNull(base.getResponse());
+        });
+        Then("^The entity is created$", () -> {
+
         });    
         And("^Validate that the statusCode is \"([^\"]*)\"$", (String statusCode) -> {
             assertNotNull(base.getResponse());

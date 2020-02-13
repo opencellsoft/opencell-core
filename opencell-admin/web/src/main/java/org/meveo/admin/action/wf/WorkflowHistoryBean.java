@@ -77,12 +77,6 @@ public class WorkflowHistoryBean extends BaseBean<WorkflowHistory> {
 		return workflowHistoryService;
 	}
 
-
-	@Override
-	protected String getListViewName() {
-		return "workflowHistories";
-	}
-
 	@Override
 	protected String getDefaultSort() {
 		return "actionDate";

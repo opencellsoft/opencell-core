@@ -122,11 +122,6 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 	}
 
 	@Override
-	protected String getListViewName() {
-		return "tradingLanguages";
-	}
-
-	@Override
 	public String getNewViewName() {
 		return "tradingLanguagesDetail";
 	}

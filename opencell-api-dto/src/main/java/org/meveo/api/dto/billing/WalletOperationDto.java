@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.IEntityDto;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -27,7 +28,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @XmlRootElement(name = "WalletOperation")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WalletOperationDto extends BaseEntityDto {
+public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -1920217666509809184L;

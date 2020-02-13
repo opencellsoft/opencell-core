@@ -2222,6 +2222,9 @@ public class CustomFieldDataEntryBean implements Serializable {
     private PagingAndFiltering getPagingAndFiltering(ICustomFieldEntity entity, CustomFieldTemplate cft) {
         String filterString = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getDataFilterEL(), "entity", entity);
         String fieldsString = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getFieldsEL(), "entity", entity);
+        if (!StringUtils.isBlank(fieldsString) && !org.apache.commons.lang3.StringUtils.contains(fieldsString, "id")) {
+            fieldsString = "id," + fieldsString;
+        }
         if (StringUtils.isBlank(filterString)) {
             return new PagingAndFiltering();
         }
@@ -2237,7 +2240,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         List<String> includedFields = new ArrayList<>();
         if (!StringUtils.isBlank(fieldsString)) {
             fieldsString = fieldsString.replaceAll("[\\s\"]+", "");
-            includedFields = Arrays.asList(fieldsString.split(","));
+            includedFields.addAll(Arrays.asList(fieldsString.split(",")));
         }
 
         CustomEntityTemplate cet = customTableService.getCET(customTableCode);

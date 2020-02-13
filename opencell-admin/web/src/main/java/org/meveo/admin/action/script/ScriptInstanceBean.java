@@ -143,11 +143,6 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         return scriptInstanceService;
     }
 
-    @Override
-    protected String getListViewName() {
-        return "scriptInstances";
-    }
-
     /**
      * Fetch customer field so no LazyInitialize exception is thrown when we access it from account edit view.
      * 

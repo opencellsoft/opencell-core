@@ -76,16 +76,6 @@ public class InvoiceTypeBean extends CustomFieldBean<InvoiceType> {
 	}
 
 	@Override
-	protected String getListViewName() {
-		return "invoiceTypes";
-	}
-
-	@Override
-	public String getNewViewName() {
-		return "invoiceTypeDetail";
-	}
-
-	@Override
 	protected String getDefaultSort() {
 		return "code";
 	}

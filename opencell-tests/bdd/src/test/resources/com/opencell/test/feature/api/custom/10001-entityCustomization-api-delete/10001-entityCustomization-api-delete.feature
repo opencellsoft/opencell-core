@@ -1,4 +1,4 @@
-@custom
+@custom @ignore
 Feature: Delete Entity Customization by API
 
   Background: The classic offer is already executed
