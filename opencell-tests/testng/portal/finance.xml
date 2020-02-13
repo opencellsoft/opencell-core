@@ -1,0 +1,15 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="TestAll" preserve-order="true">
+	<parameter name="language" value="fr" />
+	<test name="finance" enabled="true">
+
+		<classes>
+		<class
+				name="com.opencellsoft.testng.tests.finance.TestAccountingCode" />
+		
+		</classes>
+	</test>
+
+
+</suite>

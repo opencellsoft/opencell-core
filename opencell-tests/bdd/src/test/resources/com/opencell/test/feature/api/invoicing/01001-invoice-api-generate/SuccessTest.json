@@ -1,0 +1,6 @@
+{
+	"targetType": "BILLINGACCOUNT",
+	"targetCode": "ben.ohara",
+	"generateXML": "false",
+	"invoicingDate": "2022-07-25"
+}

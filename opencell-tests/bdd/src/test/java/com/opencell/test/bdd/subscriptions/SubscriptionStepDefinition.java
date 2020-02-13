@@ -31,6 +31,9 @@ public class SubscriptionStepDefinition implements En {
                 assertEquals(code, actualEntity.getSubscription().getCode());
             }
         });
+        Then("^The subscription is created and activated$", () -> {
+
+        });
         Then("^The subscription is activated$", () -> {
 
         });

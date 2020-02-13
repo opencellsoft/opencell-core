@@ -1,0 +1,8 @@
+{ 
+	"code": "userAccount", 
+	"billingAccount":"billingAccount",
+	"terminationReason":"TR",
+	"terminationDate":"2018-09-14",
+	"status" : "ACTIVE" 
+	
+}

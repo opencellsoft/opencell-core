@@ -2,7 +2,7 @@
 Feature: Test all URLs of Admin
 
   @admin @superadmin
-  Scenario Outline: Open Configuration pages
+  Scenario Outline: Open Configuration pages url : <url>
     When I go to this "<url>"
     Then I should be on "<pageName>"
     And Validate that the statusCode is "<statusCode>"
@@ -10,7 +10,7 @@ Feature: Test all URLs of Admin
     Examples: 
       | url                                                                   | pageName                                 | statusCode |
       | /index.jsf                                                            | Opencell \| Open Source Billing Platform |        200 |
-      | /pages/admin/providers/providerSelfDetail.jsf?mode=appConfiguration   | Opencell \| Open Source Billing Platform |        200 |
+      | /pages/admin/providers/providerSelfDetail.jsf                         | Opencell \| Open Source Billing Platform |        200 |
       | /pages/crm/providerContacts/providerContacts.jsf                      | Opencell \| Open Source Billing Platform |        200 |
       | /pages/admin/meveoUsers/users.jsf                                     | Opencell \| Open Source Billing Platform |        200 |
       | /pages/admin/userRoles/userRoles.jsf                                  | Opencell \| Open Source Billing Platform |        200 |
@@ -72,8 +72,8 @@ Feature: Test all URLs of Admin
       | /pages/billing/invoicing/recurringInvoicing.jsf                       | Opencell \| Open Source Billing Platform |        200 |
       | /pages/billing/invoicing/exceptionelInvoicing.jsf                     | Opencell \| Open Source Billing Platform |        200 |
       | /pages/billing/invoices/invoices.jsf                                  | Opencell \| Open Source Billing Platform |        200 |
-      | /pages/billing/invoices/createInvoiceDetail.jsf?mode=agregated        | Opencell \| Open Source Billing Platform |        200 |
-      | /pages/billing/invoices/createInvoiceDetail.jsf?mode=detailed         | Opencell \| Open Source Billing Platform |        200 |
+      | /pages/billing/invoices/createInvoiceDetail.jsf                       | Opencell \| Open Source Billing Platform |        200 |
+      | /pages/billing/invoices/createInvoiceDetail.jsf                       | Opencell \| Open Source Billing Platform |        200 |
       | /pages/payments/dDRequestBuilders/dDRequestBuilders.jsf               | Opencell \| Open Source Billing Platform |        200 |
       | /pages/payments/ddrequestLotOp/ddrequestLotOps.jsf                    | Opencell \| Open Source Billing Platform |        200 |
       | /pages/payments/ddrequestLot/ddrequestLots.jsf                        | Opencell \| Open Source Billing Platform |        200 |
