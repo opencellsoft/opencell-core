@@ -1,0 +1,9 @@
+{
+    "code": "WO_4689",
+    "description": "Wallet operation test",
+    "subscription": "ben.ohara",
+    "chargeInstance": "CH_CLASSIC_REC_FLAT",
+    "currency": "EUR",
+    "taxCode": "TAX_CLASSIC_HIGH",
+    "status": "TREATED"
+}

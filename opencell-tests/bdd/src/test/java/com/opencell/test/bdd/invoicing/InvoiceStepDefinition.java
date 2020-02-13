@@ -3,6 +3,7 @@ package com.opencell.test.bdd.invoicing;
 import static org.junit.Assert.assertNotNull;
 
 import org.apache.http.HttpStatus;
+import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
 import org.meveo.api.dto.response.InvoicesDto;
 
 import com.opencell.test.bdd.commons.BaseHook;
@@ -20,6 +21,15 @@ public class InvoiceStepDefinition implements En {
                 InvoicesDto actualEntity = response.extract().body().as(InvoicesDto.class);
                 assertNotNull(actualEntity);
                 assertNotNull(actualEntity.getInvoices());
+            }
+        });
+        Then("^The invoice is generated$", () -> {
+            if (base.getResponse().getHttpStatusCode() == HttpStatus.SC_OK) {
+                ValidatableResponse response = base.getJsonresponse();
+                GenerateInvoiceResponseDto actualEntity = response.extract().body()
+                        .as(GenerateInvoiceResponseDto.class);
+                assertNotNull(actualEntity);
+                assertNotNull(actualEntity.getGenerateInvoiceResultDto());
             }
         });
     }
