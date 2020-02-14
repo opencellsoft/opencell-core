@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
@@ -58,6 +59,7 @@ import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
@@ -81,6 +83,8 @@ import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
@@ -135,6 +139,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * Entity list search parameter name - parameter's value contains filter parameters
      */
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
+    
+    
+    public static final String FROM_JSON_FUNCTION = "FromJson(a.cfValues,";
 
     protected static boolean accumulateCF = true;
 
@@ -839,8 +846,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public QueryBuilder getQuery(PaginationConfiguration config) {
 
-        final Class<? extends E> entityClass = getEntityClass();
-
         Map<String, Object> filters = config.getFilters();
 
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields());
@@ -852,7 +857,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 Map<CustomFieldTemplate, Object> parameterMap = (Map<CustomFieldTemplate, Object>) filters.get(SEARCH_FILTER_PARAMETERS);
                 queryBuilder = new FilteredQueryBuilder(filter, parameterMap, false, false);
             } else {
-
+            	
+            	Map<String, Object> cfFilters = extractCustomFieldsFilters(filters);
+				filters.putAll(cfFilters);
+				
                 for (String key : filters.keySet()) {
 
                     Object filterValue = filters.get(key);
@@ -866,32 +874,33 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
                     String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
                     String fieldName2 = fieldInfo.length == 3 ? fieldInfo[2] : null;
-
                     String[] fields = null;
                     if (condition != null) {
                         fields = Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
                     }
-
-                    // if ranged search - field value in between from - to values. Specifies "from" value: e.g value<=field.value
-                    if ("fromRange".equals(condition)) {
+                    String fieldWAlias = extractFieldWithAlias(fieldName);
+                    String fieldWAlias2 = extractFieldWithAlias(fieldName2);
+                    
+					// if ranged search - field value in between from - to values. Specifies "from" value: e.g value<=field.value
+					if ("fromRange".equals(condition)) {
                         if (filterValue instanceof Double) {
                             BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
-                            queryBuilder.addCriterion("a." + fieldName, " >= ", rationalNumber, true);
+                            queryBuilder.addCriterion(fieldWAlias, " >= ", rationalNumber, true);
                         } else if (filterValue instanceof Number) {
-                            queryBuilder.addCriterion("a." + fieldName, " >= ", filterValue, true);
+                            queryBuilder.addCriterion(fieldWAlias, " >= ", filterValue, true);
                         } else if (filterValue instanceof Date) {
-                            queryBuilder.addCriterionDateRangeFromTruncatedToDay("a." + fieldName, (Date) filterValue);
+                            queryBuilder.addCriterionDateRangeFromTruncatedToDay(fieldWAlias, (Date) filterValue);
                         }
 
                         // if ranged search - field value in between from - to values. Specifies "to" value: e.g field.value<=value
                     } else if ("toRange".equals(condition)) {
                         if (filterValue instanceof Double) {
                             BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
-                            queryBuilder.addCriterion("a." + fieldName, " <= ", rationalNumber, true);
+                            queryBuilder.addCriterion(fieldWAlias, " <= ", rationalNumber, true);
                         } else if (filterValue instanceof Number) {
-                            queryBuilder.addCriterion("a." + fieldName, " <= ", filterValue, true);
+                            queryBuilder.addCriterion(fieldWAlias, " <= ", filterValue, true);
                         } else if (filterValue instanceof Date) {
-                            queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + fieldName, (Date) filterValue);
+                            queryBuilder.addCriterionDateRangeToTruncatedToDay(fieldWAlias, (Date) filterValue);
                         }
 
                         // Value, which is a list, should be in field value (list)
@@ -901,18 +910,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         // Value is in field value (list)
                     } else if ("list".equals(condition)) {
                         String paramName = queryBuilder.convertFieldToParam(fieldName);
-                        queryBuilder.addSqlCriterion(":" + paramName + " in elements(a." + fieldName + ")", paramName, filterValue);
+                        queryBuilder.addSqlCriterion(":" + paramName + " in elements("+ fieldWAlias + ")", paramName, filterValue);
 
                         // Field value is in value (list)
                     } else if ("inList".equals(condition) || "not-inList".equals(condition)) {
-
                         boolean isNot = "not-inList".equals(condition);
 
-                        Field field = ReflectionUtils.getField(entityClass, fieldName);
-                        Class<?> fieldClassType = field.getType();
-
                         // Searching for a list inside a list field requires to join it first as collection member e.g. "IN (a.sellers) seller"
-                        if (Collection.class.isAssignableFrom(fieldClassType)) {
+						if (isFieldCollection(fieldName)) {
 
                             String paramName = queryBuilder.convertFieldToParam(fieldName);
                             String collectionItem = queryBuilder.convertFieldToCollectionMemberItem(fieldName);
@@ -929,10 +934,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                         } else {
                             if (filterValue instanceof String) {
-                                queryBuilder.addSql("a." + fieldName + (isNot ? " NOT " : "") + " IN (" + filterValue + ")");
+                                queryBuilder.addSql(fieldWAlias + (isNot ? " NOT " : "") + " IN (" + filterValue + ")");
                             } else if (filterValue instanceof Collection) {
                                 String paramName = queryBuilder.convertFieldToParam(fieldName);
-                                queryBuilder.addSqlCriterion("a." + fieldName + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, filterValue);
+                                queryBuilder.addSqlCriterion(fieldWAlias + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, filterValue);
                             }
                         }
 
@@ -981,11 +986,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     } else if ("minmaxRange".equals(condition)) {
                         if (filterValue instanceof Double) {
                             BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
-                            queryBuilder.addCriterion("a." + fieldName, " <= ", rationalNumber, false);
-                            queryBuilder.addCriterion("a." + fieldName2, " >= ", rationalNumber, false);
+                            queryBuilder.addCriterion(fieldWAlias, " <= ", rationalNumber, false);
+                            queryBuilder.addCriterion(fieldWAlias2, " >= ", rationalNumber, false);
                         } else if (filterValue instanceof Number) {
-                            queryBuilder.addCriterion("a." + fieldName, " <= ", filterValue, false);
-                            queryBuilder.addCriterion("a." + fieldName2, " >= ", filterValue, false);
+                            queryBuilder.addCriterion(fieldWAlias, " <= ", filterValue, false);
+                            queryBuilder.addCriterion(fieldWAlias2, " >= ", filterValue, false);
                         }
                         if (filterValue instanceof Date) {
                             Date value = (Date) filterValue;
@@ -996,8 +1001,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             int date = c.get(Calendar.DATE);
                             c.set(year, month, date, 0, 0, 0);
                             value = c.getTime();
-                            queryBuilder.addCriterion("a." + fieldName, "<=", value, false);
-                            queryBuilder.addCriterion("a." + fieldName2, ">=", value, false);
+                            queryBuilder.addCriterion(fieldWAlias, "<=", value, false);
+                            queryBuilder.addCriterion(fieldWAlias2, ">=", value, false);
                         }
 
                         // The value is in between two field values with either them being optional
@@ -1005,9 +1010,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                         String paramName = queryBuilder.convertFieldToParam(fieldName);
 
-                        String sql = "((a." + fieldName + " IS NULL and a." + fieldName2 + " IS NULL) or (a." + fieldName + "<=:" + paramName + " and :" + paramName + "<a."
-                                + fieldName2 + ") or (a." + fieldName + "<=:" + paramName + " and a." + fieldName2 + " IS NULL) or (a." + fieldName + " IS NULL and :" + paramName
-                                + "<a." + fieldName2 + "))";
+                        String sql = "(("+ fieldWAlias + " IS NULL and " + fieldWAlias2 + " IS NULL) or ("+ fieldWAlias + "<=:" + paramName + " and :" + paramName + "<" 
+                        		+ fieldWAlias2 + ") or ("+ fieldWAlias + "<=:" + paramName + " and " + fieldWAlias2 + " IS NULL) or ("+ fieldWAlias + " IS NULL and :" + paramName
+                                + "<" + fieldWAlias2 + "))";
                         queryBuilder.addSqlCriterionMultiple(sql, paramName, filterValue);
 
                         // The value range is overlapping two field values with either them being optional
@@ -1016,10 +1021,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         String paramNameFrom = queryBuilder.convertFieldToParam(fieldName);
                         String paramNameTo = queryBuilder.convertFieldToParam(fieldName2);
 
-                        String sql = "(( a." + fieldName + " IS NULL and a." + fieldName2 + " IS NULL) or  ( a." + fieldName + " IS NULL and a." + fieldName2 + ">:" + paramNameFrom
-                                + ") or (a." + fieldName2 + " IS NULL and a." + fieldName + "<:" + paramNameTo + ") or (a." + fieldName + " IS NOT NULL and a." + fieldName2
-                                + " IS NOT NULL and ((a." + fieldName + "<=:" + paramNameFrom + " and :" + paramNameFrom + "<a." + fieldName2 + ") or (:" + paramNameFrom + "<=a."
-                                + fieldName + " and a." + fieldName + "<:" + paramNameTo + "))))";
+                        String sql = "(( "+ fieldWAlias + " IS NULL and " + fieldWAlias2 + " IS NULL) or  ( "+ fieldWAlias + " IS NULL and " + fieldWAlias2 + ">:" + paramNameFrom
+                                + ") or (" + fieldWAlias2 + " IS NULL and "+ fieldWAlias + "<:" + paramNameTo + ") or ("+ fieldWAlias + " IS NOT NULL and " + fieldWAlias2
+                                + " IS NOT NULL and (("+ fieldWAlias + "<=:" + paramNameFrom + " and :" + paramNameFrom + "<" + fieldWAlias2 + ") or (:" + paramNameFrom + "<="
+                                + fieldWAlias + " and "+ fieldWAlias + "<:" + paramNameTo + "))))";
 
                         if (filterValue.getClass().isArray()) {
                             queryBuilder.addSqlCriterionMultiple(sql, paramNameFrom, ((Object[]) filterValue)[0], paramNameTo, ((Object[]) filterValue)[1]);
@@ -1034,7 +1039,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         if (filterValue instanceof String) {
                             String filterString = (String) filterValue;
                             for (String field : fields) {
-                                queryBuilder.addCriterionWildcard("a." + field, filterString, true);
+                                queryBuilder.addCriterionWildcard(extractFieldWithAlias(field), filterString, true);
                             }
                         }
                         queryBuilder.endOrClause();
@@ -1044,7 +1049,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     } else if (SEARCH_WILDCARD_OR.equals(condition)) {
                         queryBuilder.startOrClause();
                         for (String field : fields) {
-                            queryBuilder.addSql("a." + field + " like '%" + filterValue + "%'");
+                            queryBuilder.addSql(extractFieldWithAlias(field) + " like '%" + filterValue + "%'");
                         }
                         queryBuilder.endOrClause();
 
@@ -1052,7 +1057,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     } else if (SEARCH_WILDCARD_OR_IGNORE_CAS.equals(condition)) {
                         queryBuilder.startOrClause();
                         for (String field : fields) { // since SEARCH_WILDCARD_OR_IGNORE_CAS , then filterValue is necessary a String
-                            queryBuilder.addSql("lower(a." + field + ") like '%" + String.valueOf(filterValue).toLowerCase() + "%'");
+                            queryBuilder.addSql("lower(" + extractFieldWithAlias(field) + ") like '%" + String.valueOf(filterValue).toLowerCase() + "%'");
                         }
                         queryBuilder.endOrClause();
 
@@ -1068,24 +1073,17 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                     } else {
                         if (filterValue instanceof String && SEARCH_IS_NULL.equals(filterValue)) {
-                            Field field = ReflectionUtils.getField(entityClass, fieldName);
-                            Class<?> fieldClassType = field.getType();
-
-                            if (Collection.class.isAssignableFrom(fieldClassType)) {
-                                queryBuilder.addSql("a." + fieldName + " is empty ");
+                            if (isFieldCollection(fieldName)) {
+                                queryBuilder.addSql(fieldWAlias + " is empty ");
                             } else {
-                                queryBuilder.addSql("a." + fieldName + " is null ");
+                                queryBuilder.addSql(fieldWAlias + " is null ");
                             }
 
                         } else if (filterValue instanceof String && SEARCH_IS_NOT_NULL.equals(filterValue)) {
-                            Field field = ReflectionUtils.getField(entityClass, fieldName);
-                            Class<?> fieldClassType = field.getType();
-
-                            if (Collection.class.isAssignableFrom(fieldClassType)) {
-
-                                queryBuilder.addSql("a." + fieldName + " is not empty ");
+                            if (isFieldCollection(fieldName)) {
+                                queryBuilder.addSql(fieldWAlias + " is not empty ");
                             } else {
-                                queryBuilder.addSql("a." + fieldName + " is not null ");
+                                queryBuilder.addSql(fieldWAlias + " is not null ");
                             }
 
                         } else if (filterValue instanceof String) {
@@ -1094,42 +1092,45 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             String filterString = (String) filterValue;
                             boolean wildcard = (filterString.indexOf("*") != -1);
                             if (wildcard) {
-                                queryBuilder.addCriterionWildcard("a." + fieldName, filterString, true, "ne".equals(condition));
+                                queryBuilder.addCriterionWildcard(fieldWAlias, filterString, true, "ne".equals(condition));
                             } else {
-                                queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " != " : " = ", filterString, true);
+                                queryBuilder.addCriterion(fieldWAlias, "ne".equals(condition) ? " != " : " = ", filterString, true);
                             }
 
                         } else if (filterValue instanceof Date) {
-                            queryBuilder.addCriterionDateTruncatedToDay("a." + fieldName, (Date) filterValue);
+                            queryBuilder.addCriterionDateTruncatedToDay(fieldWAlias, (Date) filterValue);
 
                         } else if (filterValue instanceof Number) {
-                            queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " != " : " = ", filterValue, true);
+                            queryBuilder.addCriterion(fieldWAlias, "ne".equals(condition) ? " != " : " = ", filterValue, true);
 
                         } else if (filterValue instanceof Boolean) {
-                            queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " not is" : " is ", filterValue, true);
+                            queryBuilder.addCriterion(fieldWAlias, "ne".equals(condition) ? " not is" : " is ", filterValue, true);
 
                         } else if (filterValue instanceof Enum) {
                             if (filterValue instanceof IdentifiableEnum) {
                                 String enumIdKey = new StringBuilder(fieldName).append("Id").toString();
                                 queryBuilder.addCriterion("a." + enumIdKey, "ne".equals(condition) ? " != " : " = ", ((IdentifiableEnum) filterValue).getId(), true);
                             } else {
-                                queryBuilder.addCriterionEnum("a." + fieldName, (Enum) filterValue, "ne".equals(condition) ? " != " : " = ");
+                                queryBuilder.addCriterionEnum(fieldWAlias, (Enum) filterValue, "ne".equals(condition) ? " != " : " = ");
                             }
 
                         } else if (BaseEntity.class.isAssignableFrom(filterValue.getClass())) {
-                            queryBuilder.addCriterionEntity("a." + fieldName, filterValue, "ne".equals(condition) ? " != " : " = ");
+                            queryBuilder.addCriterionEntity(fieldWAlias, filterValue, "ne".equals(condition) ? " != " : " = ");
 
                         } else if (filterValue instanceof UniqueEntity || filterValue instanceof IEntity) {
-                            queryBuilder.addCriterionEntity("a." + fieldName, filterValue, "ne".equals(condition) ? " != " : " = ");
+                            queryBuilder.addCriterionEntity(fieldWAlias, filterValue, "ne".equals(condition) ? " != " : " = ");
 
                         } else if (filterValue instanceof List) {
-                            queryBuilder.addSqlCriterion("a." + fieldName + ("ne".equals(condition) ? " not in  " : " in ") + ":" + fieldName, fieldName, filterValue);
+                            queryBuilder.addSqlCriterion(fieldWAlias + ("ne".equals(condition) ? " not in  " : " in ") + ":" + fieldName, fieldName, filterValue);
                         }else if ("auditable".equalsIgnoreCase(fieldName) && filterValue instanceof Map) {
                             QueryBuilder queryBuilderHolder = queryBuilder;
                             ((Map) filterValue).forEach((k, value) -> queryBuilderHolder.addCriterionDate("a.auditable."+k, (Date) value));
                         }
                     }
                 }
+				for (String cft : cfFilters.keySet()) {
+					filters.remove(cft);
+				}
             }
         }
 
@@ -1145,6 +1146,55 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // log.trace("Query params are {}", queryBuilder.getParams());
         return queryBuilder;
     }
+
+	/**
+	 * @param fieldName 
+	 * @return
+	 */
+	private boolean isFieldCollection(String fieldName) {
+		if(fieldName.contains(FROM_JSON_FUNCTION)) {
+			return false;
+		}
+		final Class<? extends E> entityClass = getEntityClass();
+        Field field = ReflectionUtils.getField(entityClass, fieldName);
+        Class<?> fieldClassType = field.getType();
+        return Collection.class.isAssignableFrom(fieldClassType);
+	}
+
+	private String extractFieldWithAlias(String fieldName) {
+		if(StringUtils.isBlank(fieldName)) {
+			return fieldName;
+		}
+		return fieldName.contains(FROM_JSON_FUNCTION)? fieldName : "a." + fieldName;
+	}
+
+	private Map<String, Object> extractCustomFieldsFilters(Map<String, Object> filters) {
+		Map<String, Object> cftFilters = new TreeMap<String, Object>();
+		for (Object filterValue : filters.values()) {
+			if(filterValue instanceof CustomFieldValues) {
+				CustomFieldValues customFieldValues= (CustomFieldValues) filterValue;
+				Map<String, List<CustomFieldValue>> valuesByCode = customFieldValues.getValuesByCode();
+				for (String customFiterName: valuesByCode.keySet()) {
+                    //get the filter value
+                    CustomFieldValue  cfv = valuesByCode.get(customFiterName).get(0);
+                    Map<String, Object> map=cfv.getkeyValueMap();
+					String type = (String) map.keySet().toArray()[0];
+					Object value = map.values().toArray()[0];
+					
+					String[] fieldInfo = customFiterName.split(" ");
+                    String[] fields = fieldInfo.length == 1 ? fieldInfo : Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
+                    String transformedFilter = fieldInfo.length == 1 ? "" : fieldInfo[0]+" ";
+                    for(String fieldName : fields ) {
+						String castType = getCustomFieldDataType(value.getClass());
+						String functionPrefix=castType.split("\\(")[0];
+						transformedFilter = transformedFilter + functionPrefix + FROM_JSON_FUNCTION + fieldName + "," + type + "," + castType + ") ";
+                    }
+                    cftFilters.put(transformedFilter,value);
+				}
+			}
+		}
+		return cftFilters;
+	}
 
     /**
      * add a creterion to check if all filterValue (Array) elements are elements of the fieldName (Array)
@@ -1367,4 +1417,19 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         return query.getResultList();
     }
+    
+	public String getCustomFieldDataType(Class<?> clazz) {
+		if(clazz == Date.class) {
+			return "timestamp";
+		}
+		if (clazz == Double.class || clazz == EntityReferenceWrapper.class || clazz == Long.class || clazz == Boolean.class) {
+			for (CustomFieldTypeEnum cft : CustomFieldTypeEnum.values()) {
+				if (cft.getDataClass().equals(clazz)) {
+					String dataType = cft.getDataType();
+					return dataType.split(" ")[0];
+				}
+			}
+		}
+		return "varchar";
+	}
 }

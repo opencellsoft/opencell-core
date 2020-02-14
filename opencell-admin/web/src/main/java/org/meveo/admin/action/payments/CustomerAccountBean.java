@@ -415,6 +415,14 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
                     ((CardPaymentMethod) selectedPaymentMethod).setHiddenCardNumber(CardPaymentMethod.hideCardNumber(((CardPaymentMethod) selectedPaymentMethod).getCardNumber()));
                 }
             }
+            
+            if(selectedPaymentMethod instanceof DDPaymentMethod) {
+            	DDPaymentMethod ddPaymentMethod = (DDPaymentMethod) selectedPaymentMethod;
+            	String error = paymentMethodService.validateBankCoordinates(ddPaymentMethod);
+            	if(!StringUtils.isBlank(error)) {
+            		throw new BusinessException(error);
+            	}
+            }
 
             if (entity.getPaymentMethods() == null) {
                 entity.setPaymentMethods(new ArrayList<PaymentMethod>());

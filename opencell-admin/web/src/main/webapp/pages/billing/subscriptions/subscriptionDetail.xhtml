@@ -1,11 +1,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-				xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-				xmlns:f="http://xmlns.jcp.org/jsf/core"
-				xmlns:h="http://xmlns.jcp.org/jsf/html"
-				xmlns:p="http://primefaces.org/ui"
-				xmlns:hftl="http://hftl.org" xmlns:o="http://omnifaces.org/ui"
-				xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core"
-				template="/layout/template.xhtml">
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hftl="http://hftl.org" xmlns:o="http://omnifaces.org/ui"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://java.sun.com/jsp/jstl/core" 
+	template="/layout/template.xhtml">
 
     <o:importConstants type="org.meveo.model.audit.AuditableFieldNameEnum" />
 
@@ -1084,8 +1085,7 @@
 							</p:column>
 							<p:column rendered="#{!appProvider.entreprise}" sortBy="#{shotApplication.amountWithTax}">
 								<f:facet name="header">
-									<h:outputText
-										value="#{messages['walletOperation.amountWithTax']}" />
+									<h:outputText value="#{messages['walletOperation.amountWithTax']}" />
 								</f:facet>
 								<h:outputText value="#{shotApplication.amountWithTax}" converter="bigDecimal12DigitsConverter" />
 							</p:column>
