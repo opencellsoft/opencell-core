@@ -190,6 +190,9 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
                 throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid timer entity=" + postData.getTimerCode());
             }
         }
+        if (postData.getTimerCode() != null && postData.getTimerCode().trim().length() == 0 && jobInstance.getTimerEntity() != null) {
+            jobInstance.setTimerEntity(null);
+        }
 
         if (!StringUtils.isBlank(postData.getFollowingJob())) {
             JobInstance nextJob = jobInstanceService.findByCode(postData.getFollowingJob());
