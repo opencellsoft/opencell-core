@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import org.meveo.commons.utils.CustomDateSerializer;
@@ -1428,6 +1430,66 @@ public class CustomFieldValue implements Serializable, Cloneable {
             return longValue;
         } else if (entityReferenceValue != null) {
             return entityReferenceValue;
+        }
+        return null;
+    }
+    
+    public Map<String,Object> getkeyValueMap() {
+    	Map<String,Object> result = new TreeMap<String, Object>();
+        if (mapStringValue != null && !mapStringValue.isEmpty()) {
+        	result.put("mapString", mapStringValue);
+            return result;
+        } else if (mapDateValue != null && !mapDateValue.isEmpty()) {
+        	result.put("mapDate", mapDateValue);
+            return result;
+        } else if (mapLongValue != null && !mapLongValue.isEmpty()) {
+        	result.put("mapLong", mapLongValue);
+            return result;
+        } else if (mapDoubleValue != null && !mapDoubleValue.isEmpty()) {
+        	result.put("mapDouble", mapDoubleValue);
+            return result;
+        } else if (mapBooleanValue != null && !mapBooleanValue.isEmpty()) {
+        	result.put("mapBoolean", mapBooleanValue);
+            return result;
+        } else if (mapEntityValue != null && !mapEntityValue.isEmpty()) {
+        	result.put("mapEntity", mapEntityValue);
+            return result;
+        } else if (listStringValue != null && !listStringValue.isEmpty()) {
+        	result.put("listString", listStringValue);
+            return result;
+        } else if (listDateValue != null && !listDateValue.isEmpty()) {
+        	result.put("listDate", listDateValue);
+            return result;
+        } else if (listLongValue != null && !listLongValue.isEmpty()) {
+        	result.put("listLong", listLongValue);
+            return result;
+        } else if (listDoubleValue != null && !listDoubleValue.isEmpty()) {
+        	result.put("listDouble", listDoubleValue);
+            return result;
+        } else if (listBooleanValue != null && !listBooleanValue.isEmpty()) {
+        	result.put("listBoolean", listBooleanValue);
+            return result;
+        } else if (listEntityValue != null && !listEntityValue.isEmpty()) {
+        	result.put("listEntity", listEntityValue);
+            return result;
+        } else if (stringValue != null) {
+        	result.put("string", stringValue);
+            return result;
+        } else if (dateValue != null) {
+        	result.put("date", dateValue);
+            return result;
+        } else if (doubleValue != null) {
+        	result.put("double", doubleValue);
+            return result;
+        } else if (booleanValue != null) {
+        	result.put("boolean", booleanValue);
+            return result;
+        } else if (longValue != null) {
+        	result.put("long", longValue);
+            return result;
+        } else if (entityReferenceValue != null) {
+        	result.put("entity", entityReferenceValue);
+            return result;
         }
         return null;
     }
