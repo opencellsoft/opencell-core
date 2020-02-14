@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -16,6 +16,8 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.meveo.apiv2.generic.GenericPaginatedResource;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
@@ -32,6 +34,8 @@ public class JsonGenericMapper extends ObjectMapper{
         setUpConfig();
         registerModule(module);
         this.simpleFilterProvider = simpleFilterProvider;
+        addMixIn(WalletOperation.class, InfiniteRecursionMixIn.class);
+        addMixIn(ChargeInstance.class, InfiniteRecursionMixIn.class);
         addMixIn(BaseEntity.class, ForbiddenFieldsMixIn.class);
         addMixIn(GenericPaginatedResource.class, GenericPaginatedResourceMixIn.class);
         addMixIn(CustomFieldValues.class, EntityCustomFieldValuesFilterMixIn.class);
@@ -122,12 +126,13 @@ public class JsonGenericMapper extends ObjectMapper{
     private abstract class EntityCustomFieldValueFilterMixIn {}
 
     @JsonFilter("EntitySubObjectFieldFilter")
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private abstract class EntitySubObjectFieldFilterMixIn {}
 
     @JsonFilter("EntityForbiddenFieldsFilter")
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private abstract class ForbiddenFieldsMixIn {}
+
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    private abstract class InfiniteRecursionMixIn {}
 
     @JsonFilter("GenericPaginatedResourceFilter")
     private abstract class GenericPaginatedResourceMixIn {}

@@ -1080,10 +1080,7 @@ public class NativePersistenceService extends BaseService {
             } else if (targetClass == Boolean.class || (targetClass.isPrimitive() && targetClass.getName().equals("boolean"))) {
                 if (booleanVal != null) {
                     return value;
-                } else {
-                    return Boolean.parseBoolean(value.toString());
                 }
-
             } else if (targetClass == Date.class) {
                 if (dateVal != null || listVal != null) {
                     return value;
