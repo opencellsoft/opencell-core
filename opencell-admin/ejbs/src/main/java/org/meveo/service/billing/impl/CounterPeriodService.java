@@ -35,8 +35,9 @@ import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.jaxb.customer.Customer;
-import org.meveo.model.jaxb.customer.CustomerAccount;
+
+import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 
 /**
