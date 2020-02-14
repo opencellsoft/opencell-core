@@ -344,6 +344,12 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @Transient
     private Boolean exoneratedFromtaxes;
 
+    /**
+     * Tax category resolved
+     */
+    @Transient
+    private TaxCategory taxCategoryResolved;
+
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
     }
@@ -770,5 +776,19 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      */
     public void setTaxCategory(TaxCategory taxCategory) {
         this.taxCategory = taxCategory;
+    }
+    
+    /**
+     * @return Tax category resolved
+     */
+    public TaxCategory getTaxCategoryResolved() {
+        return taxCategoryResolved;
+    }
+    
+    /**
+     * @param taxCategoryResolved Tax category resolved
+     */
+    public void setTaxCategoryResolved(TaxCategory taxCategoryResolved) {
+        this.taxCategoryResolved = taxCategoryResolved;
     }
 }

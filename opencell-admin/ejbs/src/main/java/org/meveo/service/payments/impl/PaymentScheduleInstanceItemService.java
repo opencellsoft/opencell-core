@@ -43,10 +43,10 @@ import org.meveo.model.payments.PaymentScheduleStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.util.ApplicationProvider;
 
 /**
@@ -85,11 +85,11 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
 
     /** The invoice sub category country service. */
     @Inject
-    private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
+    private TaxService taxService;
 
     @Inject
     private ServiceSingleton serviceSingleton;
-    
+
     /** The Constant HUNDRED. */
     private static final BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -107,8 +107,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
     @SuppressWarnings("unchecked")
     public List<PaymentScheduleInstanceItem> getItemsToProcess(Date processingDate) {
         try {
-            return (List<PaymentScheduleInstanceItem>) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.listItemsToProcess")
-                .setParameter("requestPaymentDateIN", processingDate).getResultList();
+            return (List<PaymentScheduleInstanceItem>) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.listItemsToProcess").setParameter("requestPaymentDateIN", processingDate).getResultList();
         } catch (Exception e) {
             return new ArrayList<PaymentScheduleInstanceItem>();
         }
@@ -127,8 +126,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
         InvoiceSubCategory invoiceSubCat = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getAdvancePaymentInvoiceSubCategory();
         BigDecimal amount = paymentScheduleInstanceItem.getPaymentScheduleInstance().getAmount();
-        Tax tax = invoiceSubCategoryCountryService.determineTax(invoiceSubCat,
-            paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getSeller(), userAccount.getBillingAccount(), new Date(), false);
+        Tax tax = taxService.getZeroTax(); // TODO AKK There should be no tax on payment.
         if (tax == null) {
             throw new BusinessException("Cant found tax for invoiceSubCat:" + invoiceSubCat.getCode());
         }
@@ -194,12 +192,12 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             invoice.setAmountTax(amounts[1]);
             invoice.setAmountWithTax(amounts[2]);
             invoice.setNetToPay(amounts[2]);
-           
-            invoiceService.create(invoice);            
+
+            invoiceService.create(invoice);
             invoiceService.postCreate(invoice);
 
             invoice = serviceSingleton.assignInvoiceNumber(invoice);
-            
+
             paymentScheduleInstanceItem.setInvoice(invoice);
         }
         recordedInvoicePS = createRecordedInvoicePS(amounts, customerAccount, invoiceType, preferredMethod.getPaymentType(), invoice, aoIdsToPay, paymentScheduleInstanceItem);
@@ -244,10 +242,8 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      * @throws BusinessException the business exception
      */
     private void applyOneShotPS(PaymentScheduleInstanceItem paymentScheduleInstanceItem, boolean isPaymentRejected) throws BusinessException {
-        UserAccount userAccount = paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getUserAccount();
         InvoiceSubCategory invoiceSubCat = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getAdvancePaymentInvoiceSubCategory();
-        Tax tax = invoiceSubCategoryCountryService.determineTax(invoiceSubCat,
-            paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription().getSeller(), userAccount.getBillingAccount(), new Date(), false);
+        Tax tax = taxService.getZeroTax(); // TODO AKK There should be no tax on payment.
         if (tax == null) {
             throw new BusinessException("applyOneShotPS: cant found tax for invoiceSubCat:" + invoiceSubCat.getCode());
         }
@@ -256,9 +252,8 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         OneShotChargeTemplate oneShot = createOneShotCharge(invoiceSubCat, paymentlabel);
 
         try {
-            oneShotChargeInstanceService.oneShotChargeApplication(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), oneShot, null,
-                new Date(), new BigDecimal((isPaymentRejected ? "" : "-") + amounts[0]), null, new BigDecimal(1), null, null, null,
-                paymentlabel + (isPaymentRejected ? " (Rejected)" : ""), null, true);
+            oneShotChargeInstanceService.oneShotChargeApplication(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), oneShot, null, new Date(),
+                new BigDecimal((isPaymentRejected ? "" : "-") + amounts[0]), null, new BigDecimal(1), null, null, null, paymentlabel + (isPaymentRejected ? " (Rejected)" : ""), null, true);
 
         } catch (RatingException e) {
             log.trace("Failed to apply a one shot charge {}: {}", oneShot, e.getRejectionReason());
@@ -316,8 +311,8 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      * @return the account operation PS
      * @throws BusinessException the business exception
      */
-    public RecordedInvoice createRecordedInvoicePS(BigDecimal amounts[], CustomerAccount customerAccount, InvoiceType invoiceType, PaymentMethodEnum paymentMethodType,
-            Invoice invoice, List<Long> aoIdsToPay, PaymentScheduleInstanceItem paymentScheduleInstanceItem) throws BusinessException {
+    public RecordedInvoice createRecordedInvoicePS(BigDecimal amounts[], CustomerAccount customerAccount, InvoiceType invoiceType, PaymentMethodEnum paymentMethodType, Invoice invoice, List<Long> aoIdsToPay,
+            PaymentScheduleInstanceItem paymentScheduleInstanceItem) throws BusinessException {
         OCCTemplate occTemplate = oCCTemplateService.getOccTemplateFromInvoiceType(amounts[2], invoiceType, null, null);
         RecordedInvoice recordedInvoicePS = new RecordedInvoice();
         recordedInvoicePS.setDueDate(paymentScheduleInstanceItem.getDueDate());
@@ -385,8 +380,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      */
     public Long countPaidItems(PaymentScheduleInstance paymentScheduleInstance) {
         try {
-            return (Long) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.countPaidItems")
-                .setParameter("serviceInstanceIdIN", paymentScheduleInstance.getServiceInstance().getId()).getSingleResult();
+            return (Long) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.countPaidItems").setParameter("serviceInstanceIdIN", paymentScheduleInstance.getServiceInstance().getId()).getSingleResult();
         } catch (Exception e) {
             return null;
         }
@@ -400,8 +394,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      */
     public Long countIncomingItems(PaymentScheduleInstance paymentScheduleInstance) {
         try {
-            return (Long) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.countIncomingItems")
-                .setParameter("serviceInstanceIdIN", paymentScheduleInstance.getServiceInstance().getId()).getSingleResult();
+            return (Long) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.countIncomingItems").setParameter("serviceInstanceIdIN", paymentScheduleInstance.getServiceInstance().getId()).getSingleResult();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -416,8 +409,8 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      */
     public BigDecimal sumAmountPaid(PaymentScheduleInstance paymentScheduleInstance) {
         try {
-            return (BigDecimal) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.amountPaidItems")
-                .setParameter("serviceInstanceIdIN", paymentScheduleInstance.getServiceInstance().getId()).getSingleResult();
+            return (BigDecimal) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.amountPaidItems").setParameter("serviceInstanceIdIN", paymentScheduleInstance.getServiceInstance().getId())
+                .getSingleResult();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -432,8 +425,8 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      */
     public BigDecimal sumAmountIncoming(PaymentScheduleInstance paymentScheduleInstance) {
         try {
-            return (BigDecimal) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.amountIncomingItems")
-                .setParameter("serviceInstanceIdIN", paymentScheduleInstance.getServiceInstance().getId()).getSingleResult();
+            return (BigDecimal) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.amountIncomingItems").setParameter("serviceInstanceIdIN", paymentScheduleInstance.getServiceInstance().getId())
+                .getSingleResult();
         } catch (Exception e) {
             e.printStackTrace();
             return null;

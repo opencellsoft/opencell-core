@@ -22,7 +22,6 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
@@ -33,7 +32,6 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
-import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.billing.impl.RealtimeChargingService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
@@ -46,9 +44,6 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
 
     @Inject
     private OneShotChargeTemplateService oneShotChargeTemplateService;
-
-    @Inject
-    private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 
     @Inject
     private RealtimeChargingService realtimeChargingService;
@@ -264,36 +259,32 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         return result;
     }
 
-    public List<OneShotChargeTemplateWithPriceDto> listWithPrice(String languageCode, String countryCode, String currencyCode, String sellerCode, Date date)
-            throws MeveoApiException, BusinessException {
+    public List<OneShotChargeTemplateWithPriceDto> listWithPrice(String languageCode, String countryCode, String currencyCode, String sellerCode, Date date) throws MeveoApiException, BusinessException {
 
         Seller seller = sellerService.findByCode(sellerCode);
         TradingCurrency currency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode);
-        TradingCountry buyersCountry = tradingCountryService.findByTradingCountryCode(countryCode);
-        TradingCountry sellersCountry = seller.getTradingCountry();
+        TradingCountry buyersCountry = tradingCountryService.findByCode(countryCode);
 
         List<OneShotChargeTemplate> oneShotChargeTemplates = oneShotChargeTemplateService.getSubscriptionChargeTemplates();
         List<OneShotChargeTemplateWithPriceDto> oneShotChargeTemplatesWPrice = new ArrayList<>();
 
-        Date today = new Date();
         for (OneShotChargeTemplate oneShotChargeTemplate : oneShotChargeTemplates) {
             OneShotChargeTemplateWithPriceDto oneShotChargeDto = new OneShotChargeTemplateWithPriceDto();
             oneShotChargeDto.setChargeCode(oneShotChargeTemplate.getCode());
             oneShotChargeDto.setDescription(oneShotChargeTemplate.getDescription());
-            InvoiceSubCategory invoiceSubCategory = oneShotChargeTemplate.getInvoiceSubCategory();
 
             if (buyersCountry == null) {
                 log.warn("country with code={} does not exists", countryCode);
             } else {
 
-                Tax tax = invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, seller, buyersCountry, today, true);
+                // TODO AKK calculate tax - return WO and get tax info from there
+                Tax tax = null; // invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, seller, buyersCountry, today, true);
                 if (tax != null) {
                     oneShotChargeDto.setTaxCode(tax.getCode());
                     oneShotChargeDto.setTaxDescription(tax.getDescription());
                     oneShotChargeDto.setTaxPercent(tax.getPercent() == null ? 0.0 : tax.getPercent().doubleValue());
                 }
-                BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(seller, null, currency, buyersCountry, oneShotChargeTemplate, date, null, BigDecimal.ONE, null,
-                    null, null, true, true);
+                BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(seller, null, currency, buyersCountry, oneShotChargeTemplate, date, null, BigDecimal.ONE, null, null, null, true, true);
                 if (unitPrice != null) {
                     oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.doubleValue());
                 }

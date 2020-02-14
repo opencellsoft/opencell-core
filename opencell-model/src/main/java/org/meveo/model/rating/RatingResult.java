@@ -23,22 +23,22 @@ import java.util.List;
 import org.meveo.model.billing.WalletOperation;
 
 /**
- * Tracks EDR rating progress
+ * Tracks rating progress
  *
  * @author Khalid HORRI
  * @lastModifiedVersion 7.3
  */
-public class RatedEDRResult {
+public class RatingResult {
 
     /**
-     * A list of EDRs that were triggered as part of this EDR processing
+     * A list of EDRs that were triggered as part of this processing
      */
     private List<EDR> triggeredEDRs;
 
     /**
-     * Was EDR fully rated
+     * Was consumption/EDR fully rated
      */
-    private boolean EDRfullyRated;
+    private boolean fullyRated;
 
     /**
      * Wallet operation as result of rating an EDR
@@ -60,28 +60,28 @@ public class RatedEDRResult {
     }
 
     /**
-     * @return Was EDR fully rated
+     * @return Was consumption/EDR fully rated
      */
-    public boolean isEDRfullyRated() {
-        return EDRfullyRated;
+    public boolean isFullyRated() {
+        return fullyRated;
     }
 
     /**
-     * @param EDRfullyRated Was EDR fully rated
+     * @param fullyRated Was consumption/EDR fully rated
      */
-    public void setEDRfullyRated(boolean EDRfullyRated) {
-        this.EDRfullyRated = EDRfullyRated;
+    public void setFullyRated(boolean fullyRated) {
+        this.fullyRated = fullyRated;
     }
 
     /**
-     * @return Wallet operation as result of rating an EDR
+     * @return Wallet operation as result of rating
      */
     public WalletOperation getWalletOperation() {
         return walletOperation;
     }
 
     /**
-     * @param walletOperation Wallet operation as result of rating an EDR
+     * @param walletOperation Wallet operation as result of rating
      */
     public void setWalletOperation(WalletOperation walletOperation) {
         this.walletOperation = walletOperation;

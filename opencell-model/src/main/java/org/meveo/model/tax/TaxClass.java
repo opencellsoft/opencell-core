@@ -7,6 +7,9 @@ import java.util.Map;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -28,6 +31,7 @@ import org.meveo.model.ISearchable;
 @ExportIdentifier({ "code" })
 @Table(name = "billing_tax_class", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_tax_class_seq"), })
+@NamedQueries({ @NamedQuery(name = "TaxClass.getByCode", query = "from TaxClass t where t.code=:code ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
 public class TaxClass extends BusinessCFEntity implements Serializable, ISearchable {
     private static final long serialVersionUID = 1L;
 

@@ -185,7 +185,7 @@ public class WalletOperation extends BaseEntity {
     private Currency currency;
 
     /**
-     * Tax applied
+     * Tax applied. An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
      */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tax_id", nullable = false)
@@ -198,6 +198,13 @@ public class WalletOperation extends BaseEntity {
     @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
     @NotNull
     private BigDecimal taxPercent;
+
+    /**
+     * Charge tax class. An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
+     **/
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_class_id", nullable = false)
+    private TaxClass taxClass;
 
     /**
      * Unit price without tax
@@ -433,13 +440,6 @@ public class WalletOperation extends BaseEntity {
     private WalletOperationStatusEnum status = WalletOperationStatusEnum.OPEN;
 
     /**
-     * Charge tax class
-     **/
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tax_class_id", nullable = false)
-    private TaxClass taxClass;
-
-    /**
      * Constructor
      */
     public WalletOperation() {
@@ -463,7 +463,7 @@ public class WalletOperation extends BaseEntity {
      */
     @SuppressWarnings("deprecation")
     public WalletOperation(ChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date operationDate, String orderNumber, String criteria1, String criteria2, String criteria3,
-            String criteriaExtra, Tax tax, Date startDate, Date endDate, TaxClass taxClass) {
+            String criteriaExtra, Tax tax, Date startDate, Date endDate) {
 
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 
@@ -482,7 +482,19 @@ public class WalletOperation extends BaseEntity {
         this.parameter2 = criteria2;
         this.parameter3 = criteria3;
         this.inputQuantity = inputQuantity;
-        this.taxClass = taxClass;
+
+        // TODO AKK in what case prevails customized description of chargeInstance??
+
+//      String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
+//        String descTranslated = null;
+//        if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().get(languageCode) != null) {
+//            descTranslated = chargeTemplate.getDescriptionI18n().get(languageCode);
+//        }
+//        if (descTranslated == null) {
+//            descTranslated = (chargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : chargeInstance.getDescription();
+//        }
+//
+//        this.setDescription(descTranslated);
 
         if (chargeInstance instanceof RecurringChargeInstance) {
             this.subscriptionDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
@@ -578,12 +590,11 @@ public class WalletOperation extends BaseEntity {
      * @param orderNumber Order number
      * @param invoiceSubCategory Invoice sub category
      * @param status Status
-     * @param taxClass taxClass
      */
     public WalletOperation(String code, String description, WalletInstance wallet, Date operationDate, Date invoicingDate, OperationTypeEnum type, Currency currency, Tax tax, BigDecimal unitAmountWithoutTax,
             BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, String parameter1, String parameter2,
             String parameter3, String parameterExtra, Date startDate, Date endDate, Date subscriptionDate, OfferTemplate offerTemplate, Seller seller, String inputUnitDescription, String ratingUnitDescription,
-            BigDecimal inputQuantity, String orderNumber, InvoiceSubCategory invoiceSubCategory, WalletOperationStatusEnum status, TaxClass taxClass) {
+            BigDecimal inputQuantity, String orderNumber, InvoiceSubCategory invoiceSubCategory, WalletOperationStatusEnum status) {
         super();
         this.code = code;
         this.description = description;
@@ -614,7 +625,6 @@ public class WalletOperation extends BaseEntity {
         this.inputQuantity = inputQuantity;
         this.orderNumber = orderNumber;
         this.invoiceSubCategory = invoiceSubCategory;
-        this.taxClass = taxClass;
 
         if (chargeInstance != null) {
             this.serviceInstance = chargeInstance.getServiceInstance();

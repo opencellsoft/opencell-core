@@ -411,12 +411,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     private TaxClass taxClass;
 
     /**
-     * Was tax explicitly overridden during rating and should not be recalculated at invoice time
-     */
-    @Transient
-    private boolean taxOverriden;
-
-    /**
      * Was tax recalculated (changed) during invoicing
      */
     @Transient
@@ -929,17 +923,11 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     }
 
     /**
-     * @return Was tax explicitly overridden during rating and should not be recalculated at invoice time
+     * @return Was tax explicitly overridden during rating instead of calculated by a lookup in tax mapping table based on account and charge attributes. An absence of tax class
+     *         with a presence of tax means tax was overridden.
      */
     public boolean isTaxOverriden() {
-        return taxOverriden;
-    }
-
-    /**
-     * @param taxOverriden Was tax explicitly overridden during rating and should not be recalculated at invoice time
-     */
-    public void setTaxOverriden(boolean taxOverriden) {
-        this.taxOverriden = taxOverriden;
+        return taxClass == null;
     }
 
     /**

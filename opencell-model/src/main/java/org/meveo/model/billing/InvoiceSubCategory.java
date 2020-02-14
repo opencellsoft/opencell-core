@@ -54,13 +54,6 @@ import org.meveo.model.payments.OCCTemplate;
 @Table(name = "billing_invoice_sub_cat", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_invoice_sub_cat_seq"), })
 @CustomFieldEntity(cftCodePrefix = "InvoiceSubCategory", inheritCFValuesFrom = "invoiceCategory")
-@NamedQueries({
-        @NamedQuery(name = "invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", query = "select count(*) from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"
-                + " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)", hints = {
-                        @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-
-        @NamedQuery(name = "invoiceSubCategory.getInvoiceSubCatNotAssociated", query = "from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null) "
-                + " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)") })
 public class InvoiceSubCategory extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;

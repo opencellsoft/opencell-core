@@ -1561,6 +1561,11 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 </navigation-rule>
 <navigation-rule>
 
+    <navigation-case>
+        <from-outcome>configurationIssues</from-outcome>
+        <to-view-id>/pages/reporting/config/configurationIssues.xhtml</to-view-id>
+    </navigation-case>
+
 	<navigation-case>
 		<from-outcome>measuredValueDetail</from-outcome>
 		<to-view-id>/pages/reporting/dwh/measuredValueDetail.xhtml

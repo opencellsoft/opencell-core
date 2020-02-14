@@ -7,6 +7,9 @@ import java.util.Map;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -28,7 +31,11 @@ import org.meveo.model.ISearchable;
 @ExportIdentifier({ "code" })
 @Table(name = "billing_tax_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_tax_category_seq"), })
-public class TaxCategory extends BusinessCFEntity implements Serializable, ISearchable {
+@NamedQueries({ @NamedQuery(name = "TaxCategory.getByCode", query = "from TaxCategory t where t.code=:code ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
+        @NamedQuery(name = "TaxCategory.getNbrTaxCatNotAssociated", query = "select count(*) from TaxCategory v where v.id not in (select tm.accountTaxCategory.id from TaxMapping tm where tm.accountTaxCategory.id is not null)", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+        @NamedQuery(name = "TaxCategory.getTaxCatNotAssociated", query = "from TaxCategory v where v.id not in (select tm.accountTaxCategory.id from TaxMapping tm where tm.accountTaxCategory.id is not null)") })
+ public class TaxCategory extends BusinessCFEntity implements Serializable, ISearchable {
     private static final long serialVersionUID = 1L;
 
     /**

@@ -41,13 +41,9 @@ public class RealtimeChargingService {
     @Inject
     protected Logger log;
 
-    /** The invoice sub category country service. */
-    @Inject
-    private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
-
     /** The charge application rating service. */
     @Inject
-    private RatingService chargeApplicationRatingService;
+    private RatingService ratingService;
 
     /** The wallet operation service. */
     @Inject
@@ -115,20 +111,18 @@ public class RealtimeChargingService {
             Date subscriptionDate, OfferTemplate offerTemplate, BigDecimal inputQuantity, String param1, String param2, String param3, boolean priceWithoutTax, boolean ignoreNoTax)
             throws BusinessException {
 
-        Tax tax = invoiceSubCategoryCountryService.determineTax(chargeTemplate.getInvoiceSubCategory(), seller, ba, subscriptionDate, ignoreNoTax);
-
         OneShotChargeInstance ci = new OneShotChargeInstance();
         ci.setCountry(buyersCountry);
         ci.setCurrency(currency);
         ci.setChargeTemplate(chargeTemplate);
 
-        WalletOperation op = new WalletOperation(ci, inputQuantity, null, subscriptionDate, null, param1, param2, param3, null, tax, null, null);
+        WalletOperation op = new WalletOperation(ci, inputQuantity, null, subscriptionDate, null, param1, param2, param3, null, null, null, null);
 
         op.setOfferTemplate(offerTemplate);
         op.setSeller(seller);
 
         try {
-            chargeApplicationRatingService.rateBareWalletOperation(op, null, null, buyersCountry.getId(), currency);
+            ratingService.rateBareWalletOperation(op, null, null, buyersCountry.getId(), currency);
 
         } catch (RatingException e) {
             log.trace("Failed to rate a wallet operation {}: {}", op, e.getRejectionReason());

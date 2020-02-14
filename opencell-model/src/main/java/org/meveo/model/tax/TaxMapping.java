@@ -38,7 +38,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @Table(name = "billing_tax_mapping", uniqueConstraints = @UniqueConstraint(columnNames = { "tax_category_id", "tax_class_id", "seller_country_id", "buyer_country_id", "valid_from", "valid_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_tax_mapping_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "TaxMapping.findApplicableTax", query = "select m from TaxMapping m where m.taxCategory=:taxCategory and (m.taxClass=:taxClass or m.taxClass is null) and (m.sellerCountry=:sellerCountry or m.sellerCountry is null) and (m.buyerCountry=:buyerCountry or m.buyerCountry is null) and ((m.valid.from is null or m.valid.from<=:applicationDate) AND (:applicationDate<m.valid.to or m.valid.to is null)) ORDER BY m.taxClass asc NULLS LAST, m.sellerCountry asc NULLS LAST, m.buyerCountry asc NULLS LAST, priority DESC") })
+        @NamedQuery(name = "TaxMapping.findApplicableTax", query = "select m from TaxMapping m where m.accountTaxCategory=:taxCategory and (m.chargeTaxClass=:taxClass or m.chargeTaxClass is null) and (m.sellerCountry=:sellerCountry or m.sellerCountry is null) and (m.buyerCountry=:buyerCountry or m.buyerCountry is null) and ((m.valid.from is null or m.valid.from<=:applicationDate) AND (:applicationDate<m.valid.to or m.valid.to is null)) ORDER BY m.chargeTaxClass asc NULLS LAST, m.sellerCountry asc NULLS LAST, m.buyerCountry asc NULLS LAST, priority DESC") })
 public class TaxMapping extends AuditableEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 

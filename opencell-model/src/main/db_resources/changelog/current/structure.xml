@@ -2602,11 +2602,12 @@ END $$;]]>
 
         <sql>insert into ${db.schema.adapted}billing_tax_class (id, version, created, uuid, code, description) (select id, 0, created, 'tax_class_'||id, code, description from ${db.schema.adapted}billing_invoice_sub_cat isc where isc.id in (select distinct invoice_sub_category_id from ${db.schema.adapted}billing_inv_sub_cat_country))</sql>
         <sql>insert into ${db.schema.adapted}billing_tax_mapping (id, version, created, tax_category_id, tax_class_id, seller_country_id, buyer_country_id, filter_el, tax_id, tax_el, tax_el_sp, valid_from, valid_to) (select nextval('billing_tax_mapping_seq'), 0, created, -1, invoice_sub_category_id, selling_country_id, trading_country_id, filter_el, tax_id, tax_code_el, tax_code_el_sp, start_validity_date, end_validity_date from ${db.schema.adapted}billing_inv_sub_cat_country)</sql>
+        <sql>update ${db.schema.adapted}billing_tax_mapping set tax_script_id = (select tax_script_instance_id from ${db.schema.adapted}billing_invoice_sub_cat where billing_tax_mapping.id=billing_invoice_sub_cat.id and tax_script_instance_id is not null)</sql>
         
         <sql>update ${db.schema.adapted}billing_wallet_operation set tax_class_id = invoice_sub_category_id</sql>
         <sql>update ${db.schema.adapted}billing_rated_transaction set tax_class_id = invoice_sub_category_id</sql>
-        <sql>update ${db.schema.adapted}cat_charge_template set tax_class_id = invoice_sub_category_id </sql>
-        <sql>update ${db.schema.adapted}crm_customer_category set tax_category_id = -1 where exoneratedFromTaxes=0 </sql>
+        <sql>update ${db.schema.adapted}cat_charge_template set tax_class_id = invoice_sub_category </sql>
+        <sql>update ${db.schema.adapted}crm_customer_category set tax_category_id = -1 where exonerated_from_taxes=0 </sql>
         
         <addNotNullConstraint tableName="billing_wallet_operation" columnName="tax_class_id" columnDataType="bigint"/>
         <addNotNullConstraint tableName="billing_rated_transaction" columnName="tax_class_id" columnDataType="bigint"/>

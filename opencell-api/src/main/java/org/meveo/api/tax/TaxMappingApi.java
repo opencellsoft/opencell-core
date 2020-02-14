@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.tax.TaxMappingDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.DatePeriod;
@@ -74,12 +73,6 @@ public class TaxMappingApi extends BaseCrudApi<TaxMapping, TaxMappingDto> {
 
         handleMissingParametersAndValidate(dto);
 
-//        if (invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, sellersCountry, buyersCountry, postData.getStartValidityDate(),
-//            postData.getEndValidityDate()) != null) {
-//            throw new EntityAlreadyExistsException("InvoiceSubCategoryCountry with invoiceSubCategory=" + postData.getInvoiceSubCategory() + ", sellingCountry="
-//                    + postData.getSellingCountry() + ", tradingCountry=" + postData.getCountry() + " already exists.");
-//        }
-        
         TaxMapping entity = new TaxMapping();
 
         dtoToEntity(entity, dto);
