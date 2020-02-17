@@ -35,10 +35,15 @@ public class CreateMinAmountsResult implements Serializable {
      and amounts as values
      */
     Map<String, Amounts> createdAmountUserAccount;
-    
-    
+
+    /**
+     * The list for additional rated transaction
+     */
     List<RatedTransaction> minAmountTransactions = new ArrayList<RatedTransaction>();
 
+    /**
+     * The extra amount added for an entity to get the required minimum amount
+     */
     List<ExtraMinAmount> extraMinAmounts = new ArrayList<>();
 
     /**
