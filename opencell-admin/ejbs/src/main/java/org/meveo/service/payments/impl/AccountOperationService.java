@@ -368,26 +368,22 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      */
     public AccountOperation createToAccountOperation(AccountOperation accountOperation, CustomerAccount toCustomerAccount, BigDecimal amount) {
 
-        try {
-            AccountOperation newAccountOperation = SerializationUtils.clone(accountOperation);
-            newAccountOperation.setId(null);
-            newAccountOperation.setMatchingAmount(BigDecimal.ZERO);
-            newAccountOperation.setMatchingStatus(MatchingStatusEnum.O);
-            newAccountOperation.setUnMatchingAmount(amount);
-            newAccountOperation.setAmount(amount);
-            newAccountOperation.setCustomerAccount(toCustomerAccount);
-            newAccountOperation.setAccountingWritings(new ArrayList<>());
-            newAccountOperation.setInvoices(null);
-            newAccountOperation.setMatchingAmounts(new ArrayList<>());
-            newAccountOperation.setTransactionDate(new Date());
-            // newAccountOperation.setDueDate(new Date());
-            create(newAccountOperation);
+        AccountOperation newAccountOperation = SerializationUtils.clone(accountOperation);
+        newAccountOperation.setId(null);
+        newAccountOperation.setMatchingAmount(BigDecimal.ZERO);
+        newAccountOperation.setMatchingStatus(MatchingStatusEnum.O);
+        newAccountOperation.setUnMatchingAmount(amount);
+        newAccountOperation.setAmount(amount);
+        newAccountOperation.setCustomerAccount(toCustomerAccount);
+        newAccountOperation.setAccountingWritings(new ArrayList<>());
+        newAccountOperation.setInvoices(null);
+        newAccountOperation.setMatchingAmounts(new ArrayList<>());
+        newAccountOperation.setTransactionDate(new Date());
+        // newAccountOperation.setDueDate(new Date());
+        create(newAccountOperation);
 
-            newAccountOperation.setReference(getRefrence(newAccountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.t.name()));
-            return newAccountOperation;
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-            throw new BusinessException("Failed to create new account operation on the customer account " + toCustomerAccount.getCode(), e);
-        }
+        newAccountOperation.setReference(getRefrence(newAccountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.t.name()));
+        return newAccountOperation;
     }
 
     /**
