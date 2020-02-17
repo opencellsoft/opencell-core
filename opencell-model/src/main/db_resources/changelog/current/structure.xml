@@ -2536,7 +2536,7 @@ END $$;]]>
             <column name="tax_el" type="varchar(2000)" />
             <column name="tax_el_sp" type="varchar(2000)" />
             <column name="tax_script_id" type="bigint" />
-            <column name="priority" type="int4" />
+            <column name="priority" type="int4" defaultValueNumeric="0" />
             <column name="source" type="varchar(2000)" />
             <column name="origin_id" type="bigint" />
         </createTable>

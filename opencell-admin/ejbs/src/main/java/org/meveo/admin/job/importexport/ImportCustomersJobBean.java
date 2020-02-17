@@ -324,7 +324,7 @@ public class ImportCustomersJobBean {
             nbSellersUpdated++;
             seller.setDescription(sell.getDescription());
             if (!StringUtils.isBlank(sell.getTradingCountryCode())) {
-                seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode()));
+                seller.setTradingCountry(tradingCountryService.findByCode(sell.getTradingCountryCode()));
             } else {
                 seller.setTradingCountry(null);
             }
@@ -348,7 +348,7 @@ public class ImportCustomersJobBean {
             seller.setCode(sell.getCode());
             seller.setDescription(sell.getDescription());
             if (!StringUtils.isBlank(sell.getTradingCountryCode())) {
-                seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode()));
+                seller.setTradingCountry(tradingCountryService.findByCode(sell.getTradingCountryCode()));
             }
             if (!StringUtils.isBlank(sell.getTradingCurrencyCode())) {
                 seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(sell.getTradingCurrencyCode()));

@@ -29,7 +29,7 @@
             <hftl:searchField label="#{messages['taxMapping.taxELSpark']}" field="taxELSpark" />
             <hftl:searchField label="#{messages['taxMapping.taxScript']}" field="taxScript" valueLabelField="descriptionOrCode" listBean="#{scriptInstanceBean}" />
             <hftl:searchField label="#{messages['taxMapping.source']}" field="source" />
-            <hftl:searchField label="#{messages['taxMapping.originId']}" field="originId" />
+<!--             <hftl:searchField label="#{messages['taxMapping.originId']}" field="originId" /> -->
         </hftl:searchPanel>
 
         <hftl:dataList label="#{messages['taxMapping.title']}" backingBean="#{taxMappingListBean}" sortBy="id">
@@ -45,13 +45,9 @@
             <hftl:column label="#{messages['taxMapping.buyerCountry']}" field="buyerCountry.code" valueIdField="buyerCountry.id" entityView="tradingCountryDetail"
                 backView="taxMappings" />
             <hftl:column label="#{messages['taxMapping.filterEL']}" field="filterEL" />
-            <hftl:column label="#{messages['taxMapping.filterELSpark']}" field="filterELSpark" />
             <hftl:column label="#{messages['taxMapping.tax']}" field="tax.code" valueIdField="tax.id" entityView="taxDetail" backView="taxMappings" />
             <hftl:column label="#{messages['taxMapping.taxEL']}" field="taxEL" />
-            <hftl:column label="#{messages['taxMapping.taxELSpark']}" field="taxELSpark" />
             <hftl:column label="#{messages['taxMapping.taxScript']}" field="taxScript.code" valueIdField="taxScript.id" entityView="scriptInstanceDetail" backView="taxMappings" />
-            <hftl:column label="#{messages['taxMapping.source']}" field="source" />
-            <hftl:column label="#{messages['taxMapping.originId']}" field="originId" />
             <hftl:actionsColumn permission="#{currentUser.hasRole('catalogManagement')}" />
         </hftl:dataList>
 

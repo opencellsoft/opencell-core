@@ -107,7 +107,7 @@ public class CustomerCategory extends BusinessCFEntity implements ISearchable {
      */
     @Column(name = "tax_category_el_sp", length = 2000)
     @Size(max = 2000)
-    private String taxCategorySpark;
+    private String taxCategoryElSpark;
 
     /**
      * @return True if account is exonerated from taxes
@@ -210,14 +210,14 @@ public class CustomerCategory extends BusinessCFEntity implements ISearchable {
     /**
      * @return Expression to determine tax category - for Spark
      */
-    public String getTaxCategorySpark() {
-        return taxCategorySpark;
+    public String getTaxCategoryElSpark() {
+        return taxCategoryElSpark;
     }
 
     /**
      * @param taxCategorySpark Expression to determine tax category - for Spark
      */
-    public void setTaxCategorySpark(String taxCategorySpark) {
-        this.taxCategorySpark = taxCategorySpark;
+    public void setTaxCategoryElSpark(String taxCategoryElSpark) {
+        this.taxCategoryElSpark = taxCategoryElSpark;
     }
 }

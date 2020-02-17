@@ -123,7 +123,7 @@ public class TaxMapping extends AuditableEntity implements Serializable {
      * Priority. Higher value, higher the priority
      */
     @Column(name = "priority")
-    private int priority;
+    private int priority = 0;
 
     /**
      * Record's data source

@@ -20,19 +20,21 @@
         <hftl:formPanel label="#{messages['taxMapping.panel']}" backingBean="#{taxMappingBean}">
             <hftl:formField label="#{messages['taxMapping.accountTaxCategory']}" field="accountTaxCategory" valueLabelField="descriptionOrCode" listBean="#{taxCategoryBean}" />
             <hftl:formField label="#{messages['taxMapping.chargeTaxClass']}" field="chargeTaxClass" valueLabelField="descriptionOrCode" listBean="#{taxClassBean}" />
-            <o:validateMultiple components="valid_date valid_date_toRange" validator="#{taxMappingBean.validateDateRange}" message="#{messages['validator.dateRange.incorrectOrder']}" />
-            <hftl:formField label="#{messages['commons.valid']}" field="valid" time="true" displayOneLine="true" labelWidth="100" />
+            <o:validateMultiple components="valid_date valid_date_toRange" validator="#{taxMappingBean.validateDateRange}"
+                message="#{messages['validator.dateRange.incorrectOrder']}" />
+            <hftl:formField label="#{messages['commons.valid']}" field="valid" time="false" displayOneLine="true" labelWidth="100" />
             <hftl:formField label="#{messages['taxMapping.sellerCountry']}" field="sellerCountry" valueLabelField="descriptionOrCode" listBean="#{tradingCountryBean}" />
             <hftl:formField label="#{messages['taxMapping.buyerCountry']}" field="buyerCountry" valueLabelField="descriptionOrCode" listBean="#{tradingCountryBean}" />
-            <hftl:formField label="#{messages['taxMapping.filterEL']}" field="filterEL" />
-            <hftl:formField label="#{messages['taxMapping.filterELSpark']}" field="filterELSpark" />
-            <hftl:formField label="#{messages['taxMapping.tax']}" field="tax" valueLabelField="descriptionOrCode" listBean="#{taxBean}" />
-            <hftl:formField label="#{messages['taxMapping.taxEL']}" field="taxEL" />
-            <hftl:formField label="#{messages['taxMapping.taxELSpark']}" field="taxELSpark" />
-            <hftl:formField label="#{messages['taxMapping.taxScript']}" field="taxScript" valueLabelField="descriptionOrCode" listBean="#{scriptInstanceBean}" />
-            <hftl:formField label="#{messages['taxMapping.priority']}" field="priority" spinner="false"/>
-            <hftl:formField label="#{messages['taxMapping.source']}" field="source" edit="false"/>
-            <hftl:formField label="#{messages['taxMapping.originId']}" field="originId" spinner="false" edit="false" />
+            <hftl:formField label="#{messages['taxMapping.priority']}" field="priority" spinner="false" />
+            <hftl:formField label="#{messages['taxMapping.filterEL']}" field="filterEL" textArea="true" rows="1" maxlength="2000" newLine="true" />
+            <hftl:formField label="#{messages['taxMapping.filterELSpark']}" field="filterELSpark" textArea="true" rows="1" maxlength="2000" rendered="#{paramBean.sparkEnabled}" />
+            <hftl:formField label="#{messages['taxMapping.tax']}" field="tax" valueLabelField="descriptionOrCode" listBean="#{taxBean}" newLine="true" />
+            <hftl:formField label="#{messages['taxMapping.taxEL']}" field="taxEL" textArea="true" rows="1" maxlength="2000" newLine="true" />
+            <hftl:formField label="#{messages['taxMapping.taxELSpark']}" field="taxELSpark" textArea="true" rows="1" maxlength="2000" rendered="#{paramBean.sparkEnabled}" />
+            <hftl:formField label="#{messages['taxMapping.taxScript']}" field="taxScript" valueLabelField="descriptionOrCode" listBean="#{scriptInstanceBean}" newLine="true" />
+
+            <hftl:formField label="#{messages['taxMapping.source']}" field="source" edit="false" />
+            <!--             <hftl:formField label="#{messages['taxMapping.originId']}" field="originId" spinner="false" edit="false" /> -->
 
         </hftl:formPanel>
     </ui:define>

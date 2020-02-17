@@ -31,13 +31,19 @@
                     <hftl:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" id="description" />
                     <hftl:formField id="accountingCodeId" label="#{messages['customerCategory.accountingCode']}" field="accountingCode" valueLabelField="code"
                         listenerUpdate="@this" popup="true" popupId="accountingCodePopup" showResetButton="true" />
-                    <hftl:formField label="#{messages['customerCategory.exoneratedFromTaxes']}" field="exoneratedFromTaxes" listenerUpdate="taxCategory"/>
-                    <hftl:formField label="#{messages['customerCategory.exonerationTaxEl']}" field="exonerationTaxEl" textArea="true" rows="1" maxlength="2000" />
-                    <hftl:formField label="#{messages['customerCategory.exonerationTaxElSpark']}" field="exonerationTaxElSpark" textArea="true" rows="1" maxlength="2000" />
-                    <hftl:formField label="#{messages['customerCategory.exonerationReason']}" field="exonerationReason" size="80" />
-                    <hftl:formField label="#{messages['customerCategory.taxCategory']}" field="taxCategory" valueLabelField="descriptionOrCode" listBean="#{taxCategoryBean}" required="#{customerCategoryBean.entity.exoneratedFromTaxes==null and customerCategoryBean.entity.exonerationTaxEl==null" />
-                    <hftl:formField label="#{messages['customerCategory.taxCategoryEl']}" field="taxCategoryEl" textArea="true" rows="1" maxlength="2000" />
-                    <hftl:formField label="#{messages['customerCategory.taxCategoryEl']}" field="taxCategoryElSpark" textArea="true" rows="1" maxlength="2000" />
+                    <hftl:formField label="#{messages['customerCategory.exoneratedFromTaxes']}" field="exoneratedFromTaxes" listenerUpdate="taxExonerationRelated" />
+                    <hftl:formField label="#{messages['customerCategory.exonerationTaxEl']}" field="exonerationTaxEl" textArea="true" rows="1" maxlength="2000" newLine="true"
+                        listenerUpdate="taxExonerationRelated" />
+                    <hftl:formField label="#{messages['customerCategory.exonerationTaxElSpark']}" field="exonerationTaxElSpark" textArea="true" rows="1" maxlength="2000"
+                        listenerUpdate="taxExonerationRelated" />
+                    <h:panelGroup id="taxExonerationRelated">
+                        <hftl:formField label="#{messages['customerCategory.exonerationReason']}" field="exonerationReason" size="80"
+                            required="#{customerCategoryBean.entity.exoneratedFromTaxes or customerCategoryBean.entity.exonerationTaxEl!=null}" />
+                        <hftl:formField label="#{messages['customerCategory.taxCategory']}" field="taxCategory" valueLabelField="descriptionOrCode" listBean="#{taxCategoryBean}"
+                            required="#{!customerCategoryBean.entity.exoneratedFromTaxes and customerCategoryBean.entity.exonerationTaxEl==null}" newLine="true" />
+                        <hftl:formField label="#{messages['customerCategory.taxCategoryEl']}" field="taxCategoryEl" textArea="true" rows="1" maxlength="2000" newLine="true" />
+                        <hftl:formField label="#{messages['customerCategory.taxCategoryElSpark']}" field="taxCategoryElSpark" textArea="true" rows="1" maxlength="2000" />
+                    </h:panelGroup>
                 </p:tab>
                 <hftl:customFields backingBean="#{customerCategoryBean}" messagesId=":formId:messages" />
             </p:tabView>

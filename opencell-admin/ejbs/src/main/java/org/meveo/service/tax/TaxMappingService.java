@@ -159,14 +159,14 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         }
 
         if (validFrom != null && validTo != null) {
-            qb.addSql("((tm.valid.from is null or m.valid.from<=:endDate) AND (:startDate<m.valid.to or tm.valid.to is null))");
+            qb.addSqlCriterionMultiple("((tm.valid.from is null or tm.valid.from<=:endDate) AND (:startDate<tm.valid.to or tm.valid.to is null))", "startDate", validFrom, "endDate", validTo);
         } else if (validFrom != null) {
-            qb.addSql("(:startDate<m.valid.to or tm.valid.to is null)");
+            qb.addSqlCriterion("(:startDate<tm.valid.to or tm.valid.to is null)", "startDate", validFrom);
         } else if (validTo != null) {
-            qb.addSql("(tm.valid.from is null or tm.valid.from<=:endDate)");
+            qb.addSqlCriterion("(tm.valid.from is null or tm.valid.from<=:endDate)", "endDate", validTo);
         }
 
-        qb.addOrderMultiCriterion("tm.taxClass", false, "tm.sellerCountry", false, "tm.buyerCountry", false, "tm.priority", false);
+        qb.addOrderMultiCriterion("tm.chargeTaxClass", false, "tm.sellerCountry", false, "tm.buyerCountry", false, "tm.priority", false);
 
         try {
             return (List<TaxMapping>) qb.getQuery(getEntityManager()).getResultList();

@@ -51,6 +51,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.tax.TaxCategory;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
@@ -64,6 +65,7 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.tax.TaxCategoryService;
 
 /**
  * @author Edward P. Legaspi
@@ -123,6 +125,9 @@ public class BillingAccountApi extends AccountEntityApi {
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
 
+    @Inject
+    private TaxCategoryService taxCategoryService;
+    
     public BillingAccount create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
     }
@@ -170,7 +175,7 @@ public class BillingAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(BillingCycle.class, postData.getBillingCycle());
         }
 
-        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry());
+        TradingCountry tradingCountry = tradingCountryService.findByCode(postData.getCountry());
         if (tradingCountry == null) {
             throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
         }
@@ -238,6 +243,14 @@ public class BillingAccountApi extends AccountEntityApi {
 
         if (businessAccountModel != null) {
             billingAccount.setBusinessAccountModel(businessAccountModel);
+        }
+        
+        if (!StringUtils.isBlank(postData.getTaxCategoryCode())) {
+            TaxCategory taxCategory = taxCategoryService.findByCode(postData.getTaxCategoryCode());
+            if (taxCategory == null) {
+                throw new EntityDoesNotExistsException(TaxCategory.class, postData.getTaxCategoryCode());
+            }
+            billingAccount.setTaxCategory(taxCategory);
         }
 
         // Update payment method information in a customer account.
@@ -357,7 +370,7 @@ public class BillingAccountApi extends AccountEntityApi {
         }
 
         if (postData.getCountry() != null) {
-            TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry());
+            TradingCountry tradingCountry = tradingCountryService.findByCode(postData.getCountry());
             if (tradingCountry == null) {
                 throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
             }
@@ -392,6 +405,19 @@ public class BillingAccountApi extends AccountEntityApi {
         }
         if (!StringUtils.isBlank(postData.getEmail())) {
         	postData.getContactInformation().setEmail(postData.getEmail());
+        }
+
+        if (postData.getTaxCategoryCode() != null) {
+            if (StringUtils.isBlank(postData.getTaxCategoryCode())) {
+                billingAccount.setTaxCategory(null);
+
+            } else {
+                TaxCategory taxCategory = taxCategoryService.findByCode(postData.getTaxCategoryCode());
+                if (taxCategory == null) {
+                    throw new EntityDoesNotExistsException(TaxCategory.class, postData.getTaxCategoryCode());
+                }
+                billingAccount.setTaxCategory(taxCategory);
+            }
         }
 
         updateAccount(billingAccount, postData, checkCustomFields);
