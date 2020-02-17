@@ -1,0 +1,14 @@
+{
+  "code": "NOT_EXIST",
+  "description": "Test Recurring charge",
+  "invoiceSubCategory": "ISCAT_REC",
+  "disabled": false,
+  "unitNbDecimal": 4,
+  "roundingModeDtoEnum": "NEAREST",
+  "calendar": "CAL_MONTHLY_1ST",
+  "durationTermInMonth": null,
+  "subscriptionProrata": true,
+  "terminationProrata": true,
+  "applyInAdvance": true,
+  "triggeredEdrs": null
+}

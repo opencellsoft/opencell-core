@@ -18,37 +18,6 @@
  */
 package org.meveo.service.base;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.IntStream;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
@@ -58,26 +27,10 @@ import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.event.qualifier.Created;
-import org.meveo.event.qualifier.Disabled;
-import org.meveo.event.qualifier.Enabled;
-import org.meveo.event.qualifier.InstantiateWF;
-import org.meveo.event.qualifier.Removed;
-import org.meveo.event.qualifier.Updated;
+import org.meveo.event.qualifier.*;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.IAuditable;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IEnable;
-import org.meveo.model.IEntity;
-import org.meveo.model.ISearchable;
-import org.meveo.model.IdentifiableEnum;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.UniqueEntity;
-import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.*;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -88,6 +41,22 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.index.ElasticClient;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.*;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -1126,7 +1095,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             queryBuilder.addSqlCriterion("a." + fieldName + ("ne".equals(condition) ? " not in  " : " in ") + ":" + fieldName, fieldName, filterValue);
                         }else if ("auditable".equalsIgnoreCase(fieldName) && filterValue instanceof Map) {
                             QueryBuilder queryBuilderHolder = queryBuilder;
-                            ((Map) filterValue).forEach((k, value) -> queryBuilderHolder.addCriterionDate("a.auditable."+k, (Date) value));
+                            ((Map) filterValue).forEach((k, value) -> queryBuilderHolder.addCriterionDateTruncatedToDay("a.auditable."+k, (Date) value));
                         }
                     }
                 }

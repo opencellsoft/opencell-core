@@ -11320,7 +11320,7 @@ public class PaymentCallBackScript extends Script {
             <column name="updated" valueDate="now()"/>
             <column name="code" value="PaymentCard_Job"/>
             <column name="description" value="NULL"/>
-            <column name="job_category" value="ACCOUNT_RECEIVABLES"/>
+            <column name="job_category" value="PAYMENT"/>
             <column name="job_template"  value="PaymentJob"/>
             <column name="parametres" value="NULL"/>
             <column name="creator" value="opencell.admin"/>
@@ -11342,7 +11342,7 @@ public class PaymentCallBackScript extends Script {
             <column name="updated" valueDate="now()"/>
             <column name="code" value="RefundCard_Job"/>
             <column name="description" value="NULL"/>
-            <column name="job_category" value="ACCOUNT_RECEIVABLES"/>
+            <column name="job_category" value="PAYMENT"/>
             <column name="job_template"  value="PaymentJob"/>
             <column name="parametres" value="NULL"/>
             <column name="creator" value="opencell.admin"/>

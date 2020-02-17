@@ -29,7 +29,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
-import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
@@ -56,8 +55,8 @@ public class CheckPaymentScheduleCallbackJob extends Job {
 
 
     @Override
-    public JobCategoryEnum getJobCategory() {
-        return MeveoJobCategoryEnum.ACCOUNT_RECEIVABLES;
+    public MeveoJobCategoryEnum getJobCategory() {
+        return MeveoJobCategoryEnum.PAYMENT;
     }
 
 

@@ -1,15 +1,17 @@
 package com.opencell.test.bdd.subscriptions;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.opencell.test.bdd.commons.BaseHook;
-import com.opencell.test.utils.RestApiUtils;
-import cucumber.api.java8.En;
-import io.restassured.response.ValidatableResponse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.apache.http.HttpStatus;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.opencell.test.bdd.commons.BaseHook;
+import com.opencell.test.utils.RestApiUtils;
+
+import cucumber.api.java8.En;
+import io.restassured.response.ValidatableResponse;
 
 public class SubscriptionStepDefinition implements En {
 
@@ -28,6 +30,12 @@ public class SubscriptionStepDefinition implements En {
                 assertNotNull(actualEntity.getSubscription());
                 assertEquals(code, actualEntity.getSubscription().getCode());
             }
+        });
+        Then("^The subscription is created and activated$", () -> {
+
+        });
+        Then("^The subscription is activated$", () -> {
+
         });
 
     }

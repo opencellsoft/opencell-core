@@ -636,8 +636,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         char[] dst = new char[1];
         sb.getChars(0, 1, dst, 0);
         sb.replace(0, 1, new String(dst).toLowerCase());
-        if (className.endsWith("y")) {
-            sb.deleteCharAt(sb.length() - 1);
+        if (className.endsWith("ay")) {
+            sb.append("s");
+        } else if (className.endsWith("y")) {
+            sb.deleteCharAt(sb.length()-1);
             sb.append("ies");
         } else if (className.endsWith("s") || className.endsWith("x")) {
             sb.append("es");

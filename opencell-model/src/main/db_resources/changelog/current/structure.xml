@@ -2434,6 +2434,14 @@ END $$;]]>
         </addColumn>
     </changeSet>
     
+    <changeSet id="#3743_20190414" author="HatimOudad">
+	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'PaymentJob'</sql>
+	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'PaymentScheduleProcessingJob'</sql>
+	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'SepaDirectDebitJob'</sql>
+	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'SepaRejectedTransactionsJob'</sql>
+	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'CheckPaymentScheduleCallbackJob'</sql>
+    </changeSet>
+    
     
     <changeSet id="#4096_2020-02-07_1" author="AndriusKarpavicius" dbms="mysql">
         <createTable tableName="billing_tax_category_seq">
