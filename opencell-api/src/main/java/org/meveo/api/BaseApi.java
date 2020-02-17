@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -66,6 +67,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.DateUtils;
@@ -1119,7 +1121,11 @@ public abstract class BaseApi {
             Class targetClass) throws InvalidParameterException {
 
         if (pagingAndFiltering != null && targetClass != null) {
-            pagingAndFiltering.setFilters(convertFilters(targetClass, pagingAndFiltering.getFilters(), null));
+        	Map<String, CustomFieldTemplate> cfts = null;
+        	if(ICustomFieldEntity.class.isAssignableFrom(targetClass)) {
+        		cfts = customFieldTemplateService.findByAppliesTo(targetClass.getSimpleName());
+        	}
+			pagingAndFiltering.setFilters(convertFilters(targetClass, pagingAndFiltering.getFilters(), cfts ));
         }
         PaginationConfiguration paginationConfig = initPaginationConfiguration(defaultSortBy, defaultSortOrder, fetchFields, pagingAndFiltering);
         return paginationConfig;
@@ -1200,10 +1206,8 @@ public abstract class BaseApi {
             } else {
 
             	Class<?> fieldClassType = extractFieldType(targetClass, fieldName, cfts);
-                
-
-                Object valueConverted = castFilterValue(value, fieldClassType, (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition));
-                if (valueConverted != null) {
+                Object valueConverted =castFilterValue(value, fieldClassType, (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition), cfts);
+    			if (valueConverted != null) {
                     filters.put(key, valueConverted);
                 } else {
                     throw new InvalidParameterException("Filter " + key + " value " + value + " does not match " + fieldClassType.getSimpleName());
@@ -1247,11 +1251,12 @@ public abstract class BaseApi {
      * @param targetClass Target data type class to convert to
      * @param expectedList Is return value expected to be a list. If value is not a list and is a string a value will be parsed as comma separated string and each value will be
      *        converted accordingly. If a single value is passed, it will be added to a list.
+	 * @param cfts 
      * @return A converted data type
      * @throws InvalidParameterException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Object castFilterValue(Object value, Class targetClass, boolean expectedList) throws InvalidParameterException {
+    private Object castFilterValue(Object value, Class targetClass, boolean expectedList, Map<String, CustomFieldTemplate> cfts) throws InvalidParameterException {
 
         log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
             value != null ? value.getClass().isArray() : null);
@@ -1271,7 +1276,7 @@ public abstract class BaseApi {
                 boolean invalidReference = false;
                 for (String valueItem : valueItems) {
                 	try {
-                		Object valueConverted = castFilterValue(valueItem, targetClass, false);
+                		Object valueConverted = castFilterValue(valueItem, targetClass, false, cfts);
                 		if (valueConverted != null) {
                             valuesConverted.add(valueConverted);
                         } else {
@@ -1289,7 +1294,7 @@ public abstract class BaseApi {
 
                 // A single value list
             } else {
-                Object valueConverted = castFilterValue(value, targetClass, false);
+                Object valueConverted = castFilterValue(value, targetClass, false, cfts);
                 if (valueConverted != null) {
                     return Arrays.asList(valueConverted);
                 } else {
@@ -1304,6 +1309,7 @@ public abstract class BaseApi {
         Boolean booleanVal = null;
         Date dateVal = null;
         List listVal = null;
+        Map<String,Object> mapVal=null;
 
         if (value instanceof Number) {
             numberVal = (Number) value;
@@ -1317,6 +1323,8 @@ public abstract class BaseApi {
             stringVal = (String) value;
         } else if (value instanceof List) {
             listVal = (List) value;
+        } else if (value instanceof Map) {
+        	mapVal = (Map) value;
         } else {
             throw new InvalidParameterException("Unrecognized data type for filter criteria value " + value);
         }
@@ -1440,8 +1448,44 @@ public abstract class BaseApi {
                     }
                     return role;
                 }
-            }
-
+			} else if (CustomFieldValues.class.isAssignableFrom(targetClass)) {
+				if(mapVal!=null) {
+					Map<String, List<CustomFieldValue>> cfvMap = new TreeMap<String, List<CustomFieldValue>>();
+					for(String key : mapVal.keySet()) {
+						Object cfValue = mapVal.get(key);
+						String[] fieldInfo = key.split(" ");
+	                    String[] fields = fieldInfo.length == 1 ? fieldInfo : Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
+	                    Class dataClass = null;
+	                    CustomFieldStorageTypeEnum storageType = null;
+						for (String f : fields) {
+							CustomFieldTemplate customFieldTemplate = cfts.get(f);
+							if (customFieldTemplate == null) {
+								throw new BusinessException("No custom field found with name :" + f);
+							}
+							storageType = customFieldTemplate.getStorageType();
+							Class tempDataClass = customFieldTemplate.getFieldType().getDataClass();
+							if (dataClass == null) {
+								dataClass = tempDataClass;
+							} else {
+								if (!dataClass.equals(tempDataClass)) {
+									throw new BusinessException("Different data type used in the same filter : " + key);
+								}
+							}
+						}
+	                    Object valueConverted =castFilterValue(cfValue, dataClass, expectedList, cfts);
+						if(valueConverted==null) {
+							if(!CustomFieldStorageTypeEnum.SINGLE .equals( storageType)) {
+								throw new BusinessException("Only CustomFields with SINGLE storageType are accepted on filters. Cannot use filter '"+key+"'");
+							}else {
+								throw new BusinessException("Not able to cast filter value '"+cfValue+"' of custom field '"+key+"' to "+dataClass);
+							}
+						}
+						cfvMap.put(key, Arrays.asList(new CustomFieldValue(valueConverted)));
+					}
+					CustomFieldValues customFieldsValues = new CustomFieldValues(cfvMap);
+					return customFieldsValues;
+				}
+			}
         } catch (NumberFormatException e) {
             // Swallow - validation will take care of it later
         }
@@ -1526,6 +1570,17 @@ public abstract class BaseApi {
     	}
     	return new MeveoApiException(e);
     }
+    
+	public String getCustomFieldDataType(Class clazz) {
+		if (clazz == Double.class || clazz == Date.class || clazz == Long.class) {
+			for (CustomFieldTypeEnum cft : CustomFieldTypeEnum.values()) {
+				if (cft.getDataClass().equals(clazz)) {
+					return cft.getDataType();
+				}
+			}
+		}
+		return "varchar";
+	}
 
     public ICustomFieldEntity populateCustomFieldsForGenericApi(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
         return populateCustomFields(customFieldsDto, entity, isNewEntity, true);
