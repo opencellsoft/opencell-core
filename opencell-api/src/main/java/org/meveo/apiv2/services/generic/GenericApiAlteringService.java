@@ -122,13 +122,14 @@ public class GenericApiAlteringService extends GenericApiService {
     }
 
     private void writeValueToCFDto(CustomFieldDto customFieldDto, CustomFieldTypeEnum fieldType, CustomFieldStorageTypeEnum storageType, Object value) {
+        Object effectiveValue = ((Map) ((List) value).get(0)).get("value");
         switch (storageType){
             case SINGLE:
-                parseSingleValuedCf(customFieldDto, fieldType, value);
+                parseSingleValuedCf(customFieldDto, fieldType, effectiveValue);
                 break;
             case LIST:
                 customFieldDto.setListValue(new ArrayList<>());
-                List listValues = (List) ((Map) ((List) value).get(0)).get("value");
+                List listValues = (List) effectiveValue;
                 for(Object obj: listValues){
                     CustomFieldValueDto customFieldValueDto = new CustomFieldValueDto();
                     customFieldValueDto.setValue(getConvertedType(fieldType, obj));
@@ -136,7 +137,7 @@ public class GenericApiAlteringService extends GenericApiService {
                 }
                 break;
             case MAP:
-                Map<String, Object> mapValues = (Map) ((Map) ((List) value).get(0)).get("value");
+                Map<String, Object> mapValues = (Map) effectiveValue;
                 customFieldDto.setMapValue(new LinkedHashMap<String, CustomFieldValueDto>());
                 for(String key: mapValues.keySet()){
                     CustomFieldValueDto customFieldValueDto = new CustomFieldValueDto();
@@ -145,7 +146,7 @@ public class GenericApiAlteringService extends GenericApiService {
                 }
                 break;
             case MATRIX:
-                Map<Object, Object> matrixValues = (Map) ((Map) ((List) value).get(0)).get("value");
+                Map<Object, Object> matrixValues = (Map) effectiveValue;
                 customFieldDto.setMapValue(new LinkedHashMap<String, CustomFieldValueDto>());
                 for(Object key: matrixValues.keySet()){
                     CustomFieldValueDto customFieldValueDto = new CustomFieldValueDto();
@@ -177,14 +178,14 @@ public class GenericApiAlteringService extends GenericApiService {
             case CUSTOM_TABLE_WRAPPER:
                 customFieldDto.setCustomTableCode((String) getConvertedType(fieldType, value));
                 break;
-            case STRING:
-            case TEXT_AREA:
-                customFieldDto.setStringValue((String) getConvertedType(fieldType, value));
-                break;
             case LIST:
                 if(!((List)value).isEmpty()){
                     customFieldDto.setStringValue((String) getConvertedType(fieldType, ((Map)((List)value).get(0)).get("value")));
                 }
+                break;
+            default:
+                customFieldDto.setStringValue((String) getConvertedType(fieldType, value));
+                break;
         }
     }
 
@@ -193,7 +194,7 @@ public class GenericApiAlteringService extends GenericApiService {
             case DATE:
                 return new Date((Long) value);
             case ENTITY:
-                Map<String, String> entityRefDto = (Map<String, String>) ((Map)((List) value).get(0)).get("value");
+                Map<String, String> entityRefDto = (Map<String, String>) value;
                 EntityReferenceDto entityReferenceDto = new EntityReferenceDto();
                 entityReferenceDto.setClassname(entityRefDto.get("classname"));
                 entityReferenceDto.setCode(entityRefDto.get("code"));
