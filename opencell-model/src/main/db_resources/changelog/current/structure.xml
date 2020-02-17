@@ -2433,6 +2433,14 @@ END $$;]]>
             <column name="job_code" type="varchar(255)" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#3743_20190414" author="HatimOudad">
+	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'PaymentJob'</sql>
+	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'PaymentScheduleProcessingJob'</sql>
+	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'SepaDirectDebitJob'</sql>
+	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'SepaRejectedTransactionsJob'</sql>
+	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'CheckPaymentScheduleCallbackJob'</sql>
+    </changeSet>
 
 </databaseChangeLog>
 
