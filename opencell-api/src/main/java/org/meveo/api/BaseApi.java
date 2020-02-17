@@ -1418,6 +1418,10 @@ public abstract class BaseApi {
                     return new BigDecimal(stringVal);
                 }
 
+            } else if (targetClass == EntityReferenceWrapper.class) {
+                if (numberVal != null) {
+                    return value;
+                }
             } else if (BusinessEntity.class.isAssignableFrom(targetClass)) {
 
                 if (stringVal != null && (stringVal.equals(PersistenceService.SEARCH_IS_NULL) || stringVal.equals(PersistenceService.SEARCH_IS_NOT_NULL))) {
