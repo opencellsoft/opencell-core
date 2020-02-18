@@ -478,15 +478,13 @@ public class FlatFileValidator {
                 throw new BusinessException("The input directory for the " + fileFormat.getJobCode() + " job is note same with faile format input directory");
             }
 
-            if (!isAllowedToExecute(jobInstance)) {
-                throw new BusinessException("the " + fileFormat.getJobCode() + " job can not be run on a current server or cluster node");
-            }
-
-            try {
-                jobExecutionService.manualExecute(jobInstance);
-            } catch (Exception e) {
-                log.error("execute flat file job fail", e);
-                throw new BusinessException(e.getMessage(), e);
+            if (isAllowedToExecute(jobInstance)) {
+                try {
+                    jobExecutionService.manualExecute(jobInstance);
+                } catch (Exception e) {
+                    log.error("execute flat file job fail", e);
+                    throw new BusinessException(e.getMessage(), e);
+                }
             }
         }
     }
