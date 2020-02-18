@@ -87,7 +87,7 @@ public class NumberUtils {
             unitMultiplicator = BigDecimal.ONE;
         }
         if (unitNbDecimal == null) {
-            unitNbDecimal = new Integer(2);
+            unitNbDecimal = 2;
         }
 
         BigDecimal result = unitValue.multiply(unitMultiplicator);
@@ -116,6 +116,7 @@ public class NumberUtils {
 
     /**
      * Get BigDecimal as a string
+     * 
      * @param bigDecimal
      * @return A null-safe Plain String value of the bigDecimal
      */
@@ -124,8 +125,8 @@ public class NumberUtils {
     }
 
     /**
-     * Compute derived amounts amountWithoutTax/amountWithTax/amountTax. If taxPercent is null, or ZERO returned amountWithoutTax and amountWithTax values will be the same (which
-     * one, depending on isEnterprise value)
+     * Compute derived amounts: amountWithoutTax/amountWithTax/amountTax, taking amountWithoutTax or amountWithTax as a base and use tax percent to calculate the rest. <br/>
+     * If taxPercent is null, or ZERO returned amountWithoutTax and amountWithTax values will be the same (which one, depending on isEnterprise value)
      * 
      * @param amountWithoutTax Amount without tax
      * @param amountWithTax Amount with tax
@@ -135,8 +136,7 @@ public class NumberUtils {
      * @param roundingMode Rounding mode to apply
      * @return Calculated amount values as array [amountWithoutTax, amountWithTax, amountTax]
      */
-    public static BigDecimal[] computeDerivedAmounts(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal taxPercent, boolean isEnterprise, int rounding,
-            RoundingMode roundingMode) {
+    public static BigDecimal[] computeDerivedAmounts(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal taxPercent, boolean isEnterprise, int rounding, RoundingMode roundingMode) {
 
         if (taxPercent == null || taxPercent.compareTo(BigDecimal.ZERO) == 0) {
             if (isEnterprise) {
@@ -162,11 +162,38 @@ public class NumberUtils {
         return new BigDecimal[] { amountWithoutTax, amountWithTax, amountTax };
     }
 
+    /**
+     * Compute derived amounts: amountWithoutTax/amountWithTax with rounding applied.
+     * 
+     * @param amountWithoutTax Amount without tax
+     * @param amountWithTax Amount with tax
+     * @param amountTax Tax amount
+     * @param isEnterprise Is application used used in B2B (base prices are without tax) or B2C mode (base prices are with tax)
+     * @param rounding Rounding precision to apply
+     * @param roundingMode Rounding mode to apply
+     * @return Calculated amount values as array [amountWithoutTax, amountWithTax, amountTax]
+     */
+    public static BigDecimal[] computeDerivedAmountsWoutTaxPercent(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, boolean isEnterprise, int rounding, RoundingMode roundingMode) {
+
+        if (isEnterprise) {
+            amountWithoutTax = amountWithoutTax.setScale(rounding, roundingMode);
+            amountTax = amountWithTax.setScale(rounding, roundingMode);
+            amountWithTax = amountWithoutTax.add(amountTax);
+
+        } else {
+            amountWithTax = amountWithTax.setScale(rounding, roundingMode);
+            amountTax = amountWithTax.setScale(rounding, roundingMode);
+            amountWithoutTax = amountWithTax.subtract(amountTax);
+        }
+
+        return new BigDecimal[] { amountWithoutTax, amountWithTax, amountTax };
+    }
+
     public static long parseLongDefault(String value, long defaultValue) {
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
-            return  defaultValue;
+            return defaultValue;
         }
     }
 }

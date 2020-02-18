@@ -142,4 +142,30 @@ public class Tax extends BusinessCFEntity {
         return StringUtils.isBlank(id) ? getCode() : String.valueOf(id);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Tax)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+
+        Tax other = (Tax) obj;
+
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
+        if (code == null) {
+            if (other.getCode() != null) {
+                return false;
+            }
+        } else if (!code.equals(other.getCode())) {
+            return false;
+        }
+        return true;
+    }
 }

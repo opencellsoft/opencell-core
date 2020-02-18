@@ -559,8 +559,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     RatedTransaction rtCopy = new RatedTransaction();
                     BeanUtils.copyProperties(rtCopy, rt);
                     rtCopy.setId(null);
-                    rtCopy.setTax(subCatInvAggr.getTax());
-                    rtCopy.setTaxPercent(subCatInvAggr.getTaxPercent());
                     rtCopy.setBillingAccount(billingAccount);
                     rtCopy.changeStatus(RatedTransactionStatusEnum.BILLED);
                     rtCopy.setInvoice(invoiceCopy);
@@ -642,8 +640,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             entity.addInvoiceAggregate(subCatInvAggr);
 
             for (RatedTransaction rt : subCatInvAggr.getRatedtransactionsToAssociate()) {
-                rt.setTax(subCatInvAggr.getTax());
-                rt.setTaxPercent(subCatInvAggr.getTaxPercent());
                 rt.setInvoice(entity);
                 rt.setInvoiceAgregateF(subCatInvAggr);
                 rt.changeStatus(RatedTransactionStatusEnum.BILLED);

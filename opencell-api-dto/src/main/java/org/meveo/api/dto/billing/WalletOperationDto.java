@@ -161,6 +161,11 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
     private Long walletId;
 
     /**
+     * Charge tax class code
+     */
+    private String taxClassCode;
+
+    /**
      * Instantiates a new wallet operation dto.
      */
     public WalletOperationDto() {
@@ -211,13 +216,13 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         subscriptionDate = walletOperation.getSubscriptionDate();
         walletTemplate = walletOperation.getWallet().getCode();
         userAccount = walletOperation.getWallet().getUserAccount().getCode();
-        offerCode = walletOperation.getOfferCode() != null ? walletOperation.getOfferCode()
-                : walletOperation.getOfferTemplate() != null ? walletOperation.getOfferTemplate().getCode() : null;
+        offerCode = walletOperation.getOfferCode() != null ? walletOperation.getOfferCode() : walletOperation.getOfferTemplate() != null ? walletOperation.getOfferTemplate().getCode() : null;
         chargeInstance = walletOperation.getChargeInstance().getCode();
         chargeInstanceId = walletOperation.getChargeInstance().getId();
         rawAmountWithoutTax = walletOperation.getRawAmountWithoutTax();
         rawAmountWithTax = walletOperation.getRawAmountWithTax();
         updated = walletOperation.getUpdated();
+        taxClassCode = walletOperation.getTaxClass() != null ? walletOperation.getTaxClass().getCode() : null;
     }
 
     /**
@@ -866,14 +871,27 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         this.description = description;
     }
 
+    /**
+     * @return Charge tax class code
+     */
+    public String getTaxClassCode() {
+        return taxClassCode;
+    }
+
+    /**
+     * @param taxClassCode Charge tax class code
+     */
+    public void setTaxClassCode(String taxClassCode) {
+        this.taxClassCode = taxClassCode;
+    }
+
     @Override
     public String toString() {
-        return "WalletOperationDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate="
-                + walletTemplate + ", seller=" + seller + ", chargeInstance=" + chargeInstance + ", chargeInstanceId=" + chargeInstanceId + ", currency=" + currency + ", type="
-                + type + ", status=" + status + ", ratingUnitDescription=" + ratingUnitDescription + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax
-                + ", unitAmountWithTax=" + unitAmountWithTax + ", unitAmountTax=" + unitAmountTax + ", quantity=" + quantity + ", amountWithoutTax=" + amountWithoutTax
-                + ", amountWithTax=" + amountWithTax + ", amountTax=" + amountTax + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3
-                + ", parameterExtra=" + parameterExtra + ", orderNumber=" + orderNumber + ", startDate=" + startDate + ", endDate=" + endDate + ", operationDate=" + operationDate
-                + ", subscriptionDate=" + subscriptionDate + ", offerCode=" + offerCode + "]";
+        return "WalletOperationDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate=" + walletTemplate + ", seller=" + seller
+                + ", chargeInstance=" + chargeInstance + ", chargeInstanceId=" + chargeInstanceId + ", currency=" + currency + ", type=" + type + ", status=" + status + ", ratingUnitDescription=" + ratingUnitDescription
+                + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", unitAmountWithTax=" + unitAmountWithTax + ", unitAmountTax=" + unitAmountTax + ", quantity=" + quantity
+                + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", amountTax=" + amountTax + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3
+                + ", parameterExtra=" + parameterExtra + ", orderNumber=" + orderNumber + ", startDate=" + startDate + ", endDate=" + endDate + ", operationDate=" + operationDate + ", subscriptionDate="
+                + subscriptionDate + ", offerCode=" + offerCode + "]";
     }
 }

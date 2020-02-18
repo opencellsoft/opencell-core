@@ -337,8 +337,6 @@ public class InvoiceAggregateHandler {
             subCategoryInvoiceAgregate.setBillingAccount(billingAccount);
             subCategoryInvoiceAgregate.setAccountingCode(invoiceSubCategory.getAccountingCode());
             subCategoryInvoiceAgregate.setQuantity(BigDecimal.ONE);
-            subCategoryInvoiceAgregate.setTaxPercent(currentTax.getPercent());
-            subCategoryInvoiceAgregate.setTax(currentTax);
             subCategoryInvoiceAgregate.setAmountWithoutTax(BigDecimal.ZERO);
             subCategoryInvoiceAgregate.setAmountWithTax(BigDecimal.ZERO);
             subCategoryInvoiceAgregate.setAmountTax(BigDecimal.ZERO);

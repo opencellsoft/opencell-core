@@ -1668,21 +1668,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Delete min RT associated to an invoice
+     * Delete supplemental Rated transactions associated to an invoice. Includes Rated transactions created to reach a minimum invoicing amount or any other Rated transaction
+     * created just before invoicing and relied on an overall data to bill.
      *
      * @param invoice Invoice
      */
-    public void deleteMinRTs(Invoice invoice) {
-        getEntityManager().createNamedQuery("RatedTransaction.deleteMinRTByInvoice").setParameter("invoice", invoice).executeUpdate();
+    public void deleteSupplementalRTs(Invoice invoice) {
+        getEntityManager().createNamedQuery("RatedTransaction.deleteSupplementalRTByInvoice").setParameter("invoice", invoice).executeUpdate();
     }
 
     /**
-     * Delete min RT associated to a billing run
+     * Delete supplemental Rated transactions associated to a billing run. Includes Rated transactions created to reach a minimum invoicing amount or any other Rated transaction
+     * created just before invoicing and relied on an overall data to bill.
      *
      * @param billingRun Billing run
      */
-    public void deleteMinRTs(BillingRun billingRun) {
-        getEntityManager().createNamedQuery("RatedTransaction.deleteMinRTByBR").setParameter("billingRun", billingRun).executeUpdate();
+    public void deleteSupplementalRTs(BillingRun billingRun) {
+        getEntityManager().createNamedQuery("RatedTransaction.deleteSupplementalRTByBR").setParameter("billingRun", billingRun).executeUpdate();
     }
 
     /**
