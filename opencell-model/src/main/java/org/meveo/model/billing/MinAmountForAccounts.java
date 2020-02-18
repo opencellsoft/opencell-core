@@ -226,7 +226,7 @@ public class MinAmountForAccounts {
     }
 
     /**
-     * Check if Minimum amount is activated in account.
+     * Check if Minimum amount is activated in account or a service.
      * @param accountClass the account class.
      * @param entity the billable entity.
      * @return true if Minimum amount is activated false otherwise.

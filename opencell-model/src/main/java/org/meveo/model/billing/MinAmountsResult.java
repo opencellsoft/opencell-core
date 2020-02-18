@@ -11,7 +11,7 @@ import java.util.Map;
  * @author abdelmounaim akadid
  * @since 7.4.0
  */
-public class CreateMinAmountsResult implements Serializable {
+public class MinAmountsResult implements Serializable {
 
     /**
      * 
@@ -49,7 +49,7 @@ public class CreateMinAmountsResult implements Serializable {
     /**
      * Instantiate
      */
-    public CreateMinAmountsResult() {
+    public MinAmountsResult() {
     }
 
     /**

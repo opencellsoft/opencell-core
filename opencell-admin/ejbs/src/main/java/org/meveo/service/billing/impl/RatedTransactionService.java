@@ -33,7 +33,7 @@ import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.CreateMinAmountsResult;
+import org.meveo.model.billing.MinAmountsResult;
 import org.meveo.model.billing.ExtraMinAmount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -635,10 +635,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             Class[] accountClasses = new Class[] { ServiceInstance.class, Subscription.class, UserAccount.class, BillingAccount.class, CustomerAccount.class, Customer.class };
             for (Class accountClass : accountClasses) {
                 if (minAmountForAccounts.isMinAmountForAccountsActivated(accountClass, billableEntity)) {
-                    CreateMinAmountsResult createMinAmountsResults = createMinRTForAccount(billableEntity, billingAccount, lastTransactionDate, minRatingDate, extraMinAmounts,
+                    MinAmountsResult minAmountsResults = createMinRTForAccount(billableEntity, billingAccount, lastTransactionDate, minRatingDate, extraMinAmounts,
                             accountClass);
-                    extraMinAmounts = createMinAmountsResults.getExtraMinAmounts();
-                    minAmountTransactions.addAll(createMinAmountsResults.getMinAmountTransactions());
+                    extraMinAmounts = minAmountsResults.getExtraMinAmounts();
+                    minAmountTransactions.addAll(minAmountsResults.getMinAmountTransactions());
                 }
             }
             //get totalInvoicable for the billableEntity
@@ -687,10 +687,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @return CreateMinAmountsResult Contains createMinRTForAccount result
      * @throws BusinessException General Business exception
      */
-    private CreateMinAmountsResult createMinRTForAccount(IBillableEntity billableEntity, BillingAccount billingAccount, Date lastTransactionDate, Date minRatingDate,
-            List<ExtraMinAmount> extraMinAmounts, Class accountClass) throws BusinessException {
+    private MinAmountsResult createMinRTForAccount(IBillableEntity billableEntity, BillingAccount billingAccount, Date lastTransactionDate, Date minRatingDate,
+                                                   List<ExtraMinAmount> extraMinAmounts, Class accountClass) throws BusinessException {
 
-        CreateMinAmountsResult createMinAmountsResult = new CreateMinAmountsResult();
+        MinAmountsResult minAmountsResult = new MinAmountsResult();
 
         EntityManager em = getEntityManager();
 
@@ -832,7 +832,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 RatedTransaction ratedTransaction = getNewRatedTransaction(billableEntity, billingAccount, minRatingDate, minAmountLabel, entity, seller, invoiceSubCategory, tax,
                         rtMinAmount, code);
 
-                createMinAmountsResult.addMinAmountRT(ratedTransaction);
+                minAmountsResult.addMinAmountRT(ratedTransaction);
 
                 // Remember newly "created" transaction amounts, as they are not persisted yet to DB
                 minRTAmountMap.put(mapKey, new Amounts(ratedTransaction.getUnitAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax()));
@@ -843,8 +843,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         //createMinAmountsResult.setCreatedAmountSubscription(minRTAmountMap);
-        createMinAmountsResult.setExtraMinAmounts(extraMinAmounts);
-        return createMinAmountsResult;
+        minAmountsResult.setExtraMinAmounts(extraMinAmounts);
+        return minAmountsResult;
     }
 
     private String getMinAmountRTCode(BusinessEntity entity, Class accountClass) {
