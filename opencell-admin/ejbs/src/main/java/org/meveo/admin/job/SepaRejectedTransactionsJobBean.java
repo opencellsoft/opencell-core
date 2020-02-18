@@ -104,7 +104,10 @@ public class SepaRejectedTransactionsJobBean {
             FileUtils.moveFile(archiveDir, currentFile, fileName);
             log.info("Processing " + file.getName() + " done");
             result.registerSucces();
-
+            result.setNbItemsCorrectlyProcessed(ddRejectFileInfos.getNbItemsOk());
+            result.setNbItemsProcessedWithError(ddRejectFileInfos.getNbItemsKo());
+            result.addReport(ddRejectFileInfos.formatErrorsReport());
+            
         } catch (Exception e) {
             result.registerError(e.getMessage());
             log.error("Processing " + file.getName() + " failed", e);
