@@ -1,0 +1,43 @@
+{
+	"filters": {
+		"entry": [
+			{
+				"key": "billingAccount.customerAccount.customer.code",
+				"value": "WS_FULL_286_INV_CUST1"
+			},
+			{
+				"key": "fromRange invoiceDate",
+				"value": "2050-09-15"
+			},
+			{
+				"key": "toRange invoiceDate",
+				"value": "2050-11-15"
+			},
+			{
+				"key": "fromRange dueDate",
+				"value": "2050-09-15"
+			},
+			{
+				"key": "toRange dueDate",
+				"value": "2050-11-15"
+			},
+			{
+				"key": "invoiceType.code",
+				"value": "WS_FULL_286_IT_PDFXML"
+			},
+			{
+				"key": "fromRange amountWithoutTax",
+				"value": "7.99"
+			},
+			{
+				"key": "toRange amountWithoutTax",
+				"value": "10.5"
+			}
+		]
+	},
+	"fields": "transactions,pdf",
+	"offset": "0",
+	"limit": "200",
+	"sortBy": "dueDate",
+	"sortOrder": "DESCENDING"
+}

@@ -1,0 +1,16 @@
+{
+	"code": "PARENT_SELLER",
+	"description": "Parent Seller",
+	"currencyCode": "USD",
+	"countryCode": "US",
+	"languageCode": "ENG",
+	"invoiceTypeSequences": {
+		"entry": {
+			"key": "WS_FULL_SELLER_HIE",
+			"value": {
+				"prefixEL": "PARENT-",
+				"invoiceSequenceCode": "WS_FULL_SELLER_HIE"
+			}
+		}
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"code": "WS_FULL_286_IT_PDFXML",
+	"description": "Invoice PDF adn XML Type",
+	"occTemplateCode": "INV_STD",
+	"sequenceDto": {
+		"prefixEL": "Fact_",
+		"sequenceSize": "9"
+	},
+	"matchingAuto": "false",
+	"billingTemplateNameEL": "#{invoice.billingAccount.tradingLanguage.language.languageCode.equals('ENG') ? 'RETAIL' : 'TELECOM'}"
+}

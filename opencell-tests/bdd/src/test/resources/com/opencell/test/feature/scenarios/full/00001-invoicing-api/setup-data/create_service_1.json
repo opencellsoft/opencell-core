@@ -1,0 +1,11 @@
+{
+	"code": "WS_FULL_INV_SERVICE1",
+	"description": "WS_FULL_INV_SERVICE1",
+	"serviceChargeTemplateUsages": {
+		"serviceChargeTemplateUsage": [
+    		{
+    			"code": "WS_BASE_USAGE1"
+    		}
+		]
+	}
+}

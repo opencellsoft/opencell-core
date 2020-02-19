@@ -1,0 +1,10 @@
+{
+	"subscription": "WS_FULL_286_INV_SUB",
+	"servicesToActivate": {
+		"service": {
+			"code": "WS_FULL_INV_SERVICE1",
+			"quantity": "1",
+			"subscriptionDate": "2050-10-13"
+		}
+	}
+}

@@ -1,0 +1,8 @@
+{
+	"code": "WS_FULL_286_BC_PDFXML",
+	"description": "WS_FULL_286_BCC1",
+	"dueDateDelay": "1",
+	"calendar": "MONTHLY",
+	"invoiceDateDelay": "1",
+	"invoiceTypeCode": "WS_FULL_286_IT_PDFXML"
+}

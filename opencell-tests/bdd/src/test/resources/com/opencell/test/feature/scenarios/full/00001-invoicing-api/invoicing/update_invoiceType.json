@@ -1,0 +1,8 @@
+{
+	"code": "WS_FULL_286_IT_PDFXML",
+	"description": "Invoice PDF adn XML Type",
+	"occTemplateCode": "INV_STD",
+	"matchingAuto": "false",
+	"xmlFilenameEL": "#{invoice.id}--#{invoice.invoiceNumber}.xml",
+	"pdfFilenameEL": "#{invoice.invoiceNumber}--#{invoice.id}"
+}

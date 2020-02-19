@@ -1,0 +1,8 @@
+{
+	"targetCode": "BA_WS_FULL_286_INV_CUST1",
+	"targetType": "BILLINGACCOUNT",
+	"invoicingDate": "2050-10-15",
+	"firstTransactionDate": "2050-10-01",
+	"lastTransactionDate": "2050-10-31",
+	"generateXML": "false"
+}
