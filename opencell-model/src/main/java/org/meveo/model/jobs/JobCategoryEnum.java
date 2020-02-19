@@ -18,7 +18,6 @@
  */
 package org.meveo.model.jobs;
 
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.meveo.commons.utils.JobCategoryTypeAdapter;
@@ -27,9 +26,9 @@ import org.meveo.commons.utils.MeveoEnum;
 @XmlJavaTypeAdapter(JobCategoryTypeAdapter.class)
 @MeveoEnum(identifier = JobCategoryEnum.class)
 public interface JobCategoryEnum<E extends Enum<E>> {
-	String getLabel();
+    String getLabel();
 
-	Integer getId();
+    Integer getId();
 
-	String getName();
+    String getName();
 }

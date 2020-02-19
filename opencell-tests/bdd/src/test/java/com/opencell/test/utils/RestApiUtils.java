@@ -1,6 +1,7 @@
 package com.opencell.test.utils;
 
 import com.opencell.test.KeyCloakAuthenticationHook;
+
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
 import io.restassured.response.ValidatableResponse;
@@ -21,7 +22,7 @@ public class RestApiUtils {
                 .contentType("application/json")
                 .body(body)
                 .when()
-                .post(uri+api).then();
+                .post(uri + api).then();
     }
 
     /**
@@ -35,8 +36,7 @@ public class RestApiUtils {
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
                 .body(body)
-                .when()
-                .get(uri+api).then();
+                .when().get(uri + api).then();
     }
     
     
@@ -51,8 +51,7 @@ public class RestApiUtils {
                 .auth().oauth2(KeyCloakAuthenticationHook.getToken())
                 .contentType("application/json")
                 .body(body)
-                .when()
-                .delete(uri+api).then();
+                .when().delete(uri + api).then();
     }
 
     public static ValidatableResponse put(String api, String body) {
@@ -61,6 +60,6 @@ public class RestApiUtils {
                 .contentType("application/json")
                 .body(body)
                 .when()
-                .put(uri+api).then();
+                .put(uri + api).then();
     }
 }

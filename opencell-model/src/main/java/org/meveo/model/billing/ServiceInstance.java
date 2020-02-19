@@ -34,6 +34,7 @@ import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.order.OrderHistory;
 import org.meveo.model.order.OrderItemActionEnum;
@@ -207,6 +208,11 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_invoice_sub_category_id")
     private InvoiceSubCategory minimumInvoiceSubCategory;
+
+    /** Corresponding to minimum one shot charge template */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_charge_template_id")
+    private OneShotChargeTemplate minimumChargeTemplate;
 
     /** The order histories. */
     @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -1074,6 +1080,22 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
      */
     public void setMinimumInvoiceSubCategory(InvoiceSubCategory minimumInvoiceSubCategory) {
         this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
+    }
+
+    /**
+     * Gets the charge template used in minimum amount.
+     * @return a one Shot Charge template
+     */
+    public OneShotChargeTemplate getMinimumChargeTemplate() {
+        return minimumChargeTemplate;
+    }
+
+    /**
+     * Sets the minimum amount charge template.
+     * @param minimumChargeTemplate a one Shot Charge template
+     */
+    public void setMinimumChargeTemplate(OneShotChargeTemplate minimumChargeTemplate) {
+        this.minimumChargeTemplate = minimumChargeTemplate;
     }
 
     /**

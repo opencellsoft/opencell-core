@@ -1,5 +1,5 @@
 {
-	"code":"SUB_TEST_12",
+	"code":"SUB_TEST_INVALID",
     "userAccount": "UA_TEST",    
 	"offerTemplate":"OF_CLASSIC_TEMPLATE",    
 	"servicesToActivate": {

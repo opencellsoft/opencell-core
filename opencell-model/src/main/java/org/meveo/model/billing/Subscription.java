@@ -40,6 +40,7 @@ import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.dunning.DunningDocument;
@@ -285,6 +286,12 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_invoice_sub_category_id")
     private InvoiceSubCategory minimumInvoiceSubCategory;
+
+
+    /** Corresponding to minimum one shot charge template */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_charge_template_id")
+    private OneShotChargeTemplate minimumChargeTemplate;
 
     /**
      * Optional billing cycle for invoicing by subscription
@@ -1055,5 +1062,21 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     public void setMinimumInvoiceSubCategory(InvoiceSubCategory minimumInvoiceSubCategory) {
         this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
+    }
+
+    /**
+     * Gets the charge template used in minimum amount.
+     * @return a one Shot Charge template
+     */
+    public OneShotChargeTemplate getMinimumChargeTemplate() {
+        return minimumChargeTemplate;
+    }
+
+    /**
+     * Sets the minimum amount charge template.
+     * @param minimumChargeTemplate a one Shot Charge template
+     */
+    public void setMinimumChargeTemplate(OneShotChargeTemplate minimumChargeTemplate) {
+        this.minimumChargeTemplate = minimumChargeTemplate;
     }
 }

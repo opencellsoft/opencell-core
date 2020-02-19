@@ -12,9 +12,9 @@ import com.opencell.test.utils.RestApiUtils;
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
 
-public class ReccuringChargeStepDefinition implements En {
+public class RecuringChargeStepDefinition implements En {
 
-    public ReccuringChargeStepDefinition(BaseHook base) {
+    public RecuringChargeStepDefinition(BaseHook base) {
         Then("^The recurring charge is created$", () -> {
             base.getCode().ifPresent(code -> {
                 if (base.getResponse().getHttpStatusCode() == HttpStatus.SC_OK) {
