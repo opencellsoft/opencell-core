@@ -174,10 +174,6 @@ public class GenericApiAlteringService extends GenericApiService {
             case CHILD_ENTITY:
             case ENTITY:
                 customFieldDto.setEntityReferenceValue((EntityReferenceDto) getConvertedType(fieldType, value));
-                break;
-            case CUSTOM_TABLE_WRAPPER:
-                customFieldDto.setCustomTableCode((String) getConvertedType(fieldType, value));
-                break;
             case LIST:
                 if(!((List)value).isEmpty()){
                     customFieldDto.setStringValue((String) getConvertedType(fieldType, ((Map)((List)value).get(0)).get("value")));
