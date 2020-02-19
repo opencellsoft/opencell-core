@@ -418,7 +418,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             
             if(selectedPaymentMethod instanceof DDPaymentMethod) {
             	DDPaymentMethod ddPaymentMethod = (DDPaymentMethod) selectedPaymentMethod;
-            	String error = paymentMethodService.validateBankCoordinates(ddPaymentMethod);
+            	String error = paymentMethodService.validateBankCoordinates(ddPaymentMethod, entity.getCustomer());
             	if(!StringUtils.isBlank(error)) {
             		throw new BusinessException(error);
             	}
