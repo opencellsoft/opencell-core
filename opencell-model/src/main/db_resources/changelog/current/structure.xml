@@ -1979,5 +1979,9 @@
 		<sql>CREATE INDEX rt_adjusted_rated_tx ON ${db.schema.adapted}billing_rated_transaction (adjusted_rated_tx ASC NULLS LAST)</sql>
 		<sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id ASC NULLS LAST)</sql>
    </changeSet>
+   
+   <changeSet id="#5004_20200219" author="mohamed.el.youssoufi" dbms="postgresql">
+		<sql>CREATE INDEX wo_rt_id ON ${db.schema.adapted}billing_wallet_operation (rated_transaction_id ASC NULLS LAST)</sql>
+   </changeSet>
     
 </databaseChangeLog>
