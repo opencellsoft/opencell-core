@@ -14126,7 +14126,7 @@ public class Action1 extends Script {
         </entry>
         <entry>
           <key>*_ctw_field1</key>
-          <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">CF_${#TestSuite#index}_OFFER1</value>
+          <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">${#Project#entityPrefix}_${#TestSuite#index}_OFFER1</value>
         </entry>
         <entry>
           <key>*_ctw_field2</key>

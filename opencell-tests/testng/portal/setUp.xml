@@ -1,0 +1,48 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="TestAll" preserve-order="true">
+	<parameter name="language" value="fr" />
+	<test name="setUp" enabled="true">
+
+		<classes>
+			<class name="com.opencellsoft.testng.tests.setup.TestSeller" />
+			<class
+				name="com.opencellsoft.testng.tests.setup.TestAssuredFactor" />
+			<class
+				name="com.opencellsoft.testng.tests.setup.TestBillingCycles" />
+
+			<class
+				name="com.opencellsoft.testng.tests.setup.TestActionQualifier" />
+			<class name="com.opencellsoft.testng.tests.setup.TestCalendars" />
+			
+			<class
+				name="com.opencellsoft.testng.tests.setup.TestInvoicecategories" />
+                       <class
+				name="com.opencellsoft.testng.tests.setup.TestInvoiceSequence" />
+			<class
+				name="com.opencellsoft.testng.tests.setup.TestServiceType" />
+				<class
+				name="com.opencellsoft.testng.tests.setup.TestInvoiceSubCategories" />
+				<class
+				name="com.opencellsoft.testng.tests.setup.TestCurrencies" />
+                                <class
+				name="com.opencellsoft.testng.tests.setup.TestClassOfService" />
+                               <class
+				name="com.opencellsoft.testng.tests.setup.TestCreditCategories" />
+				<class
+				name="com.opencellsoft.testng.tests.setup.TestContact" />
+					<class
+				name="com.opencellsoft.testng.tests.setup.TestCustomerCategories" />
+				<class
+				name="com.opencellsoft.testng.tests.setup.TestBrands" />
+				<class
+				name="com.opencellsoft.testng.tests.setup.TestDensity" />
+				<class
+				name="com.opencellsoft.testng.tests.setup.TestDiscountPlan" />
+
+
+		</classes>
+	</test>
+
+
+</suite>

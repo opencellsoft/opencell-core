@@ -1,4 +1,4 @@
-@ticket-2878
+@ticket-2878 @scenarios @ignore
 Feature: rateUntilDate X should not produce WO with date X
 
   Background: The classic offer is already executed
