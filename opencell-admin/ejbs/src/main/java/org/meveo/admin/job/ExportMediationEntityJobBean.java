@@ -353,20 +353,5 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
         EDRDto dto = new EDRDto(edr);
         return dto;
     }
-    
-    private  <T extends Enum<T>> List<T> getTargetStatusList(JobInstance jobInstance, Class<T> clazz, String cfCode) {
-        List<T> formattedStatus = new ArrayList<T>();
-        String statusListStr = (String) this.getParamOrCFValue(jobInstance, cfCode);
-        if (statusListStr != null && !statusListStr.isEmpty()) {
-            List<String> statusList = Arrays.asList(statusListStr.split(SPLIT_CHAR));
-            for (String status : statusList) {
-                T statusEnum = T.valueOf(clazz, status.toUpperCase());
-                if (statusEnum != null) {
-                    formattedStatus.add(statusEnum);
-                }
-            }
-        }
-        return formattedStatus;
-    }
 
 }

@@ -1,7 +1,16 @@
 package org.meveo.admin.job;
+import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_DAYS_TO_PURGE;
+import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_EDR_CF;
+import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_EDR_STATUS_CF;
+import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_FIRST_TRANSACTION_DATE;
+import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_LAST_TRANSACTION_DATE;
+import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_PACKETS_NUMBER;
+import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_RT_CF;
+import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_RT_STATUS_CF;
+import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_WO_CF;
+import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_WO_STATUS_CF;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -22,17 +31,6 @@ import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.slf4j.Logger;
-
-import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_FIRST_TRANSACTION_DATE;
-import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_LAST_TRANSACTION_DATE;
-import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_EDR_CF;
-import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_WO_CF;
-import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_RT_CF;
-import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_DAYS_TO_PURGE;
-import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_PACKETS_NUMBER;
-import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_EDR_STATUS_CF;
-import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_RT_STATUS_CF;
-import static org.meveo.admin.job.PurgeMediationDataJob.PURGE_MEDIATION_DATA_JOB_WO_STATUS_CF;
 
 /**
  * The Class job bean to remove not open EDR, WO, RTx between two dates.
@@ -57,8 +55,6 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
     
     private static final int OLD_DATE = 10;
 
-    private static final String SPLIT_CHAR = ";";
-    
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
@@ -149,22 +145,6 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private long processEdrPaquet(Date firstTransactionDate, Date lastTransactionDate, List<EDRStatusEnum> targetStatusList, long paquetSize) {
         return edrService.purge(firstTransactionDate, lastTransactionDate, targetStatusList, paquetSize);
-    }
-    
-    
-    private  <T extends Enum<T>> List<T> getTargetStatusList(JobInstance jobInstance, Class<T> clazz, String cfCode) {
-        List<T> formattedStatus = new ArrayList<T>();
-        String statusListStr = (String) this.getParamOrCFValue(jobInstance, cfCode);
-        if (statusListStr != null && !statusListStr.isEmpty()) {
-            List<String> statusList = Arrays.asList(statusListStr.split(SPLIT_CHAR));
-            for (String status : statusList) {
-                T statusEnum = T.valueOf(clazz, status.toUpperCase());
-                if (statusEnum != null) {
-                    formattedStatus.add(statusEnum);
-                }
-            }
-        }
-        return formattedStatus;
     }
     
     

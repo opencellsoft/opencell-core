@@ -842,5 +842,15 @@
                              referencedColumnNames="id" referencedTableName="ar_payment_token" />
 
   </changeSet>
+  
+  <changeSet id="#500X_20200219" author="mohamed.el.youssoufi" dbms="postgresql">
+  		<sql>CREATE INDEX rt_edr_id ON ${db.schema.adapted}billing_rated_transaction (edr_id ASC NULLS LAST)</sql>
+  		<sql>CREATE INDEX resa_origin_edr_id ON ${db.schema.adapted}billing_reservation (origin_edr_id ASC NULLS LAST)</sql>
+  		<sql>CREATE INDEX wo_edr_id ON ${db.schema.adapted}billing_wallet_operation (edr_id ASC NULLS LAST)</sql>
+		<sql>CREATE INDEX edr_header_edr_id ON ${db.schema.adapted}rating_edr (header_edr_id ASC NULLS LAST)</sql>
+		<sql>CREATE INDEX rt_adjusted_rated_tx ON ${db.schema.adapted}billing_rated_transaction (adjusted_rated_tx ASC NULLS LAST)</sql>
+		<sql>CREATE INDEX wo_rt_id ON ${db.schema.adapted}billing_rated_transaction (wallet_operation_id ASC NULLS LAST)</sql>
+		<sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id ASC NULLS LAST)</sql>
+   </changeSet>
 
 </databaseChangeLog> 
