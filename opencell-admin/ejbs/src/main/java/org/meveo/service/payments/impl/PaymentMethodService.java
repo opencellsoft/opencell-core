@@ -312,7 +312,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
      *
      * @param paymentMethod the DDpaymentMethod to check.
      */
-	public String validateBankCoordinates(DDPaymentMethod paymentMethod) {
+	public String validateBankCoordinates(DDPaymentMethod paymentMethod, Customer cust) {
 		BankCoordinates bankCoordinates = paymentMethod.getBankCoordinates();
 
 		boolean emptyMandateIdentification = StringUtils.isBlank(paymentMethod.getMandateIdentification());
@@ -330,7 +330,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 			if (emptyIban) {
 				return "Missing IBAN.";
 			}
-			Customer cust = paymentMethod.getCustomerAccount().getCustomer();
+            
 			if (StringUtils.isBlank(bankCoordinates.getBic())
 					&& customerService.isBicRequired(cust, bankCoordinates.getIban())) {
 				return "Missing BIC.";
