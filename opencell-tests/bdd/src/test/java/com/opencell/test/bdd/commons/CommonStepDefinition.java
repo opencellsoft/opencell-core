@@ -92,7 +92,8 @@ public class CommonStepDefinition implements En {
                     new ApiResponse(response.extract().statusCode(), actionStatus, response.extract().jsonPath()));
             base.setJsonresponse(response);
             assertNotNull(base.getResponse());
-            assertNotNull(base.getResponse().getActionStatus());
+            assertNotNull("Cannot get actionStatus" + response.extract().body().asString(),
+                    base.getResponse().getActionStatus());
             assertNotNull(base.getResponse().getHttpStatusCode());
         });
         When("^I call the \"([^\"]*)\" \"([^\"]*)\" with identifier \"([^\"]*)\"$",
@@ -130,11 +131,17 @@ public class CommonStepDefinition implements En {
                         response = RestApiUtils.delete(api + base.getField(field).get(), bodyRequest);
                         break;
                     }
-                    ActionStatus actionStatus = (response.extract().jsonPath().get("actionStatus") == null
-                            ? response.extract().body().as(ActionStatus.class)
-                            : response.extract().jsonPath().getObject("actionStatus", ActionStatus.class));
-                    if (actionStatus.getMessage() == null)
-                        actionStatus.setMessage("");
+                    ActionStatus actionStatus = null;
+                    try {
+                        actionStatus = (response.extract().jsonPath().get("actionStatus") == null
+                                ? response.extract().body().as(ActionStatus.class)
+                                : response.extract().jsonPath().getObject("actionStatus", ActionStatus.class));
+                        if (actionStatus.getMessage() == null)
+                            actionStatus.setMessage("");
+                    } catch (Exception jpe) {
+                        System.out.println("DEBUG - Error parsing");
+                        System.out.println("DEBUG - Cannot parse: " + response.extract().body().asString());
+                    }
                     base.setResponse(new ApiResponse(response.extract().statusCode(), actionStatus,
                             response.extract().jsonPath()));
                     base.setJsonresponse(response);
