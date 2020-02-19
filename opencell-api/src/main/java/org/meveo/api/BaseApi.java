@@ -1252,7 +1252,7 @@ public abstract class BaseApi {
      * @param targetClass Target data type class to convert to
      * @param expectedList Is return value expected to be a list. If value is not a list and is a string a value will be parsed as comma separated string and each value will be
      *        converted accordingly. If a single value is passed, it will be added to a list.
-	 * @param cfts 
+	 * @param cfts
      * @return A converted data type
      * @throws InvalidParameterException
      */
@@ -1574,5 +1574,9 @@ public abstract class BaseApi {
     		return new ConstraintViolationApiException(e.getMessage());
     	}
     	return new MeveoApiException(e);
+    }
+
+    public ICustomFieldEntity populateCustomFieldsForGenericApi(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
+        return populateCustomFields(customFieldsDto, entity, isNewEntity, true);
     }
 }
