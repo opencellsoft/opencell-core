@@ -1,4 +1,4 @@
-@accounts @test
+@accounts
 Feature: Create/Update Account Hierarchy by API
 
   Background: The system is configured
