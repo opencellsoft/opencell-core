@@ -1,7 +1,7 @@
 {
 	"code": "WS_FULL_INV_OFFER1",
 	"description": "WS_FULL_INV_OFFER1",
-	"name": "WS_BASE_OFFER1",
+	"name": "RS_BASE_OFFER1",
 	"disabled": "false",
 	"offerServiceTemplates": {
 		"offerServiceTemplate": {

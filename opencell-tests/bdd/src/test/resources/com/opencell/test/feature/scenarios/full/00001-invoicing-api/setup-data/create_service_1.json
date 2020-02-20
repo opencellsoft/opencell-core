@@ -4,7 +4,7 @@
 	"serviceChargeTemplateUsages": {
 		"serviceChargeTemplateUsage": [
     		{
-    			"code": "WS_BASE_USAGE1"
+    			"code": "RS_BASE_USAGE1"
     		}
 		]
 	}

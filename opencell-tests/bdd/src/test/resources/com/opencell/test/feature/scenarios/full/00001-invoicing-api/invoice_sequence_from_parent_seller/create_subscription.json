@@ -2,6 +2,6 @@
 	"code": "WS_FULL_286_SELLER_HIE",
 	"description": "WS_FULL_286__SELLER_HIE",
 	"userAccount": "UA_WS_FULL_286_SELLER_HIE_CUST",
-	"offerTemplate": "WS_BASE_OFFER1",
+	"offerTemplate": "RS_BASE_OFFER1",
 	"subscriptionDate": "2018-10-13"
 }
