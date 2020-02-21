@@ -114,6 +114,7 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         notif.setEmailFrom(postData.getEmailFrom());
         notif.setEmailToEl(postData.getEmailToEl());
         notif.setRunAsync(postData.isRunAsync());
+        notif.setDescription(postData.getDescription());
         
         EmailTemplate emailTemplate = new EmailTemplate();
         emailTemplate.setSubject(postData.getSubject());
@@ -121,7 +122,7 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         emailTemplate.setHtmlContent(postData.getHtmlBody());
         notif.setEmailTemplate(emailTemplate);
 
-        Set<String> emails = new HashSet<String>();
+        Set<String> emails = new HashSet<>();
         for (String email : postData.getSendToMail()) {
             emails.add(email);
         }
@@ -208,6 +209,7 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         notif.setCounterTemplate(counterTemplate);
         notif.setEmailFrom(postData.getEmailFrom());
         notif.setEmailToEl(postData.getEmailToEl());
+        notif.setDescription(postData.getDescription());
        
         EmailTemplate emailTemplate = notif.getEmailTemplate();
         if (emailTemplate == null) {
@@ -223,7 +225,7 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
             notif.setDisabled(postData.isDisabled());
         }
 
-        Set<String> emails = new HashSet<String>();
+        Set<String> emails = new HashSet<>();
         for (String email : postData.getSendToMail()) {
             emails.add(email);
         }
