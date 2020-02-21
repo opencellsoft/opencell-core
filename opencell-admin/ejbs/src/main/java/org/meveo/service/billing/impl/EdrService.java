@@ -425,12 +425,8 @@ public class EdrService extends PersistenceService<EDR> {
 		
 		case "WalletOperation":
 			
-			String q6 = new StringBuilder("update billing_rated_transaction set wallet_operation_id = null where wallet_operation_id in (").append(inClause).append(")").toString();
 			String q10 = new StringBuilder("update billing_wallet_operation set reratedwalletoperation_id = null where reratedwalletoperation_id in (").append(inClause).append(")").toString();
 			String q7 = new StringBuilder("delete from billing_wallet_operation where id in (").append(inClause).append(")").toString();
-			
-			long r6 = getEntityManager().createNativeQuery(q6).executeUpdate();
-			log.debug("{} rows updated \n with query {}", r6, q6);
 			
 			long r10 = getEntityManager().createNativeQuery(q10).executeUpdate();
 			log.debug("{} rows updated \n with query {}", r10, q10);
