@@ -178,8 +178,14 @@ public class SepaFile extends AbstractDDRequestBuilder {
 			}
 			OrgnlPmtInfAndSts orgnlPmtInfAndSts = cstmrPmtStsRpt.getOrgnlPmtInfAndSts();
 			for (TxInfAndSts txInfAndSts : orgnlPmtInfAndSts.getTxInfAndSts()) {
+				try {
 				if (REJECT_STS_CODE.equals(txInfAndSts.getTxSts())) {
 					ddRejectFileInfos.getListInvoiceRefsRejected().put(new Long(txInfAndSts.getOrgnlEndToEndId()), REJECT_STS_CODE);
+					ddRejectFileInfos.addItemOk();
+				}
+				}catch (Exception e) {
+					ddRejectFileInfos.addItemKo();
+					log.error("Error on processSDDRejectedFile txInfAndSts.getOrgnlInstrId:"+txInfAndSts.getOrgnlInstrId(),e);
 				}
 			}
 
