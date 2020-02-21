@@ -1,0 +1,6 @@
+{
+	"code": "org.meveo.service.script.rating.RatingScript",
+	"description": "rating script",
+	"type": "JAVA",
+	"script": "<![CDATA[\n  package org.meveo.service.script.rating;\n\n  import java.math.BigDecimal;\n  import java.util.Map;\n  import org.meveo.admin.exception.BusinessException;\n  import org.meveo.model.admin.User;\n  import org.meveo.model.billing.WalletOperation;\n  import org.meveo.service.script.Script;\n  import org.slf4j.Logger;\n  import org.slf4j.LoggerFactory;\n\n  public class RatingScript extends Script {\n\n      private static final Logger log = LoggerFactory.getLogger(RatingScript.class);\n\n      public void execute(Map<String, Object> context) throws BusinessException {\n          log.debug(\"Rating script creation script...\");\n          // DO not change any amount, as it is untestable\n          //WalletOperation op = (WalletOperation) context.get(Script.CONTEXT_ENTITY);\n          //op.setAmountWithoutTax(op.getAmountTax().add(BigDecimal.ONE));\n      }\n  }\n]]>  "
+}

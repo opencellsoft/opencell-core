@@ -1,0 +1,20 @@
+{
+	"code": "RS_BASE_OST1",
+	"description": "RS_BASE_OST1",
+	"invoiceSubCategory": "SUB_DATA",
+	"disabled": "false",
+	"amountEditable": "false",
+	"languageDescriptions": [
+		{
+			"languageCode": "FRA",
+			"description": "RS_BASE-Termination Test"
+		}
+	],
+	"inputUnitDescription": "1",
+	"ratingUnitDescription": "1",
+	"unitMultiplicator": "1",
+	"unitNbDecimal": "2",
+	"oneShotChargeTemplateType": "TERMINATION",
+	"immediateInvoicing": "false",
+	"roundingModeDtoEnum": "NEAREST"
+}

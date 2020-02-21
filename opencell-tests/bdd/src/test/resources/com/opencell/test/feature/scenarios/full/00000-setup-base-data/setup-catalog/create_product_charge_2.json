@@ -1,0 +1,13 @@
+{
+    "code": "RS_BASE_PC2",
+    "description": "RS_BASE_PC2",
+    "invoiceSubCategory": "SUB_DATA",
+    "disabled": "false",
+    "amountEditable": "false",
+    "languageDescriptions": [
+        {
+            "languageCode": "FRA",
+            "description": "RS_BASE-Produit 2 Test"
+        }
+    ]
+}

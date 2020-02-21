@@ -1,56 +1,59 @@
 @full
-Feature: Setup base data - Setup Configuration
+Feature: Setup base data - Setup Catalog
 
   @admin @superadmin
-  Scenario Outline: Update Provider
-    Given The entity has the following information "<jsonFile>" as "<dto>"
-    When I call the "<action>" "<api>"
-    Then The provider is created
-    And Validate that the statusCode is "<statusCode>"
-    And The status is "<status>"
-    And The message  is "<message>"
-    And The errorCode  is "<errorCode>"
-
-    Examples: 
-      | jsonFile                                                                      | dto         | api        | action | statusCode | status  | errorCode | message |
-      | scenarios/full/00000-setup-base-data/setup-configuration/update_provider.json | ProviderDto | /provider/ | Update |        200 | SUCCESS |           |         |
-
-  Scenario Outline: Create InvoiceType
-    Given The entity has the following information "<jsonFile>" as "<dto>"
-    When I call the "<action>" "<api>"
-    Then The invoice type is created
-    And Validate that the statusCode is "<statusCode>"
-    And The status is "<status>"
-    And The message  is "<message>"
-    And The errorCode  is "<errorCode>"
-
-    Examples: 
-      | jsonFile                                                                         | dto            | api                         | action         | statusCode | status  | errorCode | message |
-      | scenarios/full/00000-setup-base-data/setup-configuration/create_invoiceType.json | InvoiceTypeDto | /invoiceType/createOrUpdate | CreateOrUpdate |        200 | SUCCESS |           |         |
-
   Scenario Outline: Create <entity>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
-    Then The billing cycle is created
+    Then The entity is created
     And Validate that the statusCode is "<statusCode>"
     And The status is "<status>"
     And The message  is "<message>"
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                                                           | entity         | dto             | api                          | action         | statusCode | status  | errorCode | message |
-      | scenarios/full/00000-setup-base-data/setup-configuration/create_billingCycle.json  | BillingCycle   | BillingCycleDto | /billingCycle/createOrUpdate | CreateOrUpdate |        200 | SUCCESS |           |         |
-      | scenarios/full/00000-setup-base-data/setup-configuration/create_billingCycle3.json | BillingCycle 3 | BillingCycleDto | /billingCycle/createOrUpdate | CreateOrUpdate |        200 | SUCCESS |           |         |
-
-  Scenario Outline: Create Seller
-    Given The entity has the following information "<jsonFile>" as "<dto>"
-    When I call the "<action>" "<api>"
-    Then The seller is created
-    And Validate that the statusCode is "<statusCode>"
-    And The status is "<status>"
-    And The message  is "<message>"
-    And The errorCode  is "<errorCode>"
-
-    Examples: 
-      | jsonFile                                                                    | dto       | api                    | action         | statusCode | status  | errorCode | message |
-      | scenarios/full/00000-setup-base-data/setup-configuration/create_seller.json | SellerDto | /seller/createOrUpdate | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | jsonFile                                                                                      | entity                           | dto                        | api                                                     | action         | statusCode | status  | errorCode | message |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_prepaidWallet.json                  | PrepaidWallet                    | WalletTemplateDto          | /billing/wallet/template/createOrUpdate                 | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_counter.json                        | Counter                          | CounterTemplateDto         | /catalog/counterTemplate/createOrUpdate                 | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_triggeredEDR.json                   | TriggeredEDR                     | TriggeredEdrTemplateDto    | /catalog/triggeredEdr/createOrUpdate                    | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_recurring_1.json                    | recurring 1                      | RecurringChargeTemplateDto | /catalog/recurringChargeTemplate/createOrUpdate         | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_oneshot_subscription.json           | OneShot - Subscription           | OneShotChargeTemplateDto   | /catalog/oneShotChargeTemplate/createOrUpdate           | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_oneshot_termination.json            | OneShot - Termination            | OneShotChargeTemplateDto   | /catalog/oneShotChargeTemplate/createOrUpdate           | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_oneshot_other.json                  | OneShot - Other                  | OneShotChargeTemplateDto   | /catalog/oneShotChargeTemplate/createOrUpdate           | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_usage_1.json                        | usage 1                          | UsageChargeTemplateDto     | /catalog/usageChargeTemplate/createOrUpdate             | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_service_1.json                      | Service1                         | ServiceTemplateDto         | /catalog/serviceTemplate/createOrUpdate                 | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_service_2.json                      | Service2                         | ServiceTemplateDto         | /catalog/serviceTemplate/createOrUpdate                 | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_product_charge_1.json               | Product Charge 1                 | ServiceTemplateDto         | /catalogManagement/productChargeTemplate/createOrUpdate | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_product_charge_2.json               | Product Charge 2                 | ServiceTemplateDto         | /catalogManagement/productChargeTemplate/createOrUpdate | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_product_1.json                      | Product 1                        | ServiceTemplateDto         | /catalogManagement/productTemplate/createOrUpdate       | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_product_2.json                      | Product 2                        | ServiceTemplateDto         | /catalogManagement/productTemplate/createOrUpdate       | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_offer_1.json                        | Offer1                           | OfferTemplateDto           | /catalog/offerTemplate/createOrUpdate                   | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_scriptInstance.json                 | ScriptInstance                   | ScriptInstanceDto          | /scriptInstance/createOrUpdate                          | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_pricePlan_recurring_1.json          | priceplan recurring              | PricePlanMatrixDto         | /catalog/pricePlan/createOrUpdate                       | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_pricePlan_oneshot_subscription.json | priceplan OneShot - Subscription | PricePlanMatrixDto         | /catalog/pricePlan/createOrUpdate                       | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_pricePlan_oneshot_termination.json  | priceplan OneShot - Termination  | PricePlanMatrixDto         | /catalog/pricePlan/createOrUpdate                       | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_pricePlan_oneshot_other.json        | priceplan OneShopt - Other       | PricePlanMatrixDto         | /catalog/pricePlan/createOrUpdate                       | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_pricePlan_usage_1.json              | priceplan usage                  | PricePlanMatrixDto         | /catalog/pricePlan/createOrUpdate                       | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_pricePlan_product_1_in_offer_1.json | priceplan product1 in offer1     | PricePlanMatrixDto         | /catalog/pricePlan/createOrUpdate                       | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_pricePlan_product_1.json            | priceplan product1               | PricePlanMatrixDto         | /catalog/pricePlan/createOrUpdate                       | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_pricePlan_product_2.json            | priceplan product2               | PricePlanMatrixDto         | /catalog/pricePlan/createOrUpdate                       | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_recurring_2.json                    | recurring 2                      | RecurringChargeTemplateDto | /catalog/recurringChargeTemplate/createOrUpdate         | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_recurring_3.json                    | recurring 3                      | RecurringChargeTemplateDto | /catalog/recurringChargeTemplate/createOrUpdate         | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_oneshot_2.json                      | OneShot 2                        | OneShotChargeTemplateDto   | /catalog/oneShotChargeTemplate/createOrUpdate           | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_oneshot_3.json                      | OneShot 3                        | OneShotChargeTemplateDto   | /catalog/oneShotChargeTemplate/createOrUpdate           | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_usage_2.json                        | usage 2                          | UsageChargeTemplateDto     | /catalog/usageChargeTemplate/createOrUpdate             | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_usage_3.json                        | usage 3                          | UsageChargeTemplateDto     | /catalog/usageChargeTemplate/createOrUpdate             | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_service_3.json                      | Service 3                        | ServiceTemplateDto         | /catalog/serviceTemplate/createOrUpdate                 | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_service_4.json                      | Service 4                        | ServiceTemplateDto         | /catalog/serviceTemplate/createOrUpdate                 | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_offer_2.json                        | Offer 2                          | OfferTemplateDto           | /catalog/offerTemplate/createOrUpdate                   | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_offer_3.json                        | Offer 3                          | OfferTemplateDto           | /catalog/offerTemplate/createOrUpdate                   | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_pricePlan_usage_2.json              | priceplan usage 2                | PricePlanMatrixDto         | /catalog/pricePlan/createOrUpdate                       | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_pricePlan_usage__1_in_offer_2.json  | priceplan usage 1 in Offer2      | PricePlanMatrixDto         | /catalog/pricePlan/createOrUpdate                       | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_pricePlan_oneshot_os3.json          | priceplan OneShot OS3            | PricePlanMatrixDto         | /catalog/pricePlan/createOrUpdate                       | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_pricePlan_recurring_3.json          | priceplan recurring 3            | PricePlanMatrixDto         | /catalog/pricePlan/createOrUpdate                       | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_pricePlan_usage_3.json              | priceplan usage 3                | PricePlanMatrixDto         | /catalog/pricePlan/createOrUpdate                       | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_bundle_1.json                       | Bundle 1                         | BundleTemplateDto          | /catalog/bundleTemplate/createOrUpdate                  | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_channel_web.json                    | Channel - WEB                    | ChannelDto                 | /catalog/channel/createOrUpdate                         | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_channel_social_media.json           | Channel - SOCIAL_MEDIA           | ChannelDto                 | /catalog/channel/createOrUpdate                         | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_offer_category_disk_space.json      | offer category - SOFTWARE        | OfferTemplateCategoryDto   | /catalog/offerTemplateCategory/createOrUpdate           | CreateOrUpdate |        200 | SUCCESS |           |         |
+      | scenarios/full/00000-setup-base-data/setup-catalog/create_offer_category_software.json        | offer category - DISK_SPACE      | OfferTemplateCategoryDto   | /catalog/offerTemplateCategory/createOrUpdate           | CreateOrUpdate |        200 | SUCCESS |           |         |
