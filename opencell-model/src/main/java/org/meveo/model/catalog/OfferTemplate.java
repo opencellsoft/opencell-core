@@ -91,8 +91,8 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name="cat_offer_tmpl_discount_plan",
-            joinColumns=@JoinColumn(name="offer_tmpl_id", referencedColumnName="id"),
-            inverseJoinColumns=@JoinColumn(name="discount_plan_id", referencedColumnName="id"))
+            joinColumns = @JoinColumn(name = "offer_tmpl_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "discount_plan_id", referencedColumnName = "id"))
     private List<DiscountPlan> allowedDiscountPlans;
 
     /**
@@ -101,11 +101,20 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @Column(name = "minimum_label_el_sp", length = 2000)
     @Size(max = 2000)
     private String minimumLabelElSpark;
-    
-    /** Corresponding invoice subcategory */
+
+    /**
+     * Corresponding invoice subcategory
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_invoice_sub_category_id")
     private InvoiceSubCategory minimumInvoiceSubCategory;
+
+    /**
+     * Corresponding to minimum one shot charge template
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_charge_template_id")
+    private OneShotChargeTemplate minimumChargeTemplate;
 
     @Embedded
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
@@ -396,4 +405,23 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     public void setMinimumInvoiceSubCategory(InvoiceSubCategory minimumInvoiceSubCategory) {
         this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
     }
+
+    /**
+     * Gets the charge template used in minimum amount.
+     *
+     * @return a one Shot Charge template
+     */
+    public OneShotChargeTemplate getMinimumChargeTemplate() {
+        return minimumChargeTemplate;
+    }
+
+    /**
+     * Sets the minimum amount charge template.
+     *
+     * @param minimumChargeTemplate a one Shot Charge template
+     */
+    public void setMinimumChargeTemplate(OneShotChargeTemplate minimumChargeTemplate) {
+        this.minimumChargeTemplate = minimumChargeTemplate;
+    }
+
 }

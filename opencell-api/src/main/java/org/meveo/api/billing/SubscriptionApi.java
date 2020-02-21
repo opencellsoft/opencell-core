@@ -399,12 +399,13 @@ public class SubscriptionApi extends BaseApi {
 
         setSubscriptionFutureTermination(postData, subscription);
 
-        if (!StringUtils.isBlank(postData.getMinimumInvoiceSubCategory())) {
-            InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
-            if (minimumInvoiceSubCategory == null) {
-                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
+        if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
+            OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
+            if (minimumChargeTemplate == null) {
+                throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getMinimumChargeTemplate());
+            } else {
+                subscription.setMinimumChargeTemplate(minimumChargeTemplate);
             }
-            subscription.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
         }
 
         if (postData.getMinimumAmountEl() != null) {
@@ -750,12 +751,12 @@ public class SubscriptionApi extends BaseApi {
         if (!StringUtils.isBlank(serviceToActivateDto.getMinimumLabelEl())) {
             serviceInstance.setMinimumLabelEl(serviceToActivateDto.getMinimumLabelEl());
         }
-        if (!StringUtils.isBlank(serviceToActivateDto.getMinimumInvoiceSubCategory())) {
-            InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(serviceToActivateDto.getMinimumInvoiceSubCategory());
-            if (minimumInvoiceSubCategory == null) {
-                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, serviceToActivateDto.getMinimumInvoiceSubCategory());
+        if (!StringUtils.isBlank(serviceToActivateDto.getMinimumChargeTemplate())) {
+            OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(serviceToActivateDto.getMinimumChargeTemplate());
+            if (minimumChargeTemplate == null) {
+                throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, serviceToActivateDto.getMinimumChargeTemplate());
             } else {
-                serviceInstance.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
+                serviceInstance.setMinimumChargeTemplate(minimumChargeTemplate);
             }
         }
     }
@@ -2358,7 +2359,7 @@ public class SubscriptionApi extends BaseApi {
         subscription.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
         subscription.setMinimumAmountElSpark(offerTemplate.getMinimumAmountElSpark());
         subscription.setMinimumLabelElSpark(offerTemplate.getMinimumLabelElSpark());
-        subscription.setMinimumInvoiceSubCategory(offerTemplate.getMinimumInvoiceSubCategory());
+        subscription.setMinimumChargeTemplate(offerTemplate.getMinimumChargeTemplate());
 
         if (!StringUtils.isBlank(postData.getMinimumAmountEl())) {
             subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
@@ -2372,12 +2373,13 @@ public class SubscriptionApi extends BaseApi {
         if (!StringUtils.isBlank(postData.getMinimumLabelElSpark())) {
             subscription.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
-        if (!StringUtils.isBlank(postData.getMinimumInvoiceSubCategory())) {
-            InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
-            if (minimumInvoiceSubCategory == null) {
-                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
+        if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
+            OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
+            if (minimumChargeTemplate == null) {
+                throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getMinimumChargeTemplate());
+            } else {
+                subscription.setMinimumChargeTemplate(minimumChargeTemplate);
             }
-            subscription.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
         }
     }
 }

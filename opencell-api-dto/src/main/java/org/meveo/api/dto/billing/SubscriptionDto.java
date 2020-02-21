@@ -106,36 +106,55 @@ public class SubscriptionDto extends BusinessEntityDto {
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
      */
     private String minimumLabelElSpark;
-    
+
     /**
      * Corresponding to minimum invoice subcategory
      */
+    @Deprecated
     private String minimumInvoiceSubCategory;
+
+    /**
+     * Corresponding to minimum one shot charge template code.
+     */
+    private String minimumChargeTemplate;
+
 
     /**
      * A date till which subscription is subscribed. After this date it will either be extended or terminated
      */
     private Date subscribedTillDate;
 
-    /** Was subscription renewed. */
+    /**
+     * Was subscription renewed.
+     */
     private boolean renewed;
 
-    /** Was/when "endOfTerm" notification fired for soon to expire subscription. */
+    /**
+     * Was/when "endOfTerm" notification fired for soon to expire subscription.
+     */
     private Date renewalNotifiedDate;
 
-    /** The renewal rule. */
+    /**
+     * The renewal rule.
+     */
     private SubscriptionRenewalDto renewalRule;
 
-    /** The billing cycle. */
+    /**
+     * The billing cycle.
+     */
     @XmlElement(required = true)
     private String billingCycle;
 
-    /** The seller. */
+    /**
+     * The seller.
+     */
     private String seller;
-    
-    /** The auto end of engagement. */
+
+    /**
+     * The auto end of engagement.
+     */
     private Boolean autoEndOfEngagement;
-    
+
     /**
      * String value matched in the usageRatingJob to group the EDRs for rating.
      */
@@ -712,6 +731,7 @@ public class SubscriptionDto extends BusinessEntityDto {
     /**
      * @return the minimumInvoiceSubCategory
      */
+    @Deprecated
     public String getMinimumInvoiceSubCategory() {
         return minimumInvoiceSubCategory;
     }
@@ -719,8 +739,17 @@ public class SubscriptionDto extends BusinessEntityDto {
     /**
      * @param minimumInvoiceSubCategory the minimumInvoiceSubCategory to set
      */
+    @Deprecated
     public void setMinimumInvoiceSubCategory(String minimumInvoiceSubCategory) {
         this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
+    }
+
+    public String getMinimumChargeTemplate() {
+        return minimumChargeTemplate;
+    }
+
+    public void setMinimumChargeTemplate(String minimumChargeTemplate) {
+        this.minimumChargeTemplate = minimumChargeTemplate;
     }
 
     @Override

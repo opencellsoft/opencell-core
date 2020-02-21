@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.AccountEntity;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 
 /**
  * The Class AccountDto.
@@ -69,9 +70,24 @@ public abstract class AccountDto extends BusinessEntityDto {
     private String minimumLabelEl;
 
     /**
-     * The billing account code to be used when calculating the min amount billable for Customer and CA
+     * The billing account code to be used when calculating the min amount billable for Customer and CA.
      */
     private String minimumTargetAccount;
+
+    /**
+     * Expression to determine minimum amount value - for Spark.
+     */
+    private String minimumAmountElSpark;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark.
+     */
+    private String minimumLabelElSpark;
+
+    /**
+     * Corresponding to minimum one shot charge template code.
+     */
+    private String minimumChargeTemplate;
 
     /**
      * Instantiates a new account dto.
@@ -79,26 +95,26 @@ public abstract class AccountDto extends BusinessEntityDto {
     public AccountDto() {
         super();
     }
-    
-	/**
-	 * Instantiates a new account dto. Used on account hierarchy
-	 *
-	 * @param e the accountEntity entity
-	 */
-	public AccountDto(AccountEntity e) {
-		super(e);
-		
-		setVatNo(e.getVatNo());
-		setRegistrationNo(e.getVatNo());
-		if (e.getContactInformation() != null) {
-			setContactInformation(new ContactInformationDto(e.getContactInformation()));
-		}
-	}
+
+    /**
+     * Instantiates a new account dto. Used on account hierarchy
+     *
+     * @param e the accountEntity entity
+     */
+    public AccountDto(AccountEntity e) {
+        super(e);
+
+        setVatNo(e.getVatNo());
+        setRegistrationNo(e.getVatNo());
+        if (e.getContactInformation() != null) {
+            setContactInformation(new ContactInformationDto(e.getContactInformation()));
+        }
+    }
 
     /**
      * Instantiates a new account dto.
      *
-     * @param accountEntity the accountEntity entity
+     * @param accountEntity        the accountEntity entity
      * @param customFieldInstances the custom field instances
      */
     public AccountDto(AccountEntity accountEntity, CustomFieldsDto customFieldInstances) {
@@ -358,5 +374,29 @@ public abstract class AccountDto extends BusinessEntityDto {
 
     public void setMinimumTargetAccount(String minimumTargetAccount) {
         this.minimumTargetAccount = minimumTargetAccount;
+    }
+
+    public String getMinimumAmountElSpark() {
+        return minimumAmountElSpark;
+    }
+
+    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
+        this.minimumAmountElSpark = minimumAmountElSpark;
+    }
+
+    public String getMinimumLabelElSpark() {
+        return minimumLabelElSpark;
+    }
+
+    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
+        this.minimumLabelElSpark = minimumLabelElSpark;
+    }
+
+    public String getMinimumChargeTemplate() {
+        return minimumChargeTemplate;
+    }
+
+    public void setMinimumChargeTemplate(String minimumChargeTemplate) {
+        this.minimumChargeTemplate = minimumChargeTemplate;
     }
 }

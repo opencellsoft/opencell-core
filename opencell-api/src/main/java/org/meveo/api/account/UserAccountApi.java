@@ -30,6 +30,7 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -39,16 +40,20 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.base.IVersionedBusinessEntityService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
@@ -89,6 +94,9 @@ public class UserAccountApi extends AccountEntityApi {
     @Inject
     private SellerService sellerService;
 
+    @Inject
+    private OneShotChargeTemplateService oneShotChargeTemplateService;
+
     public UserAccount create(UserAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
     }
@@ -126,6 +134,14 @@ public class UserAccountApi extends AccountEntityApi {
         if (postData.getMinimumLabelEl() != null) {
             userAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
             userAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
+        }
+        if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
+            OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
+            if (minimumChargeTemplate == null) {
+                throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getMinimumChargeTemplate());
+            } else {
+                userAccount.setMinimumChargeTemplate(minimumChargeTemplate);
+            }
         }
 
         // Validate and populate customFields

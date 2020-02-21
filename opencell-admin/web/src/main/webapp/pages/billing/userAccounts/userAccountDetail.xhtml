@@ -164,6 +164,9 @@
 										<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
                                         <hftl:formField label="#{messages['userAccount.minimumLabelEl']}" field="minimumLabelEl" id="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true"/>
                                         <hftl:formField label="#{messages[appProvider.entreprise?'userAccount.minimumAmountWithoutTaxEl':'userAccount.minimumAmountWithTaxEl']}" field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                                        <hftl:formField label="#{messages['account.minimumLabelElSpark']}" field="minimumLabelElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true"/>
+                                        <hftl:formField label="#{messages[appProvider.entreprise?'account.minimumAmountWithoutTaxElSpark':'account.minimumAmountWithTaxElSpark']}" field="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
+                                        <hftl:formField label="#{messages['account.minimumChargeTemplate']}" id="chargeTemplateId" field="minimumChargeTemplate" valueLabelField="code" listBean="#{oneShotChargeTemplateBean}" listElements="#{oneShotChargeTemplateBean.getOtherOneShotCharges()}" />
                                     </p:fieldset>
                                     
                                     <p:fieldset legend="#{messages['commons.status']}" styleClass="clearLeft">

@@ -80,6 +80,11 @@ public class OfferTemplateDto extends ProductOfferingDto {
     private Boolean autoEndOfEngagement;
 
     /**
+     * Corresponding to minimum one shot charge template code.
+     */
+    private String minimumChargeTemplate;
+
+    /**
      * Instantiates a new offer template dto.
      */
     public OfferTemplateDto() {
@@ -320,9 +325,18 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
     /**
      * Sets the Minimum InvoiceSubCategory used in the offer code
+     *
      * @param minimumInvoiceSubCategory
      */
     public void setMinimumInvoiceSubCategory(String minimumInvoiceSubCategory) {
         this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
+    }
+
+    public String getMinimumChargeTemplate() {
+        return minimumChargeTemplate;
+    }
+
+    public void setMinimumChargeTemplate(String minimumChargeTemplate) {
+        this.minimumChargeTemplate = minimumChargeTemplate;
     }
 }

@@ -70,6 +70,26 @@ public class MinimumAmountElDto implements Serializable {
     private String userAccountMinimumLabelEl;
 
     /**
+     * Corresponding to minimum one shot charge template for the customer
+     */
+    private String customerMinimumChargeTemplate;
+
+    /**
+     * Corresponding to minimum one shot charge template for the customer account
+     */
+    private String customerAccountMinimumChargeTemplate;
+
+    /**
+     * Corresponding to minimum one shot charge template for the billing account
+     */
+    private String billingAccountMinimumChargeTemplate;
+
+    /**
+     * Corresponding to minimum one shot charge template for the billing account
+     */
+    private String userAccountMinimumChargeTemplate;
+
+    /**
      * Gets customerMinimumAmountEl.
      *
      * @return customerMinimumAmountEl.
@@ -245,7 +265,40 @@ public class MinimumAmountElDto implements Serializable {
      *
      * @param userAccountMinimumLabelEl a user Account Minimum Label El expression.
      */
+
     public void setUserAccountMinimumLabelEl(String userAccountMinimumLabelEl) {
         this.userAccountMinimumLabelEl = userAccountMinimumLabelEl;
+    }
+
+    public String getCustomerMinimumChargeTemplate() {
+        return customerMinimumChargeTemplate;
+    }
+
+    public void setCustomerMinimumChargeTemplate(String customerMinimumChargeTemplate) {
+        this.customerMinimumChargeTemplate = customerMinimumChargeTemplate;
+    }
+
+    public String getCustomerAccountMinimumChargeTemplate() {
+        return customerAccountMinimumChargeTemplate;
+    }
+
+    public void setCustomerAccountMinimumChargeTemplate(String customerAccountMinimumChargeTemplate) {
+        this.customerAccountMinimumChargeTemplate = customerAccountMinimumChargeTemplate;
+    }
+
+    public String getBillingAccountMinimumChargeTemplate() {
+        return billingAccountMinimumChargeTemplate;
+    }
+
+    public void setBillingAccountMinimumChargeTemplate(String billingAccountMinimumChargeTemplate) {
+        this.billingAccountMinimumChargeTemplate = billingAccountMinimumChargeTemplate;
+    }
+
+    public String getUserAccountMinimumChargeTemplate() {
+        return userAccountMinimumChargeTemplate;
+    }
+
+    public void setUserAccountMinimumChargeTemplate(String userAccountMinimumChargeTemplate) {
+        this.userAccountMinimumChargeTemplate = userAccountMinimumChargeTemplate;
     }
 }

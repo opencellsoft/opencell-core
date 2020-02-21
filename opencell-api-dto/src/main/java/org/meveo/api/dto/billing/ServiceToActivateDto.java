@@ -79,8 +79,15 @@ public class ServiceToActivateDto implements Serializable {
      */
     private String minimumLabelEl;
 
-    /** Corresponding to minimum invoice subcategory */
+    /**
+     * Corresponding to minimum invoice subcategory
+     */
     private String minimumInvoiceSubCategory;
+
+    /**
+     * Corresponding to minimum one shot charge template code.
+     */
+    private String minimumChargeTemplate;
 
     /**
      * Gets the code.
@@ -342,18 +349,27 @@ public class ServiceToActivateDto implements Serializable {
 
     /**
      * Sets the Minimum InvoiceSubCategory
+     *
      * @param minimumInvoiceSubCategory
      */
     public void setMinimumInvoiceSubCategory(String minimumInvoiceSubCategory) {
         this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
     }
 
+    public String getMinimumChargeTemplate() {
+        return minimumChargeTemplate;
+    }
+
+    public void setMinimumChargeTemplate(String minimumChargeTemplate) {
+        this.minimumChargeTemplate = minimumChargeTemplate;
+    }
+
     /* (non-Javadoc)
-             * @see java.lang.Object#toString()
-             */
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return String.format("ServiceToActivateDto [code=%s, quantity=%s, subscriptionDate=%s, chargeInstanceOverrides=%s, customFields=%s]", code, quantity, subscriptionDate,
-            chargeInstanceOverrides, customFields);
+                chargeInstanceOverrides, customFields);
     }
 }

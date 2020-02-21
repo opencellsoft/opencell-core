@@ -38,6 +38,7 @@ import org.meveo.model.catalog.*;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.catalog.impl.*;
 import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.model.SortOrder;
@@ -79,6 +80,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
+
+    @Inject
+    private OneShotChargeTemplateService oneShotChargeTemplateService;
 
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
@@ -249,12 +253,13 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
         offerTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
         offerTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
-        if (!StringUtils.isBlank(postData.getMinimumInvoiceSubCategory())) {
-            InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
-            if (minimumInvoiceSubCategory == null) {
-                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
+
+        if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
+            OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
+            if (minimumChargeTemplate == null) {
+                throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getMinimumChargeTemplate());
             } else {
-                offerTemplate.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
+                offerTemplate.setMinimumChargeTemplate(minimumChargeTemplate);
             }
         }
         if (postData.getLifeCycleStatus() != null) {

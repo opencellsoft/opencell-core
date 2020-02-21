@@ -168,11 +168,20 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Column(name = "minimum_label_el_sp", length = 2000)
     @Size(max = 2000)
     private String minimumLabelElSpark;
-    
-    /** Corresponding invoice subcategory */
+
+    /**
+     * Corresponding invoice subcategory
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_invoice_sub_category_id")
     private InvoiceSubCategory minimumInvoiceSubCategory;
+
+    /**
+     * Corresponding to minimum one shot charge template
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_charge_template_id")
+    private OneShotChargeTemplate minimumChargeTemplate;
 
     /**
      * Service renewal configuration
@@ -431,6 +440,25 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     public void setMinimumInvoiceSubCategory(InvoiceSubCategory minimumInvoiceSubCategory) {
         this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
     }
+
+    /**
+     * Gets the charge template used in minimum amount.
+     *
+     * @return a one Shot Charge template
+     */
+    public OneShotChargeTemplate getMinimumChargeTemplate() {
+        return minimumChargeTemplate;
+    }
+
+    /**
+     * Sets the minimum amount charge template.
+     *
+     * @param minimumChargeTemplate a one Shot Charge template
+     */
+    public void setMinimumChargeTemplate(OneShotChargeTemplate minimumChargeTemplate) {
+        this.minimumChargeTemplate = minimumChargeTemplate;
+    }
+
 
     public SubscriptionRenewal getServiceRenewal() {
         return serviceRenewal;

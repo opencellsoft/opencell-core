@@ -19,8 +19,10 @@
 package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -31,6 +33,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
@@ -207,12 +210,21 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 				getEntity().getCode()) != null)) ? true : false;
 	}
 
-	public LazyDataModel<OneShotChargeTemplate> getOtherTypeCharges(){
-		if (filters == null){
+	public LazyDataModel<OneShotChargeTemplate> getOtherTypeCharges() {
+		if (filters == null) {
 			filters = new HashMap<>();
 		}
 		filters.put("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.OTHER);
 		return getLazyDataModel();
+	}
+
+	public List<OneShotChargeTemplate> getOtherOneShotCharges() {
+
+		List<OneShotChargeTemplate> oneShotChargeTemplates = super.listAll();
+		if (oneShotChargeTemplates == null || oneShotChargeTemplates.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return oneShotChargeTemplates.stream().filter(os -> os.getOneShotChargeTemplateType().equals(OneShotChargeTemplateTypeEnum.OTHER)).collect(Collectors.toList());
 	}
 
 }

@@ -173,6 +173,7 @@ public class AccountHierarchyApi extends BaseApi {
     @Inject
     private PaymentMethodApi paymentMethodApi;
 
+
     @Inject
     @MeveoParamBean
     private ParamBean paramBean;
@@ -186,6 +187,7 @@ public class AccountHierarchyApi extends BaseApi {
     public static final int CA = 2;
     public static final int BA = 4;
     public static final int UA = 8;
+
 
     /**
      * Creates the customer heirarchy including : - Trading Country - Trading Currency - Trading Language - Customer Brand - Customer Category - Seller - Customer - Customer
@@ -1017,7 +1019,6 @@ public class AccountHierarchyApi extends BaseApi {
     /**
      * @param postData
      * @param accountHierarchyTypeEnum
-     * @param businessAccountModel
      * @return the created User Account DTO
      */
     private UserAccountDto createUserAccountDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum) {
@@ -1054,9 +1055,21 @@ public class AccountHierarchyApi extends BaseApi {
             userAccountDto.setCustomFields(cfsDto);
         }
 
-        if (postData.getMinimumAmountEl() != null && postData.getMinimumAmountEl().getUserAccountMinimumAmountEl() != null) {
-            userAccountDto.setMinimumAmountEl(postData.getMinimumAmountEl().getUserAccountMinimumAmountEl());
-            userAccountDto.setMinimumLabelEl(postData.getMinimumAmountEl().getUserAccountMinimumLabelEl());
+        if (postData.getMinimumAmountEl() != null) {
+            if (postData.getMinimumAmountEl().getUserAccountMinimumAmountEl() != null) {
+                userAccountDto.setMinimumAmountEl(postData.getMinimumAmountEl().getUserAccountMinimumAmountEl());
+            }
+            if (postData.getMinimumAmountEl().getUserAccountMinimumLabelEl() != null) {
+                userAccountDto.setMinimumLabelEl(postData.getMinimumAmountEl().getUserAccountMinimumLabelEl());
+            }
+
+            if (postData.getMinimumAmountEl().getUserAccountMinimumChargeTemplate() != null) {
+                if (!StringUtils.isBlank(postData.getMinimumAmountEl().getUserAccountMinimumChargeTemplate())) {
+                    userAccountDto.setMinimumChargeTemplate(postData.getMinimumAmountEl().getUserAccountMinimumChargeTemplate());
+                } else {
+                    userAccountDto.setMinimumChargeTemplate(null);
+                }
+            }
         }
 
         return userAccountDto;
@@ -1113,9 +1126,21 @@ public class AccountHierarchyApi extends BaseApi {
             billingAccountDto.setCustomFields(cfsDto);
         }
 
-        if (postData.getMinimumAmountEl() != null && postData.getMinimumAmountEl().getBillingAccountMinimumAmountEl() != null) {
-            billingAccountDto.setMinimumAmountEl(postData.getMinimumAmountEl().getBillingAccountMinimumAmountEl());
-            billingAccountDto.setMinimumLabelEl(postData.getMinimumAmountEl().getBillingAccountMinimumLabelEl());
+        if (postData.getMinimumAmountEl() != null) {
+            if (postData.getMinimumAmountEl().getBillingAccountMinimumAmountEl() != null) {
+                billingAccountDto.setMinimumAmountEl(postData.getMinimumAmountEl().getBillingAccountMinimumAmountEl());
+            }
+            if (postData.getMinimumAmountEl().getBillingAccountMinimumLabelEl() != null) {
+                billingAccountDto.setMinimumLabelEl(postData.getMinimumAmountEl().getBillingAccountMinimumLabelEl());
+            }
+
+            if (postData.getMinimumAmountEl().getBillingAccountMinimumChargeTemplate() != null) {
+                if (!StringUtils.isBlank(postData.getMinimumAmountEl().getBillingAccountMinimumChargeTemplate())) {
+                    billingAccountDto.setMinimumChargeTemplate(postData.getMinimumAmountEl().getBillingAccountMinimumChargeTemplate());
+                } else {
+                    billingAccountDto.setMinimumChargeTemplate(null);
+                }
+            }
         }
 
         return billingAccountDto;
@@ -1124,7 +1149,6 @@ public class AccountHierarchyApi extends BaseApi {
     /**
      * @param postData
      * @param accountHierarchyTypeEnum
-     * @param businessAccountModel
      * @return the created Customer account dto
      */
     private CustomerAccountDto createCustomerAccountDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum) {
@@ -1172,19 +1196,36 @@ public class AccountHierarchyApi extends BaseApi {
 
             customerAccountDto.setCustomFields(cfsDto);
         }
-        if (postData.getMinimumAmountEl() != null && postData.getMinimumAmountEl().getCustomerAccountMinimumAmountEl() != null) {
-            customerAccountDto.setMinimumAmountEl(postData.getMinimumAmountEl().getCustomerAccountMinimumAmountEl());
-            customerAccountDto.setMinimumLabelEl(postData.getMinimumAmountEl().getCustomerAccountMinimumLabelEl());
-            customerAccountDto.setMinimumTargetAccount(postData.getMinimumAmountEl().getCustomerAccountMinimumTargetAccount());
-        }
 
+        if (postData.getMinimumAmountEl() != null) {
+            if (postData.getMinimumAmountEl().getCustomerAccountMinimumLabelEl() != null) {
+                customerAccountDto.setMinimumAmountEl(postData.getMinimumAmountEl().getCustomerAccountMinimumAmountEl());
+            }
+            if (postData.getMinimumAmountEl().getCustomerAccountMinimumLabelEl() != null) {
+                customerAccountDto.setMinimumLabelEl(postData.getMinimumAmountEl().getCustomerAccountMinimumLabelEl());
+            }
+
+            if (postData.getMinimumAmountEl().getCustomerAccountMinimumTargetAccount() != null) {
+                if (!StringUtils.isBlank(postData.getMinimumAmountEl().getCustomerAccountMinimumTargetAccount())) {
+                    customerAccountDto.setMinimumTargetAccount(postData.getMinimumAmountEl().getCustomerAccountMinimumTargetAccount());
+                } else {
+                    customerAccountDto.setMinimumTargetAccount(null);
+                }
+            }
+            if (postData.getMinimumAmountEl().getCustomerAccountMinimumChargeTemplate() != null) {
+                if (!StringUtils.isBlank(postData.getMinimumAmountEl().getCustomerAccountMinimumChargeTemplate())) {
+                    customerAccountDto.setMinimumChargeTemplate(postData.getMinimumAmountEl().getCustomerAccountMinimumChargeTemplate());
+                } else {
+                    customerAccountDto.setMinimumChargeTemplate(null);
+                }
+            }
+        }
         return customerAccountDto;
     }
 
     /**
      * @param postData
      * @param accountHierarchyTypeEnum
-     * @param businessAccountModel
      * @return the created customer dto
      */
     private CustomerDto createCustomerDto(CRMAccountHierarchyDto postData, AccountHierarchyTypeEnum accountHierarchyTypeEnum) {
@@ -1225,12 +1266,30 @@ public class AccountHierarchyApi extends BaseApi {
 
             customerDto.setCustomFields(cfsDto);
         }
+        if (postData.getMinimumAmountEl() != null) {
+            if (postData.getMinimumAmountEl().getCustomerMinimumAmountEl() != null) {
+                customerDto.setMinimumAmountEl(postData.getMinimumAmountEl().getCustomerMinimumAmountEl());
+            }
+            if (postData.getMinimumAmountEl().getCustomerMinimumLabelEl() != null) {
+                customerDto.setMinimumLabelEl(postData.getMinimumAmountEl().getCustomerMinimumLabelEl());
+            }
 
-        if (postData.getMinimumAmountEl() != null && postData.getMinimumAmountEl().getCustomerMinimumAmountEl() != null) {
-            customerDto.setMinimumAmountEl(postData.getMinimumAmountEl().getCustomerMinimumAmountEl());
-            customerDto.setMinimumLabelEl(postData.getMinimumAmountEl().getCustomerMinimumLabelEl());
-            customerDto.setMinimumTargetAccount(postData.getMinimumAmountEl().getCustomerMinimumTargetAccount());
+            if (postData.getMinimumAmountEl().getCustomerMinimumTargetAccount() != null) {
+                if (!StringUtils.isBlank(postData.getMinimumAmountEl().getCustomerMinimumTargetAccount())) {
+                    customerDto.setMinimumTargetAccount(postData.getMinimumAmountEl().getCustomerMinimumTargetAccount());
+                } else {
+                    customerDto.setMinimumTargetAccount(null);
+                }
+            }
+            if (postData.getMinimumAmountEl().getCustomerMinimumChargeTemplate() != null) {
+                if (!StringUtils.isBlank(postData.getMinimumAmountEl().getCustomerMinimumChargeTemplate())) {
+                    customerDto.setMinimumChargeTemplate(postData.getMinimumAmountEl().getCustomerMinimumChargeTemplate());
+                } else {
+                    customerDto.setMinimumChargeTemplate(null);
+                }
+            }
         }
+
         return customerDto;
     }
 
