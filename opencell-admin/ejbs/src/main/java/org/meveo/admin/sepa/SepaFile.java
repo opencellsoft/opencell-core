@@ -185,10 +185,17 @@ public class SepaFile extends AbstractDDRequestBuilder {
             }
             OrgnlPmtInfAndSts orgnlPmtInfAndSts = cstmrPmtStsRpt.getOrgnlPmtInfAndSts();
             for (TxInfAndSts txInfAndSts : orgnlPmtInfAndSts.getTxInfAndSts()) {
-                if (REJECT_STS_CODE.equals(txInfAndSts.getTxSts())) {
-                    ddRejectFileInfos.getListInvoiceRefsRejected().put(new Long(txInfAndSts.getOrgnlEndToEndId()), REJECT_STS_CODE);
-                }
-            }
+				try {
+				if (REJECT_STS_CODE.equals(txInfAndSts.getTxSts())) {
+					ddRejectFileInfos.getListInvoiceRefsRejected().put(new Long(txInfAndSts.getOrgnlEndToEndId()), REJECT_STS_CODE);
+					ddRejectFileInfos.addItemOk();
+				}
+				}catch (Exception e) {
+					ddRejectFileInfos.addItemKo();
+					log.error("Error on processSDDRejectedFile txInfAndSts.getOrgnlInstrId:"+txInfAndSts.getOrgnlInstrId(),e);
+					ddRejectFileInfos.getListErrors().add("Error on processSDDRejectedFile txInfAndSts.getOrgnlInstrId:"+txInfAndSts.getOrgnlInstrId());
+				}
+			}
 
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
