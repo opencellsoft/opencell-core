@@ -16,7 +16,7 @@ Feature: Setup base data - Clean up data - restore provider and configuration
       | scenarios/full/00000-setup-base-data/clean-up-data-restore-provider-and-configuration/restore_provider.json | ProviderDto | /provider/ | PUT    |        200 | SUCCESS |           |         |
 
   Scenario Outline: Set securedEntities=false
-    Given The entity has the following information "<jsonFile>" as "<dto>"
+    Given The entity has the following information "<jsonFile>"
     When I call the "<action>" "<api>"
     Then The entity is created
     And Validate that the statusCode is "<statusCode>"
@@ -25,5 +25,5 @@ Feature: Setup base data - Clean up data - restore provider and configuration
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                                                                                             | dto         | api                         | action | statusCode | status  | errorCode | message |
-      | scenarios/full/00000-setup-base-data/clean-up-data-restore-provider-and-configuration/set_securedEntities=false.json | ProviderDto | /configurations/setProperty | POST   |        200 | SUCCESS |           |         |
+      | jsonFile                                                                                                             | api                         | action | statusCode | status  | errorCode | message |
+      | scenarios/full/00000-setup-base-data/clean-up-data-restore-provider-and-configuration/set_securedEntities_false.json | /configurations/setProperty | POST   |        200 | SUCCESS |           |         |
