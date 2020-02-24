@@ -1,0 +1,14 @@
+{
+    "code": "RS_BASE_WebHook1",
+    "classNameFilter": "org.meveo.model.crm.Customer",
+    "eventTypeFilter": "CREATED",
+    "elFilter": "#{event.code.startsWith('test')}",
+    "scriptInstanceCode": "org.meveo.service.script.RS_BASE_Script",
+    "host": "localhost",
+    "port": "8080",
+    "page": "meveo/api/rest/",
+    "httpMethod": "HTTP_GET",
+    "username": "test.username",
+    "password": "test.password",
+    "counterTemplate": "RS_BASE_CT1"
+}

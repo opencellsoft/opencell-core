@@ -1,0 +1,13 @@
+{
+    "code": "RS_BASE_MQ1",
+    "description": "RS_BASE_MQ1-DESC",
+    "dimension1": "1",
+    "dimension2": "2",
+    "dimension3": "3",
+    "dimension4": "4",
+    "editable": "false",
+    "additive": "true",
+    "sqlQuery": "select count(*) from billing_subscription where status='CREATED' and date(created)='#{date}'",
+    "measurementPeriod": "MONTHLY",
+    "lastMeasureDate": "2016-03-16"
+}

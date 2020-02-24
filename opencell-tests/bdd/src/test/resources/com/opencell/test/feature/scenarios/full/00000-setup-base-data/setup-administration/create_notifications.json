@@ -1,0 +1,7 @@
+{
+    "code": "RS_BASE_Notification1",
+    "classNameFilter": "org.meveo.model.crm.Customer",
+    "eventTypeFilter": "CREATED",
+    "elFilter": "#{event.code.startsWith('test')}",
+    "scriptInstanceCode": "org.meveo.service.script.RS_BASE_Script"
+}

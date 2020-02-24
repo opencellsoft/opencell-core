@@ -1,0 +1,13 @@
+{
+    "code": "RS_BASE_EmailNotif1",
+    "classNameFilter": "org.meveo.model.crm.Customer",
+    "eventTypeFilter": "CREATED",
+    "elFilter": "#{event.code.startsWith('test')}",
+    "scriptInstanceCode": "org.meveo.service.script.RS_BASE_Script",
+    "emailFrom": "OpenCell",
+    "emailToEl": "edward.legaspi@opencellsoft.com",
+    "subject": "Test Meveo Application",
+    "body": "Test Body",
+    "htmlBody": "HTML Body",
+    "counterTemplate": "RS_BASE_CT1"
+}
