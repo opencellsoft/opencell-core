@@ -11,17 +11,20 @@ import java.util.function.Function;
 
 public class ReferenceMapper extends FilterMapper {
 
-    private final Function<Class, EntityManager> entityManagerResolver;
+    private final Function<Class, PersistenceService> serviceFunction;
     private final Class entity;
 
-    public ReferenceMapper(String property, Object value, Class entity, Function<Class, EntityManager> entityManagerResolver) {
+    public ReferenceMapper(String property, Object value, Class entity, Function<Class, PersistenceService> serviceFunction) {
         super(property, value);
         this.entity = entity;
-        this.entityManagerResolver = entityManagerResolver;
+        this.serviceFunction = serviceFunction;
     }
 
     @Override
     public Object mapStrategy(Object value) {
-        return entityManagerResolver.apply(entity).getReference(entity, Long.valueOf(value.toString()));
+        return serviceFunction
+                .apply(entity)
+                .getEntityManager()
+                .getReference(entity, Long.valueOf(value.toString()));
     }
 }

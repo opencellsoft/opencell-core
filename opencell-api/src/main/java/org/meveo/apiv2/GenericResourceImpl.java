@@ -6,7 +6,6 @@ import org.meveo.apiv2.services.generic.GenericApiLoadService;
 import org.meveo.apiv2.services.generic.GenericApiAlteringService;
 import org.meveo.apiv2.services.generic.GenericRequestMapper;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -29,7 +28,7 @@ public class GenericResourceImpl implements GenericResource {
             genericFields = searchConfig.getGenericFields();
         }
         Class entityClass = loadService.getEntityClass(entityName);
-        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, loadService.getEntityManager());
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, loadService.getPersistenceService());
         return Response.ok().entity(loadService.findPaginatedRecords(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields))
                 .links(buildPaginatedResourceLink(entityName)).build();
     }
@@ -41,7 +40,7 @@ public class GenericResourceImpl implements GenericResource {
             genericFields = searchConfig.getGenericFields();
         }
         Class entityClass = loadService.getEntityClass(entityName);
-        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, loadService.getEntityManager());
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, loadService.getPersistenceService());
         return loadService.findByClassNameAndId(entityName, id, genericRequestMapper.mapTo(searchConfig), genericFields)
                 .map(deletedEntity -> Response.ok().entity(deletedEntity).links(buildSingleResourceLink(entityName, id)).build())
                 .orElseThrow(NotFoundException::new);
