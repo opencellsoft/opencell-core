@@ -125,7 +125,7 @@ public class GenericApiAlteringService extends GenericApiService {
         Object effectiveValue = ((Map) ((List) value).get(0)).get("value");
         switch (storageType){
             case SINGLE:
-                parseSingleValuedCf(customFieldDto, fieldType, effectiveValue);
+                writeSingleValueToCFDto(customFieldDto, fieldType, effectiveValue);
                 break;
             case LIST:
                 customFieldDto.setListValue(new ArrayList<>());
@@ -157,30 +157,34 @@ public class GenericApiAlteringService extends GenericApiService {
         }
     }
 
-    private void parseSingleValuedCf(CustomFieldDto customFieldDto, CustomFieldTypeEnum fieldType, Object value) {
+    private void writeSingleValueToCFDto(CustomFieldDto customFieldDto, CustomFieldTypeEnum fieldType, Object value) {
         switch (fieldType) {
             case DATE:
-                customFieldDto.setDateValue((Date) getConvertedType(fieldType, value));
+                customFieldDto.setDateValue(new Date((Long) value));
                 break;
             case LONG:
-                customFieldDto.setLongValue((Long) getConvertedType(fieldType, value));
+                customFieldDto.setLongValue(Integer.toUnsignedLong((Integer) value));
                 break;
             case DOUBLE:
-                customFieldDto.setDoubleValue((Double) getConvertedType(fieldType, value));
+                customFieldDto.setDoubleValue((Double) value);
                 break;
             case BOOLEAN:
-                customFieldDto.setBooleanValue((Boolean) getConvertedType(fieldType, value));
+                customFieldDto.setBooleanValue((Boolean) value);
                 break;
             case CHILD_ENTITY:
             case ENTITY:
-                customFieldDto.setEntityReferenceValue((EntityReferenceDto) getConvertedType(fieldType, value));
+                Map<String, String> entityRefDto = (Map<String, String>) value;
+                EntityReferenceDto entityReferenceDto = new EntityReferenceDto();
+                entityReferenceDto.setClassname(entityRefDto.get("classname"));
+                entityReferenceDto.setCode(entityRefDto.get("code"));
+                customFieldDto.setEntityReferenceValue(entityReferenceDto);
             case LIST:
                 if(!((List)value).isEmpty()){
-                    customFieldDto.setStringValue((String) getConvertedType(fieldType, ((Map)((List)value).get(0)).get("value")));
+                    customFieldDto.setStringValue((String)  ((Map)((List)value).get(0)).get("value"));
                 }
                 break;
             default:
-                customFieldDto.setStringValue((String) getConvertedType(fieldType, value));
+                customFieldDto.setStringValue((String) value);
                 break;
         }
     }
