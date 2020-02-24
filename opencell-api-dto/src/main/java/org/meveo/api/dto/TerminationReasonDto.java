@@ -4,28 +4,43 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.billing.OverrideProrataEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 
 /**
  * The Class TerminationReasonDto.
  *
  * @author Edward P. Legaspi
+ * @author Khalid HORRI
  */
 @XmlRootElement(name = "TerminationReasonDto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TerminationReasonDto extends BusinessEntityDto {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
     private static final long serialVersionUID = 6013621511892042364L;
 
-    /** The apply agreement. */
+    /**
+     * The apply agreement.
+     */
     private boolean applyAgreement;
 
-    /** The apply reimbursment. */
+    /**
+     * The apply reimbursment.
+     */
     private boolean applyReimbursment;
 
-    /** The apply termination charges. */
+    /**
+     * The apply termination charges.
+     */
     private boolean applyTerminationCharges;
+
+    /**
+     * Override the prorata setting in the charge.
+     */
+    private OverrideProrataEnum overrideProrata;
 
     /**
      * Instantiates a new termination reason dto.
@@ -98,6 +113,24 @@ public class TerminationReasonDto extends BusinessEntityDto {
      */
     public void setApplyTerminationCharges(boolean applyTerminationCharges) {
         this.applyTerminationCharges = applyTerminationCharges;
+    }
+
+    /**
+     * Gets the override prorata value.
+     *
+     * @return the override prorata value
+     */
+    public OverrideProrataEnum getOverrideProrata() {
+        return overrideProrata;
+    }
+
+    /**
+     * Sets the override prorata value.
+     *
+     * @param overrideProrata the the override prorata.
+     */
+    public void setOverrideProrata(OverrideProrataEnum overrideProrata) {
+        this.overrideProrata = overrideProrata;
     }
 
     @Override
