@@ -18,7 +18,19 @@
  */
 package org.meveo.service.payments.impl;
 
-import org.apache.commons.beanutils.BeanUtils;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+
+import org.apache.commons.lang3.SerializationUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.account.TransferAccountOperationDto;
 import org.meveo.api.dto.account.TransferCustomerAccountDto;
@@ -36,23 +48,12 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 /**
  * AccountOperation service implementation.
  * 
  * @author anasseh
  * @author Abdellatif BARI
- * @lastModifiedVersion 8.2.2
+ * @lastModifiedVersion 8.4.1
  */
 @Stateless
 public class AccountOperationService extends PersistenceService<AccountOperation> {
@@ -289,9 +290,9 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     /**
      * Get the account operation reference
      *
-     * @param accountOperationId        the account operation Id
+     * @param accountOperationId the account operation Id
      * @param accountOperationReference the account operation reference
-     * @param accountOperationAction    the account operation action ('s' : source, 't' : transfer, 'c' cancelation)
+     * @param accountOperationAction the account operation action ('s' : source, 't' : transfer, 'c' cancelation)
      * @return the account operation reference
      */
     public String getRefrence(Long accountOperationId, String accountOperationReference, String accountOperationAction) {
@@ -302,7 +303,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * Create the new account operation on the fromCustomerAccountCode to settle the old one.
      *
      * @param accountOperation the account operation to transfer
-     * @param amount           the amount to transfer
+     * @param amount the amount to transfer
      * @return the other credit and charge
      * @throws BusinessException business exception
      */
@@ -310,7 +311,6 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
         ParamBean paramBean = paramBeanFactory.getInstance();
         String debitOccTemplateCode = null;
-
 
         if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
             debitOccTemplateCode = paramBean.getProperty("occ.transferAccountOperation.credit", "CRD_TRS");
@@ -361,39 +361,35 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     /**
      * Create the new account operation on the toCustomerAccountCode which is equivalent to the transfer.
      *
-     * @param accountOperation  the account operation to transfer
+     * @param accountOperation the account operation to transfer
      * @param toCustomerAccount the destination customer account
-     * @param amount            the amount to transfer
+     * @param amount the amount to transfer
      * @return the account operation.
      */
     public AccountOperation createToAccountOperation(AccountOperation accountOperation, CustomerAccount toCustomerAccount, BigDecimal amount) {
 
-        try {
-            AccountOperation newAccountOperation = (AccountOperation) BeanUtils.cloneBean(accountOperation);
-            newAccountOperation.setId(null);
-            newAccountOperation.setMatchingAmount(BigDecimal.ZERO);
-            newAccountOperation.setMatchingStatus(MatchingStatusEnum.O);
-            newAccountOperation.setUnMatchingAmount(amount);
-            newAccountOperation.setAmount(amount);
-            newAccountOperation.setCustomerAccount(toCustomerAccount);
-            newAccountOperation.setAccountingWritings(new ArrayList<>());
-            newAccountOperation.setInvoices(null);
-            newAccountOperation.setMatchingAmounts(new ArrayList<>());
-            newAccountOperation.setTransactionDate(new Date());
-            //newAccountOperation.setDueDate(new Date());
-            create(newAccountOperation);
+        AccountOperation newAccountOperation = SerializationUtils.clone(accountOperation);
+        newAccountOperation.setId(null);
+        newAccountOperation.setMatchingAmount(BigDecimal.ZERO);
+        newAccountOperation.setMatchingStatus(MatchingStatusEnum.O);
+        newAccountOperation.setUnMatchingAmount(amount);
+        newAccountOperation.setAmount(amount);
+        newAccountOperation.setCustomerAccount(toCustomerAccount);
+        newAccountOperation.setAccountingWritings(new ArrayList<>());
+        newAccountOperation.setInvoices(null);
+        newAccountOperation.setMatchingAmounts(new ArrayList<>());
+        newAccountOperation.setTransactionDate(new Date());
+        // newAccountOperation.setDueDate(new Date());
+        create(newAccountOperation);
 
-            newAccountOperation.setReference(getRefrence(newAccountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.t.name()));
-            return newAccountOperation;
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-            throw new BusinessException("Failed to create new account operation on the customer account " + toCustomerAccount.getCode(), e);
-        }
+        newAccountOperation.setReference(getRefrence(newAccountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.t.name()));
+        return newAccountOperation;
     }
 
     /**
      * Transfer an account operation from a customer account to an other.
      *
-     * @param accountOperation           the account operation
+     * @param accountOperation the account operation
      * @param transferCustomerAccountDto destination customer account
      * @throws BusinessException business exception
      */
@@ -444,7 +440,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
         if (!fromCustomerAccount.equals(accountOperation.getCustomerAccount())) {
             throw new BusinessException(
-                    "the account operation " + accountOperationId + " to be the transfer doesn't belong to the source customer account " + fromCustomerAccountCode);
+                "the account operation " + accountOperationId + " to be the transfer doesn't belong to the source customer account " + fromCustomerAccountCode);
         }
 
         if (transferAccountOperationDto.getToCustomerAccounts() != null && !transferAccountOperationDto.getToCustomerAccounts().isEmpty()) {
