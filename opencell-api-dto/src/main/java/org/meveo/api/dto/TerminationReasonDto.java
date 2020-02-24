@@ -59,6 +59,7 @@ public class TerminationReasonDto extends BusinessEntityDto {
         applyAgreement = subscriptionTerminationReason.isApplyAgreement();
         applyReimbursment = subscriptionTerminationReason.isApplyReimbursment();
         applyTerminationCharges = subscriptionTerminationReason.isApplyTerminationCharges();
+        overrideProrata = subscriptionTerminationReason.getOverrideProrata();
     }
 
     /**
