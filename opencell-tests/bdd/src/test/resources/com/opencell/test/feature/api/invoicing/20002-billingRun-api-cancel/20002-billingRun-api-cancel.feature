@@ -1,4 +1,4 @@
-@invoicing
+@invoicing @ignore
 Feature: Cancel billing run by API
 
   Background: The classic offer is already executed
@@ -17,5 +17,6 @@ Feature: Cancel billing run by API
 
     Examples: 
       | jsonFile                                                                        | dto                | api                                 | statusCode | status  | errorCode                        | message                                 |
-      | api/invoicing/20002-billingRun-api-cancel/Success.json                          | AuditableEntityDto | /billing/invoicing/cancelBillingRun |        200 | SUCCESS |                                  |                                         |
+      | api/invoicing/20002-billingRun-api-cancel/SuccessTest.json                      | AuditableEntityDto | /billing/invoicing/cancelBillingRun |        200 | SUCCESS |                                  |                                         |
+      | api/invoicing/20002-billingRun-api-cancel/FailedTest.json                       | AuditableEntityDto | /billing/invoicing/cancelBillingRun |        500 | FAIL |                                  | Cannot cancel a VALIDATED billingRun                                        |
       | api/invoicing/20002-billingRun-api-cancel/ENTITY_DOES_NOT_EXISTS_EXCEPTION.json | AuditableEntityDto | /billing/invoicing/cancelBillingRun |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | BillingRun with id=100 does not exists. |

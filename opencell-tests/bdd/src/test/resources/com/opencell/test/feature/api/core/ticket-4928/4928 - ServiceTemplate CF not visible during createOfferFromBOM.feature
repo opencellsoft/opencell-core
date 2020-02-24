@@ -12,7 +12,7 @@ Feature: Check that ServiceTemplate CF are visible during createOfferFromBOM
     And Service template contains the following CF "<Val_aStringFiltered_attendue>"
 
     Examples: 
-      | jsonFile                               | api                           | action | statusCode | status  | Val_aString_attendue                         | Val_aStringFiltered_attendue                         |
+      | jsonFile                               | api                           | action | statusCode | status  | Val_aString_attendue                             | Val_aStringFiltered_attendue                             |
       | api/core/ticket-4928/SuccessTest1.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | api/core/ticket-4928/Val_aString_attendue_1.json | api/core/ticket-4928/Val_aStringFiltered_attendue_1.json |
       | api/core/ticket-4928/SuccessTest2.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | api/core/ticket-4928/Val_aString_attendue_2.json | api/core/ticket-4928/Val_aStringFiltered_attendue_2.json |
       | api/core/ticket-4928/SuccessTest3.json | /catalog/serviceTemplate/list | Get    |        200 | SUCCESS | api/core/ticket-4928/Val_aString_attendue_3.json | api/core/ticket-4928/Val_aStringFiltered_attendue_3.json |

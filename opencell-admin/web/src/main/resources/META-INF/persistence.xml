@@ -28,6 +28,7 @@
 
             <!--skip duplicate ID_GENERATOR ERROR IN WF17-->
             <property name="hibernate.jpa.compliance.global_id_generators" value="false" />
+            <property name="hibernate.dialect" value="org.meveo.commons.persistence.MeveoSQLDialect" />
         </properties>
     </persistence-unit>
 

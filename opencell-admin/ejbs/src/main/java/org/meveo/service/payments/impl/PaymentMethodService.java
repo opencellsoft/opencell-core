@@ -30,6 +30,7 @@ import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
@@ -37,6 +38,7 @@ import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.crm.impl.CustomerService;
 
 /**
  * PaymentMethod service implementation.
@@ -59,6 +61,10 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     /** The customer account service. */
     @Inject
     private CustomerAccountService customerAccountService;
+    
+    /** The customer service. */
+    @Inject
+    private CustomerService customerService;
 
     /* (non-Javadoc)
      * @see org.meveo.service.base.PersistenceService#create(org.meveo.model.IEntity)
@@ -300,5 +306,47 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }
         return gatewayPaymentInterface;
     }
+    
+    /**
+     * Check bank coordinates fields.
+     *
+     * @param paymentMethod the DDpaymentMethod to check.
+     */
+	public String validateBankCoordinates(DDPaymentMethod paymentMethod, Customer cust, boolean strict) {
+		BankCoordinates bankCoordinates = paymentMethod.getBankCoordinates();
 
+		boolean emptyMandateIdentification = StringUtils.isBlank(paymentMethod.getMandateIdentification());
+		boolean emptyMandateDate = paymentMethod.getMandateDate() == null;
+		boolean emptyAccount = bankCoordinates==null || StringUtils.isBlank(bankCoordinates.getAccountOwner());
+		boolean emptyIban = bankCoordinates==null || StringUtils.isBlank(bankCoordinates.getIban());
+		boolean emptyBank = bankCoordinates==null || StringUtils.isBlank(bankCoordinates.getBankName());
+		boolean missingMandate = emptyMandateIdentification && emptyMandateDate;
+		if (missingMandate && emptyAccount && emptyIban && emptyBank) {
+			return "Missing Bank coordinates or MandateIdentification.";
+		} else {
+			if (strict || missingMandate) {
+				if (emptyAccount) {
+					return "Missing account owner.";
+				}
+				if (emptyIban) {
+					return "Missing IBAN.";
+				}
+				if (StringUtils.isBlank(bankCoordinates.getBic()) && customerService.isBicRequired(cust, bankCoordinates.getIban())) {
+					return "Missing BIC.";
+				}
+				if (emptyBank) {
+					return "Missing BANK NAME.";
+				}
+			}
+			if (strict || !missingMandate) {
+				if (emptyMandateIdentification) {
+					return "Missing mandate identification.";
+				}
+				if (emptyMandateDate) {
+					return "Missing mandate date.";
+				}
+			}
+		}
+		return null;
+	}
 }

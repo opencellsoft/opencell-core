@@ -108,7 +108,7 @@ public class SepaRejectedTransactionsJob extends Job {
 
     @Override
     public JobCategoryEnum getJobCategory() {
-        return MeveoJobCategoryEnum.ACCOUNT_RECEIVABLES;
+        return MeveoJobCategoryEnum.PAYMENT;
     }
 
     @Override

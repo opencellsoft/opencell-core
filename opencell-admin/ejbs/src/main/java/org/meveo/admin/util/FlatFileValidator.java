@@ -69,8 +69,6 @@ public class FlatFileValidator {
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
-    private static final String FLAT_FILE_PROCESSING_JOB_INPUT_DIR = "FlatFileProcessingJob_inputDir";
-
     /**
      * The Constant DATETIME_FORMAT.
      */
@@ -460,33 +458,13 @@ public class FlatFileValidator {
         FileFormat fileFormat = flatFile != null ? flatFile.getFileFormat() : null;
         if (flatFile != null && flatFile.getStatus() == FileStatusEnum.WELL_FORMED && fileFormat != null && !StringUtils.isBlank(fileFormat.getJobCode())) {
             JobInstance jobInstance = jobInstanceService.findByCode(fileFormat.getJobCode());
-            if (jobInstance == null) {
-                throw new BusinessException("Job instance with code=" + fileFormat.getJobCode() + " does not exists.");
-            }
-
-            String jobInputDirectory = (String) jobInstance.getParamValue(FLAT_FILE_PROCESSING_JOB_INPUT_DIR);
-            if (jobInputDirectory == null) {
-                jobInputDirectory = (String) customFieldInstanceService.getCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_INPUT_DIR);
-            }
-
-            if (StringUtils.isBlank(jobInputDirectory)) {
-                throw new BusinessException("The input directory is missing for the " + fileFormat.getJobCode() + " job");
-            }
-
-            // FIXME : replace the job CFs by FileFormat
-            if (!jobInputDirectory.equalsIgnoreCase(fileFormat.getInputDirectory())) {
-                throw new BusinessException("The input directory for the " + fileFormat.getJobCode() + " job is note same with faile format input directory");
-            }
-
-            if (!isAllowedToExecute(jobInstance)) {
-                throw new BusinessException("the " + fileFormat.getJobCode() + " job can not be run on a current server or cluster node");
-            }
-
-            try {
-                jobExecutionService.manualExecute(jobInstance);
-            } catch (Exception e) {
-                log.error("execute flat file job fail", e);
-                throw new BusinessException(e.getMessage(), e);
+            if (jobInstance != null && isAllowedToExecute(jobInstance)) {
+                try {
+                    jobExecutionService.manualExecute(jobInstance);
+                } catch (Exception e) {
+                    log.error("execute flat file job fail", e);
+                    throw new BusinessException(e.getMessage(), e);
+                }
             }
         }
     }
