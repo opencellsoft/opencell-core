@@ -7,6 +7,7 @@ import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.service.base.PersistenceService;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;
@@ -21,12 +22,12 @@ import static org.mockito.Mockito.when;
 public class GenericRequestMapperTest {
     @Test
     public void evaluateFiltersObjectWithId() throws IOException {
-        EntityManager entityManagerMock = mock(EntityManager.class);
-        Function<Class, EntityManager> entityManager = aClass -> entityManagerMock;
+        PersistenceService persistenceServiceMock = mock(PersistenceService.class);
+        Function<Class, PersistenceService> serviceFunction = aClass -> persistenceServiceMock;
         CustomerCategory customerCategory = new CustomerCategory();
         customerCategory.setId(2L);
-        when(entityManagerMock.getReference(CustomerCategory.class, 2L)).thenReturn(customerCategory);
-        GenericRequestMapper requestMapper = new GenericRequestMapper(CustomerCategory.class, entityManager);
+        when(persistenceServiceMock.getEntityManager().getReference(CustomerCategory.class, 2L)).thenReturn(customerCategory);
+        GenericRequestMapper requestMapper = new GenericRequestMapper(CustomerCategory.class, serviceFunction);
 
         String filter = "{\"customerCategory\":{\"id\":2}}";
         ObjectMapper objectMapper = new ObjectMapper();
