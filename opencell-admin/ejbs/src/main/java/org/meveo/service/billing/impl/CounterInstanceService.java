@@ -151,11 +151,23 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.CUST)
     public CounterInstance instantiateCustomerCounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        if (serviceInstance.getSubscription() == null || serviceInstance.getSubscription().getUserAccount() == null
-                || serviceInstance.getSubscription().getUserAccount().getBillingAccount() == null) {
+        Subscription subscription = serviceInstance.getSubscription();
+        if (subscription == null) {
             return null;
         }
-        Customer customer = serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
+        UserAccount userAccount = subscription.getUserAccount();
+        if (userAccount == null) {
+            return null;
+        }
+        BillingAccount billingAccount = userAccount.getBillingAccount();
+        if (billingAccount == null) {
+            return null;
+        }
+        CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+        if (customerAccount == null) {
+            return null;
+        }
+        Customer customer = customerAccount.getCustomer();
         return instantiateCounter(customerService, customer, Customer.class, counterTemplate, isVirtual);
     }
 
@@ -172,10 +184,19 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.CA)
     public CounterInstance instantiateCACounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        if (serviceInstance.getSubscription() == null || serviceInstance.getSubscription().getUserAccount() == null
-                || serviceInstance.getSubscription().getUserAccount().getBillingAccount() == null) {
+        Subscription subscription = serviceInstance.getSubscription();
+        if (subscription == null) {
             return null;
         }
+        UserAccount userAccount = subscription.getUserAccount();
+        if (userAccount == null) {
+            return null;
+        }
+        BillingAccount billingAccount = userAccount.getBillingAccount();
+        if (billingAccount == null) {
+            return null;
+        }
+
         CustomerAccount customerAccount = serviceInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount();
         return instantiateCounter(customerAccountService, customerAccount, CustomerAccount.class, counterTemplate, isVirtual);
     }
@@ -193,7 +214,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.UA)
     public CounterInstance instantiateUACounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        if (serviceInstance.getSubscription() == null) {
+
+        Subscription subscription = serviceInstance.getSubscription();
+        if (subscription == null) {
             return null;
         }
         UserAccount userAccount = serviceInstance.getSubscription().getUserAccount();
@@ -213,7 +236,12 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.BA)
     public CounterInstance instantiateBACounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        if (serviceInstance.getSubscription() == null || serviceInstance.getSubscription().getUserAccount() == null) {
+        Subscription subscription = serviceInstance.getSubscription();
+        if (subscription == null) {
+            return null;
+        }
+        UserAccount userAccount = subscription.getUserAccount();
+        if (userAccount == null) {
             return null;
         }
         BillingAccount billingAccount = serviceInstance.getSubscription().getUserAccount().getBillingAccount();
