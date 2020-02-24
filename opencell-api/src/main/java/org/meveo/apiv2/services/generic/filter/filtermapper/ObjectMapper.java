@@ -4,6 +4,7 @@ package org.meveo.apiv2.services.generic.filter.filtermapper;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.meveo.apiv2.services.generic.filter.FactoryFilterMapper;
 import org.meveo.apiv2.services.generic.filter.FilterMapper;
+import org.meveo.service.base.PersistenceService;
 
 import javax.persistence.EntityManager;
 import java.util.Collections;
@@ -12,12 +13,12 @@ import java.util.function.Function;
 
 public class ObjectMapper extends FilterMapper {
     private final Class<?> type;
-    private final Function<Class, EntityManager> entityManagerResolver;
+    private final Function<Class, PersistenceService> serviceFunction;
 
-    public ObjectMapper(String property, Object value, Class<?> type, Function<Class, EntityManager> entityManagerResolver) {
+    public ObjectMapper(String property, Object value, Class<?> type, Function<Class, PersistenceService> serviceFunction) {
         super(property, value);
         this.type = type;
-        this.entityManagerResolver = entityManagerResolver;
+        this.serviceFunction = serviceFunction;
     }
 
     @Override
@@ -29,7 +30,7 @@ public class ObjectMapper extends FilterMapper {
                 Map<String, Object> innerValue = ((Map) value);
                 innerValue.keySet()
                         .stream()
-                        .map(key -> Collections.singletonMap(key, new FactoryFilterMapper().create(key, innerValue.get(key), type, entityManagerResolver).map()))
+                        .map(key -> Collections.singletonMap(key, new FactoryFilterMapper().create(key, innerValue.get(key), type, serviceFunction).map()))
                         .flatMap(entries -> entries.entrySet().stream())
                         .forEach(entry -> {
                             try {
@@ -40,9 +41,9 @@ public class ObjectMapper extends FilterMapper {
                         });
                 target = targetInstanceHolder;
             } else if(((Map) value).containsKey("id")){
-                target = new FactoryFilterMapper().create("id", ((Map) value).get("id"), type, entityManagerResolver).map();
+                target = new FactoryFilterMapper().create("id", ((Map) value).get("id"), type, serviceFunction).map();
             }else{
-                target = new FactoryFilterMapper().create("id", value, type, entityManagerResolver).map();
+                target = new FactoryFilterMapper().create("id", value, type, serviceFunction).map();
             }
 
         } catch (InstantiationException | IllegalAccessException e) {

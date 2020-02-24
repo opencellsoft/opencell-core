@@ -513,8 +513,8 @@ public class QueryBuilder {
         c.add(Calendar.DATE, 1);
         Date end = c.getTime();
 
-        String startDateParameterName = "start" + field.replace(".", "");
-        String endDateParameterName = "end" + field.replace(".", "");
+        String startDateParameterName = "start" + field.replaceAll("[^a-zA-Z0-9_]", "");
+        String endDateParameterName = "end" + field.replaceAll("[^a-zA-Z0-9_]", "");
         return addSqlCriterion(field + ">=:" + startDateParameterName, startDateParameterName, start).addSqlCriterion(field + "<:" + endDateParameterName, endDateParameterName,
             end);
     }
