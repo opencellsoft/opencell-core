@@ -139,8 +139,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * Entity list search parameter name - parameter's value contains filter parameters
      */
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
-    
-    
+
+
     public static final String FROM_JSON_FUNCTION = "FromJson(a.cfValues,";
 
     protected static boolean accumulateCF = true;
@@ -857,10 +857,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 Map<CustomFieldTemplate, Object> parameterMap = (Map<CustomFieldTemplate, Object>) filters.get(SEARCH_FILTER_PARAMETERS);
                 queryBuilder = new FilteredQueryBuilder(filter, parameterMap, false, false);
             } else {
-            	
+
             	Map<String, Object> cfFilters = extractCustomFieldsFilters(filters);
 				filters.putAll(cfFilters);
-				
+
                 for (String key : filters.keySet()) {
 
                     Object filterValue = filters.get(key);
@@ -880,7 +880,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     }
                     String fieldWAlias = extractFieldWithAlias(fieldName);
                     String fieldWAlias2 = extractFieldWithAlias(fieldName2);
-                    
+
 					// if ranged search - field value in between from - to values. Specifies "from" value: e.g value<=field.value
 					if ("fromRange".equals(condition)) {
                         if (filterValue instanceof Double) {
@@ -1010,7 +1010,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                         String paramName = queryBuilder.convertFieldToParam(fieldName);
 
-                        String sql = "(("+ fieldWAlias + " IS NULL and " + fieldWAlias2 + " IS NULL) or ("+ fieldWAlias + "<=:" + paramName + " and :" + paramName + "<" 
+                        String sql = "(("+ fieldWAlias + " IS NULL and " + fieldWAlias2 + " IS NULL) or ("+ fieldWAlias + "<=:" + paramName + " and :" + paramName + "<"
                         		+ fieldWAlias2 + ") or ("+ fieldWAlias + "<=:" + paramName + " and " + fieldWAlias2 + " IS NULL) or ("+ fieldWAlias + " IS NULL and :" + paramName
                                 + "<" + fieldWAlias2 + "))";
                         queryBuilder.addSqlCriterionMultiple(sql, paramName, filterValue);
@@ -1148,7 +1148,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
 	/**
-	 * @param fieldName 
+	 * @param fieldName
 	 * @return
 	 */
 	private boolean isFieldCollection(String fieldName) {
@@ -1180,7 +1180,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     Map<String, Object> map=cfv.getkeyValueMap();
 					String type = (String) map.keySet().toArray()[0];
 					Object value = map.values().toArray()[0];
-					
+
 					String[] fieldInfo = customFiterName.split(" ");
                     String[] fields = fieldInfo.length == 1 ? fieldInfo : Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
                     String transformedFilter = fieldInfo.length == 1 ? "" : fieldInfo[0]+" ";
@@ -1417,7 +1417,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         return query.getResultList();
     }
-    
+
 	public String getCustomFieldDataType(Class<?> clazz) {
 		if(clazz == Date.class) {
 			return "timestamp";
