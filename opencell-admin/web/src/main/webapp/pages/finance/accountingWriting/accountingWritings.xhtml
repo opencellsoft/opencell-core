@@ -98,7 +98,7 @@
 							<h:outputText value="#{messages['accountOperation.customerAccount']}" />
 						</f:facet>
 						<h:link value="#{entity.customerAccount.code}" outcome="customerAccountDetail">
-							<f:param name="objectId" value="#{entity.customerAccount.id}" />
+							<f:param name="customerAccountId" value="#{entity.customerAccount.id}" />
 							<f:param name="edit" value="false" />
 							<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                       		<f:param name="backView" value="accountingWritings" />
