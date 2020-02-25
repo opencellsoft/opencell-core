@@ -18,4 +18,4 @@ Feature: Delete invoice Type by API
     Examples: 
       | jsonFile                                                    | dto            | api           | action | statusCode | status  | errorCode                        | message                                          |
       | api/settings/00011-invoiceType-api-create/SuccessTest1.json | InvoiceTypeDto | /invoiceType/ | Delete |        200 | SUCCESS |                                  |                                                  |
-      | api/settings/00011-InvoiceType-api-create/DO_NOT_EXIST.json | InvoiceTypeDto | /invoiceType/ | Delete |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | InvoiceType with code=NOT_EXIST does not exists. |
+      | api/settings/00011-invoiceType-api-create/DO_NOT_EXIST.json | InvoiceTypeDto | /invoiceType/ | Delete |        404 | FAIL    | ENTITY_DOES_NOT_EXISTS_EXCEPTION | InvoiceType with code=NOT_EXIST does not exists. |

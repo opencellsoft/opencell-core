@@ -25,7 +25,8 @@ public enum MeveoJobCategoryEnum implements JobCategoryEnum {
 
     RATING(1, "jobCategoryEnum.rating"), INVOICING(2, "jobCategoryEnum.invoicing"), IMPORT_HIERARCHY(3, "jobCategoryEnum.importHierarchy"), DWH(4,
             "jobCategoryEnum.dwh"), ACCOUNT_RECEIVABLES(5,
-                    "jobCategoryEnum.accountReceivables"), WALLET(6, "jobCategoryEnum.wallet"), UTILS(7, "jobCategoryEnum.utils"), MEDIATION(8, "jobCategoryEnum.mediation");
+                    "jobCategoryEnum.accountReceivables"), WALLET(6, "jobCategoryEnum.wallet"), UTILS(7, "jobCategoryEnum.utils"), MEDIATION(8, "jobCategoryEnum.mediation"),
+    PAYMENT(9, "jobCategoryEnum.payment");
 
     private Integer id;
     private String label;

@@ -34,6 +34,8 @@ import javax.persistence.TypedQuery;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.jpa.TypedParameterValue;
+import org.hibernate.type.CharacterType;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 
@@ -511,8 +513,8 @@ public class QueryBuilder {
         c.add(Calendar.DATE, 1);
         Date end = c.getTime();
 
-        String startDateParameterName = "start" + field.replace(".", "");
-        String endDateParameterName = "end" + field.replace(".", "");
+        String startDateParameterName = "start" + field.replaceAll("[^a-zA-Z0-9_]", "");
+        String endDateParameterName = "end" + field.replaceAll("[^a-zA-Z0-9_]", "");
         return addSqlCriterion(field + ">=:" + startDateParameterName, startDateParameterName, start).addSqlCriterion(field + "<:" + endDateParameterName, endDateParameterName,
             end);
     }
@@ -854,7 +856,7 @@ public class QueryBuilder {
      * @return convert para.
      */
     public String convertFieldToParam(String fieldname) {
-        fieldname = fieldname.replace(".", "_").replace("(", "_").replace(")", "_");
+        fieldname = fieldname.replace(".", "_").replace("(", "_").replace(")", "_").replace(",", "_").replace(" ", "");
         StringBuilder newField = new StringBuilder(fieldname);
         while (params.containsKey(newField.toString())) {
             newField = new StringBuilder(fieldname).append("_" + String.valueOf(new Random().nextInt(100)));
