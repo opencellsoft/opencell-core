@@ -21,6 +21,8 @@ package org.meveo.model.billing;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -35,7 +37,7 @@ import org.meveo.model.ISearchable;
 
 /**
  * Subscription termination rule
- * 
+ *
  * @author Andrius Karpavicius
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
@@ -73,6 +75,13 @@ public class SubscriptionTerminationReason extends BusinessEntity implements ISe
     @Column(name = "apply_termination_charges")
     private boolean applyTerminationCharges;
 
+    /**
+     * Override termination prorata setting of the charge, default value is NO_OVERRIDE.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "override_prorata")
+    private OverrideProrataEnum overrideProrata = OverrideProrataEnum.NO_OVERRIDE;
+
     public boolean isApplyAgreement() {
         return applyAgreement;
     }
@@ -95,5 +104,26 @@ public class SubscriptionTerminationReason extends BusinessEntity implements ISe
 
     public void setApplyTerminationCharges(boolean applyTerminationCharges) {
         this.applyTerminationCharges = applyTerminationCharges;
+    }
+
+    /**
+     * Gets the Override Prorata value.
+     *
+     * @return the Override Prorata value
+     */
+    public OverrideProrataEnum getOverrideProrata() {
+        if (overrideProrata == null) {
+            overrideProrata = OverrideProrataEnum.NO_OVERRIDE;
+        }
+        return overrideProrata;
+    }
+
+    /**
+     * Sets the Override Prorata value.
+     *
+     * @param overrideProrata the Override Prorata value
+     */
+    public void setOverrideProrata(OverrideProrataEnum overrideProrata) {
+        this.overrideProrata = overrideProrata;
     }
 }

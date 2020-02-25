@@ -32,7 +32,7 @@ public class TerminationReasonApi extends BaseApi {
     public void create(TerminationReasonDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");            
+            missingParameters.add("code");
         }
 
         handleMissingParametersAndValidate(postData);
@@ -48,6 +48,7 @@ public class TerminationReasonApi extends BaseApi {
         subscriptionTerminationReason.setApplyAgreement(postData.isApplyAgreement());
         subscriptionTerminationReason.setApplyReimbursment(postData.isApplyReimbursment());
         subscriptionTerminationReason.setApplyTerminationCharges(postData.isApplyTerminationCharges());
+        subscriptionTerminationReason.setOverrideProrata(postData.getOverrideProrata());
 
         terminationReasonService.create(subscriptionTerminationReason);
     }
@@ -78,6 +79,7 @@ public class TerminationReasonApi extends BaseApi {
         subscriptionTerminationReason.setApplyAgreement(postData.isApplyAgreement());
         subscriptionTerminationReason.setApplyReimbursment(postData.isApplyReimbursment());
         subscriptionTerminationReason.setApplyTerminationCharges(postData.isApplyTerminationCharges());
+        subscriptionTerminationReason.setOverrideProrata(postData.getOverrideProrata());
 
         terminationReasonService.update(subscriptionTerminationReason);
     }
