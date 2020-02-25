@@ -1,0 +1,10 @@
+{
+	"code": "RS_BASE_TEST-Type",
+	"description": "Invoice Test Type",
+	"occTemplateCode": "INV_STD",
+	"sequenceDto": {
+		"prefixEL": "Fact_",
+		"sequenceSize": "9"
+	},
+	"matchingAuto": "false"
+}

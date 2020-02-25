@@ -1,0 +1,10 @@
+{
+	"code": "CYC_INV_MT_1",
+	"description": "Monthly Invoice Cycle 1",
+	"transactionDateDelay": "0",
+	"invoiceDateProductionDelay": "0",
+	"dueDateDelay": "2",
+	"invoiceDateDelay": "4",
+	"calendar": "MONTHLY",
+	"invoiceTypeCode": "RS_BASE_TEST-Type"
+}

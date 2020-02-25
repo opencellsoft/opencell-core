@@ -181,10 +181,19 @@ public class CommonStepDefinition implements En {
                 });
             });
         });
+        Then("^The entity is created$", () -> {
+
+        });
+        Then("^The entity is updated$", () -> {
+
+        });
         Then("^The entity is deleted$", () -> {
             assertNotNull(base.getResponse());
         });
-        Then("^The entity is created$", () -> {
+        Then("^The action is completed$", () -> {
+
+        });
+        Then("^The entity is cleared$", () -> {
 
         });    
         And("^Validate that the statusCode is \"([^\"]*)\"$", (String statusCode) -> {

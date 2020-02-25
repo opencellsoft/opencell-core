@@ -1,0 +1,9 @@
+{
+	"code": "RS_BASE_REC1",
+	"description": "RS_BASE_REC1",
+	"eventCode": "RS_BASE_REC1",
+	"amountWithoutTax": "10",
+	"amountWithTax": "12",
+	"scriptInstance": "org.meveo.service.script.rating.RatingScript",
+	"priority": "1"
+}

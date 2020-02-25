@@ -1,0 +1,42 @@
+{
+    "code": "demo",
+    "currency": "AFA",
+    "country": "AD",
+    "language": "DEU",
+    "multiCurrency": "true",
+    "multiCountry": "true",
+    "multiLanguage": "true",
+    "enterprise": "true",
+    "levelDuplication": "false",
+    "rounding": "8",
+    "invoiceRounding": "2",
+    "prepaidReservationExpirationDelayinMillisec": "60000",
+    "bankCoordinates": {
+        "bankCode": "SGMB",
+        "branchCode": "12345",
+        "accountNumber": "33333333333",
+        "key": "11",
+        "iban": "11",
+        "bic": "11",
+        "accountOwner": "owner",
+        "bankName": "SGMB",
+        "bankId": "11",
+        "issuerNumber": "1111",
+        "issuerName": "DEMO"
+    },
+    "recognizeRevenue": "false",
+    "invoiceConfiguration": {
+        "displaySubscriptions": "true",
+        "displayServices": "true",
+        "displayOffers": "true",
+        "displayEdrs": "false",
+        "displayProvider": "false",
+        "displayCfAsXML": "false",
+        "displayPricePlans": "false",
+        "displayDetail": "true",
+        "displayBillingCycle": "false",
+        "displayFreeTransacInInvoice": "true",
+        "displayOrders": "false",
+        "displayWalletOperations": "false"
+    }
+}

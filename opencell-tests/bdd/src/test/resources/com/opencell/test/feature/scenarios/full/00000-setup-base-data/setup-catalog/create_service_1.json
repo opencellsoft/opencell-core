@@ -1,0 +1,33 @@
+{
+	"code": "RS_BASE_SERVICE1",
+	"description": "RS_BASE_SERVICE1",
+	"invoicingCalendar": "MONTHLY",
+	"serviceChargeTemplateRecurrings": {
+		"serviceChargeTemplateRecurring": [
+			{
+				"code": "RS_BASE_REC1"
+			}
+		]
+	},
+	"serviceChargeTemplateSubscriptions": {
+		"serviceChargeTemplateSubscription": [
+			{
+				"code": "RS_BASE_OS1"
+			}
+		]
+	},
+	"serviceChargeTemplateTerminations": {
+		"serviceChargeTemplateTermination": [
+			{
+				"code": "RS_BASE_OST1"
+			}
+		]
+	},
+	"serviceChargeTemplateUsages": {
+		"serviceChargeTemplateUsage": [
+			{
+				"code": "RS_BASE_USAGE1"
+			}
+		]
+	}
+}
