@@ -30,6 +30,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.OverrideProrataEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Renewal;
 import org.meveo.model.billing.ServiceInstance;
@@ -524,6 +525,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         boolean applyAgreement = terminationReason.isApplyAgreement();
         boolean applyReimbursment = terminationReason.isApplyReimbursment();
         boolean applyTerminationCharges = terminationReason.isApplyTerminationCharges();
+        OverrideProrataEnum overrideProrata = terminationReason.getOverrideProrata();
 
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
 
@@ -552,7 +554,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             if (endDate.after(nextChargeDate)) {
                 try {
-                    walletOperationService.applyChargeAgreement(recurringChargeInstance, recurringChargeInstance.getRecurringChargeTemplate(), endDate);
+                    walletOperationService.applyChargeAgreement(recurringChargeInstance, recurringChargeInstance.getRecurringChargeTemplate(), endDate, overrideProrata);
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
@@ -570,7 +572,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                         recurringChargeInstance.setTerminationDate(endAgreementDate);
 
                         try {
-                            walletOperationService.applyReimbursment(recurringChargeInstance, orderNumber);
+                            walletOperationService.applyReimbursment(recurringChargeInstance, orderNumber, overrideProrata);
 
                         } catch (RatingException e) {
                             log.trace("Failed to apply reimbursement recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
@@ -587,7 +589,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                     recurringChargeInstance.setTerminationDate(terminationDate);
 
                     try {
-                        walletOperationService.applyReimbursment(recurringChargeInstance, orderNumber);
+                        walletOperationService.applyReimbursment(recurringChargeInstance, orderNumber, overrideProrata);
 
                     } catch (RatingException e) {
                         log.trace("Failed to apply reimbursement recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());

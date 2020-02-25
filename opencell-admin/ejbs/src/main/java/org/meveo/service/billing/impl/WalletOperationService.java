@@ -16,6 +16,24 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
@@ -39,6 +57,7 @@ import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.OverrideProrataEnum;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -478,12 +497,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     /**
      * Reimburse already applied recurring charges
-     * 
+     *
      * @param chargeInstance Recurring charge instance
      * @throws BusinessException Business exception
-     * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
+     * @throws RatingException   Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public void applyReimbursment(RecurringChargeInstance chargeInstance, String orderNumber) throws BusinessException, RatingException {
+    public void applyReimbursment(RecurringChargeInstance chargeInstance, String orderNumber, OverrideProrataEnum overrideProrata) throws BusinessException, RatingException {
         if (chargeInstance == null) {
             throw new IncorrectChargeInstanceException("charge instance is null");
         }
@@ -529,12 +548,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         boolean isTerminationProrata = recurringChargeTemplate.getTerminationProrata() == null ? false : recurringChargeTemplate.getTerminationProrata();
         if (!StringUtils.isBlank(recurringChargeTemplate.getTerminationProrataEl())) {
             isTerminationProrata = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getTerminationProrataEl(), chargeInstance.getServiceInstance(),
-                recurringChargeTemplate);
+                    recurringChargeTemplate);
         }
+        isTerminationProrata = isOverrideTerminationProrata(isTerminationProrata, overrideProrata);
+
         if (isTerminationProrata) {
 
             log.debug("Applying the first prorated recuring charge reimbursement : id: {} for {} - {}, subscriptionDate={}, previousChargeDate={}", chargeInstance.getId(),
-                applyChargeOnDate, nextChargeDate, chargeInstance.getSubscriptionDate(), previousChargeDate);
+                    applyChargeOnDate, nextChargeDate, chargeInstance.getSubscriptionDate(), previousChargeDate);
 
             double prorataRatio = 1.0;
             double part1 = DateUtils.daysBetween(applyChargeOnDate, nextChargeDate);
@@ -913,7 +934,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     /**
-     * Apply missing recurring charges from the last charge date to the end agreement date.
+     * Apply missing recurring charges from the last charge date to the end agreement date
      *
      * @param chargeInstance          charge Instance
      * @param recurringChargeTemplate recurringCharge Template
@@ -921,7 +942,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @throws BusinessException Business exception
      * @throws RatingException   Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate, Date endAgreementDate)
+    public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate, Date endAgreementDate, OverrideProrataEnum overrideProrata)
             throws BusinessException, RatingException {
 
         // we apply the charge at its nextChargeDate if applied in advance, else at chargeDate
@@ -955,8 +976,10 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         boolean isTerminationProrata = recurringChargeTemplate.getTerminationProrata() == null ? false : recurringChargeTemplate.getTerminationProrata();
         if (!StringUtils.isBlank(recurringChargeTemplate.getTerminationProrataEl())) {
             isTerminationProrata = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getTerminationProrataEl(), chargeInstance.getServiceInstance(),
-                recurringChargeTemplate);
+                    recurringChargeTemplate);
         }
+
+        isTerminationProrata = isOverrideTerminationProrata(isTerminationProrata, overrideProrata);
 
         Date applyChargeOnDate = applyChargeFromDate;
 
@@ -1007,11 +1030,24 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         chargeInstance.setChargeDate(applyChargeOnDate);
     }
 
+    private boolean isOverrideTerminationProrata(boolean isTerminationProrata, OverrideProrataEnum overrideProrata) {
+        switch (overrideProrata) {
+            case NO_OVERRIDE:
+                return isTerminationProrata;
+            case PRORATA:
+                return true;
+            case NO_PRORATA:
+                return false;
+            default:
+                return isTerminationProrata;
+        }
+    }
+
     /**
      * Get a list of wallet operations to rate up to a given date. WalletOperation.invoiceDate< date
-     * 
+     *
      * @param entityToInvoice Entity to invoice
-     * @param invoicingDate Invoicing date
+     * @param invoicingDate   Invoicing date
      * @return A list of wallet operations
      */
     public List<WalletOperation> listToRate(IBillableEntity entityToInvoice, Date invoicingDate) {
