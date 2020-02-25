@@ -1,5 +1,5 @@
 {
-    "targetCode": "BA_WS_FULL_286_INV_CUST1",
+    "targetCode": "BA_RS_FULL_286_INV_CUST1",
     "targetType": "BILLINGACCOUNT",
     "invoicingDate": "2050-10-15",
     "firstTransactionDate": "2050-10-01",

@@ -1,5 +1,5 @@
 {
-	"code": "WS_FULL_286_IT_PDFXML",
+	"code": "RS_FULL_286_IT_PDFXML",
 	"description": "Invoice PDF adn XML Type",
 	"occTemplateCode": "INV_STD",
 	"matchingAuto": "false",

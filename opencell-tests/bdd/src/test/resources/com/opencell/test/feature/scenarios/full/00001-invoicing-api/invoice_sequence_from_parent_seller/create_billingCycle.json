@@ -1,8 +1,8 @@
 {
-	"code": "WS_FULL_SELLER_HIE",
-	"description": "WS_FULL_SELLER_HIE",
+	"code": "RS_FULL_SELLER_HIE",
+	"description": "RS_FULL_SELLER_HIE",
 	"dueDateDelay": "1",
 	"calendar": "MONTHLY",
 	"invoiceDateDelay": "1",
-	"invoiceTypeCode": "WS_FULL_SELLER_HIE"
+	"invoiceTypeCode": "RS_FULL_SELLER_HIE"
 }

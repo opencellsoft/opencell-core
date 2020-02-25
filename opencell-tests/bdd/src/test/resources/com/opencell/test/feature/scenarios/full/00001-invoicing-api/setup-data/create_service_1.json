@@ -1,6 +1,6 @@
 {
-	"code": "WS_FULL_INV_SERVICE1",
-	"description": "WS_FULL_INV_SERVICE1",
+	"code": "RS_FULL_INV_SERVICE1",
+	"description": "RS_FULL_INV_SERVICE1",
 	"serviceChargeTemplateUsages": {
 		"serviceChargeTemplateUsage": [
     		{

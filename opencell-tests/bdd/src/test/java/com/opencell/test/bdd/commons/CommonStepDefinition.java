@@ -4,11 +4,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import org.meveo.api.dto.ActionStatus;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.opencell.test.utils.JsonParser;
+import com.opencell.test.utils.ResourceUtils;
 import com.opencell.test.utils.RestApiUtils;
 
 import cucumber.api.java8.En;
@@ -20,10 +25,18 @@ public class CommonStepDefinition implements En {
 
     public CommonStepDefinition(BaseHook base) {
         this.base = base;
-        Given("^The entity has the following information \"([^\"]*)\" as \"([^\"]*)\"$", (String filename, String dto) -> {
-            Class klazz = base.getEntityClass(dto).get();
-                    setJsonObject(filename);
-                    assertTrue(base.getEntityDto() != null || base.getJsonObject() != null);
+        Given("^The entity has the following information \"([^\"]*)\" as \"([^\"]*)\"$",
+                (String filename, String dto) -> {
+                    if (dto.equals("String")) {
+                        base.setBody(getFileContent(filename));
+                    } else if (!dto.isBlank()) {
+                        Class klazz = base.getEntityClass(dto).get();
+                        setJsonObject(filename);
+                        assertTrue(base.getEntityDto() != null || base.getJsonObject() != null);
+                    } else {
+                        setJsonObject(filename);
+                        assertTrue(base.getEntityDto() != null || base.getJsonObject() != null);
+                    }
                 });
         Given("^The entity has the following information \"([^\"]*)\"$", (String filename) -> {
             setJsonObject(filename);
@@ -46,7 +59,7 @@ public class CommonStepDefinition implements En {
         When("^I call the \"([^\"]*)\" \"([^\"]*)\"$", (String action, String api) -> {
             String bodyRequest = getBodyRequest();
             ValidatableResponse response = null;
-            switch(action) {
+            switch (action) {
             case "create":
             case "Create":
             case "Post":
@@ -151,9 +164,10 @@ public class CommonStepDefinition implements En {
                 });
         When("^I call the delete \"([^\"]*)\"$", (String api) -> {
             String bodyRequest = getBodyRequest();
-            base.getCode().ifPresent( code ->{
+            base.getCode().ifPresent(code -> {
                 ValidatableResponse response = RestApiUtils.delete(api + code, bodyRequest);
-                base.setResponse(new ApiResponse(response.extract().statusCode(), response.extract().body().as(ActionStatus.class)));
+                base.setResponse(new ApiResponse(response.extract().statusCode(),
+                        response.extract().body().as(ActionStatus.class)));
                 assertNotNull(base.getResponse());
                 assertNotNull(base.getResponse().getActionStatus());
                 assertNotNull(base.getResponse().getHttpStatusCode());
@@ -161,26 +175,29 @@ public class CommonStepDefinition implements En {
         });
         When("^I call the delete \"([^\"]*)\" with identifier \"([^\"]*)\"$", (String api, String field) -> {
             String bodyRequest = getBodyRequest();
-            base.getField(field).ifPresent( code ->{
+            base.getField(field).ifPresent(code -> {
                 ValidatableResponse response = RestApiUtils.delete(api + code, bodyRequest);
-                base.setResponse(new ApiResponse(response.extract().statusCode(), response.extract().body().as(ActionStatus.class)));
+                base.setResponse(new ApiResponse(response.extract().statusCode(),
+                        response.extract().body().as(ActionStatus.class)));
                 assertNotNull(base.getResponse());
                 assertNotNull(base.getResponse().getActionStatus());
                 assertNotNull(base.getResponse().getHttpStatusCode());
             });
         });
-        When("^I call the delete \"([^\"]*)\" with identifiers \"([^\"]*)\" and \"([^\"]*)\"$", (String api, String field1, String field2) -> {
-            String bodyRequest = getBodyRequest();
-            base.getField(field1).ifPresent( f1 ->{
-                base.getField(field2).ifPresent(f2 ->{
-                    ValidatableResponse response = RestApiUtils.delete(api + f1 + "/" + f2, bodyRequest);
-                    base.setResponse(new ApiResponse(response.extract().statusCode(), response.extract().body().as(ActionStatus.class)));
-                    assertNotNull(base.getResponse());
-                    assertNotNull(base.getResponse().getActionStatus());
-                    assertNotNull(base.getResponse().getHttpStatusCode());
+        When("^I call the delete \"([^\"]*)\" with identifiers \"([^\"]*)\" and \"([^\"]*)\"$",
+                (String api, String field1, String field2) -> {
+                    String bodyRequest = getBodyRequest();
+                    base.getField(field1).ifPresent(f1 -> {
+                        base.getField(field2).ifPresent(f2 -> {
+                            ValidatableResponse response = RestApiUtils.delete(api + f1 + "/" + f2, bodyRequest);
+                            base.setResponse(new ApiResponse(response.extract().statusCode(),
+                                    response.extract().body().as(ActionStatus.class)));
+                            assertNotNull(base.getResponse());
+                            assertNotNull(base.getResponse().getActionStatus());
+                            assertNotNull(base.getResponse().getHttpStatusCode());
+                        });
+                    });
                 });
-            });
-        });
         Then("^The entity is created$", () -> {
 
         });
@@ -195,14 +212,13 @@ public class CommonStepDefinition implements En {
         });
         Then("^The entity is cleared$", () -> {
 
-        });    
+        });
         And("^Validate that the statusCode is \"([^\"]*)\"$", (String statusCode) -> {
             assertNotNull(base.getResponse());
             assertEquals(
                     (base.getResponse().getActionStatus() != null ? base.getResponse().getActionStatus().getMessage()
                             : null),
-                    Integer.valueOf(statusCode).intValue(),
-                    base.getResponse().getHttpStatusCode());
+                    Integer.valueOf(statusCode).intValue(), base.getResponse().getHttpStatusCode());
         });
         And("^The status is \"([^\"]*)\"$", (String actionStatus) -> {
             assertNotNull(base.getResponse());
@@ -220,7 +236,7 @@ public class CommonStepDefinition implements En {
         And("^The errorCode  is \"([^\"]*)\"$", (String errorCode) -> {
             assertNotNull(base.getResponse());
             assertNotNull(base.getResponse().getActionStatus());
-            if(base.getResponse().getActionStatus().getErrorCode() != null) {
+            if (base.getResponse().getActionStatus().getErrorCode() != null) {
                 assertEquals(base.getResponse().getActionStatus().getErrorCode().toString(),
                         base.getResponse().getActionStatus().getErrorCode().toString(), errorCode);
             }
@@ -235,6 +251,17 @@ public class CommonStepDefinition implements En {
     }
 
     private String getBodyRequest() throws JsonProcessingException {
-        return JsonParser.writeValueAsString(base.getJsonObject());
+        if (base.getBody() == null) {
+            return JsonParser.writeValueAsString(base.getJsonObject());
+        } else {
+            return base.getBody();
+        }
+
+    }
+
+    private String getFileContent(String fileName) throws IOException {
+        return new String(Files
+                .readAllBytes(Paths.get(ResourceUtils
+                        .getFileFromClasspathResource("com/opencell/test/feature/" + fileName).getPath())));
     }
 }

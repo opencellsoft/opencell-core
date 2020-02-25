@@ -5,12 +5,9 @@
 	"countryCode": "US",
 	"languageCode": "ENG",
 	"invoiceTypeSequences": {
-		"entry": {
-			"key": "WS_FULL_SELLER_HIE",
-			"value": {
-				"prefixEL": "PARENT-",
-				"invoiceSequenceCode": "WS_FULL_SELLER_HIE"
-			}
+		"RS_FULL_SELLER_HIE": {
+			"prefixEL": "PARENT-",
+			"invoiceSequenceCode": "RS_FULL_SELLER_HIE"
 		}
 	}
 }

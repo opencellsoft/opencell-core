@@ -1,5 +1,5 @@
 {
-    "code": "WS_FULL_SELLER_HIE",
+    "code": "RS_FULL_SELLER_HIE",
     "description": "Seller hiehrarchy invoice type",
     "occTemplateCode": "INV_STD",
     "sequenceDto": {
