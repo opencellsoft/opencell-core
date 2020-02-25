@@ -18,30 +18,32 @@
  */
 package org.meveo.admin.action.crm;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletResponse;
-
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.account.CustomerApi;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.dwh.GdprService;
+
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Standard backing bean for {@link Customer} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
- * 
+ *
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.2
  */
@@ -51,7 +53,9 @@ public class CustomerBean extends AccountBean<Customer> {
 
     private static final long serialVersionUID = 1L;
 
-    /** Injected @{link Customer} service. Extends {@link PersistenceService}. */
+    /**
+     * Injected @{link Customer} service. Extends {@link PersistenceService}.
+     */
     @Inject
     private CustomerService customerService;
 
@@ -60,6 +64,11 @@ public class CustomerBean extends AccountBean<Customer> {
 
     @Inject
     private GdprService gpdrService;
+
+    @Inject
+    private CounterInstanceService counterInstanceService;
+
+    private CounterInstance selectedCounterInstance;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -80,6 +89,7 @@ public class CustomerBean extends AccountBean<Customer> {
         if (entity.getContactInformation() == null) {
             entity.setContactInformation(new ContactInformation());
         }
+        selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
         return entity;
     }
 
@@ -139,5 +149,30 @@ public class CustomerBean extends AccountBean<Customer> {
         }
 
         return null;
+    }
+
+    /**
+     * Gets selected counter instances.
+     *
+     * @return the selected counter instances
+     */
+    public CounterInstance getSelectedCounterInstance() {
+        if (entity == null) {
+            initEntity();
+        }
+        return selectedCounterInstance;
+    }
+
+    /**
+     * Select counter instance.
+     *
+     * @param selectedCounterInstance selected counter instance
+     */
+    public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
+        if (selectedCounterInstance != null) {
+            this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
+        } else {
+            this.selectedCounterInstance = null;
+        }
     }
 }

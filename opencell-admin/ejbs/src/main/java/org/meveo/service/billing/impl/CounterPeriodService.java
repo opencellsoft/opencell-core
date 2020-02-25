@@ -28,7 +28,16 @@ import javax.persistence.TemporalType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.ICounterEntity;
-import org.meveo.model.billing.*;
+
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.UserAccount;
+
+import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -92,6 +101,8 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
         query.setParameter("subscription", null);
         query.setParameter("billingAccount", null);
         query.setParameter("userAccount", null);
+        query.setParameter("customerAccount", null);
+        query.setParameter("customer", null);
         query.setParameter("counterCode", counterCode);
 
         if (entity instanceof ServiceInstance) {
@@ -105,6 +116,12 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
         }
         if (entity instanceof UserAccount) {
             query.setParameter("userAccount", entity);
+        }
+        if (entity instanceof CustomerAccount) {
+            query.setParameter("customerAccount", entity);
+        }
+        if (entity instanceof Customer) {
+            query.setParameter("customer", entity);
         }
         try {
             CounterPeriod cp = (CounterPeriod) query.getSingleResult();

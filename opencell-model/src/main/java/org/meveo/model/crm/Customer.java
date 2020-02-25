@@ -18,10 +18,19 @@
  */
 package org.meveo.model.crm;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.meveo.model.AccountEntity;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICounterEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.intcrm.AdditionalDetails;
+import org.meveo.model.intcrm.AddressBook;
+import org.meveo.model.payments.CustomerAccount;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
@@ -29,21 +38,16 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.meveo.model.AccountEntity;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IWFEntity;
-import org.meveo.model.WorkflowedEntity;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.intcrm.AdditionalDetails;
-import org.meveo.model.intcrm.AddressBook;
-import org.meveo.model.payments.CustomerAccount;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 /**
  * Customer
@@ -58,7 +62,7 @@ import org.meveo.model.payments.CustomerAccount;
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "crm_customer")
-public class Customer extends AccountEntity implements IWFEntity {
+public class Customer extends AccountEntity implements IWFEntity, ICounterEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Customer.class.getAnnotation(DiscriminatorValue.class)).value();
 
@@ -102,6 +106,13 @@ public class Customer extends AccountEntity implements IWFEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "additional_details_id")
     private AdditionalDetails additionalDetails;
+
+    /**
+     * Accumulator Counters instantiated on the customer with Counter template code as a key.
+     */
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
+    private Map<String, CounterInstance> counters = new HashMap<>();
 
     public AddressBook getAddressbook() {
         return addressbook;
@@ -183,4 +194,22 @@ public class Customer extends AccountEntity implements IWFEntity {
         }
     }
 
+    /**
+     * Gets a counters map.
+     *
+     * @return a counters map
+     */
+    @Override
+    public Map<String, CounterInstance> getCounters() {
+        return counters;
+    }
+
+    /**
+     * Sets counters.
+     *
+     * @param counters a counters map
+     */
+    public void setCounters(Map<String, CounterInstance> counters) {
+        this.counters = counters;
+    }
 }
