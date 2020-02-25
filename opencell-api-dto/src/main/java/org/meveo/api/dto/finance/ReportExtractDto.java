@@ -53,6 +53,10 @@ public class ReportExtractDto extends EnableBusinessDto {
      */
     private ReportExtractResultTypeEnum reportExtractResultType;
 
+    private String style;
+
+    private String imagePath;
+
     /**
      * Instantiate a new ReportExtract DTO
      */
@@ -77,6 +81,8 @@ public class ReportExtractDto extends EnableBusinessDto {
         setStartDate(reportExtract.getStartDate());
         setScriptType(reportExtract.getScriptType());
         setReportExtractResultType(reportExtract.getReportExtractResultType());
+        setStyle(reportExtract.getStyle());
+        setImagePath(reportExtract.getImagePath());
         if (reportExtract.getScriptType().equals(ReportExtractScriptTypeEnum.JAVA)) {
             if (reportExtract.getScriptInstance() != null) {
                 setScriptInstanceCode(reportExtract.getScriptInstance().getCode());
@@ -255,5 +261,21 @@ public class ReportExtractDto extends EnableBusinessDto {
 
     public void setReportExtractResultType(ReportExtractResultTypeEnum reportExtractResultType) {
         this.reportExtractResultType = reportExtractResultType;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

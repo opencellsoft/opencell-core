@@ -418,7 +418,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             
             if(selectedPaymentMethod instanceof DDPaymentMethod) {
             	DDPaymentMethod ddPaymentMethod = (DDPaymentMethod) selectedPaymentMethod;
-            	String error = paymentMethodService.validateBankCoordinates(ddPaymentMethod, entity.getCustomer());
+            	String error = paymentMethodService.validateBankCoordinates(ddPaymentMethod, entity.getCustomer(), false);
             	if(!StringUtils.isBlank(error)) {
             		throw new BusinessException(error);
             	}
@@ -476,20 +476,29 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         } else {
             showMessage = true;
         }
-
-        paymentMethodToPrefer.setPreferred(true);
-        entity.addPaymentMethodToAudit(new Object() {
-        }.getClass().getEnclosingMethod().getName(), paymentMethodToPrefer);
-        for (PaymentMethod paymentMethod : entity.getPaymentMethods()) {
-            if (!paymentMethod.equals(paymentMethodToPrefer)) {
-                paymentMethod.setPreferred(false);
-            }
-        }
-        entity.addPaymentMethodToAudit(new Object() {
-        }.getClass().getEnclosingMethod().getName(), paymentMethodToPrefer);
-        if (showMessage) {
-            messages.info(new BundleKey("messages", "paymentMethod.setPreferred.ok"));
-        }
+        String error = null;
+		if (paymentMethodToPrefer instanceof DDPaymentMethod) {
+			DDPaymentMethod ddPaymentMethod = (DDPaymentMethod) paymentMethodToPrefer;
+			error = paymentMethodService.validateBankCoordinates(ddPaymentMethod, entity.getCustomer(), true);
+		}
+        if(!StringUtils.isBlank(error)) {
+    		log.error("cannot define as preferred payment method : "+error);
+    		messages.error(new BundleKey("messages", "paymentMethod.setPreferred.ko"),error);
+		} else {
+			paymentMethodToPrefer.setPreferred(true);
+			entity.addPaymentMethodToAudit(new Object() {
+			}.getClass().getEnclosingMethod().getName(), paymentMethodToPrefer);
+			for (PaymentMethod paymentMethod : entity.getPaymentMethods()) {
+				if (!paymentMethod.equals(paymentMethodToPrefer)) {
+					paymentMethod.setPreferred(false);
+				}
+			}
+			entity.addPaymentMethodToAudit(new Object() {
+			}.getClass().getEnclosingMethod().getName(), paymentMethodToPrefer);
+			if (showMessage) {
+				messages.info(new BundleKey("messages", "paymentMethod.setPreferred.ok"));
+			}
+		}
     }
 
     public void removePaymentMethod(PaymentMethod paymentMethod) {
