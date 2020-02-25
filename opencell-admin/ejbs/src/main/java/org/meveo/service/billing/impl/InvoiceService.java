@@ -2321,7 +2321,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             initCalendarDate = billingAccount.getAuditable().getCreated();
         }
 
-        Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(initCalendarDate, getReferenceDate(invoice));
+        Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(getReferenceDate(invoice));
         billingAccount.setNextInvoiceDate(nextCalendarDate);
         billingAccount.updateAudit(currentUser);
         invoice = update(invoice);

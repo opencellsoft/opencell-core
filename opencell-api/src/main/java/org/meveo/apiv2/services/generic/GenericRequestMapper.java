@@ -6,6 +6,7 @@ import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering;
 import org.meveo.apiv2.services.generic.filter.FactoryFilterMapper;
 import org.meveo.model.BaseEntity;
+import org.meveo.service.base.PersistenceService;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -17,10 +18,10 @@ import java.util.stream.Stream;
 
 public class GenericRequestMapper {
     private final Class entityClass;
-    private final Function<Class, EntityManager> entityManager;
-    public GenericRequestMapper(Class entityClass, Function<Class, EntityManager> entityManager) {
+    private final Function<Class, PersistenceService> serviceFunction;
+    public GenericRequestMapper(Class entityClass, Function<Class, PersistenceService> serviceFunction) {
         this.entityClass = entityClass;
-        this.entityManager = entityManager;
+        this.serviceFunction = serviceFunction;
     }
 
     public PaginationConfiguration mapTo(GenericPagingAndFiltering genericPagingAndFiltering){
@@ -42,7 +43,7 @@ public class GenericRequestMapper {
                 .map(key -> {
                     String keyObject = (String) key;
                     String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
-                    return Collections.singletonMap(keyObject, new FactoryFilterMapper().create(fieldName, filters.get(key), entity, entityManager).map());
+                    return Collections.singletonMap(keyObject, new FactoryFilterMapper().create(fieldName, filters.get(key), entity, serviceFunction).map());
                 })
                 .flatMap (map -> map.entrySet().stream())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

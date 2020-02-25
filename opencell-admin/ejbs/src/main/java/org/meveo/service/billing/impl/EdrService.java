@@ -18,6 +18,8 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +37,7 @@ import org.meveo.api.dto.billing.EDRDto;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.RatedTransactionGroup;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.rating.EDR;
@@ -77,6 +80,8 @@ public class EdrService extends PersistenceService<EDR> {
     static boolean deduplicateEdrs = false;
     static boolean useInMemoryDeduplication = false;
     static boolean inMemoryDeduplicationPrepopulated = false;
+    
+	private static final int PURGE_MAX_RESULTS = 30000;
 
     @PostConstruct
     private void init() {
@@ -320,6 +325,174 @@ public class EdrService extends PersistenceService<EDR> {
 
 		return getEntityManager().createNamedQuery("EDR.deleteEdrBetweenTwoDateByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
 				.setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+	}
+	
+	public <T extends Enum<T>, E extends BaseEntity> long countMediationDataToPurge(String firstTransactionDate, List<T> targetStatus, Class<E> clazz) {
+		if (targetStatus != null && !targetStatus.isEmpty()) {
+			getEntityManager().clear();
+			String sqlString = buildSelectOrCountMediationDataToPurgeQuery(firstTransactionDate, targetStatus, clazz, true, 0);
+			if(sqlString != null) {
+				log.debug("count Mediation Data To Purge query : {}", sqlString);
+				return ((BigInteger) getEntityManager().createNativeQuery(sqlString).getSingleResult()).longValue();
+			}
+		}
+		return 0l;
+	}
+	
+	private <T extends Enum<T>, E extends BaseEntity> String buildSelectOrCountMediationDataToPurgeQuery(String firstTransactionDate, List<T> targetStatus, Class<E> clazz, boolean countQuery, long lastId) {
+		
+		String tablelName = null;
+		String dateColName = null;
+		
+		switch (clazz.getSimpleName()) {
+		case "WalletOperation":
+			tablelName = "billing_wallet_operation";
+			dateColName = "operation_date";
+			break;
+		case "RatedTransaction":
+			tablelName = "billing_rated_transaction";
+			dateColName = "usage_date";
+			break;
+		case "EDR":
+			tablelName = "rating_edr";
+			dateColName = "event_date";
+			break;
+
+		default:
+			return null;
+		}
+		
+		StringBuilder queryBuilder = new StringBuilder("select ");
+		queryBuilder.append(countQuery ? "count(*) " : "id ");
+		queryBuilder.append("from ").append(tablelName);
+		queryBuilder.append(" where ");
+		
+		if(!countQuery) {
+			queryBuilder.append("id > ").append(lastId).append(" and ");
+		}
+			
+		queryBuilder
+			.append("date(")
+			.append(dateColName)
+			.append(") = '")
+			.append(firstTransactionDate)
+			.append("'\\:\\:DATE ")
+			.append(statusListToSqlClause(targetStatus));
+		
+		if(!countQuery) {
+			queryBuilder.append(" order by id asc");
+		}
+		
+		return queryBuilder.toString();
+	}
+	
+	public <T extends Enum<T>> String statusListToSqlClause(List<T> enumsList) {
+		StringBuilder inClauseBuilder = new StringBuilder("");
+		if (enumsList != null && !enumsList.isEmpty()) {
+			inClauseBuilder.append(" and status ").append(enumsList.size() > 1 ? "in (" : "= ");
+			boolean firstTime = true;
+			for (T status : enumsList) {
+				if (!firstTime) {
+					inClauseBuilder.append(",");
+				}
+				inClauseBuilder.append("'").append(status.name()).append("'");
+				firstTime = false;
+			}
+			inClauseBuilder.append(enumsList.size() > 1 ? ")" : "");
+		}
+		return inClauseBuilder.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T extends Enum<T>, E extends BaseEntity> List<BigInteger> getMediationDataIdsToPurge(String firstTransactionDate, List<T> targetStatus, Class<E> clazz, long lastId) {
+		if (targetStatus != null && !targetStatus.isEmpty()) {
+			getEntityManager().clear();
+			String sqlString = buildSelectOrCountMediationDataToPurgeQuery(firstTransactionDate, targetStatus, clazz, false, lastId);
+			if(sqlString != null) {
+				log.debug("get Mediation Data Ids To Purge query : {}", sqlString);
+				return (List<BigInteger>) getEntityManager().createNativeQuery(sqlString).setMaxResults(PURGE_MAX_RESULTS).getResultList();
+			}
+		}
+		return new ArrayList<BigInteger>();
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public <E extends BaseEntity> long purgeMediationDataPacket(List<BigInteger> ids, Class<E> clazz) {
+		
+		String inClause = buildInIdsClause(ids);
+
+		switch (clazz.getSimpleName()) {
+		
+		case "WalletOperation":
+			
+			String q10 = new StringBuilder("update billing_wallet_operation set reratedwalletoperation_id = null where reratedwalletoperation_id in (").append(inClause).append(")").toString();
+			String q7 = new StringBuilder("delete from billing_wallet_operation where id in (").append(inClause).append(")").toString();
+			
+			long r10 = getEntityManager().createNativeQuery(q10).executeUpdate();
+			log.debug("{} rows updated \n with query {}", r10, q10);
+			
+			long r7 = getEntityManager().createNativeQuery(q7).executeUpdate();
+			log.debug("{} rows deleted \n with query {}", r7, q7);
+			
+			return r7;
+			
+		case "RatedTransaction":
+			
+			String q8 = new StringBuilder("update billing_rated_transaction set adjusted_rated_tx = null where adjusted_rated_tx in (").append(inClause).append(")").toString();
+			long r8 = getEntityManager().createNativeQuery(q8).executeUpdate();
+			log.debug("{} rows updated  \n with query {}", r8, q8);
+			
+			String q11 = new StringBuilder("update billing_wallet_operation set rated_transaction_id = null where rated_transaction_id in (").append(inClause).append(")").toString();
+			long r11 = getEntityManager().createNativeQuery(q8).executeUpdate();
+			log.debug("{} rows updated  \n with query {}", r11, q11);
+			
+			String q9 = new StringBuilder("delete from billing_rated_transaction where id in (").append(inClause).append(")").toString();
+			long r9 = getEntityManager().createNativeQuery(q9).executeUpdate();
+			log.debug("{} rows deleted \n with query {}", r9, q9);
+			
+			return r9;
+		
+		case "EDR":
+			
+			String q1 = new StringBuilder("update billing_wallet_operation set edr_id = null where edr_id in (").append(inClause).append(")").toString();
+			String q2 = new StringBuilder("update billing_rated_transaction set edr_id = null where edr_id in (").append(inClause).append(")").toString();
+			String q3 = new StringBuilder("update billing_reservation set origin_edr_id = null where origin_edr_id in (").append(inClause).append(")").toString();
+			String q4 = new StringBuilder("update rating_edr set header_edr_id = null where header_edr_id in (").append(inClause).append(")").toString();
+			String q5 = new StringBuilder("delete from rating_edr where id in (").append(inClause).append(")").toString();
+			
+			long r1 = getEntityManager().createNativeQuery(q1).executeUpdate();
+			log.debug("{} rows updated \n with query {}", r1, q1);
+			
+			long r2 = getEntityManager().createNativeQuery(q2).executeUpdate();
+			log.debug("{} rows updated \n with query {}", r2, q2);
+			
+			long r3 = getEntityManager().createNativeQuery(q3).executeUpdate();
+			log.debug("{} rows updated \n with query {}", r3, q3);
+			
+			long r4 = getEntityManager().createNativeQuery(q4).executeUpdate();
+			log.debug("{} rows updated \n with query {}", r4, q4);
+			
+			long r5 = getEntityManager().createNativeQuery(q5).executeUpdate();
+			log.debug("{} rows deleted \n with query {}", r5, q5);
+			
+			return r5;
+
+		default:
+			return 0l;
+		}
+
+	}
+	
+	private String buildInIdsClause(List<BigInteger> ids) {
+		StringBuilder in = new StringBuilder();
+		boolean fisrtTime = true;
+		for(BigInteger id : ids) {
+			if(!fisrtTime)
+				in.append(",");
+			in.append(id.longValue());
+			fisrtTime =false;
+		}
+		return in.toString();
 	}
 
 }

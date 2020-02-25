@@ -153,6 +153,9 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
         reportExtract.setStartDate(dto.getStartDate());
         reportExtract.setScriptType(dto.getScriptType());
         reportExtract.setReportExtractResultType(dto.getReportExtractResultType());
+        reportExtract.setStyle(dto.getStyle());
+        reportExtract.setImagePath(dto.getImagePath());
+        reportExtract.setReportExtractResultType(dto.getReportExtractResultType());
         if (dto.getScriptType().equals(ReportExtractScriptTypeEnum.JAVA)) {
             ScriptInstance scriptInstance = scriptInstanceService.findByCode(dto.getScriptInstanceCode());
             if (scriptInstance == null) {

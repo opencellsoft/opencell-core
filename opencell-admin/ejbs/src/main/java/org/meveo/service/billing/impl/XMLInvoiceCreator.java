@@ -104,6 +104,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -186,6 +187,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
     /** temporary map to store billing cycle. */
     private Map<BillingCycle, String> billingCycleMap = new HashMap<>();
+
+	@Inject
+    private SellerService sellerService;
 
     /** all rated transaction for a invoice. */
     // private List<RatedTransaction> ratedTransactions = null;
@@ -1024,10 +1028,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         
         Element country = doc.createElement("country");
         Element countryName = doc.createElement("countryName");
-        if (seller.getAddress() != null && seller.getAddress().getCountry() != null) {
-            Text countryTxt = doc.createTextNode(seller.getAddress().getCountry() != null ? seller.getAddress().getCountry().getCountryCode() : "");
+        seller = sellerService.refreshOrRetrieve(seller);
+		if (seller.getAddress() != null && seller.getAddress().getCountry() != null) {
+			Country countryEntity = seller.getAddress().getCountry();
+            Text countryTxt = doc.createTextNode(countryEntity != null ? countryEntity.getCountryCode() : "");
             country.appendChild(countryTxt);
-            Country countryEntity = seller.getAddress().getCountry();
             Text countryNameTxt;
             if (countryEntity.getDescriptionI18n() != null && countryEntity.getDescriptionI18n().get(languageCode) != null) {
                 // get country description by language code
