@@ -18,15 +18,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -39,6 +30,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.OverrideProrataEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Renewal;
@@ -51,9 +43,9 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
+import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
+import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.payments.PaymentScheduleTemplate;
@@ -67,6 +59,14 @@ import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
 import org.meveo.service.payments.impl.PaymentScheduleTemplateService;
 import org.meveo.service.script.service.ServiceModelScriptService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * ServiceInstanceService.
@@ -340,15 +340,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             serviceInstance.getRecurringChargeInstances().add(chargeInstance);
         }
 
-        for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate.getServiceSubscriptionCharges()) {
-            SubscriptionChargeInstance chargeInstance = (SubscriptionChargeInstance) oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance, serviceChargeTemplate.getChargeTemplate(),
-                subscriptionAmount, null, true, isVirtual);
+        for (ServiceChargeTemplateSubscription serviceChargeTemplate : serviceTemplate.getServiceSubscriptionCharges()) {
+            SubscriptionChargeInstance chargeInstance = (SubscriptionChargeInstance) oneShotChargeInstanceService
+                    .oneShotChargeInstanciation(serviceInstance, serviceChargeTemplate, subscriptionAmount, null, true, isVirtual);
             serviceInstance.getSubscriptionChargeInstances().add(chargeInstance);
         }
 
-        for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate.getServiceTerminationCharges()) {
-            TerminationChargeInstance chargeInstance = (TerminationChargeInstance) oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance, serviceChargeTemplate.getChargeTemplate(),
-                terminationAmount, null, false, isVirtual);
+        for (ServiceChargeTemplateTermination serviceChargeTemplate : serviceTemplate.getServiceTerminationCharges()) {
+            TerminationChargeInstance chargeInstance = (TerminationChargeInstance) oneShotChargeInstanceService
+                    .oneShotChargeInstanciation(serviceInstance, serviceChargeTemplate, terminationAmount, null, false, isVirtual);
             serviceInstance.getTerminationChargeInstances().add(chargeInstance);
         }
 
@@ -526,6 +526,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         boolean applyAgreement = terminationReason.isApplyAgreement();
         boolean applyReimbursment = terminationReason.isApplyReimbursment();
         boolean applyTerminationCharges = terminationReason.isApplyTerminationCharges();
+        OverrideProrataEnum overrideProrata = terminationReason.getOverrideProrata();
 
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
 
@@ -554,7 +555,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             if (endDate.after(nextChargeDate)) {
                 try {
-                    walletOperationService.applyChargeAgreement(recurringChargeInstance, recurringChargeInstance.getRecurringChargeTemplate(), endDate);
+                    walletOperationService.applyChargeAgreement(recurringChargeInstance, recurringChargeInstance.getRecurringChargeTemplate(), endDate, overrideProrata);
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
@@ -572,7 +573,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                         recurringChargeInstance.setTerminationDate(endAgreementDate);
 
                         try {
-                            walletOperationService.applyReimbursment(recurringChargeInstance, orderNumber);
+                            walletOperationService.applyReimbursment(recurringChargeInstance, orderNumber, overrideProrata);
 
                         } catch (RatingException e) {
                             log.trace("Failed to apply reimbursement recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
@@ -589,7 +590,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                     recurringChargeInstance.setTerminationDate(terminationDate);
 
                     try {
-                        walletOperationService.applyReimbursment(recurringChargeInstance, orderNumber);
+                        walletOperationService.applyReimbursment(recurringChargeInstance, orderNumber, overrideProrata);
 
                     } catch (RatingException e) {
                         log.trace("Failed to apply reimbursement recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());

@@ -1,12 +1,5 @@
 package org.meveo.api.catalog;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
@@ -30,6 +23,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
@@ -55,6 +49,12 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.primefaces.model.SortOrder;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -109,24 +109,23 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     
     @Inject
     private SubscriptionApi subscriptionApi;
-    
+
     /**
      * Sets the service charge template.
      *
-     * @param serviceTemplate the service template.
-     * @param serviceChargeTemplate the service charge template.
+     * @param serviceTemplate          the service template.
+     * @param serviceChargeTemplate    the service charge template.
      * @param serviceChargeTemplateDto the service charge template Dto.
-     * @param chargeTemplate the charge template
+     * @param chargeTemplate           the charge template
      * @throws EntityDoesNotExistsException entity does not exists exception
      */
-    
-    @SuppressWarnings("unchecked")
-    private void setServiceChargeTemplate(ServiceTemplate serviceTemplate, @SuppressWarnings("rawtypes") ServiceChargeTemplate serviceChargeTemplate,
-            BaseServiceChargeTemplateDto serviceChargeTemplateDto, ChargeTemplate chargeTemplate) throws MeveoApiException {
+
+    private void setServiceChargeTemplate(ServiceTemplate serviceTemplate, ServiceChargeTemplate serviceChargeTemplate, BaseServiceChargeTemplateDto serviceChargeTemplateDto,
+            ChargeTemplate chargeTemplate) throws MeveoApiException {
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, serviceChargeTemplateDto.getCode());
         }
-        
+
         List<WalletTemplate> wallets = new ArrayList<WalletTemplate>();
         for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {
             if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
@@ -140,9 +139,26 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceChargeTemplate.setChargeTemplate(chargeTemplate);
         serviceChargeTemplate.setWalletTemplates(wallets);
         serviceChargeTemplate.setServiceTemplate(serviceTemplate);
-        serviceChargeTemplate.setCounterTemplate(counterTemplateService.getCounterTemplate(serviceChargeTemplateDto.getCounterTemplate()));
+        serviceChargeTemplate.setCounterTemplate(getCounterTemplate(serviceChargeTemplate, serviceChargeTemplateDto.getCounterTemplate()));
     }
-    
+
+    private CounterTemplate getCounterTemplate(ServiceChargeTemplate serviceChargeTemplate, String counterTemplateCode) {
+        if (StringUtils.isBlank(counterTemplateCode)) {
+            return null;
+        }
+        CounterTemplate counterTemplate = counterTemplateService.getCounterTemplate(counterTemplateCode);
+
+        if (serviceChargeTemplate instanceof ServiceChargeTemplateTermination || serviceChargeTemplate instanceof ServiceChargeTemplateSubscription) {
+            log.trace("Select only accumulator counter");
+            if (counterTemplate != null && counterTemplate.getAccumulator() != null && counterTemplate.getAccumulator()) {
+                return counterTemplate;
+            } else {
+                throw new InvalidParameterException("The counterTemplate parameter: " + counterTemplateCode + " must be an accumulator counter");
+            }
+        }
+        return counterTemplate;
+    }
+
     private void createServiceChargeTemplateRecurring(ServiceTemplate serviceTemplate, ServiceChargeTemplateRecurringDto serviceChargeTemplateDto)
             throws MeveoApiException, BusinessException {
         RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
@@ -150,7 +166,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, serviceChargeTemplateDto, chargeTemplate);
         serviceChargeTemplateRecurringService.create(serviceChargeTemplate);
     }
-    
+
     private void createServiceChargeTemplateSubscription(ServiceTemplate serviceTemplate, ServiceChargeTemplateSubscriptionDto serviceChargeTemplateDto)
             throws MeveoApiException, BusinessException {
         OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());

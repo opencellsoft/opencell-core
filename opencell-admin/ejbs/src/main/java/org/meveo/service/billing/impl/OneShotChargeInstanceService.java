@@ -18,22 +18,12 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingWalletTypeEnum;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -44,11 +34,22 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 @Stateless
 public class OneShotChargeInstanceService extends BusinessService<OneShotChargeInstance> {
@@ -61,6 +62,9 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
     @Inject
     private WalletOperationService walletOperationService;
+
+    @Inject
+    private CounterInstanceService counterInstanceService;
 
     public OneShotChargeInstance findByCodeAndSubsription(String code, Long subscriptionId) {
         OneShotChargeInstance oneShotChargeInstance = null;
@@ -80,6 +84,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         return oneShotChargeInstance;
     }
 
+    @Override
     public OneShotChargeInstance findById(Long oneShotChargeId) {
         OneShotChargeInstance oneShotChargeInstance = null;
         try {
@@ -98,19 +103,19 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
     /**
      * Instantiate subscription or termination charge
-     * 
-     * @param serviceInstance Service instance
-     * @param chargeTemplate Charge template
-     * @param amoutWithoutTax Amount without tax
-     * @param amoutWithTax Amount with tax
-     * @param isSubscriptionCharge True if this is a subscription charge
-     * @param isVirtual Is it a virtual charge - should not be persisted
+     *
+     * @param serviceInstance       Service instance
+     * @param serviceChargeTemplate Service Charge template
+     * @param amoutWithoutTax       Amount without tax
+     * @param amoutWithTax          Amount with tax
+     * @param isSubscriptionCharge  True if this is a subscription charge
+     * @param isVirtual             Is it a virtual charge - should not be persisted
      * @return Subscription or termination charge instance
      * @throws BusinessException General exception
      */
-    public OneShotChargeInstance oneShotChargeInstanciation(ServiceInstance serviceInstance, OneShotChargeTemplate chargeTemplate, BigDecimal amoutWithoutTax,
+    public OneShotChargeInstance oneShotChargeInstanciation(ServiceInstance serviceInstance, ServiceChargeTemplate serviceChargeTemplate, BigDecimal amoutWithoutTax,
             BigDecimal amoutWithTax, boolean isSubscriptionCharge, boolean isVirtual) throws BusinessException {
-
+        OneShotChargeTemplate chargeTemplate = (OneShotChargeTemplate) serviceChargeTemplate.getChargeTemplate();
         log.debug("Instanciate a oneshot for code {} on subscription {}", chargeTemplate.getCode(), serviceInstance.getSubscription().getCode());
 
         OneShotChargeInstance oneShotChargeInstance = null;
@@ -154,6 +159,14 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
         if (!isVirtual) {
             create(oneShotChargeInstance);
+        }
+        if (serviceChargeTemplate.getCounterTemplate() != null) {
+            CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, serviceChargeTemplate.getCounterTemplate(), isVirtual);
+            oneShotChargeInstance.setCounter(counterInstance);
+
+            if (!isVirtual) {
+                update(oneShotChargeInstance);
+            }
         }
 
         return oneShotChargeInstance;

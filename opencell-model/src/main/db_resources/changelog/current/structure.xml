@@ -2008,7 +2008,7 @@
 
         <sql>insert into ${db.schema.adapted}rating_edr (id,version,created,event_date,last_updated,origin_batch,origin_record,parameter_1,parameter_2,parameter_3,parameter_4,quantity,reject_reason,status,subscription_id,parameter_5,parameter_6,parameter_7,parameter_8,parameter_9,date_parameter_1,date_parameter_2,date_parameter_3,date_parameter_4,date_parameter_5,decimal_parameter_1,decimal_parameter_2,decimal_parameter_3,decimal_parameter_4,decimal_parameter_5,access_code,header_edr_id,extra_parameter) 
                 (select id,version,created,event_date,last_updated,origin_batch,origin_record,parameter_1,parameter_2,parameter_3,parameter_4,quantity,reject_reason,status,subscription_id,parameter_5,parameter_6,parameter_7,parameter_8,parameter_9,date_parameter_1,date_parameter_2,date_parameter_3,date_parameter_4,date_parameter_5,decimal_parameter_1,decimal_parameter_2,decimal_parameter_3,decimal_parameter_4,decimal_parameter_5,access_code,header_edr_id,extra_parameter from ${db.schema.adapted}rating_edr_tmp) </sql>       
-        <sql>insert into ${db.schema.adapted}billing_wallet_operation (id,operation_type,version,created,updated,code,description,amount_tax,amount_with_tax,amount_without_tax,end_date,offer_code,operation_date,parameter_1,parameter_2,parameter_3,quantity,start_date,status,subscription_date,tax_percent,credit_debit_flag,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,charge_instance_id,counter_id,currency_id,priceplan_id,reratedwalletoperation_id,seller_id,wallet_id,reservation_id,invoicing_date,input_quantity,input_unit_description,rating_unit_description,edr_id,order_number,parameter_extra,raw_amount_without_tax,raw_amount_with_tax,invoice_sub_category_id,subscription_id,tax_id,rated_transaction_id,service_instance_id,offer_id) 
+        <sql>insert into ${db.schema.adapted}billing_wallet_operation (id,operation_type,version,created,updated,code,description,amount_tax,amount_with_tax,amount_without_tax,end_date,offer_code,operation_date,parameter_1,parameter_2,parameter_3,quantity,start_date,status,subscription_date,tax_percent,credit_debit_flag,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,charge_instance_id,counter_id,currency_id,priceplan_id,reratedwalletoperation_id,seller_id,wallet_id,reservation_id,invoicing_date,input_quantity,input_unit_description,rating_unit_description,edr_id,order_number,parameter_extra,raw_amount_without_tax,raw_amount_with_tax,invoice_sub_category_id,subscription_id,tax_id,rated_transaction_id,service_instance_id,offer_id)
                 (select id,operation_type,version,created,updated,code,description,amount_tax,amount_with_tax,amount_without_tax,end_date,offer_code,operation_date,parameter_1,parameter_2,parameter_3,quantity,start_date,status,subscription_date,tax_percent,credit_debit_flag,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,charge_instance_id,counter_id,currency_id,priceplan_id,reratedwalletoperation_id,seller_id,wallet_id,reservation_id,invoicing_date,input_quantity,input_unit_description,rating_unit_description,edr_id,order_number,parameter_extra,raw_amount_without_tax,raw_amount_with_tax,invoice_sub_category_id,subscription_id,tax_id,rated_transaction_id,service_instance_id,offer_id from ${db.schema.adapted}billing_wallet_operation_tmp)</sql>
         <sql>insert into ${db.schema.adapted}billing_rated_transaction (id,version,amount_tax,amount_with_tax,amount_without_tax,code,description,do_not_trigger_invoicing,parameter_1,parameter_2,parameter_3,quantity,status,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,unity_description,usage_date,billing_account__id,billing_run_id,invoice_id,aggregate_id_f,invoice_sub_category_id,priceplan_id,wallet_id,edr_id,adjusted_rated_tx,order_number,rating_unit_description,parameter_extra,start_date,end_date,subscription_id,seller_id,charge_instance_id,tax_id,tax_percent,user_account_id,offer_id,service_instance_id, updated) 
                 (select id,version,amount_tax,amount_with_tax,amount_without_tax,code,description,do_not_trigger_invoicing,parameter_1,parameter_2,parameter_3,quantity,status,unit_amount_tax,unit_amount_with_tax,unit_amount_without_tax,unity_description,usage_date,billing_account__id,billing_run_id,invoice_id,aggregate_id_f,invoice_sub_category_id,priceplan_id,wallet_id,edr_id,adjusted_rated_tx,order_number,rating_unit_description,parameter_extra,start_date,end_date,subscription_id,seller_id,charge_instance_id,tax_id,tax_percent,user_account_id,offer_id,service_instance_id, now() from ${db.schema.adapted}billing_rated_transaction_tmp)</sql>
@@ -2248,6 +2248,39 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="#4791_20200113" author="KhalidHORRI">
+
+        <addColumn tableName="cat_counter_template">
+            <column name="is_accumulator" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+        <addColumn tableName="cat_serv_trm_charge_template">
+            <column name="counter_template_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="counter_template_id" baseTableName="cat_serv_trm_charge_template" constraintName="fk_serv_trm_charge_template_counter_template"
+                                 deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template"/>
+        <addColumn tableName="cat_serv_sub_charge_template">
+            <column name="counter_template_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="counter_template_id" baseTableName="cat_serv_sub_charge_template" constraintName="fk_serv_sub_charge_template_counter_template"
+                                 deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_counter_template"/>
+        <addColumn tableName="billing_counter">
+            <column name="customer_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_billing_counter_customer_id" referencedTableName="crm_customer"
+                                 baseColumnNames="customer_id" baseTableName="billing_counter" referencedColumnNames="id"/>
+        <addColumn tableName="billing_counter">
+            <column name="customer_account_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="fk_billing_counter_customer_account_id" referencedTableName="ar_customer_account"
+                                 baseColumnNames="customer_account_id" baseTableName="billing_counter" referencedColumnNames="id"/>
+
+        <addColumn tableName="billing_counter_period">
+            <column name="is_accumulator" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
     <!--    one shot migration of sellers -->
     <changeSet id="4745_20200108" author="MohamedSTITANE" >
         <sql dbms="postgresql" endDelimiter="$$" splitStatements="false">
@@ -2468,6 +2501,11 @@ END $$;]]>
         <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id ASC
             NULLS LAST)
         </sql>
+    </changeSet>
+    <changeSet id="#4787_20200224" author="khalidHORRI">
+        <addColumn tableName="billing_subscrip_termin_reason">
+            <column name="override_prorata" type="varchar(255)"/>
+        </addColumn>
     </changeSet>
     <changeSet id="#4201_20200225" author="khalidHORRI">
         <addColumn tableName="billing_subscrip_termin_reason">

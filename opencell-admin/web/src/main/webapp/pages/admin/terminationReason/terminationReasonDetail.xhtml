@@ -26,11 +26,13 @@
 		</h:form>
 
 		<hftl:formPanel label="#{messages['terminationReason.title']}"
-			backingBean="#{terminationReasonBean}" columns="2">
+						backingBean="#{terminationReasonBean}" columns="3">
 			<hftl:formField label="#{messages['BusinessEntity.code']}" field="code"
 							required="true"/>
 			<hftl:formField label="#{messages['BusinessEntity.description']}"
 							field="description"/>
+			<hftl:formField label="#{messages['terminationReason.overrideProrata']}"
+							field="overrideProrata"/>
 			<hftl:formField label="#{messages['terminationReason.applyAgreement']}"
 							field="applyAgreement" newLine="true"/>
 			<hftl:formField
