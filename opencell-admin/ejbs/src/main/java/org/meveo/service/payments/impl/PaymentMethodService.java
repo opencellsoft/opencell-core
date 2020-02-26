@@ -312,41 +312,41 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
      *
      * @param paymentMethod the DDpaymentMethod to check.
      */
-	public String validateBankCoordinates(DDPaymentMethod paymentMethod, Customer cust) {
+	public String validateBankCoordinates(DDPaymentMethod paymentMethod, Customer cust, boolean strict) {
 		BankCoordinates bankCoordinates = paymentMethod.getBankCoordinates();
 
 		boolean emptyMandateIdentification = StringUtils.isBlank(paymentMethod.getMandateIdentification());
 		boolean emptyMandateDate = paymentMethod.getMandateDate() == null;
-		boolean emptyAccount = StringUtils.isBlank(bankCoordinates.getAccountOwner());
-		boolean emptyIban = StringUtils.isBlank(bankCoordinates.getIban());
-		boolean emptyBank = StringUtils.isBlank(bankCoordinates.getBankName());
+		boolean emptyAccount = bankCoordinates==null || StringUtils.isBlank(bankCoordinates.getAccountOwner());
+		boolean emptyIban = bankCoordinates==null || StringUtils.isBlank(bankCoordinates.getIban());
+		boolean emptyBank = bankCoordinates==null || StringUtils.isBlank(bankCoordinates.getBankName());
 		boolean missingMandate = emptyMandateIdentification && emptyMandateDate;
 		if (missingMandate && emptyAccount && emptyIban && emptyBank) {
 			return "Missing Bank coordinates or MandateIdentification.";
-		} else if (missingMandate) {
-			if (emptyAccount) {
-                return "Missing account owner.";
-            }
-			if (emptyIban) {
-				return "Missing IBAN.";
-			}
-            
-			if (StringUtils.isBlank(bankCoordinates.getBic())
-					&& customerService.isBicRequired(cust, bankCoordinates.getIban())) {
-				return "Missing BIC.";
-			}
-			if (emptyBank) {
-				return "Missing BANK NAME.";
-			}
 		} else {
-			if (emptyMandateIdentification) {
-				return "Missing mandate identification.";
+			if (strict || missingMandate) {
+				if (emptyAccount) {
+					return "Missing account owner.";
+				}
+				if (emptyIban) {
+					return "Missing IBAN.";
+				}
+				if (StringUtils.isBlank(bankCoordinates.getBic()) && customerService.isBicRequired(cust, bankCoordinates.getIban())) {
+					return "Missing BIC.";
+				}
+				if (emptyBank) {
+					return "Missing BANK NAME.";
+				}
 			}
-			if (emptyMandateDate) {
-				return "Missing mandate date.";
+			if (strict || !missingMandate) {
+				if (emptyMandateIdentification) {
+					return "Missing mandate identification.";
+				}
+				if (emptyMandateDate) {
+					return "Missing mandate date.";
+				}
 			}
 		}
 		return null;
 	}
-
 }

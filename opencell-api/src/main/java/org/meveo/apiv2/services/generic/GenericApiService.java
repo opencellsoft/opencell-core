@@ -31,10 +31,10 @@ public abstract class GenericApiService {
                 entityClass.getSimpleName(), id);
     }
 
-    public Function<Class, EntityManager> getEntityManager() {
-        return aClass -> getPersistenceService(aClass).getEntityManager();
+    public Function<Class, PersistenceService> getPersistenceService() {
+        return this::getPersistenceService;
     }
-    
+
     public PersistenceService getPersistenceService(Class entityClass) {
         return (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Service");
     }
