@@ -49,6 +49,7 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.Renewal;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -56,9 +57,12 @@ import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.OrderItemActionEnum;
@@ -104,6 +108,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     @Inject
     private AuditableFieldService auditableFieldService;
+
+    @Inject
+    private OneShotChargeInstanceService oneShotChargeInstanceService;
 
     @MeveoAudit
     @Override
@@ -321,7 +328,24 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 orderHistoryService.create(orderNumber, orderItemId, serviceInstance, orderItemAction);
             }
         }
+        //Apply oneshot charge of type=Other refunding
+        if (terminationReason.isReimburseOneshots()) {
+            List<OneShotChargeInstance> oneShotChargeInstances = oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(subscription.getId());
+            for (OneShotChargeInstance oneShotChargeInstance : oneShotChargeInstances) {
+                if (terminationDate.compareTo(oneShotChargeInstance.getChargeDate()) <= 0) {
+                    OneShotChargeTemplate chargeTemplate = (OneShotChargeTemplate) PersistenceUtils.initializeAndUnproxy(oneShotChargeInstance.getChargeTemplate());
+                    if (chargeTemplate == null || chargeTemplate.getOneShotChargeTemplateType() == null || !chargeTemplate.getOneShotChargeTemplateType().equals(OneShotChargeTemplateTypeEnum.OTHER)) {
+                        continue;
+                    }
+                    oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity().negate(),
+                            orderNumber);
+                    oneShotChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
+                    oneShotChargeInstanceService.update(oneShotChargeInstance);
+                }
 
+            }
+
+        }
         subscription.setSubscriptionTerminationReason(terminationReason);
         subscription.setTerminationDate(terminationDate);
         subscription.setStatus(SubscriptionStatusEnum.RESILIATED);

@@ -73,6 +73,13 @@ public class SubscriptionTerminationReason extends BusinessEntity implements ISe
     @Column(name = "apply_termination_charges")
     private boolean applyTerminationCharges;
 
+    /**
+     * reimburse Oneshots charges.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "reimburse_oneshots")
+    private boolean reimburseOneshots;
+
     public boolean isApplyAgreement() {
         return applyAgreement;
     }
@@ -95,5 +102,13 @@ public class SubscriptionTerminationReason extends BusinessEntity implements ISe
 
     public void setApplyTerminationCharges(boolean applyTerminationCharges) {
         this.applyTerminationCharges = applyTerminationCharges;
+    }
+
+    public boolean isReimburseOneshots() {
+        return reimburseOneshots;
+    }
+
+    public void setReimburseOneshots(boolean reimburseOneshots) {
+        this.reimburseOneshots = reimburseOneshots;
     }
 }

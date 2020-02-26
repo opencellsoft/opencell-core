@@ -478,11 +478,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     /**
-     * Reimburse already applied recurring charges
-     * 
+     * Reimburse already applied recurring charges.
+     *
      * @param chargeInstance Recurring charge instance
      * @throws BusinessException Business exception
-     * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
+     * @throws RatingException   Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
     public void applyReimbursment(RecurringChargeInstance chargeInstance, String orderNumber) throws BusinessException, RatingException {
         if (chargeInstance == null) {
@@ -1541,5 +1541,4 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 	            .setParameter("lastTransactionDate", lastTransactionDate)
 	            .executeUpdate();
 	}
-
 }

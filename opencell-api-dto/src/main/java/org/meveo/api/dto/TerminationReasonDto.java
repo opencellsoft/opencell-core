@@ -15,17 +15,30 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TerminationReasonDto extends BusinessEntityDto {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
     private static final long serialVersionUID = 6013621511892042364L;
 
-    /** The apply agreement. */
+    /**
+     * The apply agreement.
+     */
     private boolean applyAgreement;
 
-    /** The apply reimbursment. */
+    /**
+     * The apply reimbursment.
+     */
     private boolean applyReimbursment;
 
-    /** The apply termination charges. */
+    /**
+     * The apply termination charges.
+     */
     private boolean applyTerminationCharges;
+
+    /**
+     * reimburse Oneshots charges.
+     */
+    private boolean reimburseOneshots;
 
     /**
      * Instantiates a new termination reason dto.
@@ -44,6 +57,7 @@ public class TerminationReasonDto extends BusinessEntityDto {
         applyAgreement = subscriptionTerminationReason.isApplyAgreement();
         applyReimbursment = subscriptionTerminationReason.isApplyReimbursment();
         applyTerminationCharges = subscriptionTerminationReason.isApplyTerminationCharges();
+        reimburseOneshots = subscriptionTerminationReason.isReimburseOneshots();
     }
 
     /**
@@ -98,6 +112,24 @@ public class TerminationReasonDto extends BusinessEntityDto {
      */
     public void setApplyTerminationCharges(boolean applyTerminationCharges) {
         this.applyTerminationCharges = applyTerminationCharges;
+    }
+
+    /**
+     * Check if refunding oneshots charges is enabled.
+     *
+     * @return True if refunding charge is enabled, false else.
+     */
+    public boolean isReimburseOneshots() {
+        return reimburseOneshots;
+    }
+
+    /**
+     * Enable/disable the refunding oneshot charges.
+     *
+     * @param reimburseOneshots
+     */
+    public void setReimburseOneshots(boolean reimburseOneshots) {
+        this.reimburseOneshots = reimburseOneshots;
     }
 
     @Override

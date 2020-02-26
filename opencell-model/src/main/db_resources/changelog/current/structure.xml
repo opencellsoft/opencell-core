@@ -2433,25 +2433,49 @@ END $$;]]>
             <column name="job_code" type="varchar(255)" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#3743_20190414" author="HatimOudad">
-	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'PaymentJob'</sql>
-	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'PaymentScheduleProcessingJob'</sql>
-	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'SepaDirectDebitJob'</sql>
-	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'SepaRejectedTransactionsJob'</sql>
-	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'CheckPaymentScheduleCallbackJob'</sql>
+        <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template =
+            'PaymentJob'
+        </sql>
+        <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template =
+            'PaymentScheduleProcessingJob'
+        </sql>
+        <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template =
+            'SepaDirectDebitJob'
+        </sql>
+        <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template =
+            'SepaRejectedTransactionsJob'
+        </sql>
+        <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template =
+            'CheckPaymentScheduleCallbackJob'
+        </sql>
     </changeSet>
-    
+
     <changeSet id="#500X_20200218" author="mohamed.el.youssoufi" dbms="postgresql">
-    	<sql>CREATE INDEX rt_edr_id ON ${db.schema.adapted}billing_rated_transaction (edr_id ASC NULLS LAST)</sql>
-    	<sql>CREATE INDEX resa_origin_edr_id ON ${db.schema.adapted}billing_reservation (origin_edr_id ASC NULLS LAST)</sql>
-    	<sql>CREATE INDEX wo_edr_id ON ${db.schema.adapted}billing_wallet_operation (edr_id ASC NULLS LAST)</sql>
-    	<sql>CREATE INDEX cdr_header_edr_id ON ${db.schema.adapted}rating_cdr (header_edr_id ASC NULLS LAST)</sql>
-		<sql>CREATE INDEX edr_header_edr_id ON ${db.schema.adapted}rating_edr (header_edr_id ASC NULLS LAST)</sql>
-		<sql>CREATE INDEX rt_adjusted_rated_tx ON ${db.schema.adapted}billing_rated_transaction (adjusted_rated_tx ASC NULLS LAST)</sql>
-		<sql>CREATE INDEX wo_rt_id ON ${db.schema.adapted}billing_wallet_operation (rated_transaction_id ASC NULLS LAST)</sql>
-		<sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id ASC NULLS LAST)</sql>
-   </changeSet>
+        <sql>CREATE INDEX rt_edr_id ON ${db.schema.adapted}billing_rated_transaction (edr_id ASC NULLS LAST)</sql>
+        <sql>CREATE INDEX resa_origin_edr_id ON ${db.schema.adapted}billing_reservation (origin_edr_id ASC NULLS LAST)
+        </sql>
+        <sql>CREATE INDEX wo_edr_id ON ${db.schema.adapted}billing_wallet_operation (edr_id ASC NULLS LAST)</sql>
+        <sql>CREATE INDEX cdr_header_edr_id ON ${db.schema.adapted}rating_cdr (header_edr_id ASC NULLS LAST)</sql>
+        <sql>CREATE INDEX edr_header_edr_id ON ${db.schema.adapted}rating_edr (header_edr_id ASC NULLS LAST)</sql>
+        <sql>CREATE INDEX rt_adjusted_rated_tx ON ${db.schema.adapted}billing_rated_transaction (adjusted_rated_tx ASC
+            NULLS LAST)
+        </sql>
+        <sql>CREATE INDEX wo_rt_id ON ${db.schema.adapted}billing_wallet_operation (rated_transaction_id ASC NULLS
+            LAST)
+        </sql>
+        <sql>CREATE INDEX wo_rerated_wo ON ${db.schema.adapted}billing_wallet_operation (reratedwalletoperation_id ASC
+            NULLS LAST)
+        </sql>
+    </changeSet>
+    <changeSet id="#4201_20200225" author="khalidHORRI">
+        <addColumn tableName="billing_subscrip_termin_reason">
+            <column name="reimburse_oneshots" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
 
