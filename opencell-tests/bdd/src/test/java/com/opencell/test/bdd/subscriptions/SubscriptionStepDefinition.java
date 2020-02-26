@@ -37,6 +37,5 @@ public class SubscriptionStepDefinition implements En {
         Then("^The subscription is activated$", () -> {
 
         });
-
     }
 }

@@ -7,16 +7,21 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import org.meveo.api.dto.ActionStatus;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.MapDifference.ValueDifference;
+import com.google.common.collect.Maps;
 import com.opencell.test.utils.JsonParser;
 import com.opencell.test.utils.ResourceUtils;
 import com.opencell.test.utils.RestApiUtils;
 
 import cucumber.api.java8.En;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.ValidatableResponse;
 
 public class CommonStepDefinition implements En {
@@ -143,6 +148,10 @@ public class CommonStepDefinition implements En {
                     case "DEL":
                         response = RestApiUtils.delete(api + base.getField(field).get(), bodyRequest);
                         break;
+                    case "Find":
+                    case "find":
+                        response = RestApiUtils.get(api + base.getField(field).get(), bodyRequest);
+                        break;
                     }
                     ActionStatus actionStatus = null;
                     try {
@@ -213,6 +222,18 @@ public class CommonStepDefinition implements En {
         Then("^The entity is cleared$", () -> {
 
         });
+        Then("^The entity \"([^\"]*)\" matches$", (String identifier) -> {
+            Map<String, Object> actualResponse = base.getJsonresponse().extract().jsonPath().get(identifier);
+
+            JsonNode jsonnode = base.getJsonObject();
+            JsonPath expectedJson = new JsonPath(JsonParser.writeValueAsString(jsonnode));
+            Map<String, Object> expectedResponse = expectedJson.getMap("");
+
+            MapDifference<String, Object> diff = Maps.difference(actualResponse, expectedResponse);
+            Map<String, ValueDifference<Object>> entriesDiffering = diff.entriesDiffering();
+
+            assertTrue(actualResponse.entrySet().containsAll(expectedResponse.entrySet()));
+        });
         And("^Validate that the statusCode is \"([^\"]*)\"$", (String statusCode) -> {
             assertNotNull(base.getResponse());
             assertEquals(
@@ -260,8 +281,7 @@ public class CommonStepDefinition implements En {
     }
 
     private String getFileContent(String fileName) throws IOException {
-        return new String(Files
-                .readAllBytes(Paths.get(ResourceUtils
-                        .getFileFromClasspathResource("com/opencell/test/feature/" + fileName).getPath())));
+        return new String(Files.readAllBytes(Paths
+                .get(ResourceUtils.getFileFromClasspathResource("com/opencell/test/feature/" + fileName).getPath())));
     }
 }

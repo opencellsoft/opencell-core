@@ -1,0 +1,4 @@
+{
+    "subscriptionCode": "RS_FULL_212_SUB_SERVICE_MULTI",
+    "serviceInstanceId": "${ServiceInstanceIds#siid1}"
+  }

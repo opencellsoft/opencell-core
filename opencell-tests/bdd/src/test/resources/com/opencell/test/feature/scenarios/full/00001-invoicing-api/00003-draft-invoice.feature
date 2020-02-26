@@ -5,7 +5,7 @@ Feature: Invoicing - Draft Invoice
   Scenario Outline: <title>
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"
-    Then The entity is cleared
+    Then The entity is created
     And Validate that the statusCode is "<statusCode>"
     And The status is "<status>"
     And The message  is "<message>"
