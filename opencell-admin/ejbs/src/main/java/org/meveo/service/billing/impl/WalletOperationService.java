@@ -86,6 +86,23 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
 import static org.meveo.commons.utils.NumberUtils.round;
 
 /**
@@ -151,7 +168,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeAndTriggerEDRs(chargeInstance, ApplicationTypeEnum.PUNCTUAL, applicationDate,
             chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantityInChargeUnits, tax, orderNumberOverride, null, null, null, false,
             isVirtual);
-
         return chargeApplication;
     }
 
@@ -204,6 +220,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 billingAccountService.update(billingAccount);
             }
         }
+        applyAccumulatorCounter(chargeInstance, Collections.singletonList(walletOperation), isVirtual);
         return walletOperation;
     }
 
@@ -658,10 +675,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                         reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT : ChargeApplicationModeEnum.SUBSCRIPTION, recurringChargeTemplate.getCode(), forSchedule,
                         serviceInstance.getSubscriptionDate(), tax, nextChargeDate, applyChargeOnDate, inputQuantity));
             } else {
-                WalletOperation walletOperation = chargeApplicationRatingService.rateChargeAndTriggerEDRs(chargeInstance,
-                    reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION : ApplicationTypeEnum.RECURRENT, applyChargeOnDate, chargeInstance.getAmountWithoutTax(),
-                    chargeInstance.getAmountWithTax(), inputQuantity, null, tax, chargeInstance.getOrderNumber(), applyChargeOnDate, nextChargeDate,
-                    reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT : ChargeApplicationModeEnum.SUBSCRIPTION, forSchedule, false);
+                WalletOperation walletOperation = chargeApplicationRatingService
+                        .rateChargeAndTriggerEDRs(chargeInstance, reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION : ApplicationTypeEnum.RECURRENT, applyChargeOnDate,
+                                chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, null, tax, chargeInstance.getOrderNumber(),
+                                applyChargeOnDate, nextChargeDate, reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT : ChargeApplicationModeEnum.SUBSCRIPTION, forSchedule,
+                                false);
 
                 walletOperation.setSubscriptionDate(serviceInstance.getSubscriptionDate());
 
@@ -672,7 +690,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 List<WalletOperation> operations = chargeWalletOperation(walletOperation);
                 walletOperations.addAll(operations);
             }
-
+            if (!reimbursement) {
+                applyAccumulatorCounter(chargeInstance, walletOperations, false);
+            }
             // create(chargeApplication);
             chargeInstance.setChargeDate(applyChargeOnDate);
             applyChargeOnDate = nextChargeDate;
@@ -683,24 +703,45 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return walletOperations;
     }
 
-    private List<WalletOperation> generateWalletOperationsByPricePlan(RecurringChargeInstance chargeInstance,
-            ApplicationTypeEnum applicationTypeEnum,ChargeApplicationModeEnum chargeApplicationModeEnum,
-            String recurringChargeTemplateCode, boolean forSchedule, Date subscriptionDate, Tax tax, Date nextChargeDate, Date applyChargeOnDate,
-            BigDecimal inputQuantity) {
-        return chargeApplicationRatingService.getActivePricePlansByChargeCode(recurringChargeTemplateCode)
-                .stream()
-                .filter(ppm -> !shouldNotIncludePPM(applyChargeOnDate, nextChargeDate, ppm.getValidityFrom(), ppm.getValidityDate())
-                        && (ppm.getValidityFrom() != null && nextChargeDate.after(ppm.getValidityFrom())))
-                .map(pricePlanMatrix -> {
+    private void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
+
+        CounterInstance counterInstance = chargeInstance.getCounter();
+        CounterPeriod counterPeriod = null;
+        if (counterInstance != null) {
+            // get the counter period of charge instance
+            counterPeriod = counterInstanceService.getCounterPeriod(counterInstance, chargeInstance.getChargeDate());
+            if (counterPeriod == null || counterPeriod.getValue() == null || !counterPeriod.getValue().equals(BigDecimal.ZERO)) {
+                // The counter will be incremented by charge quantity
+                if (counterPeriod == null) {
+                    counterPeriod = counterInstanceService
+                            .getOrCreateCounterPeriod(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
+                                    chargeInstance.getServiceInstance());
+                }
+            }
+            for (WalletOperation wo : walletOperations) {
+                counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
+            }
+        }
+
+
+    }
+
+    private List<WalletOperation> generateWalletOperationsByPricePlan(RecurringChargeInstance chargeInstance, ApplicationTypeEnum applicationTypeEnum,
+            ChargeApplicationModeEnum chargeApplicationModeEnum, String recurringChargeTemplateCode, boolean forSchedule, Date subscriptionDate, Tax tax, Date nextChargeDate,
+            Date applyChargeOnDate, BigDecimal inputQuantity) {
+        return chargeApplicationRatingService.getActivePricePlansByChargeCode(recurringChargeTemplateCode).stream()
+                .filter(ppm -> !shouldNotIncludePPM(applyChargeOnDate, nextChargeDate, ppm.getValidityFrom(), ppm.getValidityDate()) && (ppm.getValidityFrom() != null
+                        && nextChargeDate.after(ppm.getValidityFrom()))).map(pricePlanMatrix -> {
                     Date computedApplyChargeOnDate = pricePlanMatrix.getValidityFrom().after(applyChargeOnDate) ? pricePlanMatrix.getValidityFrom() : applyChargeOnDate;
-                    Date computedNextChargeDate = pricePlanMatrix.getValidityDate() != null
-                            && pricePlanMatrix.getValidityDate().before(nextChargeDate) ? pricePlanMatrix.getValidityDate() : nextChargeDate;
+                    Date computedNextChargeDate = pricePlanMatrix.getValidityDate() != null && pricePlanMatrix.getValidityDate().before(nextChargeDate) ?
+                            pricePlanMatrix.getValidityDate() :
+                            nextChargeDate;
                     double ratio = computeQuantityRatio(computedApplyChargeOnDate, computedNextChargeDate);
                     BigDecimal computedInputQuantityHolder = inputQuantity.multiply(new BigDecimal(ratio + ""));
-                    WalletOperation walletOperation = chargeApplicationRatingService.rateChargeAndTriggerEDRs(chargeInstance,
-                            applicationTypeEnum, computedApplyChargeOnDate, chargeInstance.getAmountWithoutTax(),
-                            chargeInstance.getAmountWithTax(), computedInputQuantityHolder, null, tax, chargeInstance.getOrderNumber(), computedApplyChargeOnDate, computedNextChargeDate,
-                            chargeApplicationModeEnum, forSchedule, false);
+                    WalletOperation walletOperation = chargeApplicationRatingService
+                            .rateChargeAndTriggerEDRs(chargeInstance, applicationTypeEnum, computedApplyChargeOnDate, chargeInstance.getAmountWithoutTax(),
+                                    chargeInstance.getAmountWithTax(), computedInputQuantityHolder, null, tax, chargeInstance.getOrderNumber(), computedApplyChargeOnDate,
+                                    computedNextChargeDate, chargeApplicationModeEnum, forSchedule, false);
 
                     walletOperation.setSubscriptionDate(subscriptionDate);
                     if (forSchedule) {
@@ -886,7 +927,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         chargeInstance.setChargeDate(applyChargeOnDate);
         Date nextChargeDate = cal.nextCalendarDate(applyChargeOnDate);
         chargeInstance.setNextChargeDate(nextChargeDate);
-
+        if (!reimbursement) {
+            applyAccumulatorCounter(chargeInstance, walletOperations, false);
+        }
         return walletOperations;
     }
 
@@ -974,13 +1017,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             }
 
             WalletOperation walletOperation = chargeApplicationRatingService.rateChargeAndTriggerEDRs(chargeInstance, type, applyChargeOnDate, chargeInstance.getAmountWithoutTax(),
-                    chargeInstance.getAmountWithTax(), inputQuantity, null, tax, chargeInstance.getOrderNumber(), applyChargeOnDate, nextChargeDate,
-                    ChargeApplicationModeEnum.AGREEMENT, false, false);
+                chargeInstance.getAmountWithTax(), inputQuantity, null, tax, chargeInstance.getOrderNumber(), applyChargeOnDate, nextChargeDate,
+                ChargeApplicationModeEnum.AGREEMENT, false, false);
 
             chargeWalletOperation(walletOperation);
 
             // create(chargeApplication);
             applyChargeOnDate = nextChargeDate;
+
         }
 
         chargeInstance.setChargeDate(applyChargeOnDate);
@@ -1364,6 +1408,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 }
                 if (counterPeriod != null) {
                     CounterValueChangeInfo counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterPeriod, recurringChargeInstance.getQuantity(), false);
+                    if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator()) {
+                        for (WalletOperation wo : resultingWalletOperations) {
+                            counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, false);
+                        }
+                    }
                     counterInstanceService.triggerCounterPeriodEvent(counterValueChangeInfo, counterPeriod);
                 }
 

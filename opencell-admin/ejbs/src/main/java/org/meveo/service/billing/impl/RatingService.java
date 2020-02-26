@@ -1,20 +1,5 @@
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.Query;
-import javax.ws.rs.core.Response;
-
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
@@ -23,7 +8,6 @@ import org.meveo.admin.exception.PriceELErrorException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.RatingScriptExecutionErrorException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.commons.utils.NumberUtils;
@@ -77,10 +61,24 @@ import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.catalog.TriggeredEdrScriptService;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.Query;
+import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Rate charges such as {@link org.meveo.model.catalog.OneShotChargeTemplate}, {@link org.meveo.model.catalog.RecurringChargeTemplate} and
  * {@link org.meveo.model.catalog.UsageChargeTemplate}. Generate the {@link org.meveo.model.billing.WalletOperation} with the appropriate values.
- * 
+ *
  * @author Edward P. Legaspi
  * @lastModifiedVersion 7.0
  */
@@ -123,10 +121,16 @@ public class RatingService extends PersistenceService<WalletOperation> {
     @Inject
     private TaxService taxService;
 
+    @Inject
+    private CounterInstanceService counterInstanceService;
+
+    @Inject
+    private CounterPeriodService counterPeriodService;
+
     /**
-     * @param level level enum
-     * @param chargeCode charge's code
-     * @param chargeDate charge's date
+     * @param level             level enum
+     * @param chargeCode        charge's code
+     * @param chargeDate        charge's date
      * @param recChargeInstance reccurring charge instance
      * @return shared quantity
      */
@@ -270,7 +274,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         Subscription subscription = chargeInstance.getSubscription();
         WalletOperation walletOperation = rateCharge(chargeInstance, applicationType, applicationDate, amountWithoutTax, amountWithTax, inputQuantity, quantityInChargeUnits, tax,
-            orderNumberOverride, startdate, endDate, chargeMode);
+                orderNumberOverride, startdate, endDate, chargeMode);
 
         // handle associated edr creation unless it is a Scheduled or virtual operation
         if (forSchedule || isVirtual) {
@@ -280,8 +284,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
         List<TriggeredEDRTemplate> triggeredEDRTemplates = chargeInstance.getChargeTemplate().getEdrTemplates();
         for (TriggeredEDRTemplate triggeredEDRTemplate : triggeredEDRTemplates) {
 
-            boolean conditionCheck = triggeredEDRTemplate.getConditionEl() == null || "".equals(triggeredEDRTemplate.getConditionEl())
-                    || matchExpression(triggeredEDRTemplate.getConditionEl(), walletOperation, ua, walletOperation.getPriceplan());
+            boolean conditionCheck =
+                    triggeredEDRTemplate.getConditionEl() == null || "".equals(triggeredEDRTemplate.getConditionEl()) || matchExpression(triggeredEDRTemplate.getConditionEl(),
+                            walletOperation, ua, walletOperation.getPriceplan());
             log.debug("checking condition for {} : {} -> {}", triggeredEDRTemplate.getCode(), triggeredEDRTemplate.getConditionEl(), conditionCheck);
             if (conditionCheck) {
                 MeveoInstance meveoInstance = null;
@@ -315,7 +320,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                         sub = subscriptionService.findByCode(subCode);
                         if (sub == null) {
                             log.info("Could not find subscription for code={} (EL={}) in triggered EDR with code {}", subCode, triggeredEDRTemplate.getSubscriptionEl(),
-                                triggeredEDRTemplate.getCode());
+                                    triggeredEDRTemplate.getCode());
                         }
                     }
 
@@ -359,7 +364,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
                     if (actionStatus != null && ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
                         throw new ChargingEdrOnRemoteInstanceErrorException(
-                            "Error charging EDR. Error code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
+                                "Error charging EDR. Error code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
 
                     } else if (actionStatus == null) {
                         throw new ChargingEdrOnRemoteInstanceErrorException("Error charging EDR. No response code from API.");
@@ -371,9 +376,10 @@ public class RatingService extends PersistenceService<WalletOperation> {
         return walletOperation;
     }
 
+
     /**
      * used to rate or rerate a bareWalletOperation.
-     * 
+     *
      * @param bareWalletOperation operation
      * @param unitPriceWithoutTax unit price without tax
      * @param unitPriceWithTax unit price with tax

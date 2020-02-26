@@ -1,5 +1,22 @@
 package org.meveo.api.rest.account;
 
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.account.CustomerBrandDto;
+import org.meveo.api.dto.account.CustomerCategoryDto;
+import org.meveo.api.dto.account.CustomerDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.dto.response.account.CustomersResponseDto;
+import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
+import org.meveo.api.dto.response.account.GetCustomerResponseDto;
+import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
+import org.meveo.api.dto.sequence.CustomerSequenceDto;
+import org.meveo.api.dto.sequence.GenericSequenceDto;
+import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
+import org.meveo.api.rest.IBaseRs;
+import org.meveo.api.serialize.RestDateParam;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -11,21 +28,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.account.CustomerBrandDto;
-import org.meveo.api.dto.account.CustomerCategoryDto;
-import org.meveo.api.dto.account.CustomerDto;
-import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
-import org.meveo.api.dto.response.account.CustomersResponseDto;
-import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
-import org.meveo.api.dto.response.account.GetCustomerResponseDto;
-import org.meveo.api.dto.sequence.CustomerSequenceDto;
-import org.meveo.api.dto.sequence.GenericSequenceDto;
-import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
-import org.meveo.api.rest.IBaseRs;
-import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import java.util.Date;
 
 /**
  * @author Edward P. Legaspi
@@ -294,5 +297,17 @@ public interface CustomerRs extends IBaseRs {
 	@POST
 	@Path("/sequence/{code}/next")
 	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@PathParam("code") String code);
-	
+
+    /**
+     * Filter counters by period date.
+     *
+     * @param customerCode The customer's code
+     * @param date         The date corresponding to the period
+     * @return counter instances.
+     */
+    @GET
+    @Path("/filterCountersByPeriod")
+    GetCountersInstancesResponseDto filterCustomerCountersByPeriod(@QueryParam("customerCode") String customerCode, @QueryParam("date") @RestDateParam Date date);
+
+
 }

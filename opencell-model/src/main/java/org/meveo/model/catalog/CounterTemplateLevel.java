@@ -6,7 +6,7 @@ package org.meveo.model.catalog;
  * @lastModifiedVersion 5.3
  */
 public enum CounterTemplateLevel {
-    SI, SU, UA, BA;
+    SI, SU, UA, BA, CA, CUST;
 
     public String getLabel() {
         return "enum.counterTemplateLevel." + name();

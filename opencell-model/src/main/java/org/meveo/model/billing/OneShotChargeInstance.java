@@ -18,16 +18,18 @@
  */
 package org.meveo.model.billing;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.OneShotChargeTemplate;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * One shot charge as part of subscribed service
@@ -47,13 +49,17 @@ public class OneShotChargeInstance extends ChargeInstance {
     @NotNull
     protected BigDecimal quantity = BigDecimal.ONE;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counter_id")
+    private CounterInstance counter;
+
     public OneShotChargeInstance() {
 
     }
 
     /**
      * Constructor
-     * 
+     *
      * @param amountWithoutTax Amount without tax
      * @param amountWithTax Amount with tax
      * @param chargeTemplate Charge template
@@ -125,5 +131,23 @@ public class OneShotChargeInstance extends ChargeInstance {
      */
     public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
+    }
+
+    /**
+     * Gets a counter instance
+     *
+     * @return a counter instance
+     */
+    public CounterInstance getCounter() {
+        return counter;
+    }
+
+    /**
+     * Sets a counter instance.
+     *
+     * @param counter a counter instance
+     */
+    public void setCounter(CounterInstance counter) {
+        this.counter = counter;
     }
 }

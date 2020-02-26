@@ -18,14 +18,6 @@
  */
 package org.meveo.admin.action.catalog;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.enterprise.inject.Produces;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
@@ -49,6 +41,13 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.primefaces.model.DualListModel;
+
+import javax.enterprise.inject.Produces;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Abdellatif BARI
@@ -81,9 +80,9 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     private ServiceChargeTemplateRecurringService serviceChargeTemplateRecurringService;
     @Inject
     private ServiceChargeTemplateUsageService serviceChargeTemplateUsageService;
-    
+
     @Inject
-    private  RecurringChargeTemplateService recurringChargeTemplateService;
+    private RecurringChargeTemplateService recurringChargeTemplateService;
 
     private DualListModel<WalletTemplate> usageWallets;
     private DualListModel<WalletTemplate> recurringWallets;
@@ -107,6 +106,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
         this.recurringWallets = null;
     }
 
+    @Produces
+    @Named
     private ServiceChargeTemplateSubscription serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
 
     public ServiceChargeTemplateSubscription getServiceChargeTemplateSubscription() {
@@ -122,6 +123,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
         this.subscriptionWallets = null;
     }
 
+    @Produces
+    @Named
     private ServiceChargeTemplateTermination serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
 
     public ServiceChargeTemplateTermination getServiceChargeTemplateTermination() {
@@ -540,4 +543,5 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 
         return serviceInstanceService.hasInstances(entity, null);
     }
+
 }
