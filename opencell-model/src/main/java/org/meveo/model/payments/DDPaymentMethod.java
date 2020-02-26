@@ -65,7 +65,7 @@ public class DDPaymentMethod extends PaymentMethod {
 		this.customerAccount = customerAccount;
 		this.mandateDate = mandateDate;
 		this.mandateIdentification = mandateIdentification;
-		this.bankCoordinates = bankCoordinates;
+		setBankCoordinates(bankCoordinates);
 	}
 
 	public BankCoordinates getBankCoordinates() {
@@ -73,7 +73,7 @@ public class DDPaymentMethod extends PaymentMethod {
 	}
 
 	public void setBankCoordinates(BankCoordinates bankCoordinates) {
-		this.bankCoordinates = bankCoordinates;
+		this.bankCoordinates = bankCoordinates != null ? bankCoordinates : new BankCoordinates();
 	}
 
 	public String getMandateIdentification() {
