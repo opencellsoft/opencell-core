@@ -1124,7 +1124,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             queryBuilder.addSqlCriterion(fieldWAlias + ("ne".equals(condition) ? " not in  " : " in ") + ":" + fieldName, fieldName, filterValue);
                         }else if ("auditable".equalsIgnoreCase(fieldName) && filterValue instanceof Map) {
                             QueryBuilder queryBuilderHolder = queryBuilder;
-                            ((Map) filterValue).forEach((k, value) -> queryBuilderHolder.addCriterionDate("a.auditable."+k, (Date) value));
+                            ((Map) filterValue).forEach((k, value) -> queryBuilderHolder.addCriterionDateTruncatedToDay("a.auditable."+k, (Date) value));
                         }
                     }
                 }
