@@ -7,21 +7,18 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Map;
 
 import org.meveo.api.dto.ActionStatus;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.MapDifference;
-import com.google.common.collect.MapDifference.ValueDifference;
-import com.google.common.collect.Maps;
 import com.opencell.test.utils.JsonParser;
 import com.opencell.test.utils.ResourceUtils;
 import com.opencell.test.utils.RestApiUtils;
 
 import cucumber.api.java8.En;
-import io.restassured.path.json.JsonPath;
 import io.restassured.response.ValidatableResponse;
 
 public class CommonStepDefinition implements En {
@@ -223,16 +220,11 @@ public class CommonStepDefinition implements En {
 
         });
         Then("^The entity \"([^\"]*)\" matches$", (String identifier) -> {
-            Map<String, Object> actualResponse = base.getJsonresponse().extract().jsonPath().get(identifier);
+            Object responseObj = base.getJsonresponse().extract().jsonPath().get(identifier);
+            String responseStr = JsonParser.writeValueAsString(responseObj);
+            String expectedStr = getBodyRequest();
 
-            JsonNode jsonnode = base.getJsonObject();
-            JsonPath expectedJson = new JsonPath(JsonParser.writeValueAsString(jsonnode));
-            Map<String, Object> expectedResponse = expectedJson.getMap("");
-
-            MapDifference<String, Object> diff = Maps.difference(actualResponse, expectedResponse);
-            Map<String, ValueDifference<Object>> entriesDiffering = diff.entriesDiffering();
-
-            assertTrue(actualResponse.entrySet().containsAll(expectedResponse.entrySet()));
+            JSONAssert.assertEquals(expectedStr, responseStr, JSONCompareMode.LENIENT);
         });
         And("^Validate that the statusCode is \"([^\"]*)\"$", (String statusCode) -> {
             assertNotNull(base.getResponse());
