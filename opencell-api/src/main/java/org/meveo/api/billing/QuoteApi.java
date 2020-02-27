@@ -383,7 +383,6 @@ public class QuoteApi extends BaseApi {
             quoteItem.setStatus(QuoteStatusEnum.PENDING);
         }
         quote = invoiceQuote(quote);
-        quote = quoteService.update(quote);
         log.trace("Finished processing quote {}", quote.getCode());
         return quote;
     }
@@ -1015,6 +1014,11 @@ public class QuoteApi extends BaseApi {
         handleMissingParameters();
 
         Quote quote = quoteService.findByCode(quoteCode);
+        
+        if(quote == null) {
+        	throw new EntityDoesNotExistsException(Quote.class, quoteCode);
+        }
+        
         ProductOrder productOrder = new ProductOrder();
         productOrder.setOrderDate(new Date());
         productOrder.setRequestedStartDate(quote.getFulfillmentStartDate());
