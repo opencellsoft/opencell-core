@@ -85,6 +85,7 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
         priority = usageChargeTemplate.getPriority();
         triggerNextCharge = usageChargeTemplate.getTriggerNextCharge();
         triggerNextChargeEL = usageChargeTemplate.getTriggerNextChargeEL();
+
     }
 
     /**

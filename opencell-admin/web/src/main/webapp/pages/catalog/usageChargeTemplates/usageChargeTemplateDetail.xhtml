@@ -50,14 +50,15 @@
 
 				<p:tab title="#{messages['customer.tab.information']}">
 
-						<hftl:formField label="#{messages['chargeTemplate.code']}"
-							field="code" required="true" validateUnique="true" />
-						<hftl:formLanguageFields field="description" />
+					<hftl:formField label="#{messages['chargeTemplate.code']}"
+									field="code" required="true" validateUnique="true"/>
+					<hftl:formLanguageFields field="description"/>
 
-						<hftl:formField label="#{messages['chargeTemplate.amountEditable']}"
-							field="amountEditable" />						
-						<hftl:formField label="#{messages['usageChargeTemplate.priority']}"
-							field="priority" />
+					<hftl:formField label="#{messages['chargeTemplate.amountEditable']}"
+									field="amountEditable"/>
+					<hftl:formField label="#{messages['chargeTemplate.dropZeroWo']}" field="dropZeroWo"/>
+					<hftl:formField label="#{messages['usageChargeTemplate.priority']}"
+									field="priority"/>
 
 					<hftl:formField
 							label="#{messages['chargeTemplate.inputUnitOfMesure']}"
@@ -69,44 +70,44 @@
 
 					<hftl:formField
 							label="#{messages['chargeTemplate.unitMultiplicator']}"
-							field="unitMultiplicator" converter="bigDecimal12DigitsConverter" />
-						<hftl:formField label="#{messages['chargeTemplate.unitNbDecimal']}"
-							field="unitNbDecimal" />
-						<hftl:formField label="#{messages['chargeTemplate.inputUnitOfMesureEL']}" field="inputUnitEL" />
-						<hftl:formField label="#{messages['chargeTemplate.ratingUnitOfMesureEL']}" field="outputUnitEL"/>
-						<hftl:formField id="invoiceSubCategorySelectedId"
-                            label="#{messages['charge.subCategory']}"
-                            field="invoiceSubCategory" valueLabelField="code" required="true" listBean="#{invoiceSubCategoryBean}"/>
-<!--                            popup="true" popupId="searchInvoiceSubCategoryPopup" /> -->
-						<hftl:formField label="#{messages['usageChargeTemplate.triggerNextCharge']}" field="triggerNextCharge" />
-                        <hftl:formField label="#{messages['usageChargeTemplate.triggerNextCharge']} EL"
-						   field="triggerNextChargeEL" textArea="true" rows="1" maxlength="2000" newLine="true"/>
+							field="unitMultiplicator" converter="bigDecimal12DigitsConverter"/>
+					<hftl:formField label="#{messages['chargeTemplate.unitNbDecimal']}"
+									field="unitNbDecimal"/>
+					<hftl:formField label="#{messages['chargeTemplate.inputUnitOfMesureEL']}" field="inputUnitEL"/>
+					<hftl:formField label="#{messages['chargeTemplate.ratingUnitOfMesureEL']}" field="outputUnitEL"/>
+					<hftl:formField id="invoiceSubCategorySelectedId"
+									label="#{messages['charge.subCategory']}"
+									field="invoiceSubCategory" valueLabelField="code" required="true" listBean="#{invoiceSubCategoryBean}"/>
+					<!--                            popup="true" popupId="searchInvoiceSubCategoryPopup" /> -->
+					<hftl:formField label="#{messages['usageChargeTemplate.triggerNextCharge']}" field="triggerNextCharge"/>
+					<hftl:formField label="#{messages['usageChargeTemplate.triggerNextCharge']} EL"
+									field="triggerNextChargeEL" textArea="true" rows="1" maxlength="2000" newLine="true"/>
 
-						<hftl:formField
+					<hftl:formField
 							label="#{messages['usageChargeTemplate.filterParam1']}"
-							field="filterParam1" newLine="true" />
-						<hftl:formField
+							field="filterParam1" newLine="true"/>
+					<hftl:formField
 							label="#{messages['usageChargeTemplate.filterParam2']}"
-							field="filterParam2" />
-						<hftl:formField
+							field="filterParam2"/>
+					<hftl:formField
 							label="#{messages['usageChargeTemplate.filterParam3']}"
-							field="filterParam3" />
-						<hftl:formField
+							field="filterParam3"/>
+					<hftl:formField
 							label="#{messages['usageChargeTemplate.filterParam4']}"
-							field="filterParam4" />
-						<hftl:formField label="#{messages['usageChargeTemplate.filterExpression']}"
-						   field="filterExpression" textArea="true" rows="1" maxlength="2000" newLine="true"/>
-                        <hftl:formField label="#{messages['usageChargeTemplate.filterExpressionSpark']}"
-                           field="filterExpressionSpark" textArea="true" rows="1" maxlength="2000"/>
+							field="filterParam4"/>
+					<hftl:formField label="#{messages['usageChargeTemplate.filterExpression']}"
+									field="filterExpression" textArea="true" rows="1" maxlength="2000" newLine="true"/>
+					<hftl:formField label="#{messages['usageChargeTemplate.filterExpressionSpark']}"
+									field="filterExpressionSpark" textArea="true" rows="1" maxlength="2000"/>
 
-                                                        
-                        <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
-                            field="disabled" isMessage="true" />
-                            
-                        <hftl:formField label="#{messages['menu.triggeredEdrTemplates']}"
-                            field="edrTemplates" listType="pickUpList" valueLabelField="code"
-                            dualListModel="#{usageChargeTemplateBean.edrTemplatesModel}" newLine="true"/>
-                            
+
+					<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+									field="disabled" isMessage="true"/>
+
+					<hftl:formField label="#{messages['menu.triggeredEdrTemplates']}"
+									field="edrTemplates" listType="pickUpList" valueLabelField="code"
+									dualListModel="#{usageChargeTemplateBean.edrTemplatesModel}" newLine="true"/>
+
 				</p:tab>
 
 				<p:tab title="#{messages['pricePlanMatrix.panel']}"

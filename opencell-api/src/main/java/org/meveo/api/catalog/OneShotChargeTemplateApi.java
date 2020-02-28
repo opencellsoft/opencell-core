@@ -86,56 +86,8 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
 
         handleMissingParametersAndValidate(postData);
 
-        // check if code already exists
-        if (oneShotChargeTemplateService.findByCode(postData.getCode()) != null) {
-            throw new EntityAlreadyExistsException(OneShotChargeTemplate.class, postData.getCode());
-        }
-
-        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
-        if (invoiceSubCategory == null) {
-            throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
-        }
-
         OneShotChargeTemplate chargeTemplate = new OneShotChargeTemplate();
-        chargeTemplate.setCode(postData.getCode());
-        chargeTemplate.setDescription(postData.getDescription());
-        if (postData.isDisabled() != null) {
-            chargeTemplate.setDisabled(postData.isDisabled());
-        }
-        chargeTemplate.setAmountEditable(postData.getAmountEditable());
-        chargeTemplate.setOneShotChargeTemplateType(postData.getOneShotChargeTemplateType());
-        chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-        chargeTemplate.setImmediateInvoicing(postData.getImmediateInvoicing());
-        chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
-        chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
-        chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
-        chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-        chargeTemplate.setFilterExpression(postData.getFilterExpression());
-        if (postData.getRoundingModeDtoEnum() != null) {
-            chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
-        } else {
-            chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
-        }
-
-        if (postData.getRevenueRecognitionRuleCode() != null) {
-            RevenueRecognitionRule revenueRecognitionScript = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
-            chargeTemplate.setRevenueRecognitionRule(revenueRecognitionScript);
-        }
-
-        if (postData.getTriggeredEdrs() != null) {
-            List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
-
-            for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
-                TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode());
-                if (triggeredEdrTemplate == null) {
-                    throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
-                }
-
-                edrTemplates.add(triggeredEdrTemplate);
-            }
-
-            chargeTemplate.setEdrTemplates(edrTemplates);
-        }
+        chargeTemplate = fromDto(postData, chargeTemplate);
 
         // populate customFields
         try {
@@ -176,6 +128,25 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getCode());
         }
 
+        chargeTemplate = fromDto(postData, chargeTemplate);
+
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), chargeTemplate, false);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+
+        chargeTemplate = oneShotChargeTemplateService.update(chargeTemplate);
+
+        return chargeTemplate;
+    }
+
+    private OneShotChargeTemplate fromDto(OneShotChargeTemplateDto postData, OneShotChargeTemplate chargeTemplate) {
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
         if (invoiceSubCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
@@ -196,6 +167,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
         chargeTemplate.setFilterExpression(postData.getFilterExpression());
+        chargeTemplate.setDropZeroWo(postData.isDropZeroWo());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
@@ -221,26 +193,12 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
 
             chargeTemplate.setEdrTemplates(edrTemplates);
         }
-
-        // populate customFields
-        try {
-            populateCustomFields(postData.getCustomFields(), chargeTemplate, false);
-        } catch (MissingParameterException | InvalidParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
-
-        chargeTemplate = oneShotChargeTemplateService.update(chargeTemplate);
-
         return chargeTemplate;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override

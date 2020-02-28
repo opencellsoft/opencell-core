@@ -66,45 +66,47 @@
 							label="#{messages['chargeTemplate.ratingUnitOfMesure']}"
 							field="ratingUnitOfMeasure" valueLabelField="symbol" listBean="#{unitOfMeasureBean}"/>
 
-<!--						<hftl:formField-->
-<!--							label="#{messages['chargeTemplate.ratingUnitDescription']}"-->
-<!--							field="ratingUnitDescription" />-->
-						<hftl:formField
+					<!--						<hftl:formField-->
+					<!--							label="#{messages['chargeTemplate.ratingUnitDescription']}"-->
+					<!--							field="ratingUnitDescription" />-->
+					<hftl:formField
 							label="#{messages['chargeTemplate.unitMultiplicator']}"
-							field="unitMultiplicator" converter="bigDecimal12DigitsConverter" />
-						<hftl:formField label="#{messages['chargeTemplate.unitNbDecimal']}"
-							field="unitNbDecimal" />
-						<hftl:formField label="#{messages['chargeTemplate.inputUnitOfMesureEL']}" field="inputUnitEL" />
-						<hftl:formField label="#{messages['chargeTemplate.ratingUnitOfMesureEL']}" field="outputUnitEL"/>
-						<hftl:formField label="#{messages['chargeTemplate.roundingMode']}" field="roundingMode" />
+							field="unitMultiplicator" converter="bigDecimal12DigitsConverter"/>
+					<hftl:formField label="#{messages['chargeTemplate.unitNbDecimal']}"
+									field="unitNbDecimal"/>
+					<hftl:formField label="#{messages['chargeTemplate.inputUnitOfMesureEL']}" field="inputUnitEL"/>
+					<hftl:formField label="#{messages['chargeTemplate.ratingUnitOfMesureEL']}" field="outputUnitEL"/>
+					<hftl:formField label="#{messages['chargeTemplate.roundingMode']}" field="roundingMode"/>
 
-						<hftl:formField label="#{messages['recurringChargeTemplate.filterExpression']}"
-						   field="filterExpression" textArea="true" rows="1" maxlength="2000"/>							
+					<hftl:formField label="#{messages['recurringChargeTemplate.filterExpression']}"
+									field="filterExpression" textArea="true" rows="1" maxlength="2000"/>
 
-                        <hftl:formLanguageFields field="description" />
-                        
-						<hftl:formField id="invoiceSubCategorySelectedId"
-							label="#{messages['charge.subCategory']}"
-							field="invoiceSubCategory" valueLabelField="code" required="true" listBean="#{invoiceSubCategoryBean}"/>
-<!-- 							popup="true" popupId="searchInvoiceSubCategoryPopup" /> -->
-						<hftl:formField
+
+					<hftl:formLanguageFields field="description"/>
+
+					<hftl:formField id="invoiceSubCategorySelectedId"
+									label="#{messages['charge.subCategory']}"
+									field="invoiceSubCategory" valueLabelField="code" required="true" listBean="#{invoiceSubCategoryBean}"/>
+					<!-- 							popup="true" popupId="searchInvoiceSubCategoryPopup" /> -->
+					<hftl:formField
 							label="#{messages['recurringChargeTemplate.calendar']}"
 							field="calendar" valueLabelField="code" required="true" popup="false"
-							listBean="#{calendarBean}" />
-                        
-                        <hftl:formField label="#{messages['chargeTemplate.amountEditable']}"
-                            field="amountEditable" />
-                        <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
-                            field="disabled" isMessage="true" />
-                        <hftl:formField id="revenueRecognitionRuleId" label="#{messages['charge.revenueRecognitionRule']}"  
-                        field="revenueRecognitionRule" valueLabelField="code" listBean="#{revenueRecognitionRuleBean}" />
-                            
-                        <hftl:formField label="#{messages['menu.triggeredEdrTemplates']}"
-                            field="edrTemplates" listType="pickUpList" valueLabelField="code"
-                            dualListModel="#{recurringChargeTemplateBean.edrTemplatesModel}" newLine="true"/>
-                        
+							listBean="#{calendarBean}"/>
 
-   						<hftl:formField label="#{messages['recurringChargeTemplate.subscriptionProrata']} EL"
+					<hftl:formField label="#{messages['chargeTemplate.amountEditable']}"
+									field="amountEditable"/>
+					<hftl:formField label="#{messages['chargeTemplate.dropZeroWo']}" field="dropZeroWo"/>
+					<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+									field="disabled" isMessage="true"/>
+					<hftl:formField id="revenueRecognitionRuleId" label="#{messages['charge.revenueRecognitionRule']}"
+									field="revenueRecognitionRule" valueLabelField="code" listBean="#{revenueRecognitionRuleBean}"/>
+
+					<hftl:formField label="#{messages['menu.triggeredEdrTemplates']}"
+									field="edrTemplates" listType="pickUpList" valueLabelField="code"
+									dualListModel="#{recurringChargeTemplateBean.edrTemplatesModel}" newLine="true"/>
+
+
+					<hftl:formField label="#{messages['recurringChargeTemplate.subscriptionProrata']} EL"
 						   field="subscriptionProrataEl" textArea="true" rows="1" maxlength="2000"/>	
 						<hftl:formField label="#{messages['recurringChargeTemplate.terminationProrata']} EL"
 						   field="terminationProrataEl" textArea="true" rows="1" maxlength="2000"/>	

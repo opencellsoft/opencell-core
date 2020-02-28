@@ -83,22 +83,23 @@
 							field="invoiceSubCategory" valueLabelField="descriptionOrCode"
 								edit="false" />
 
-                        <hftl:formLanguageFields field="description" />
-                        
+					<hftl:formLanguageFields field="description"/>
 
-                        <hftl:formField label="#{messages['chargeTemplate.amountEditable']}"
-                            field="amountEditable" /> 
-                            
-						<hftl:formField
+
+					<hftl:formField label="#{messages['chargeTemplate.amountEditable']}"
+									field="amountEditable"/>
+
+					<hftl:formField
 							label="#{messages['oneShotChargeTemplate.immediateInvoicing']}"
-							field="immediateInvoicing" />
-                            
-                        <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
-                            field="disabled" isMessage="true" />
-                            
-                        <hftl:formField label="#{messages['menu.triggeredEdrTemplates']}"
-                            field="edrTemplates" listType="pickUpList" valueLabelField="code"
-                            dualListModel="#{oneShotChargeTemplateBean.edrTemplatesModel}" newLine="true" />
+							field="immediateInvoicing"/>
+					<hftl:formField label="#{messages['chargeTemplate.dropZeroWo']}" field="dropZeroWo"/>
+
+					<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
+									field="disabled" isMessage="true"/>
+
+					<hftl:formField label="#{messages['menu.triggeredEdrTemplates']}"
+									field="edrTemplates" listType="pickUpList" valueLabelField="code"
+									dualListModel="#{oneShotChargeTemplateBean.edrTemplatesModel}" newLine="true"/>
 
 
 				</p:tab>

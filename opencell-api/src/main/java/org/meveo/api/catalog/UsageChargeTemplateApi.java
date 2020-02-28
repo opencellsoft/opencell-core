@@ -113,6 +113,7 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
         chargeTemplate.setTriggerNextCharge(postData.getTriggerNextCharge());
         chargeTemplate.setTriggerNextChargeEL(postData.getTriggerNextChargeEL());
+        chargeTemplate.setDropZeroWo(postData.isDropZeroWo());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {

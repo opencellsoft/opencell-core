@@ -149,7 +149,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Column(name = "input_unit_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String inputUnitEL;
-    
+
     /**
      * Expression to calculate input unitOfMeasure
      */
@@ -157,23 +157,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Size(max = 2000)
     private String outputUnitEL;
 
-    public String getInputUnitEL() {
-		return inputUnitEL;
-	}
-
-	public void setInputUnitEL(String inputUnitEL) {
-		this.inputUnitEL = inputUnitEL;
-	}
-
-	public String getOutputUnitEL() {
-		return outputUnitEL;
-	}
-
-	public void setOutputUnitEL(String outputUnitEL) {
-		this.outputUnitEL = outputUnitEL;
-	}
-
-	/**
+    /**
      * Unit multiplicator between input and rating unit
      */
     @Column(name = "unit_multiplicator", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
@@ -220,6 +204,14 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Size(max = 2000)
     private String filterExpressionSpark = null;
 
+    /**
+     * Enable/disable removing rated WO to 0.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "drop_zero_wo")
+    protected boolean dropZeroWo;
+
+
     // Calculated values
     @Transient
     private boolean roundingValuesComputed;
@@ -231,6 +223,22 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     private int roundingEdrNbDecimal = BaseEntity.NB_DECIMALS;
 
     public abstract String getChargeType();
+
+    public String getInputUnitEL() {
+        return inputUnitEL;
+    }
+
+    public void setInputUnitEL(String inputUnitEL) {
+        this.inputUnitEL = inputUnitEL;
+    }
+
+    public String getOutputUnitEL() {
+        return outputUnitEL;
+    }
+
+    public void setOutputUnitEL(String outputUnitEL) {
+        this.outputUnitEL = outputUnitEL;
+    }
 
     public OperationTypeEnum getType() {
         return type;
@@ -422,14 +430,31 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 	private void updateUnitMultiplicator(BigDecimal multiplicator) {
 		this.unitMultiplicator=calculateUnitMultiplicator(multiplicator, this.inputUnitOfMeasure, this.ratingUnitOfMeasure);
 	}
-	
-    private BigDecimal calculateUnitMultiplicator(BigDecimal multiplicator, UnitOfMeasure IUM, UnitOfMeasure RUM) {
-		if(IUM!=null && RUM != null && IUM.isCompatibleWith(RUM)){
-			return BigDecimal.valueOf(IUM.getMultiplicator()).divide(BigDecimal.valueOf(RUM.getMultiplicator()),BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP );
-		} else if(multiplicator!=null) {
-			return multiplicator;
-		}
-		return unitMultiplicator;
-	}
 
+    private BigDecimal calculateUnitMultiplicator(BigDecimal multiplicator, UnitOfMeasure IUM, UnitOfMeasure RUM) {
+        if (IUM != null && RUM != null && IUM.isCompatibleWith(RUM)) {
+            return BigDecimal.valueOf(IUM.getMultiplicator()).divide(BigDecimal.valueOf(RUM.getMultiplicator()), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+        } else if (multiplicator != null) {
+            return multiplicator;
+        }
+        return unitMultiplicator;
+    }
+
+    /**
+     * Check if removing WO rated to 0 is enabled or not.
+     *
+     * @return true if is enabled false else.
+     */
+    public boolean isDropZeroWo() {
+        return dropZeroWo;
+    }
+
+    /**
+     * Enable/disable removing WO rated to 0.
+     *
+     * @param dropZeroWo
+     */
+    public void setDropZeroWo(boolean dropZeroWo) {
+        this.dropZeroWo = dropZeroWo;
+    }
 }

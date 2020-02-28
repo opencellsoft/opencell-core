@@ -2507,6 +2507,12 @@ END $$;]]>
             <column name="override_prorata" type="varchar(255)"/>
         </addColumn>
     </changeSet>
+    <changeSet id="#4071_20200227" author="khalidHORRI">
+        <addColumn tableName="cat_charge_template">
+            <column name="drop_zero_wo" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
 
 </databaseChangeLog>
 

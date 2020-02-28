@@ -67,70 +67,8 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
 
         handleMissingParametersAndValidate(postData);
 
-        // check if code already exists
-        if (recurringChargeTemplateService.findByCode(postData.getCode()) != null) {
-            throw new EntityAlreadyExistsException(RecurringChargeTemplate.class, postData.getCode());
-        }
-
-        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
-        if (invoiceSubCategory == null) {
-            throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
-        }
-
-        Calendar calendar = calendarService.findByCode(postData.getCalendar());
-        if (calendar == null) {
-            throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
-        }
-
         RecurringChargeTemplate chargeTemplate = new RecurringChargeTemplate();
-        chargeTemplate.setCode(postData.getCode());
-        chargeTemplate.setDescription(postData.getDescription());
-        if (postData.isDisabled() != null) {
-            chargeTemplate.setDisabled(postData.isDisabled());
-        }
-        chargeTemplate.setAmountEditable(postData.getAmountEditable());
-        chargeTemplate.setDurationTermInMonth(postData.getDurationTermInMonth());
-        chargeTemplate.setSubscriptionProrata(postData.getSubscriptionProrata());
-        chargeTemplate.setTerminationProrata(postData.getTerminationProrata());
-        chargeTemplate.setApplyInAdvance(postData.getApplyInAdvance());
-        chargeTemplate.setShareLevel(LevelEnum.getValue(postData.getShareLevel()));
-        chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-        chargeTemplate.setCalendar(calendar);
-        chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
-        chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
-        chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
-        chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-        chargeTemplate.setFilterExpression(postData.getFilterExpression());
-        chargeTemplate.setDurationTermInMonthEl(postData.getDurationTermInMonthEl());
-        chargeTemplate.setSubscriptionProrataEl(postData.getSubscriptionProrataEl());
-        chargeTemplate.setTerminationProrataEl(postData.getTerminationProrataEl());
-        chargeTemplate.setApplyInAdvanceEl(postData.getApplyInAdvanceEl());
-        chargeTemplate.setCalendarCodeEl(postData.getCalendarCodeEl());
-        if (postData.getRoundingModeDtoEnum() != null) {
-            chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
-        } else {
-            chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
-        }
-
-        if (postData.getRevenueRecognitionRuleCode() != null) {
-            RevenueRecognitionRule revenueRecognitionRule = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
-            chargeTemplate.setRevenueRecognitionRule(revenueRecognitionRule);
-        }
-
-        if (postData.getTriggeredEdrs() != null) {
-            List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
-
-            for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
-                TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode());
-                if (triggeredEdrTemplate == null) {
-                    throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
-                }
-
-                edrTemplates.add(triggeredEdrTemplate);
-            }
-
-            chargeTemplate.setEdrTemplates(edrTemplates);
-        }
+        chargeTemplate = fromDto(postData, chargeTemplate);
 
         // populate customFields
         try {
@@ -150,27 +88,8 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         return chargeTemplate;
     }
 
-    @Override
-    public RecurringChargeTemplate update(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
-        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-            missingParameters.add("invoiceSubCategory");
-        }
-        if (StringUtils.isBlank(postData.getCalendar())) {
-            missingParameters.add("calendar");
-        }
-
-        handleMissingParametersAndValidate(postData);
-
+    private RecurringChargeTemplate fromDto(RecurringChargeTemplateDto postData, RecurringChargeTemplate chargeTemplate) {
         // check if code already exists
-        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(postData.getCode());
-        if (chargeTemplate == null) {
-            throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, postData.getCode());
-        }
-
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
         if (invoiceSubCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
@@ -200,6 +119,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         chargeTemplate.setTerminationProrataEl(postData.getTerminationProrataEl());
         chargeTemplate.setApplyInAdvanceEl(postData.getApplyInAdvanceEl());
         chargeTemplate.setCalendarCodeEl(postData.getCalendarCodeEl());
+        chargeTemplate.setDropZeroWo(postData.isDropZeroWo());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
@@ -229,6 +149,32 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
 
             chargeTemplate.setEdrTemplates(edrTemplates);
         }
+        return chargeTemplate;
+    }
+
+    @Override
+    public RecurringChargeTemplate update(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
+            missingParameters.add("invoiceSubCategory");
+        }
+        if (StringUtils.isBlank(postData.getCalendar())) {
+            missingParameters.add("calendar");
+        }
+
+        handleMissingParametersAndValidate(postData);
+
+        // check if code already exists
+        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(postData.getCode());
+
+        if (chargeTemplate == null) {
+            throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, postData.getCode());
+        }
+
+        chargeTemplate = fromDto(postData, chargeTemplate);
 
         // populate customFields
         try {
