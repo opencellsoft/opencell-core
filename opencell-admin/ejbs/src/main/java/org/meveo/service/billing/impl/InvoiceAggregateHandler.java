@@ -22,7 +22,6 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -263,9 +262,7 @@ public class InvoiceAggregateHandler {
         log.debug("addOrRemoveLine amountWithoutTax {} ...", amount);
 
         Auditable auditable = new Auditable(currentUser);
-        boolean isEnterprise = appProvider.isEntreprise();
-        int rounding = appProvider.getRounding();
-        RoundingModeEnum invoiceRoundingMode = appProvider.getRoundingMode();
+        
 
         BigDecimal amountTax = BigDecimal.ZERO;
         BigDecimal amountWithTax = BigDecimal.ZERO;
@@ -286,13 +283,14 @@ public class InvoiceAggregateHandler {
         if (billingAccountService.isExonerated(billingAccount)) {
             amountWithTax = amountWithoutTax;
             
-        } else {
+		} else {
 			BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amount, amount, currentTax.getPercent(),
-					isEnterprise, rounding, invoiceRoundingMode.getRoundingMode());
+					appProvider.isEntreprise(), appProvider.getRounding(),
+					appProvider.getRoundingMode().getRoundingMode());
 			amountWithoutTax = amounts[0];
 			amountWithTax = amounts[1];
 			amountTax = amounts[2];
-        }
+		}
         log.trace("addOrRemoveLine amountWithTax {}", amountWithTax);
         log.trace("addOrRemoveLine amountTax {}", amountTax);
 
@@ -303,32 +301,48 @@ public class InvoiceAggregateHandler {
         invoiceAmountWithTax = addOrSubtract(invoiceAmountWithTax, amountWithTax, isToAdd);
         log.trace("addOrRemoveLine invoiceAmountWithTax {}", invoiceAmountWithTax);
 
-        CategoryInvoiceAgregate categoryInvoiceAgregate = catInvAgregateMap.get(invoiceSubCategory.getInvoiceCategory().getCode());
-        if (categoryInvoiceAgregate == null) {
-            categoryInvoiceAgregate = new CategoryInvoiceAgregate();
-            categoryInvoiceAgregate.setAuditable(auditable);
-            categoryInvoiceAgregate.setInvoiceCategory(invoiceSubCategory.getInvoiceCategory());
-            categoryInvoiceAgregate.setDescription(invoiceSubCategory.getInvoiceCategory().getDescription());
-            categoryInvoiceAgregate.setAmountWithoutTax(BigDecimal.ZERO);
-            categoryInvoiceAgregate.setAmountWithTax(BigDecimal.ZERO);
-            categoryInvoiceAgregate.setAmountTax(BigDecimal.ZERO);
-            categoryInvoiceAgregate.setBillingAccount(billingAccount);
-            categoryInvoiceAgregate.setUserAccount(userAccount);
-            categoryInvoiceAgregate.setItemNumber(0);
+        CategoryInvoiceAgregate categoryInvoiceAgregate = extractCategoryInvoiceAgregate(invoiceSubCategory,
+				billingAccount, userAccount, isToAdd, auditable, amountTax, amountWithTax, amountWithoutTax);
+
+        updateSubCategoryInvoiceAgregate(invoiceSubCategory, billingAccount, userAccount, description,
+				ratedTransaction, isToAdd, auditable, amountTax, amountWithTax, amountWithoutTax, currentTax,
+				categoryInvoiceAgregate);
+
+        updateInvoiceAgregateTax(billingAccount, isToAdd, amountTax, amountWithTax, amountWithoutTax, currentTax);
+    }
+
+	private void updateInvoiceAgregateTax(BillingAccount billingAccount, boolean isToAdd, BigDecimal amountTax,
+			BigDecimal amountWithTax, BigDecimal amountWithoutTax, Tax currentTax) {
+		TaxInvoiceAgregate invoiceAgregateTax = taxInvAgregateMap.get(currentTax.getCode());
+        if (invoiceAgregateTax == null) {
+            invoiceAgregateTax = new TaxInvoiceAgregate();
+            invoiceAgregateTax.setBillingRun(null);
+            invoiceAgregateTax.setTax(currentTax);
+            invoiceAgregateTax.setAccountingCode(currentTax.getAccountingCode());
+            invoiceAgregateTax.setTaxPercent(currentTax.getPercent());
+            invoiceAgregateTax.setAmountWithoutTax(BigDecimal.ZERO);
+            invoiceAgregateTax.setAmountWithTax(BigDecimal.ZERO);
+            invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
+            invoiceAgregateTax.setBillingAccount(billingAccount);
+            invoiceAgregateTax.setItemNumber(0);
         }
-        categoryInvoiceAgregate.setAmountWithoutTax(addOrSubtract(categoryInvoiceAgregate.getAmountWithoutTax(), amountWithoutTax, isToAdd));
-        categoryInvoiceAgregate.setAmountWithTax(addOrSubtract(categoryInvoiceAgregate.getAmountWithTax(), amountWithTax, isToAdd));
-        categoryInvoiceAgregate.setAmountTax(addOrSubtract(categoryInvoiceAgregate.getAmountTax(), amountTax, isToAdd));
+        invoiceAgregateTax.setAmountWithoutTax(addOrSubtract(invoiceAgregateTax.getAmountWithoutTax(), amountWithoutTax, isToAdd));
+        invoiceAgregateTax.setAmountWithTax(addOrSubtract(invoiceAgregateTax.getAmountWithTax(), amountWithTax, isToAdd));
+        invoiceAgregateTax.setAmountTax(addOrSubtract(invoiceAgregateTax.getAmountTax(), amountTax, isToAdd));
+        invoiceAgregateTax.setItemNumber(invoiceAgregateTax.getItemNumber() + (isToAdd ? 1 : -1));
 
-        categoryInvoiceAgregate.setItemNumber(categoryInvoiceAgregate.getItemNumber() + (isToAdd ? 1 : -1));
-
-        if (categoryInvoiceAgregate.getItemNumber() > 0) {
-            catInvAgregateMap.put(invoiceSubCategory.getInvoiceCategory().getCode(), categoryInvoiceAgregate);
+        if (invoiceAgregateTax.getItemNumber() > 0) {
+            taxInvAgregateMap.put(currentTax.getCode(), invoiceAgregateTax);
         } else {
-            catInvAgregateMap.remove(invoiceSubCategory.getInvoiceCategory().getCode());
+            taxInvAgregateMap.remove(currentTax.getCode());
         }
+	}
 
-        SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = subCatInvAgregateMap.get(invoiceSubCategory.getCode());
+	private void updateSubCategoryInvoiceAgregate(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount,
+			UserAccount userAccount, String description, RatedTransaction ratedTransaction, boolean isToAdd,
+			Auditable auditable, BigDecimal amountTax, BigDecimal amountWithTax, BigDecimal amountWithoutTax,
+			Tax currentTax, CategoryInvoiceAgregate categoryInvoiceAgregate) {
+		SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = subCatInvAgregateMap.get(invoiceSubCategory.getCode());
         if (subCategoryInvoiceAgregate == null) {
             subCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate();
             subCategoryInvoiceAgregate.setAuditable(auditable);
@@ -371,31 +385,37 @@ public class InvoiceAggregateHandler {
         } else {
             subCatInvAgregateMap.remove(invoiceSubCategory.getCode());
         }
+	}
 
-        TaxInvoiceAgregate invoiceAgregateTax = taxInvAgregateMap.get(currentTax.getCode());
-        if (invoiceAgregateTax == null) {
-            invoiceAgregateTax = new TaxInvoiceAgregate();
-            invoiceAgregateTax.setBillingRun(null);
-            invoiceAgregateTax.setTax(currentTax);
-            invoiceAgregateTax.setAccountingCode(currentTax.getAccountingCode());
-            invoiceAgregateTax.setTaxPercent(currentTax.getPercent());
-            invoiceAgregateTax.setAmountWithoutTax(BigDecimal.ZERO);
-            invoiceAgregateTax.setAmountWithTax(BigDecimal.ZERO);
-            invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
-            invoiceAgregateTax.setBillingAccount(billingAccount);
-            invoiceAgregateTax.setItemNumber(0);
+	private CategoryInvoiceAgregate extractCategoryInvoiceAgregate(InvoiceSubCategory invoiceSubCategory,
+			BillingAccount billingAccount, UserAccount userAccount, boolean isToAdd, Auditable auditable,
+			BigDecimal amountTax, BigDecimal amountWithTax, BigDecimal amountWithoutTax) {
+		CategoryInvoiceAgregate categoryInvoiceAgregate = catInvAgregateMap.get(invoiceSubCategory.getInvoiceCategory().getCode());
+        if (categoryInvoiceAgregate == null) {
+            categoryInvoiceAgregate = new CategoryInvoiceAgregate();
+            categoryInvoiceAgregate.setAuditable(auditable);
+            categoryInvoiceAgregate.setInvoiceCategory(invoiceSubCategory.getInvoiceCategory());
+            categoryInvoiceAgregate.setDescription(invoiceSubCategory.getInvoiceCategory().getDescription());
+            categoryInvoiceAgregate.setAmountWithoutTax(BigDecimal.ZERO);
+            categoryInvoiceAgregate.setAmountWithTax(BigDecimal.ZERO);
+            categoryInvoiceAgregate.setAmountTax(BigDecimal.ZERO);
+            categoryInvoiceAgregate.setBillingAccount(billingAccount);
+            categoryInvoiceAgregate.setUserAccount(userAccount);
+            categoryInvoiceAgregate.setItemNumber(0);
         }
-        invoiceAgregateTax.setAmountWithoutTax(addOrSubtract(invoiceAgregateTax.getAmountWithoutTax(), amountWithoutTax, isToAdd));
-        invoiceAgregateTax.setAmountWithTax(addOrSubtract(invoiceAgregateTax.getAmountWithTax(), amountWithTax, isToAdd));
-        invoiceAgregateTax.setAmountTax(addOrSubtract(invoiceAgregateTax.getAmountTax(), amountTax, isToAdd));
-        invoiceAgregateTax.setItemNumber(invoiceAgregateTax.getItemNumber() + (isToAdd ? 1 : -1));
+        categoryInvoiceAgregate.setAmountWithoutTax(addOrSubtract(categoryInvoiceAgregate.getAmountWithoutTax(), amountWithoutTax, isToAdd));
+        categoryInvoiceAgregate.setAmountWithTax(addOrSubtract(categoryInvoiceAgregate.getAmountWithTax(), amountWithTax, isToAdd));
+        categoryInvoiceAgregate.setAmountTax(addOrSubtract(categoryInvoiceAgregate.getAmountTax(), amountTax, isToAdd));
 
-        if (invoiceAgregateTax.getItemNumber() > 0) {
-            taxInvAgregateMap.put(currentTax.getCode(), invoiceAgregateTax);
+        categoryInvoiceAgregate.setItemNumber(categoryInvoiceAgregate.getItemNumber() + (isToAdd ? 1 : -1));
+
+        if (categoryInvoiceAgregate.getItemNumber() > 0) {
+            catInvAgregateMap.put(invoiceSubCategory.getInvoiceCategory().getCode(), categoryInvoiceAgregate);
         } else {
-            taxInvAgregateMap.remove(currentTax.getCode());
+            catInvAgregateMap.remove(invoiceSubCategory.getInvoiceCategory().getCode());
         }
-    }
+		return categoryInvoiceAgregate;
+	}
 
     /**
      * 
