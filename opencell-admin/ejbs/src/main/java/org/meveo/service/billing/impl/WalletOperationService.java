@@ -1609,4 +1609,10 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 	            .executeUpdate();
 	}
 
+    /**
+     * Remove wallet operation rated 0 and chargeTemplate.dropZeroWo=true.
+     */
+    public void removeZeroWalletOperation() {
+        getEntityManager().createNamedQuery("WalletOperation.deleteZeroWO").executeUpdate();
+    }
 }

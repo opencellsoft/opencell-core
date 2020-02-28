@@ -62,6 +62,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
             RatedTransactionsJobAggregationSetting aggregationSetting = new RatedTransactionsJobAggregationSetting();
 
             aggregationSetting.setEnable((boolean) this.getParamOrCFValue(jobInstance, "activateAggregation", false));
+            removeZeroWalletOperation();
             if (aggregationSetting.isEnable()) {
                 aggregationSetting.setAggregateGlobally((boolean) this.getParamOrCFValue(jobInstance, "globalAggregation"));
                 aggregationSetting.setAggregateByDay((boolean) this.getParamOrCFValue(jobInstance, "aggregateByDay"));
@@ -85,6 +86,11 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         } catch (Exception e) {
             log.error("Failed to rate transactions", e);
         }
+    }
+
+    private void removeZeroWalletOperation() {
+        log.info("Remove wellet oprations rated to 0");
+        walletOperationService.removeZeroWalletOperation();
     }
 
     private void executeWithoutAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis) throws Exception {
