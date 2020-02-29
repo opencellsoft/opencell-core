@@ -21,6 +21,7 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -237,6 +238,11 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         } else {
             amount = ratedTransaction.getAmountWithTax();
             addAmountWithTax(ratedTransaction.getAmountWithTax());
+        }
+        addAmountTax(ratedTransaction.getAmountTax());
+
+        if (amountsByTax == null) {
+            amountsByTax = new HashMap<>();
         }
         if (!amountsByTax.containsKey(ratedTransaction.getTax())) {
             amountsByTax.put(ratedTransaction.getTax(), amount);

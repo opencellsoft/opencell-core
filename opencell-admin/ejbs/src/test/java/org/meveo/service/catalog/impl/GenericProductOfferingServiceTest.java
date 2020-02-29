@@ -108,7 +108,7 @@ public class GenericProductOfferingServiceTest {
 
         OfferTemplate matchedVersion = new OfferTemplate();
 
-        GenericProductOfferingService<ProductOffering> poService = new GenericProductOfferingService<ProductOffering>();
+        GenericProductOfferingService<ProductOffering> poService = new GenericProductOfferingService<ProductOffering>() {};
 
         for (String[] dates : checkDates) {
 

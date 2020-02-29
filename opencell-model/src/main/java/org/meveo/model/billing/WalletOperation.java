@@ -535,8 +535,10 @@ public class WalletOperation extends BaseEntity {
             this.seller = userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
         }
 
-        this.tax = tax;
-        this.taxPercent = tax.getPercent();
+        if (tax != null) {
+            this.tax = tax;
+            this.taxPercent = tax.getPercent();
+        }
 
         this.startDate = startDate;
         this.endDate = endDate;
@@ -941,6 +943,7 @@ public class WalletOperation extends BaseEntity {
         result.setSubscription(subscription);
         result.setCreated(created);
         result.setUpdated(updated);
+        result.setTaxClass(taxClass);
 
         return result;
     }

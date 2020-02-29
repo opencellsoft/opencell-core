@@ -177,12 +177,12 @@ public class NumberUtils {
 
         if (isEnterprise) {
             amountWithoutTax = amountWithoutTax.setScale(rounding, roundingMode);
-            amountTax = amountWithTax.setScale(rounding, roundingMode);
+            amountTax = amountTax.setScale(rounding, roundingMode);
             amountWithTax = amountWithoutTax.add(amountTax);
 
         } else {
             amountWithTax = amountWithTax.setScale(rounding, roundingMode);
-            amountTax = amountWithTax.setScale(rounding, roundingMode);
+            amountTax = amountTax.setScale(rounding, roundingMode);
             amountWithoutTax = amountWithTax.subtract(amountTax);
         }
 

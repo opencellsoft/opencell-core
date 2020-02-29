@@ -111,7 +111,6 @@ public class UsageRatingService implements Serializable {
     @Rejected
     private Event<Serializable> rejectedEdrProducer;
 
-
     // @PreDestroy
     // accessing Entity manager in predestroy is bugged in jboss7.1.3
     /*
@@ -234,23 +233,24 @@ public class UsageRatingService implements Serializable {
      */
     private RatingResult rateEDRonChargeAndCounters(EDR edr, UsageChargeInstance usageChargeInstance, boolean isVirtual) throws BusinessException, RatingException {
         // boolean stopEDRRating_fullyRated = false;
-        RatingResult ratedEDRResult = new RatingResult();
+
         BigDecimal deducedQuantity = null;
 
+        boolean fullyRated = false;
         if (usageChargeInstance.getCounter() != null) {
             // if the charge is associated to a counter, we decrement it. If decremented by the full quantity, rating is finished.
             // If decremented partially or none - proceed with another charge
             deducedQuantity = deduceCounter(edr, usageChargeInstance, null, isVirtual);
             if (edr.getQuantityLeftToRate().compareTo(deducedQuantity) == 0) {
-                ratedEDRResult.setFullyRated(true);
+                fullyRated = true;
             }
 
             if (deducedQuantity != null && deducedQuantity.compareTo(BigDecimal.ZERO) == 0) {
                 // we continue the rating to have a WO that its needed in pricePlan.script
-                return ratedEDRResult;
+                return new RatingResult();
             }
         } else {
-            ratedEDRResult.setFullyRated(true);
+            fullyRated = true;
         }
 
         BigDecimal quantityToCharge = null;
@@ -263,12 +263,13 @@ public class UsageRatingService implements Serializable {
         }
 
         RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(usageChargeInstance, null, edr.getEventDate(), quantityToCharge, null, null, null, null, null, edr, false, isVirtual);
+        ratingResult.setFullyRated(fullyRated);
 
         if (!isVirtual) {
             walletOperationService.chargeWalletOperation(ratingResult.getWalletOperation());
         }
 
-        return ratedEDRResult;
+        return ratingResult;
     }
 
     /**
@@ -443,7 +444,7 @@ public class UsageRatingService implements Serializable {
                     walletOperations.add(ratedEDRResult.getWalletOperation());
                 }
 
-                if (rateTriggeredEdr && !ratedEDRResult.getTriggeredEDRs().isEmpty()) {
+                if (rateTriggeredEdr && ratedEDRResult.getTriggeredEDRs() != null && !ratedEDRResult.getTriggeredEDRs().isEmpty()) {
                     walletOperations.addAll(rateTriggeredEDRs(isVirtual, rateTriggeredEdr, maxDeep, currentRatingDepth, ratedEDRResult.getTriggeredEDRs()));
                 }
 
@@ -467,7 +468,7 @@ public class UsageRatingService implements Serializable {
                 edr.changeStatus(EDRStatusEnum.RATED);
 
             } else if (!foundPricePlan) {
-                throw new NoPricePlanException("At least one charge was matched but did not contain an applicable price plan for EDR " + edr.getId());
+                throw new NoPricePlanException("At least one charge was matched but did not contain an applicable price plan for EDR " + (edr.getId() != null ? edr.getId() : edr));
 
             } else {
                 throw new NoChargeException(EDRRejectReasonEnum.NO_MATCHING_CHARGE, "No charge matched for EDR " + edr.getId());

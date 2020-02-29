@@ -4,7 +4,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.meveo.api.catalog.ChargeTemplateApi;
+import org.meveo.api.catalog.GenericChargeTemplateApi;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.ChargeTemplateRs;
@@ -18,7 +18,7 @@ import org.meveo.api.rest.impl.BaseRs;
 public class ChargeTemplateRsImpl extends BaseRs implements ChargeTemplateRs {
 
     @Inject
-    private ChargeTemplateApi chargeTemplateApi;
+    private GenericChargeTemplateApi chargeTemplateApi;
 
     @Override
     public GetChargeTemplateResponseDto find(String chargeTemplateCode) {

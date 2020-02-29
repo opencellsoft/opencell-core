@@ -2908,13 +2908,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             Map<Tax, BigDecimal> amountCumulativeForTax = scAggregate.getAmountsByTax();
 
-            if ((amountCumulativeForTax != null) && !BigDecimal.ZERO.equals(amountCumulativeForTax)) {
+            if ((amountCumulativeForTax != null) && !BigDecimal.ZERO.equals(sumMapValues(amountCumulativeForTax))) {
 
                 Map<Tax, BigDecimal> amountAsDiscountBase = amountCumulativeForTax;
 
                 // Add discount aggregates defined on subscription level - ONLY when invoicing by subscription
                 for (DiscountPlanItem discountPlanItem : subscriptionApplicableDiscountPlanItems) {
-                    SubCategoryInvoiceAgregate discountAggregate = getDiscountAggregates(billingAccount, invoice, isEnterprise, invoiceRounding, invoiceRoundingMode, scAggregate, amountCumulativeForTax, cAggregate,
+                    SubCategoryInvoiceAgregate discountAggregate = getDiscountAggregates(billingAccount, invoice, isEnterprise, invoiceRounding, invoiceRoundingMode, scAggregate, amountAsDiscountBase, cAggregate,
                         discountPlanItem);
                     if (discountAggregate != null) {
                         amountCumulativeForTax = addMapValues(amountCumulativeForTax, discountAggregate.getAmountsByTax());
@@ -2922,7 +2922,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     discountAggregates.add(discountAggregate);
                 }
 
-                amountAsDiscountBase = amountCumulativeForTax;
                 for (DiscountPlanItem discountPlanItem : billingAccountApplicableDiscountPlanItems) {
                     SubCategoryInvoiceAgregate discountAggregate = getDiscountAggregates(billingAccount, invoice, isEnterprise, invoiceRounding, invoiceRoundingMode, scAggregate, amountAsDiscountBase, cAggregate,
                         discountPlanItem);
@@ -3043,7 +3042,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private SubCategoryInvoiceAgregate getDiscountAggregates(BillingAccount billingAccount, Invoice invoice, boolean isEnterprise, int invoiceRounding, RoundingModeEnum invoiceRoundingMode,
             SubCategoryInvoiceAgregate scAggregate, Map<Tax, BigDecimal> amountsByTax, CategoryInvoiceAgregate cAggregate, DiscountPlanItem discountPlanItem) throws BusinessException {
 
-        Map<Tax, BigDecimal> discountAmounts = new HashMap<Tax, BigDecimal>();
+        Map<Tax, BigDecimal> discountAmountsByTax = new HashMap<Tax, BigDecimal>();
         BigDecimal amountToApplyDiscountOn = sumMapValues(amountsByTax);
 
         if (BigDecimal.ZERO.compareTo(amountToApplyDiscountOn) == 0) {
@@ -3068,10 +3067,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         // Percent based discount
         if (discountPlanItem.getDiscountPlanItemType() == DiscountPlanItemTypeEnum.PERCENTAGE) {
-            discountAmounts.putAll(amountsByTax);
-            discountAmounts.replaceAll((tax, amount) -> amount.abs().multiply(discountValue.negate().divide(HUNDRED)).setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode()));
+            discountAmountsByTax.putAll(amountsByTax);
+            discountAmountsByTax.replaceAll((tax, amount) -> amount.abs().multiply(discountValue.negate().divide(HUNDRED)).setScale(invoiceRounding, invoiceRoundingMode.getRoundingMode()));
 
-            discountAmount = sumMapValues(discountAmounts);
+            discountAmount = sumMapValues(discountAmountsByTax);
 
             // Amount based discount
         } else {
@@ -3082,10 +3081,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             // considered invoice aggregate
             if (!((discountAmount.compareTo(BigDecimal.ZERO) < 0 && amountToApplyDiscountOn.compareTo(BigDecimal.ZERO) < 0)
                     || (discountAmount.compareTo(BigDecimal.ZERO) > 0 && amountToApplyDiscountOn.compareTo(BigDecimal.ZERO) > 0)) && (discountAmount.abs().compareTo(amountToApplyDiscountOn.abs()) > 0)) {
-                discountAmounts.putAll(amountsByTax);
-                discountAmounts.replaceAll((tax, amount) -> amount.negate());
+                discountAmountsByTax.putAll(amountsByTax);
+                discountAmountsByTax.replaceAll((tax, amount) -> amount.negate());
             } else {
-                discountAmounts = getFromMapValues(amountsByTax, discountAmount);
+                discountAmountsByTax = getFromMapValues(amountsByTax, discountAmount);
             }
         }
 
@@ -3106,9 +3105,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         discountAggregate.setDiscountPlanItem(discountPlanItem);
         discountAggregate.setDescription(discountPlanItem.getCode());
 
-        discountAggregate.setAmountsByTax(discountAmounts);
+        discountAggregate.setAmountsByTax(discountAmountsByTax);
 
-        for (Entry<Tax, BigDecimal> discountTaxAmount : discountAmounts.entrySet()) {
+        for (Entry<Tax, BigDecimal> discountTaxAmount : discountAmountsByTax.entrySet()) {
 
             BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(discountTaxAmount.getValue(), discountTaxAmount.getValue(), discountTaxAmount.getKey().getPercent(), isEnterprise, invoiceRounding,
                 invoiceRoundingMode.getRoundingMode());
@@ -3318,7 +3317,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             Tax recalculatedTax = recalculatedTaxInfo.tax;
 
-            return new Object[] { recalculatedTax, tax.getId().equals(recalculatedTax.getId()) };
+            return new Object[] { recalculatedTax, !tax.getId().equals(recalculatedTax.getId()) };
         }
     }
 
@@ -3402,8 +3401,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceAgregateSubcat.setAuditable(auditable);
                 invoice.addInvoiceAggregate(invoiceAgregateSubcat);
 
-                boolean isDetailledInvoiceMode = InvoiceModeEnum.DETAILLED.name().equals(invoiceDTO.getInvoiceMode().name());
-                if (subCatInvAgrDTO.getRatedTransactions() != null) {
+                boolean isDetailledInvoiceMode = InvoiceModeEnum.DETAILLED == invoiceDTO.getInvoiceMode();
+                if (isDetailledInvoiceMode && subCatInvAgrDTO.getRatedTransactions() != null) {
                     for (RatedTransactionDto ratedTransactionDto : subCatInvAgrDTO.getRatedTransactions()) {
 
                         BigDecimal tempAmountWithoutTax = BigDecimal.ZERO;
@@ -3434,24 +3433,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         BigDecimal amountWithTax = amounts[1];
                         BigDecimal amountTax = amounts[2];
 
-                        RatedTransaction meveoRatedTransaction = new RatedTransaction(ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(), ratedTransactionDto.getUnitAmountWithTax(),
+                        RatedTransaction rt = new RatedTransaction(ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(), ratedTransactionDto.getUnitAmountWithTax(),
                             ratedTransactionDto.getUnitAmountTax(), ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.BILLED, userAccount.getWallet(),
                             billingAccount, userAccount, invoiceSubCategory, null, null, null, null, null, null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(),
                             ratedTransactionDto.getDescription(), ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass);
 
-                        meveoRatedTransaction.setWallet(userAccount.getWallet());
+                        rt.setWallet(userAccount.getWallet());
                         // #3355 : setting params 1,2,3
                         if (isDetailledInvoiceMode) {
-                            meveoRatedTransaction.setParameter1(ratedTransactionDto.getParameter1());
-                            meveoRatedTransaction.setParameter2(ratedTransactionDto.getParameter2());
-                            meveoRatedTransaction.setParameter3(ratedTransactionDto.getParameter3());
+                            rt.setParameter1(ratedTransactionDto.getParameter1());
+                            rt.setParameter2(ratedTransactionDto.getParameter2());
+                            rt.setParameter3(ratedTransactionDto.getParameter3());
                         }
 
-                        meveoRatedTransaction.changeStatus(RatedTransactionStatusEnum.BILLED);
-                        meveoRatedTransaction.setInvoice(invoice);
-                        meveoRatedTransaction.setInvoiceAgregateF(invoiceAgregateSubcat);
+                        rt.changeStatus(RatedTransactionStatusEnum.BILLED);
+                        rt.setInvoice(invoice);
+                        rt.setInvoiceAgregateF(invoiceAgregateSubcat);
 
-                        invoiceAgregateSubcat.addRatedTransaction(meveoRatedTransaction, isEnterprise);
+                        invoiceAgregateSubcat.addRatedTransaction(rt, isEnterprise);
 
                         subCatAmountWithoutTax = subCatAmountWithoutTax.add(amountWithoutTax);
                         subCatAmountTax = subCatAmountTax.add(amountTax);
@@ -3483,6 +3482,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     invoiceAgregateSubcat.setAmountWithTax(subCatAmountWithTax);
 
                 } else {
+                    if (subCatInvAgrDTO.getAmountWithoutTax() == null || subCatInvAgrDTO.getAmountWithTax() == null || subCatInvAgrDTO.getAmountTax() == null) {
+                        throw new InvalidParameterException("For aggregated invoices, all amounts: amount without tax, tax amount and amount with tax must be provided ");
+                    }
+
                     // we add subCatAmountWithoutTax, in the case if there any opened RT to include
                     BigDecimal[] amounts = NumberUtils.computeDerivedAmountsWoutTaxPercent(subCatInvAgrDTO.getAmountWithoutTax(), subCatInvAgrDTO.getAmountWithTax(), subCatInvAgrDTO.getAmountTax(), isEnterprise,
                         invoiceRounding, invoiceRoundingMode.getRoundingMode());
@@ -3492,59 +3495,61 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     invoiceAgregateSubcat.setAmountTax(amounts[2]);
                 }
 
-                for (Map.Entry<Tax, BigDecimal> amountByTax : invoiceAgregateSubcat.getAmountsByTax().entrySet()) {
-                    Tax tax = amountByTax.getKey();
-                    if (BigDecimal.ZERO.compareTo(amountByTax.getValue()) == 0) {
-                        continue;
+                if (isDetailledInvoiceMode) {
+                    for (Map.Entry<Tax, BigDecimal> amountByTax : invoiceAgregateSubcat.getAmountsByTax().entrySet()) {
+                        Tax tax = amountByTax.getKey();
+                        if (BigDecimal.ZERO.compareTo(amountByTax.getValue()) == 0) {
+                            continue;
+                        }
+
+                        TaxInvoiceAgregate invoiceAgregateTax = null;
+
+                        if (taxInvoiceAgregateMap.containsKey(tax.getId())) {
+                            invoiceAgregateTax = taxInvoiceAgregateMap.get(tax.getId());
+                        } else {
+                            invoiceAgregateTax = new TaxInvoiceAgregate();
+                            invoiceAgregateTax.setInvoice(invoice);
+                            invoiceAgregateTax.setBillingRun(null);
+                            invoiceAgregateTax.setTax(tax);
+                            invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
+                            invoiceAgregateTax.setTaxPercent(tax.getPercent());
+                            invoiceAgregateTax.setAmountWithoutTax(BigDecimal.ZERO);
+                            invoiceAgregateTax.setAmountWithTax(BigDecimal.ZERO);
+                            invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
+                            invoiceAgregateTax.setBillingAccount(billingAccount);
+                            invoiceAgregateTax.setAuditable(auditable);
+                            invoice.addInvoiceAggregate(invoiceAgregateTax);
+                        }
+
+                        if (isEnterprise) {
+                            invoiceAgregateTax.addAmountWithoutTax(amountByTax.getValue());
+
+                        } else {
+                            invoiceAgregateTax.addAmountWithTax(amountByTax.getValue());
+                        }
+                        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(invoiceAgregateTax.getAmountWithoutTax(), invoiceAgregateTax.getAmountWithTax(), invoiceAgregateTax.getTaxPercent(), isEnterprise,
+                            invoiceRounding, invoiceRoundingMode.getRoundingMode());
+                        invoiceAgregateTax.setAmountWithoutTax(amounts[0]);
+                        invoiceAgregateTax.setAmountWithTax(amounts[1]);
+                        invoiceAgregateTax.setAmountTax(amounts[2]);
+
+                        taxInvoiceAgregateMap.put(tax.getId(), invoiceAgregateTax);
                     }
 
-                    TaxInvoiceAgregate invoiceAgregateTax = null;
-
-                    if (taxInvoiceAgregateMap.containsKey(tax.getId())) {
-                        invoiceAgregateTax = taxInvoiceAgregateMap.get(tax.getId());
+                    // Save invoice subcategory and associate rated transactions
+                    List<RatedTransaction> ratedTransactions = invoiceAgregateSubcat.getRatedtransactionsToAssociate();
+                    if (invoice.getId() == null) {
+                        create(invoice);
                     } else {
-                        invoiceAgregateTax = new TaxInvoiceAgregate();
-                        invoiceAgregateTax.setInvoice(invoice);
-                        invoiceAgregateTax.setBillingRun(null);
-                        invoiceAgregateTax.setTax(tax);
-                        invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
-                        invoiceAgregateTax.setTaxPercent(tax.getPercent());
-                        invoiceAgregateTax.setAmountWithoutTax(BigDecimal.ZERO);
-                        invoiceAgregateTax.setAmountWithTax(BigDecimal.ZERO);
-                        invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
-                        invoiceAgregateTax.setBillingAccount(billingAccount);
-                        invoiceAgregateTax.setAuditable(auditable);
-                        invoice.addInvoiceAggregate(invoiceAgregateTax);
+                        em.persist(invoiceAgregateSubcat);
                     }
 
-                    if (isEnterprise) {
-                        invoiceAgregateTax.addAmountWithoutTax(amountByTax.getValue());
-
-                    } else {
-                        invoiceAgregateTax.addAmountWithTax(amountByTax.getValue());
-                    }
-                    BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(invoiceAgregateTax.getAmountWithoutTax(), invoiceAgregateTax.getAmountWithTax(), invoiceAgregateTax.getTaxPercent(), isEnterprise,
-                        invoiceRounding, invoiceRoundingMode.getRoundingMode());
-                    invoiceAgregateTax.setAmountWithoutTax(amounts[0]);
-                    invoiceAgregateTax.setAmountWithTax(amounts[1]);
-                    invoiceAgregateTax.setAmountTax(amounts[2]);
-
-                    taxInvoiceAgregateMap.put(tax.getId(), invoiceAgregateTax);
-                }
-
-                // Save invoice subcategory and associate rated transactions
-                List<RatedTransaction> ratedTransactions = invoiceAgregateSubcat.getRatedtransactionsToAssociate();
-                if (invoice.getId() == null) {
-                    create(invoice);
-                } else {
-                    em.persist(invoiceAgregateSubcat);
-                }
-
-                for (RatedTransaction ratedTransaction : ratedTransactions) {
-                    if (ratedTransaction.getId() == null) {
-                        em.persist(ratedTransaction);
-                    } else {
-                        em.merge(ratedTransaction);
+                    for (RatedTransaction ratedTransaction : ratedTransactions) {
+                        if (ratedTransaction.getId() == null) {
+                            em.persist(ratedTransaction);
+                        } else {
+                            em.merge(ratedTransaction);
+                        }
                     }
                 }
 
@@ -3698,7 +3703,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         for (T key : two.keySet()) {
             if (result.containsKey(key)) {
-                result.get(key).add(two.get(key));
+                result.put(key, result.get(key).add(two.get(key)));
             } else {
                 result.put(key, two.get(key));
             }

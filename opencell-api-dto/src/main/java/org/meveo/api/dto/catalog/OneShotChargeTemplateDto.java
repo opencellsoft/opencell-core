@@ -1,6 +1,5 @@
 package org.meveo.api.dto.catalog;
 
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,10 +29,6 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
     /** The immediate invoicing. */
     private Boolean immediateInvoicing = true;
 
-    /** The filter expression. */
-    @Size(max = 2000)
-    private String filterExpression = null;
-
     /**
      * Instantiates a new one shot charge template dto.
      */
@@ -51,7 +46,6 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
         super(oneShotChargeTemplate, customFieldInstances);
         oneShotChargeTemplateType = oneShotChargeTemplate.getOneShotChargeTemplateType();
         immediateInvoicing = oneShotChargeTemplate.getImmediateInvoicing();
-        setFilterExpression(oneShotChargeTemplate.getFilterExpression());
     }
 
     /**
@@ -72,7 +66,6 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
         this.immediateInvoicing = immediateInvoicing;
     }
 
-
     /**
      * Gets the one shot charge template type.
      *
@@ -91,29 +84,8 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
         this.oneShotChargeTemplateType = oneShotChargeTemplateType;
     }
 
-    /**
-     * Gets the filter expression.
-     *
-     * @return the filter expression
-     */
-    public String getFilterExpression() {
-        return filterExpression;
-    }
-
-    /**
-     * Sets the filter expression.
-     *
-     * @param filterExpression the new filter expression
-     */
-    public void setFilterExpression(String filterExpression) {
-        this.filterExpression = filterExpression;
-    }
-    
     @Override
     public String toString() {
-        return "OneShotChargeTemplateDto [oneShotChargeTemplateType=" + oneShotChargeTemplateType + ", immediateInvoicing=" + immediateInvoicing + ", getCode()=" + getCode()
-                + ", getDescription()=" + getDescription() + ", getLanguageDescriptions()=" + getLanguageDescriptions() + ", toString()=" + super.toString()
-                + ", getAmountEditable()=" + getAmountEditable() + ", getInvoiceSubCategory()=" + getInvoiceSubCategory() + ", isDisabled()=" + isDisabled() + ", getClass()="
-                + getClass() + ", hashCode()=" + hashCode() + "]";
+        return "OneShotChargeTemplateDto [" + super.toString() + ", oneShotChargeTemplateType=" + oneShotChargeTemplateType + ", immediateInvoicing=" + immediateInvoicing + "]";
     }
 }

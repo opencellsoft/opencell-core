@@ -104,10 +104,12 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
                     taxMapping.getValid().setStrictMatch(mappingFound.getValid() != null && mappingFound.getValid().isCorrespondsToPeriod(taxMapping.getValid(), true));
                     taxMapping.getValid().setFromMatch(mappingFound.getValid().getFrom());
                     taxMapping.getValid().setToMatch(mappingFound.getValid().getTo());
-                }
 
-                if (taxMapping.getValid().getStrictMatch()) {
-                    throw new BusinessException(resourceBundle.getString("taxMapping.validityDates.matchingFound"));
+                    if (taxMapping.getValid().getStrictMatch()) {
+                        throw new BusinessException(resourceBundle.getString("taxMapping.validityDates.matchingFound", mappingFound.getValid().getFrom(), mappingFound.getValid().getTo()));
+                    }
+                } else if (mappingFound.getValid() == null && taxMapping.getValid() == null) {
+                    throw new BusinessException(resourceBundle.getString("taxMapping.validityDates.matchingFound", null, null));
                 }
             }
 
