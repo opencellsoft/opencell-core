@@ -632,7 +632,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return walletOperations;
     }
 
-    // TODO AKK what is this use for - what if rateCharge would return multiple WOs
+    // TODO AKK what if rateCharge would return multiple WOs as alternative to this method??
     private List<WalletOperation> generateWalletOperationsByPricePlan(RecurringChargeInstance chargeInstance, ApplicationTypeEnum applicationTypeEnum, ChargeApplicationModeEnum chargeApplicationModeEnum,
             String recurringChargeTemplateCode, boolean forSchedule, Date subscriptionDate, Date nextChargeDate, Date applyChargeOnDate, BigDecimal inputQuantity) {
 

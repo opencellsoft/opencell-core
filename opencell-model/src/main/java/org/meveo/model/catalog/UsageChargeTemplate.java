@@ -107,7 +107,7 @@ public class UsageChargeTemplate extends ChargeTemplate {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "trigger_next_charge")
-    private Boolean triggerNextCharge = false;
+    private boolean triggerNextCharge = false;
 
     /**
      * Overrides the triggerNextCharge switch.
@@ -196,11 +196,11 @@ public class UsageChargeTemplate extends ChargeTemplate {
         return priority != previousPriority;
     }
 
-    public Boolean getTriggerNextCharge() {
+    public boolean getTriggerNextCharge() {
         return triggerNextCharge;
     }
 
-    public void setTriggerNextCharge(Boolean triggerNextCharge) {
+    public void setTriggerNextCharge(boolean triggerNextCharge) {
         this.triggerNextCharge = triggerNextCharge;
     }
 

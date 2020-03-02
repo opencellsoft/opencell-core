@@ -449,12 +449,10 @@ public class UsageRatingService implements Serializable {
                 }
 
                 if (ratedEDRResult.isFullyRated()) {
-                    boolean triggerNextCharge = false;
                     UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
 
-                    if (usageChargeTemplate.getTriggerNextCharge() != null) {
-                        triggerNextCharge = usageChargeTemplate.getTriggerNextCharge();
-                    }
+                    boolean triggerNextCharge = usageChargeTemplate.getTriggerNextCharge();
+
                     if (!StringUtils.isBlank(usageChargeTemplate.getTriggerNextChargeEL())) {
                         triggerNextCharge = evaluateBooleanExpression(usageChargeTemplate.getTriggerNextChargeEL(), edr, ratedEDRResult.getWalletOperation());
                     }

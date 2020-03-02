@@ -197,10 +197,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     private CustomerAccountService customerAccountService;
 
-    /** The invoice aggregate service. */
-    @Inject
-    private InvoiceAgregateService invoiceAgregateService;
-
     /** The billing account service. */
     @Inject
     private BillingAccountService billingAccountService;
@@ -3414,6 +3410,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                             tempAmountWithTax = ratedTransactionDto.getUnitAmountWithTax().multiply(ratedTransactionDto.getQuantity());
                         }
 
+                        if (ratedTransactionDto.getTaxCode() == null) {
+                            throw new BusinessException("Tax code not provided for a rated transaction");
+                        }
                         Tax tax = taxService.findByCode(ratedTransactionDto.getTaxCode());
                         if (tax == null) {
                             throw new EntityDoesNotExistsException(Tax.class, ratedTransactionDto.getTaxCode());
@@ -3550,6 +3549,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         } else {
                             em.merge(ratedTransaction);
                         }
+                    }
+                } else {
+                    if (invoice.getId() == null) {
+                        create(invoice);
+                    } else {
+                        em.persist(invoiceAgregateSubcat);
                     }
                 }
 

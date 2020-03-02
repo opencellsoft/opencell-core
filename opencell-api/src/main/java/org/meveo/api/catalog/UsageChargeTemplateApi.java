@@ -101,20 +101,23 @@ public class UsageChargeTemplateApi extends ChargeTemplateApi<UsageChargeTemplat
             chargeTemplate.setPriority(postData.getPriority());
         }
         if (postData.getFilterParam1() != null) {
-            chargeTemplate.setFilterParam1(postData.getFilterParam1());
+            chargeTemplate.setFilterParam1(StringUtils.getDefaultIfEmpty(postData.getFilterParam1(), null));
         }
         if (postData.getFilterParam2() != null) {
-            chargeTemplate.setFilterParam2(postData.getFilterParam2());
+            chargeTemplate.setFilterParam2(StringUtils.getDefaultIfEmpty(postData.getFilterParam2(), null));
         }
         if (postData.getFilterParam3() != null) {
-            chargeTemplate.setFilterParam3(postData.getFilterParam3());
+            chargeTemplate.setFilterParam3(StringUtils.getDefaultIfEmpty(postData.getFilterParam3(), null));
         }
         if (postData.getFilterParam4() != null) {
-            chargeTemplate.setFilterParam4(postData.getFilterParam4());
+            chargeTemplate.setFilterParam4(StringUtils.getDefaultIfEmpty(postData.getFilterParam4(), null));
         }
-
-        chargeTemplate.setTriggerNextCharge(postData.getTriggerNextCharge());
-        chargeTemplate.setTriggerNextChargeEL(postData.getTriggerNextChargeEL());
+        if (postData.getTriggerNextCharge() != null) {
+            chargeTemplate.setTriggerNextCharge(postData.getTriggerNextCharge());
+        }
+        if (postData.getTriggerNextChargeEL() != null) {
+            chargeTemplate.setTriggerNextChargeEL(StringUtils.getDefaultIfEmpty(postData.getTriggerNextChargeEL(), null));
+        }
 
         return chargeTemplate;
     }

@@ -99,7 +99,7 @@ public class CatalogApi extends BaseApi {
             for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : serviceTemplate.getServiceSubscriptionCharges()) {
 
                 // TODO AKK Impossible or not accurate to determine a tax rate as it depends on an account
-                // price.setTaxRate(BigDecimal.ZERO);
+                price.setTaxRate(BigDecimal.ZERO);
 
                 chargeCode = serviceChargeTemplateSubscription.getChargeTemplate().getCode();
 
@@ -147,7 +147,7 @@ public class CatalogApi extends BaseApi {
                 chargeCode = serviceChargeTemplateRecurring.getChargeTemplate().getCode();
 
                 // TODO AKK Impossible or not accurate to determine a tax rate as it depends on an account
-                // price.setTaxRate(BigDecimal.ZERO);
+                price.setTaxRate(BigDecimal.ZERO);
 
                 List<PricePlanMatrix> pricePlans = pricePlanMatrixService.getActivePricePlansByOfferAndChargeCode(offerTemplate.getCode(), chargeCode);
                 if (pricePlans == null || pricePlans.isEmpty()) {
@@ -199,7 +199,7 @@ public class CatalogApi extends BaseApi {
                 chargeCode = productChargeTemplate.getCode();
 
                 // TODO AKK Impossible or not accurate to determine a tax rate as it depends on an account
-                // price.setTaxRate(BigDecimal.ZERO);
+                price.setTaxRate(BigDecimal.ZERO);
 
                 List<PricePlanMatrix> pricePlans = pricePlanMatrixService.getActivePricePlansByOfferAndChargeCode(offerTemplate.getCode(), chargeCode);
                 if (pricePlans == null || pricePlans.isEmpty()) {

@@ -219,7 +219,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
             Date startdate, Date endDate, ChargeApplicationModeEnum chargeMode, EDR edr, boolean isReservation, boolean isVirtual) throws BusinessException, RatingException {
 
         // For virtual operation, lookup charge in the subscription
-        if (isVirtual) {
+        if (isVirtual && chargeInstance.getSubscription() != null) {
             List<ServiceInstance> serviceInstances = chargeInstance.getSubscription().getServiceInstances();
             for (ServiceInstance serviceInstance : serviceInstances) {
                 for (ChargeInstance chargeInstanceFromService : serviceInstance.getChargeInstances()) {

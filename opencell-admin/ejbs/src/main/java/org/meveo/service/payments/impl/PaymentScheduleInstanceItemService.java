@@ -18,6 +18,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
@@ -130,7 +131,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         if (tax == null) {
             throw new BusinessException("Cant found tax for invoiceSubCat:" + invoiceSubCat.getCode());
         }
-        BigDecimal amounts[] = getAmounts(amount, tax);
+        Amounts amounts = getAmounts(amount, tax);
         List<Long> aoIdsToPay = new ArrayList<Long>();
         Invoice invoice = null;
         RecordedInvoice recordedInvoicePS = null;
@@ -152,9 +153,9 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             subCategoryInvoiceAgregate.setAuditable(new Auditable(currentUser));
             subCategoryInvoiceAgregate.setInvoiceSubCategory(invoiceSubCat);
             subCategoryInvoiceAgregate.setDescription(invoiceSubCat.getDescription());
-            subCategoryInvoiceAgregate.setAmountWithoutTax(amounts[0]);
-            subCategoryInvoiceAgregate.setAmountWithTax(amounts[2]);
-            subCategoryInvoiceAgregate.setAmountTax(amounts[1]);
+            subCategoryInvoiceAgregate.setAmountWithoutTax(amounts.getAmountWithoutTax());
+            subCategoryInvoiceAgregate.setAmountWithTax(amounts.getAmountWithTax());
+            subCategoryInvoiceAgregate.setAmountTax(amounts.getAmountTax());
             subCategoryInvoiceAgregate.setQuantity(BigDecimal.ONE);
             subCategoryInvoiceAgregate.setWallet(userAccount.getWallet());
             subCategoryInvoiceAgregate.setAccountingCode(invoiceSubCat.getAccountingCode());
@@ -169,9 +170,9 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             invoiceAgregateTax.setTax(tax);
             invoiceAgregateTax.setTaxPercent(tax.getPercent());
             invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
-            invoiceAgregateTax.setAmountWithoutTax(amounts[0]);
-            invoiceAgregateTax.setAmountWithTax(amounts[2]);
-            invoiceAgregateTax.setAmountTax(amounts[1]);
+            invoiceAgregateTax.setAmountWithoutTax(amounts.getAmountWithoutTax());
+            invoiceAgregateTax.setAmountWithTax(amounts.getAmountWithTax());
+            invoiceAgregateTax.setAmountTax(amounts.getAmountTax());
 
             CategoryInvoiceAgregate categoryInvoiceAgregate = new CategoryInvoiceAgregate();
             categoryInvoiceAgregate.setAuditable(new Auditable(currentUser));
@@ -179,19 +180,19 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             categoryInvoiceAgregate.setDescription(invoiceSubCat.getInvoiceCategory().getDescription());
             categoryInvoiceAgregate.addSubCategoryInvoiceAggregate(subCategoryInvoiceAgregate);
             categoryInvoiceAgregate.setInvoice(invoice);
-            categoryInvoiceAgregate.setAmountWithoutTax(amounts[0]);
-            categoryInvoiceAgregate.setAmountWithTax(amounts[2]);
-            categoryInvoiceAgregate.setAmountTax(amounts[1]);
+            categoryInvoiceAgregate.setAmountWithoutTax(amounts.getAmountWithoutTax());
+            categoryInvoiceAgregate.setAmountWithTax(amounts.getAmountWithTax());
+            categoryInvoiceAgregate.setAmountTax(amounts.getAmountTax());
 
             subCategoryInvoiceAgregate.setCategoryInvoiceAgregate(categoryInvoiceAgregate);
 
             invoice.getInvoiceAgregates().add(categoryInvoiceAgregate);
             invoice.getInvoiceAgregates().add(subCategoryInvoiceAgregate);
 
-            invoice.setAmountWithoutTax(amounts[0]);
-            invoice.setAmountTax(amounts[1]);
-            invoice.setAmountWithTax(amounts[2]);
-            invoice.setNetToPay(amounts[2]);
+            invoice.setAmountWithoutTax(amounts.getAmountWithoutTax());
+            invoice.setAmountTax(amounts.getAmountTax());
+            invoice.setAmountWithTax(amounts.getAmountWithTax());
+            invoice.setNetToPay(amounts.getAmountWithTax());
 
             invoiceService.create(invoice);
             invoiceService.postCreate(invoice);
@@ -247,13 +248,13 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         if (tax == null) {
             throw new BusinessException("applyOneShotPS: cant found tax for invoiceSubCat:" + invoiceSubCat.getCode());
         }
-        BigDecimal amounts[] = getAmounts(paymentScheduleInstanceItem.getPaymentScheduleInstance().getAmount(), tax);
+        Amounts amounts = getAmounts(paymentScheduleInstanceItem.getPaymentScheduleInstance().getAmount(), tax);
         String paymentlabel = paymentScheduleInstanceItem.getPaymentScheduleInstance().getPaymentScheduleTemplate().getPaymentLabel();
         OneShotChargeTemplate oneShot = createOneShotCharge(invoiceSubCat, paymentlabel);
 
         try {
             oneShotChargeInstanceService.oneShotChargeApplication(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), oneShot, null, new Date(),
-                new BigDecimal((isPaymentRejected ? "" : "-") + amounts[0]), null, new BigDecimal(1), null, null, null, paymentlabel + (isPaymentRejected ? " (Rejected)" : ""), null, true);
+                new BigDecimal((isPaymentRejected ? "" : "-") + amounts.getAmountWithoutTax()), null, new BigDecimal(1), null, null, null, paymentlabel + (isPaymentRejected ? " (Rejected)" : ""), null, true);
 
         } catch (RatingException e) {
             log.trace("Failed to apply a one shot charge {}: {}", oneShot, e.getRejectionReason());
@@ -311,13 +312,13 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      * @return the account operation PS
      * @throws BusinessException the business exception
      */
-    public RecordedInvoice createRecordedInvoicePS(BigDecimal amounts[], CustomerAccount customerAccount, InvoiceType invoiceType, PaymentMethodEnum paymentMethodType, Invoice invoice, List<Long> aoIdsToPay,
+    public RecordedInvoice createRecordedInvoicePS(Amounts amounts, CustomerAccount customerAccount, InvoiceType invoiceType, PaymentMethodEnum paymentMethodType, Invoice invoice, List<Long> aoIdsToPay,
             PaymentScheduleInstanceItem paymentScheduleInstanceItem) throws BusinessException {
-        OCCTemplate occTemplate = oCCTemplateService.getOccTemplateFromInvoiceType(amounts[2], invoiceType, null, null);
+        OCCTemplate occTemplate = oCCTemplateService.getOccTemplateFromInvoiceType(amounts.getAmountWithTax(), invoiceType, null, null);
         RecordedInvoice recordedInvoicePS = new RecordedInvoice();
         recordedInvoicePS.setDueDate(paymentScheduleInstanceItem.getDueDate());
         recordedInvoicePS.setPaymentMethod(paymentMethodType);
-        recordedInvoicePS.setAmount(amounts[2]);
+        recordedInvoicePS.setAmount(amounts.getAmountWithTax());
         recordedInvoicePS.setUnMatchingAmount(recordedInvoicePS.getAmount());
         recordedInvoicePS.setMatchingAmount(BigDecimal.ZERO);
         recordedInvoicePS.setAccountingCode(occTemplate.getAccountingCode());
@@ -328,8 +329,8 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         recordedInvoicePS.setReference(invoice == null ? "psItemID:" + paymentScheduleInstanceItem.getId() : invoice.getInvoiceNumber());
         recordedInvoicePS.setTransactionDate(new Date());
         recordedInvoicePS.setMatchingStatus(MatchingStatusEnum.O);
-        recordedInvoicePS.setTaxAmount(amounts[1]);
-        recordedInvoicePS.setAmountWithoutTax(amounts[0]);
+        recordedInvoicePS.setTaxAmount(amounts.getAmountTax());
+        recordedInvoicePS.setAmountWithoutTax(amounts.getAmountWithoutTax());
         recordedInvoicePS.setPaymentScheduleInstanceItem(paymentScheduleInstanceItem);
         recordedInvoiceService.create(recordedInvoicePS);
         return recordedInvoicePS;
@@ -340,12 +341,12 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      * Gets the amount tax and amount without tax from amoutWithTax for the right tax application.
      *
      * @param amountWithTax the amount with tax
-     * @param tax the tax
+     * @param tax The tax to apply
      * @return the amounts
      * @throws BusinessException the business exception
      */
-    private BigDecimal[] getAmounts(BigDecimal amountWithTax, Tax tax) throws BusinessException {
-        BigDecimal[] amounts = new BigDecimal[3];
+    private Amounts getAmounts(BigDecimal amountWithTax, Tax tax) throws BusinessException {
+
         BigDecimal amountTax, amountWithoutTax;
         Integer rounding = appProvider.getRounding();
         RoundingModeEnum roundingMode = appProvider.getRoundingMode();
@@ -356,10 +357,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             amountTax = round(amountTax, rounding, roundingMode);
         }
         amountWithoutTax = amountWithTax.subtract(amountTax);
-        amounts[0] = amountWithoutTax;
-        amounts[1] = amountTax;
-        amounts[2] = amountWithTax;
-        return amounts;
+        return new Amounts(amountWithoutTax, amountWithTax, amountTax);
     }
 
     /**
@@ -368,7 +366,6 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
      * @param recordedInvoice the recorded invoice
      */
     public void checkPaymentRecordInvoice(RecordedInvoice recordedInvoice) {
-        // TODO Auto-generated method stub
 
     }
 

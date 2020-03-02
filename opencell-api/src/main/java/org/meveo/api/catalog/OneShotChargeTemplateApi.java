@@ -19,7 +19,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -28,11 +28,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.RealtimeChargingService;
 import org.meveo.service.billing.impl.TradingCountryService;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
-import org.meveo.service.finance.RevenueRecognitionRuleService;
-import org.meveo.service.tax.TaxClassService;
 
 @Stateless
 public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTemplate, OneShotChargeTemplateDto> {
@@ -163,11 +159,11 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
         return result;
     }
 
-    public List<OneShotChargeTemplateWithPriceDto> listWithPrice(String languageCode, String countryCode, String currencyCode, String sellerCode, Date date) throws MeveoApiException, BusinessException {
+    public List<OneShotChargeTemplateWithPriceDto> listWithPrice(String languageCode, String buyersCountryCode, String buyersCurrencyCode, String sellerCode, Date date) throws MeveoApiException, BusinessException {
 
         Seller seller = sellerService.findByCode(sellerCode);
-        TradingCurrency currency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode);
-        TradingCountry buyersCountry = tradingCountryService.findByCode(countryCode);
+        TradingCurrency currency = tradingCurrencyService.findByTradingCurrencyCode(buyersCurrencyCode);
+        TradingCountry buyersCountry = tradingCountryService.findByCode(buyersCountryCode);
 
         List<OneShotChargeTemplate> oneShotChargeTemplates = oneShotChargeTemplateService.getSubscriptionChargeTemplates();
         List<OneShotChargeTemplateWithPriceDto> oneShotChargeTemplatesWPrice = new ArrayList<>();
@@ -178,19 +174,15 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
             oneShotChargeDto.setDescription(oneShotChargeTemplate.getDescription());
 
             if (buyersCountry == null) {
-                log.warn("country with code={} does not exists", countryCode);
+                log.warn("country with code={} does not exists", buyersCountryCode);
             } else {
 
-                // TODO AKK calculate tax - return WO and get tax info from there
-                Tax tax = null; // invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, seller, buyersCountry, today, true);
-                if (tax != null) {
-                    oneShotChargeDto.setTaxCode(tax.getCode());
-                    oneShotChargeDto.setTaxDescription(tax.getDescription());
-                    oneShotChargeDto.setTaxPercent(tax.getPercent() == null ? 0.0 : tax.getPercent().doubleValue());
-                }
-                BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(seller, null, currency, buyersCountry, oneShotChargeTemplate, date, null, BigDecimal.ONE, null, null, null, true, true);
+                Amounts unitPrice = realtimeChargingService.getApplicationPrice(seller, null, currency, buyersCountry, oneShotChargeTemplate, date, null, BigDecimal.ONE, null, null, null, true);
                 if (unitPrice != null) {
-                    oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.doubleValue());
+                    oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.getAmountWithoutTax().doubleValue());
+                    oneShotChargeDto.setTaxCode(unitPrice.getTax().getCode());
+                    oneShotChargeDto.setTaxDescription(unitPrice.getTax().getDescription());
+                    oneShotChargeDto.setTaxPercent(unitPrice.getTax().getPercent().doubleValue());
                 }
             }
 
