@@ -162,6 +162,14 @@ public class NumberUtils {
         return new BigDecimal[] { amountWithoutTax, amountWithTax, amountTax };
     }
 
+	public static BigDecimal computeTax(BigDecimal amountWithoutTax, BigDecimal taxPercent, int rounding,
+			RoundingMode roundingMode) {
+		taxPercent = taxPercent != null ? taxPercent : BigDecimal.ZERO;
+		amountWithoutTax.setScale(rounding, roundingMode);
+		BigDecimal tax = amountWithoutTax.multiply(taxPercent).divide(new BigDecimal(100), rounding, roundingMode);
+		return tax;
+	}
+
     public static long parseLongDefault(String value, long defaultValue) {
         try {
             return Long.parseLong(value);
