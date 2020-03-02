@@ -148,6 +148,7 @@ public class GenericApiAlteringService extends GenericApiService {
             case LIST:
                 customFieldDto.setListValue(new ArrayList<>());
                 List listValues = (List) effectiveValue;
+                if(effectiveValue == null){break;}
                 for(Object obj: listValues){
                     CustomFieldValueDto customFieldValueDto = new CustomFieldValueDto();
                     customFieldValueDto.setValue(getConvertedType(fieldType, obj));
@@ -156,6 +157,7 @@ public class GenericApiAlteringService extends GenericApiService {
                 break;
             case MAP:
                 Map<String, Object> mapValues = (Map) effectiveValue;
+                if(mapValues == null){break;}
                 customFieldDto.setMapValue(new LinkedHashMap<String, CustomFieldValueDto>());
                 for(String key: mapValues.keySet()){
                     CustomFieldValueDto customFieldValueDto = new CustomFieldValueDto();
@@ -165,6 +167,7 @@ public class GenericApiAlteringService extends GenericApiService {
                 break;
             case MATRIX:
                 Map<Object, Object> matrixValues = (Map) effectiveValue;
+                if(matrixValues == null){break;}
                 customFieldDto.setMapValue(new LinkedHashMap<String, CustomFieldValueDto>());
                 for(Object key: matrixValues.keySet()){
                     CustomFieldValueDto customFieldValueDto = new CustomFieldValueDto();
