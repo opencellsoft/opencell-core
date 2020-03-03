@@ -12,11 +12,7 @@ import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
-import org.meveo.api.dto.response.job.JobCategoriesResponseDto;
-import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
-import org.meveo.api.dto.response.job.JobInstanceListResponseDto;
-import org.meveo.api.dto.response.job.JobInstanceResponseDto;
-import org.meveo.api.dto.response.job.TimerEntityResponseDto;
+import org.meveo.api.dto.response.job.*;
 import org.meveo.api.job.JobApi;
 import org.meveo.api.job.JobInstanceApi;
 import org.meveo.api.job.TimerEntityApi;
@@ -208,6 +204,30 @@ public class JobRsImpl extends BaseRs implements JobRs {
         }
         return result;
     }
+
+    @Override
+    public JobExecutionResultsResponseDto list(String query, String fields, Integer offset,
+                                               Integer limit, String sortBy, SortOrder sortOrder) {
+        try {
+            return jobApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+        } catch (Exception e) {
+            JobExecutionResultsResponseDto result = new JobExecutionResultsResponseDto();
+            processException(e, result.getActionStatus());
+            return result;
+        }
+    }
+
+    @Override
+    public JobExecutionResultsResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        try {
+            return jobApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            JobExecutionResultsResponseDto result = new JobExecutionResultsResponseDto();
+            processException(e, result.getActionStatus());
+            return result;
+        }
+    }
+
 
     @Override
     public JobCategoriesResponseDto listCategories() {

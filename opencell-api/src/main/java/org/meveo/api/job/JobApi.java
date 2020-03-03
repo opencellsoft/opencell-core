@@ -5,17 +5,22 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.job.JobExecutionResultDto;
+import org.meveo.api.dto.job.JobExecutionResultsDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.job.JobExecutionResultsResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -26,6 +31,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
+import org.primefaces.model.SortOrder;
 
 /**
  * @author anasseh
@@ -189,5 +195,35 @@ public class JobApi extends BaseApi {
         }
 
         return jobExecutionResultDto;
+    }
+
+    public JobExecutionResultsResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+
+        PaginationConfiguration paginationConfig =
+                toPaginationConfiguration(pagingAndFiltering.getSortBy(),
+                        SortOrder.ASCENDING, null, pagingAndFiltering, JobExecutionResultImpl.class);
+
+        Long totalCount = jobExecutionService.count(paginationConfig);
+
+        JobExecutionResultsResponseDto jobExecutionResultsResponse = new JobExecutionResultsResponseDto();
+        JobExecutionResultsDto jobExecutionResult = new JobExecutionResultsDto();
+        jobExecutionResult.setTotalNumberOfRecords(totalCount);
+
+        jobExecutionResultsResponse.setPaging(pagingAndFiltering);
+        jobExecutionResultsResponse.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        if (totalCount > 0) {
+            List<JobExecutionResultImpl> jobExecutionResults = jobExecutionService.list(paginationConfig);
+            jobExecutionResult.setJobExecutionResults(jobExecutionResults
+                                                .stream()
+                                                .map(JobExecutionResultDto::new)
+                                                .collect(Collectors.toList()));
+        }
+        jobExecutionResultsResponse.setJobExecutionResult(jobExecutionResult);
+        return jobExecutionResultsResponse;
     }
 }

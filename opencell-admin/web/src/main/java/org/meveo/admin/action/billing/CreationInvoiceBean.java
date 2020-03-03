@@ -454,32 +454,25 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
      */
     @ActionMethod
     public void reComputeAmountWithoutTax(RatedTransaction ratedTx) {
-
         aggregateHandler.reset();
-        boolean entreprise = appProvider.isEntreprise();
         for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
             for (RatedTransaction rt : subcat.getRatedtransactionsToAssociate()) {
-                synchroniseAmounts(entreprise, rt);
+                synchroniseAmounts(rt);
                 aggregateHandler.addRT(entity.getInvoiceDate(), rt);
             }
         }
-
         updateAmountsAndLines();
     }
 
-    private void synchroniseAmounts(boolean entreprise, RatedTransaction rt) {
+    private void synchroniseAmounts(RatedTransaction rt) {
         BigDecimal uawot = rt.getUnitAmountWithoutTax() != null ? rt.getUnitAmountWithoutTax() : BigDecimal.ZERO;
         BigDecimal rtAwot = rt.getAmountWithoutTax() != null ? rt.getAmountWithoutTax() : BigDecimal.ZERO;
         BigDecimal newAwot = uawot.multiply(rt.getQuantity());
         if (newAwot.compareTo(rtAwot) != 0) {
-            BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(newAwot, newAwot, rt.getTaxPercent(), entreprise, appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-            BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(uawot, uawot, rt.getTaxPercent(), entreprise, appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-            newAwot = amounts[0];
-            BigDecimal newAwt = amounts[1];
-            BigDecimal amountTax = amounts[2];
-            uawot = unitAmounts[0];
-            BigDecimal uawt = unitAmounts[1];
-            BigDecimal unitAmountTax = unitAmounts[2];
+            BigDecimal amountTax = NumberUtils.computeTax(newAwot, rt.getTaxPercent(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            BigDecimal newAwt = newAwot.add(amountTax);
+            BigDecimal unitAmountTax = NumberUtils.computeTax(uawot, rt.getTaxPercent(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            BigDecimal uawt = uawot.add(unitAmountTax);
 
             rt.setUnitAmountTax(unitAmountTax);
             rt.setUnitAmountWithoutTax(uawot);
