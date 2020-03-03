@@ -457,34 +457,32 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         aggregateHandler.reset();
         for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
             for (RatedTransaction rt : subcat.getRatedtransactionsToAssociate()) {
-            	synchroniseAmounts(rt);
-                aggregateHandler.addRT(rt, rt.getInvoiceSubCategory().getDescription(), getFreshUA());
+                synchroniseAmounts(rt);
+                aggregateHandler.addRT(entity.getInvoiceDate(), rt);
             }
         }
         updateAmountsAndLines();
     }
 
-	private void synchroniseAmounts( RatedTransaction rt) {
-		BigDecimal uawot = rt.getUnitAmountWithoutTax() != null ? rt.getUnitAmountWithoutTax() : BigDecimal.ZERO;
-		BigDecimal rtAwot = rt.getAmountWithoutTax() != null ? rt.getAmountWithoutTax() : BigDecimal.ZERO;
-		BigDecimal newAwot = uawot.multiply(rt.getQuantity());
-		if (newAwot.compareTo(rtAwot) != 0) {
-			BigDecimal amountTax = NumberUtils.computeTax(newAwot, rt.getTaxPercent(), appProvider.getRounding(),
-					appProvider.getRoundingMode().getRoundingMode());
-			BigDecimal newAwt = newAwot.add(amountTax);
-			BigDecimal unitAmountTax = NumberUtils.computeTax(uawot, rt.getTaxPercent(), appProvider.getRounding(),
-					appProvider.getRoundingMode().getRoundingMode());
-			BigDecimal uawt = uawot.add(unitAmountTax);
+    private void synchroniseAmounts(RatedTransaction rt) {
+        BigDecimal uawot = rt.getUnitAmountWithoutTax() != null ? rt.getUnitAmountWithoutTax() : BigDecimal.ZERO;
+        BigDecimal rtAwot = rt.getAmountWithoutTax() != null ? rt.getAmountWithoutTax() : BigDecimal.ZERO;
+        BigDecimal newAwot = uawot.multiply(rt.getQuantity());
+        if (newAwot.compareTo(rtAwot) != 0) {
+            BigDecimal amountTax = NumberUtils.computeTax(newAwot, rt.getTaxPercent(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            BigDecimal newAwt = newAwot.add(amountTax);
+            BigDecimal unitAmountTax = NumberUtils.computeTax(uawot, rt.getTaxPercent(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            BigDecimal uawt = uawot.add(unitAmountTax);
 
-			rt.setUnitAmountTax(unitAmountTax);
-			rt.setUnitAmountWithoutTax(uawot);
-			rt.setUnitAmountWithTax(uawt);
+            rt.setUnitAmountTax(unitAmountTax);
+            rt.setUnitAmountWithoutTax(uawot);
+            rt.setUnitAmountWithTax(uawt);
 
-			rt.setAmountTax(amountTax);
-			rt.setAmountWithoutTax(newAwot);
-			rt.setAmountWithTax(newAwt);
-		}
-	}
+            rt.setAmountTax(amountTax);
+            rt.setAmountWithoutTax(newAwot);
+            rt.setAmountWithTax(newAwt);
+        }
+    }
 
     /**
      * Include original opened ratedTransaction
