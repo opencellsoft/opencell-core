@@ -1,6 +1,7 @@
 package org.meveo.apiv2.services.generic.JsonGenericApiMapper;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonStreamContext;
 import com.fasterxml.jackson.core.util.VersionUtil;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -45,7 +46,8 @@ class GenericModule extends SimpleModule {
 
          @Override
          public void serialize(HibernateProxy value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-             if(DATA_ROOT_ELEMENT.equals(gen.getOutputContext().getParent().getCurrentName())){
+             JsonStreamContext outputContext = gen.getOutputContext();
+             if(DATA_ROOT_ELEMENT.equals(outputContext.getParent().getCurrentName()) || nestedEntities.contains(outputContext.getCurrentName())){
                  Hibernate.initialize(value);
                  Object implementation = value.getHibernateLazyInitializer().getImplementation();
                  gen.writeObject(implementation);

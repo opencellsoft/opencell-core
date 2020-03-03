@@ -18,12 +18,10 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.payments.impl.OCCTemplateService;
-import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * CRUD API for managing {@link InvoiceSubCategory}.
@@ -39,13 +37,10 @@ public class InvoiceSubCategoryApi extends BaseApi {
 
     @Inject
     private InvoiceCategoryService invoiceCategoryService;
-    
+
     @Inject
     private AccountingCodeService accountingCodeService;
-    
-    @Inject
-    private ScriptInstanceService scriptInstanceService;
-    
+
     /** The occ template service. */
     @Inject
     private OCCTemplateService occTemplateService;
@@ -70,7 +65,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
         if (invoiceCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceCategory.class, postData.getInvoiceCategory());
         }
-        
+
         OCCTemplate occTemplate = null;
         if (!StringUtils.isBlank(postData.getOccTemplateCode())) {
             occTemplate = occTemplateService.findByCode(postData.getOccTemplateCode());
@@ -99,12 +94,6 @@ public class InvoiceSubCategoryApi extends BaseApi {
                 throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
             }
             invoiceSubCategory.setAccountingCode(accountingCode);
-        }
-        if(!StringUtils.isBlank(postData.getTaxScriptScode())) {
-            ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getTaxScriptScode());
-            if(scriptInstance != null) {
-                invoiceSubCategory.setTaxScript(scriptInstance);
-            }
         }
 
         // populate customFields
@@ -155,12 +144,6 @@ public class InvoiceSubCategoryApi extends BaseApi {
             }
             invoiceSubCategory.setAccountingCode(accountingCode);
         }
-        if(!StringUtils.isBlank(postData.getTaxScriptScode())) {
-            ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getTaxScriptScode());
-            if(scriptInstance != null) {
-                invoiceSubCategory.setTaxScript(scriptInstance);
-            }
-        }
 
         if (postData.getLanguageDescriptions() != null) {
             invoiceSubCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), invoiceSubCategory.getDescriptionI18n()));
@@ -183,7 +166,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
             }
             invoiceSubCategory.setOccTemplateNegative(occTemplateNegative);
         }
-        
+
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), invoiceSubCategory, false, true);

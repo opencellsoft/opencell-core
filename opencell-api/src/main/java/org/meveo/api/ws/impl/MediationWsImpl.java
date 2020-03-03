@@ -10,6 +10,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.dto.billing.ChargeCDRDto;
+import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -18,6 +19,7 @@ import org.meveo.commons.utils.StringUtils;
 
 /**
  * Mediation related API WS implementation
+ * 
  * @lastModifiedVersion willBeSetLater
  * 
  * @author Andrius Karpavicius
@@ -48,17 +50,16 @@ public class MediationWsImpl extends BaseWs implements MediationWs {
     }
 
     @Override
-    public ActionStatus chargeCdr(String cdr) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    public ChargeCDRResponseDto chargeCdr(String cdr, boolean isVirtual, boolean rateTriggeredEdr, boolean returnWalletOperations, Integer maxDepth) {
 
         try {
-            ChargeCDRDto chargeCDRDto = new ChargeCDRDto(cdr, getHttpServletRequest().getRemoteAddr(), false, false, false, 1);
-            mediationApi.chargeCdr(chargeCDRDto);
+            ChargeCDRDto chargeCDRDto = new ChargeCDRDto(cdr, getHttpServletRequest().getRemoteAddr(), isVirtual,  rateTriggeredEdr,  returnWalletOperations,  maxDepth);
+            return mediationApi.chargeCdr(chargeCDRDto);
         } catch (Exception e) {
-            processException(e, result);
+            ChargeCDRResponseDto result = new ChargeCDRResponseDto();
+            processException(e, result.getActionStatus());
+            return result;
         }
-
-        return result;
     }
 
     @Override

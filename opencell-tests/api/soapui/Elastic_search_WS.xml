@@ -38,7 +38,7 @@
   </con:settings>
   <con:interface xsi:type="con:WsdlInterface" id="12eea81f-4c2a-4ab4-a6ca-023996713d59" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
       <con:endpoint>http://Alexander:8080/opencell/AccountWs</con:endpoint>
     </con:endpoints>
@@ -411,9 +411,219 @@
       </con:call>
     </con:operation>
   </con:interface>
+  <con:interface xsi:type="con:RestService" id="7cdd0ae3-5427-435a-a52c-e8cd6f39974a" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://${#Project#opencell.url}" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>${#Project#opencell.url}</con:endpoint>
+    </con:endpoints>
+    <con:resource name="" path="/api/rest/taxClass" id="aa111c31-bc25-48e5-9d17-7b39ff794313">
+      <con:settings/>
+      <con:parameters>
+        <con:parameter>
+          <con:name>#Project#opencell.url</con:name>
+          <con:value>#Project#opencell.url</con:value>
+          <con:style>TEMPLATE</con:style>
+          <con:default>#Project#opencell.url</con:default>
+          <con:path xsi:nil="true"/>
+          <con:description xsi:nil="true"/>
+        </con:parameter>
+      </con:parameters>
+      <con:method name="POST" id="69c261f4-bb8f-4a9e-87d2-9f21e75eb839" method="POST">
+        <con:settings/>
+        <con:parameters/>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/xml</con:mediaType>
+          <con:params/>
+          <con:element>TaxClass</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>415 400 403</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/json</con:mediaType>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/xml;charset=UTF-8</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>actionStatus</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>text/html;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>html</con:element>
+        </con:representation>
+      </con:method>
+    </con:resource>
+    <con:resource name="" path="/api/rest/taxMapping" id="aa111c31-bc25-48e5-9d17-7b39ff794313">
+      <con:settings/>
+      <con:parameters>
+        <con:parameter>
+          <con:name>#Project#opencell.url</con:name>
+          <con:value>#Project#opencell.url</con:value>
+          <con:style>TEMPLATE</con:style>
+          <con:default>#Project#opencell.url</con:default>
+          <con:path xsi:nil="true"/>
+          <con:description xsi:nil="true"/>
+        </con:parameter>
+      </con:parameters>
+      <con:method name="POST" id="69c261f4-bb8f-4a9e-87d2-9f21e75eb839" method="POST">
+        <con:settings/>
+        <con:parameters/>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/xml</con:mediaType>
+          <con:params/>
+          <con:element>TaxClass</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>415 400 403 500</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/json</con:mediaType>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/xml;charset=UTF-8</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>actionStatus</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>text/html;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>html</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/xml;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>actionStatus</con:element>
+        </con:representation>
+      </con:method>
+    </con:resource>
+    <con:resource name="" path="/api/rest/taxCategory" id="aa111c31-bc25-48e5-9d17-7b39ff794313">
+      <con:settings/>
+      <con:parameters>
+        <con:parameter>
+          <con:name>#Project#opencell.url</con:name>
+          <con:value>#Project#opencell.url</con:value>
+          <con:style>TEMPLATE</con:style>
+          <con:default>#Project#opencell.url</con:default>
+          <con:path xsi:nil="true"/>
+          <con:description xsi:nil="true"/>
+        </con:parameter>
+      </con:parameters>
+      <con:method name="POST" id="69c261f4-bb8f-4a9e-87d2-9f21e75eb839" method="POST">
+        <con:settings/>
+        <con:parameters/>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/xml</con:mediaType>
+          <con:params/>
+          <con:element>TaxClass</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>415 400 403 500</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/json</con:mediaType>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/xml;charset=UTF-8</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>actionStatus</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>text/html;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>html</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/xml;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>actionStatus</con:element>
+        </con:representation>
+      </con:method>
+    </con:resource>
+  </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="851c5e5b-0df9-4e9c-9774-e39fa8f93d3f" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
       <con:endpoint>http://localhost:8080/opencell/CatalogWs</con:endpoint>
     </con:endpoints>
@@ -759,7 +969,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0a39cdb7-1de6-46e4-bbe7-8f6e82a4e738" wsaVersion="NONE" name="FilteredListWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilteredListWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/FilteredListWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#opencell.url}/FilteredListWs</con:endpoint>
     </con:endpoints>
     <con:operation id="68fd0f9d-65de-4627-80d4-aefd0cc91fac" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -780,7 +990,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0e0ff08e-67e7-43b3-b03e-dd4e12d77cc7" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
       <con:endpoint>http://localhost:8080/opencell/SettingsWs</con:endpoint>
     </con:endpoints>
@@ -1246,7 +1456,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="8c2affeb-ab12-43ad-adde-ed28dba3be5d" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#opencell.url}/SubscriptionWs</con:endpoint>
     </con:endpoints>
     <con:operation id="eb311c9f-15de-4d3f-b422-da737c5eb229" isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1321,7 +1531,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="46feb4ff-ba6f-4554-a95b-e943a466084d" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/WalletWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#opencell.url}/WalletWs</con:endpoint>
     </con:endpoints>
     <con:operation id="5d0ddec3-09b0-439c-838f-58dafad04d96" isOneWay="false" action="" name="cancelReservation" bindingOperationName="cancelReservation" type="Request-Response" outputName="cancelReservationResponse" inputName="cancelReservation" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1372,7 +1582,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="405f4de6-2366-460c-88cd-c0e25de8ef4c" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="b924835f-f5bc-4eee-a684-a8b4439b1a87" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1459,7 +1669,7 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="7bf31d37-dd0b-4792-a1c9-c37a6c092b36" wadlVersion="http://wadl.dev.java.net/2009/02" name="Elastic search" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
     </con:endpoints>
     <con:resource name="Account by id" path="/${#Project#esIndexPrefix}_account/_doc/{type}_{id}" id="dc93348b-fbb2-4ed5-9fcd-c437a622a50f">
@@ -1715,7 +1925,7 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="9f953325-63c5-4b66-9828-6cfef4525b73" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO JAX-WS API Documentation" type="rest" basePath="/api/rest" definitionUrl="C:\andrius\projektai\seb\meveo\meveo-api\target\docs\application.wadl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#opencell.url}</con:endpoint>
     </con:endpoints>
     <con:resource name="/notification/jobTrigger" path="/notification/jobTrigger" id="c0880eb9-cb73-48bf-b9b1-7775f6ea9351">
@@ -15590,7 +15800,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="44fef92b-be52-4a1e-811f-84deec97b850" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/ScriptInstanceWs</con:endpoint>
     </con:endpoints>
     <con:operation id="5602eec5-69d1-4bbe-bed3-4af54069e28f" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -16766,6 +16976,86 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:properties/>
     </con:testCase>
+    <con:testCase id="bd69aa00-b0ed-4f69-91f8-a479e4346421" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create tax class and mapping" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="restrequest" name="Create tax class" id="1f709579-a198-4d52-a0ca-38135a8d27e3">
+        <con:settings/>
+        <con:config service="http://${#Project#opencell.url}" methodName="POST" resourcePath="/api/rest/taxClass" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create tax class" id="99e74d2f-34b8-4577-86dc-d658d41499a2" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}</con:endpoint>
+            <con:request>{
+"code":"${#Project#baseEntityPrefix}_taxClass",
+"description":"Tax class for ${#Project#baseEntityPrefix}"
+}</con:request>
+            <con:originalUri>http://http//localhost:8080/opencell/%23Project%23opencell.url</con:originalUri>
+            <con:assertion type="Simple Contains" id="4eafa7cc-c06b-4127-bc47-20ae9df005f4" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="#Project#opencell.url" value="#Project#opencell.url"/>
+            </con:parameters>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Create tax mapping" id="3cc2ec16-1dc7-4257-9287-812b9167d3cb">
+        <con:settings/>
+        <con:config service="http://${#Project#opencell.url}" methodName="POST" resourcePath="/api/rest/taxMapping" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create tax mapping" id="99e74d2f-34b8-4577-86dc-d658d41499a2" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}</con:endpoint>
+            <con:request>{
+"accountTaxCategoryCode":"Tax category",
+"chargeTaxClassCode":"${#Project#baseEntityPrefix}_taxClass",
+"taxCode":"TAX_18"
+}</con:request>
+            <con:originalUri>http://http//localhost:8080/opencell/%23Project%23opencell.url</con:originalUri>
+            <con:assertion type="Simple Contains" id="4eafa7cc-c06b-4127-bc47-20ae9df005f4" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="#Project#opencell.url" value="#Project#opencell.url"/>
+            </con:parameters>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:properties>
+        <con:property>
+          <con:name>prefix</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>tax</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
+    </con:testCase>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Setup Catalog: Charges, Services, Offer, PP, Counters, Wallets" searchProperties="true" id="fe1d7e1f-858a-439a-a1d1-76b54cf3a456">
       <con:settings/>
       <con:testStep type="request" name="Create PrepaidWallet" id="19b40514-10c9-4ba9-b309-250e9fddee45">
@@ -16934,6 +17224,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
  		  <durationTermInMonth>4</durationTermInMonth>
   		  <!--shareLevel>1</shareLevel-->
             <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>
 		  <triggeredEdrs>
 		    <triggeredEdr code="${#Project#baseEntityPrefix}_EDR1"></triggeredEdr>
 		  </triggeredEdrs>
@@ -16995,6 +17286,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>            
             <immediateInvoicing>false</immediateInvoicing>
             <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>
 		  <triggeredEdrs>
 		    <triggeredEdr code="${#Project#baseEntityPrefix}_EDR1"></triggeredEdr>
 		  </triggeredEdrs>
@@ -17036,28 +17328,29 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateOneShotChargeTemplate>         
-         <oneShotChargeTemplate code="${#Project#baseEntityPrefix}_OST1" description="${#Project#baseEntityPrefix}_OST1">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>            
-            <amountEditable>false</amountEditable>            
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>${#Project#baseEntityPrefix}-Termination Test</description>
-            </languageDescriptions>            
-            <inputUnitDescription>1</inputUnitDescription>            
-            <ratingUnitDescription>1</ratingUnitDescription>            
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <oneShotChargeTemplateType>TERMINATION</oneShotChargeTemplateType>            
-            <immediateInvoicing>false</immediateInvoicing>
-            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
-         </oneShotChargeTemplate>
-      </ws:createOrUpdateOneShotChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateOneShotChargeTemplate>\r
+         <oneShotChargeTemplate code="${#Project#baseEntityPrefix}_OST1" description="${#Project#baseEntityPrefix}_OST1">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>${#Project#baseEntityPrefix}-Termination Test</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>1</inputUnitDescription>\r
+            <ratingUnitDescription>1</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <oneShotChargeTemplateType>TERMINATION</oneShotChargeTemplateType>\r
+            <immediateInvoicing>false</immediateInvoicing>\r
+            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </oneShotChargeTemplate>\r
+      </ws:createOrUpdateOneShotChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="0f5be196-98dd-4979-b82b-3bc82866f554"/>
             <con:assertion type="Simple Contains" id="284f6f83-ae8d-4185-8de5-d91e9138cbe3" name="Contains">
@@ -17112,6 +17405,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <oneShotChargeTemplateType>OTHER</oneShotChargeTemplateType>            
             <immediateInvoicing>false</immediateInvoicing>
             <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>
          </oneShotChargeTemplate>
       </ws:createOrUpdateOneShotChargeTemplate>
    </soapenv:Body>
@@ -17173,6 +17467,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <filterExpression></filterExpression>
             <priority>1</priority>
             <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>
 		  <triggeredEdrs>
 		    <triggeredEdr code="${#Project#baseEntityPrefix}_EDR1"></triggeredEdr>
 		  </triggeredEdrs>
@@ -17342,24 +17637,25 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateProductChargeTemplate>         
-         <productChargeTemplate code="${#Project#baseEntityPrefix}_PC1" description="${#Project#baseEntityPrefix}_PC1">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>            
-            <amountEditable>false</amountEditable>            
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>${#Project#baseEntityPrefix}-Produit Test</description>
-            </languageDescriptions>            
-     	  <triggeredEdrs>
-		    <triggeredEdr code="${#Project#baseEntityPrefix}_EDR1"></triggeredEdr>
-		  </triggeredEdrs>
-         </productChargeTemplate>
-      </ws:createOrUpdateProductChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateProductChargeTemplate>\r
+         <productChargeTemplate code="${#Project#baseEntityPrefix}_PC1" description="${#Project#baseEntityPrefix}_PC1">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>${#Project#baseEntityPrefix}-Produit Test</description>\r
+            </languageDescriptions>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+            <triggeredEdrs>\r
+               <triggeredEdr code="${#Project#baseEntityPrefix}_EDR1"/>\r
+            </triggeredEdrs>\r
+         </productChargeTemplate>\r
+      </ws:createOrUpdateProductChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="0f5be196-98dd-4979-b82b-3bc82866f554"/>
             <con:assertion type="Simple Contains" id="284f6f83-ae8d-4185-8de5-d91e9138cbe3" name="Contains">
@@ -17449,21 +17745,22 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateProductChargeTemplate>         
-         <productChargeTemplate code="${#Project#baseEntityPrefix}_PC2" description="${#Project#baseEntityPrefix}_PC2">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>            
-            <amountEditable>false</amountEditable>            
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>${#Project#baseEntityPrefix}-Produit 2 Test</description>
-            </languageDescriptions>         
-         </productChargeTemplate>
-      </ws:createOrUpdateProductChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateProductChargeTemplate>\r
+         <productChargeTemplate code="${#Project#baseEntityPrefix}_PC2" description="${#Project#baseEntityPrefix}_PC2">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>${#Project#baseEntityPrefix}-Produit 2 Test</description>\r
+            </languageDescriptions>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </productChargeTemplate>\r
+      </ws:createOrUpdateProductChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="0f5be196-98dd-4979-b82b-3bc82866f554"/>
             <con:assertion type="Simple Contains" id="284f6f83-ae8d-4185-8de5-d91e9138cbe3" name="Contains">
@@ -17997,6 +18294,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
  		  <durationTermInMonth>4</durationTermInMonth>
   		  <!--shareLevel>1</shareLevel-->
             <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>
 		  <triggeredEdrs>
 		    <triggeredEdr code="${#Project#baseEntityPrefix}_EDR1"></triggeredEdr>
 		  </triggeredEdrs>
@@ -18058,6 +18356,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>            
             <immediateInvoicing>false</immediateInvoicing>
             <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>
 		  <triggeredEdrs>
 		    <triggeredEdr code="${#Project#baseEntityPrefix}_EDR1"></triggeredEdr>
 		  </triggeredEdrs>
@@ -18122,6 +18421,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <filterExpression></filterExpression>
             <priority>1</priority>
             <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>
 		  <triggeredEdrs>
 		    <triggeredEdr code="${#Project#baseEntityPrefix}_EDR1"></triggeredEdr>
 		  </triggeredEdrs>
@@ -18186,6 +18486,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
  		  <durationTermInMonth>4</durationTermInMonth>
   		  <!--shareLevel>1</shareLevel-->
             <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>
 		  <triggeredEdrs>
 		    <triggeredEdr code="${#Project#baseEntityPrefix}_EDR1"></triggeredEdr>
 		  </triggeredEdrs>
@@ -18247,6 +18548,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>            
             <immediateInvoicing>false</immediateInvoicing>
             <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>
 		  <triggeredEdrs>
 		    <triggeredEdr code="${#Project#baseEntityPrefix}_EDR1"></triggeredEdr>
 		  </triggeredEdrs>
@@ -18311,6 +18613,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <filterExpression></filterExpression>
             <priority>2</priority>
             <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>
 		  <triggeredEdrs>
 		    <triggeredEdr code="${#Project#baseEntityPrefix}_EDR1"></triggeredEdr>
 		  </triggeredEdrs>
@@ -23525,7 +23828,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>232</con:value>
+        <con:value>234</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

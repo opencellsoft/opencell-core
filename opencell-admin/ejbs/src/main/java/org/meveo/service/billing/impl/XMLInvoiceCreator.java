@@ -1571,10 +1571,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                             subCategory.setAttribute("amountWithTax", toPlainString(subCatInvoiceAgregate.getAmountWithTax()));
                         }
     
-                        Tax tax  = subCatInvoiceAgregate.getTax();
-                        subCategory.setAttribute("taxCode", tax.getCode());
-                        subCategory.setAttribute("taxPercent", toPlainString(tax.getPercent()));
-    
                         for (RatedTransaction ratedTransaction : ratedTransactions) {
                             if (!(ratedTransaction.getWallet() != null && ratedTransaction.getWallet().getId().longValue() == wallet.getId()
                                     && ratedTransaction.getInvoiceSubCategory().getId().longValue() == invoiceSubCat.getId())) {
@@ -2025,9 +2021,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                         code = invoiceSubCat.getCode();
                     }
                     subCategory.setAttribute("code", code);
-                    Tax tax = subCatInvoiceAgregate.getTax();
-                    subCategory.setAttribute("taxCode", tax.getCode());
-                    subCategory.setAttribute("taxPercent", toPlainString(tax.getPercent()));
 
                     if (!entreprise) {
                         subCategory.setAttribute("amountWithTax", toPlainString(subCatInvoiceAgregate.getAmountWithTax()));

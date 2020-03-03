@@ -28,20 +28,19 @@ import javax.persistence.TemporalType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.ICounterEntity;
-
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
-
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 
 /**
  * The CounterPeriod service class
+ * 
  * @author Khalid HORRI
  * @lastModifiedVersion 9.0
  */
@@ -53,7 +52,7 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
      * Find an existing counter period matching a given date
      *
      * @param counterInstance Counter instance
-     * @param date            Date to match
+     * @param date Date to match
      * @return Counter period
      * @throws BusinessException Business exception
      */
@@ -71,7 +70,7 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
     /**
      * Return the counter value of a ICounterEntity UserAccount, BillingAccount, Subscription or ServiceInstance
      *
-     * @param entity      the ICounterEntity
+     * @param entity the ICounterEntity
      * @param counterCode the counter code
      * @return the counter value.
      */
@@ -82,7 +81,7 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
     /**
      * Return the counter value of a ICounterEntity UserAccount, BillingAccount, Subscription or ServiceInstance where the startDate<=date<endDate
      *
-     * @param entity      the ICounterEntity
+     * @param entity the ICounterEntity
      * @param counterCode the counter code
      * @param date the date to be compared to start and end date of a CounterPeriod
      * @return the counter value.

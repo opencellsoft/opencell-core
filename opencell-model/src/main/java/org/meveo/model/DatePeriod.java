@@ -25,6 +25,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.shared.DateUtils;
@@ -59,6 +60,24 @@ public class DatePeriod implements Comparable<DatePeriod>, Serializable {
     @Column(name = "end_date")
     private Date to;
 
+    /**
+     * Was another date period matched strictly (true if dates match exactly or false if dates overlap)
+     */
+    @Transient
+    private Boolean strictMatch;
+
+    /**
+     * Another date period matched - from date
+     */
+    @Transient
+    private Date fromMatch;
+
+    /**
+     * Another date period matched - to date
+     */
+    @Transient
+    private Date toMatch;
+
     public DatePeriod() {
     }
 
@@ -78,18 +97,30 @@ public class DatePeriod implements Comparable<DatePeriod>, Serializable {
         }
     }
 
+    /**
+     * @return Date period from date
+     */
     public Date getFrom() {
         return from;
     }
 
+    /**
+     * @param from Date period from date
+     */
     public void setFrom(Date from) {
         this.from = from;
     }
 
+    /**
+     * @return Date period to date
+     */
     public Date getTo() {
         return to;
     }
 
+    /**
+     * @param to Date period to date
+     */
     public void setTo(Date to) {
         this.to = to;
     }
@@ -204,5 +235,47 @@ public class DatePeriod implements Comparable<DatePeriod>, Serializable {
         }
 
         return isCorrespondsToPeriod((DatePeriod) other, true);
+    }
+
+    /**
+     * @param strictMatch Was another date period matched strictly (true if dates match exactly or false if dates overlap)
+     */
+    public void setStrictMatch(Boolean strictMatch) {
+        this.strictMatch = strictMatch;
+    }
+
+    /**
+     * @return Was another date period matched strictly (true if dates match exactly or false if dates overlap)
+     */
+    public Boolean getStrictMatch() {
+        return strictMatch;
+    }
+
+    /**
+     * @return Another date period matched - from date
+     */
+    public Date getFromMatch() {
+        return fromMatch;
+    }
+
+    /**
+     * @param fromMatch Another date period matched - from date
+     */
+    public void setFromMatch(Date fromMatch) {
+        this.fromMatch = fromMatch;
+    }
+
+    /**
+     * @return Another date period matched - to date
+     */
+    public Date getToMatch() {
+        return toMatch;
+    }
+
+    /**
+     * @param toMatch Another date period matched - to date
+     */
+    public void setToMatch(Date toMatch) {
+        this.toMatch = toMatch;
     }
 }

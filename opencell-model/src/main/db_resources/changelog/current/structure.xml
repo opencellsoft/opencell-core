@@ -2507,6 +2507,187 @@ END $$;]]>
             <column name="override_prorata" type="varchar(255)"/>
         </addColumn>
     </changeSet>
+
+
+    <changeSet id="#4096_2020-02-07_1" author="AndriusKarpavicius" dbms="mysql">
+        <createTable tableName="billing_tax_category_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_category_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}billing_tax_category_seq values(1)</sql>
+
+        <createTable tableName="billing_tax_class_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_class_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}billing_tax_class_seq values(1)</sql>
+
+        <createTable tableName="billing_tax_mapping_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_mapping_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ${db.schema.adapted}billing_tax_mapping_seq values(1)</sql>
+    </changeSet>
+
+    <changeSet id="#4096_2020-02-07_2" author="AndriusKarpavicius">
+        <createSequence sequenceName="billing_tax_category_seq" startValue="1" />
+        <createTable tableName="billing_tax_category">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_category_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="description_i18n" type="${type.json}" />
+            <column name="uuid" type="varchar(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values" type="${type.json}" />
+            <column name="cf_values_accum" type="${type.json}" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_billing_tax_category_code" deferrable="false" disabled="false" initiallyDeferred="false"
+            tableName="billing_tax_category" />
+
+        <createSequence sequenceName="billing_tax_class_seq" startValue="1" />
+        <createTable tableName="billing_tax_class">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_class_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="description_i18n" type="${type.json}" />
+            <column name="uuid" type="varchar(60)">
+                <constraints nullable="false" />
+            </column>
+            <column name="cf_values" type="${type.json}" />
+            <column name="cf_values_accum" type="${type.json}" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_billing_tax_class_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_tax_class" />
+
+        <createSequence sequenceName="billing_tax_mapping_seq" startValue="1" />
+        <createTable tableName="billing_tax_mapping">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_mapping_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="tax_category_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="tax_class_id" type="bigint" />
+            <column name="valid_from" type="datetime" />
+            <column name="valid_to" type="datetime" />
+            <column name="seller_country_id" type="bigint" />
+            <column name="buyer_country_id" type="bigint" />
+            <column name="filter_el" type="varchar(2000)" />
+            <column name="filter_el_sp" type="varchar(2000)" />
+            <column name="tax_id" type="bigint" />
+            <column name="tax_el" type="varchar(2000)" />
+            <column name="tax_el_sp" type="varchar(2000)" />
+            <column name="tax_script_id" type="bigint" />
+            <column name="priority" type="int4" defaultValueNumeric="0" />
+            <column name="source" type="varchar(2000)" />
+            <column name="origin_id" type="bigint" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="tax_category_id" baseTableName="billing_tax_mapping" constraintName="fk_billing_tax_mapping_tax_category_id"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_category" />
+        <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="billing_tax_mapping" constraintName="fk_billing_tax_mapping_tax_class_id" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_class" />
+        <addForeignKeyConstraint baseColumnNames="seller_country_id" baseTableName="billing_tax_mapping" constraintName="fk_billing_tax_mapping_seller_country_id" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_country" />
+        <addForeignKeyConstraint baseColumnNames="buyer_country_id" baseTableName="billing_tax_mapping" constraintName="fk_billing_tax_mapping_buyer_country_id" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_country" />
+        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="billing_tax_mapping" constraintName="fk_billing_tax_mapping_tax_id" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax" />
+        <addForeignKeyConstraint baseColumnNames="tax_script_id" baseTableName="billing_tax_mapping" constraintName="fk_billing_tax_mapping_tax_script_id" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+
+
+        <addColumn tableName="crm_customer_category">
+            <column name="tax_category_id" type="bigint" />
+            <column name="tax_category_el" type="varchar(2000)" />
+            <column name="tax_category_el_sp" type="varchar(2000)" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="tax_category_id" baseTableName="crm_customer_category" constraintName="fk_crm_customer_category_tax_category_id"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_category" />
+
+        <addColumn tableName="billing_billing_account">
+            <column name="tax_category_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="tax_category_id" baseTableName="billing_billing_account" constraintName="fk_billing_account_tax_category_id"
+            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_category" />
+
+        <addColumn tableName="cat_charge_template">
+            <column name="tax_class_id" type="bigint" />
+            <column name="tax_class_el" type="varchar(2000)" />
+            <column name="tax_class_el_sp" type="varchar(2000)" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="cat_charge_template" constraintName="fk_cat_charge_template_tax_class_id" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_class" />
+
+        <addColumn tableName="billing_wallet_operation">
+            <column name="tax_class_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="billing_wallet_operation" constraintName="fk_billing_wallet_operation_tax_class_id" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_class" />
+
+        <addColumn tableName="billing_rated_transaction">
+            <column name="tax_class_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="tax_class_id" baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_tax_class_id" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_tax_class" />
+
+    </changeSet>
+
+    <changeSet id="#4096_2020-02-07_3" author="AndriusKarpavicius">
+        <insert tableName="billing_tax_category">
+            <column name="id" valueNumeric="-1"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueDate="2020-02-08 00:03:59.983" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="Tax category"/>
+            <column name="uuid" value="tax_category_1"/>
+        </insert>
+
+        <sql>insert into ${db.schema.adapted}billing_tax_class (id, version, created, uuid, code, description) (select id, 0, created, 'tax_class_'||id, code, description from ${db.schema.adapted}billing_invoice_sub_cat isc where isc.id in (select distinct invoice_sub_category_id from ${db.schema.adapted}billing_inv_sub_cat_country))</sql>
+        <sql>insert into ${db.schema.adapted}billing_tax_mapping (id, version, created, tax_category_id, tax_class_id, seller_country_id, buyer_country_id, filter_el, tax_id, tax_el, tax_el_sp, valid_from, valid_to) (select nextval('billing_tax_mapping_seq'), 0, created, -1, invoice_sub_category_id, selling_country_id, trading_country_id, filter_el, tax_id, tax_code_el, tax_code_el_sp, start_validity_date, end_validity_date from ${db.schema.adapted}billing_inv_sub_cat_country)</sql>
+        <sql>update ${db.schema.adapted}billing_tax_mapping set tax_script_id = (select tax_script_instance_id from ${db.schema.adapted}billing_invoice_sub_cat where billing_tax_mapping.id=billing_invoice_sub_cat.id and tax_script_instance_id is not null)</sql>
+
+        <sql>update ${db.schema.adapted}billing_wallet_operation set tax_class_id = invoice_sub_category_id</sql>
+        <sql>update ${db.schema.adapted}billing_rated_transaction set tax_class_id = invoice_sub_category_id</sql>
+        <sql>update ${db.schema.adapted}cat_charge_template set tax_class_id = invoice_sub_category </sql>
+        <sql>update ${db.schema.adapted}crm_customer_category set tax_category_id = -1 where exonerated_from_taxes=0 </sql>
+
+        <addNotNullConstraint tableName="cat_charge_template" columnName="tax_class_id" columnDataType="bigint"/>
+
+        <dropTable tableName="billing_inv_sub_cat_country"/>
+
+    </changeSet>
     <changeSet id="#4071_20200227" author="khalidHORRI">
         <addColumn tableName="cat_charge_template">
             <column name="drop_zero_wo" type="${type.boolean}" defaultValueNumeric="0"/>

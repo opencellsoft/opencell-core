@@ -1,0 +1,31 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{taxCategoryBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+                <p:menuitem outcome="taxCategories" value="#{messages['menu.taxCategories']}" />
+                <p:menuitem value="#{messages['commons.new']} #{messages['taxCategory']}" disabled="true" rendered="#{taxCategoryBean.entity.transient}" />
+                <p:menuitem value="#{messages['taxCategory']} - #{taxCategoryBean.entity.code}" disabled="true" rendered="#{!taxCategoryBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
+
+        <hftl:formPanel label="#{messages['taxCategory.panel']}" backingBean="#{taxCategoryBean}">
+            <p:tabView id="childTab" activeIndex="#{taxCategoryBean.activeTab}">
+                <p:tab id="tab0" title="#{messages['taxCategory']}">
+                    <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
+                    <hftl:formLanguageFields field="description" />
+
+                </p:tab>
+                <hftl:customFields backingBean="#{taxCategoryBean}" messagesId=":formId:messages" />
+            </p:tabView>
+        </hftl:formPanel>
+    </ui:define>
+</ui:composition>

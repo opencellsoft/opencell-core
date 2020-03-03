@@ -17,7 +17,7 @@ public interface TaxScriptInterface {
     /**
      * Determine if external tax calculation applies to the given parameters
      * 
-     * @param methodContext values: userAccount, invoice, invoiceSubCategory
+     * @param methodContext values: userAccount, seller, tax class, date
      * @return True if tax should be calculated externally
      * @throws BusinessException General business exception
      */
@@ -26,7 +26,7 @@ public interface TaxScriptInterface {
     /**
      * Determines applicable taxes from an external web service
      * 
-     * @param methodContext values: userAccount, invoice, invoiceSubCategory
+     * @param methodContext values: userAccount, seller, tax class, date
      * @return A list of Tax entities
      * @throws BusinessException General business exception
      */

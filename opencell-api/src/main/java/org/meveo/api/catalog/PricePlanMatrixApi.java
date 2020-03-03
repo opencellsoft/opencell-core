@@ -110,7 +110,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         }
 
         if (!StringUtils.isBlank(postData.getCountry())) {
-            TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry());
+            TradingCountry tradingCountry = tradingCountryService.findByCode(postData.getCountry());
             if (tradingCountry == null) {
                 throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
             }
@@ -275,7 +275,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         }
 
         if (!StringUtils.isBlank(postData.getCountry())) {
-            TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry());
+            TradingCountry tradingCountry = tradingCountryService.findByCode(postData.getCountry());
             if (tradingCountry == null) {
                 throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
             }

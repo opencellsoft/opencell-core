@@ -47,6 +47,7 @@ import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.sequence.GenericSequence;
+import org.meveo.model.tax.TaxCategory;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.AccountingCodeService;
@@ -58,6 +59,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.dwh.GdprService;
 import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookService;
+import org.meveo.service.tax.TaxCategoryService;
 import org.primefaces.model.SortOrder;
 
 import javax.ejb.EJB;
@@ -131,13 +133,13 @@ public class CustomerApi extends AccountEntityApi {
     private ProviderService providerService;
 
     @Inject
-    private CustomerSequenceApi customerSequenceApi;
-
-    @Inject
     private AccountingCodeService accountingCodeService;
 
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
+
+    @Inject
+    private TaxCategoryService taxCategoryService;
 
     public Customer create(CustomerDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -377,7 +379,7 @@ public class CustomerApi extends AccountEntityApi {
     }
 
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = DEFAULT_SORT_ORDER_CODE, entityClass = Customer.class)}, totalRecords = "customers.totalNumberOfRecords")
+    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = DEFAULT_SORT_ORDER_CODE, entityClass = Customer.class) }, totalRecords = "customers.totalNumberOfRecords")
     public CustomersResponseDto list(CustomerDto postData, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
         return list(postData, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
     }
@@ -473,8 +475,13 @@ public class CustomerApi extends AccountEntityApi {
     public void createCategory(CustomerCategoryDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add(DEFAULT_SORT_ORDER_CODE);
-            handleMissingParametersAndValidate(postData);
         }
+
+        if ((postData.isExoneratedFromTaxes() == null || !postData.isExoneratedFromTaxes()) && postData.getTaxCategoryCode() == null) {
+            missingParameters.add("Exonerated from taxes or tax category code");
+        }
+
+        handleMissingParametersAndValidate(postData);
 
         if (customerCategoryService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(CustomerCategory.class, postData.getCode());
@@ -497,6 +504,17 @@ public class CustomerApi extends AccountEntityApi {
             }
             customerCategory.setAccountingCode(accountingCode);
         }
+        if (!StringUtils.isBlank(postData.getTaxCategoryCode())) {
+            TaxCategory taxCategory = taxCategoryService.findByCode(postData.getTaxCategoryCode());
+            if (taxCategory == null) {
+                throw new EntityDoesNotExistsException(TaxCategory.class, postData.getTaxCategoryCode());
+            }
+            customerCategory.setTaxCategory(taxCategory);
+        }
+
+        customerCategory.setTaxCategoryEl(postData.getTaxCategoryEl());
+        customerCategory.setTaxCategoryElSpark(postData.getTaxCategoryElSpark());
+
         customerCategoryService.create(customerCategory);
     }
 
@@ -546,6 +564,30 @@ public class CustomerApi extends AccountEntityApi {
             }
             customerCategory.setAccountingCode(accountingCode);
         }
+        
+        if (postData.getTaxCategoryCode()!=null && StringUtils.isBlank(postData.getTaxCategoryCode()) && customerCategory.getTaxCategory()!=null) {
+            customerCategory.setTaxCategory(null);
+            toUpdate = true;
+        
+        }else if (!StringUtils.isBlank(postData.getTaxCategoryCode()) && (customerCategory.getTaxCategory()==null || !customerCategory.getTaxCategory().getCode().equals(postData.getTaxCategoryCode())))  {
+            TaxCategory taxCategory = taxCategoryService.findByCode(postData.getTaxCategoryCode());
+            if (taxCategory == null) {
+                throw new EntityDoesNotExistsException(TaxCategory.class, postData.getTaxCategoryCode());
+            }
+            customerCategory.setTaxCategory(taxCategory);
+            toUpdate = true;
+        }
+
+        if (postData.getTaxCategoryEl() != null && StringUtils.compare(postData.getTaxCategoryEl(), customerCategory.getTaxCategoryEl()) != 0) {
+            customerCategory.setTaxCategoryEl(postData.getTaxCategoryEl());
+            toUpdate = true;
+        }
+        
+        if (postData.getTaxCategoryElSpark() != null && StringUtils.compare(postData.getTaxCategoryElSpark(), customerCategory.getTaxCategoryElSpark()) != 0) {
+            customerCategory.setTaxCategoryElSpark(postData.getTaxCategoryElSpark());
+            toUpdate = true;
+        }
+
 
         if (toUpdate) {
             customerCategoryService.update(customerCategory);

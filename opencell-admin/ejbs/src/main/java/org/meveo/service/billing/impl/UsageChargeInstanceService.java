@@ -18,7 +18,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 

@@ -38,6 +38,7 @@ import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.MeveoModuleService;
@@ -62,6 +63,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.Conversation;
+import javax.faces.component.UIInput;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
@@ -71,6 +73,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1547,12 +1550,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
             if (fieldAddedToSql) {
 
-                List entitiesMatched = getPersistenceService().getEntityManager().createQuery(sql.toString()).setParameter("id", referencedEntity).setMaxResults(10)
-                    .getResultList();
+                List entitiesMatched = getPersistenceService().getEntityManager().createQuery(sql.toString()).setParameter("id", referencedEntity).setMaxResults(10).getResultList();
                 if (!entitiesMatched.isEmpty()) {
 
-                    matchedEntityInfo = (matchedEntityInfo == null ? "" : matchedEntityInfo + "; ") + ReflectionUtils.getHumanClassName(classFieldInfo.getKey().getSimpleName())
-                            + ": ";
+                    matchedEntityInfo = (matchedEntityInfo == null ? "" : matchedEntityInfo + "; ") + ReflectionUtils.getHumanClassName(classFieldInfo.getKey().getSimpleName()) + ": ";
                     boolean first = true;
                     for (Object entityIdOrCode : entitiesMatched) {
                         matchedEntityInfo += (first ? "" : ", ") + entityIdOrCode;
@@ -1591,4 +1592,42 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public String getBackMainTab() {
         return backMainTab;
     }
+
+    /**
+     * Validate that if two dates are provided, the From value is before the To value.
+     * 
+     * @param context Faces context
+     * @param components Components being validated
+     * @param values Values to validate
+     * @return Is valid or not
+     */
+    public boolean validateDateRange(FacesContext context, List<UIInput> components, List<Object> values) {
+
+        if (values.size() != 2) {
+            throw new RuntimeException("Please bind validator to two components in the following order: dateFrom, dateTo");
+        }
+//        Date from = (Date) values.get(0);
+//        Date to = (Date) values.get(1);
+        Date from = null;
+        Date to = null;
+
+        if (values.get(0) != null) {
+            if (values.get(0) instanceof String) {
+                from = DateUtils.parseDateWithPattern((String) values.get(0), ParamBean.getInstance().getDateFormat());
+            } else {
+                from = (Date) values.get(0);
+            }
+        }
+        if (values.get(1) != null) {
+            if (values.get(1) instanceof String) {
+                to = DateUtils.parseDateWithPattern((String) values.get(1), ParamBean.getInstance().getDateFormat());
+            } else {
+                to = (Date) values.get(1);
+            }
+        }
+
+        // Check that two dates are one after another
+        return !(from != null && to != null && from.compareTo(to) > 0);
+    }
+
 }

@@ -43,12 +43,12 @@ public class CatalogApi extends BaseApi {
 
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
-    
+
     @Inject
     private RatingService ratingService;
-    
+
     @Inject
-    private  RecurringChargeTemplateService recurringChargeTemplateService;
+    private RecurringChargeTemplateService recurringChargeTemplateService;
 
     public ProductOffering findProductOffering(String code, Date validFrom, Date validTo, UriInfo uriInfo, Category category) throws EntityDoesNotExistsException, BusinessException {
         OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
@@ -98,10 +98,8 @@ public class CatalogApi extends BaseApi {
             String chargeCode = null;
             for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : serviceTemplate.getServiceSubscriptionCharges()) {
 
-                if (serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
-                        && serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
-                    price.setTaxRate(serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
-                }
+                // TODO AKK Impossible or not accurate to determine a tax rate as it depends on an account
+                price.setTaxRate(BigDecimal.ZERO);
 
                 chargeCode = serviceChargeTemplateSubscription.getChargeTemplate().getCode();
 
@@ -122,7 +120,7 @@ public class CatalogApi extends BaseApi {
                     price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(wo.getUnitAmountWithTax()));
                 }
             }
-            
+
             ProductOfferingPrice offerPrice = new ProductOfferingPrice();
             offerPrice.setPriceName(serviceTemplate.getCode());
             offerPrice.setPriceType(ProductOfferingPriceType.ONE_TIME);
@@ -148,10 +146,8 @@ public class CatalogApi extends BaseApi {
 
                 chargeCode = serviceChargeTemplateRecurring.getChargeTemplate().getCode();
 
-                if (serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
-                        && serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
-                    price.setTaxRate(serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
-                }
+                // TODO AKK Impossible or not accurate to determine a tax rate as it depends on an account
+                price.setTaxRate(BigDecimal.ZERO);
 
                 List<PricePlanMatrix> pricePlans = pricePlanMatrixService.getActivePricePlansByOfferAndChargeCode(offerTemplate.getCode(), chargeCode);
                 if (pricePlans == null || pricePlans.isEmpty()) {
@@ -167,12 +163,13 @@ public class CatalogApi extends BaseApi {
                     wo.setTaxPercent(price.getTaxRate());
                     ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
                     price.setDutyFreeAmount(wo.getUnitAmountWithoutTax());
-                    price.setTaxIncludedAmount(wo.getUnitAmountWithTax());    
+                    price.setTaxIncludedAmount(wo.getUnitAmountWithTax());
                 }
 
                 String calendarCode = serviceChargeTemplateRecurring.getChargeTemplate().getCalendar().getCode();
-                if(!StringUtils.isBlank(serviceChargeTemplateRecurring.getChargeTemplate().getCalendarCodeEl())) {
-                    calendarCode = recurringChargeTemplateService.getCalendarFromEl(serviceChargeTemplateRecurring.getChargeTemplate().getCalendarCodeEl(), null,serviceTemplate , serviceChargeTemplateRecurring.getChargeTemplate()).getCode();
+                if (!StringUtils.isBlank(serviceChargeTemplateRecurring.getChargeTemplate().getCalendarCodeEl())) {
+                    calendarCode = recurringChargeTemplateService
+                        .getCalendarFromEl(serviceChargeTemplateRecurring.getChargeTemplate().getCalendarCodeEl(), null, serviceTemplate, serviceChargeTemplateRecurring.getChargeTemplate()).getCode();
                 }
                 String priceName = StringUtils.isBlank(calendarCode) ? serviceTemplate.getCode() : serviceTemplate.getCode() + " " + calendarCode;
 
@@ -201,17 +198,15 @@ public class CatalogApi extends BaseApi {
 
                 chargeCode = productChargeTemplate.getCode();
 
-                if (productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
-                        && productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
-                    price.setTaxRate(productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
-                }
+                // TODO AKK Impossible or not accurate to determine a tax rate as it depends on an account
+                price.setTaxRate(BigDecimal.ZERO);
 
                 List<PricePlanMatrix> pricePlans = pricePlanMatrixService.getActivePricePlansByOfferAndChargeCode(offerTemplate.getCode(), chargeCode);
                 if (pricePlans == null || pricePlans.isEmpty()) {
                     pricePlans = pricePlanMatrixService.getActivePricePlansByOfferAndChargeCode(null, chargeCode);
                 }
                 if (pricePlans != null && !pricePlans.isEmpty()) {
-                    
+
                     // Nothing to do with WO here, other then reusing an existing method to calculate price amounts based on amountWithoutTax or amountWithTax depending on
                     // provider.isEnterprise() value
                     WalletOperation wo = new WalletOperation();
@@ -220,7 +215,7 @@ public class CatalogApi extends BaseApi {
                     wo.setTaxPercent(price.getTaxRate());
                     ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
                     price.setDutyFreeAmount(wo.getUnitAmountWithoutTax());
-                    price.setTaxIncludedAmount(wo.getUnitAmountWithTax());                    
+                    price.setTaxIncludedAmount(wo.getUnitAmountWithTax());
                 }
 
                 offerPrice = new ProductOfferingPrice();
@@ -247,5 +242,4 @@ public class CatalogApi extends BaseApi {
         List<OfferTemplate> offerTemplates = offerTemplateService.list(true);
         return ProductSpecification.parseFromOfferTemplates(offerTemplates, uriInfo);
     }
-
 }

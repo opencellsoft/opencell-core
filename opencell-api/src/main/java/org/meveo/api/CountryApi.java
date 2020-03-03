@@ -55,7 +55,7 @@ public class CountryApi extends BaseApi {
 
         // If countryCode exist in the trading country table ("billing_trading_country"), return error.
 
-        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode());
+        TradingCountry tradingCountry = tradingCountryService.findByCode(postData.getCountryCode());
         if (tradingCountry != null) {
             throw new EntityAlreadyExistsException(TradingCountry.class.getName(), tradingCountry.getCountryCode());
         }
@@ -131,7 +131,7 @@ public class CountryApi extends BaseApi {
 
         handleMissingParameters();
 
-        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode);
+        TradingCountry tradingCountry = tradingCountryService.findByCode(countryCode);
 
         if (tradingCountry == null) {
             throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
@@ -148,7 +148,7 @@ public class CountryApi extends BaseApi {
 
         handleMissingParameters();
 
-        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode);
+        TradingCountry tradingCountry = tradingCountryService.findByCode(countryCode);
         if (tradingCountry == null) {
             throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
         }
@@ -170,7 +170,7 @@ public class CountryApi extends BaseApi {
         if (currency == null) {
             throw new EntityDoesNotExistsException(Currency.class, postData.getCurrencyCode());
         }
-        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode());
+        TradingCountry tradingCountry = tradingCountryService.findByCode(postData.getCountryCode());
         if (tradingCountry == null) {
             throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
         }
@@ -210,7 +210,7 @@ public class CountryApi extends BaseApi {
     }
 
     public void createOrUpdate(CountryDto postData) throws MeveoApiException, BusinessException {
-        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode());
+        TradingCountry tradingCountry = tradingCountryService.findByCode(postData.getCountryCode());
         if (tradingCountry == null) {
             // create
             create(postData);
@@ -224,7 +224,7 @@ public class CountryApi extends BaseApi {
         if (StringUtils.isBlank(countryCode)) {
             return;
         }
-        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode);
+        TradingCountry tradingCountry = tradingCountryService.findByCode(countryCode);
         if (tradingCountry == null) {
             Country country = countryService.findByCode(countryCode);
             if (country == null) {
@@ -254,7 +254,7 @@ public class CountryApi extends BaseApi {
 
         handleMissingParameters();
 
-        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(code);
+        TradingCountry tradingCountry = tradingCountryService.findByCode(code);
         if (tradingCountry == null) {
             throw new EntityDoesNotExistsException(TradingCountry.class, code);
         }

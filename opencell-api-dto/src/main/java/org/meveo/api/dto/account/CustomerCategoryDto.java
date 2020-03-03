@@ -37,6 +37,21 @@ public class CustomerCategoryDto extends BusinessEntityDto {
     private String accountingCode;
 
     /**
+     * Account tax category - code
+     **/
+    private String taxCategoryCode;
+
+    /**
+     * Expression to determine tax category code
+     */
+    private String taxCategoryEl;
+
+    /**
+     * Expression to determine tax category code - for Spark
+     */
+    private String taxCategoryElSpark;
+
+    /**
      * Instantiates a new customer category dto.
      */
     public CustomerCategoryDto() {
@@ -54,9 +69,14 @@ public class CustomerCategoryDto extends BusinessEntityDto {
         exonerationReason = customerCategory.getExonerationReason();
         exonerationTaxEl = customerCategory.getExonerationTaxEl();
         exonerationTaxElSpark = customerCategory.getExonerationTaxElSpark();
-        if(customerCategory.getAccountingCode() != null) {
+        if (customerCategory.getAccountingCode() != null) {
             accountingCode = customerCategory.getAccountingCode().getCode();
         }
+        if (customerCategory.getTaxCategory() != null) {
+            taxCategoryCode = customerCategory.getTaxCategory().getCode();
+        }
+        taxCategoryEl = customerCategory.getTaxCategoryEl();
+        taxCategoryElSpark = customerCategory.getTaxCategoryElSpark();
     }
 
     /**
@@ -121,6 +141,7 @@ public class CustomerCategoryDto extends BusinessEntityDto {
     public String getAccountingCode() {
         return accountingCode;
     }
+
     /**
      * @param accountingCode the accounting code to set
      */
@@ -128,9 +149,51 @@ public class CustomerCategoryDto extends BusinessEntityDto {
         this.accountingCode = accountingCode;
     }
 
+    /**
+     * @return Account tax category - code
+     */
+    public String getTaxCategoryCode() {
+        return taxCategoryCode;
+    }
+
+    /**
+     * @param taxCategory Account tax category - code
+     */
+    public void setTaxCategoryCode(String taxCategoryCode) {
+        this.taxCategoryCode = taxCategoryCode;
+    }
+
+    /**
+     * @return Expression to determine tax category code
+     */
+    public String getTaxCategoryEl() {
+        return taxCategoryEl;
+    }
+
+    /**
+     * @param taxCategoryEl Expression to determine tax category code
+     */
+    public void setTaxCategoryEl(String taxCategoryEl) {
+        this.taxCategoryEl = taxCategoryEl;
+    }
+
+    /**
+     * @return Expression to determine tax category code - for Spark
+     */
+    public String getTaxCategoryElSpark() {
+        return taxCategoryElSpark;
+    }
+
+    /**
+     * @param taxCategorySpark Expression to determine tax category code - for Spark
+     */
+    public void setTaxCategoryElSpark(String taxCategoryElSpark) {
+        this.taxCategoryElSpark = taxCategoryElSpark;
+    }
+
     @Override
     public String toString() {
-        return "CustomerCategoryDto [exoneratedFromTaxes=" + exoneratedFromTaxes + ", exonerationTaxEl=" + exonerationTaxEl + ", exonerationTaxElSpark=" + exonerationTaxElSpark
-                + ", exonerationReason=" + exonerationReason + ", accountingCode=" + accountingCode + "]";
+        return "CustomerCategoryDto [exoneratedFromTaxes=" + exoneratedFromTaxes + ", exonerationTaxEl=" + exonerationTaxEl + ", exonerationTaxElSpark=" + exonerationTaxElSpark + ", exonerationReason="
+                + exonerationReason + ", accountingCode=" + accountingCode + "]";
     }
 }

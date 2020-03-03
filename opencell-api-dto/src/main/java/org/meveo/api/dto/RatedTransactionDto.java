@@ -85,7 +85,7 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
     /** The code. */
     @XmlElement(required = true)
     private String code;
-    
+
     /** The status. */
     private RatedTransactionStatusEnum status;
 
@@ -144,6 +144,11 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
     private String billingAccountCode;
 
     /**
+     * Charge tax class code
+     */
+    private String taxClassCode;
+
+    /**
      * Instantiates a new rated transaction dto.
      */
     public RatedTransactionDto() {
@@ -182,11 +187,10 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
         if (ratedTransaction.getBillingAccount() != null) {
             this.setBillingAccountCode(ratedTransaction.getBillingAccount().getCode());
         }
-        if(ratedTransaction.getSeller() != null){
+        if (ratedTransaction.getSeller() != null) {
             this.setSellerCode(ratedTransaction.getSeller().getCode());
         }
-
-
+        taxClassCode = ratedTransaction.getTaxClass() != null ? ratedTransaction.getTaxClass().getCode() : null;
     }
 
     /**
@@ -631,7 +635,7 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
     public void setBillingAccountCode(String billingAccountCode) {
         this.billingAccountCode = billingAccountCode;
     }
-    
+
     /**
      * @return the status
      */
@@ -645,5 +649,18 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
     public void setStatus(RatedTransactionStatusEnum status) {
         this.status = status;
     }
-    
+
+    /**
+     * @return Charge tax class code
+     */
+    public String getTaxClassCode() {
+        return taxClassCode;
+    }
+
+    /**
+     * @param taxClassCode Charge tax class code
+     */
+    public void setTaxClassCode(String taxClassCode) {
+        this.taxClassCode = taxClassCode;
+    }
 }

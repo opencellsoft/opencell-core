@@ -472,7 +472,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     private void cleanBillingRun(BillingRun billingRun) throws BusinessException {
 
-        ratedTransactionService.deleteMinRTs(billingRun);
+        ratedTransactionService.deleteSupplementalRTs(billingRun);
         ratedTransactionService.uninvoiceRTs(billingRun);
         
         invoiceService.deleteInvoices(billingRun);
@@ -1106,7 +1106,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             walletOperationService.markToRerateByBR(billingRun);
             cleanBillingRun(billingRun);
         } else {
-            ratedTransactionService.deleteMinRTs(billingRun);
+            ratedTransactionService.deleteSupplementalRTs(billingRun);
         }
 
         billingRun.setStatus(BillingRunStatusEnum.CANCELED);
@@ -1130,7 +1130,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 || billingRun.getStatus() == BillingRunStatusEnum.CANCELLING) {
             cleanBillingRun(billingRun);
         } else {
-            ratedTransactionService.deleteMinRTs(billingRun);
+            ratedTransactionService.deleteSupplementalRTs(billingRun);
         }
 
         billingRun.setStatus(BillingRunStatusEnum.CANCELED);
