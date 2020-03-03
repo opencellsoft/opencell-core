@@ -61,6 +61,7 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.tax.TaxCategory;
 
 /**
  * Billing account
@@ -79,8 +80,7 @@ import org.meveo.model.payments.CustomerAccount;
 @NamedQueries({ @NamedQuery(name = "BillingAccount.listIdsByBillingRunId", query = "SELECT b.id FROM BillingAccount b where b.billingRun.id=:billingRunId order by b.id"),
         @NamedQuery(name = "BillingAccount.listByBillingRun", query = "select b from BillingAccount b where b.billingRun.id=:billingRunId order by b.id"),
         @NamedQuery(name = "BillingAccount.PreInv", query = "SELECT b FROM BillingAccount b left join fetch b.customerAccount ca left join fetch ca.paymentMethods where b.billingRun.id=:billingRunId"),
-        @NamedQuery(name = "BillingAccount.getMimimumRTUsed", query = "select ba.minimumAmountEl from BillingAccount ba where ba.minimumAmountEl is not null"),
-})
+        @NamedQuery(name = "BillingAccount.getMimimumRTUsed", query = "select ba.minimumAmountEl from BillingAccount ba where ba.minimumAmountEl is not null"), })
 public class BillingAccount extends AccountEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) BillingAccount.class.getAnnotation(DiscriminatorValue.class)).value();
@@ -269,7 +269,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @Column(name = "minimum_label_el_sp", length = 2000)
     @Size(max = 2000)
     private String minimumLabelElSpark;
-    
+
     /** Corresponding invoice subcategory */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_invoice_sub_category_id")
@@ -332,10 +332,23 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     private String ccedEmails;
 
     /**
+     * Account tax category
+     **/
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_category_id")
+    private TaxCategory taxCategory;
+
+    /**
      * A flag to indicate that account is exonerated from taxes
      */
     @Transient
     private Boolean exoneratedFromtaxes;
+
+    /**
+     * Tax category resolved
+     */
+    @Transient
+    private TaxCategory taxCategoryResolved;
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -749,5 +762,33 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      */
     public void setMinimumInvoiceSubCategory(InvoiceSubCategory minimumInvoiceSubCategory) {
         this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
+    }
+
+    /**
+     * @return Account tax category
+     */
+    public TaxCategory getTaxCategory() {
+        return taxCategory;
+    }
+
+    /**
+     * @param taxCategory Account tax category
+     */
+    public void setTaxCategory(TaxCategory taxCategory) {
+        this.taxCategory = taxCategory;
+    }
+    
+    /**
+     * @return Tax category resolved
+     */
+    public TaxCategory getTaxCategoryResolved() {
+        return taxCategoryResolved;
+    }
+    
+    /**
+     * @param taxCategoryResolved Tax category resolved
+     */
+    public void setTaxCategoryResolved(TaxCategory taxCategoryResolved) {
+        this.taxCategoryResolved = taxCategoryResolved;
     }
 }

@@ -18,6 +18,8 @@ import com.google.common.io.BaseEncoding;
  */
 public class TaxScript extends ModuleScript implements TaxScriptInterface {
 
+    private static final long serialVersionUID = -7676724555991823006L;
+
     /**
      * Parameter User account
      */
@@ -29,9 +31,19 @@ public class TaxScript extends ModuleScript implements TaxScriptInterface {
     public static final String TAX_INVOICE = "TAX_INVOICE";
 
     /**
-     * Parameter invoice subcategory
+     * Parameter Seller
      */
-    public static final String TAX_INVOICE_SUB_CAT = "TAX_INVOICE_SUB_CAT";
+    public static final String TAX_SELLER = "TAX_SELLER";
+
+    /**
+     * Parameter Tax class
+     */
+    public static final String TAX_TAX_CLASS = "TAX_TAX_CLASS";
+
+    /**
+     * Parameter Date
+     */
+    public static final String TAX_DATE = "TAX_DATE";
 
     /**
      * Checks if this script is applicable to the context parameter.
@@ -69,5 +81,4 @@ public class TaxScript extends ModuleScript implements TaxScriptInterface {
 
         return BaseEncoding.base64().encode(username.concat(":").concat(password).getBytes());
     }
-
 }

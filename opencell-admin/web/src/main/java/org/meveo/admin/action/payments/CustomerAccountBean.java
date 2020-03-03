@@ -18,6 +18,17 @@
  */
 package org.meveo.admin.action.payments;
 
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -50,16 +61,6 @@ import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 /**
  * Standard backing bean for {@link CustomerAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
@@ -84,7 +85,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
      */
     @Inject
     private CustomerService customerService;
-    
+
     @Inject
     private RatedTransactionService ratedTransactionService;
 
@@ -144,11 +145,11 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
         return entity;
     }
-    
+
     @Override
     public CustomerAccount getEntity() {
         CustomerAccount ca = super.getEntity();
-       this.initNestedFields(ca);
+        this.initNestedFields(ca);
         return ca;
     }
 
@@ -171,29 +172,29 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         if (entity.getPreferredPaymentMethod() == null) {
             throw new ValidationException("CustomerAccount does not have a preferred payment method", "paymentMethod.noPreferredPaymentMethod");
         }
-        
-        if(!entity.isTransient()) {
-        	CustomerAccount customerAccountFromDB = customerAccountService.findByCode(entity.getCode());
-        	if (!entity.getCustomer().equals(customerAccountFromDB.getCustomer())) {
-		        // a safeguard to allow this only if all the WO/RT have been invoiced.
-		        Long countNonTreatedWO = walletOperationService.countNonTreatedWOByCA(entity);
-		        if(countNonTreatedWO > 0) {
-		            messages.error(new BundleKey("messages", "customerAccount.nontreatedWO"));
-		            return null;
-		        }
-		        Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByCA(entity);
-		        if(countNonInvoicedRT > 0) {
-		            messages.error(new BundleKey("messages", "customerAccount.nonInvoicedRT"));
-		            return null;
-		        }
-		        Long countUnmatchedAO = accountOperationService.countUnmatchedAOByCA(entity);
-		        if(countUnmatchedAO > 0) {
-		            messages.error(new BundleKey("messages", "customerAccount.unmatchedAO"));
-		            return null;
-		        }
-        	}
+
+        if (!entity.isTransient()) {
+            CustomerAccount customerAccountFromDB = customerAccountService.findByCode(entity.getCode());
+            if (!entity.getCustomer().equals(customerAccountFromDB.getCustomer())) {
+                // a safeguard to allow this only if all the WO/RT have been invoiced.
+                Long countNonTreatedWO = walletOperationService.countNonTreatedWOByCA(entity);
+                if (countNonTreatedWO > 0) {
+                    messages.error(new BundleKey("messages", "customerAccount.nontreatedWO"));
+                    return null;
+                }
+                Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByCA(entity);
+                if (countNonInvoicedRT > 0) {
+                    messages.error(new BundleKey("messages", "customerAccount.nonInvoicedRT"));
+                    return null;
+                }
+                Long countUnmatchedAO = accountOperationService.countUnmatchedAOByCA(entity);
+                if (countUnmatchedAO > 0) {
+                    messages.error(new BundleKey("messages", "customerAccount.unmatchedAO"));
+                    return null;
+                }
+            }
         }
-        
+
         entity.setCustomer(customerService.findById(entity.getCustomer().getId()));
 
         String outcome = super.saveOrUpdate(killConversation);
@@ -421,13 +422,13 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
                     ((CardPaymentMethod) selectedPaymentMethod).setHiddenCardNumber(CardPaymentMethod.hideCardNumber(((CardPaymentMethod) selectedPaymentMethod).getCardNumber()));
                 }
             }
-            
-            if(selectedPaymentMethod instanceof DDPaymentMethod) {
-            	DDPaymentMethod ddPaymentMethod = (DDPaymentMethod) selectedPaymentMethod;
-            	String error = paymentMethodService.validateBankCoordinates(ddPaymentMethod, entity.getCustomer(), false);
-            	if(!StringUtils.isBlank(error)) {
-            		throw new BusinessException(error);
-            	}
+
+            if (selectedPaymentMethod instanceof DDPaymentMethod) {
+                DDPaymentMethod ddPaymentMethod = (DDPaymentMethod) selectedPaymentMethod;
+                String error = paymentMethodService.validateBankCoordinates(ddPaymentMethod, entity.getCustomer(), false);
+                if (!StringUtils.isBlank(error)) {
+                    throw new BusinessException(error);
+                }
             }
 
             if (entity.getPaymentMethods() == null) {
@@ -483,28 +484,28 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             showMessage = true;
         }
         String error = null;
-		if (paymentMethodToPrefer instanceof DDPaymentMethod) {
-			DDPaymentMethod ddPaymentMethod = (DDPaymentMethod) paymentMethodToPrefer;
-			error = paymentMethodService.validateBankCoordinates(ddPaymentMethod, entity.getCustomer(), true);
-		}
-        if(!StringUtils.isBlank(error)) {
-    		log.error("cannot define as preferred payment method : "+error);
-    		messages.error(new BundleKey("messages", "paymentMethod.setPreferred.ko"),error);
-		} else {
-			paymentMethodToPrefer.setPreferred(true);
-			entity.addPaymentMethodToAudit(new Object() {
-			}.getClass().getEnclosingMethod().getName(), paymentMethodToPrefer);
-			for (PaymentMethod paymentMethod : entity.getPaymentMethods()) {
-				if (!paymentMethod.equals(paymentMethodToPrefer)) {
-					paymentMethod.setPreferred(false);
-				}
-			}
-			entity.addPaymentMethodToAudit(new Object() {
-			}.getClass().getEnclosingMethod().getName(), paymentMethodToPrefer);
-			if (showMessage) {
-				messages.info(new BundleKey("messages", "paymentMethod.setPreferred.ok"));
-			}
-		}
+        if (paymentMethodToPrefer instanceof DDPaymentMethod) {
+            DDPaymentMethod ddPaymentMethod = (DDPaymentMethod) paymentMethodToPrefer;
+            error = paymentMethodService.validateBankCoordinates(ddPaymentMethod, entity.getCustomer(), true);
+        }
+        if (!StringUtils.isBlank(error)) {
+            log.error("cannot define as preferred payment method : " + error);
+            messages.error(new BundleKey("messages", "paymentMethod.setPreferred.ko"), error);
+        } else {
+            paymentMethodToPrefer.setPreferred(true);
+            entity.addPaymentMethodToAudit(new Object() {
+            }.getClass().getEnclosingMethod().getName(), paymentMethodToPrefer);
+            for (PaymentMethod paymentMethod : entity.getPaymentMethods()) {
+                if (!paymentMethod.equals(paymentMethodToPrefer)) {
+                    paymentMethod.setPreferred(false);
+                }
+            }
+            entity.addPaymentMethodToAudit(new Object() {
+            }.getClass().getEnclosingMethod().getName(), paymentMethodToPrefer);
+            if (showMessage) {
+                messages.info(new BundleKey("messages", "paymentMethod.setPreferred.ok"));
+            }
+        }
     }
 
     public void removePaymentMethod(PaymentMethod paymentMethod) {

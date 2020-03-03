@@ -3,9 +3,11 @@ package org.meveo.api.ws;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.ws.rs.QueryParam;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.CdrListDto;
+import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 
@@ -32,10 +34,15 @@ public interface MediationWs extends IBaseWs {
      * Same as registerCdrList, but at the same process rate the EDR created
      * 
      * @param cdr String of CDR
+     * @param isVirtual Boolean for the virtual option
+     * @param rateTriggeredEdr Boolean for rate Triggered Edr
+     * @param returnWalletOperations return Wallet Operations option
+     * @param maxDepth Interger of the max Depth
      * @return Request processing status
      */
     @WebMethod
-    ActionStatus chargeCdr(@WebParam(name = "cdr") String cdr);
+    ChargeCDRResponseDto chargeCdr(@WebParam(name = "cdr") String cdr, @WebParam(name = "isVirtual") boolean isVirtual, @WebParam(name = "rateTriggeredEdr") boolean rateTriggeredEdr,
+            @WebParam(name = "returnWalletOperations") boolean returnWalletOperations, @WebParam(name = "maxDepth") Integer maxDepth);
 
     /**
      * Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity

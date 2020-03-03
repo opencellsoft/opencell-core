@@ -18,18 +18,12 @@
  */
 package org.meveo.model.billing;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -56,12 +50,20 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.tax.TaxClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Instantiated/subscribed charge
@@ -75,8 +77,7 @@ import java.util.List;
 @Cacheable
 @CustomFieldEntity(cftCodePrefix = "ChargeInstance", inheritCFValuesFrom = "chargeTemplate")
 @Table(name = "billing_charge_instance")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_charge_instance_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_charge_instance_seq"), })
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "charge_type", discriminatorType = DiscriminatorType.STRING)
@@ -194,14 +195,14 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     protected Subscription subscription;
 
     /**
-     * Currency
+     * Buyer's currency
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency")
     protected TradingCurrency currency;
 
     /**
-     * Country
+     * Buyer's country
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country")
@@ -247,6 +248,12 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     protected String orderNumber;
+
+    /**
+     * Resolved taxClass
+     */
+    @Transient
+    private TaxClass taxClassResolved;
 
     public ChargeInstance() {
     }
@@ -502,6 +509,19 @@ public abstract class ChargeInstance extends BusinessCFEntity {
         this.serviceInstance = serviceInstance;
     }
 
+    /**
+     * @return Resolved tax class
+     */
+    public TaxClass getTaxClassResolved() {
+        return taxClassResolved;
+    }
+
+    /**
+     * @param taxClass Resolved tax class
+     */
+    public void setTaxClassResolved(TaxClass taxClass) {
+        this.taxClassResolved = taxClass;
+    }
     /**
      * Gets a counter instance.
      *

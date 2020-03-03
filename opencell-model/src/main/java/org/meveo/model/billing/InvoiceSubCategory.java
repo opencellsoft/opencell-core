@@ -19,13 +19,10 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,13 +30,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -48,7 +42,6 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -59,26 +52,14 @@ import org.meveo.model.scripts.ScriptInstance;
 @Cacheable
 @ExportIdentifier({ "code" })
 @Table(name = "billing_invoice_sub_cat", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_invoice_sub_cat_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_invoice_sub_cat_seq"), })
 @CustomFieldEntity(cftCodePrefix = "InvoiceSubCategory", inheritCFValuesFrom = "invoiceCategory")
-@NamedQueries({
-        @NamedQuery(name = "invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", query = "select count(*) from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"
-                + " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)", hints = {
-                        @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
-
-        @NamedQuery(name = "invoiceSubCategory.getInvoiceSubCatNotAssociated", query = "from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null) "
-                + " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)") })
 public class InvoiceSubCategory extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
     @Column(name = "discount")
     private BigDecimal discount;
-
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @OneToMany(mappedBy = "invoiceSubCategory", fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
-    private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = new ArrayList<InvoiceSubcategoryCountry>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_category_id")
@@ -96,24 +77,12 @@ public class InvoiceSubCategory extends BusinessCFEntity {
     private AccountingCode accountingCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tax_script_instance_id")
-    private ScriptInstance taxScript;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "occ_template_id")
     private OCCTemplate occTemplate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "occ_templ_negative_id")
     private OCCTemplate occTemplateNegative;
-
-    public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
-        return invoiceSubcategoryCountries;
-    }
-
-    public void setInvoiceSubcategoryCountries(List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
-        this.invoiceSubcategoryCountries = invoiceSubcategoryCountries;
-    }
 
     public AccountingCode getAccountingCode() {
         return accountingCode;
@@ -166,14 +135,6 @@ public class InvoiceSubCategory extends BusinessCFEntity {
             descriptionI18n = new HashMap<>();
         }
         return descriptionI18n;
-    }
-
-    public ScriptInstance getTaxScript() {
-        return taxScript;
-    }
-
-    public void setTaxScript(ScriptInstance taxScript) {
-        this.taxScript = taxScript;
     }
 
     /**

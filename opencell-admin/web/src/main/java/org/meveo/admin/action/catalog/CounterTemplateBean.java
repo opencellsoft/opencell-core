@@ -18,6 +18,16 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -28,15 +38,6 @@ import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.primefaces.model.LazyDataModel;
-
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Named
 @ViewScoped
@@ -146,12 +147,10 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
     public Object[] getCounterTypes() {
         List<Object> allCounterTypes = Arrays.asList(entity.getCounterType().getClass().getEnumConstants());
         if (entity.getAccumulator()) {
-            allCounterTypes = allCounterTypes.stream().filter(counterType -> ((CounterTypeEnum) counterType).isAccumulator()).sorted(Comparator.comparing(Object::toString))
-                    .collect(Collectors.toList());
+            allCounterTypes = allCounterTypes.stream().filter(counterType -> ((CounterTypeEnum) counterType).isAccumulator()).sorted(Comparator.comparing(Object::toString)).collect(Collectors.toList());
 
         } else {
-            allCounterTypes = allCounterTypes.stream().filter(counterType -> !((CounterTypeEnum) counterType).isAccumulator()).sorted(Comparator.comparing(Object::toString))
-                    .collect(Collectors.toList());
+            allCounterTypes = allCounterTypes.stream().filter(counterType -> !((CounterTypeEnum) counterType).isAccumulator()).sorted(Comparator.comparing(Object::toString)).collect(Collectors.toList());
 
         }
 
@@ -180,10 +179,9 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
     public Object[] getCounterLevels() {
         List<Object> counterLevels = Arrays.asList(entity.getCounterLevel().getClass().getEnumConstants());
         if (entity.getAccumulator() == null || !entity.getAccumulator()) {
-            counterLevels = counterLevels.stream()
-                    .filter(counterLevel -> counterLevel.equals(CounterTemplateLevel.SI) || counterLevel.equals(CounterTemplateLevel.SU) || counterLevel
-                            .equals(CounterTemplateLevel.UA) || counterLevel.equals(CounterTemplateLevel.BA)).sorted(Comparator.comparing(Object::toString))
-                    .collect(Collectors.toList());
+            counterLevels = counterLevels.stream().filter(counterLevel -> counterLevel.equals(CounterTemplateLevel.SI) || counterLevel.equals(CounterTemplateLevel.SU) || counterLevel.equals(CounterTemplateLevel.UA)
+                    || counterLevel.equals(CounterTemplateLevel.BA))
+                .sorted(Comparator.comparing(Object::toString)).collect(Collectors.toList());
         }
 
         return counterLevels.toArray();

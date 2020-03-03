@@ -421,7 +421,7 @@ public class SellerApi extends AccountEntityApi {
     private void updateTradingCountry(Seller seller, String countryCode) throws EntityDoesNotExistsException {
         if (countryCode != null) {
             if (isNotBlank(countryCode)) {
-                TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode);
+                TradingCountry tradingCountry = tradingCountryService.findByCode(countryCode);
                 if (tradingCountry == null) {
                     throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
                 }

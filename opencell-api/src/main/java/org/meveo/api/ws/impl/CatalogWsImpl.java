@@ -10,11 +10,11 @@ import javax.jws.WebService;
 import org.meveo.api.catalog.BundleTemplateApi;
 import org.meveo.api.catalog.BusinessOfferApi;
 import org.meveo.api.catalog.ChannelApi;
-import org.meveo.api.catalog.ChargeTemplateApi;
 import org.meveo.api.catalog.CounterTemplateApi;
 import org.meveo.api.catalog.DigitalResourceApi;
 import org.meveo.api.catalog.DiscountPlanApi;
 import org.meveo.api.catalog.DiscountPlanItemApi;
+import org.meveo.api.catalog.GenericChargeTemplateApi;
 import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.catalog.OfferTemplateCategoryApi;
 import org.meveo.api.catalog.OneShotChargeTemplateApi;
@@ -82,7 +82,12 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.ws.CatalogWs;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.*;
+import org.meveo.model.catalog.BundleTemplate;
+import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.BusinessProductModel;
+import org.meveo.model.catalog.BusinessServiceModel;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
 
@@ -102,7 +107,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     private TriggeredEdrApi triggeredEdrApi;
 
     @Inject
-    private ChargeTemplateApi chargeTemplateApi;
+    private GenericChargeTemplateApi chargeTemplateApi;
 
     @Inject
     private CounterTemplateApi counterTemplateApi;
@@ -234,13 +239,13 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public GetOfferTemplateResponseDto findOfferTemplate(String offerTemplateCode, Date validFrom, Date validTo, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
-            boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate) {
+    public GetOfferTemplateResponseDto findOfferTemplate(String offerTemplateCode, Date validFrom, Date validTo, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate, boolean loadServiceChargeTemplate,
+            boolean loadProductChargeTemplate) {
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, loadOfferServiceTemplate,
-                loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate, false));
+            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, loadOfferServiceTemplate, loadOfferProductTemplate, loadServiceChargeTemplate,
+                loadProductChargeTemplate, false));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -320,8 +325,7 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         OneShotChargeTemplateWithPriceListDto result = new OneShotChargeTemplateWithPriceListDto();
 
         try {
-            result.setOneShotChargeTemplateDtos(
-                oneShotChargeTemplateApi.listWithPrice(languageCode, countryCode, currencyCode, sellerCode, DateUtils.parseDateWithPattern(date, "yyyy-MM-dd")));
+            result.setOneShotChargeTemplateDtos(oneShotChargeTemplateApi.listWithPrice(languageCode, countryCode, currencyCode, sellerCode, DateUtils.parseDateWithPattern(date, "yyyy-MM-dd")));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

@@ -18,6 +18,11 @@
  */
 package org.meveo.admin.action.crm;
 
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletResponse;
+
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
@@ -34,11 +39,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.dwh.GdprService;
-
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Standard backing bean for {@link Customer} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,

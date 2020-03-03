@@ -212,12 +212,12 @@ public class AccountImportService extends ImportService {
             billingAccount.setName(name);
         }
 
-        // billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(billAccount.getTradingCountryCode()));
+        // billingAccount.setTradingCountry(tradingCountryService.findByCode(billAccount.getTradingCountryCode()));
         // billingAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(billAccount.getTradingLanguageCode()));
 
         TradingCountry tradingCountry = tradingCountryMap.get(new CacheKeyStr(currentUser.getProviderCode(), billAccount.getTradingCountryCode()));
         if (tradingCountry == null) {
-            TradingCountry findByTradingCountryCode = tradingCountryService.findByTradingCountryCode(billAccount.getTradingCountryCode());
+            TradingCountry findByTradingCountryCode = tradingCountryService.findByCode(billAccount.getTradingCountryCode());
             tradingCountryMap.put(new CacheKeyStr(currentUser.getProviderCode(), billAccount.getTradingCountryCode()), findByTradingCountryCode);
             findByTradingCountryCode.getCountry().getCountryCode();
             billingAccount.setTradingCountry(findByTradingCountryCode);
@@ -317,7 +317,7 @@ public class AccountImportService extends ImportService {
             billingAccount.setName(name);
         }
 
-        billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(billingAccountDto.getTradingCountryCode()));
+        billingAccount.setTradingCountry(tradingCountryService.findByCode(billingAccountDto.getTradingCountryCode()));
         billingAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(billingAccountDto.getTradingLanguageCode()));
 
         billingAccount = billingAccountService.updateNoCheck(billingAccount);
