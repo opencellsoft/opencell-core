@@ -166,6 +166,13 @@ public class BillingAccountDto extends AccountDto {
      * a list of emails separated by comma
      */
 	private String ccedEmails;
+	
+    /**
+     * Account tax category code - overrides the value from a customer category
+     **/
+    private String taxCategoryCode;
+	
+	
     /**
      * Instantiates a new billing account dto.
      */
@@ -217,6 +224,10 @@ public class BillingAccountDto extends AccountDto {
         setMailingType(e.getMailingType() != null ? e.getMailingType().getLabel() : null);
         setEmailTemplate(e.getEmailTemplate() != null ? e.getEmailTemplate().getCode() : null);
         setCcedEmails(e.getCcedEmails());
+        
+        if (e.getTaxCategory() != null) {
+            taxCategoryCode = e.getTaxCategory().getCode();
+        }
 
         // Start compatibility with pre-4.6 versions
 
@@ -750,5 +761,20 @@ public class BillingAccountDto extends AccountDto {
      */
     public void setMinimumInvoiceSubCategory(String minimumInvoiceSubCategory) {
         this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
+    }
+
+
+    /**
+     * @return Account tax category code - overrides the value from a customer category
+     */
+    public String getTaxCategoryCode() {
+        return taxCategoryCode;
+    }
+
+    /**
+     * @param taxCategory Account tax category code - overrides the value from a customer category
+     */
+    public void setTaxCategoryCode(String taxCategoryCode) {
+        this.taxCategoryCode = taxCategoryCode;
     }
 }

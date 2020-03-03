@@ -58,7 +58,7 @@ public class ChargeCDRDto extends BaseEntityDto {
         this.virtual = virtual;
         this.rateTriggeredEdr = rateTriggeredEdr;
         this.returnWalletOperations = returnWalletOperations;
-        this.maxDepth = maxDepth;
+        this.maxDepth = maxDepth == null ? 1 : maxDepth;
     }
 
     public String getCdr() {

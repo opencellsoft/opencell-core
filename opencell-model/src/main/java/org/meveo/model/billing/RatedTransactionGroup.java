@@ -39,6 +39,11 @@ public class RatedTransactionGroup implements Serializable {
     private boolean prepaid;
 
     /**
+     * A unique invoice identifier while processing aggregates. In a form of billingAccount.id_seller.id_invoiceType.id_isPrepaid
+     */
+    private String invoiceKey;
+
+    /**
      * Rated transactions
      */
     private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
@@ -141,9 +146,14 @@ public class RatedTransactionGroup implements Serializable {
         return prepaid;
     }
 
+    /**
+     * @return A unique invoice identifier while processing aggregates. In a form of billingAccount.id_seller.id_invoiceType.id_isPrepaid
+     */
     public String getInvoiceKey() {
-        String invoiceKey = billingAccount.getId() + "_" + seller.getId() + "_" + invoiceType.getId() + "_" + prepaid;
 
+        if (invoiceKey == null) {
+            invoiceKey = billingAccount.getId() + "_" + seller.getId() + "_" + invoiceType.getId() + "_" + prepaid;
+        }
         return invoiceKey;
     }
 }

@@ -29,6 +29,11 @@ public class Amounts implements Serializable {
     private BigDecimal amountTax = BigDecimal.ZERO;
 
     /**
+     * Tax applied
+     */
+    private Tax tax;
+
+    /**
      * Instantiate
      */
     public Amounts() {
@@ -71,6 +76,19 @@ public class Amounts implements Serializable {
         } else {
             this.amountTax = amountTax;
         }
+    }
+
+    /**
+     * Instantiate with given amounts
+     * 
+     * @param amountWithoutTax Amount without tax
+     * @param amountWithTax Amount with tax
+     * @param amountTax Tax amount
+     * @param tax Tax applied
+     */
+    public Amounts(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, Tax tax) {
+        this(amountWithoutTax, amountWithTax, amountTax);
+        this.tax = tax;
     }
 
     /**
@@ -129,6 +147,20 @@ public class Amounts implements Serializable {
         }
     }
 
+    /**
+     * @return Tax applied
+     */
+    public Tax getTax() {
+        return tax;
+    }
+
+    /**
+     * @param tax Tax applied
+     */
+    public void setTax(Tax tax) {
+        this.tax = tax;
+    }
+
     @Override
     public String toString() {
         return "amountWithTax=" + amountWithTax + ", amountWithoutTax=" + amountWithoutTax + ", amountTax=" + amountTax;
@@ -185,6 +217,6 @@ public class Amounts implements Serializable {
      * @return A copy of an object
      */
     public Amounts clone() {
-        return new Amounts(amountWithoutTax, amountWithTax, amountTax);
+        return new Amounts(amountWithoutTax, amountWithTax, amountTax, tax);
     }
 }

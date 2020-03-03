@@ -271,7 +271,7 @@
                 <c:forEach var="valueIdVar" items="#{valueIdField.split('\\.')}">
                     <c:set var="valueId" value="#{valueId[valueIdVar]}" />
                 </c:forEach>
-                <h:link id="#{attrId}_message_link" value="#{valueField}" outcome="#{entityView}" onclick="if(this.disabled!=true){this.disabled=true;return true;} return false;">
+                <h:link id="#{attrId}_message_link" value="#{valueField}" outcome="#{entityView}" onclick="if(this.disabled!=true){this.disabled=true;return true;} return false;" rendered="#{valueId != null}">
                     <f:param name="#{objectIdParamName}" value="#{valueId}" />
                     <f:param name="edit" value="#{edit}" />
                     <c:if test="${propagateConversation}">

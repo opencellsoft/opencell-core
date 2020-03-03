@@ -878,10 +878,6 @@ public class InvoiceApi extends BaseApi {
             dto.setAccountingCode(subCategoryInvoiceAgregate.getAccountingCode().getCode());
         }
         dto.setDescription(subCategoryInvoiceAgregate.getDescription());
-        dto.setTaxPercent(subCategoryInvoiceAgregate.getTaxPercent());
-        if (subCategoryInvoiceAgregate.getTax() != null) {
-            dto.setTaxCode(subCategoryInvoiceAgregate.getTax().getCode());
-        }
         dto.setQuantity(subCategoryInvoiceAgregate.getQuantity());
         dto.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
         dto.setAmountTax(subCategoryInvoiceAgregate.getAmountTax());

@@ -18,6 +18,17 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -40,16 +51,6 @@ import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 @Stateless
 public class OneShotChargeInstanceService extends BusinessService<OneShotChargeInstance> {
@@ -74,8 +75,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             qb.addCriterion("c.code", "=", code, true);
             qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
             oneShotChargeInstance = (OneShotChargeInstance) qb.getQuery(getEntityManager()).getSingleResult();
-            log.debug("end of find {} by code (code={}, subscriptionId={}). Result found={}.",
-                new Object[] { "OneShotChargeInstance", code, subscriptionId, oneShotChargeInstance != null });
+            log.debug("end of find {} by code (code={}, subscriptionId={}). Result found={}.", new Object[] { "OneShotChargeInstance", code, subscriptionId, oneShotChargeInstance != null });
         } catch (NoResultException nre) {
             log.debug("findByCodeAndSubsription : aucune charge ponctuelle n'a ete trouvee");
         } catch (Exception e) {
@@ -104,17 +104,17 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     /**
      * Instantiate subscription or termination charge
      *
-     * @param serviceInstance       Service instance
+     * @param serviceInstance Service instance
      * @param serviceChargeTemplate Service Charge template
-     * @param amoutWithoutTax       Amount without tax
-     * @param amoutWithTax          Amount with tax
-     * @param isSubscriptionCharge  True if this is a subscription charge
-     * @param isVirtual             Is it a virtual charge - should not be persisted
+     * @param amoutWithoutTax Amount without tax
+     * @param amoutWithTax Amount with tax
+     * @param isSubscriptionCharge True if this is a subscription charge
+     * @param isVirtual Is it a virtual charge - should not be persisted
      * @return Subscription or termination charge instance
      * @throws BusinessException General exception
      */
-    public OneShotChargeInstance oneShotChargeInstanciation(ServiceInstance serviceInstance, ServiceChargeTemplate serviceChargeTemplate, BigDecimal amoutWithoutTax,
-            BigDecimal amoutWithTax, boolean isSubscriptionCharge, boolean isVirtual) throws BusinessException {
+    public OneShotChargeInstance oneShotChargeInstanciation(ServiceInstance serviceInstance, ServiceChargeTemplate serviceChargeTemplate, BigDecimal amoutWithoutTax, BigDecimal amoutWithTax, boolean isSubscriptionCharge,
+            boolean isVirtual) throws BusinessException {
         OneShotChargeTemplate chargeTemplate = (OneShotChargeTemplate) serviceChargeTemplate.getChargeTemplate();
         log.debug("Instanciate a oneshot for code {} on subscription {}", chargeTemplate.getCode(), serviceInstance.getSubscription().getCode());
 
@@ -173,17 +173,14 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     }
 
     // apply a oneShotCharge on the postpaid wallet
-    public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargetemplate, String walletCode, Date effetDate,
-            BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String orderNumber,
-            boolean applyCharge) throws BusinessException, RatingException {
+    public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargetemplate, String walletCode, Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
+            BigDecimal quantity, String criteria1, String criteria2, String criteria3, String orderNumber, boolean applyCharge) throws BusinessException, RatingException {
 
-        return oneShotChargeApplication(subscription, chargetemplate, walletCode, effetDate, amoutWithoutTax, amoutWithoutTx2, quantity, criteria1, criteria2, criteria3, null,
-            orderNumber, true);
+        return oneShotChargeApplication(subscription, chargetemplate, walletCode, effetDate, amoutWithoutTax, amoutWithoutTx2, quantity, criteria1, criteria2, criteria3, null, orderNumber, true);
     }
 
-    public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargeTemplate, String walletCode, Date effetDate,
-            BigDecimal amoutWithoutTax, BigDecimal amoutWithTax, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description, String orderNumber,
-            boolean applyCharge) throws BusinessException, RatingException {
+    public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargeTemplate, String walletCode, Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithTax,
+            BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description, String orderNumber, boolean applyCharge) throws BusinessException, RatingException {
 
         if (quantity == null) {
             quantity = BigDecimal.ONE;
@@ -194,8 +191,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             amoutWithTax = null;
         }
 
-        OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(description, effetDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, subscription,
-            chargeTemplate);
+        OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(description, effetDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, subscription, chargeTemplate);
         oneShotChargeInstance.setCriteria1(criteria1);
         oneShotChargeInstance.setCriteria2(criteria2);
         oneShotChargeInstance.setCriteria3(criteria3);
@@ -229,8 +225,8 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         return oneShotChargeInstance;
     }
 
-    public void oneShotChargeApplication(Subscription subscription, OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity,
-            String orderNumberOverride) throws BusinessException, RatingException {
+    public void oneShotChargeApplication(Subscription subscription, OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity, String orderNumberOverride)
+            throws BusinessException, RatingException {
         if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeInstance.getChargeTemplate().getFilterExpression())) {
             log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", oneShotChargeInstance.getCode());
             return;
@@ -250,11 +246,10 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @throws BusinessException business exception.
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public WalletOperation oneShotChargeApplicationVirtual(Subscription subscription, OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity)
-            throws BusinessException, RatingException {
+    public WalletOperation oneShotChargeApplicationVirtual(Subscription subscription, OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity) throws BusinessException, RatingException {
 
-        log.debug("Apply one shot charge on Virtual operation. User account {}, offer {}, charge {}, quantity {}", oneShotChargeInstance.getUserAccount().getCode(),
-            subscription.getOffer().getCode(), oneShotChargeInstance.getChargeTemplate().getCode(), quantity);
+        log.debug("Apply one shot charge on Virtual operation. User account {}, offer {}, charge {}, quantity {}", oneShotChargeInstance.getUserAccount().getCode(), subscription.getOffer().getCode(),
+            oneShotChargeInstance.getChargeTemplate().getCode(), quantity);
 
         if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeInstance.getChargeTemplate().getFilterExpression())) {
             log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", oneShotChargeInstance.getCode());
@@ -289,15 +284,13 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             throw new BusinessException("Charge template " + matchingChargeCode + " not found");
         }
 
-        List<WalletOperation> wos = getEntityManager().createNamedQuery("WalletOperation.getOpenByWallet", WalletOperation.class).setParameter("wallet", wallet)
-            .setHint("org.hibernate.readOnly", true).getResultList();
+        List<WalletOperation> wos = getEntityManager().createNamedQuery("WalletOperation.getOpenByWallet", WalletOperation.class).setParameter("wallet", wallet).setHint("org.hibernate.readOnly", true).getResultList();
 
         if (wos.isEmpty()) {
             return;
         }
 
-        log.info("Prepaid matching - setting to TREATED {} wallet operations on wallet {} and creating matching and compensating charges and wallet operations", wos.size(),
-            wallet.getId());
+        log.info("Prepaid matching - setting to TREATED {} wallet operations on wallet {} and creating matching and compensating charges and wallet operations", wos.size(), wallet.getId());
 
         BigDecimal balanceNoTax = BigDecimal.ZERO;
         BigDecimal balanceWithTax = BigDecimal.ZERO;
@@ -328,20 +321,19 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         }
 
         log.debug("Create matching and compensating charge {} instances with amountWithoutTax {}, amountWithTax {}", matchingChargeCode, balanceNoTax, balanceWithTax);
-        OneShotChargeInstance matchingCharge = oneShotChargeApplication(firstActiveSubscription, (OneShotChargeTemplate) oneShotChargeTemplate, wallet.getCode(), new Date(),
-            balanceNoTax, balanceWithTax, BigDecimal.ONE, null, null, null, null, false);
+        OneShotChargeInstance matchingCharge = oneShotChargeApplication(firstActiveSubscription, (OneShotChargeTemplate) oneShotChargeTemplate, wallet.getCode(), new Date(), balanceNoTax, balanceWithTax, BigDecimal.ONE,
+            null, null, null, null, false);
         if (matchingCharge == null) {
             throw new BusinessException("Cannot find or create matching charge instance for code " + matchingChargeCode);
         }
-        OneShotChargeInstance compensationCharge = oneShotChargeApplication(firstActiveSubscription, (OneShotChargeTemplate) oneShotChargeTemplate, wallet.getCode(), new Date(),
-            balanceNoTax.negate(), balanceWithTax.negate(), BigDecimal.ONE, null, null, null, null, false);
+        OneShotChargeInstance compensationCharge = oneShotChargeApplication(firstActiveSubscription, (OneShotChargeTemplate) oneShotChargeTemplate, wallet.getCode(), new Date(), balanceNoTax.negate(),
+            balanceWithTax.negate(), BigDecimal.ONE, null, null, null, null, false);
         if (compensationCharge == null) {
             throw new BusinessException("Cannot find or create compensating charge instance for code " + matchingChargeCode);
         }
         BigDecimal inputQuantity = BigDecimal.ONE;
 
-        WalletOperation op = walletOperationService.applyOneShotWalletOperation(firstActiveSubscription, matchingCharge, inputQuantity, null, new Date(), false,
-            firstActiveSubscription.getOrderNumber());
+        WalletOperation op = walletOperationService.applyOneShotWalletOperation(firstActiveSubscription, matchingCharge, inputQuantity, null, new Date(), false, firstActiveSubscription.getOrderNumber());
         op.changeStatus(WalletOperationStatusEnum.TREATED);
 
         walletOperationService.applyOneShotWalletOperation(firstActiveSubscription, compensationCharge, inputQuantity, null, new Date(), false, null);

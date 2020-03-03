@@ -41,10 +41,6 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
     /** The share level. */
     private Integer shareLevel;
 
-    /** The filter expression. */
-    @Size(max = 2000)
-    private String filterExpression = null;
-    
     /** The calendar code el. */
     @Size(max = 2000)
     private String calendarCodeEl;
@@ -89,7 +85,6 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
         terminationProrataEl = recurringChargeTemplate.getTerminationProrataEl();
         applyInAdvanceEl = recurringChargeTemplate.getApplyInAdvanceEl();
         calendarCodeEl = recurringChargeTemplate.getCalendarCodeEl();
-        setFilterExpression(recurringChargeTemplate.getFilterExpression());
         if (recurringChargeTemplate.getShareLevel() != null) {
             shareLevel = recurringChargeTemplate.getShareLevel().getId();
         }
@@ -206,27 +201,6 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
         this.calendar = calendar;
     }
 
-   
-    /**
-     * Gets the filter expression.
-     *
-     * @return the filter expression
-     */
-    public String getFilterExpression() {
-        return filterExpression;
-    }
-
-    /**
-     * Sets the filter expression.
-     *
-     * @param filterExpression the new filter expression
-     */
-    public void setFilterExpression(String filterExpression) {
-        this.filterExpression = filterExpression;
-    }
-    
-    
-
     /**
      * Gets the calendar code el.
      *
@@ -245,7 +219,6 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
         this.calendarCodeEl = calendarCodeEl;
     }
 
-   
     /**
      * @return the durationTermInMonthEl
      */
@@ -314,14 +287,15 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
         this.applyInAdvanceEl = applyInAdvanceEl;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.dto.catalog.ChargeTemplateDto#toString()
      */
     @Override
     public String toString() {
-        return "RecurringChargeTemplateDto [calendar=" + calendar + ", durationTermInMonth=" + durationTermInMonth + ", subscriptionProrata=" + subscriptionProrata
-                + ", terminationProrata=" + terminationProrata + ", applyInAdvance=" + applyInAdvance + ", shareLevel=" + shareLevel + ", filterExpression=" + filterExpression
-                + ", calendarCodeEl=" + calendarCodeEl + ", durationTermInMonthEl=" + durationTermInMonthEl + ", subscriptionProrataEl=" + subscriptionProrataEl
-                + ", terminationProrataEl=" + terminationProrataEl + ", applyInAdvanceEl=" + applyInAdvanceEl + "]";
+        return "RecurringChargeTemplateDto [" + super.toString() + ", calendar=" + calendar + ", durationTermInMonth=" + durationTermInMonth + ", subscriptionProrata=" + subscriptionProrata + ", terminationProrata="
+                + terminationProrata + ", applyInAdvance=" + applyInAdvance + ", shareLevel=" + shareLevel + ", calendarCodeEl=" + calendarCodeEl + ", durationTermInMonthEl="
+                + durationTermInMonthEl + ", subscriptionProrataEl=" + subscriptionProrataEl + ", terminationProrataEl=" + terminationProrataEl + ", applyInAdvanceEl=" + applyInAdvanceEl + "]";
     }
 }

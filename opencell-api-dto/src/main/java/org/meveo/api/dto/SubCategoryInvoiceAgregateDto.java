@@ -51,12 +51,6 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
     /** The description. */
     private String description;
 
-    /** The taxes code */
-    private String taxCode;
-
-    /** The tax percent applied */
-    private BigDecimal taxPercent;
-
     /** The quantity. Deprecated in v5.2 */
     @Deprecated
     private BigDecimal quantity;
@@ -82,7 +76,6 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
     @XmlElement(name = "ratedTransaction")
     private List<RatedTransactionDto> ratedTransactions;
 
-    
     /**
      * Gets the item number.
      *
@@ -135,42 +128,6 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
      */
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    /**
-     * Gets the tax percent applied
-     *
-     * @return The tax percent applied
-     */
-    public BigDecimal getTaxPercent() {
-        return taxPercent;
-    }
-
-    /**
-     * Sets the tax percent applied
-     *
-     * @param taxPercent The tax percent applied
-     */
-    public void setTaxPercent(BigDecimal taxPercent) {
-        this.taxPercent = taxPercent;
-    }
-
-    /**
-     * Gets the code of a tax applied
-     *
-     * @return the taxes codes
-     */
-    public String getTaxCode() {
-        return taxCode;
-    }
-
-    /**
-     * Sets the code of a tax applied
-     *
-     * @param taxCode Code of a tax applied
-     */
-    public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
     }
 
     /**

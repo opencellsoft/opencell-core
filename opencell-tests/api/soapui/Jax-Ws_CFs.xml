@@ -255,6 +255,216 @@
       <con:settings/>
     </con:operation>
   </con:interface>
+  <con:interface xsi:type="con:RestService" id="7cdd0ae3-5427-435a-a52c-e8cd6f39974a" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://${#Project#opencell.url}" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>${#Project#opencell.url}</con:endpoint>
+    </con:endpoints>
+    <con:resource name="" path="/api/rest/taxClass" id="aa111c31-bc25-48e5-9d17-7b39ff794313">
+      <con:settings/>
+      <con:parameters>
+        <con:parameter>
+          <con:name>#Project#opencell.url</con:name>
+          <con:value>#Project#opencell.url</con:value>
+          <con:style>TEMPLATE</con:style>
+          <con:default>#Project#opencell.url</con:default>
+          <con:path xsi:nil="true"/>
+          <con:description xsi:nil="true"/>
+        </con:parameter>
+      </con:parameters>
+      <con:method name="POST" id="69c261f4-bb8f-4a9e-87d2-9f21e75eb839" method="POST">
+        <con:settings/>
+        <con:parameters/>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/xml</con:mediaType>
+          <con:params/>
+          <con:element>TaxClass</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>415 400 403</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/json</con:mediaType>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/xml;charset=UTF-8</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>actionStatus</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>text/html;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>html</con:element>
+        </con:representation>
+      </con:method>
+    </con:resource>
+    <con:resource name="" path="/api/rest/taxMapping" id="aa111c31-bc25-48e5-9d17-7b39ff794313">
+      <con:settings/>
+      <con:parameters>
+        <con:parameter>
+          <con:name>#Project#opencell.url</con:name>
+          <con:value>#Project#opencell.url</con:value>
+          <con:style>TEMPLATE</con:style>
+          <con:default>#Project#opencell.url</con:default>
+          <con:path xsi:nil="true"/>
+          <con:description xsi:nil="true"/>
+        </con:parameter>
+      </con:parameters>
+      <con:method name="POST" id="69c261f4-bb8f-4a9e-87d2-9f21e75eb839" method="POST">
+        <con:settings/>
+        <con:parameters/>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/xml</con:mediaType>
+          <con:params/>
+          <con:element>TaxClass</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>415 400 403 500</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/json</con:mediaType>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/xml;charset=UTF-8</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>actionStatus</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>text/html;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>html</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/xml;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>actionStatus</con:element>
+        </con:representation>
+      </con:method>
+    </con:resource>
+    <con:resource name="" path="/api/rest/taxCategory" id="aa111c31-bc25-48e5-9d17-7b39ff794313">
+      <con:settings/>
+      <con:parameters>
+        <con:parameter>
+          <con:name>#Project#opencell.url</con:name>
+          <con:value>#Project#opencell.url</con:value>
+          <con:style>TEMPLATE</con:style>
+          <con:default>#Project#opencell.url</con:default>
+          <con:path xsi:nil="true"/>
+          <con:description xsi:nil="true"/>
+        </con:parameter>
+      </con:parameters>
+      <con:method name="POST" id="69c261f4-bb8f-4a9e-87d2-9f21e75eb839" method="POST">
+        <con:settings/>
+        <con:parameters/>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/xml</con:mediaType>
+          <con:params/>
+          <con:element>TaxClass</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>415 400 403 500</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/json</con:mediaType>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/xml;charset=UTF-8</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>actionStatus</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>text/html;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>html</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/xml;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>actionStatus</con:element>
+        </con:representation>
+      </con:method>
+    </con:resource>
+  </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0452a833-b399-485e-ad93-15f1e0a8ca1f" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
@@ -2337,6 +2547,86 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         </con:config>
       </con:testStep>
       <con:properties/>
+    </con:testCase>
+    <con:testCase id="a247d295-de13-4db5-b5b0-5c87d034d52d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create tax class and mapping" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="restrequest" name="Create tax class" id="c182bef7-56ca-4896-99d8-2ab8e6453073">
+        <con:settings/>
+        <con:config service="http://${#Project#opencell.url}" methodName="POST" resourcePath="/api/rest/taxClass" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create tax class" id="99e74d2f-34b8-4577-86dc-d658d41499a2" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}</con:endpoint>
+            <con:request>{
+"code":"${#Project#baseEntityPrefix}_taxClass",
+"description":"Tax class for ${#Project#baseEntityPrefix}"
+}</con:request>
+            <con:originalUri>http://http//localhost:8080/opencell/%23Project%23opencell.url</con:originalUri>
+            <con:assertion type="Simple Contains" id="4eafa7cc-c06b-4127-bc47-20ae9df005f4" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="#Project#opencell.url" value="#Project#opencell.url"/>
+            </con:parameters>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Create tax mapping" id="32328e3c-dbdf-4114-8bd3-fbd1f3fa5e1c">
+        <con:settings/>
+        <con:config service="http://${#Project#opencell.url}" methodName="POST" resourcePath="/api/rest/taxMapping" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create tax mapping" id="99e74d2f-34b8-4577-86dc-d658d41499a2" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}</con:endpoint>
+            <con:request>{
+"accountTaxCategoryCode":"Tax category",
+"chargeTaxClassCode":"${#Project#baseEntityPrefix}_taxClass",
+"taxCode":"TAX_18"
+}</con:request>
+            <con:originalUri>http://http//localhost:8080/opencell/%23Project%23opencell.url</con:originalUri>
+            <con:assertion type="Simple Contains" id="4eafa7cc-c06b-4127-bc47-20ae9df005f4" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="#Project#opencell.url" value="#Project#opencell.url"/>
+            </con:parameters>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:properties>
+        <con:property>
+          <con:name>prefix</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>tax</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
     </con:testCase>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CFT - Create CFT for all entities" searchProperties="true" id="5b439f67-d207-4c93-bb38-f1f1887d7706">
       <con:settings/>
@@ -8984,68 +9274,64 @@ public class Action1 extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createRecurringChargeTemplate>
-         
-         <recurringChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_REC1" description="${#Project#entityPrefix}_${#TestSuite#index}_REC1">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            
-            <amountEditable>false</amountEditable>
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Forfait test ${#ticket}</description>
-            </languageDescriptions>
-            <calendar>MONTHLY</calendar>
-            <subscriptionProrata>true</subscriptionProrata>
-            <terminationProrata>true</terminationProrata>
-            <applyInAdvance>true</applyInAdvance>
-            <inputUnitDescription>1</inputUnitDescription>
-            
-            <ratingUnitDescription>1</ratingUnitDescription>
-            
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <customFields>
-               <customField code="${#Project#baseEntityPrefix}_ChargeTemplate_ENTITY_MAP_VC" valueDate="2015-09-10">
-                  <mapValue>
-                     <entry>
-                        <key>bb</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY0"/>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>cc</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY0"/>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_ChargeTemplate_ENTITY_MAP_VC" valueDate="2015-08-10">
-                  <mapValue>
-                     <entry>
-                        <key>dd</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY1"/>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>ee</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY1"/>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-            </customFields>
-         </recurringChargeTemplate>
-      </ws:createRecurringChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createRecurringChargeTemplate>\r
+         <recurringChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_REC1" description="${#Project#entityPrefix}_${#TestSuite#index}_REC1">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Forfait test ${#ticket}</description>\r
+            </languageDescriptions>\r
+            <calendar>MONTHLY</calendar>\r
+            <subscriptionProrata>true</subscriptionProrata>\r
+            <terminationProrata>true</terminationProrata>\r
+            <applyInAdvance>true</applyInAdvance>\r
+            <inputUnitDescription>1</inputUnitDescription>\r
+            <ratingUnitDescription>1</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_ChargeTemplate_ENTITY_MAP_VC" valueDate="2015-09-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>bb</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY0"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>cc</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY0"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_ChargeTemplate_ENTITY_MAP_VC" valueDate="2015-08-10">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>dd</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY1"/>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>ee</key>\r
+                        <value>\r
+                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY1"/>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </recurringChargeTemplate>\r
+      </ws:createRecurringChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="485ee9e9-806f-4193-a680-a46c8071305e"/>
             <con:assertion type="SOAP Fault Assertion" id="ea64ae1d-72d5-4a2c-9aa5-db8f7f1e9929"/>
@@ -9082,68 +9368,62 @@ public class Action1 extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOneShotChargeTemplate>
-         
-         <oneShotChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_OS1" description="${#Project#entityPrefix}_${#TestSuite#index}_OS1">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            
-            <amountEditable>false</amountEditable>
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Forfait test 685</description>
-            </languageDescriptions>
-            
-            <inputUnitDescription>1</inputUnitDescription>
-            
-            <ratingUnitDescription>1</ratingUnitDescription>
-            
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>
-            
-            <immediateInvoicing>false</immediateInvoicing>
-            <customFields>
-               <customField code="${#Project#baseEntityPrefix}_ChargeTemplate_STRING_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <mapValue>
-                     <entry>
-                        <key>ff</key>
-                        <value>
-                           <stringValue>CHARGE_STRING_VALUE_21</stringValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>gg</key>
-                        <value>
-                           <stringValue>CHARGE_STRING_VALUE_22</stringValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_ChargeTemplate_STRING_MAP_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <mapValue>
-                     <entry>
-                        <key>hh</key>
-                        <value>
-                           <stringValue>CHARGE_STRING_VALUE_23</stringValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>ii</key>
-                        <value>
-                           <stringValue>CHARGE_STRING_VALUE_24</stringValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-            </customFields>
-         </oneShotChargeTemplate>
-      </ws:createOneShotChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOneShotChargeTemplate>\r
+         <oneShotChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_OS1" description="${#Project#entityPrefix}_${#TestSuite#index}_OS1">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Forfait test 685</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>1</inputUnitDescription>\r
+            <ratingUnitDescription>1</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>\r
+            <immediateInvoicing>false</immediateInvoicing>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_ChargeTemplate_STRING_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>ff</key>\r
+                        <value>\r
+                           <stringValue>CHARGE_STRING_VALUE_21</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>gg</key>\r
+                        <value>\r
+                           <stringValue>CHARGE_STRING_VALUE_22</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_ChargeTemplate_STRING_MAP_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>hh</key>\r
+                        <value>\r
+                           <stringValue>CHARGE_STRING_VALUE_23</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>ii</key>\r
+                        <value>\r
+                           <stringValue>CHARGE_STRING_VALUE_24</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </oneShotChargeTemplate>\r
+      </ws:createOneShotChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1a93f06d-6749-4edb-a2d4-0c994cb38225"/>
             <con:assertion type="Simple Contains" name="Contains" id="89b71a17-a7b1-4cbb-be25-3e861b65dbd4">
@@ -9179,40 +9459,36 @@ public class Action1 extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createUsageChargeTemplate>
-         
-         <usageChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_USAGE1" description="${#Project#entityPrefix}_${#TestSuite#index}_USAGE1">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            
-            <amountEditable>false</amountEditable>
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Forfait test 685</description>
-            </languageDescriptions>
-            
-            <inputUnitDescription>1</inputUnitDescription>
-            
-            <ratingUnitDescription>1</ratingUnitDescription>
-            
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <priority>1</priority>
-            <customFields>
-               <customField code="${#Project#baseEntityPrefix}_ChargeTemplate_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <doubleValue>26.27</doubleValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_ChargeTemplate_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
-                  <doubleValue>28.29</doubleValue>
-               </customField>
-            </customFields>
-         </usageChargeTemplate>
-      </ws:createUsageChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createUsageChargeTemplate>\r
+         <usageChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_USAGE1" description="${#Project#entityPrefix}_${#TestSuite#index}_USAGE1">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <!--Zero or more repetitions:-->\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Forfait test 685</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>1</inputUnitDescription>\r
+            <ratingUnitDescription>1</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <priority>1</priority>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_ChargeTemplate_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <doubleValue>26.27</doubleValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_ChargeTemplate_DOUBLE_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                  <doubleValue>28.29</doubleValue>\r
+               </customField>\r
+            </customFields>\r
+         </usageChargeTemplate>\r
+      </ws:createUsageChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="4bcfca98-1dfb-415b-a4ac-15f5579a173e"/>
             <con:assertion type="Simple Contains" name="Contains" id="bca38516-3ea9-44d1-8632-508b94b995b1">
@@ -9391,51 +9667,45 @@ public class Action1 extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateProductChargeTemplate>
-         
-         <productChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_PC1" description="product charge offer 1">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            
-            <amountEditable>false</amountEditable>
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               
-               <languageCode>FRA</languageCode>
-               
-               <description>Produit 1</description>
-            </languageDescriptions>
-            
-            <inputUnitDescription>1</inputUnitDescription>
-            
-            <ratingUnitDescription>1</ratingUnitDescription>
-            
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-          <customFields>
-               <customField code="${#Project#baseEntityPrefix}_ChargeTemplate_STRING_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
-                  <mapValue>
-                     <entry>
-                        <key>ff</key>
-                        <value>
-                           <stringValue>CHARGE_STRING_VALUE_21</stringValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>gg</key>
-                        <value>
-                           <stringValue>CHARGE_STRING_VALUE_22</stringValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-            </customFields>
-         </productChargeTemplate>
-      </ws:createOrUpdateProductChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateProductChargeTemplate>\r
+         <productChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_PC1" description="product charge offer 1">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <!--Zero or more repetitions:-->\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Produit 1</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>1</inputUnitDescription>\r
+            <ratingUnitDescription>1</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_ChargeTemplate_STRING_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>ff</key>\r
+                        <value>\r
+                           <stringValue>CHARGE_STRING_VALUE_21</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>gg</key>\r
+                        <value>\r
+                           <stringValue>CHARGE_STRING_VALUE_22</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+            </customFields>\r
+         </productChargeTemplate>\r
+      </ws:createOrUpdateProductChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="4bcfca98-1dfb-415b-a4ac-15f5579a173e"/>
             <con:assertion type="Simple Contains" name="Contains" id="bca38516-3ea9-44d1-8632-508b94b995b1">
@@ -34944,7 +35214,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>103</con:value>
+        <con:value>10</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -37576,7 +37846,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>138</con:value>
+        <con:value>139</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -37711,6 +37981,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <ratingUnitDescription>Quantity</ratingUnitDescription>\r
             <unitMultiplicator>2</unitMultiplicator>\r
             <unitNbDecimal>2</unitNbDecimal>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
          </usageChargeTemplate>\r
       </ws:createOrUpdateUsageChargeTemplate>\r
    </soapenv:Body>\r
@@ -37749,30 +38020,30 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateRecurringChargeTemplate>
-         
-         <recurringChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_REC1" description="${#Project#entityPrefix}_${#TestSuite#index}_REC1">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            <amountEditable>false</amountEditable>
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Forfait test ${#ticket}</description>
-            </languageDescriptions>
-            <calendar>MONTHLY</calendar>
-            <subscriptionProrata>true</subscriptionProrata>
-            <terminationProrata>true</terminationProrata>
-            <applyInAdvance>true</applyInAdvance>
-            <inputUnitDescription>1</inputUnitDescription>
-            <ratingUnitDescription>1</ratingUnitDescription>
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-         </recurringChargeTemplate>
-      </ws:createOrUpdateRecurringChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateRecurringChargeTemplate>\r
+         <recurringChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_REC1" description="${#Project#entityPrefix}_${#TestSuite#index}_REC1">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Forfait test ${#ticket}</description>\r
+            </languageDescriptions>\r
+            <calendar>MONTHLY</calendar>\r
+            <subscriptionProrata>true</subscriptionProrata>\r
+            <terminationProrata>true</terminationProrata>\r
+            <applyInAdvance>true</applyInAdvance>\r
+            <inputUnitDescription>1</inputUnitDescription>\r
+            <ratingUnitDescription>1</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </recurringChargeTemplate>\r
+      </ws:createOrUpdateRecurringChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="ada91c48-810e-481d-b581-808300f79389"/>
             <con:assertion type="Simple Contains" name="Contains" id="fc8d3bc1-3ff4-40cb-9716-8a46ca1e7d2f">
@@ -38245,88 +38516,6 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <con:assertion type="Simple Contains" id="13e39316-3ee9-4c65-a88b-59ce5ead24a7" name="Contains">
               <con:configuration>
                 <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>true</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="createTax" id="327a95d4-db45-4db4-bb73-d7f47b5a6cda">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createTax</con:operation>
-          <con:request name="createTax" id="18836e05-2c24-42c6-91c3-c4be1e5d93d7">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateTax>\r
-         <tax code="${#Project#entityPrefix}_${#TestSuite#index}_TAX" description="${#Project#entityPrefix}_${#TestSuite#index}_TAX desc">\r
-            <percent>10</percent>\r
-         </tax>\r
-      </ws:createOrUpdateTax>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="5bf2bf7c-4e44-4b5e-a87b-bed3ade3ee20"/>
-            <con:assertion type="Simple Contains" id="4371499e-f2dc-465e-b593-05060a66dfab" name="Contains">
-              <con:configuration>
-                <token>SUCCESS</token>
-                <ignoreCase>true</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="createInvoiceSubCategoryCountry" id="c4cec12d-d24d-44d9-8501-ea9301b1fb52">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createInvoiceSubCategoryCountry</con:operation>
-          <con:request name="createInvoiceSubCategoryCountry" id="d4fbe12c-4240-4251-af7f-a42b5ca0eed1">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateInvoiceSubCategoryCountry>\r
-         <invoiceSubCategoryCountry>\r
-            <invoiceSubCategory>${#Project#entityPrefix}_${#TestSuite#index}_ISubC</invoiceSubCategory>\r
-            <country>FR</country>\r
-            <tax>${#Project#entityPrefix}_${#TestSuite#index}_TAX</tax>\r
-         </invoiceSubCategoryCountry>\r
-      </ws:createOrUpdateInvoiceSubCategoryCountry>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="8141e10f-88cc-4efe-8f9e-4fa8dee97991"/>
-            <con:assertion type="Simple Contains" id="d66f4456-aaf6-4fa5-add1-65485f28e894" name="Contains">
-              <con:configuration>
-                <token>SUCCESS</token>
                 <ignoreCase>true</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -39038,6 +39227,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                               <amountWithoutTax>-100</amountWithoutTax>\r
                               <amountWithTax>-120</amountWithTax>\r
                               <amountTax>20</amountTax>\r
+                              <taxCode>TAX_18</taxCode>
                               <code>codemONcode</code>\r
                               <description>my nex desc</description>\r
                               <unityDescription>uit</unityDescription>\r
@@ -39052,6 +39242,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                               <amountWithoutTax>-100</amountWithoutTax>\r
                               <amountWithTax>-120</amountWithTax>\r
                               <amountTax>20</amountTax>\r
+                              <taxCode>TAX_18</taxCode>
                               <code>codemONcode</code>\r
                               <description>my nex desc</description>\r
                               <unityDescription>uit</unityDescription>\r
@@ -39125,7 +39316,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>92</con:value>
+        <con:value>95</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39386,154 +39577,6 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="createTax" id="fbfb30dd-6dc7-441d-98fd-fb7bc0eb7dca">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createTax</con:operation>
-          <con:request name="createTax" id="18836e05-2c24-42c6-91c3-c4be1e5d93d7">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateTax>\r
-         <tax code="${#Project#entityPrefix}_${#TestSuite#index}_TAX" description="${#Project#entityPrefix}_${#TestSuite#index}_TAX desc">\r
-            <percent>10</percent>
-              <customFields>
-               <customField code="${#Project#baseEntityPrefix}_Tax_DATE_MAP_VC" valueDate="2015-09-10">
-                  <mapValue>
-                     <entry>
-                        <key>x</key>
-                        <value>
-                           <dateValue>2007-08-01</dateValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>y</key>
-                        <value>
-                           <dateValue>2007-09-01</dateValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_Tax_DATE_MAP_VC" valueDate="2015-08-10">
-                  <mapValue>
-                     <entry>
-                        <key>z</key>
-                        <value>
-                           <dateValue>2006-08-01</dateValue>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>aa</key>
-                        <value>
-                           <dateValue>2006-09-01</dateValue>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField> 
-               <customField code="${#Project#baseEntityPrefix}_Tax_ENTITY_MAP_VC" valueDate="2015-09-10">
-                  <mapValue>
-                     <entry>
-                        <key>bb</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY0"/>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>cc</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY0"/>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_Tax_ENTITY_MAP_VC" valueDate="2015-08-10">
-                  <mapValue>
-                     <entry>
-                        <key>dd</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="MONTHLY1"/>
-                        </value>
-                     </entry>
-                     <entry>
-                        <key>ee</key>
-                        <value>
-                           <entityReferenceValue classname="org.meveo.model.catalog.Calendar" code="YEARLY1"/>
-                        </value>
-                     </entry>
-                  </mapValue>
-               </customField>
-            </customFields>\r
-         </tax>\r
-      </ws:createOrUpdateTax>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="5bf2bf7c-4e44-4b5e-a87b-bed3ade3ee20"/>
-            <con:assertion type="Simple Contains" id="4371499e-f2dc-465e-b593-05060a66dfab" name="Contains">
-              <con:configuration>
-                <token>SUCCESS</token>
-                <ignoreCase>true</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="createInvoiceSubCategoryCountry" id="73d1cbac-c01f-4bb4-8aea-9243b2223e19">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createInvoiceSubCategoryCountry</con:operation>
-          <con:request name="createInvoiceSubCategoryCountry" id="d4fbe12c-4240-4251-af7f-a42b5ca0eed1">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateInvoiceSubCategoryCountry>\r
-         <invoiceSubCategoryCountry>\r
-            <invoiceSubCategory>${#Project#entityPrefix}_${#TestSuite#index}_ISubC</invoiceSubCategory>\r
-            <country>FR</country>\r
-            <tax>${#Project#entityPrefix}_${#TestSuite#index}_TAX</tax>\r
-         </invoiceSubCategoryCountry>\r
-      </ws:createOrUpdateInvoiceSubCategoryCountry>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="8141e10f-88cc-4efe-8f9e-4fa8dee97991"/>
-            <con:assertion type="Simple Contains" id="d66f4456-aaf6-4fa5-add1-65485f28e894" name="Contains">
-              <con:configuration>
-                <token>SUCCESS</token>
-                <ignoreCase>true</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:testCase id="a7856bac-5784-4da3-a290-2c4a2e8f53a8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Catalog creation" searchProperties="true">
@@ -39549,31 +39592,26 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUsageChargeTemplate>
-         
-         <usageChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_USG1" description="${#Project#entityPrefix}_${#TestSuite#index}_USG1" disabled="false">
-         	  <invoiceSubCategory>${#Project#entityPrefix}_${#TestSuite#index}_ISubC</invoiceSubCategory>
-            
-            <amountEditable>false</amountEditable>
-            <priority>1</priority>
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Forfait test ${#ticket}</description>
-            </languageDescriptions>
-            
-            <inputUnitDescription>1</inputUnitDescription>
-            
-            <ratingUnitDescription>Quantity</ratingUnitDescription>
-            
-            <unitMultiplicator>2</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-         </usageChargeTemplate>
-      </ws:createOrUpdateUsageChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateUsageChargeTemplate>\r
+         <usageChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_USG1" description="${#Project#entityPrefix}_${#TestSuite#index}_USG1" disabled="false">\r
+            <invoiceSubCategory>${#Project#entityPrefix}_${#TestSuite#index}_ISubC</invoiceSubCategory>\r
+            <amountEditable>false</amountEditable>\r
+            <priority>1</priority>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Forfait test ${#ticket}</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>1</inputUnitDescription>\r
+            <ratingUnitDescription>Quantity</ratingUnitDescription>\r
+            <unitMultiplicator>2</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </usageChargeTemplate>\r
+      </ws:createOrUpdateUsageChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="ada91c48-810e-481d-b581-808300f79389"/>
             <con:assertion type="Simple Contains" name="Contains" id="fc8d3bc1-3ff4-40cb-9716-8a46ca1e7d2f">
@@ -39609,34 +39647,31 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateRecurringChargeTemplate>
-         
-         <recurringChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_REC1" description="${#Project#entityPrefix}_${#TestSuite#index}_REC1">
-            <invoiceSubCategory>${#Project#entityPrefix}_${#TestSuite#index}_ISubC</invoiceSubCategory>
-            <disabled>false</disabled>
-            
-            <amountEditable>false</amountEditable>
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Forfait test ${#ticket}</description>
-            </languageDescriptions>
-            <calendar>MONTHLY</calendar>
-            <subscriptionProrata>true</subscriptionProrata>
-            <terminationProrata>true</terminationProrata>
-            <applyInAdvance>true</applyInAdvance>
-            <inputUnitDescription>1</inputUnitDescription>
-            
-            <ratingUnitDescription>1</ratingUnitDescription>
-            
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-         </recurringChargeTemplate>
-      </ws:createOrUpdateRecurringChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateRecurringChargeTemplate>\r
+         <recurringChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_REC1" description="${#Project#entityPrefix}_${#TestSuite#index}_REC1">\r
+            <invoiceSubCategory>${#Project#entityPrefix}_${#TestSuite#index}_ISubC</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <!--Zero or more repetitions:-->\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Forfait test ${#ticket}</description>\r
+            </languageDescriptions>\r
+            <calendar>MONTHLY</calendar>\r
+            <subscriptionProrata>true</subscriptionProrata>\r
+            <terminationProrata>true</terminationProrata>\r
+            <applyInAdvance>true</applyInAdvance>\r
+            <inputUnitDescription>1</inputUnitDescription>\r
+            <ratingUnitDescription>1</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </recurringChargeTemplate>\r
+      </ws:createOrUpdateRecurringChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="ada91c48-810e-481d-b581-808300f79389"/>
             <con:assertion type="Simple Contains" name="Contains" id="fc8d3bc1-3ff4-40cb-9716-8a46ca1e7d2f">
@@ -40285,18 +40320,17 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/InvoiceWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:generateInvoiceData>
-         
-         <generateInvoiceRequest>
-            <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_BA</billingAccountCode>
-            <invoicingDate>2015-10-15T00:00:00</invoicingDate>
-            <lastTransactionDate>2015-11-20T00:00:00</lastTransactionDate>
-         </generateInvoiceRequest>
-      </ws:generateInvoiceData>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:generateInvoiceData>\r
+         <generateInvoiceRequest>\r
+            <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_BA</billingAccountCode>\r
+            <invoicingDate>2015-10-15T00:00:00</invoicingDate>\r
+            <lastTransactionDate>2015-11-20T00:00:00</lastTransactionDate>\r
+         </generateInvoiceRequest>\r
+      </ws:generateInvoiceData>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="4dea367e-1e93-404d-9e7a-027eea668f81"/>
             <con:credentials>
@@ -40322,14 +40356,13 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/InvoiceWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:findXMLInvoice>
-         
-         <invoiceNumber>000000053</invoiceNumber>
-      </ws:findXMLInvoice>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findXMLInvoice>\r
+         <invoiceNumber>000000053</invoiceNumber>\r
+      </ws:findXMLInvoice>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="2981d816-93e6-4257-a194-bf9cf5c3cf3d"/>
             <con:credentials>
@@ -40348,7 +40381,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>81</con:value>
+        <con:value>83</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

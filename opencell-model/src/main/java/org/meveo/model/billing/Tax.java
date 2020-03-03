@@ -57,12 +57,11 @@ import org.meveo.model.ObservableEntity;
 @CustomFieldEntity(cftCodePrefix = "Tax")
 @ExportIdentifier({ "code" })
 @Table(name = "billing_tax", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_tax_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_tax_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "Tax.getNbTaxesNotAssociated", query = "select count(*) from Tax t where t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)", hints = {
+        @NamedQuery(name = "Tax.getNbTaxesNotAssociated", query = "select count(*) from Tax t where t.id not in (select tm.tax.id from TaxMapping tm where tm.tax.id is not null)", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
-        @NamedQuery(name = "Tax.getTaxesNotAssociated", query = "from Tax t where t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)"),
+        @NamedQuery(name = "Tax.getTaxesNotAssociated", query = "from Tax t where t.id not in (select tm.tax.id from TaxMapping tm where tm.tax.id is not null)"),
         @NamedQuery(name = "Tax.getZeroTax", query = "from Tax t where t.percent=0 ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
         @NamedQuery(name = "Tax.getTaxByCode", query = "from Tax t where t.code=:code ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
         @NamedQuery(name = "Tax.getTaxByPercent", query = "from Tax t where t.percent=:percent ") })
@@ -143,4 +142,30 @@ public class Tax extends BusinessCFEntity {
         return StringUtils.isBlank(id) ? getCode() : String.valueOf(id);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Tax)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+
+        Tax other = (Tax) obj;
+
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
+        if (code == null) {
+            if (other.getCode() != null) {
+                return false;
+            }
+        } else if (!code.equals(other.getCode())) {
+            return false;
+        }
+        return true;
+    }
 }
