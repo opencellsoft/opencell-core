@@ -201,24 +201,38 @@
                                         </p:column>
                                         <p:column>
                                             <p:inputText value="#{rated.parameter1}" size="10" label="#{messages['ratedTransaction.param1']}">
+                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
                                             </p:inputText>
                                         </p:column>
                                         <p:column>
                                             <p:inputText value="#{rated.parameter2}" size="10" label="#{messages['ratedTransaction.param2']}">
+                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
                                             </p:inputText>
                                         </p:column>
                                         <p:column>
                                             <p:inputText value="#{rated.parameter3}" size="10" label="#{messages['ratedTransaction.param3']}">
+                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
                                             </p:inputText>
                                         </p:column>
                                         <p:column>
-                                            <p:calendar value="#{rated.startDate}" size="10" pattern="#{paramBean.dateFormat}" label="#{messages['ratedTransaction.startDate']}" />
+                                            <p:calendar value="#{rated.startDate}" size="10" pattern="#{paramBean.dateFormat}" label="#{messages['ratedTransaction.startDate']}">
+                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
+                                            </p:calendar>
                                         </p:column>
                                         <p:column>
-                                            <p:calendar value="#{rated.endDate}" size="10" pattern="#{paramBean.dateFormat}" label="#{messages['ratedTransaction.endDate']}" />
+                                            <p:calendar value="#{rated.endDate}" size="10" pattern="#{paramBean.dateFormat}" label="#{messages['ratedTransaction.endDate']}" >
+                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
+                                            </p:calendar>
                                         </p:column>
                                         <p:column>
                                             <p:inputText value="#{rated.orderNumber}" size="10" label="#{messages['order.number']}">
+                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
                                             </p:inputText>
                                         </p:column>
                                         <p:column>
