@@ -18,7 +18,13 @@
  */
 package org.meveo.model.catalog;
 
-import java.math.BigDecimal;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.EnableBusinessEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
+import org.meveo.model.ObservableEntity;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -36,13 +42,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableBusinessEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ModuleItem;
-import org.meveo.model.ObservableEntity;
+import java.math.BigDecimal;
 
 /**
  * Counter template/definition
@@ -117,6 +117,13 @@ public class CounterTemplate extends EnableBusinessEntity {
     @Size(max = 70)
     private String notificationLevels;
 
+    /**
+     * Check if is it an accumulator account.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_accumulator")
+    private Boolean accumulator = Boolean.FALSE;
+
     public CounterTypeEnum getCounterType() {
         return counterType;
     }
@@ -171,5 +178,13 @@ public class CounterTemplate extends EnableBusinessEntity {
 
     public void setNotificationLevels(String notificationLevels) {
         this.notificationLevels = notificationLevels;
+    }
+
+    public Boolean getAccumulator() {
+        return accumulator;
+    }
+
+    public void setAccumulator(Boolean accumulator) {
+        this.accumulator = accumulator;
     }
 }

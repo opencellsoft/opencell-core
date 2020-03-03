@@ -59,6 +59,8 @@ import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.OverrideProrataEnum;
+import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -188,6 +190,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 billingAccountService.update(billingAccount);
             }
         }
+        applyAccumulatorCounter(chargeInstance, Collections.singletonList(walletOperation), isVirtual);
         return walletOperation;
     }
 
@@ -439,12 +442,12 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     /**
      * Reimburse already applied recurring charges
-     * 
+     *
      * @param chargeInstance Recurring charge instance
      * @throws BusinessException Business exception
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public void applyReimbursment(RecurringChargeInstance chargeInstance, String orderNumber) throws BusinessException, RatingException {
+    public void applyReimbursment(RecurringChargeInstance chargeInstance, String orderNumber, OverrideProrataEnum overrideProrata) throws BusinessException, RatingException {
         if (chargeInstance == null) {
             throw new IncorrectChargeInstanceException("charge instance is null");
         }
@@ -489,6 +492,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         if (!StringUtils.isBlank(recurringChargeTemplate.getTerminationProrataEl())) {
             isTerminationProrata = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getTerminationProrataEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
         }
+        isTerminationProrata = isOverrideTerminationProrata(isTerminationProrata, overrideProrata);
+
         if (isTerminationProrata) {
 
             log.debug("Applying the first prorated recuring charge reimbursement : id: {} for {} - {}, subscriptionDate={}, previousChargeDate={}", chargeInstance.getId(), applyChargeOnDate, nextChargeDate,
@@ -621,7 +626,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 List<WalletOperation> operations = chargeWalletOperation(walletOperation);
                 walletOperations.addAll(operations);
             }
-
+            if (!reimbursement) {
+                applyAccumulatorCounter(chargeInstance, walletOperations, false);
+            }
             // create(chargeApplication);
             chargeInstance.setChargeDate(applyChargeOnDate);
             applyChargeOnDate = nextChargeDate;
@@ -657,6 +664,26 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 return chargeWalletOperation(walletOperation);
 
             }).flatMap(List::stream).collect(Collectors.toList());
+    }
+
+   private void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
+
+        CounterInstance counterInstance = chargeInstance.getCounter();
+        CounterPeriod counterPeriod = null;
+        if (counterInstance != null) {
+            // get the counter period of charge instance
+            counterPeriod = counterInstanceService.getCounterPeriod(counterInstance, chargeInstance.getChargeDate());
+            if (counterPeriod == null || counterPeriod.getValue() == null || !counterPeriod.getValue().equals(BigDecimal.ZERO)) {
+                // The counter will be incremented by charge quantity
+                if (counterPeriod == null) {
+                    counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
+                        chargeInstance.getServiceInstance());
+                }
+            }
+            for (WalletOperation wo : walletOperations) {
+                counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
+            }
+        }
     }
 
     private double computeQuantityRatio(Date computedApplyChargeOnDate, Date computedNextChargeDate) {
@@ -826,20 +853,22 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         chargeInstance.setChargeDate(applyChargeOnDate);
         Date nextChargeDate = cal.nextCalendarDate(applyChargeOnDate);
         chargeInstance.setNextChargeDate(nextChargeDate);
-
+        if (!reimbursement) {
+            applyAccumulatorCounter(chargeInstance, walletOperations, false);
+        }
         return walletOperations;
     }
 
     /**
      * Apply missing recurring charges from the last charge date to the end agreement date
-     * 
+     *
      * @param chargeInstance charge Instance
      * @param recurringChargeTemplate recurringCharge Template
      * @param endAgreementDate end agreement date
      * @throws BusinessException Business exception
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate, Date endAgreementDate) throws BusinessException, RatingException {
+    public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate, Date endAgreementDate, OverrideProrataEnum overrideProrata) throws BusinessException, RatingException {
 
         // we apply the charge at its nextChargeDate if applied in advance, else at chargeDate
         Date applyChargeFromDate = chargeInstance.getNextChargeDate();
@@ -871,6 +900,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         if (!StringUtils.isBlank(recurringChargeTemplate.getTerminationProrataEl())) {
             isTerminationProrata = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getTerminationProrataEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
         }
+
+        isTerminationProrata = isOverrideTerminationProrata(isTerminationProrata, overrideProrata);
 
         Date applyChargeOnDate = applyChargeFromDate;
 
@@ -914,14 +945,28 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
             // create(chargeApplication);
             applyChargeOnDate = nextChargeDate;
+
         }
 
         chargeInstance.setChargeDate(applyChargeOnDate);
     }
 
+    private boolean isOverrideTerminationProrata(boolean isTerminationProrata, OverrideProrataEnum overrideProrata) {
+        switch (overrideProrata) {
+        case NO_OVERRIDE:
+            return isTerminationProrata;
+        case PRORATA:
+            return true;
+        case NO_PRORATA:
+            return false;
+        default:
+            return isTerminationProrata;
+        }
+    }
+
     /**
      * Get a list of wallet operations to rate up to a given date. WalletOperation.invoiceDate< date
-     * 
+     *
      * @param entityToInvoice Entity to invoice
      * @param invoicingDate Invoicing date
      * @return A list of wallet operations
@@ -1277,6 +1322,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 }
                 if (counterPeriod != null) {
                     CounterValueChangeInfo counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterPeriod, recurringChargeInstance.getQuantity(), false);
+                    if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator()) {
+                        for (WalletOperation wo : resultingWalletOperations) {
+                            counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, false);
+                        }
+                    }
                     counterInstanceService.triggerCounterPeriodEvent(counterValueChangeInfo, counterPeriod);
                 }
 

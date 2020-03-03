@@ -47,6 +47,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
@@ -324,12 +325,12 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
         // AKK check what happens with tax
         RatedTransaction ratedTransaction = new RatedTransaction(usageDate, unitAmountWithoutTax, unitAmountWithTax, null, quantity, null, null, null, RatedTransactionStatusEnum.BILLED, ua.getWallet(),
-            ua.getBillingAccount(), null, selectInvoiceSubCat, parameter1, parameter2, parameter3, null, orderNumber, null, null, null, null, null, null, selectedCharge.getCode(), description, rtStartDate, rtEndDate,
+            ua.getBillingAccount(), ua, selectInvoiceSubCat, parameter1, parameter2, parameter3, null, orderNumber, null, null, null, null, null, null, selectedCharge.getCode(), description, rtStartDate, rtEndDate,
             seller, taxInfo.tax, taxInfo.tax.getPercent(), null, taxInfo.taxClass);
 
         ratedTransaction.setInvoice(entity);
 
-        aggregateHandler.addRT(ratedTransaction, selectInvoiceSubCat.getDescription(), ua);
+        aggregateHandler.addRT(entity.getInvoiceDate(), ratedTransaction);
         updateAmountsAndLines();
 
     }
@@ -388,7 +389,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     @ActionMethod
     public void deleteRatedTransactionLine() {
 
-        aggregateHandler.removeRT(selectedRatedTransaction, selectedRatedTransaction.getInvoiceSubCategory().getDescription(), getFreshUA());
+        aggregateHandler.removeRT(selectedRatedTransaction);
         updateAmountsAndLines();
     }
 
@@ -442,10 +443,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     public void deleteLinkedInvoiceCategoryDetaild() {
 
         for (int i = 0; i < selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactionsToAssociate().size(); i++) {
-            aggregateHandler.removeRT(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactionsToAssociate().get(i),
-                selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactionsToAssociate().get(i).getInvoiceSubCategory().getDescription(), getFreshUA());
+            aggregateHandler.removeRT(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactionsToAssociate().get(i));
         }
-        updateAmountsAndLines();
     }
 
     /**
@@ -457,13 +456,39 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     public void reComputeAmountWithoutTax(RatedTransaction ratedTx) {
 
         aggregateHandler.reset();
+        boolean entreprise = appProvider.isEntreprise();
         for (SubCategoryInvoiceAgregate subcat : subCategoryInvoiceAggregates) {
             for (RatedTransaction rt : subcat.getRatedtransactionsToAssociate()) {
-                rt.resetAmounts();
-                aggregateHandler.addRT(rt, rt.getInvoiceSubCategory().getDescription(), getFreshUA());
+                synchroniseAmounts(entreprise, rt);
+                aggregateHandler.addRT(entity.getInvoiceDate(), rt);
             }
         }
+
         updateAmountsAndLines();
+    }
+
+    private void synchroniseAmounts(boolean entreprise, RatedTransaction rt) {
+        BigDecimal uawot = rt.getUnitAmountWithoutTax() != null ? rt.getUnitAmountWithoutTax() : BigDecimal.ZERO;
+        BigDecimal rtAwot = rt.getAmountWithoutTax() != null ? rt.getAmountWithoutTax() : BigDecimal.ZERO;
+        BigDecimal newAwot = uawot.multiply(rt.getQuantity());
+        if (newAwot.compareTo(rtAwot) != 0) {
+            BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(newAwot, newAwot, rt.getTaxPercent(), entreprise, appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(uawot, uawot, rt.getTaxPercent(), entreprise, appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            newAwot = amounts[0];
+            BigDecimal newAwt = amounts[1];
+            BigDecimal amountTax = amounts[2];
+            uawot = unitAmounts[0];
+            BigDecimal uawt = unitAmounts[1];
+            BigDecimal unitAmountTax = unitAmounts[2];
+
+            rt.setUnitAmountTax(unitAmountTax);
+            rt.setUnitAmountWithoutTax(uawot);
+            rt.setUnitAmountWithTax(uawt);
+
+            rt.setAmountTax(amountTax);
+            rt.setAmountWithoutTax(newAwot);
+            rt.setAmountWithTax(newAwt);
+        }
     }
 
     /**
@@ -488,7 +513,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 return;
             }
             for (RatedTransaction ratedTransaction : openedRT) {
-                aggregateHandler.addRT(ratedTransaction, ratedTransaction.getInvoiceSubCategory().getDescription(), getFreshUA());
+                aggregateHandler.addRT(entity.getInvoiceDate(), ratedTransaction);
             }
             setRtxHasImported(true);
             updateAmountsAndLines();
@@ -608,7 +633,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) {
-
         BillingAccount billingAccount = getFreshBA();
         Customer customer = billingAccount.getCustomerAccount().getCustomer();
         entity.setBillingAccount(billingAccount);
@@ -667,7 +691,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         }
 
         return getListViewName();
-
     }
 
     /**
@@ -717,24 +740,26 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
                     newRT.setInvoice(entity);
 
-                    aggregateHandler.addRT(newRT, rt.getInvoiceSubCategory().getDescription(), ua);
+                    aggregateHandler.addRT(entity.getInvoiceDate(), rt);
                 }
-
             } else {
                 for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
                     if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-                        aggregateHandler.addInvoiceSubCategory(((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory(), entity.getBillingAccount(), ua, invoiceAgregate.getDescription(),
-                            ((SubCategoryInvoiceAgregate) invoiceAgregate).getIsEnterpriseAmount(appProvider.isEntreprise()));
+                        aggregateHandler.addInvoiceSubCategory(((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory(), getFreshUA(), invoiceAgregate.getDescription(),
+                            invoiceAgregate.getAmountWithoutTax(), invoiceAgregate.getAmountWithTax());
                     }
                 }
 
                 for (RatedTransaction rt : ratedTransactions) {
                     if (rt.getWallet() == null) {
-                        aggregateHandler.addRT(rt, rt.getInvoiceSubCategory().getDescription(), ua);
+                        aggregateHandler.addRT(entity.getInvoiceDate(), rt);
                     }
                 }
+
             }
+
         }
+
         updateAmountsAndLines();
     }
 
@@ -820,21 +845,21 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     @ActionMethod
     public void deleteLinkedInvoiceCategory() {
         for (SubCategoryInvoiceAgregate subCat : selectedCategoryInvoiceAgregate.getSubCategoryInvoiceAgregates()) {
-            aggregateHandler.removeInvoiceSubCategory(subCat.getInvoiceSubCategory(), getFreshBA(), getFreshUA(), subCat.getDescription(), subCat.getIsEnterpriseAmount(appProvider.isEntreprise()));
+            aggregateHandler.removeInvoiceSubCategory(subCat.getInvoiceSubCategory(), getFreshUA(), subCat.getAmountWithoutTax(), subCat.getAmountWithTax());
         }
-        
+
         updateAmountsAndLines();
     }
 
     /**
-     * delete a sub cat invoice agregate
+     * delete a sub cat invoice aggregate
      * 
      * @throws BusinessException General business exception
      */
     @ActionMethod
     public void deleteLinkedInvoiceSubCategory() {
-        aggregateHandler.removeInvoiceSubCategory(selectedSubCategoryInvoiceAgregate.getInvoiceSubCategory(), getFreshBA(), getFreshUA(), selectedSubCategoryInvoiceAgregate.getDescription(),
-            selectedSubCategoryInvoiceAgregate.getIsEnterpriseAmount(appProvider.isEntreprise()));
+        aggregateHandler.removeInvoiceSubCategory(selectedSubCategoryInvoiceAgregate.getInvoiceSubCategory(), getFreshUA(), selectedSubCategoryInvoiceAgregate.getAmountWithoutTax(),
+            selectedSubCategoryInvoiceAgregate.getAmountWithTax());
         updateAmountsAndLines();
 
     }
@@ -897,8 +922,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
         selectedInvoiceSubCategory = invoiceSubCategoryService.retrieveIfNotManaged(selectedInvoiceSubCategory);
 
-        aggregateHandler.addInvoiceSubCategory(entity.getSeller(), entity.getInvoiceDate(), selectedInvoiceSubCategory, getFreshBA(), getFreshUA(), description,
-            appProvider.isEntreprise() ? amountWithoutTax : amountWithTax);
+        aggregateHandler.addInvoiceSubCategory(selectedInvoiceSubCategory, getFreshUA(), description, amountWithoutTax, amountWithTax);
         updateAmountsAndLines();
     }
 
@@ -914,7 +938,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         for (CategoryInvoiceAgregate cat : categoryInvoiceAggregates) {
             for (SubCategoryInvoiceAgregate subCate : cat.getSubCategoryInvoiceAgregates()) {
                 InvoiceSubCategory tmp = subCate.getInvoiceSubCategory();
-                aggregateHandler.addInvoiceSubCategory(tmp, getFreshBA(), getFreshUA(), subCate.getDescription(), subCate.getIsEnterpriseAmount(appProvider.isEntreprise()));
+                aggregateHandler.addInvoiceSubCategory(tmp, getFreshUA(), subCate.getDescription(), subCate.getAmountWithoutTax(), subCate.getAmountWithTax());
             }
         }
         updateAmountsAndLines();

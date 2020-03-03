@@ -6,18 +6,23 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.account.TransferCustomerAccountDto;
+import org.meveo.api.dto.billing.CounterInstanceDto;
 import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
+import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.CustomerAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -150,6 +155,22 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
             customerAccountApi.transferAccount(transferCustomerAccountDto);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public GetCountersInstancesResponseDto filterCustomerAccountCountersByPeriod(String customerAccountCode, Date date) {
+        GetCountersInstancesResponseDto result = new GetCountersInstancesResponseDto();
+
+        try {
+            List<CounterInstance> counters = customerAccountApi.filterCountersByPeriod(customerAccountCode, date);
+            for (CounterInstance ci : counters) {
+                result.getCountersInstances().getCounterInstance().add(new CounterInstanceDto(ci));
+            }
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;

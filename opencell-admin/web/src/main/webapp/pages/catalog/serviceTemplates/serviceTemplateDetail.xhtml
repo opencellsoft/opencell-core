@@ -47,41 +47,66 @@
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="searchSubscriptionChargeTemplatePopup"
-			header="#{messages['serviceTemplate.subscriptionCharges']}"
-			updateField=":tabView:formSubscriptionCharge:subscriptionChargeTemplateSelectedId :tabView:formSubscriptionCharge:subscriptionChargeTemplateSelectedId_text"
-			selection="#{serviceTemplateBean.serviceChargeTemplateSubscription.chargeTemplate}"
-			backingBean="#{subscriptionChargeTemplateBean}"
-			dataModel="#{subscriptionChargeTemplateBean.subscriptionCharges}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="code" column1Label="#{messages['businessEntity.code']}"
-			column1="code"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="description">
+						  header="#{messages['serviceTemplate.subscriptionCharges']}"
+						  updateField=":tabView:formSubscriptionCharge:subscriptionChargeTemplateSelectedId :tabView:formSubscriptionCharge:subscriptionChargeTemplateSelectedId_text"
+						  selection="#{serviceTemplateBean.serviceChargeTemplateSubscription.chargeTemplate}"
+						  backingBean="#{subscriptionChargeTemplateBean}"
+						  dataModel="#{subscriptionChargeTemplateBean.subscriptionCharges}"
+						  searchField1Label="#{messages['businessEntity.code']}"
+						  searchField1="code" column1Label="#{messages['businessEntity.code']}"
+						  column1="code"
+						  column2Label="#{messages['businessEntity.description']}"
+						  column2="description">
+		</hftl:entityPopup>
+		<hftl:entityPopup id="searchSubscriptionCounterTemplatePopup"
+						  header="#{messages['counterTemplate.title']}"
+						  updateField=":tabView:formSubscriptionCharge:subscriptionCounterTemplateSelectedId :tabView:formSubscriptionCharge:subscriptionCounterTemplateSelectedId_text"
+						  selection="#{serviceChargeTemplateSubscription.counterTemplate}"
+						  backingBean="#{counterTemplateBean}"
+						  dataModel="#{counterTemplateBean.accumulatorLazyDataModel}"
+						  searchField1Label="#{messages['businessEntity.code']}"
+						  searchField1="code" column1Label="#{messages['businessEntity.code']}"
+						  column1="code"
+						  column2Label="#{messages['businessEntity.description']}"
+						  column2="description">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="searchTerminationChargeTemplatePopup"
-			header="#{messages['serviceTemplate.terminationCharges']}"
-			updateField=":tabView:formTerminationCharge:terminationChargeTemplateSelectedId :tabView:formTerminationCharge:terminationChargeTemplateSelectedId_text"
-			selection="#{serviceTemplateBean.serviceChargeTemplateTermination.chargeTemplate}"
-			backingBean="#{terminationChargeTemplateBean}"
-			dataModel="#{subscriptionChargeTemplateBean.terminationCharges}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="code" column1Label="#{messages['businessEntity.code']}"
-			column1="code"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="description">
+						  header="#{messages['serviceTemplate.terminationCharges']}"
+						  updateField=":tabView:formTerminationCharge:terminationChargeTemplateSelectedId :tabView:formTerminationCharge:terminationChargeTemplateSelectedId_text"
+						  selection="#{serviceTemplateBean.serviceChargeTemplateTermination.chargeTemplate}"
+						  backingBean="#{terminationChargeTemplateBean}"
+						  dataModel="#{subscriptionChargeTemplateBean.terminationCharges}"
+						  searchField1Label="#{messages['businessEntity.code']}"
+						  searchField1="code" column1Label="#{messages['businessEntity.code']}"
+						  column1="code"
+						  column2Label="#{messages['businessEntity.description']}"
+						  column2="description">
+		</hftl:entityPopup>
+
+		<hftl:entityPopup id="searchTerminationCounterTemplatePopup"
+						  header="#{messages['counterTemplate.title']}"
+						  updateField=":tabView:formTerminationCharge:terminationCounterTemplateSelectedId :tabView:formTerminationCharge:terminationCounterTemplateSelectedId_text"
+						  selection="#{serviceChargeTemplateTermination.counterTemplate}"
+						  backingBean="#{counterTemplateBean}"
+						  dataModel="#{counterTemplateBean.accumulatorLazyDataModel}"
+						  searchField1Label="#{messages['businessEntity.code']}"
+						  searchField1="code" column1Label="#{messages['businessEntity.code']}"
+						  column1="code"
+						  column2Label="#{messages['businessEntity.description']}"
+						  column2="description">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="searchUsageChargeTemplatePopup"
-			header="#{messages['usageChargeTemplate.title']}"
-			updateField=":tabView:formUsageCharge:usageChargeTemplateSelectedId :tabView:formUsageCharge:usageChargeTemplateSelectedId_text"
-			selection="#{serviceTemplateBean.serviceChargeTemplateUsage.chargeTemplate}"
-			backingBean="#{usageChargeTemplateBean}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="code" column1Label="#{messages['businessEntity.code']}"
-			column1="code"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="description">
+						  header="#{messages['usageChargeTemplate.title']}"
+						  updateField=":tabView:formUsageCharge:usageChargeTemplateSelectedId :tabView:formUsageCharge:usageChargeTemplateSelectedId_text"
+						  selection="#{serviceTemplateBean.serviceChargeTemplateUsage.chargeTemplate}"
+						  backingBean="#{usageChargeTemplateBean}"
+						  searchField1Label="#{messages['businessEntity.code']}"
+						  searchField1="code" column1Label="#{messages['businessEntity.code']}"
+						  column1="code"
+						  column2Label="#{messages['businessEntity.description']}"
+						  column2="description">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="searchCounterTemplatePopup"
@@ -335,26 +360,28 @@
 					<h:panelGroup id="serviceSubscriptionChargeTempalte_panel">
 						<p:outputPanel ><p:autoUpdate />
 							<hftl:dataList
-								backingBean="#{serviceChargeTemplateSubscriptionBean}"
-								dataModel="#{serviceTemplateBean.entity.serviceSubscriptionCharges}"
-								resultsId="serviceSubscriptionCharges_results"
-								exportToXml="false">
+									backingBean="#{serviceChargeTemplateSubscriptionBean}"
+									dataModel="#{serviceTemplateBean.entity.serviceSubscriptionCharges}"
+									resultsId="serviceSubscriptionCharges_results"
+									exportToXml="false">
 								<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
-									field="chargeTemplate.code" valueIdField="chargeTemplate.id"
-									entityView="oneShotChargeTemplateDetail" />
+											 field="chargeTemplate.code" valueIdField="chargeTemplate.id"
+											 entityView="oneShotChargeTemplateDetail"/>
 								<hftl:column label="#{messages['menu.wallets']}"
-									field="walletTemplates" valueLabelField="code" isList="true" />
+											 field="walletTemplates" valueLabelField="code" isList="true"/>
+								<hftl:column label="#{messages['counterTemplate.title']}"
+											 field="counterTemplate.code"/>
 								<p:column styleClass="actions-column"
-									rendered="#{serviceTemplateBean.edit}">
+										  rendered="#{serviceTemplateBean.edit}">
 									<f:facet name="header">
-										<h:outputText value="#{messages['commons.actions']}" />
+										<h:outputText value="#{messages['commons.actions']}"/>
 									</f:facet>
 									<p:commandButton update=":tabView:formSubscriptionCharge"
-										action="#{serviceTemplateBean.editServiceSubscriptionChargeTemplate(entity)}"
-										icon="ui-icon-document" />
+													 action="#{serviceTemplateBean.editServiceSubscriptionChargeTemplate(entity)}"
+													 icon="ui-icon-document"/>
 									<p:commandButton
-										action="#{serviceTemplateBean.deleteServiceSubscriptionChargeTemplate(entity.getId())}"
-										icon="ui-icon-trash" update=":tabView:formSubscriptionCharge" />
+											action="#{serviceTemplateBean.deleteServiceSubscriptionChargeTemplate(entity.getId())}"
+											icon="ui-icon-trash" update=":tabView:formSubscriptionCharge"/>
 								</p:column>
 							</hftl:dataList>
 						</p:outputPanel>
@@ -362,32 +389,37 @@
 					<p:panel id="serviceSubscriptionChargediv"
 						rendered="#{serviceTemplateBean.edit}">
 						<hftl:formPanel formId="formSubscriptionCharge"
-							edit="#{serviceTemplateBean.edit}"
-							backingBean="#{serviceTemplateBean}"
-							entity="#{serviceTemplateBean.serviceChargeTemplateSubscription}"
-							showFormButtons="false" ajaxSubmit="true">
+										edit="#{serviceTemplateBean.edit}"
+										backingBean="#{serviceTemplateBean}"
+										entity="#{serviceTemplateBean.serviceChargeTemplateSubscription}"
+										showFormButtons="false" ajaxSubmit="true">
 							<hftl:formField id="subscriptionChargeTemplateSelectedId"
-								label="#{messages['pricePlanMatrix.eventCode']}"
-								field="chargeTemplate" valueLabelField="code" popup="true"
-								popupId="searchSubscriptionChargeTemplatePopup"
-								required="true"
-								disabled="#{!serviceTemplateBean.serviceChargeTemplateSubscription.transient}" />
+											label="#{messages['pricePlanMatrix.eventCode']}"
+											field="chargeTemplate" valueLabelField="code" popup="true"
+											popupId="searchSubscriptionChargeTemplatePopup"
+											required="true"
+											disabled="#{!serviceTemplateBean.serviceChargeTemplateSubscription.transient}"/>
 							<hftl:formField label="#{messages['menu.wallets']}"
-								listType="pickUpList" field="walletTemplates"
-								valueLabelField="code"
-								dualListModel="#{serviceTemplateBean.subscriptionDualListModel}" />
-							<ui:param name="buttons" value="true" />
+											listType="pickUpList" field="walletTemplates"
+											valueLabelField="code"
+											dualListModel="#{serviceTemplateBean.subscriptionDualListModel}"/>
+							<hftl:formField id="subscriptionCounterTemplateSelectedId"
+											label="#{messages['counterTemplate.title']}"
+											field="counterTemplate" valueLabelField="code" popup="true"
+											popupId="searchSubscriptionCounterTemplatePopup" showResetButton="true"
+											required="false"/>
+							<ui:param name="buttons" value="true"/>
 							<ui:define name="buttons">
 								<p:commandButton
-									rendered="#{serviceSubscriptionChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
-									action="#{serviceTemplateBean.saveServiceChargeTemplateSubscription}"
-									value="#{messages['action.addSave']}"
-									update=":tabView:serviceSubscriptionChargediv" />
+										rendered="#{serviceSubscriptionChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
+										action="#{serviceTemplateBean.saveServiceChargeTemplateSubscription}"
+										value="#{messages['action.addSave']}"
+										update=":tabView:serviceSubscriptionChargediv"/>
 								<p:commandButton
-									rendered="#{serviceSubscriptionChargeTemplate.id!=null}"
-									action="#{serviceTemplateBean.saveServiceChargeTemplateSubscription}"
-									value="#{messages['serviceSubscriptionChargeTemplate.modifyServiceSubscriptionCharge']}"
-									update=":tabView:serviceSubscriptionChargediv" />
+										rendered="#{serviceSubscriptionChargeTemplate.id!=null}"
+										action="#{serviceTemplateBean.saveServiceChargeTemplateSubscription}"
+										value="#{messages['serviceSubscriptionChargeTemplate.modifyServiceSubscriptionCharge']}"
+										update=":tabView:serviceSubscriptionChargediv"/>
 								<p:commandButton value="#{messages['action.cancel']}"
 									action="#{serviceTemplateBean.newServiceChargeTemplateSubscription}"
 									update=":tabView:serviceSubscriptionChargediv" />
@@ -431,25 +463,27 @@
 					<h:panelGroup id="serviceTerminationChargeTempalte_panel">
 						<p:outputPanel ><p:autoUpdate />
 							<hftl:dataList
-								backingBean="#{serviceChargeTemplateTerminationBean}"
-								dataModel="#{serviceTemplateBean.entity.serviceTerminationCharges}"
-								resultsId="serviceTerminationCharges_results"
-								exportToXml="false">
+									backingBean="#{serviceChargeTemplateTerminationBean}"
+									dataModel="#{serviceTemplateBean.entity.serviceTerminationCharges}"
+									resultsId="serviceTerminationCharges_results"
+									exportToXml="false">
 								<hftl:column label="#{messages['pricePlanMatrix.eventCode']}"
-									field="chargeTemplate.code" valueIdField="chargeTemplate.id"
-									entityView="oneShotChargeTemplateDetail" />
+											 field="chargeTemplate.code" valueIdField="chargeTemplate.id"
+											 entityView="oneShotChargeTemplateDetail"/>
 								<hftl:column label="#{messages['menu.wallets']}"
-									field="walletTemplates" valueLabelField="code" isList="true" />
+											 field="walletTemplates" valueLabelField="code" isList="true"/>
+								<hftl:column label="#{messages['counterTemplate.title']}"
+											 field="counterTemplate.code"/>
 								<p:column styleClass="actions-column"
-									rendered="#{serviceTemplateBean.edit}">
+										  rendered="#{serviceTemplateBean.edit}">
 									<f:facet name="header">
-										<h:outputText value="#{messages['commons.actions']}" />
+										<h:outputText value="#{messages['commons.actions']}"/>
 									</f:facet>
 									<p:commandButton update=":tabView:formTerminationCharge"
-										action="#{serviceTemplateBean.editServiceTerminationChargeTemplate(entity)}"
-										icon="ui-icon-document" />
+													 action="#{serviceTemplateBean.editServiceTerminationChargeTemplate(entity)}"
+													 icon="ui-icon-document"/>
 									<p:commandButton
-										action="#{serviceTemplateBean.deleteServiceTerminationChargeTemplate(entity.getId())}"
+											action="#{serviceTemplateBean.deleteServiceTerminationChargeTemplate(entity.getId())}"
 										icon="ui-icon-trash" update=":tabView:formTerminationCharge" />
 								</p:column>
 							</hftl:dataList>
@@ -458,32 +492,37 @@
 					<p:panel id="serviceTerminationChargediv"
 						rendered="#{serviceTemplateBean.edit}">
 						<hftl:formPanel formId="formTerminationCharge"
-							edit="#{serviceTemplateBean.edit}"
-							backingBean="#{serviceTemplateBean}"
-							entity="#{serviceTemplateBean.serviceChargeTemplateTermination}"
-							showFormButtons="false" ajaxSubmit="true">
+										edit="#{serviceTemplateBean.edit}"
+										backingBean="#{serviceTemplateBean}"
+										entity="#{serviceTemplateBean.serviceChargeTemplateTermination}"
+										showFormButtons="false" ajaxSubmit="true">
 							<hftl:formField id="terminationChargeTemplateSelectedId"
-								label="#{messages['pricePlanMatrix.eventCode']}"
-								field="chargeTemplate" valueLabelField="code" popup="true"
-								popupId="searchTerminationChargeTemplatePopup"
-								required="true"
-								disabled="#{!serviceTemplateBean.serviceChargeTemplateTermination.transient}" />
+											label="#{messages['pricePlanMatrix.eventCode']}"
+											field="chargeTemplate" valueLabelField="code" popup="true"
+											popupId="searchTerminationChargeTemplatePopup"
+											required="true"
+											disabled="#{!serviceTemplateBean.serviceChargeTemplateTermination.transient}"/>
 							<hftl:formField label="#{messages['menu.wallets']}"
-								listType="pickUpList" field="walletTemplates"
-								valueLabelField="code"
-								dualListModel="#{serviceTemplateBean.terminationDualListModel}" />
-							<ui:param name="buttons" value="true" />
+											listType="pickUpList" field="walletTemplates"
+											valueLabelField="code"
+											dualListModel="#{serviceTemplateBean.terminationDualListModel}"/>
+							<hftl:formField id="terminationCounterTemplateSelectedId"
+											label="#{messages['counterTemplate.title']}"
+											field="counterTemplate" valueLabelField="code" popup="true"
+											popupId="searchTerminationCounterTemplatePopup" showResetButton="true"
+											required="false"/>
+							<ui:param name="buttons" value="true"/>
 							<ui:define name="buttons">
 								<p:commandButton
-									rendered="#{serviceTerminationChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
-									action="#{serviceTemplateBean.saveServiceChargeTemplateTermination}"
-									value="#{messages['action.addSave']}"
-									update=":tabView:serviceTerminationChargediv" />
+										rendered="#{serviceTerminationChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
+										action="#{serviceTemplateBean.saveServiceChargeTemplateTermination}"
+										value="#{messages['action.addSave']}"
+										update=":tabView:serviceTerminationChargediv"/>
 								<p:commandButton
-									rendered="#{serviceTerminationChargeTemplate.id!=null}"
-									action="#{serviceTemplateBean.saveServiceChargeTemplateTermination}"
-									value="#{messages['serviceTerminationChargeTemplate.modifyServiceTerminationCharge']}"
-									update=":tabView:serviceTerminationChargediv" />
+										rendered="#{serviceTerminationChargeTemplate.id!=null}"
+										action="#{serviceTemplateBean.saveServiceChargeTemplateTermination}"
+										value="#{messages['serviceTerminationChargeTemplate.modifyServiceTerminationCharge']}"
+										update=":tabView:serviceTerminationChargediv"/>
 								<p:commandButton value="#{messages['action.cancel']}"
 									action="#{serviceTemplateBean.newServiceChargeTemplateTermination}"
 									update=":tabView:serviceTerminationChargediv" />

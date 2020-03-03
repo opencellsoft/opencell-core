@@ -63035,7 +63035,7 @@ public class DDRequestBuilderDemo extends DDRequestBuilderScript {
             <dueDateDelay>2</dueDateDelay>
             <invoiceDateDelay>4</invoiceDateDelay>          
             <calendar>YEARLY</calendar>
-  		  <invoiceTypeCode>IT_REGUL</invoiceTypeCode>
+  		  <invoiceTypeCode>${#Project#entityPrefix}_${#TestSuite#index}_PS_IT_REGUL</invoiceTypeCode>
   		  </billingCycle>
       </ws:createOrUpdateBillingCycle>
    </soapenv:Body>

@@ -391,6 +391,7 @@ public abstract class ChargeInstance extends BusinessCFEntity {
             sortedWalletOperations = new ArrayList<WalletOperation>(getWalletOperations());
 
             Collections.sort(sortedWalletOperations, new Comparator<WalletOperation>() {
+                @Override
                 public int compare(WalletOperation c0, WalletOperation c1) {
                     return c1.getOperationDate().compareTo(c0.getOperationDate());
                 }
@@ -521,4 +522,13 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     public void setTaxClassResolved(TaxClass taxClass) {
         this.taxClassResolved = taxClass;
     }
+    /**
+     * Gets a counter instance.
+     *
+     * @return CounterInstance
+     */
+    public CounterInstance getCounter() {
+        return null;
+    }
+
 }

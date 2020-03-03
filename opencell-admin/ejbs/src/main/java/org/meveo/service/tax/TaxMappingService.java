@@ -178,7 +178,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
     }
 
     /**
-     * Determine applicable tax for a given charge instance
+     * Determine applicable tax for a given charge instance. Considers when Billing Account is exonerated.
      * 
      * @param chargeInstance Charge instance
      * @param date Date to determine tax validity
@@ -202,7 +202,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
     }
 
     /**
-     * Determine applicable tax for a given charge template
+     * Determine applicable tax for a given charge template. Considers when Billing Account is exonerated.
      * 
      * @param chargeTemplate Charge template
      * @param seller Seller
@@ -219,7 +219,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
     }
 
     /**
-     * Determine applicable tax for a given seller/buyer and tax category and class combination
+     * Determine applicable tax for a given seller/buyer and tax category and class combination. Considers when Billing Account is exonerated.
      * 
      * @param taxClass Tax class
      * @param seller Seller

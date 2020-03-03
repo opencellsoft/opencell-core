@@ -83,7 +83,7 @@ import org.meveo.service.tax.TaxMappingService.TaxInfo;
 /**
  * Rate charges such as {@link org.meveo.model.catalog.OneShotChargeTemplate}, {@link org.meveo.model.catalog.RecurringChargeTemplate} and
  * {@link org.meveo.model.catalog.UsageChargeTemplate}. Generate the {@link org.meveo.model.billing.WalletOperation} with the appropriate values.
- * 
+ *
  * @author Edward P. Legaspi
  * @lastModifiedVersion 7.0
  */
@@ -126,7 +126,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param level level enum
      * @param chargeCode charge's code
      * @param chargeDate charge's date
-     * @param recChargeInstance reccurring charge instance
+     * @param recChargeInstance recurring charge instance
      * @return shared quantity
      */
     @SuppressWarnings("deprecation")
@@ -423,7 +423,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
     /**
      * Rate or rerate a Wallet operation - determine a unit price, lookup tax and calculate total amounts. Unless price is overridden, consults price plan for a unit price to
      * charge.
-     * 
+     *
      * @param bareWalletOperation operation
      * @param unitPriceWithoutTaxOverridden Unit price without tax - An overridden price
      * @param unitPriceWithTaxOverriden unit price with tax - An overridden price

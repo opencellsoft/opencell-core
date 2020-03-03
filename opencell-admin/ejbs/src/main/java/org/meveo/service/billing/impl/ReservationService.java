@@ -18,17 +18,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map.Entry;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -46,6 +35,16 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * @author Edward P. Legaspi
@@ -281,7 +280,7 @@ public class ReservationService extends PersistenceService<Reservation> {
         if (reservation.getCounterPeriodValues().size() > 0) {
 
             for (Entry<Long, BigDecimal> periodInfo : reservation.getCounterPeriodValues().entrySet()) {
-                counterInstanceService.incrementCounterValue(periodInfo.getKey(), periodInfo.getValue());
+                counterInstanceService.incrementCounterValue(periodInfo.getKey(), periodInfo.getValue(), reservation);
             }
         }
 

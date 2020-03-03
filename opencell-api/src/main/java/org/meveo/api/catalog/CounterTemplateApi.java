@@ -1,10 +1,8 @@
 package org.meveo.api.catalog;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -14,8 +12,14 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTemplateLevel;
+import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.math.BigDecimal;
 
 /**
  * @author Edward P. Legaspi
@@ -66,7 +70,11 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         }
         counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
         counterTemplate.setNotificationLevels(postData.getNotificationLevels());
-
+        counterTemplate.setAccumulator(postData.getAccumulator());
+        if (counterTemplate.getAccumulator() != null && counterTemplate.getAccumulator()) {
+            counterTemplate.setCeilingExpressionEl(null);
+            counterTemplate.setCeiling(BigDecimal.ZERO);
+        }
         counterTemplateService.create(counterTemplate);
 
         return counterTemplate;
@@ -105,7 +113,11 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         }
         counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
         counterTemplate.setNotificationLevels(postData.getNotificationLevels());
-
+        counterTemplate.setAccumulator(postData.getAccumulator());
+        if (counterTemplate.getAccumulator() != null && counterTemplate.getAccumulator()) {
+            counterTemplate.setCeilingExpressionEl(null);
+            counterTemplate.setCeiling(BigDecimal.ZERO);
+        }
         counterTemplate = counterTemplateService.update(counterTemplate);
 
         return counterTemplate;
@@ -123,5 +135,35 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         }
 
         return new CounterTemplateDto(counterTemplate);
+    }
+
+    /**
+     * Check if any parameters are missing and throw and exception.
+     *
+     * @param dto base data transfer object.
+     * @throws MeveoApiException meveo api exception.
+     */
+    @Override
+    protected void handleMissingParametersAndValidate(BaseEntityDto dto) throws MeveoApiException {
+        validate(dto);
+        handleMissingParameters(dto);
+        CounterTemplateDto counterTemplateDto = (CounterTemplateDto) dto;
+        if (counterTemplateDto.getAccumulator() != null) {
+            if (counterTemplateDto.getAccumulator() && counterTemplateDto.getType().equals(CounterTypeEnum.NOTIFICATION)) {
+                log.error("The counter type is invalid if the counter is accumulator counter, deactivate the accumulator or change the counter type");
+                throw new InvalidParameterException("The counter type is invalid if the counter is accumulator counter, deactivate the accumulator or change the counter type");
+            }
+            if (!counterTemplateDto.getAccumulator() && (counterTemplateDto.getType().equals(CounterTypeEnum.USAGE_AMOUNT))) {
+                log.error("The accumulator should be activated if the following counter type are used : {}, {} or {}", CounterTypeEnum.USAGE_AMOUNT.getLabel(),
+                        CounterTypeEnum.USAGE_AMOUNT.getLabel(), CounterTypeEnum.USAGE_AMOUNT.getLabel());
+                throw new InvalidParameterException("The accumulator must be activated to use the counter type " + counterTemplateDto.getType());
+            }
+            if (!counterTemplateDto.getAccumulator() && counterTemplateDto.getType().equals(CounterTypeEnum.USAGE)
+                    && (counterTemplateDto.getCounterLevel().equals(CounterTemplateLevel.CA) || counterTemplateDto.getCounterLevel().equals(CounterTemplateLevel.CUST))) {
+                log.error("The accumulator should be activated if the following counter level are used : {}, {}", CounterTemplateLevel.CA.getLabel(),
+                        CounterTemplateLevel.CUST.getLabel());
+                throw new InvalidParameterException("The accumulator must be activated to use the counter level " + counterTemplateDto.getCounterLevel());
+            }
+        }
     }
 }

@@ -1,25 +1,7 @@
 package org.meveo.api.account;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.servlet.http.HttpServletResponse;
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import org.apache.commons.io.IOUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -54,6 +36,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.export.CustomBigDecimalConverter;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
@@ -79,8 +62,26 @@ import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.tax.TaxCategoryService;
 import org.primefaces.model.SortOrder;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author Edward P. Legaspi
@@ -869,4 +870,17 @@ public class CustomerApi extends AccountEntityApi {
         return result;
     }
 
+    public List<CounterInstance> filterCountersByPeriod(String customerCode, Date date) {
+        Customer customer = customerService.findByCode(customerCode);
+
+        if (customer == null) {
+            throw new EntityDoesNotExistsException(Customer.class, customerCode);
+        }
+
+        if (StringUtils.isBlank(date)) {
+            throw new BusinessApiException("date is null");
+        }
+
+        return new ArrayList<>(customerService.filterCountersByPeriod(customer.getCounters(), date).values());
+    }
 }

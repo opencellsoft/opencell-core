@@ -1,9 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+                xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="objectId" value="#{counterTemplateBean.objectId}" />
+            <f:viewParam name="objectId" value="#{counterTemplateBean.objectId}"/>
         </f:metadata>
     </ui:define>
 
@@ -25,20 +25,28 @@
 
             <h:panelGrid columns="3" cellpadding="5">
                 <h:outputLink id="exprEl" value="#">
-                    <h:outputText value="#{messages['counterTemplate.elExpressionVariables']}" />
+                    <h:outputText value="#{messages['counterTemplate.elExpressionVariables']}"/>
                 </h:outputLink>
             </h:panelGrid>
 
-            <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" />
-            <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description" />
-            <hftl:formField label="#{messages['usageChargeTemplate.unityDescription']}" field="unityDescription" />
-            <hftl:formField label="#{messages['counterTemplate.counterType']}" field="counterType" required="true" />
-            <hftl:formField label="#{messages['counterTemplate.counterLevel']}" field="counterLevel" required="true" />
-            <hftl:formField label="#{messages['counterTemplate.level']}" field="ceiling" converter="bigDecimal4DigitsConverter" />
-            <hftl:formField label="#{messages['billingCycle.calendar']}" field="calendar" valueLabelField="code" required="true" listBean="#{calendarBean}" />
-            <hftl:formField label="#{messages['counterTemplate.ceilingExpressionEl']}" field="ceilingExpressionEl" textArea="true" rows="1" maxlength="2000" />
-            <hftl:formField label="#{messages['counterTemplate.notificationLevels']}" field="notificationLevels" />
-            <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
+            <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true"/>
+            <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description"/>
+            <hftl:formField label="#{messages['usageChargeTemplate.unityDescription']}" field="unityDescription"/>
+            <hftl:formField label="#{messages['counterTemplate.isAccumulator']}" field="accumulator"
+                            listenerUpdate="counterTemplatId:counterType counterTemplatId:counterLevel counterTemplatId:ceiling counterTemplatId:ceilingExpressionEl"
+                            actionListenerBean="#{counterTemplateBean}"
+                            actionListenerMethod="updateCounterTypeAndCounterLevel"/>
+            <hftl:formField label="#{messages['counterTemplate.counterType']}" id="counterType" field="counterType" required="true"/>
+            <hftl:formField label="#{messages['billingCycle.calendar']}" field="calendar" valueLabelField="code" required="true" listBean="#{calendarBean}"/>
+            <hftl:formField label="#{messages['counterTemplate.counterLevel']}" id="counterLevel" field="counterLevel" required="true"
+                            listValues="#{counterTemplateBean.getCounterLevels()}"/>
+            <hftl:formField label="#{messages['counterTemplate.level']}" id="ceiling" field="ceiling" converter="bigDecimal4DigitsConverter"
+                            disabled="#{counterTemplateBean.entity.accumulator}"/>
+            <hftl:formField label="#{messages['counterTemplate.ceilingExpressionEl']}" id="ceilingExpressionEl" field="ceilingExpressionEl" textArea="true" rows="1"
+                            maxlength="2000"
+                            disabled="#{counterTemplateBean.entity.accumulator}"/>
+            <hftl:formField label="#{messages['counterTemplate.notificationLevels']}" field="notificationLevels"/>
+            <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true"/>
 
         </hftl:formPanel>
 

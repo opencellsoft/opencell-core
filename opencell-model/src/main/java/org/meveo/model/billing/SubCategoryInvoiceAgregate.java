@@ -384,10 +384,11 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      */
     @Override
     public int hashCode() {
-        if (id != null)
+        if (id != null) {
             return id.intValue();
-        if (invoiceSubCategory != null)
+        } else if (invoiceSubCategory != null) {
             return invoiceSubCategory.hashCode();
+        }
 
         final int prime = 31;
         int result = super.hashCode();
