@@ -1,10 +1,12 @@
 {
-	"subscription": "RS_FULL_212_SUB_SERVICE_MULTI",
-	"servicesToActivate": {
-		"service": {
-			"code": "RS_BASE_SERVICE1",
-			"quantity": "5",
-			"subscriptionDate": "2016-12-08"
-		}
-	}
+    "subscription": "RS_FULL_212_SUB_SERVICE_MULTI",
+    "servicesToActivate": {
+        "service": [
+            {
+                "code": "RS_BASE_SERVICE1",
+                "quantity": "5",
+                "subscriptionDate": "2016-12-08"
+            }
+        ]
+    }
 }

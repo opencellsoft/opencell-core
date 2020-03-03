@@ -145,10 +145,6 @@ public class CommonStepDefinition implements En {
                     case "DEL":
                         response = RestApiUtils.delete(api + base.getField(field).get(), bodyRequest);
                         break;
-                    case "Find":
-                    case "find":
-                        response = RestApiUtils.get(api + base.getField(field).get(), bodyRequest);
-                        break;
                     }
                     ActionStatus actionStatus = null;
                     try {
@@ -224,7 +220,7 @@ public class CommonStepDefinition implements En {
             String responseStr = JsonParser.writeValueAsString(responseObj);
             String expectedStr = getBodyRequest();
 
-            JSONAssert.assertEquals(expectedStr, responseStr, JSONCompareMode.LENIENT);
+            JSONAssert.assertEquals(expectedStr, responseStr, JSONCompareMode.STRICT_ORDER);
         });
         And("^Validate that the statusCode is \"([^\"]*)\"$", (String statusCode) -> {
             assertNotNull(base.getResponse());

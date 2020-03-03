@@ -1,6 +1,10 @@
 {
     "code": "RS_FULL_212_SUB_SERVICE_MULTI",
     "auditable": {
+        "creator": "opencell.superadmin",
+        "created": 1582798572731,
+        "updated": 1582887896133,
+        "updater": "opencell.admin"
     },
     "auditableField": [
         {
@@ -9,7 +13,7 @@
             "changeOrigin": "API",
             "originName": "/billing/subscription/createOrUpdate",
             "currentState": "CREATED",
-                "actor": "opencell.superadmin"
+            "actor": "opencell.superadmin"
         }
     ],
     "userAccount": "RS_BASE_UA",
@@ -66,7 +70,7 @@
                         "sellerCode": "SELLER_FR",
                         "userAccountCode": "RS_BASE_UA"
                     }
-               ],
+                ],
                 "usageChargeInstance": [
                     {
                         "code": "RS_BASE_USAGE1",
