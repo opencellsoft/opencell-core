@@ -1,4 +1,4 @@
-@full @test
+@full
 Feature: Service workflow - service single activation
 
   @admin

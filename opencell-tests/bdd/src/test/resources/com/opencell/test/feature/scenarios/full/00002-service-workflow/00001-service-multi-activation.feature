@@ -1,4 +1,4 @@
-@full @test
+@full
 Feature: Service workflow - service multi activation
 
   @admin
