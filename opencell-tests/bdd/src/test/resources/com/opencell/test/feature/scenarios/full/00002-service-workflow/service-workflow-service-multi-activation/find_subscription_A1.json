@@ -9,7 +9,7 @@
             "changeOrigin": "API",
             "originName": "/billing/subscription/createOrUpdate",
             "currentState": "CREATED",
-            "actor": "opencell.superadmin"
+            "actor": "opencell.admin"
         },
         {
             "entityClass": "org.meveo.model.billing.Subscription",
@@ -18,7 +18,7 @@
             "originName": "/billing/subscription/activateServices",
             "previousState": "CREATED",
             "currentState": "ACTIVE",
-            "actor": "opencell.superadmin"
+            "actor": "opencell.admin"
         }
     ],
     "userAccount": "RS_BASE_UA",
@@ -38,7 +38,7 @@
                         "changeOrigin": "API",
                         "originName": "/billing/subscription/instantiateServices",
                         "currentState": "INACTIVE",
-                        "actor": "opencell.superadmin"
+                        "actor": "opencell.admin"
                     },
                     {
                         "entityClass": "org.meveo.model.billing.ServiceInstance",
@@ -47,7 +47,7 @@
                         "originName": "/billing/subscription/activateServices",
                         "previousState": "INACTIVE",
                         "currentState": "ACTIVE",
-                        "actor": "opencell.superadmin"
+                        "actor": "opencell.admin"
                     }
                 ],
                 "status": "ACTIVE",
@@ -114,7 +114,7 @@
                         "changeOrigin": "API",
                         "originName": "/billing/subscription/activateServices",
                         "currentState": "INACTIVE",
-                        "actor": "opencell.superadmin"
+                        "actor": "opencell.admin"
                     },
                     {
                         "entityClass": "org.meveo.model.billing.ServiceInstance",
@@ -123,7 +123,7 @@
                         "originName": "/billing/subscription/activateServices",
                         "previousState": "INACTIVE",
                         "currentState": "ACTIVE",
-                        "actor": "opencell.superadmin"
+                        "actor": "opencell.admin"
                     }
                 ],
                 "status": "ACTIVE",

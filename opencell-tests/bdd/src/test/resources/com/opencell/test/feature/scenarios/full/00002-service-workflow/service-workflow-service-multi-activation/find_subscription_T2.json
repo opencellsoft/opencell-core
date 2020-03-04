@@ -1,18 +1,13 @@
 {
     "code": "RS_BASE_SERVICE2",
-    "description": "*_SERVICE2",
     "auditable": {
-        "creator": "opencell.superadmin",
-        "created": 1582798572731,
-        "updated": 1582887896133,
-        "updater": "opencell.admin"
     },
     "auditableField": [
         {
             "entityClass": "org.meveo.model.billing.ServiceInstance",
             "fieldName": "status",
             "changeOrigin": "API",
-            "originName": "SubscriptionWs/activateServices",
+            "originName": "/billing/subscription/activateServices",
             "currentState": "INACTIVE",
             "actor": "opencell.admin"
         },
@@ -20,7 +15,7 @@
             "entityClass": "org.meveo.model.billing.ServiceInstance",
             "fieldName": "status",
             "changeOrigin": "API",
-            "originName": "SubscriptionWs/activateServices",
+            "originName": "/billing/subscription/activateServices",
             "previousState": "INACTIVE",
             "currentState": "ACTIVE",
             "actor": "opencell.admin"
@@ -29,7 +24,7 @@
             "entityClass": "org.meveo.model.billing.ServiceInstance",
             "fieldName": "status",
             "changeOrigin": "API",
-            "originName": "SubscriptionWs/terminateServices",
+            "originName": "/billing/subscription/terminateServices",
             "previousState": "ACTIVE",
             "currentState": "TERMINATED",
             "actor": "opencell.admin"
@@ -37,27 +32,21 @@
     ],
     "status": "TERMINATED",
     "quantity": 2.000000000000,
-    "terminationReason": "TERM_REASON_3",
+    "terminationReason": "TERM_REASON_2",
     "recurringChargeInstance": [
         {
-            "code": "*_REC1",
-            "description": "*-Forfait Test",
             "auditable": {
             },
             "status": "TERMINATED",
-            "sellerCode": "SELLER_FR",
-            "userAccountCode": "*_UA"
+            "sellerCode": "SELLER_FR"
         }
     ],
     "usageChargeInstance": [
         {
-            "code": "*_USAGE1",
-            "description": "*-Forfait Test",
             "auditable": {
             },
             "status": "TERMINATED",
-            "sellerCode": "SELLER_FR",
-            "userAccountCode": "*_UA"
+            "sellerCode": "SELLER_FR"
         }
     ],
     "serviceRenewal": {

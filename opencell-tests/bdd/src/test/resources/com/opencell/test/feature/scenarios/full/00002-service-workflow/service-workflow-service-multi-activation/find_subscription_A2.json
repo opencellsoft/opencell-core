@@ -7,7 +7,7 @@
             "entityClass": "org.meveo.model.billing.Subscription",
             "fieldName": "status",
             "changeOrigin": "API",
-            "originName": "SubscriptionWs/create",
+            "originName": "/billing/subscription/createOrUpdate",
             "currentState": "CREATED",
             "actor": "opencell.admin"
         },
@@ -15,7 +15,7 @@
             "entityClass": "org.meveo.model.billing.Subscription",
             "fieldName": "status",
             "changeOrigin": "API",
-            "originName": "SubscriptionWs/activateServices",
+            "originName": "/billing/subscription/activateServices",
             "previousState": "CREATED",
             "currentState": "ACTIVE",
             "actor": "opencell.admin"
@@ -36,7 +36,7 @@
                         "entityClass": "org.meveo.model.billing.ServiceInstance",
                         "fieldName": "status",
                         "changeOrigin": "API",
-                        "originName": "/billing/subscription/activateServices",
+                        "originName": "/billing/subscription/instantiateServices",
                         "currentState": "INACTIVE",
                         "actor": "opencell.admin"
                     },
@@ -53,7 +53,7 @@
                         "entityClass": "org.meveo.model.billing.ServiceInstance",
                         "fieldName": "status",
                         "changeOrigin": "API",
-                        "originName": "SubscriptionWs/terminateServices",
+                        "originName": "/billing/subscription/terminateServices",
                         "previousState": "ACTIVE",
                         "currentState": "TERMINATED",
                         "actor": "opencell.admin"
@@ -61,7 +61,7 @@
                 ],
                 "status": "TERMINATED",
                 "quantity": 1.000000000000,
-                "terminationReason": "TERM_REASON_3",
+                "terminationReason": "TERM_REASON_1",
                 "recurringChargeInstance": [
                     {
                         "code": "RS_BASE_REC1",
@@ -122,7 +122,7 @@
                         "entityClass": "org.meveo.model.billing.ServiceInstance",
                         "fieldName": "status",
                         "changeOrigin": "API",
-                        "originName": "SubscriptionWs/activateServices",
+                        "originName": "/billing/subscription/activateServices",
                         "currentState": "INACTIVE",
                         "actor": "opencell.admin"
                     },
@@ -130,7 +130,7 @@
                         "entityClass": "org.meveo.model.billing.ServiceInstance",
                         "fieldName": "status",
                         "changeOrigin": "API",
-                        "originName": "SubscriptionWs/activateServices",
+                        "originName": "/billing/subscription/activateServices",
                         "previousState": "INACTIVE",
                         "currentState": "ACTIVE",
                         "actor": "opencell.admin"
@@ -176,7 +176,7 @@
                         "entityClass": "org.meveo.model.billing.ServiceInstance",
                         "fieldName": "status",
                         "changeOrigin": "API",
-                        "originName": "SubscriptionWs/instantiateServices",
+                        "originName": "/billing/subscription/instantiateServices",
                         "currentState": "INACTIVE",
                         "actor": "opencell.admin"
                     },
@@ -184,7 +184,7 @@
                         "entityClass": "org.meveo.model.billing.ServiceInstance",
                         "fieldName": "status",
                         "changeOrigin": "API",
-                        "originName": "SubscriptionWs/activateServices",
+                        "originName": "/billing/subscription/activateServices",
                         "previousState": "INACTIVE",
                         "currentState": "ACTIVE",
                         "actor": "opencell.admin"

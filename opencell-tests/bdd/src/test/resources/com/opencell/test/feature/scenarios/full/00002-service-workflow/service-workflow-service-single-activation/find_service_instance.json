@@ -1,4 +1,76 @@
 {
-	"subscriptionCode": "RS_FULL_212_SUB_SERVICE_WFL",
-	"serviceInstanceCode": "RS_BASE_SERVICE1"
+    "code": "RS_BASE_SERVICE1",
+    "description": "RS_BASE_SERVICE1",
+    "auditable": {
+    },
+    "auditableField": [
+        {
+            "entityClass": "org.meveo.model.billing.ServiceInstance",
+            "fieldName": "status",
+            "changeOrigin": "API",
+            "originName": "/billing/subscription/instantiateServices",
+            "currentState": "INACTIVE",
+            "actor": "opencell.admin"
+        },
+        {
+            "entityClass": "org.meveo.model.billing.ServiceInstance",
+            "fieldName": "status",
+            "changeOrigin": "API",
+            "originName": "/billing/subscription/activateServices",
+            "previousState": "INACTIVE",
+            "currentState": "ACTIVE",
+            "actor": "opencell.admin"
+        }
+    ],
+    "status": "ACTIVE",
+    "quantity": 1.000000000000,
+    "recurringChargeInstance": [
+        {
+            "code": "RS_BASE_REC1",
+            "description": "RS_BASE-Forfait Test",
+            "auditable": {
+            },
+            "status": "ACTIVE",
+            "sellerCode": "SELLER_FR",
+            "userAccountCode": "RS_BASE_UA"
+        }
+    ],
+    "subscriptionChargeInstance": [
+        {
+            "code": "RS_BASE_OS1",
+            "description": "RS_BASE-Forfait Test",
+            "auditable": {
+            },
+            "status": "CLOSED",
+            "sellerCode": "SELLER_FR",
+            "userAccountCode": "RS_BASE_UA"
+        }
+    ],
+    "terminationChargeInstance": [
+        {
+            "code": "RS_BASE_OST1",
+            "description": "RS_BASE-Termination Test",
+            "auditable": {
+            },
+            "status": "INACTIVE",
+            "sellerCode": "SELLER_FR",
+            "userAccountCode": "RS_BASE_UA"
+        }
+    ],
+    "usageChargeInstance": [
+        {
+            "code": "RS_BASE_USAGE1",
+            "description": "RS_BASE-Forfait Test",
+            "auditable": {
+            },
+            "status": "ACTIVE",
+            "sellerCode": "SELLER_FR",
+            "userAccountCode": "RS_BASE_UA"
+        }
+    ],
+    "serviceRenewal": {
+        "initialTermType": "RECURRING",
+        "autoRenew": false,
+        "extendAgreementPeriodToSubscribedTillDate": false
+    }
 }

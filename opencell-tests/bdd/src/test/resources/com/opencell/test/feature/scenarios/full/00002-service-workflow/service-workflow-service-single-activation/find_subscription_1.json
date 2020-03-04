@@ -1,11 +1,13 @@
 {
-    "code": "RS_FULL_212_SUB_SERVICE_MULTI",
+    "code": "RS_FULL_212_SUB_SERVICE_WFL",
+    "auditable": {
+    },
     "auditableField": [
         {
             "entityClass": "org.meveo.model.billing.Subscription",
             "fieldName": "status",
             "changeOrigin": "API",
-            "originName": "SubscriptionWs/create",
+            "originName": "/billing/subscription/createOrUpdate",
             "currentState": "CREATED",
             "actor": "opencell.admin"
         }
@@ -18,38 +20,40 @@
             {
                 "code": "RS_BASE_SERVICE1",
                 "description": "RS_BASE_SERVICE1",
-                "auditableFields": {
-                    "auditableField": {
+                "auditable": {
+                },
+                "auditableField": [
+                    {
                         "entityClass": "org.meveo.model.billing.ServiceInstance",
                         "fieldName": "status",
                         "changeOrigin": "API",
-                        "originName": "SubscriptionWs/instantiateServices",
+                        "originName": "/billing/subscription/instantiateServices",
                         "currentState": "INACTIVE",
                         "actor": "opencell.admin"
                     }
-                },
+                ],
                 "status": "INACTIVE",
-                "quantity": "1.000000000000",
-                "recurringChargeInstances": {
-                    "recurringChargeInstance": {
+                "quantity": 1.000000000000,
+                "recurringChargeInstance": [
+                    {
                         "code": "RS_BASE_REC1",
                         "description": "RS_BASE-Forfait Test",
                         "status": "INACTIVE",
                         "sellerCode": "SELLER_FR",
                         "userAccountCode": "RS_BASE_UA"
                     }
-                },
-                "subscriptionChargeInstances": {
-                    "subscriptionChargeInstance": {
+                ],
+                "subscriptionChargeInstance": [
+                    {
                         "code": "RS_BASE_OS1",
                         "description": "RS_BASE-Forfait Test",
                         "status": "INACTIVE",
                         "sellerCode": "SELLER_FR",
                         "userAccountCode": "RS_BASE_UA"
                     }
-                },
-                "terminationChargeInstances": {
-                    "terminationChargeInstance": {
+                ],
+                "terminationChargeInstance": [
+                    {
                         "code": "RS_BASE_OST1",
                         "description": "RS_BASE-Termination Test",
                         "auditable": {
@@ -58,9 +62,9 @@
                         "sellerCode": "SELLER_FR",
                         "userAccountCode": "RS_BASE_UA"
                     }
-                },
-                "usageChargeInstances": {
-                    "usageChargeInstance": {
+                ],
+                "usageChargeInstance": [
+                    {
                         "code": "RS_BASE_USAGE1",
                         "description": "RS_BASE-Forfait Test",
                         "auditable": {
@@ -69,22 +73,22 @@
                         "sellerCode": "SELLER_FR",
                         "userAccountCode": "RS_BASE_UA"
                     }
-                },
+                ],
                 "serviceRenewal": {
                     "initialTermType": "RECURRING",
-                    "autoRenew": "false",
-                    "extendAgreementPeriodToSubscribedTillDate": "false"
+                    "autoRenew": false,
+                    "extendAgreementPeriodToSubscribedTillDate": false
                 }
             }
         ]
     },
-    "renewed": "false",
+    "renewed": false,
     "renewalRule": {
         "initialTermType": "RECURRING",
-        "autoRenew": "false",
-        "extendAgreementPeriodToSubscribedTillDate": "false"
+        "autoRenew": false,
+        "extendAgreementPeriodToSubscribedTillDate": false
     },
     "seller": "SELLER_FR",
-    "autoEndOfEngagement": "false",
-    "electronicBilling": "false"
+    "autoEndOfEngagement": false,
+    "electronicBilling": false
 }

@@ -62,10 +62,10 @@ Feature: Service workflow - service multi activation
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                                                                                                                            | title                                                            | dto                                     | api                                       | action | statusCode | status  | errorCode | message |
-      | scenarios/full/00002-service-workflow/service-workflow-service-multi-activation/terminate_service_1.json                                            | Terminate Service1                                               | TerminateSubscriptionServicesRequestDto | /billing/subscription/terminateServices   | POST   |        200 | SUCCESS |           |         |
-      | scenarios/full/00002-service-workflow/service-workflow-service-multi-activation/instantiate_service_1_again.json                                    | Instantiate Service 1 again                                      | InstantiateServicesRequestDto           | /billing/subscription/instantiateServices | POST   |        200 | SUCCESS |           |         |
-      | scenarios/full/00002-service-workflow/service-workflow-service-multi-activation/activate_service_1_again_change_quantity_and_subscription_date.json | Activate service 1 again - change quantity and subscription date | ActivateServicesRequestDto              | /billing/subscription/activateServices    | POST   |        200 | SUCCESS |           |         |
+      | jsonFile                                                                                                                                            | title                                                            | dto                                     | api                                       | action | statusCode | status  | errorCode                | message                                                                          |
+      | scenarios/full/00002-service-workflow/service-workflow-service-multi-activation/terminate_service_1.json                                            | Terminate Service1                                               | TerminateSubscriptionServicesRequestDto | /billing/subscription/terminateServices   | POST   |        200 | SUCCESS |                          |                                                                                  |
+      | scenarios/full/00002-service-workflow/service-workflow-service-multi-activation/instantiate_service_1_again.json                                    | Instantiate Service 1 again                                      | InstantiateServicesRequestDto           | /billing/subscription/instantiateServices | POST   |        200 | SUCCESS |                          |                                                                                  |
+      | scenarios/full/00002-service-workflow/service-workflow-service-multi-activation/activate_service_1_again_change_quantity_and_subscription_date.json | Activate service 1 again - change quantity and subscription date | ActivateServicesRequestDto              | /billing/subscription/activateServices    | POST   |        200 | SUCCESS |                          |                                                                                  |
 
   Scenario Outline: <title>
     Given The entity has the following information "<jsonFile>"
@@ -128,7 +128,7 @@ Feature: Service workflow - service multi activation
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                                                                                  | title                | api                                                                  | action | statusCode | status  | errorCode | message | entity       |
+      | jsonFile                                                                                                  | title                | api                                                                  | action | statusCode | status  | errorCode | message | entity                                   |
       | scenarios/full/00002-service-workflow/service-workflow-service-multi-activation/find_subscription_T1.json | Find subscription T1 | /billing/subscription?subscriptionCode=RS_FULL_212_SUB_SERVICE_MULTI | GET    |        200 | SUCCESS |           |         | subscription.services.serviceInstance[0] |
 
   Scenario Outline: <title>
@@ -152,5 +152,5 @@ Feature: Service workflow - service multi activation
     And The errorCode  is "<errorCode>"
 
     Examples: 
-      | jsonFile                                                                                                  | title                | api                                                                  | action | statusCode | status  | errorCode | message | entity       |
-      | scenarios/full/00002-service-workflow/service-workflow-service-multi-activation/find_subscription_T2.json | Find subscription T2 | /billing/subscription?subscriptionCode=RS_FULL_212_SUB_SERVICE_MULTI | GET    |        200 | SUCCESS |           |         | subscription.services.serviceInstance[0] |
+      | jsonFile                                                                                                  | title                | api                                                                  | action | statusCode | status  | errorCode | message | entity                                   |
+      | scenarios/full/00002-service-workflow/service-workflow-service-multi-activation/find_subscription_T2.json | Find subscription T2 | /billing/subscription?subscriptionCode=RS_FULL_212_SUB_SERVICE_MULTI | GET    |        200 | SUCCESS |           |         | subscription.services.serviceInstance[1] |

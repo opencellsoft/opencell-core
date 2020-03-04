@@ -1,10 +1,6 @@
 {
     "code": "RS_FULL_212_SUB_SERVICE_MULTI",
     "auditable": {
-        "creator": "opencell.superadmin",
-        "created": 1582798572731,
-        "updated": 1582887896133,
-        "updater": "opencell.admin"
     },
     "auditableField": [
         {
@@ -13,7 +9,7 @@
             "changeOrigin": "API",
             "originName": "/billing/subscription/createOrUpdate",
             "currentState": "CREATED",
-            "actor": "opencell.superadmin"
+            "actor": "opencell.admin"
         }
     ],
     "userAccount": "RS_BASE_UA",
@@ -33,11 +29,11 @@
                         "changeOrigin": "API",
                         "originName": "/billing/subscription/instantiateServices",
                         "currentState": "INACTIVE",
-                        "actor": "opencell.superadmin"
+                        "actor": "opencell.admin"
                     }
                 ],
                 "status": "INACTIVE",
-                "quantity": 3.000000000000,
+                "quantity": 1.000000000000,
                 "recurringChargeInstance": [
                     {
                         "code": "RS_BASE_REC1",
