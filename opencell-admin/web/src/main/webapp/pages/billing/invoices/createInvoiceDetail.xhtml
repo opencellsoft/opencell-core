@@ -171,7 +171,7 @@
                                         <p:column>
                                             <hftl:decorateFormField fieldId="usageDate">
                                                 <p:calendar id="usageDate" value="#{rated.usageDate}" pattern="#{paramBean.dateFormat}" size="10">
-                                                    <p:ajax event="dateSelect" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                                    <p:ajax event="dateSelect" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
                                                         update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
                                                 </p:calendar>
                                             </hftl:decorateFormField>
@@ -180,7 +180,7 @@
 
 
                                             <h:inputText value="#{rated.description}" size="25">
-                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
                                                     update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
                                             </h:inputText>
 
@@ -188,50 +188,50 @@
                                         <p:column>
                                             <p:inputText value="#{rated.unitAmountWithoutTax}" label="#{messages['ratedTransaction.unitAmountWithoutTax']}" size="10">
                                                 <p:keyFilter mask="num" />
-                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
                                                     update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
                                             </p:inputText>
                                         </p:column>
                                         <p:column>
                                             <p:inputText value="#{rated.quantity}" size="4" label="#{messages['ratedTransaction.quantity']}">
                                                 <p:keyFilter mask="num" />
-                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
                                                     update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
                                             </p:inputText>
                                         </p:column>
                                         <p:column>
                                             <p:inputText value="#{rated.parameter1}" size="10" label="#{messages['ratedTransaction.param1']}">
-                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
                                                     update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
                                             </p:inputText>
                                         </p:column>
                                         <p:column>
                                             <p:inputText value="#{rated.parameter2}" size="10" label="#{messages['ratedTransaction.param2']}">
-                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
                                                     update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
                                             </p:inputText>
                                         </p:column>
                                         <p:column>
                                             <p:inputText value="#{rated.parameter3}" size="10" label="#{messages['ratedTransaction.param3']}">
-                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
                                                     update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
                                             </p:inputText>
                                         </p:column>
                                         <p:column>
                                             <p:calendar value="#{rated.startDate}" size="10" pattern="#{paramBean.dateFormat}" label="#{messages['ratedTransaction.startDate']}">
-                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
                                                     update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
                                             </p:calendar>
                                         </p:column>
                                         <p:column>
                                             <p:calendar value="#{rated.endDate}" size="10" pattern="#{paramBean.dateFormat}" label="#{messages['ratedTransaction.endDate']}" >
-                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
                                                     update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
                                             </p:calendar>
                                         </p:column>
                                         <p:column>
                                             <p:inputText value="#{rated.orderNumber}" size="10" label="#{messages['order.number']}">
-                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
+                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
                                                     update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
                                             </p:inputText>
                                         </p:column>
@@ -291,21 +291,21 @@
 
                                         <p:column>
                                             <p:inputText id="description" value="#{subCat.description}">
-                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(subCat)}"
+                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(subCat)}"
                                                     update="subCategories :formId:tabView:invoiceSummary"></p:ajax>
                                             </p:inputText>
                                         </p:column>
                                         <p:column>
                                             <p:inputText value="#{subCat.amountWithoutTax}">
                                                 <p:keyFilter mask="num" />
-                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(subCat)}"
+                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(subCat)}"
                                                     update="subCategories :formId:tabView:invoiceSummary"></p:ajax>
                                             </p:inputText>
                                         </p:column>
                                         <p:column>
                                             <p:inputText value="#{subCat.amountWithTax}">
                                                 <p:keyFilter mask="num" />
-                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmountWithoutTax(subCat)}"
+                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(subCat)}"
                                                     update="subCategories :formId:tabView:invoiceSummary"></p:ajax>
                                             </p:inputText>
                                         </p:column>
@@ -391,7 +391,7 @@
 
                                 <p:commandButton value="#{messages['action.invoice.addLine']}" style="margin-top:10px" process="addDetailInvoiceLine"
                                     action="#{creationInvoiceBean.addDetailInvoiceLine()}"
-                                    update=":formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary :formId:messages">
+                                    update=":formId:messages :formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary">
                                 </p:commandButton>
                             </h:panelGrid>
                         </p:panel>
