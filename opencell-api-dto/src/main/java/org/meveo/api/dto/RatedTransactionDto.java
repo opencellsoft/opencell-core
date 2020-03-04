@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -69,6 +69,15 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
 
     /** The quantity. */
     private BigDecimal quantity;
+
+    /** The quantity. */
+    private BigDecimal inputQuantity;
+
+    /** The raw amount without tax. */
+    private BigDecimal rawAmountWithoutTax;
+
+    /** The raw amount with tax. */
+    private BigDecimal rawAmountWithTax;
 
     /** The amount without tax. */
     @XmlElement(required = true)
@@ -190,6 +199,10 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
         if (ratedTransaction.getSeller() != null) {
             this.setSellerCode(ratedTransaction.getSeller().getCode());
         }
+
+        this.setInputQuantity(ratedTransaction.getInputQuantity());
+        this.setRawAmountWithoutTax(ratedTransaction.getRawAmountWithoutTax());
+        this.setRawAmountWithTax(ratedTransaction.getRawAmountWithTax());
         taxClassCode = ratedTransaction.getTaxClass() != null ? ratedTransaction.getTaxClass().getCode() : null;
     }
 
@@ -302,6 +315,60 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
      */
     public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
+    }
+
+    /**
+     * Gets the quantity.
+     *
+     * @return the quantity
+     */
+    public BigDecimal getInputQuantity() {
+        return inputQuantity;
+    }
+
+    /**
+     * Sets the inputQuantity.
+     *
+     * @param inputQuantity the new quantity
+     */
+    public void setInputQuantity(BigDecimal inputQuantity) {
+        this.inputQuantity = inputQuantity;
+    }
+
+    /**
+     * Gets the raw amount without tax.
+     *
+     * @return the raw amount without tax
+     */
+    public BigDecimal getRawAmountWithoutTax() {
+        return rawAmountWithoutTax;
+    }
+
+    /**
+     * Sets the raw amount without tax.
+     *
+     * @param rawAmountWithoutTax the new raw amount without tax
+     */
+    public void setRawAmountWithoutTax(BigDecimal rawAmountWithoutTax) {
+        this.rawAmountWithoutTax = rawAmountWithoutTax;
+    }
+
+    /**
+     * Gets the raw amount with tax.
+     *
+     * @return the raw amount with tax
+     */
+    public BigDecimal getRawAmountWithTax() {
+        return rawAmountWithTax;
+    }
+
+    /**
+     * Sets the raw amount with tax.
+     *
+     * @param rawAmountWithTax the new raw amount with tax
+     */
+    public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
+        this.rawAmountWithTax = rawAmountWithTax;
     }
 
     /**
