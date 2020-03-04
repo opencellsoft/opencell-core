@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEntityDto;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.WalletOperation;
@@ -160,6 +161,10 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
      */
     private Long walletId;
 
+
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
+
     /**
      * Charge tax class code
      */
@@ -178,6 +183,9 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
      * @param walletOperation the WalletOperation entity
      */
     public WalletOperationDto(WalletOperation walletOperation) {
+        this(walletOperation, null);
+    }
+    public WalletOperationDto(WalletOperation walletOperation, CustomFieldsDto customFields) {
 
         code = walletOperation.getCode();
         description = walletOperation.getDescription();
@@ -222,6 +230,7 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         rawAmountWithoutTax = walletOperation.getRawAmountWithoutTax();
         rawAmountWithTax = walletOperation.getRawAmountWithTax();
         updated = walletOperation.getUpdated();
+        this.customFields = customFields;
         taxClassCode = walletOperation.getTaxClass() != null ? walletOperation.getTaxClass().getCode() : null;
     }
 
@@ -883,6 +892,24 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
      */
     public void setTaxClassCode(String taxClassCode) {
         this.taxClassCode = taxClassCode;
+    }
+
+    /**
+     * Gets the custom fields.
+     *
+     * @return the custom fields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the new custom fields
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
     }
 
     @Override
