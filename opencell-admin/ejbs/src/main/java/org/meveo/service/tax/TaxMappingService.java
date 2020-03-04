@@ -250,7 +250,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
                 TaxMapping taxMapping = findBestTaxMappingMatch(taxCategory, taxClass, seller, billingAccount, date);
 
                 if (taxMapping.getTaxEL() != null) {
-                    tax = evaluateTaxExpression(taxMapping.getTaxEL(), seller, billingAccount, date); // TODO AKK check parameters
+                    tax = evaluateTaxExpression(taxMapping.getTaxEL(), seller, billingAccount, taxCategory, taxClass, date);
                 }
 
                 if (taxMapping.getTaxScript() != null) {
@@ -324,7 +324,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
         for (TaxMapping taxMapping : taxMappings) {
 
-            if (taxMapping.getFilterEL() == null || evaluateBooleanExpression(taxMapping.getFilterEL(), seller, billingAccount, applicationDate)) {
+            if (taxMapping.getFilterEL() == null || evaluateBooleanExpression(taxMapping.getFilterEL(), seller, billingAccount, taxCategory, taxClass, applicationDate)) {
                 return taxMapping;
             }
         }
@@ -340,16 +340,18 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @param expression Expression to evaluate
      * @param seller Seller
      * @param billingAccount Billing account
+     * @param taxClass Tax category
+     * @param taxCategory Tax class
      * @param date Date
      * @return Tax
      */
-    private Tax evaluateTaxExpression(String expression, Seller seller, BillingAccount billingAccount, Date date) throws BusinessException {
+    private Tax evaluateTaxExpression(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date) throws BusinessException {
 
         if (StringUtils.isBlank(expression)) {
             return null;
         }
 
-        Map<Object, Object> userMap = constructElContext(expression, seller, billingAccount, date);
+        Map<Object, Object> userMap = constructElContext(expression, seller, billingAccount, taxCategory, taxClass, date);
 
         String taxCode = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
 
@@ -373,17 +375,19 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @param expression Expression to evaluate
      * @param seller Seller
      * @param billingAccount Billing account
+     * @param taxCategory Tax category
+     * @param taxClass Tax class
      * @param date Date
      * @return true/false True if expression is matched
      * @throws BusinessException Business exception
      */
-    private boolean evaluateBooleanExpression(String expression, Seller seller, BillingAccount billingAccount, Date date) throws BusinessException {
+    private boolean evaluateBooleanExpression(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date) throws BusinessException {
 
         if (StringUtils.isBlank(expression)) {
             return true;
         }
 
-        Map<Object, Object> userMap = constructElContext(expression, seller, billingAccount, date);
+        Map<Object, Object> userMap = constructElContext(expression, seller, billingAccount, taxCategory, taxClass, date);
 
         return ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
 
@@ -395,10 +399,12 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @param expression EL expression
      * @param seller Seller
      * @param billingAccount Billing account
+     * @param taxCategory Tax category
+     * @param taxClass Tax class
      * @param date Date
      * @return A map of variables
      */
-    private Map<Object, Object> constructElContext(String expression, Seller seller, BillingAccount billingAccount, Date date) {
+    private Map<Object, Object> constructElContext(String expression, Seller seller, BillingAccount billingAccount, TaxCategory taxCategory, TaxClass taxClass, Date date) {
 
         Map<Object, Object> userMap = new HashMap<Object, Object>();
 
@@ -417,6 +423,12 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         }
         if (expression.indexOf("date") >= 0) {
             userMap.put("date", date);
+        }
+        if (expression.indexOf("taxCategory") >= 0) {
+            userMap.put("taxCategory", taxCategory);
+        }
+        if (expression.indexOf("taxClass") >= 0) {
+            userMap.put("taxClass", taxClass);
         }
 
         return userMap;
