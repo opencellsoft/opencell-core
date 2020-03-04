@@ -155,8 +155,6 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         for (Future<String> futureItsNow : asyncReturns) {
             futureItsNow.get();
         }
-
-        walletOperationService.updateAggregatedWalletOperations(invoicingDate);
     }
 
 }
