@@ -35,16 +35,14 @@ public class InvoiceSubCategoryDto extends BusinessEntityDto {
 
     /** The custom fields. */
     private CustomFieldsDto customFields;
-    
-    private String taxScriptScode;
 
     /** The occ template code. */
     @XmlElement(required = true)
     private String occTemplateCode;
 
     /** The occ template negative code. */
-    private String occTemplateNegativeCode;   
-    
+    private String occTemplateNegativeCode;
+
     /**
      * Instantiates a new invoice sub category dto.
      */
@@ -64,17 +62,15 @@ public class InvoiceSubCategoryDto extends BusinessEntityDto {
         if (invoiceSubCategory.getAccountingCode() != null) {
             accountingCode = invoiceSubCategory.getAccountingCode().getCode();
         }
-        if(invoiceSubCategory.getTaxScript() != null) {
-            taxScriptScode = invoiceSubCategory.getTaxScript().getCode();
-        }
+
         customFields = customFieldInstances;
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(invoiceSubCategory.getDescriptionI18n()));
-        
-        if(invoiceSubCategory.getOccTemplate() != null) {
+
+        if (invoiceSubCategory.getOccTemplate() != null) {
             occTemplateCode = invoiceSubCategory.getOccTemplate().getCode();
         }
-        
-        if(invoiceSubCategory.getOccTemplateNegative() != null) {
+
+        if (invoiceSubCategory.getOccTemplateNegative() != null) {
             occTemplateNegativeCode = invoiceSubCategory.getOccTemplateNegative().getCode();
         }
     }
@@ -152,18 +148,9 @@ public class InvoiceSubCategoryDto extends BusinessEntityDto {
     }
 
     @Override
-	public String toString() {
-		return "InvoiceSubCategoryDto [invoiceCategory=" + invoiceCategory + ", accountingCode=" + accountingCode + ", languageDescriptions=" + languageDescriptions
-				+ ", customFields=" + customFields + ", taxScriptScode=" + taxScriptScode + "]";
-	}
-
-	public String getTaxScriptScode() {
-		return taxScriptScode;
-	}
-
-	public void setTaxScriptScode(String taxScriptScode) {
-		this.taxScriptScode = taxScriptScode;
-	}
+    public String toString() {
+        return "InvoiceSubCategoryDto [invoiceCategory=" + invoiceCategory + ", accountingCode=" + accountingCode + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
+    }
 
     /**
      * @return the occTemplateCode

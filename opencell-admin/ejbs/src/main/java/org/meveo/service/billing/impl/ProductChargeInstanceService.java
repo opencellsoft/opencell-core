@@ -24,16 +24,19 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ProductChargeTemplate;
+import org.meveo.model.rating.RatingResult;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -50,7 +53,10 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 
     @EJB
     private WalletOperationService walletOperationService;
-    
+
+    @Inject
+    private RatingService ratingService;
+
     /**
      * @param code code of product charge instance
      * @param userAccountId id of user account
@@ -59,13 +65,12 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
     public ProductChargeInstance findByCodeAndSubsription(String code, Long userAccountId) {
         ProductChargeInstance productChargeInstance = null;
         try {
-            log.debug("start of find {} by code (code={}, userAccountId={}) ..", new Object[] {"ProductChargeInstance", code, userAccountId});
+            log.debug("start of find {} by code (code={}, userAccountId={}) ..", new Object[] { "ProductChargeInstance", code, userAccountId });
             QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c");
             qb.addCriterion("c.code", "=", code, true);
             qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
             productChargeInstance = (ProductChargeInstance) qb.getQuery(getEntityManager()).getSingleResult();
-            log.debug("end of find {} by code (code={}, userAccountId={}). Result found={}.",
-                new Object[] {"ProductChargeInstance", code, userAccountId, productChargeInstance != null });
+            log.debug("end of find {} by code (code={}, userAccountId={}). Result found={}.", new Object[] { "ProductChargeInstance", code, userAccountId, productChargeInstance != null });
         } catch (NoResultException nre) {
             log.debug("findByCodeAndSubsription : aucune charge ponctuelle n'a ete trouvee");
         } catch (Exception e) {
@@ -75,8 +80,7 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
     }
 
     /**
-     * Apply product charge instance
-     * v5.1 Candidate apply rating filter to product charge instance
+     * Apply product charge instance v5.1 Candidate apply rating filter to product charge instance
      * 
      * @param productChargeInstance product charge instance
      * @param isVirtual indicates that it is virtual operation
@@ -97,12 +101,13 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 
         UserAccount userAccount = productChargeInstance.getUserAccount();
         Subscription subscription = productChargeInstance.getSubscription();
-        log.debug("Apply product charge. User account {}, subscription {}, charge {}, quantity {}, date {}",
-            userAccount != null ? userAccount.getCode() : null,
-            subscription != null ? subscription.getCode() : null, chargeTemplate.getCode(),
-            productChargeInstance.getQuantity(), productChargeInstance.getChargeDate());
+        log.debug("Apply product charge. User account {}, subscription {}, charge {}, quantity {}, date {}", userAccount != null ? userAccount.getCode() : null, subscription != null ? subscription.getCode() : null,
+            chargeTemplate.getCode(), productChargeInstance.getQuantity(), productChargeInstance.getChargeDate());
 
-        WalletOperation walletOperation = walletOperationService.rateProductApplication(productChargeInstance, isVirtual);
+        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(productChargeInstance, ApplicationTypeEnum.PUNCTUAL, productChargeInstance.getChargeDate(), productChargeInstance.getQuantity(), null, null,
+            null, null, null, null, false, isVirtual);
+
+        WalletOperation walletOperation = ratingResult.getWalletOperation();
         if (!isVirtual) {
             walletOperations = walletOperationService.chargeWalletOperation(walletOperation);
         } else {
@@ -111,7 +116,7 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
         }
         return walletOperations;
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<ProductChargeInstance> findBySubscriptionId(Long subscriptionId) {
         QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"));

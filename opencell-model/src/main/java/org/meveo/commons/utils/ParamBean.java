@@ -647,8 +647,7 @@ public class ParamBean {
     }
 
     /**
-     * Get a production stage property value.
-     * False means that is on development stage.
+     * Get a production stage property value. False means that is on development stage.
      *
      * @return true/false
      */
@@ -656,6 +655,19 @@ public class ParamBean {
         ParamBean bean = ParamBean.getInstance();
         if (bean != null) {
             return Boolean.parseBoolean(bean.getProperty("production.stage", "false"));
+        }
+        return false;
+    }
+
+    /**
+     * Check if Spark is enabled. If not, fields to enter Spark relaetd data will not be shown.
+     *
+     * @return true/false
+     */
+    public boolean isSparkEnabled() {
+        ParamBean bean = ParamBean.getInstance();
+        if (bean != null) {
+            return Boolean.parseBoolean(bean.getProperty("spark.enabled", "false"));
         }
         return false;
     }

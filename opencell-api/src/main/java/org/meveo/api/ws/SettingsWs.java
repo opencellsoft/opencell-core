@@ -15,7 +15,6 @@ import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.InvoiceCategoryDto;
-import org.meveo.api.dto.InvoiceSubCategoryCountryDto;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.OccTemplateDto;
@@ -45,7 +44,6 @@ import org.meveo.api.dto.response.GetDescriptionsResponse;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
 import org.meveo.api.dto.response.GetInvoiceSequenceResponse;
 import org.meveo.api.dto.response.GetInvoiceSequencesResponse;
-import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
 import org.meveo.api.dto.response.GetInvoiceTypeResponse;
 import org.meveo.api.dto.response.GetInvoiceTypesResponse;
@@ -363,25 +361,6 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     ActionStatus removeInvoiceSubCategory(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode);
-
-    // invoice sub category country
-
-    @WebMethod
-    ActionStatus createInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
-
-    @WebMethod
-    ActionStatus updateInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
-
-    @WebMethod
-    GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode,
-            @WebParam(name = "sellersCountry") String sellersCountry, @WebParam(name = "country") String country);
-
-    @WebMethod
-    ActionStatus removeInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode, @WebParam(name = "sellersCountry") String sellersCountry,
-            @WebParam(name = "country") String country);
-
-    @WebMethod
-    ActionStatus createOrUpdateInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
 
     // calendar
 

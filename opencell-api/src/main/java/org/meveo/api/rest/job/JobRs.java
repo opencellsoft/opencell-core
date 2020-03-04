@@ -16,12 +16,9 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
-import org.meveo.api.dto.response.job.JobCategoriesResponseDto;
-import org.meveo.api.dto.response.job.JobExecutionResultResponseDto;
-import org.meveo.api.dto.response.job.JobInstanceListResponseDto;
-import org.meveo.api.dto.response.job.JobInstanceResponseDto;
-import org.meveo.api.dto.response.job.TimerEntityResponseDto;
+import org.meveo.api.dto.response.job.*;
 import org.meveo.api.rest.IBaseRs;
 
 /**
@@ -182,7 +179,35 @@ public interface JobRs extends IBaseRs {
     @GET
     @Path("/jobReport")
     JobExecutionResultResponseDto findJobExecutionResult(@QueryParam("code") String code, @QueryParam("id") Long jobExecutionResultId);
-    
+
+    /**
+     * Job execution list matching a given criteria
+     *
+     * @param query Search criteria
+     * @param fields Data retrieval options/fieldnames separated by a comma
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return List of JobExecutions
+     */
+    @GET
+    @Path("/jobReport/list")
+    JobExecutionResultsResponseDto list(@QueryParam("query") String query, @QueryParam("fields") String fields,
+                                        @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+                                        @DefaultValue("id") @QueryParam("sortBy") String sortBy,
+                                        @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * Job execution list matching a given criteria
+     *
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return List of JobExecutions
+     */
+    @POST
+    @Path("/jobReport/list")
+    JobExecutionResultsResponseDto list(PagingAndFiltering pagingAndFiltering);
+
     /**
      * List job categories
      * 

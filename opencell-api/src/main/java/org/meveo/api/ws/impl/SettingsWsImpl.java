@@ -18,7 +18,6 @@ import org.meveo.api.CustomFieldTemplateApi;
 import org.meveo.api.InvoiceCategoryApi;
 import org.meveo.api.InvoiceSequenceApi;
 import org.meveo.api.InvoiceSubCategoryApi;
-import org.meveo.api.InvoiceSubCategoryCountryApi;
 import org.meveo.api.InvoiceTypeApi;
 import org.meveo.api.LanguageApi;
 import org.meveo.api.MultiLanguageFieldApi;
@@ -43,7 +42,6 @@ import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.InvoiceCategoryDto;
-import org.meveo.api.dto.InvoiceSubCategoryCountryDto;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.OccTemplateDto;
@@ -73,7 +71,6 @@ import org.meveo.api.dto.response.GetDescriptionsResponse;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
 import org.meveo.api.dto.response.GetInvoiceSequenceResponse;
 import org.meveo.api.dto.response.GetInvoiceSequencesResponse;
-import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
 import org.meveo.api.dto.response.GetInvoiceTypeResponse;
 import org.meveo.api.dto.response.GetInvoiceTypesResponse;
@@ -109,7 +106,6 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SettingsWs;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
@@ -140,9 +136,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Inject
     private InvoiceCategoryApi invoiceCategoryApi;
-
-    @Inject
-    private InvoiceSubCategoryCountryApi invoiceSubCategoryCountryApi;
 
     @Inject
     private InvoiceSubCategoryApi invoiceSubCategoryApi;
@@ -363,58 +356,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             invoiceCategoryApi.remove(invoiceCategoryCode);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
-    }
-
-    @Override
-    public ActionStatus createInvoiceSubCategoryCountry(InvoiceSubCategoryCountryDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            invoiceSubCategoryCountryApi.create(postData);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
-    }
-
-    @Override
-    public ActionStatus updateInvoiceSubCategoryCountry(InvoiceSubCategoryCountryDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            invoiceSubCategoryCountryApi.update(postData);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
-    }
-
-    @Override
-    public GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(String invoiceSubCategoryCode, String sellersCountryCode, String buyersCountryCode) {
-        GetInvoiceSubCategoryCountryResponse result = new GetInvoiceSubCategoryCountryResponse();
-
-        try {
-            result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi.find(invoiceSubCategoryCode, sellersCountryCode, buyersCountryCode));
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
-
-        return result;
-    }
-
-    @Override
-    public ActionStatus removeInvoiceSubCategoryCountry(String invoiceSubCategoryCode, String sellersCountryCode, String buyersCountryCode) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, sellersCountryCode, buyersCountryCode);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1199,19 +1140,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             invoiceCategoryApi.createOrUpdate(postData);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
-    }
-
-    @Override
-    public ActionStatus createOrUpdateInvoiceSubCategoryCountry(InvoiceSubCategoryCountryDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            invoiceSubCategoryCountryApi.createOrUpdate(postData);
         } catch (Exception e) {
             processException(e, result);
         }

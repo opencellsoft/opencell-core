@@ -18,15 +18,7 @@
  */
 package org.meveo.model.billing;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.listeners.TradingCountryListener;
-
 import javax.persistence.Cacheable;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -34,12 +26,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.Size;
-import java.util.List;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.listeners.TradingCountryListener;
 
 /**
  * Country enabled in application
@@ -63,25 +58,11 @@ public class TradingCountry extends EnableBusinessCFEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Tax application rules by invoice subcategory
-     */
-    @OneToMany(mappedBy = "tradingCountry", fetch = FetchType.LAZY)
-    private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries;
-
-    /**
      * Country
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id")
     private Country country;
-
-    public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
-        return invoiceSubcategoryCountries;
-    }
-
-    public void setInvoiceSubcategoryCountries(List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
-        this.invoiceSubcategoryCountries = invoiceSubcategoryCountries;
-    }
 
     public Country getCountry() {
         return country;

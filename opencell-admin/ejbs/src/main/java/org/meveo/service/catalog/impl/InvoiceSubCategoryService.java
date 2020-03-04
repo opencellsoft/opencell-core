@@ -42,14 +42,6 @@ import org.meveo.service.base.ValueExpressionWrapper;
 @Stateless
 public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategory> {
 
-    public int getNbInvSubCatNotAssociated() {
-        return ((Long) getEntityManager().createNamedQuery("invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", Long.class).getSingleResult()).intValue();
-    }
-
-    public List<InvoiceSubCategory> getInvoiceSubCatNotAssociated() {
-        return (List<InvoiceSubCategory>) getEntityManager().createNamedQuery("invoiceSubCategory.getInvoiceSubCatNotAssociated", InvoiceSubCategory.class).getResultList();
-    }
-
     @SuppressWarnings("unchecked")
     public List<InvoiceSubCategory> findByInvoiceCategory(InvoiceCategory invoiceCategory) {
         QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");

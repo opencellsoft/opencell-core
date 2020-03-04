@@ -3,8 +3,6 @@ package org.meveo.api.rest.billing.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
 
 import org.meveo.api.billing.MediationApi;
 import org.meveo.api.dto.ActionStatus;
@@ -21,6 +19,7 @@ import org.meveo.commons.utils.StringUtils;
 
 /**
  * Mediation related API REST implementation
+ * 
  * @lastModifiedVersion willBeSetLater
  * 
  * @author Andrius Karpavicius
@@ -50,16 +49,15 @@ public class MediationRsImpl extends BaseRs implements MediationRs {
 
     @Override
     public ChargeCDRResponseDto chargeCdr(String cdr, boolean isVirtual, boolean rateTriggeredEdr, boolean returnWalletOperations, Integer maxDepth) {
-        ChargeCDRResponseDto result = new ChargeCDRResponseDto();
 
         try {
             ChargeCDRDto chargeCDRDto = new ChargeCDRDto(cdr, httpServletRequest.getRemoteAddr(), isVirtual, rateTriggeredEdr, returnWalletOperations, maxDepth);
-            result = mediationApi.chargeCdr(chargeCDRDto);
+            return mediationApi.chargeCdr(chargeCDRDto);
         } catch (Exception e) {
+            ChargeCDRResponseDto result = new ChargeCDRResponseDto();
             processException(e, result.getActionStatus());
+            return result;
         }
-
-        return result;
     }
 
     @Override
