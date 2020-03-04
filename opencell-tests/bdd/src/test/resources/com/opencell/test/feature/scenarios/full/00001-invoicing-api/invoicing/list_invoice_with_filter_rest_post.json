@@ -1,11 +1,11 @@
 {
     "filters": {
-        "billingAccount.customerAccount.customer.code": "${#Project#entityPrefix}_${#TestSuite#index}_INV_CUST1",
+        "billingAccount.customerAccount.customer.code": "RS_FULL_286_INV_CUST1",
         "fromRange invoiceDate": "2050-09-15",
         "toRange invoiceDate": "2050-11-15",
         "fromRange dueDate": "2050-09-15",
         "toRange dueDate": "2050-11-15",
-        "invoiceType.code": "${#Project#entityPrefix}_${#TestSuite#index}_IT_PDFXML",
+        "invoiceType.code": "RS_FULL_286_IT_PDFXML",
         "fromRange amountWithoutTax": 7.99,
         "toRange amountWithoutTax": 10.5
     },

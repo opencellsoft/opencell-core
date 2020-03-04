@@ -9,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.meveo.api.dto.ActionStatus;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -213,6 +215,13 @@ public class CommonStepDefinition implements En {
         Then("^The entity is cleared$", () -> {
 
         });
+        Then("^The entity \"([^\"]*)\" matches$", (String identifier) -> {
+            Object responseObj = base.getJsonresponse().extract().jsonPath().get(identifier);
+            String responseStr = JsonParser.writeValueAsString(responseObj);
+            String expectedStr = getBodyRequest();
+
+            JSONAssert.assertEquals(expectedStr, responseStr, JSONCompareMode.STRICT_ORDER);
+        });
         And("^Validate that the statusCode is \"([^\"]*)\"$", (String statusCode) -> {
             assertNotNull(base.getResponse());
             assertEquals(
@@ -260,8 +269,7 @@ public class CommonStepDefinition implements En {
     }
 
     private String getFileContent(String fileName) throws IOException {
-        return new String(Files
-                .readAllBytes(Paths.get(ResourceUtils
-                        .getFileFromClasspathResource("com/opencell/test/feature/" + fileName).getPath())));
+        return new String(Files.readAllBytes(Paths
+                .get(ResourceUtils.getFileFromClasspathResource("com/opencell/test/feature/" + fileName).getPath())));
     }
 }
