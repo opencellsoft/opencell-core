@@ -237,8 +237,8 @@ public class CommonStepDefinition implements En {
             assertNotNull(base.getResponse());
             assertNotNull(base.getResponse().getActionStatus());
             if (base.getResponse().getActionStatus().getErrorCode() != null) {
-                assertEquals(base.getResponse().getActionStatus().getErrorCode().toString(),
-                        base.getResponse().getActionStatus().getErrorCode().toString(), errorCode);
+                assertEquals(base.getResponse().getActionStatus().getErrorCode().toString(), errorCode,
+                        base.getResponse().getActionStatus().getErrorCode().toString());
             }
         });
 
