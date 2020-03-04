@@ -1,0 +1,20 @@
+{
+    "code": "RS_BASE_BUNDLE1",
+    "description": "Bundle 1",
+    "productChargeTemplates": {
+        "productChargeTemplate": [
+            {
+                "code": "RS_BASE_PC2"
+            }
+        ]
+    },
+    "bundleProducts": {
+        "bundleProduct": {
+            "productTemplate": [
+                {
+                    "code": "RS_BASE_PRODUCT1"
+                }
+            ]
+        }
+    }
+}

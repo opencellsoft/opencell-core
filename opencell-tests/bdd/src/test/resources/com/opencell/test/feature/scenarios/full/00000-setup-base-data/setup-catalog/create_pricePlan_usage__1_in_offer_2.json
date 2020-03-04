@@ -1,0 +1,9 @@
+{
+	"code": "RS_BASE_USAGE1_OF2",
+	"description": "RS_BASE_USAGE1",
+	"eventCode": "RS_BASE_USAGE1",
+	"offerTemplate": "RS_BASE_OFFER2",
+	"amountWithoutTax": "0",
+	"amountWithTax": "0",
+	"priority": "0"
+}

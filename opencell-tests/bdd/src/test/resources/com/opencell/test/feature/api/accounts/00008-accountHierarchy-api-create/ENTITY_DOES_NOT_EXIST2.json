@@ -1,0 +1,19 @@
+{
+    "email": "test@test.com",
+    "customerCode": "TEST_CH",
+    "sellerCode": "NOT_EXIST",
+    "customerBrandCode": "DEFAULT",
+    "customerCategoryCode": "CLIENT",
+    "currencyCode": "USD",
+    "countryCode": "US",
+    "languageCode": "ENG",
+    "billingCycleCode": "BILLCYCLE1",
+    "titleCode": "MR",
+    "firstName": "Test",
+    "lastName": "TEST",
+    "phoneNumber": "+102354749",
+    "address1": "Address1",
+    "address2": "Address2",
+    "zipCode": "4050",
+    "city": "Los Banos"
+}

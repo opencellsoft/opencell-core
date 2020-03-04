@@ -1,0 +1,11 @@
+{
+	"code": "RS_FULL_INV_SERVICE1",
+	"description": "RS_FULL_INV_SERVICE1",
+	"serviceChargeTemplateUsages": {
+		"serviceChargeTemplateUsage": [
+    		{
+    			"code": "RS_BASE_USAGE1"
+    		}
+		]
+	}
+}

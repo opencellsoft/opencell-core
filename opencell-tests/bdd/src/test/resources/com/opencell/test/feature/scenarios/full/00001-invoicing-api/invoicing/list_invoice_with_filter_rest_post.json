@@ -1,0 +1,17 @@
+{
+    "filters": {
+        "billingAccount.customerAccount.customer.code": "RS_FULL_286_INV_CUST1",
+        "fromRange invoiceDate": "2050-09-15",
+        "toRange invoiceDate": "2050-11-15",
+        "fromRange dueDate": "2050-09-15",
+        "toRange dueDate": "2050-11-15",
+        "invoiceType.code": "RS_FULL_286_IT_PDFXML",
+        "fromRange amountWithoutTax": 7.99,
+        "toRange amountWithoutTax": 10.5
+    },
+    "fields": "transactions,pdf",
+    "offset": 0,
+    "limit": 200,
+    "sortBy": "dueDate",
+    "sortOrder": "DESCENDING"
+}

@@ -1,0 +1,8 @@
+{
+	"code": "RS_BASE_REC3",
+	"description": "RS_BASE_REC3",
+	"eventCode": "RS_BASE_REC3",
+	"amountWithoutTax": "10",
+	"amountWithTax": "12",
+	"priority": "1"
+}

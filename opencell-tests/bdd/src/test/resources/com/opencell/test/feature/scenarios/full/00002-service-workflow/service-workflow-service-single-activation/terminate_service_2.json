@@ -1,0 +1,8 @@
+{
+    "services": [
+        "RS_BASE_SERVICE2"
+    ],
+    "subscriptionCode": "RS_FULL_212_SUB_SERVICE_WFL",
+    "terminationReason": "TERM_REASON_3",
+    "terminationDate": "2016-12-01"
+}

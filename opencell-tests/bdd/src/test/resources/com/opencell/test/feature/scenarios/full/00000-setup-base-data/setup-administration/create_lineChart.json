@@ -1,0 +1,32 @@
+{
+    "code": "RS_BASE_LC1",
+    "description": "RS_BASE_LineCharts",
+    "measurableQuantity": {
+        "code": "RS_BASE_MQ1"
+    },
+    "width": "200",
+    "height": "200",
+    "style": "style1",
+    "styleClass": "styleClass2",
+    "extender": "extender3",
+    "visible": "true",
+    "filled": "false",
+    "legendPosition": "w",
+    "shadow": "true",
+    "minX": "45",
+    "maxX": "45",
+    "minY": "45",
+    "maxY": "45",
+    "breakOnNull": "true",
+    "xaxisLabel": "label 1",
+    "yaxisLabel": "label 2",
+    "xaxisAngle": "12",
+    "yaxisAngle": "12",
+    "stacked": "true",
+    "zoom": "true",
+    "animate": "false",
+    "showDataTip": "false",
+    "datatipFormat": "false",
+    "legendCols": "56",
+    "legendRows": "56"
+}

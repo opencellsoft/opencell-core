@@ -1,0 +1,10 @@
+{
+	"code": "RS_BASE_CT1",
+	"description": "RS_BASE_CounterTemplate_Description",
+	"calendar": "MONTHLY",
+	"unity": "Quantity",
+	"type": "USAGE",
+	"ceiling": "1",
+	"disabled": "false",
+	"counterLevel": "BA"
+}

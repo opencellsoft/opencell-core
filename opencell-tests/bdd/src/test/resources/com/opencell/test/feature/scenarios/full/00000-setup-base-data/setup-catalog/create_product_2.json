@@ -1,0 +1,11 @@
+{
+	"code": "RS_BASE_PRODUCT2",
+	"description": "RS_BASE_PRODUCT2 DESC",
+	"name": "RS_BASE_PRODUCT1 NAME",
+	"productChargeTemplate": [
+        {
+			"code": "RS_BASE_PC2",
+			"disabled": "false"
+		}
+	]
+}

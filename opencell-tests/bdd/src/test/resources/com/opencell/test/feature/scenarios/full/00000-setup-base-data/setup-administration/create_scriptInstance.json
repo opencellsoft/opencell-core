@@ -1,0 +1,16 @@
+{
+    "code": "org.meveo.service.script.RS_BASE_Script",
+    "description": "RS_BASE_Script_Instance",
+    "type": "JAVA",
+    "script": "package org.meveo.service.script;           \r\n            import java.util.Map;\r\n            import java.math.BigDecimal;\r\n            import org.meveo.admin.exception.BusinessException;\r\n            import org.meveo.model.admin.User;\r\n            import org.meveo.model.crm.Provider;\r\n            import org.slf4j.Logger;\r\n            import org.slf4j.LoggerFactory;         \r\n            public class RS_BASE_Script extends Script {             \r\n                private static final Logger log = LoggerFactory.getLogger(RS_BASE_Script.class);\r\n                public void execute(Map<String,Object> context) throws BusinessException{\r\n                    log.debug(\\\"RS_BASE_Script creation script...\\\");\r\n                    log.debug(\\\"RS_BASE_Script creation script.\\\");\r\n                }\r\n            }",
+    "executionRoles": [
+        {
+            "name": "administrateur"
+        }
+    ],
+    "sourcingRoles": [
+        {
+            "name": "administrateur"
+        }
+    ]
+}

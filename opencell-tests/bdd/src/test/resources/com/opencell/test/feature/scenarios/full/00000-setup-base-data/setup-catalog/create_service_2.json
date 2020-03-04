@@ -1,0 +1,19 @@
+{
+	"code": "RS_BASE_SERVICE2",
+	"description": "RS_BASE_SERVICE2",
+	"invoicingCalendar": "MONTHLY",
+	"serviceChargeTemplateRecurrings": {
+		"serviceChargeTemplateRecurring": [
+			{
+				"code": "RS_BASE_REC1"
+			}
+		]
+	},
+	"serviceChargeTemplateUsages": {
+		"serviceChargeTemplateUsage": [
+			{
+				"code": "RS_BASE_USAGE1"
+			}
+		]
+	}
+}

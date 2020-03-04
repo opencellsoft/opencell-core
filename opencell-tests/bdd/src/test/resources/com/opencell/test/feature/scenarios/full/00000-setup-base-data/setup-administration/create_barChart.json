@@ -1,0 +1,31 @@
+{
+    "code": "RS_BASE_BC1",
+    "description": "RS_BASE_BarCharts",
+    "measurableQuantity": {
+        "code": "RS_BASE_MQ1"
+    },
+    "width": "100",
+    "height": "100",
+    "style": "test1",
+    "styleClass": "test1",
+    "extender": "test1",
+    "visible": "true",
+    "legendPosition": "n",
+    "barPadding": "100",
+    "barMargin": "100",
+    "orientation": "vertical",
+    "stacked": "true",
+    "min": "100",
+    "max": "100",
+    "breakOnNull": "false",
+    "xaxisLabel": "test",
+    "yaxisLabel": "test",
+    "xaxisAngle": "10",
+    "yaxisAngle": "10",
+    "legendCols": "20",
+    "legendRows": "20",
+    "zoom": "true",
+    "animate": "true",
+    "showDataTip": "true",
+    "datatipFormat": "false"
+}

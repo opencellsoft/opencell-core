@@ -1,0 +1,20 @@
+{
+    "code": "RS_BASE_UA",
+    "description": "RS_BASE_UA",
+    "billingAccount": "RS_BASE_BA",
+    "externalRef1": "EXTREF1",
+    "externalRef2": "EXTREF2",
+    "name": {
+        "title": "MR",
+        "firstName": "firstname",
+        "lastName": "lastname"
+    },
+    "address": {
+        "address1": "adress1",
+        "address3": "adress3",
+        "zipCode": "21000",
+        "city": "Dijon",
+        "country": "France"
+    },
+    "subscriptionDate": "2016-03-10"
+}

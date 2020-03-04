@@ -1,0 +1,9 @@
+{
+	"code": "RS_BASE_EDR1",
+	"description": "RS_BASE_Triggered_EDR_DESC",
+	"quantityEl": "#{op.amountWithoutTax}",
+	"param1El": "#{edr.parameter1}",
+	"param2El": "#{edr.parameter2}",
+	"param3El": "#{edr.parameter3}",
+	"param4El": "#{edr.parameter4}"
+}

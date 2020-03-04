@@ -1,0 +1,10 @@
+{
+	"code": "CYC_INV_MT_3",
+	"description": "Monthly Invoice Cycle 3",
+	"transactionDateDelay": "0",
+	"invoiceDateProductionDelay": "0",
+	"dueDateDelay": "2",
+	"invoiceDateDelay": "4",
+	"calendar": "MONTHLY",
+	"dueDateDelayEL": "#{ba.id + invoice.billingAccount.id}"
+}
