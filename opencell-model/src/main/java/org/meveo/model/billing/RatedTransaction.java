@@ -35,6 +35,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -404,6 +405,28 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     private Date updated;
 
     /**
+     * Input quantity
+     */
+    @Column(name = "input_quantity", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
+    private BigDecimal inputQuantity;
+
+    /**
+     * Raw rating amount without tax from Price plan. Might differ from amountWitouttax when minimumAmount is set on a price plan.
+     */
+    @Deprecated
+    @Column(name = "raw_amount_without_tax", precision = 23, scale = 12)
+    @Digits(integer = 23, fraction = 12)
+    private BigDecimal rawAmountWithoutTax;
+
+    /**
+     * Raw rating amount with tax from Price plan. Might differ from amountWitouttax when minimumAmount is set on a price plan.
+     */
+    @Deprecated
+    @Column(name = "raw_amount_with_tax", precision = 23, scale = 12)
+    @Digits(integer = 23, fraction = 12)
+    private BigDecimal rawAmountWithTax;
+
+    /**
      * Charge tax class
      **/
     @ManyToOne(fetch = FetchType.LAZY)
@@ -481,6 +504,9 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.quantity = walletOperation.getQuantity();
         this.amountWithoutTax = walletOperation.getAmountWithoutTax();
         this.amountWithTax = walletOperation.getAmountWithTax();
+        this.inputQuantity = walletOperation.getInputQuantity();
+        this.rawAmountWithTax = walletOperation.getRawAmountWithTax();
+        this.rawAmountWithoutTax = walletOperation.getRawAmountWithoutTax();
         this.amountTax = walletOperation.getAmountTax();
         this.wallet = walletOperation.getWallet();
         this.userAccount = walletOperation.getWallet().getUserAccount();
@@ -1012,6 +1038,30 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
      */
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public BigDecimal getInputQuantity() {
+        return inputQuantity;
+    }
+
+    public void setInputQuantity(BigDecimal inputQuantity) {
+        this.inputQuantity = inputQuantity;
+    }
+
+    public BigDecimal getRawAmountWithoutTax() {
+        return rawAmountWithoutTax;
+    }
+
+    public void setRawAmountWithoutTax(BigDecimal rawAmountWithoutTax) {
+        this.rawAmountWithoutTax = rawAmountWithoutTax;
+    }
+
+    public BigDecimal getRawAmountWithTax() {
+        return rawAmountWithTax;
+    }
+
+    public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
+        this.rawAmountWithTax = rawAmountWithTax;
     }
 
     /**

@@ -56,7 +56,6 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
@@ -423,6 +422,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
     /**
      * Rate or rerate a Wallet operation - determine a unit price, lookup tax and calculate total amounts. Unless price is overridden, consults price plan for a unit price to
      * charge.
+     * 
+     * THIS IS A SINGLE PLACE WHERE RATING SHOULD OCCUR
      *
      * @param bareWalletOperation operation
      * @param unitPriceWithoutTaxOverridden Unit price without tax - An overridden price
@@ -435,115 +436,128 @@ public class RatingService extends PersistenceService<WalletOperation> {
     public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTaxOverridden, BigDecimal unitPriceWithTaxOverriden, Long buyerCountryId, TradingCurrency buyerCurrency)
             throws BusinessException, RatingException {
 
-        RecurringChargeTemplate recChargeTemplate = null;
         ChargeInstance chargeInstance = bareWalletOperation.getChargeInstance();
-        if (chargeInstance != null && chargeInstance instanceof RecurringChargeInstance) {
-            recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
-        }
 
-        // Determine and set tax if it was not set before.
-        // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
-        if (bareWalletOperation.getTax() == null) {
+        // Let charge template's rating script handle all the rating
+        if (chargeInstance != null && chargeInstance.getChargeTemplate().getRatingScript() != null) {
+            log.debug("Will execute a rating script for charge {}", chargeInstance.getId());
 
-            TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, bareWalletOperation.getOperationDate());
-
-            bareWalletOperation.setTaxClass(taxInfo.taxClass);
-            bareWalletOperation.setTax(taxInfo.tax);
-            bareWalletOperation.setTaxPercent(taxInfo.tax.getPercent());
-        }
-
-        PricePlanMatrix pricePlan = null;
-
-        if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise()) || (unitPriceWithTaxOverriden == null && !appProvider.isEntreprise())) {
-
-            List<PricePlanMatrix> chargePricePlans = getActivePricePlansByChargeCode(bareWalletOperation.getCode());
-            if (chargePricePlans == null || chargePricePlans.isEmpty()) {
-                throw new NoPricePlanException("No price plan for charge code " + bareWalletOperation.getCode());
+            if (unitPriceWithoutTaxOverridden != null) {
+                bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTaxOverridden);
+            }
+            if (unitPriceWithTaxOverriden != null) {
+                bareWalletOperation.setUnitAmountWithTax(unitPriceWithTaxOverriden);
             }
 
-            pricePlan = ratePrice(chargePricePlans, bareWalletOperation, buyerCountryId, buyerCurrency);
-            if (pricePlan == null) {
-                throw new NoPricePlanException("No price plan matched for charge code " + bareWalletOperation.getCode());
+            executeRatingScript(bareWalletOperation, chargeInstance.getChargeTemplate().getRatingScript());
 
-            } else if ((pricePlan.getAmountWithoutTax() == null && appProvider.isEntreprise()) || (pricePlan.getAmountWithTax() == null && !appProvider.isEntreprise())) {
-                throw new NoPricePlanException("Price plan " + pricePlan.getId() + " does not contain amounts for charge " + bareWalletOperation.getCode());
+            // Use a standard price plan approach to rating
+        } else {
+
+            RecurringChargeTemplate recChargeTemplate = null;
+            if (chargeInstance != null && chargeInstance instanceof RecurringChargeInstance) {
+                recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
             }
-            log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
-            if (appProvider.isEntreprise()) {
-                unitPriceWithoutTaxOverridden = pricePlan.getAmountWithoutTax();
-                if (pricePlan.getAmountWithoutTaxEL() != null) {
-                    unitPriceWithoutTaxOverridden = evaluateAmountExpression(pricePlan.getAmountWithoutTaxEL(), bareWalletOperation, bareWalletOperation.getChargeInstance().getUserAccount(), pricePlan,
-                        unitPriceWithoutTaxOverridden);
-                    if (unitPriceWithoutTaxOverridden == null) {
-                        throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithoutTaxEL());
-                    }
+
+            // Determine and set tax if it was not set before.
+            // An absence of tax class and presence of tax means that tax was set manually and should not be recalculated at invoicing time.
+            if (bareWalletOperation.getTax() == null) {
+
+                TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, bareWalletOperation.getOperationDate());
+
+                bareWalletOperation.setTaxClass(taxInfo.taxClass);
+                bareWalletOperation.setTax(taxInfo.tax);
+                bareWalletOperation.setTaxPercent(taxInfo.tax.getPercent());
+            }
+
+            PricePlanMatrix pricePlan = null;
+
+            if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise()) || (unitPriceWithTaxOverriden == null && !appProvider.isEntreprise())) {
+
+                List<PricePlanMatrix> chargePricePlans = getActivePricePlansByChargeCode(bareWalletOperation.getCode());
+                if (chargePricePlans == null || chargePricePlans.isEmpty()) {
+                    throw new NoPricePlanException("No price plan for charge code " + bareWalletOperation.getCode());
                 }
 
-            } else {
-                unitPriceWithTaxOverriden = pricePlan.getAmountWithTax();
-                if (pricePlan.getAmountWithTaxEL() != null) {
-                    unitPriceWithTaxOverriden = evaluateAmountExpression(pricePlan.getAmountWithTaxEL(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(), pricePlan, unitPriceWithoutTaxOverridden);
-                    if (unitPriceWithTaxOverriden == null) {
-                        throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithTaxEL());
-                    }
+                pricePlan = ratePrice(chargePricePlans, bareWalletOperation, buyerCountryId, buyerCurrency);
+                if (pricePlan == null) {
+                    throw new NoPricePlanException("No price plan matched for charge code " + bareWalletOperation.getCode());
+
+                } else if ((pricePlan.getAmountWithoutTax() == null && appProvider.isEntreprise()) || (pricePlan.getAmountWithTax() == null && !appProvider.isEntreprise())) {
+                    throw new NoPricePlanException("Price plan " + pricePlan.getId() + " does not contain amounts for charge " + bareWalletOperation.getCode());
                 }
-            }
-        }
-
-        // if the wallet operation correspond to a recurring charge that is
-        // shared, we divide the price by the number of
-        // shared charges
-
-        if (recChargeTemplate != null && recChargeTemplate.getShareLevel() != null) {
-            RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) chargeInstance;
-            int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
-            if (sharedQuantity > 0) {
+                log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
                 if (appProvider.isEntreprise()) {
-                    unitPriceWithoutTaxOverridden = unitPriceWithoutTaxOverridden.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                    unitPriceWithoutTaxOverridden = pricePlan.getAmountWithoutTax();
+                    if (pricePlan.getAmountWithoutTaxEL() != null) {
+                        unitPriceWithoutTaxOverridden = evaluateAmountExpression(pricePlan.getAmountWithoutTaxEL(), bareWalletOperation, bareWalletOperation.getChargeInstance().getUserAccount(), pricePlan,
+                            unitPriceWithoutTaxOverridden);
+                        if (unitPriceWithoutTaxOverridden == null) {
+                            throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithoutTaxEL());
+                        }
+                    }
+
                 } else {
-                    unitPriceWithTaxOverriden = unitPriceWithTaxOverriden.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-                }
-                log.info("charge is shared " + sharedQuantity + " times, so unit price is " + unitPriceWithoutTaxOverridden);
-            }
-        }
-
-        calculateAmounts(bareWalletOperation, unitPriceWithoutTaxOverridden, unitPriceWithTaxOverriden);
-
-        // calculate WO description based on EL from Price plan
-        if (pricePlan != null && pricePlan.getWoDescriptionEL() != null) {
-            String woDescription = evaluateStringExpression(pricePlan.getWoDescriptionEL(), bareWalletOperation, null, null, null);
-            if (woDescription != null) {
-                bareWalletOperation.setDescription(woDescription);
-            }
-        }
-
-        // get invoiceSubCategory based on EL from Price plan
-        if (pricePlan != null && pricePlan.getInvoiceSubCategoryEL() != null) {
-            String invoiceSubCategoryCode = evaluateStringExpression(pricePlan.getInvoiceSubCategoryEL(), bareWalletOperation,
-                bareWalletOperation.getWallet() != null ? bareWalletOperation.getWallet().getUserAccount() : null, null, null);
-            if (!StringUtils.isBlank(invoiceSubCategoryCode)) {
-                InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode);
-                if (invoiceSubCategory != null) {
-                    bareWalletOperation.setInvoiceSubCategory(invoiceSubCategory);
+                    unitPriceWithTaxOverriden = pricePlan.getAmountWithTax();
+                    if (pricePlan.getAmountWithTaxEL() != null) {
+                        unitPriceWithTaxOverriden = evaluateAmountExpression(pricePlan.getAmountWithTaxEL(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(), pricePlan,
+                            unitPriceWithoutTaxOverridden);
+                        if (unitPriceWithTaxOverriden == null) {
+                            throw new PriceELErrorException("Can't evaluate price for price plan " + pricePlan.getId() + " EL:" + pricePlan.getAmountWithTaxEL());
+                        }
+                    }
                 }
             }
+
+            // if the wallet operation correspond to a recurring charge that is
+            // shared, we divide the price by the number of
+            // shared charges
+
+            if (recChargeTemplate != null && recChargeTemplate.getShareLevel() != null) {
+                RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) chargeInstance;
+                int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
+                if (sharedQuantity > 0) {
+                    if (appProvider.isEntreprise()) {
+                        unitPriceWithoutTaxOverridden = unitPriceWithoutTaxOverridden.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                    } else {
+                        unitPriceWithTaxOverriden = unitPriceWithTaxOverriden.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                    }
+                    log.info("charge is shared " + sharedQuantity + " times, so unit price is " + unitPriceWithoutTaxOverridden);
+                }
+            }
+
+            calculateAmounts(bareWalletOperation, unitPriceWithoutTaxOverridden, unitPriceWithTaxOverriden);
+
+            // calculate WO description based on EL from Price plan
+            if (pricePlan != null && pricePlan.getWoDescriptionEL() != null) {
+                String woDescription = evaluateStringExpression(pricePlan.getWoDescriptionEL(), bareWalletOperation, null, null, null);
+                if (woDescription != null) {
+                    bareWalletOperation.setDescription(woDescription);
+                }
+            }
+
+            // get invoiceSubCategory based on EL from Price plan
+            if (pricePlan != null && pricePlan.getInvoiceSubCategoryEL() != null) {
+                String invoiceSubCategoryCode = evaluateStringExpression(pricePlan.getInvoiceSubCategoryEL(), bareWalletOperation,
+                    bareWalletOperation.getWallet() != null ? bareWalletOperation.getWallet().getUserAccount() : null, null, null);
+                if (!StringUtils.isBlank(invoiceSubCategoryCode)) {
+                    InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode);
+                    if (invoiceSubCategory != null) {
+                        bareWalletOperation.setInvoiceSubCategory(invoiceSubCategory);
+                    }
+                }
+            }
+
+            if (pricePlan != null && pricePlan.getScriptInstance() != null) {
+                log.debug("start to execute script instance for ratePrice {}", pricePlan);
+                executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance());
+            }
         }
 
-        if (pricePlan != null && pricePlan.getScriptInstance() != null) {
-            log.debug("start to execute script instance for ratePrice {}", pricePlan);
-            executeRatingScript(bareWalletOperation, pricePlan.getScriptInstance());
-        }
-        ProductOffering productOffering = null;
-        if (pricePlan != null && pricePlan.getOfferTemplate() != null) {
-            productOffering = pricePlan.getOfferTemplate();
-
-        } else if (bareWalletOperation.getOfferTemplate() != null) {
-            productOffering = bareWalletOperation.getOfferTemplate();
-        }
-
-        if (productOffering != null && productOffering.getGlobalRatingScriptInstance() != null) {
-            log.debug("start to execute script instance for productOffering {}", productOffering);
-            executeRatingScript(bareWalletOperation, productOffering.getGlobalRatingScriptInstance());
+        // Execute a final rating script set on offer template
+        if (bareWalletOperation.getOfferTemplate() != null && bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance() != null) {
+            log.debug("Will execute an offer level rating script for offer {}", bareWalletOperation.getOfferTemplate());
+            executeRatingScript(bareWalletOperation, bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance());
         }
 
     }
@@ -1057,6 +1071,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         String scriptInstanceCode = scriptInstance.getCode();
         try {
             log.debug("Will execute priceplan script " + scriptInstanceCode);
+
             scriptInstanceService.executeCached(bareWalletOperation, scriptInstanceCode, null);
 
         } catch (BusinessException e) {

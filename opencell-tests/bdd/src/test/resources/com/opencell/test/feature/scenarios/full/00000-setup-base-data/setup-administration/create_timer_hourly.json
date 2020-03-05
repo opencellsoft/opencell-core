@@ -1,0 +1,11 @@
+{
+    "code": "Hourly",
+    "description": "Hourly",
+    "hour": "*",
+    "minute": "0",
+    "second": "0",
+    "year": "*",
+    "month": "*",
+    "dayOfMonth": "*",
+    "dayOfWeek": "*"
+}

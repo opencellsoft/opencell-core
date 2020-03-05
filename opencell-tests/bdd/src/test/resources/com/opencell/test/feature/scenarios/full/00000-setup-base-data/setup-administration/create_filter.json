@@ -1,0 +1,6 @@
+{
+    "code": "RS_BASE_Filter1",
+    "description": "RS_BASE_Filter1_DESCP",
+    "shared": "false",
+    "inputXml": "<filter>\r\n              <disabled>false<\/disabled>\r\n              <appendGeneratedCode>false<\/appendGeneratedCode>\r\n              <filterCondition class=\\\"andCompositeFilterCondition\\\">\r\n                <filterConditionType>COMPOSITE_AND<\/filterConditionType>\r\n                <filterConditions>\r\n                  <primitiveFilterCondition>\r\n                    <filterConditionType>PRIMITIVE<\/filterConditionType>\r\n                    <fieldName>startRatingDate<\/fieldName>\r\n                    <operator>>=<\/operator>\r\n                    <operand>date:01\/09\/2015<\/operand>\r\n                  <\/primitiveFilterCondition>\r\n                <\/filterConditions>\r\n              <\/filterCondition>\r\n              <primarySelector>\r\n                <targetEntity>org.meveo.model.catalog.PricePlanMatrix<\/targetEntity>\r\n                <alias>p<\/alias>\r\n                <displayFields>\r\n                  <field>code<\/field>\r\n                  <field>eventCode<\/field>\r\n                <\/displayFields>\r\n                <exportFields\/>\r\n                <ignoreIfNotFoundForeignKeys\/>\r\n              <\/primarySelector>\r\n              <secondarySelectors\/>\r\n          <\/filter>"
+  }

@@ -1,0 +1,11 @@
+{
+    "code": "Daily-midnight",
+    "description": "Daily-midnight",
+    "hour": "23",
+    "minute": "59",
+    "second": "59",
+    "year": "*",
+    "month": "*",
+    "dayOfMonth": "*",
+    "dayOfWeek": "*"
+}

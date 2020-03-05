@@ -1,0 +1,27 @@
+{
+	"code": "RS_BASE_USAGE2",
+	"description": "RS_BASE_USAGE2",
+	"invoiceSubCategory": "SUB_DATA",
+	"disabled": "false",
+	"amountEditable": "false",
+	"languageDescriptions": [
+		{
+			"languageCode": "FRA",
+			"description": "RS_BASE-Forfait Test"
+		}
+	],
+	"inputUnitDescription": "1",
+	"ratingUnitDescription": "Unit",
+	"unitMultiplicator": "1",
+	"unitNbDecimal": "2",
+	"filterParam1": "USAGE",
+	"priority": "1",
+	"roundingModeDtoEnum": "NEAREST",
+	"triggeredEdrs": {
+		"triggeredEdr": [
+			{
+				"code": "RS_BASE_EDR1"
+			}
+		]
+	}
+} 

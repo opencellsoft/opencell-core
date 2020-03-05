@@ -1252,19 +1252,19 @@
         <addForeignKeyConstraint baseColumnNames="file_format_id" baseTableName="flat_file" constraintName="fk_d4iavkklx1qg1ani36bari5o5i" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
                                  onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_file_format" />
     </changeSet>
-    
+
     <!--<changeSet id="#3510_20190712_4" author="Mohammed_EL-AZZOUZI">
-                                 
+
         <sql>INSERT INTO ${db.schema.adapted}cat_unit_of_measure(id, version, code, created, symbol, description)
                 (SELECT nextval( 'cat_unit_of_measure_seq'), 0, FR.rating_unit_description, current_date, FR.rating_unit_description, FR.rating_unit_description||' MIG-R ' FROM (SELECT DISTINCT rating_unit_description
                     FROM ${db.schema.adapted}cat_charge_template CT where rating_unit_description is not null) FR);</sql>
         <sql>INSERT INTO ${db.schema.adapted}cat_unit_of_measure(id, version, code, created, symbol, description, multiplicator, parent_id)
                 (SELECT nextval( 'cat_unit_of_measure_seq'), 0, FR.input_unit_description, current_date, FR.input_unit_description, FR.input_unit_description||' MIG-I ', FR.unit_multiplicator,
-                         (select id from ${db.schema.adapted}cat_unit_of_measure UOM where UOM.code=FR.rating_unit_description AND UOM.description=UOM.code||' MIG-R ' ) 
+                         (select id from ${db.schema.adapted}cat_unit_of_measure UOM where UOM.code=FR.rating_unit_description AND UOM.description=UOM.code||' MIG-R ' )
                  FROM (SELECT DISTINCT input_unit_description, rating_unit_description, unit_multiplicator FROM ${db.schema.adapted}cat_charge_template CT where input_unit_description is not null and unit_multiplicator is not null) FR);</sql>
-        <sql>UPDATE ${db.schema.adapted}cat_charge_template CT SET rating_unitofmeasure = (SELECT UOM.id FROM ${db.schema.adapted}cat_unit_of_measure UOM 
+        <sql>UPDATE ${db.schema.adapted}cat_charge_template CT SET rating_unitofmeasure = (SELECT UOM.id FROM ${db.schema.adapted}cat_unit_of_measure UOM
                 WHERE UOM.code=CT.rating_unit_description AND UOM.description=UOM.code||' MIG-R ' ) WHERE rating_unitofmeasure IS null AND rating_unit_description IS NOT null;</sql>
-        <sql>UPDATE ${db.schema.adapted}cat_charge_template CT SET input_unitofmeasure = (SELECT UOM.id FROM ${db.schema.adapted}cat_unit_of_measure UOM 
+        <sql>UPDATE ${db.schema.adapted}cat_charge_template CT SET input_unitofmeasure = (SELECT UOM.id FROM ${db.schema.adapted}cat_unit_of_measure UOM
                 WHERE UOM.code=CT.input_unit_description AND UOM.description=UOM.code||' MIG-I ' ) WHERE input_unitofmeasure IS null AND input_unit_description IS NOT null;</sql>
     </changeSet>-->
     <changeSet id="#4371_20190620_5" author="AbdellatifBARI" dbms="postgresql">
@@ -1509,13 +1509,13 @@
 			<column name="uuid" type="varchar(60)" />
 		</addColumn>
 	</changeSet>
-	
+
 	 <changeSet id="#3774_07102019" author="FranckValot">
 		<addColumn tableName="adm_notification">
 			<column name="save_successful_notif" type="${type.boolean}" defaultValueNumeric="1"></column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="#4064_11092019" author="AbdelmounaimAkadid">
 		<addColumn tableName="billing_invoice">
 			<column name="status" type="varchar(50)" />
@@ -2137,7 +2137,7 @@
             <column name="validity_date" type="datetime"></column>
         </addColumn>
     </changeSet>
-    
+
         <changeSet id="#3510_20190516" author="MounirBahije">
         <createTable tableName="cat_unit_of_measure">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -2196,7 +2196,7 @@
         <addDefaultValue tableName="cat_unit_of_measure" columnName="multiplicator" defaultValueNumeric="1"/>
 
     </changeSet>
-    
+
     <changeSet id="#4766_20191111" author="MohammedELAZZOUZI">
     	<addNotNullConstraint tableName="adm_currency" columnName="currency_code" columnDataType="varchar(3)"/>
     	<addNotNullConstraint tableName="adm_currency" columnName="description_en" columnDataType="varchar(255)"/>
@@ -2227,7 +2227,7 @@
     		<column name="display_wallet_operations" type="${type.boolean}" defaultValueNumeric="0"/>
     	</addColumn>
     </changeSet>
-        
+
     <changeSet id="#4795_221119" author="Mohammed_ElAzzouzi">
         <sql>create index billing_invoice_agregate_tax_invoice_agregate_idx on ${db.schema.adapted}billing_invoice_agregate (tax_invoice_agregate)</sql>
         <sql>create index billing_invoice_agregate_sub_cat_invoice_agregate_id_idx on ${db.schema.adapted}billing_invoice_agregate (sub_cat_invoice_agregate_id)</sql>
@@ -2404,8 +2404,8 @@ END $$;]]>
             <column name="vat_no"/>
         </dropColumn>
     </changeSet>
-    
-        
+
+
     <changeSet id="#4906_Creation_CDR_Table_1" author="anasseh" dbms="mysql">
             <createTable tableName="rating_cdr_seq">
             <column name="next_val" type="BIGINT">
@@ -2414,7 +2414,7 @@ END $$;]]>
         </createTable>
         <sql>insert into ${db.schema.adapted}rating_cdr_seq values(1)</sql>
     </changeSet>
-    
+
     <changeSet id="#4906_Creation_CDR_Table_2" author="anasseh">
    		<createSequence sequenceName="rating_cdr_seq" />
    		<createTable tableName="rating_cdr">
@@ -2430,7 +2430,7 @@ END $$;]]>
 	         <column name="quantity" type="numeric" />
 	         <column name="reject_reason" type="${type.text}" />
 	         <column name="status" type="varchar(255)" />
-	         <column name="status_date" type="datetime" />	         
+	         <column name="status_date" type="datetime" />
 	         <column name="parameter_1" type="varchar(255)" />
 	         <column name="parameter_2" type="varchar(255)" />
 	         <column name="parameter_3" type="varchar(255)" />
@@ -2455,9 +2455,9 @@ END $$;]]>
 	             <constraints nullable="true" />
 	         </column>
 	         <column name="extra_parameter" type="text" />
-    	</createTable>    	
+    	</createTable>
         <sql>CREATE INDEX rating_cdr_index ON ${db.schema.adapted}rating_cdr(origin_batch, origin_record)</sql>
-        <sql>CREATE INDEX rating_cdr_status ON ${db.schema.adapted}rating_cdr(status)</sql>               
+        <sql>CREATE INDEX rating_cdr_status ON ${db.schema.adapted}rating_cdr(status)</sql>
     </changeSet>
 
     <changeSet id="#4933_20200117" author="AbdellatifBARI">
@@ -2694,6 +2694,32 @@ END $$;]]>
                 <constraints nullable="false"/>
             </column>
         </addColumn>
+    </changeSet>
+
+    <changeSet author="abdelkader.bouazza"  id="#4894-Additional_fields_in_RT">
+        <addColumn tableName="billing_rated_transaction">
+            <column name="input_quantity" type="numeric(23, 12)" />
+            <column name="raw_amount_without_tax" type="numeric(23, 12)" />
+            <column name="raw_amount_with_tax" type="numeric(23, 12)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="abdelkader.bouazza"  id="#4893-Add-custom-field-support-to-WalletOperation">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="uuid" type="varchar(60)"/>
+            <column name="cf_values" type="${type.json}" />
+            <column name="cf_values_accum" type="${type.json}" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}billing_wallet_operation set uuid = 'wo'||id</sql>
+        <addNotNullConstraint tableName="billing_wallet_operation" columnName="uuid"/>
+    </changeSet>
+
+    <changeSet id="#4892_2020-03-04" author="AndriusKarpavicius">
+        <addColumn tableName="cat_charge_template">
+            <column name="rating_script_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="rating_script_id" baseTableName="cat_charge_template" constraintName="fk_charge_template_rating_script_id" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
     </changeSet>
 
 </databaseChangeLog>

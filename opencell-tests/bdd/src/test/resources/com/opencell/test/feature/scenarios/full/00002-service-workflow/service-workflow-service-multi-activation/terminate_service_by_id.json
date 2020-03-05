@@ -1,0 +1,6 @@
+{
+	"serviceIds": "${ServiceInstanceIds#siid4}",
+	"subscriptionCode": "RS_FULL_212_SUB_SERVICE_MULTI",
+	"terminationReason": "TERM_REASON_1",
+	"terminationDate": "2016-12-31"
+}

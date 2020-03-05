@@ -97,6 +97,11 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
      */
     private String taxClassElSpark;
 
+    /**
+     * Code of a rating script
+     */
+    private String ratingScriptCode;
+
     /** The custom fields. */
     private CustomFieldsDto customFields;
 
@@ -149,6 +154,10 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
 
         filterExpression = chargeTemplate.getFilterExpression();
         filterExpressionSpark = chargeTemplate.getFilterExpressionSpark();
+
+        if (chargeTemplate.getRatingScript() != null) {
+            ratingScriptCode = chargeTemplate.getRatingScript().getCode();
+        }
     }
 
     /**
@@ -481,5 +490,19 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
      */
     public void setFilterExpressionSpark(String filterExpressionSpark) {
         this.filterExpressionSpark = filterExpressionSpark;
+    }
+
+    /**
+     * @return Code of a rating script
+     */
+    public String getRatingScriptCode() {
+        return ratingScriptCode;
+    }
+
+    /**
+     * @param ratingScriptCode Code of a rating script
+     */
+    public void setRatingScriptCode(String ratingScriptCode) {
+        this.ratingScriptCode = ratingScriptCode;
     }
 }
