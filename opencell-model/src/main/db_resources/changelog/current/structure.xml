@@ -1329,7 +1329,7 @@
 
     <changeSet id="#4372_20190723" author="RedaDebbache">
     	<addColumn tableName="cust_cet">
-        	<column name="unique_constraint_name" type="varchar(100)" defaultValue="0"></column>
+        	<column name="unique_constraint_name" type="varchar(120)" defaultValue="0"></column>
         </addColumn>
     </changeSet>
 

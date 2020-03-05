@@ -56,8 +56,8 @@ public class CustomEntityTemplate extends EnableBusinessEntity implements Compar
     private boolean storeAsTable;
 
 
-    @Column(name = "unique_constraint_name", length = 100)
-    @Size(max = 100)
+    @Column(name = "unique_constraint_name", length = 120)
+    @Size(max = 120)
     private String uniqueContraintName;
 
 
