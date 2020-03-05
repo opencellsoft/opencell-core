@@ -18126,7 +18126,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
-      <ws:createServiceTemplate>\r
+      <ws:createOrUpdateServiceTemplate>\r
          <serviceTemplate code="${#TestCase#prefix}_SERVICE" description="${#TestCase#prefix} service">\r
             <invoicingCalendar>MONTHLY</invoicingCalendar>\r
             <serviceChargeTemplateSubscriptions>\r
@@ -18150,7 +18150,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                </serviceChargeTemplateUsage>\r
             </serviceChargeTemplateUsages>\r
          </serviceTemplate>\r
-      </ws:createServiceTemplate>\r
+      </ws:createOrUpdateServiceTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="e902c64d-785c-4808-87ac-a7458bb0e273"/>
@@ -19115,6 +19115,48 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create BillingCycle" id="8329ea94-9d7e-4e39-86ee-d08aef708e7d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createBillingCycle</con:operation>
+          <con:request name="Create BillingCycle" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="7852fbd9-87ad-43f3-a3e2-d34424821239">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createBillingCycle>
+         <billingCycle code="${#Project#entityPrefix}_${#TestSuite#index}_RATE_BC" description="${#Project#entityPrefix}_${#TestSuite#index}_BC">
+            <dueDateDelay>1</dueDateDelay>
+            <calendar>MONTHLY</calendar>
+            <invoiceDateDelay>1</invoiceDateDelay>
+            <type>COM</type>
+       </billingCycle>
+      </ws:createBillingCycle>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="e37ccf70-ddcb-4fb9-829b-abbcd506beca" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createBillingCycle"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:testCase id="6f527a93-4450-47c3-87aa-dd28baa9bcb5" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Subscription, termination and other charge rating" searchProperties="true">
@@ -19544,7 +19586,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <currencyCode>USD</currencyCode>\r
             <countryCode>US</countryCode>\r
             <languageCode>ENG</languageCode>\r
-            <billingCycleCode>CYC_INV_MT_1</billingCycleCode>\r
+            <billingCycleCode>${#Project#entityPrefix}_${#TestSuite#index}_RATE_BC</billingCycleCode>\r
             <titleCode>MR</titleCode>\r
             <firstName>Edward</firstName>\r
             <lastName>Legaspi</lastName>\r
@@ -20859,7 +20901,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <currency>EUR</currency>\r
             <caStatus>ACTIVE</caStatus>\r
             <creditCategory>VIP</creditCategory>\r
-            <billingCycle>CYC_INV_MT_1</billingCycle>\r
+            <billingCycle>${#Project#entityPrefix}_${#TestSuite#index}_RATE_BC</billingCycle>\r
             <country>FR</country>\r
             <paymentMethods>\r
                <methodOfPayment paymentMethodType="CHECK"/>\r
@@ -23828,7 +23870,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <currencyCode>USD</currencyCode>\r
             <countryCode>US</countryCode>\r
             <languageCode>ENG</languageCode>\r
-            <billingCycleCode>CYC_INV_MT_1</billingCycleCode>\r
+            <billingCycleCode>${#Project#entityPrefix}_${#TestSuite#index}_RATE_BC</billingCycleCode>\r
             <titleCode>MR</titleCode>\r
             <firstName>Edward</firstName>\r
             <lastName>Legaspi</lastName>\r
@@ -25300,7 +25342,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:validateBillingRun>
-         <billingRunId>29</billingRunId>
+         <billingRunId>16</billingRunId>
       </ws:validateBillingRun>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -27507,38 +27549,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:parameters/>
         </con:config>
       </con:testStep>
-      <con:testStep type="httprequest" name="Create billing cycle" id="d94807c3-a57c-48d8-b854-328fcb5d6749">
-        <con:settings/>
-        <con:config method="POST" xsi:type="con:HttpRequest" id="c764f261-d1e5-4f84-b3d2-beb00ce5bc82" name="Create billing cycle" postQueryString="false" mediaType="application/json" downloadIncludedResources="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:settings>
-            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-          </con:settings>
-          <con:endpoint>${#Project#opencell.url}/api/rest/billingCycle/createOrUpdate</con:endpoint>
-          <con:request>{
-  "code": "${#Project#entityPrefix}_${#TestSuite#index}_UOM_BC_LP_MONTHLY_1ST",
-  "description": "Mensuel 1er du mois",
-  "billingTemplateName": "LAPOSTE",
-  "invoiceDateDelay": "0",
-  "dueDateDelay": "7",
-  "invoiceDateProductionDelay": "0",
-
-  "invoicingThreshold": 0.01,
-  "calendar": "MONTHLY"
-}</con:request>
-          <con:assertion type="Valid HTTP Status Codes" id="c759daa3-6000-4f84-9c60-bab71486d5e5" name="Valid HTTP Status Codes">
-            <con:configuration>
-              <codes>200</codes>
-            </con:configuration>
-          </con:assertion>
-          <con:credentials>
-            <con:preemptive>true</con:preemptive>
-            <con:authType>No Authorization</con:authType>
-          </con:credentials>
-          <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-          <con:jmsPropertyConfig/>
-          <con:parameters/>
-        </con:config>
-      </con:testStep>
       <con:testStep type="httprequest" name="Create offer template" id="7d2dfd12-f60d-4efc-ac6d-91141fa0c9ef">
         <con:settings/>
         <con:config method="POST" xsi:type="con:HttpRequest" id="c764f261-d1e5-4f84-b3d2-beb00ce5bc82" name="Create offer template" postQueryString="false" mediaType="application/json" downloadIncludedResources="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -27625,7 +27635,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   }],
   "customerCategory" : "CLIENT",
   "currency" : "EUR",
-  "billingCycle" : "${#Project#entityPrefix}_${#TestSuite#index}_UOM_BC_LP_MONTHLY_1ST",
+  "billingCycle" : "${#Project#entityPrefix}_${#TestSuite#index}_RATE_BC",
   "country" : "FR",
   "electronicBilling" : "true",
   "customFields": null
@@ -27847,7 +27857,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <currency>EUR</currency>\r
             <caStatus>ACTIVE</caStatus>\r
             <creditCategory>VIP</creditCategory>\r
-            <billingCycle>CYC_INV_MT_1</billingCycle>\r
+            <billingCycle>${#Project#entityPrefix}_${#TestSuite#index}_RATE_BC</billingCycle>\r
             <country>FR</country>\r
             <paymentMethods>\r
                <methodOfPayment paymentMethodType="CHECK"/>\r
@@ -28681,7 +28691,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <currencyCode>USD</currencyCode>\r
             <countryCode>US</countryCode>\r
             <languageCode>ENG</languageCode>\r
-            <billingCycleCode>CYC_INV_MT_1</billingCycleCode>\r
+            <billingCycleCode>${#Project#entityPrefix}_${#TestSuite#index}_RATE_BC</billingCycleCode>\r
             <paymentMethods>\r
                <methodOfPayment paymentMethodType="CHECK"></methodOfPayment>\r
             </paymentMethods>\r
@@ -29367,7 +29377,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <currencyCode>USD</currencyCode>\r
             <countryCode>US</countryCode>\r
             <languageCode>ENG</languageCode>\r
-            <billingCycleCode>CYC_INV_MT_1</billingCycleCode>\r
+            <billingCycleCode>${#Project#entityPrefix}_${#TestSuite#index}_RATE_BC</billingCycleCode>\r
             <paymentMethods>\r
                <methodOfPayment paymentMethodType="CHECK">\r
                </methodOfPayment>\r
@@ -29641,7 +29651,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000102</invoiceNumber>
+         	<invoiceNumber>COM_000000030</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -30325,10 +30335,384 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:properties/>
     </con:testCase>
+    <con:testCase id="376c9c53-dbd3-4837-b122-104a718316a3" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Rate with chargeTemplate.ratingScript" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Create AccountHierarchy" id="d6188929-0def-46a2-bc83-15c69a40dc97">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createAccountHierarchy</con:operation>
+          <con:request name="Create AccountHierarchy" id="c1914356-2164-4503-ac8b-d5cd89edd20f">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createAccountHierarchy>\r
+         <accountHierarchy>\r
+            <email>edward.legaspi@manaty.net</email>\r
+            <customerId>${#Project#entityPrefix}_${#TestSuite#index}_CHS_CUST</customerId>\r
+            <sellerCode>SELLER_FR</sellerCode>\r
+            <customerBrandCode>DEFAULT</customerBrandCode>\r
+            <customerCategoryCode>CLIENT</customerCategoryCode>\r
+            <currencyCode>USD</currencyCode>\r
+            <countryCode>US</countryCode>\r
+            <languageCode>ENG</languageCode>\r
+            <billingCycleCode>${#Project#entityPrefix}_${#TestSuite#index}_RATE_BC</billingCycleCode>\r
+            <paymentMethods>\r
+               <methodOfPayment paymentMethodType="CHECK">\r
+               </methodOfPayment>\r
+            </paymentMethods>\r
+         </accountHierarchy>\r
+      </ws:createAccountHierarchy>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="73842305-5909-426a-a4a9-97bb17279076"/>
+            <con:assertion type="Simple Contains" id="8d95b388-bfa6-4e00-881c-ef75d57aea88" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="calltestcase" name="Create offer" id="a06cd5d6-87d7-4035-acea-943c2d23427b">
+        <con:settings/>
+        <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:targetTestCase>5cc8cbed-40f1-400b-b5c8-40092343eaff</con:targetTestCase>
+          <con:properties>
+            <con:property>
+              <con:name>prefix</con:name>
+              <con:value>${#Project#entityPrefix}_${#TestSuite#index}_CHS</con:value>
+            </con:property>
+            <con:property>
+              <con:name>taxPrefix</con:name>
+              <con:value>${#Project#entityPrefix}_${#TestSuite#index}_RATE</con:value>
+            </con:property>
+          </con:properties>
+          <con:returnProperties/>
+          <con:runMode>PARALLELL</con:runMode>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create subscription" id="eb5aeb63-5190-43f6-8881-3086eb9d9064">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Create subscription" id="78b62f52-e128-4072-971f-02c3d4c4e3e8">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateSubscription>
+         <subscription code="${#Project#entityPrefix}_${#TestSuite#index}_CHS_SUB">
+            <userAccount>UA_${#Project#entityPrefix}_${#TestSuite#index}_CHS_CUST</userAccount>
+            <offerTemplate>${#Project#entityPrefix}_${#TestSuite#index}_CHS_OFFER</offerTemplate>
+            <subscriptionDate>2017-01-01</subscriptionDate>
+            <endAgreementDate>2017-03-31</endAgreementDate>
+         </subscription>
+      </ws:createOrUpdateSubscription>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="Contains" id="a67c7e53-f712-404e-ba01-eaf27bb22b78">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create rating script" id="3cc5e04c-ed80-42f2-83a4-38690da0a2c8">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>create</con:operation>
+          <con:request name="Create rating script" id="8bc39b95-9e34-42c4-b335-a27ce494eb10">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:create>
+         	<createScriptInstanceRequest code="org.meveo.service.script.The${#Project#entityPrefix}_${#TestSuite#index}_CHS_RatingScript">
+            <type>JAVA</type>
+            <script>
+            <![CDATA[
+			package org.meveo.service.script;			
+			
+			import java.math.BigDecimal;
+			import java.util.Map;
+			
+			import org.meveo.admin.exception.BusinessException;
+			import org.meveo.model.billing.WalletOperation;
+			import org.meveo.model.tax.TaxClass;
+			import org.meveo.service.catalog.impl.TaxService;
+			import org.meveo.service.script.Script;
+			import org.meveo.service.tax.TaxClassService;
+
+			public class The${#Project#entityPrefix}_${#TestSuite#index}_CHS_RatingScript extends Script {
+			  	public void execute(Map<String,Object> context) throws BusinessException{
+			        TaxService taxService = (TaxService) getServiceInterface("TaxService");
+			        TaxClassService taxClassService = (TaxClassService) getServiceInterface("TaxClassService");
+			        TaxClass taxClass = taxClassService.findByCode("${#Project#entityPrefix}_${#TestSuite#index}_RATE_taxClass");
+			
+			        WalletOperation wo = (WalletOperation) context.get(Script.CONTEXT_ENTITY);
+			
+			        wo.setAmountWithoutTax(new BigDecimal(1.78));
+			        wo.setAmountWithTax(new BigDecimal(2.8));
+			        wo.setAmountTax(new BigDecimal(1.02));
+			        wo.setTax(taxService.getZeroTax());
+			        wo.setTaxPercent(new BigDecimal(25));
+			        wo.setTaxClass(taxClass);
+				}
+			}
+		   ]]]]>><![CDATA[
+            </script>
+         </createScriptInstanceRequest>
+      </ws:create>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="21abe68e-81c0-4569-8050-3cd97d268070" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create OneShot - Other" id="4d5a6fe8-31c6-47c5-bc76-efaa6330e9b3">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateOneShotChargeTemplate</con:operation>
+          <con:request name="Create OneShot - Other" id="51765fb4-8e9c-4741-89f6-5befe809d58a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateOneShotChargeTemplate>         
+         <oneShotChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_CHS_OTHER">
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+            <disabled>false</disabled>            
+            <amountEditable>true</amountEditable>            
+            <inputUnitDescription>1</inputUnitDescription>            
+            <ratingUnitDescription>1</ratingUnitDescription>            
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+            <oneShotChargeTemplateType>OTHER</oneShotChargeTemplateType>            
+            <immediateInvoicing>false</immediateInvoicing>
+            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+            <taxClassCode>${#Project#entityPrefix}_${#TestSuite#index}_RATE_taxClass</taxClassCode>
+            <ratingScriptCode>org.meveo.service.script.The${#Project#entityPrefix}_${#TestSuite#index}_CHS_RatingScript</ratingScriptCode>
+         </oneShotChargeTemplate>
+      </ws:createOrUpdateOneShotChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="0f5be196-98dd-4979-b82b-3bc82866f554"/>
+            <con:assertion type="Simple Contains" id="284f6f83-ae8d-4185-8de5-d91e9138cbe3" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Apply one charge - Charge OTHER - rate with a script" id="17370706-21dc-485e-bbdf-9849aaf80d8b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Apply one charge - Charge OTHER - rate with a script" id="1286bdbb-331f-4e14-88f7-15faee42196f">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:applyOneShotChargeInstance>       
+         <applyOneShotChargeInstance>
+		  <oneShotCharge>${#Project#entityPrefix}_${#TestSuite#index}_CHS_OTHER</oneShotCharge>
+		  <subscription>${#Project#entityPrefix}_${#TestSuite#index}_CHS_SUB</subscription>		  
+		  <operationDate>2017-10-11</operationDate>
+		  <quantity>4</quantity>
+		  <description>WO rated by a script</description>
+		</applyOneShotChargeInstance>
+      </ws:applyOneShotChargeInstance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="7b16b2d8-0f87-4ad9-ab8d-b1a0076d2e3b"/>
+            <con:assertion type="Simple Contains" name="Contains" id="ff55ce8a-a6f2-418f-bd96-8fa58a9465f2">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find wallet operations - Charge OTHER" id="624832fd-7d48-41f2-965e-7c397d402239">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WalletWsSoapBinding</con:interface>
+          <con:operation>findOperations</con:operation>
+          <con:request name="Find wallet operations - Charge OTHER" id="3fe53558-4625-412b-a28a-27ae41a7b42d">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/WalletWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findOperations>\r
+         <pagingAndFiltering>\r
+            <filters>\r
+               <entry>\r
+                  <key>wallet.userAccount.code</key>\r
+                  <value xsi:type="xs:string">UA_${#Project#entityPrefix}_${#TestSuite#index}_CHS_CUST</value>\r
+               </entry>\r
+               <entry>\r
+                  <key>chargeInstance.code</key>\r
+                  <value xsi:type="xs:string">${#Project#entityPrefix}_${#TestSuite#index}_CHS_OTHER</value>\r
+               </entry>\r
+            </filters>\r
+            <limit>5</limit>\r
+            <sortBy>operationDate</sortBy>\r
+            <sortOrder>DESCENDING</sortOrder>\r
+         </pagingAndFiltering>\r
+      </ws:findOperations>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="492ddc7e-7b82-4e4e-b7fb-611a44c1adc4"/>
+            <con:assertion type="XPath Match" id="b084c0de-b24d-4051-9c1d-7a148460c5ca" name="XPath Match">
+              <con:configuration>
+                <path>//walletOperations</path>
+                <content><![CDATA[<walletOperations code="${#Project#entityPrefix}_${#TestSuite#index}_CHS_OTHER" description="WO rated by a script" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <userAccount>UA_${#Project#entityPrefix}_${#TestSuite#index}_CHS_CUST</userAccount>
+  <walletTemplate>PRINCIPAL</walletTemplate>
+  <seller>SELLER_FR</seller>
+  <chargeInstance>${#Project#entityPrefix}_${#TestSuite#index}_CHS_OTHER</chargeInstance>
+  <chargeInstanceId>1004</chargeInstanceId>
+  <currency>USD</currency>
+  <status>OPEN</status>
+  <updated>*</updated>
+  <ratingUnitDescription>1</ratingUnitDescription>
+  <taxCode>TAX_00</taxCode>
+  <taxPercent>25.000000000000</taxPercent>
+  <quantity>4.000000000000</quantity>
+  <amountWithoutTax>1.780000000000</amountWithoutTax>
+  <amountWithTax>2.800000000000</amountWithTax>
+  <amountTax>1.020000000000</amountTax>
+  <operationDate>*</operationDate>
+  <subscriptionDate>*</subscriptionDate>
+  <offerCode>${#Project#entityPrefix}_${#TestSuite#index}_CHS_OFFER</offerCode>
+  <walletId>*</walletId>
+  <taxClassCode>${#Project#entityPrefix}_${#TestSuite#index}_RATE_taxClass</taxClassCode>
+</walletOperations>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="7e292984-14d7-480e-9240-1b95f521753a" name="XPath Match 1">
+              <con:configuration>
+                <path>//totalNumberOfRecords</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>18</con:value>
+        <con:value>25</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -33392,7 +33776,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>12</con:value>
+        <con:value>14</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -38865,7 +39249,7 @@ assert dateFoundStr == nextMonth</scriptText>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000103</invoiceNumber>
+         	<invoiceNumber>COM_000000031</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -38915,7 +39299,7 @@ assert dateFoundStr == nextMonth</scriptText>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000104</invoiceNumber>
+         	<invoiceNumber>COM_000000032</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -38972,7 +39356,7 @@ assert dateFoundStr == nextMonth</scriptText>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000105</invoiceNumber>
+         	<invoiceNumber>COM_000000033</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -40230,7 +40614,7 @@ assert dateFoundStr == nextMonth</scriptText>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>39</con:value>
+        <con:value>41</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -45528,6 +45912,7 @@ assert dateFoundStr == nextMonth</scriptText>
                                  <unitAmountWithTax>12.953367000000</unitAmountWithTax>
                                  <unitAmountTax>1.283667000000</unitAmountTax>
                                  <quantity>2.900000000000</quantity>
+                                 <inputQuantity>2.897445800000</inputQuantity>
                                  <amountWithoutTax>33.842130000000</amountWithoutTax>
                                  <amountWithTax>37.564764000000</amountWithTax>
                                  <amountTax>3.722634000000</amountTax>
@@ -45549,6 +45934,7 @@ assert dateFoundStr == nextMonth</scriptText>
                                  <unitAmountWithTax>12.953367000000</unitAmountWithTax>
                                  <unitAmountTax>1.283667000000</unitAmountTax>
                                  <quantity>1.090000000000</quantity>
+                                 <inputQuantity>1.089700000000 </inputQuantity>
                                  <amountWithoutTax>12.719973000000</amountWithoutTax>
                                  <amountWithTax>14.119170000000</amountWithTax>
                                  <amountTax>1.399197000000</amountTax>
@@ -45625,6 +46011,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>2.897445800000</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -45648,6 +46035,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.053376700000</quantity>
+                                 <inputQuantity>1.053376666667</inputQuantity>
           <amountWithoutTax>10.595613000000</amountWithoutTax>
           <amountWithTax>11.125394000000</amountWithTax>
           <amountTax>0.529781000000</amountTax>
@@ -45671,6 +46059,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>1.089700000000</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>11.509028000000</amountWithTax>
           <amountTax>0.548049000000</amountTax>
@@ -45694,6 +46083,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>2.897445800000</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -45717,6 +46107,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>1.089700000000</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>11.509028000000</amountWithTax>
           <amountTax>0.548049000000</amountTax>
@@ -45740,6 +46131,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>2.897445800000</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -45939,6 +46331,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>12.953367000000</unitAmountWithTax>
           <unitAmountTax>1.283667000000</unitAmountTax>
           <quantity>2.900000000000</quantity>
+                                 <inputQuantity>2.897445800000</inputQuantity>
           <amountWithoutTax>33.842130000000</amountWithoutTax>
           <amountWithTax>37.564764000000</amountWithTax>
           <amountTax>3.722634000000</amountTax>
@@ -45960,6 +46353,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>12.953367000000</unitAmountWithTax>
           <unitAmountTax>1.283667000000</unitAmountTax>
           <quantity>1.090000000000</quantity>
+                                 <inputQuantity>1.089700000000</inputQuantity>
           <amountWithoutTax>12.719973000000</amountWithoutTax>
           <amountWithTax>14.119170000000</amountWithTax>
           <amountTax>1.399197000000</amountTax>
@@ -46036,6 +46430,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>2.897445800000</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -46059,6 +46454,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.053376700000</quantity>
+                                 <inputQuantity>1.053376666667</inputQuantity>
           <amountWithoutTax>10.595613000000</amountWithoutTax>
           <amountWithTax>11.125394000000</amountWithTax>
           <amountTax>0.529781000000</amountTax>
@@ -46082,6 +46478,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>1.089700000000</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>11.509028000000</amountWithTax>
           <amountTax>0.548049000000</amountTax>
@@ -46105,6 +46502,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>2.897445800000</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -46128,6 +46526,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>1.089700000000</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>11.509028000000</amountWithTax>
           <amountTax>0.548049000000</amountTax>
@@ -46151,6 +46550,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>2.897445800000</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -46350,6 +46750,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>13.770246000000</unitAmountWithTax>
           <unitAmountTax>2.100546000000</unitAmountTax>
           <quantity>2.900000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>33.842130000000</amountWithoutTax>
           <amountWithTax>39.933713000000</amountWithTax>
           <amountTax>6.091583000000</amountTax>
@@ -46371,6 +46772,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>13.770246000000</unitAmountWithTax>
           <unitAmountTax>2.100546000000</unitAmountTax>
           <quantity>1.090000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>12.719973000000</amountWithoutTax>
           <amountWithTax>15.009568000000</amountWithTax>
           <amountTax>2.289595000000</amountTax>
@@ -46447,6 +46849,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>34.390597000000</amountWithTax>
           <amountTax>5.246023000000</amountTax>
@@ -46470,6 +46873,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>1.053376700000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.595613000000</amountWithoutTax>
           <amountWithTax>12.502823000000</amountWithTax>
           <amountTax>1.907210000000</amountTax>
@@ -46493,6 +46897,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>12.933955000000</amountWithTax>
           <amountTax>1.972976000000</amountTax>
@@ -46516,6 +46921,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>34.390597000000</amountWithTax>
           <amountTax>5.246023000000</amountTax>
@@ -46539,6 +46945,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>12.933955000000</amountWithTax>
           <amountTax>1.972976000000</amountTax>
@@ -46562,6 +46969,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>34.390597000000</amountWithTax>
           <amountTax>5.246023000000</amountTax>
@@ -46752,6 +47160,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>13.770246000000</unitAmountWithTax>
           <unitAmountTax>2.100546000000</unitAmountTax>
           <quantity>2.000000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>23.339400000000</amountWithoutTax>
           <amountWithTax>27.540492000000</amountWithTax>
           <amountTax>4.201092000000</amountTax>
@@ -46773,6 +47182,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>13.770246000000</unitAmountWithTax>
           <unitAmountTax>2.100546000000</unitAmountTax>
           <quantity>20.000000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>233.394000000000</amountWithoutTax>
           <amountWithTax>275.404920000000</amountWithTax>
           <amountTax>42.010920000000</amountTax>
@@ -46794,6 +47204,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>13.770246000000</unitAmountWithTax>
           <unitAmountTax>2.100546000000</unitAmountTax>
           <quantity>1.000000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>11.669700000000</amountWithoutTax>
           <amountWithTax>13.770246000000</amountWithTax>
           <amountTax>2.100546000000</amountTax>
@@ -46815,6 +47226,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>13.770246000000</unitAmountWithTax>
           <unitAmountTax>2.100546000000</unitAmountTax>
           <quantity>3.000000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>35.009100000000</amountWithoutTax>
           <amountWithTax>41.310738000000</amountWithTax>
           <amountTax>6.301638000000</amountTax>
@@ -46848,6 +47260,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>0.069280745280</unitAmountWithTax>
           <unitAmountTax>0.010568249280</unitAmountTax>
           <quantity>2.000000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>0.117425000000</amountWithoutTax>
           <amountWithTax>0.138562000000</amountWithTax>
           <amountTax>0.021137000000</amountTax>
@@ -46923,6 +47336,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>1.933333300000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>19.446844000000</amountWithoutTax>
           <amountWithTax>22.947276000000</amountWithTax>
           <amountTax>3.500432000000</amountTax>
@@ -46946,6 +47360,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>19.333333300000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>194.468441000000</amountWithoutTax>
           <amountWithTax>229.472760000000</amountWithTax>
           <amountTax>35.004319000000</amountTax>
@@ -46969,6 +47384,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>2.000000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>20.117425000000</amountWithoutTax>
           <amountWithTax>23.738562000000</amountWithTax>
           <amountTax>3.621137000000</amountTax>
@@ -46992,6 +47408,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>20.000000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>201.174250000000</amountWithoutTax>
           <amountWithTax>237.385615000000</amountWithTax>
           <amountTax>36.211365000000</amountTax>
@@ -47015,6 +47432,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>0.967741900000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>9.734238000000</amountWithoutTax>
           <amountWithTax>11.486401000000</amountWithTax>
           <amountTax>1.752163000000</amountTax>
@@ -47038,6 +47456,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>0.967741900000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>9.734238000000</amountWithoutTax>
           <amountWithTax>11.486401000000</amountWithTax>
           <amountTax>1.752163000000</amountTax>
@@ -47061,6 +47480,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>1.000000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.058712000000</amountWithoutTax>
           <amountWithTax>11.869280000000</amountWithTax>
           <amountTax>1.810568000000</amountTax>
@@ -47084,6 +47504,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>2.000000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>20.117425000000</amountWithoutTax>
           <amountWithTax>23.738562000000</amountWithTax>
           <amountTax>3.621137000000</amountTax>
@@ -47107,6 +47528,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>3.000000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>30.176137000000</amountWithoutTax>
           <amountWithTax>35.607842000000</amountWithTax>
           <amountTax>5.431705000000</amountTax>
@@ -47130,6 +47552,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>20.000000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>201.174250000000</amountWithoutTax>
           <amountWithTax>237.385615000000</amountWithTax>
           <amountTax>36.211365000000</amountTax>
@@ -47320,6 +47743,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>13.770246000000</unitAmountWithTax>
           <unitAmountTax>2.100546000000</unitAmountTax>
           <quantity>25.000000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>291.742500000000</amountWithoutTax>
           <amountWithTax>344.256150000000</amountWithTax>
           <amountTax>52.513650000000</amountTax>
@@ -47396,6 +47820,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>24.166666700000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>243.085552000000</amountWithoutTax>
           <amountWithTax>286.840951000000</amountWithTax>
           <amountTax>43.755399000000</amountTax>
@@ -47419,6 +47844,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>25.000000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>251.467812000000</amountWithoutTax>
           <amountWithTax>296.732018000000</amountWithTax>
           <amountTax>45.264206000000</amountTax>
@@ -47442,6 +47868,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>25.000000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>251.467812000000</amountWithoutTax>
           <amountWithTax>296.732018000000</amountWithTax>
           <amountTax>45.264206000000</amountTax>
@@ -47644,6 +48071,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>12.953367000000</unitAmountWithTax>
           <unitAmountTax>1.283667000000</unitAmountTax>
           <quantity>2.900000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>33.842130000000</amountWithoutTax>
           <amountWithTax>37.564764000000</amountWithTax>
           <amountTax>3.722634000000</amountTax>
@@ -47665,6 +48093,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>12.953367000000</unitAmountWithTax>
           <unitAmountTax>1.283667000000</unitAmountTax>
           <quantity>1.090000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>12.719973000000</amountWithoutTax>
           <amountWithTax>14.119170000000</amountWithTax>
           <amountTax>1.399197000000</amountTax>
@@ -47741,6 +48170,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>12.953367000000</unitAmountWithTax>
           <unitAmountTax>1.283667000000</unitAmountTax>
           <quantity>2.900000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>33.842130000000</amountWithoutTax>
           <amountWithTax>37.564764000000</amountWithTax>
           <amountTax>3.722634000000</amountTax>
@@ -47762,6 +48192,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>12.953367000000</unitAmountWithTax>
           <unitAmountTax>1.283667000000</unitAmountTax>
           <quantity>1.090000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>12.719973000000</amountWithoutTax>
           <amountWithTax>14.119170000000</amountWithTax>
           <amountTax>1.399197000000</amountTax>
@@ -47838,6 +48269,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -47861,6 +48293,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.053376700000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.595613000000</amountWithoutTax>
           <amountWithTax>11.125394000000</amountWithTax>
           <amountTax>0.529781000000</amountTax>
@@ -47884,6 +48317,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>11.509028000000</amountWithTax>
           <amountTax>0.548049000000</amountTax>
@@ -47907,6 +48341,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -47930,6 +48365,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>11.509028000000</amountWithTax>
           <amountTax>0.548049000000</amountTax>
@@ -47953,6 +48389,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -47988,6 +48425,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>0.017460000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>0.175625000000</amountWithoutTax>
           <amountWithTax>0.207238000000</amountWithTax>
           <amountTax>0.031613000000</amountTax>
@@ -48064,6 +48502,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -48087,6 +48526,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.053376700000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.595613000000</amountWithoutTax>
           <amountWithTax>11.125394000000</amountWithTax>
           <amountTax>0.529781000000</amountTax>
@@ -48110,6 +48550,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>11.509028000000</amountWithTax>
           <amountTax>0.548049000000</amountTax>
@@ -48133,6 +48574,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -48156,6 +48598,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>11.509028000000</amountWithTax>
           <amountTax>0.548049000000</amountTax>
@@ -48179,6 +48622,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -48407,6 +48851,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>13.770246000000</unitAmountWithTax>
           <unitAmountTax>2.100546000000</unitAmountTax>
           <quantity>2.900000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>33.842130000000</amountWithoutTax>
           <amountWithTax>39.933713000000</amountWithTax>
           <amountTax>6.091583000000</amountTax>
@@ -48428,6 +48873,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>13.770246000000</unitAmountWithTax>
           <unitAmountTax>2.100546000000</unitAmountTax>
           <quantity>1.090000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>12.719973000000</amountWithoutTax>
           <amountWithTax>15.009568000000</amountWithTax>
           <amountTax>2.289595000000</amountTax>
@@ -48504,6 +48950,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>34.390597000000</amountWithTax>
           <amountTax>5.246023000000</amountTax>
@@ -48527,6 +48974,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>1.053376700000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.595613000000</amountWithoutTax>
           <amountWithTax>12.502823000000</amountWithTax>
           <amountTax>1.907210000000</amountTax>
@@ -48550,6 +48998,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>12.933955000000</amountWithTax>
           <amountTax>1.972976000000</amountTax>
@@ -48573,6 +49022,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>34.390597000000</amountWithTax>
           <amountTax>5.246023000000</amountTax>
@@ -48596,6 +49046,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>12.933955000000</amountWithTax>
           <amountTax>1.972976000000</amountTax>
@@ -48619,6 +49070,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>34.390597000000</amountWithTax>
           <amountTax>5.246023000000</amountTax>
@@ -48830,6 +49282,7 @@ assert dateFoundStr == nextMonth</scriptText>
                                  <unitAmountWithTax>13.770246000000</unitAmountWithTax>
                                  <unitAmountTax>2.100546000000</unitAmountTax>
                                  <quantity>2.900000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
                                  <amountWithoutTax>33.842130000000</amountWithoutTax>
                                  <amountWithTax>39.933713000000</amountWithTax>
                                  <amountTax>6.091583000000</amountTax>
@@ -48851,6 +49304,7 @@ assert dateFoundStr == nextMonth</scriptText>
                                  <unitAmountWithTax>13.770246000000</unitAmountWithTax>
                                  <unitAmountTax>2.100546000000</unitAmountTax>
                                  <quantity>4.590000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
                                  <amountWithoutTax>53.563923000000</amountWithoutTax>
                                  <amountWithTax>63.205429000000</amountWithTax>
                                  <amountTax>9.641506000000</amountTax>
@@ -48872,6 +49326,7 @@ assert dateFoundStr == nextMonth</scriptText>
                                  <unitAmountWithTax>13.770246000000</unitAmountWithTax>
                                  <unitAmountTax>2.100546000000</unitAmountTax>
                                  <quantity>1.090000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
                                  <amountWithoutTax>12.719973000000</amountWithoutTax>
                                  <amountWithTax>15.009568000000</amountWithTax>
                                  <amountTax>2.289595000000</amountTax>
@@ -48948,6 +49403,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>13.770246000000</unitAmountWithTax>
           <unitAmountTax>2.100546000000</unitAmountTax>
           <quantity>2.900000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>33.842130000000</amountWithoutTax>
           <amountWithTax>39.933713000000</amountWithTax>
          <amountTax>6.091583000000</amountTax>
@@ -48969,6 +49425,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>13.770246000000</unitAmountWithTax>
           <unitAmountTax>2.100546000000</unitAmountTax>
           <quantity>1.090000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>12.719973000000</amountWithoutTax>
           <amountWithTax>15.009568000000</amountWithTax>
           <amountTax>2.289595000000</amountTax>
@@ -49045,6 +49502,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -49068,6 +49526,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.053376700000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.595613000000</amountWithoutTax>
           <amountWithTax>11.125394000000</amountWithTax>
           <amountTax>0.529781000000</amountTax>
@@ -49091,6 +49550,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>11.509028000000</amountWithTax>
           <amountTax>0.548049000000</amountTax>
@@ -49114,6 +49574,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -49137,6 +49598,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>11.509028000000</amountWithTax>
           <amountTax>0.548049000000</amountTax>
@@ -49160,6 +49622,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -49238,6 +49701,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -49261,6 +49725,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.053376700000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.595613000000</amountWithoutTax>
           <amountWithTax>11.125394000000</amountWithTax>
           <amountTax>0.529781000000</amountTax>
@@ -49284,6 +49749,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>11.509028000000</amountWithTax>
           <amountTax>0.548049000000</amountTax>
@@ -49307,6 +49773,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -49330,6 +49797,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>11.509028000000</amountWithTax>
           <amountTax>0.548049000000</amountTax>
@@ -49353,6 +49821,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>10.561648120800</unitAmountWithTax>
           <unitAmountTax>0.502935624800</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>30.601803000000</amountWithTax>
           <amountTax>1.457229000000</amountTax>
@@ -49575,6 +50044,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>12.253185000000</unitAmountWithTax>
           <unitAmountTax>0.583485000000</unitAmountTax>
           <quantity>2.900000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>33.842130000000</amountWithoutTax>
           <amountWithTax>35.534237000000</amountWithTax>
           <amountTax>1.692107000000</amountTax>
@@ -49596,6 +50066,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>12.253185000000</unitAmountWithTax>
           <unitAmountTax>0.583485000000</unitAmountTax>
           <quantity>1.090000000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>12.719973000000</amountWithoutTax>
           <amountWithTax>13.355972000000</amountWithTax>
           <amountTax>0.635999000000</amountTax>
@@ -49672,6 +50143,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>34.390597000000</amountWithTax>
           <amountTax>5.246023000000</amountTax>
@@ -49695,6 +50167,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
          <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>1.053376700000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.595613000000</amountWithoutTax>
           <amountWithTax>12.502823000000</amountWithTax>
           <amountTax>1.907210000000</amountTax>
@@ -49718,6 +50191,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
          <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>12.933955000000</amountWithTax>
           <amountTax>1.972976000000</amountTax>
@@ -49741,6 +50215,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
           <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>34.390597000000</amountWithTax>
           <amountTax>5.246023000000</amountTax>
@@ -49764,6 +50239,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
          <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>1.089700000000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>10.960979000000</amountWithoutTax>
           <amountWithTax>12.933955000000</amountWithTax>
           <amountTax>1.972976000000</amountTax>
@@ -49787,6 +50263,7 @@ assert dateFoundStr == nextMonth</scriptText>
           <unitAmountWithTax>11.869280745280</unitAmountWithTax>
          <unitAmountTax>1.810568249280</unitAmountTax>
           <quantity>2.897445800000</quantity>
+                                 <inputQuantity>*</inputQuantity>
           <amountWithoutTax>29.144574000000</amountWithoutTax>
           <amountWithTax>34.390597000000</amountWithTax>
           <amountTax>5.246023000000</amountTax>
@@ -49918,7 +50395,7 @@ assert dateFoundStr == nextMonth</scriptText>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>217</con:value>
+        <con:value>220</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -62826,7 +63303,7 @@ public class DDRequestBuilderDemo extends DDRequestBuilderScript {
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>351</con:value>
+        <con:value>353</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -63719,7 +64196,7 @@ public class DDRequestBuilderDemo extends DDRequestBuilderScript {
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>371</con:value>
+        <con:value>373</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
