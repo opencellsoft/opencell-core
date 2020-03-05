@@ -266,15 +266,14 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
 	public void updateConstraintByColumnsName(CustomEntityTemplate customEntityTemplate, String oldConstraintColumns,
-			String newConstraintColumns) {
-		if (!StringUtils.isBlank(oldConstraintColumns)) {
+			String newConstraintColumns, boolean keyColumnRemoved) {
+		if (!keyColumnRemoved && !StringUtils.isBlank(oldConstraintColumns)) {
 			if (oldConstraintColumns.equals(newConstraintColumns)) {
 				return;
 			}
 			String cetConstraintName = customEntityTemplate.getUniqueContraintName();
 			String constraintName = !StringUtils.isBlank(cetConstraintName) ? cetConstraintName
-					: customTableCreatorService.extractConstraintName(customEntityTemplate.getDbTablename(),
-							oldConstraintColumns);
+					: customTableCreatorService.extractConstraintName(customEntityTemplate.getDbTablename());
 			removeConstraintFromCET(customEntityTemplate, constraintName);
 		}
 		addConstraintByColumnsName(customEntityTemplate, newConstraintColumns);
@@ -358,7 +357,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 		String newConstraintColumns = CollectionUtils.isEmpty(cetFields.values()) ? ""
 				: cetFields.values().stream().filter(x -> x.isUniqueConstraint())
 						.map(x -> CustomFieldTemplate.getDbFieldname(x.getCode())).distinct().sorted().collect(Collectors.joining(","));
-		updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns);
+		updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns, false);
 	}
 
     @Override
