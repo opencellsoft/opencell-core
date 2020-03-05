@@ -46,108 +46,100 @@ import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
 
 /**
- * Standard backing bean for {@link OneShotChargeTemplate} (extends
- * {@link BaseBean} that provides almost all common methods to handle entities
- * filtering/sorting in datatable, their create, edit, view, delete operations).
- * It works with Manaty custom JSF components.
+ * Standard backing bean for {@link OneShotChargeTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable,
+ * their create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
 public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemplate> {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link OneShotChargeTemplate} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private OneShotChargeTemplateService oneShotChargeTemplateService;
+    /**
+     * Injected @{link OneShotChargeTemplate} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private OneShotChargeTemplateService oneShotChargeTemplateService;
 
-	@Inject
-	private RecurringChargeTemplateService recurringChargeTemplateService;
+    @Inject
+    private RecurringChargeTemplateService recurringChargeTemplateService;
 
-	@Inject
-	private UsageChargeTemplateService usageChargeTemplateService;
+    @Inject
+    private UsageChargeTemplateService usageChargeTemplateService;
 
-	@Inject
-	private TriggeredEDRTemplateService triggeredEDRTemplateService;
-	
+    @Inject
+    private TriggeredEDRTemplateService triggeredEDRTemplateService;
+
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
-    
+
     @Inject
     private ProductChargeTemplateService productChargeTemplateService;
 
-	private DualListModel<TriggeredEDRTemplate> edrTemplates;
+    private DualListModel<TriggeredEDRTemplate> edrTemplates;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public OneShotChargeTemplateBean() {
-		super(OneShotChargeTemplate.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public OneShotChargeTemplateBean() {
+        super(OneShotChargeTemplate.class);
+    }
 
-	@Override
-	public void search() {
-		getFilters();
-		if (!filters.containsKey("disabled")) {
-			filters.put("disabled", false);
-		}
-		super.search();
-	}
+    @Override
+    public void search() {
+        getFilters();
+        if (!filters.containsKey("disabled")) {
+            filters.put("disabled", false);
+        }
+        super.search();
+    }
 
-	// /**
-	// * Data model of entities for data table in GUI. Filters charges of Usage
-	// * type.
-	// *
-	// * @return filtered entities.
-	// */
-	// // @Out(value = "oneShotChargeTemplatesForUsageType", required = false)
-	// protected PaginationDataModel<OneShotChargeTemplate>
-	// getDataModelForUsageType() {
-	// return entities;
-	// }
+    // /**
+    // * Data model of entities for data table in GUI. Filters charges of Usage
+    // * type.
+    // *
+    // * @return filtered entities.
+    // */
+    // // @Out(value = "oneShotChargeTemplatesForUsageType", required = false)
+    // protected PaginationDataModel<OneShotChargeTemplate>
+    // getDataModelForUsageType() {
+    // return entities;
+    // }
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it. Filters charges of Usage type.
-	 * 
-	 * @return outcome view
-	 * @throws BusinessException business exception
-	 * 
-	 */
-	// @Produces
-	// @Named("oneShotChargeTemplatesForUsageType")
-	// public PaginationDataModel<OneShotChargeTemplate> listForUsageType() {
-	// getFilters();
-	// if (!filters.containsKey("disabled")) {
-	// filters.put("disabled", false);
-	// }
-	// filters.put("oneShotChargeTemplateType",
-	// OneShotChargeTemplateTypeEnum.USAGE);
-	// return super.list();
-	// }
+    /**
+     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
+     * it. Filters charges of Usage type.
+     * 
+     * @return outcome view
+     * @throws BusinessException business exception
+     * 
+     */
+    // @Produces
+    // @Named("oneShotChargeTemplatesForUsageType")
+    // public PaginationDataModel<OneShotChargeTemplate> listForUsageType() {
+    // getFilters();
+    // if (!filters.containsKey("disabled")) {
+    // filters.put("disabled", false);
+    // }
+    // filters.put("oneShotChargeTemplateType",
+    // OneShotChargeTemplateTypeEnum.USAGE);
+    // return super.list();
+    // }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-	 */
-	@Override
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+     */
+    @Override
     @ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		// check for unicity
-		if (recurringChargeTemplateService.findByCode(entity.getCode()) != null
-				|| usageChargeTemplateService.findByCode(entity.getCode()) != null
-				|| productChargeTemplateService.findByCode(entity.getCode()) != null) {
-			messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
-			return null;
-		}
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        // check for unicity
+        if (recurringChargeTemplateService.findByCode(entity.getCode()) != null || usageChargeTemplateService.findByCode(entity.getCode()) != null || productChargeTemplateService.findByCode(entity.getCode()) != null) {
+            messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
+            return null;
+        }
 
-        getEntity().getEdrTemplates().clear();
-        getEntity().getEdrTemplates().addAll(triggeredEDRTemplateService.refreshOrRetrieve(edrTemplates.getTarget()));
+        getEntity().setEdrTemplates(triggeredEDRTemplateService.refreshOrRetrieve(edrTemplates.getTarget()));
 
         String outcome = super.saveOrUpdate(killConversation);
 
@@ -155,43 +147,43 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
             return getEditViewName();
         }
         return null;
-	}
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<OneShotChargeTemplate> getPersistenceService() {
-		return oneShotChargeTemplateService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<OneShotChargeTemplate> getPersistenceService() {
+        return oneShotChargeTemplateService;
+    }
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
 
-	public DualListModel<TriggeredEDRTemplate> getEdrTemplatesModel() {
-		if (edrTemplates == null) {
-			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService.list();
-			List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
-			if (getEntity().getEdrTemplates() != null) {
-				target.addAll(getEntity().getEdrTemplates());
-			}
-			source.removeAll(target);
-			edrTemplates = new DualListModel<TriggeredEDRTemplate>(source, target);
-		}
-		return edrTemplates;
-	}
+    public DualListModel<TriggeredEDRTemplate> getEdrTemplatesModel() {
+        if (edrTemplates == null) {
+            List<TriggeredEDRTemplate> source = triggeredEDRTemplateService.list();
+            List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
+            if (getEntity().getEdrTemplates() != null) {
+                target.addAll(getEntity().getEdrTemplates());
+            }
+            source.removeAll(target);
+            edrTemplates = new DualListModel<TriggeredEDRTemplate>(source, target);
+        }
+        return edrTemplates;
+    }
 
-	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> edrTemplates) {	
-		this.edrTemplates = edrTemplates;
-	}
-	
-	@ActionMethod
-	public void duplicate() {
+    public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> edrTemplates) {
+        this.edrTemplates = edrTemplates;
+    }
+
+    @ActionMethod
+    public void duplicate() {
 
         if (entity != null && entity.getId() != null) {
-            
+
             try {
                 oneShotChargeTemplateService.duplicate(entity);
                 messages.info(new BundleKey("messages", "duplicate.successfull"));
@@ -199,20 +191,19 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
                 log.error("Error encountered duplicating one shot charge template entity: {}", entity.getCode(), e);
                 messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
             }
-		}
-	}
-	
-	public boolean isUsedInSubscription() {
-		return (getEntity() != null && !getEntity().isTransient() && (oneShotChargeTemplateService.findByCode(
-				getEntity().getCode()) != null)) ? true : false;
-	}
+        }
+    }
 
-	public LazyDataModel<OneShotChargeTemplate> getOtherTypeCharges(){
-		if (filters == null){
-			filters = new HashMap<>();
-		}
-		filters.put("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.OTHER);
-		return getLazyDataModel();
-	}
+    public boolean isUsedInSubscription() {
+        return (getEntity() != null && !getEntity().isTransient() && (oneShotChargeTemplateService.findByCode(getEntity().getCode()) != null)) ? true : false;
+    }
+
+    public LazyDataModel<OneShotChargeTemplate> getOtherTypeCharges() {
+        if (filters == null) {
+            filters = new HashMap<>();
+        }
+        filters.put("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.OTHER);
+        return getLazyDataModel();
+    }
 
 }

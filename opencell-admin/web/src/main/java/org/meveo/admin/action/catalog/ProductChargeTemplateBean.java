@@ -28,75 +28,72 @@ import org.primefaces.model.DualListModel;
 @ViewScoped
 public class ProductChargeTemplateBean extends BaseBean<ProductChargeTemplate> {
 
-	private static final long serialVersionUID = -1167691337353764450L;
+    private static final long serialVersionUID = -1167691337353764450L;
 
-	@Inject
-	protected ProductChargeTemplateService productChargeTemplateService;
+    @Inject
+    protected ProductChargeTemplateService productChargeTemplateService;
 
-	@Inject
-	private TriggeredEDRTemplateService triggeredEDRTemplateService;
-	
-	@Inject
-	private RecurringChargeTemplateService recurringChargeTemplateService;
+    @Inject
+    private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
-	@Inject
-	private UsageChargeTemplateService usageChargeTemplateService;
+    @Inject
+    private RecurringChargeTemplateService recurringChargeTemplateService;
 
-	@Inject
-	private OneShotChargeTemplateService oneShotChargeTemplateService;
+    @Inject
+    private UsageChargeTemplateService usageChargeTemplateService;
 
-	private DualListModel<TriggeredEDRTemplate> edrTemplatesDM;
+    @Inject
+    private OneShotChargeTemplateService oneShotChargeTemplateService;
 
-	public ProductChargeTemplateBean() {
-		super(ProductChargeTemplate.class);
-	}
+    private DualListModel<TriggeredEDRTemplate> edrTemplatesDM;
 
-	@Override
-	protected IPersistenceService<ProductChargeTemplate> getPersistenceService() {
-		return productChargeTemplateService;
-	}
+    public ProductChargeTemplateBean() {
+        super(ProductChargeTemplate.class);
+    }
 
-	@Override
-	@ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		// check for unicity
-		if (oneShotChargeTemplateService.findByCode(entity.getCode()) != null
-				|| usageChargeTemplateService.findByCode(entity.getCode()) != null
-				|| recurringChargeTemplateService.findByCode(entity.getCode()) != null) {
-			messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
-			return null;
-		}
+    @Override
+    protected IPersistenceService<ProductChargeTemplate> getPersistenceService() {
+        return productChargeTemplateService;
+    }
 
-		getEntity().getEdrTemplates().clear();
-		getEntity().getEdrTemplates().addAll(triggeredEDRTemplateService.refreshOrRetrieve(edrTemplatesDM.getTarget()));
+    @Override
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        // check for unicity
+        if (oneShotChargeTemplateService.findByCode(entity.getCode()) != null || usageChargeTemplateService.findByCode(entity.getCode()) != null || recurringChargeTemplateService.findByCode(entity.getCode()) != null) {
+            messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
+            return null;
+        }
 
-		boolean newEntity = (entity.getId() == null);
-		
-		String outcome = super.saveOrUpdate(killConversation);
+        getEntity().setEdrTemplates(triggeredEDRTemplateService.refreshOrRetrieve(edrTemplatesDM.getTarget()));
 
-		if (outcome != null) {
-			return newEntity ? getEditViewName() : outcome;
-		}
-		
-		return null;
-	}
+        boolean newEntity = (entity.getId() == null);
 
-	public DualListModel<TriggeredEDRTemplate> getEdrTemplatesDM() {
-		if (edrTemplatesDM == null) {
-			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService.list();
-			List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
-			if (getEntity().getEdrTemplates() != null) {
-				target.addAll(getEntity().getEdrTemplates());
-			}
+        String outcome = super.saveOrUpdate(killConversation);
 
-			source.removeAll(target);
-			edrTemplatesDM = new DualListModel<TriggeredEDRTemplate>(source, target);
-		}
-		return edrTemplatesDM;
-	}
+        if (outcome != null) {
+            return newEntity ? getEditViewName() : outcome;
+        }
 
-	public void setEdrTemplatesDM(DualListModel<TriggeredEDRTemplate> edrTemplatesDM) {
-		this.edrTemplatesDM = edrTemplatesDM;
-	}
+        return null;
+    }
+
+    public DualListModel<TriggeredEDRTemplate> getEdrTemplatesDM() {
+        if (edrTemplatesDM == null) {
+            List<TriggeredEDRTemplate> source = triggeredEDRTemplateService.list();
+            List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
+            if (getEntity().getEdrTemplates() != null) {
+                target.addAll(getEntity().getEdrTemplates());
+            }
+
+            source.removeAll(target);
+            edrTemplatesDM = new DualListModel<TriggeredEDRTemplate>(source, target);
+        }
+        return edrTemplatesDM;
+    }
+
+    public void setEdrTemplatesDM(DualListModel<TriggeredEDRTemplate> edrTemplatesDM) {
+        this.edrTemplatesDM = edrTemplatesDM;
+    }
 
 }

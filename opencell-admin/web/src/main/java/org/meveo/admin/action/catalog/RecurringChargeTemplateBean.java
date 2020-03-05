@@ -44,111 +44,104 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.primefaces.model.DualListModel;
 
 /**
- * Standard backing bean for {@link RecurringChargeTemplate} (extends
- * {@link BaseBean} that provides almost all common methods to handle entities
- * filtering/sorting in datatable, their create, edit, view, delete operations).
- * It works with Manaty custom JSF components.
+ * Standard backing bean for {@link RecurringChargeTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable,
+ * their create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
 public class RecurringChargeTemplateBean extends CustomFieldBean<RecurringChargeTemplate> {
-	private static final long serialVersionUID = 1L;
-	/**
-	 * Injected @{link RecurringChargeTemplate} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private RecurringChargeTemplateService recurringChargeTemplateService;
+    private static final long serialVersionUID = 1L;
+    /**
+     * Injected @{link RecurringChargeTemplate} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private RecurringChargeTemplateService recurringChargeTemplateService;
 
-	@Inject
-	private UsageChargeTemplateService usageChargeTemplateService;
+    @Inject
+    private UsageChargeTemplateService usageChargeTemplateService;
 
-	@Inject
-	private OneShotChargeTemplateService oneShotChargeTemplateService;
+    @Inject
+    private OneShotChargeTemplateService oneShotChargeTemplateService;
 
-	@Inject
-	private TriggeredEDRTemplateService triggeredEDRTemplateService;
-	
+    @Inject
+    private TriggeredEDRTemplateService triggeredEDRTemplateService;
+
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
-    
+
     @Inject
     private ProductChargeTemplateService productChargeTemplateService;
 
-	private DualListModel<TriggeredEDRTemplate> edrTemplates;
-	
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public RecurringChargeTemplateBean() {
-		super(RecurringChargeTemplate.class);
-	}
+    private DualListModel<TriggeredEDRTemplate> edrTemplates;
 
-	@Override
-	public void search() {
-		getFilters();
-		if (!filters.containsKey("disabled")) {
-			filters.put("disabled", false);
-		}
-		super.search();
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public RecurringChargeTemplateBean() {
+        super(RecurringChargeTemplate.class);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-	 */
-	@Override
+    @Override
+    public void search() {
+        getFilters();
+        if (!filters.containsKey("disabled")) {
+            filters.put("disabled", false);
+        }
+        super.search();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+     */
+    @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		// check for unicity
-		if (oneShotChargeTemplateService.findByCode(entity.getCode()) != null
-				|| usageChargeTemplateService.findByCode(entity.getCode()) != null
-				|| productChargeTemplateService.findByCode(entity.getCode()) != null) {
-			messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
-			return null;
-		}
+        // check for unicity
+        if (oneShotChargeTemplateService.findByCode(entity.getCode()) != null || usageChargeTemplateService.findByCode(entity.getCode()) != null || productChargeTemplateService.findByCode(entity.getCode()) != null) {
+            messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
+            return null;
+        }
 
-        getEntity().getEdrTemplates().clear();
-        getEntity().getEdrTemplates().addAll(edrTemplateService.refreshOrRetrieve(edrTemplates.getTarget()));
-        
+        getEntity().setEdrTemplates(edrTemplateService.refreshOrRetrieve(edrTemplates.getTarget()));
+
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
             return getEditViewName();
         }
         return null;
-	}
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<RecurringChargeTemplate> getPersistenceService() {
-		return recurringChargeTemplateService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<RecurringChargeTemplate> getPersistenceService() {
+        return recurringChargeTemplateService;
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
-	 */
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("calendar");
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
+     */
+    protected List<String> getListFieldsToFetch() {
+        return Arrays.asList("calendar");
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
-	 */
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("calendar");
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
+     */
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("calendar");
+    }
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
 
-	public DualListModel<TriggeredEDRTemplate> getEdrTemplatesModel() {
+    public DualListModel<TriggeredEDRTemplate> getEdrTemplatesModel() {
         if (edrTemplates == null) {
             List<TriggeredEDRTemplate> source = triggeredEDRTemplateService.list();
             List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
@@ -159,32 +152,31 @@ public class RecurringChargeTemplateBean extends CustomFieldBean<RecurringCharge
             edrTemplates = new DualListModel<TriggeredEDRTemplate>(source, target);
         }
         return edrTemplates;
-	}
+    }
 
-	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> edrTemplates) {
-		this.edrTemplates = edrTemplates;
-	}
-	
-	@Inject
-	private TriggeredEDRTemplateService edrTemplateService;
-	
-	@ActionMethod
-	public void duplicate() {
-		
+    public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> edrTemplates) {
+        this.edrTemplates = edrTemplates;
+    }
+
+    @Inject
+    private TriggeredEDRTemplateService edrTemplateService;
+
+    @ActionMethod
+    public void duplicate() {
+
         if (entity != null && entity.getId() != null) {
             try {
-            	recurringChargeTemplateService.duplicate(entity);
+                recurringChargeTemplateService.duplicate(entity);
                 messages.info(new BundleKey("messages", "duplicate.successfull"));
             } catch (BusinessException e) {
                 log.error("Error encountered duplicating recurring charge template entity: {}", entity.getCode(), e);
                 messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
             }
-		}
-	}
-	
-	public boolean isUsedInSubscription() {
-		return (getEntity() != null && !getEntity().isTransient() && (recurringChargeTemplateService.findByCode(
-				getEntity().getCode()) != null)) ? true : false;
-	}
-	
+        }
+    }
+
+    public boolean isUsedInSubscription() {
+        return (getEntity() != null && !getEntity().isTransient() && (recurringChargeTemplateService.findByCode(getEntity().getCode()) != null)) ? true : false;
+    }
+
 }
