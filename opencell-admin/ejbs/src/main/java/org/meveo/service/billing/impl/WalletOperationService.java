@@ -442,7 +442,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     /**
      * Reimburse already applied recurring charges
-     *
+     * 
      * @param chargeInstance Recurring charge instance
      * @throws BusinessException Business exception
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
