@@ -21,7 +21,9 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.UUID;
 
+import javax.persistence.PrePersist;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -48,8 +50,11 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -57,6 +62,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.tax.TaxClass;
 
@@ -68,6 +74,7 @@ import org.meveo.model.tax.TaxClass;
  * @lastModifiedVersion 7.0
  */
 @Entity
+@CustomFieldEntity(cftCodePrefix = "WalletOperation")
 @Table(name = "billing_wallet_operation")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_wallet_operation_seq"), })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -109,8 +116,9 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "WalletOperation.listNotOpenedWObetweenTwoDates", query = "SELECT o FROM WalletOperation o WHERE o.status != 'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate and o.id >:lastId order by o.id asc"),
         @NamedQuery(name = "WalletOperation.listWObetweenTwoDatesByStatus", query = "SELECT o FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate and o.id >:lastId order by o.id asc"),
         @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status<>'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate"),
+        @NamedQuery(name = "WalletOperation.deleteWObetweenTwoDatesByStatus", query = "delete FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate"),
         @NamedQuery(name = "WalletOperation.deleteZeroWO", query = "delete FROM WalletOperation o WHERE o.quantity=0 AND o.chargeInstance.id in (select c.id FROM ChargeInstance c where c.chargeTemplate.dropZeroWo=true)")})
-public class WalletOperation extends BaseEntity {
+public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -438,6 +446,28 @@ public class WalletOperation extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private WalletOperationStatusEnum status = WalletOperationStatusEnum.OPEN;
+
+    /**
+     * Custom field values in JSON format
+     */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values", columnDefinition = "text")
+    private CustomFieldValues cfValues;
+
+    /**
+     * Accumulated custom field values in JSON format
+     */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    private CustomFieldValues cfAccumulatedValues;
+
+    /**
+     * Unique identifier - UUID
+     */
+    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
+    @Size(max = 60)
+    @NotNull
+    private String uuid;
 
     /**
      * Constructor
@@ -1166,5 +1196,57 @@ public class WalletOperation extends BaseEntity {
      */
     public void setTaxClass(TaxClass taxClass) {
         this.taxClass = taxClass;
+    }
+
+    @Override
+    public CustomFieldValues getCfValues() {
+        return cfValues;
+    }
+
+    @Override
+    public void setCfValues(CustomFieldValues cfValues) {
+        this.cfValues = cfValues;
+    }
+
+    /**
+     * setting uuid if null
+     */
+    @PrePersist
+    public void setUUIDIfNull() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID().toString();
+        }
+    }
+
+    @Override
+    public CustomFieldValues getCfAccumulatedValues() {
+        return cfAccumulatedValues;
+    }
+
+    @Override
+    public void setCfAccumulatedValues(CustomFieldValues cfAccumulatedValues) {
+        this.cfAccumulatedValues = cfAccumulatedValues;
+    }
+
+    @Override
+    public String getUuid() {
+        setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return null;
+    }
+
+    @Override
+    public String clearUuid() {
+        String oldUuid = uuid;
+        uuid = UUID.randomUUID().toString();
+        return oldUuid;
     }
 }

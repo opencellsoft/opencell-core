@@ -1,0 +1,13 @@
+{
+	"code": "PARENT_SELLER",
+	"description": "Parent Seller",
+	"currencyCode": "USD",
+	"countryCode": "US",
+	"languageCode": "ENG",
+	"invoiceTypeSequences": {
+		"RS_FULL_SELLER_HIE": {
+			"prefixEL": "PARENT-",
+			"invoiceSequenceCode": "RS_FULL_SELLER_HIE"
+		}
+	}
+}

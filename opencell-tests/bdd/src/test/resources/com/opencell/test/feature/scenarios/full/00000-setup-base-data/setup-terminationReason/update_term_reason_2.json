@@ -1,0 +1,7 @@
+{
+    "code": "TERM_REASON_2",
+    "description": "Reimbursement",
+    "applyAgreement": "false",
+    "applyReimbursment": "true",
+    "applyTerminationCharges": "false"
+}

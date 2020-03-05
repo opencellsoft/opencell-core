@@ -34697,33 +34697,28 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOneShotChargeTemplate>
-         
-         <oneShotChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_INHERITED_OS1" description="${#Project#entityPrefix}_${#TestSuite#index}_INHERITED_OS1">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            
-            <amountEditable>false</amountEditable>
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Forfait test 685</description>
-            </languageDescriptions>
-            
-            <inputUnitDescription>1</inputUnitDescription>
-            
-            <ratingUnitDescription>1</ratingUnitDescription>
-            
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>
-            
-         </oneShotChargeTemplate>
-      </ws:createOneShotChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOneShotChargeTemplate>\r
+         <oneShotChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_INHERITED_OS1" description="${#Project#entityPrefix}_${#TestSuite#index}_INHERITED_OS1">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <!--Zero or more repetitions:-->\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Forfait test 685</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>1</inputUnitDescription>\r
+            <ratingUnitDescription>1</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </oneShotChargeTemplate>\r
+      </ws:createOneShotChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1a93f06d-6749-4edb-a2d4-0c994cb38225"/>
             <con:assertion type="Simple Contains" name="Contains" id="89b71a17-a7b1-4cbb-be25-3e861b65dbd4">
@@ -35214,7 +35209,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>10</con:value>
+        <con:value>11</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -37846,7 +37841,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>139</con:value>
+        <con:value>140</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39316,7 +39311,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>95</con:value>
+        <con:value>96</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -40381,7 +40376,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>83</con:value>
+        <con:value>84</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -50619,7 +50614,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     </con:property>
     <con:property>
       <con:name>opencell.url2</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://localhost:8080/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>

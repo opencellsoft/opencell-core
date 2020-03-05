@@ -1,0 +1,8 @@
+{
+	"code": "RS_BASE_PC1_PP",
+	"description": "price plan product 1",
+	"eventCode": "RS_BASE_PC1",
+	"amountWithoutTax": "1",
+	"amountWithTax": "1.2",
+	"priority": "2"
+}

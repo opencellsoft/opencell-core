@@ -59,6 +59,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.finance.RevenueRecognitionRule;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxClass;
 
 /**
@@ -224,6 +225,13 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Column(name = "tax_class_el_sp", length = 2000)
     @Size(max = 2000)
     private String taxClassElSpark;
+
+    /**
+     * Script to handle rating instead of a regular price plan logic
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rating_script_id")
+    private ScriptInstance ratingScript;
 
     /**
      * Enable/disable removing rated WO to 0.
@@ -501,6 +509,20 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
      */
     public void setTaxClassElSpark(String taxClassElSpark) {
         this.taxClassElSpark = taxClassElSpark;
+    }
+
+    /**
+     * @return Script to handle rating instead of a regular price plan logic
+     */
+    public ScriptInstance getRatingScript() {
+        return ratingScript;
+    }
+
+    /**
+     * @param ratingScript Script to handle rating instead of a regular price plan logic
+     */
+    public void setRatingScript(ScriptInstance ratingScript) {
+        this.ratingScript = ratingScript;
     }
     /**
      * Check if removing WO rated to 0 is enabled or not.

@@ -1,0 +1,26 @@
+{
+    "code": "RS_BASE_OFFER1",
+    "description": "RS_BASE_OFFER1",
+    "name": "RS_BASE_OFFER1",
+    "disabled": "false",
+    "offerServiceTemplate": [
+        {
+            "serviceTemplate": {
+                "code": "RS_BASE_SERVICE1"
+            }
+        },
+        {
+            "serviceTemplate": {
+                "code": "RS_BASE_SERVICE2"
+            }
+        }
+    ],
+    "offerProductTemplate": [
+        {
+            "productTemplate": {
+                "code": "RS_BASE_PRODUCT1"
+            }
+        }
+    ],
+    "lifeCycleStatus": "ACTIVE"
+}

@@ -1,0 +1,10 @@
+{
+    "jobTemplate": "ExportSubscriptionsJob",
+    "code": "RS_BASE_ImpExp-Job1",
+    "description": "RS_BASE_Import-Export",
+    "timerCode": "RS_BASE_Timer1",
+    "jobCategory": "IMPORT/EXPORT",
+    "followingJob": "ACCO_JOB",
+    "parameter": "param1",
+    "active": "false"
+}
