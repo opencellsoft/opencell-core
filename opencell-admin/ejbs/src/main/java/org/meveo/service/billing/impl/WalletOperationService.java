@@ -1391,16 +1391,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return result;
     }
 
-    public void updateAggregatedWalletOperations(Date invoicingDate) {
-        // batch update
-        String strQuery = "UPDATE WalletOperation o SET o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
-                + " WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate) AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN";
-        Query query = getEntityManager().createQuery(strQuery);
-        query.setParameter("invoicingDate", invoicingDate);
-        int affectedRecords = query.executeUpdate();
-        log.debug("updated record wo count={}", affectedRecords);
-    }
-
     public List<WalletOperation> listByRatedTransactionId(Long ratedTransactionId) {
         return getEntityManager().createNamedQuery("WalletOperation.listByRatedTransactionId", WalletOperation.class).setParameter("ratedTransactionId", ratedTransactionId)
             .getResultList();
