@@ -348,13 +348,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             create(ratedTransaction);
 
             WalletOperationAggregatorQueryBuilder woa = new WalletOperationAggregatorQueryBuilder(aggregationSettings);
-            String strQuery = woa.listWoQuery(aggregatedWo.getIdAsLong());
+            String strQuery = woa.listWoQuery(aggregatedWo);
             Query query = getEntityManager().createQuery(strQuery);
             query.setParameter("invoicingDate", invoicingDate);
             List<WalletOperation> walletOps = (List<WalletOperation>) query.getResultList();
-
+            
             for (WalletOperation tempWo : walletOps) {
                 tempWo.changeStatus(WalletOperationStatusEnum.TREATED);
+                tempWo.setRatedTransaction(ratedTransaction);
             }
         }
 
