@@ -43,7 +43,7 @@ public class CustomFieldTemplateServiceTest {
 		String newConstraintColumns = COLUMN_NAME_1;
 		// Given
 		// When
-		customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns);
+		customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns, false);
 		// Then
 		verify(customTableCreatorService, never()).addUniqueConstraint(anyString(), anyString());
 		verify(customTableCreatorService, never()).dropUniqueConstraint(anyString(), anyString());
@@ -55,7 +55,7 @@ public class CustomFieldTemplateServiceTest {
 		String newConstraintColumns = COLUMN_NAME_2;
 		// Given
 		// When
-		customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns);
+		customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns, false);
 		// Then
 		verify(customTableCreatorService, times(1)).addUniqueConstraint(CODE, COLUMN_NAME_2);
 		verify(customTableCreatorService, times(1)).dropUniqueConstraint(CODE, COLUMN_NAME_1);
@@ -67,7 +67,7 @@ public class CustomFieldTemplateServiceTest {
 		String newConstraintColumns = NO_CONSTRAINT;
 		// Given
 		// When
-		customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns);
+		customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns, false);
 		// Then
 		verify(customTableCreatorService, never()).addUniqueConstraint(anyString(), anyString());
 		verify(customTableCreatorService, times(1)).dropUniqueConstraint(CODE, COLUMN_NAME_1);
@@ -79,7 +79,7 @@ public class CustomFieldTemplateServiceTest {
 		String newConstraintColumns = COLUMN_NAME_1;
 		// Given
 		// When
-		customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns);
+		customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns, false);
 		// Then
 		verify(customTableCreatorService, never()).dropUniqueConstraint(anyString(), anyString());
 		verify(customTableCreatorService, times(1)).addUniqueConstraint(CODE, COLUMN_NAME_1);
