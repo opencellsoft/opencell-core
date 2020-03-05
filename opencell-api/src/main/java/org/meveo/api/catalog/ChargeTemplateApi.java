@@ -20,12 +20,13 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.finance.RevenueRecognitionRule;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxClass;
-import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UnitOfMeasureService;
 import org.meveo.service.finance.RevenueRecognitionRuleService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.tax.TaxClassService;
 
 /**
@@ -33,9 +34,6 @@ import org.meveo.service.tax.TaxClassService;
  **/
 
 public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends ChargeTemplateDto> extends BaseCrudApi<E, T> {
-
-    @Inject
-    private ChargeTemplateServiceAll chargeTemplateService;
 
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
@@ -51,6 +49,9 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
 
     @Inject
     private UnitOfMeasureService unitOfMeasureService;
+
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     /**
      * Convert/update DTO object to an entity object
@@ -149,6 +150,15 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
             }
 
             chargeTemplate.setEdrTemplates(edrTemplates);
+        }
+
+        if (postData.getRatingScriptCode() != null) {
+            if (StringUtils.isBlank(postData.getRatingScriptCode())) {
+                chargeTemplate.setRatingScript(null);
+            } else {
+                ScriptInstance ratingScript = scriptInstanceService.findByCode(postData.getRatingScriptCode());
+                chargeTemplate.setRatingScript(ratingScript);
+            }
         }
 
         if (isNew && postData.isDisabled() != null) {

@@ -2706,5 +2706,14 @@ END $$;]]>
         <sql>update ${db.schema.adapted}billing_wallet_operation set uuid = 'wo'||id</sql>
         <addNotNullConstraint tableName="billing_wallet_operation" columnName="uuid"/>
     </changeSet>
+
+    <changeSet id="#4892_2020-03-04" author="AndriusKarpavicius">
+        <addColumn tableName="cat_charge_template">
+            <column name="rating_script_id" type="bigint"/>     
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="rating_script_id" baseTableName="cat_charge_template" constraintName="fk_charge_template_rating_script_id" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+    </changeSet>
+
 </databaseChangeLog>
 
