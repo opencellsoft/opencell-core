@@ -331,10 +331,11 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
             entityActionScriptService.remove(action.getId());
         }
         if(cet !=null) {
+        	boolean keyColumnRemoved = cftsToRemove.stream().anyMatch(x -> x.isUniqueConstraint());
 			String newConstraintColumns = CollectionUtils.isEmpty(fields) ? ""
 					: fields.stream().filter(x -> x.getUniqueConstraint() != null && x.getUniqueConstraint())
 							.map(x -> CustomFieldTemplate.getDbFieldname(x.getCode())).distinct().sorted().collect(Collectors.joining(","));
-			customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns);
+			customFieldTemplateService.updateConstraintByColumnsName(cet, oldConstraintColumns, newConstraintColumns, keyColumnRemoved);
         }
     }
 

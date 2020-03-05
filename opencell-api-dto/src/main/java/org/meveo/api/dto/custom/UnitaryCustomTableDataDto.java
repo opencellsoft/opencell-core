@@ -10,6 +10,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 
+/**
+ * Represents data in custom table - custom entity data stored in a separate table
+ * This DTO is used for unitary table updates
+ * 
+ */
 @XmlRootElement(name = "CustomTableData")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UnitaryCustomTableDataDto extends BaseEntityDto {
