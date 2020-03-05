@@ -35,21 +35,24 @@
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['terminationReason.title']}"
-					   backingBean="#{terminationReasonListBean}">
-			<hftl:column label="#{messages['BusinessEntity.code']}" field="code"/>
+			backingBean="#{terminationReasonListBean}">
+			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['BusinessEntity.description']}"
-						 field="description"/>
+				field="description" />
 			<hftl:column label="#{messages['terminationReason.applyAgreement']}"
-						 field="applyAgreement"/>
+				field="applyAgreement" />
 			<hftl:column label="#{messages['terminationReason.applyReimbursment']}"
-						 field="applyReimbursment"/>
+				field="applyReimbursment" />
 			<hftl:column label="#{messages['terminationReason.applyTerminationCharges']}"
 						 field="applyTerminationCharges"/>
 			<hftl:column label="#{messages['terminationReason.overrideProrata']}"
 						 field="overrideProrata"/>
+						 field="applyTerminationCharges"/>
+			<hftl:column label="#{messages['terminationReason.reimburseOneshots']}"
+						 field="reimburseOneshots"/>
 
 			<hftl:actionsColumn
-					permission="#{currentUser.hasRole('administrationManagement')}"/>
+				permission="#{currentUser.hasRole('administrationManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

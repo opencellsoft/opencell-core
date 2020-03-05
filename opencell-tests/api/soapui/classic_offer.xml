@@ -19867,7 +19867,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <con:testStep type="restrequest" name="Create tax class Zero" id="eca11482-fad6-441d-a809-27ab8f22e3bc">
         <con:settings/>
         <con:config service="http://${#Project#opencell.url}" methodName="POST" resourcePath="/api/rest/taxClass" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="Create tax class" id="99e74d2f-34b8-4577-86dc-d658d41499a2" mediaType="application/json" postQueryString="false">
+          <con:restRequest name="Create tax class Zero" id="99e74d2f-34b8-4577-86dc-d658d41499a2" mediaType="application/json" postQueryString="false">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -19966,7 +19966,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <con:testStep type="restrequest" name="Create tax mapping Zero" id="30795e3e-ebe2-49cd-ae30-0fc9fc1c674b">
         <con:settings/>
         <con:config service="http://${#Project#opencell.url}" methodName="POST" resourcePath="/api/rest/taxMapping" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="Create tax mapping" id="99e74d2f-34b8-4577-86dc-d658d41499a2" mediaType="application/json" postQueryString="false">
+          <con:restRequest name="Create tax mapping Zero" id="99e74d2f-34b8-4577-86dc-d658d41499a2" mediaType="application/json" postQueryString="false">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>

@@ -43,6 +43,11 @@ public class TerminationReasonDto extends BusinessEntityDto {
     private OverrideProrataEnum overrideProrata;
 
     /**
+     * reimburse Oneshots charges.
+     */
+    private boolean reimburseOneshots;
+
+    /**
      * Instantiates a new termination reason dto.
      */
     public TerminationReasonDto() {
@@ -60,6 +65,7 @@ public class TerminationReasonDto extends BusinessEntityDto {
         applyReimbursment = subscriptionTerminationReason.isApplyReimbursment();
         applyTerminationCharges = subscriptionTerminationReason.isApplyTerminationCharges();
         overrideProrata = subscriptionTerminationReason.getOverrideProrata();
+        reimburseOneshots = subscriptionTerminationReason.isReimburseOneshots();
     }
 
     /**
@@ -132,6 +138,24 @@ public class TerminationReasonDto extends BusinessEntityDto {
      */
     public void setOverrideProrata(OverrideProrataEnum overrideProrata) {
         this.overrideProrata = overrideProrata;
+    }
+
+    /**
+     * Check if refunding oneshots charges is enabled.
+     *
+     * @return True if refunding charge is enabled, false else.
+     */
+    public boolean isReimburseOneshots() {
+        return reimburseOneshots;
+    }
+
+    /**
+     * Enable/disable the refunding oneshot charges.
+     *
+     * @param reimburseOneshots
+     */
+    public void setReimburseOneshots(boolean reimburseOneshots) {
+        this.reimburseOneshots = reimburseOneshots;
     }
 
     @Override

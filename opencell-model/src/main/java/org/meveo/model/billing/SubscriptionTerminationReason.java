@@ -82,6 +82,13 @@ public class SubscriptionTerminationReason extends BusinessEntity implements ISe
     @Column(name = "override_prorata")
     private OverrideProrataEnum overrideProrata = OverrideProrataEnum.NO_OVERRIDE;
 
+    /**
+     * reimburse Oneshots charges.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "reimburse_oneshots")
+    private boolean reimburseOneshots;
+
     public boolean isApplyAgreement() {
         return applyAgreement;
     }
@@ -125,5 +132,13 @@ public class SubscriptionTerminationReason extends BusinessEntity implements ISe
      */
     public void setOverrideProrata(OverrideProrataEnum overrideProrata) {
         this.overrideProrata = overrideProrata;
+    }
+
+    public boolean isReimburseOneshots() {
+        return reimburseOneshots;
+    }
+
+    public void setReimburseOneshots(boolean reimburseOneshots) {
+        this.reimburseOneshots = reimburseOneshots;
     }
 }

@@ -31,6 +31,7 @@ import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OverrideProrataEnum;
+import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Renewal;
 import org.meveo.model.billing.ServiceInstance;
@@ -638,6 +639,16 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
             usageChargeInstanceService.terminateUsageChargeInstance(usageChargeInstance, terminationDate);
+        }
+
+        //Apply oneshots refunding
+        if (terminationReason.isReimburseOneshots()) {
+            for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
+                oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity().negate(),
+                        orderNumber);
+                oneShotChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
+                oneShotChargeInstanceService.update(oneShotChargeInstance);
+            }
         }
 
         serviceInstance.setTerminationDate(terminationDate);
