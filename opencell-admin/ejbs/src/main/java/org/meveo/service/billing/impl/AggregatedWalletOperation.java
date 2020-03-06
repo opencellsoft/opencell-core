@@ -37,21 +37,6 @@ public class AggregatedWalletOperation {
 	private BigDecimal amountTax = BigDecimal.ZERO;
 
 	/**
-	 * Unit amount with tax
-	 */
-	private BigDecimal unitAmountWithTax = BigDecimal.ZERO;
-
-	/**
-	 * Unit amount without tax
-	 */
-	private BigDecimal unitAmountWithoutTax = BigDecimal.ZERO;
-
-	/**
-	 * Unit amount tax
-	 */
-	private BigDecimal unitAmountTax = BigDecimal.ZERO;
-
-	/**
 	 * Quantity
 	 */
 	private BigDecimal quantity = BigDecimal.ZERO;
@@ -118,8 +103,7 @@ public class AggregatedWalletOperation {
 
 	public AggregatedWalletOperation(String walletOpsIds, Long sellerId, Integer year, Integer month, Integer day, Tax tax,
 			InvoiceSubCategory invoiceSubCategory, Object id, BigDecimal amountWithTax, BigDecimal amountWithoutTax,
-			BigDecimal amountTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountWithoutTax,
-			BigDecimal unitAmountTax, BigDecimal quantity, String orderNumber, String parameter1, String parameter2, String parameter3,
+			BigDecimal amountTax, BigDecimal quantity, String orderNumber, String parameter1, String parameter2, String parameter3,
 			String parameterExtra) {
 		String[] stringIds = walletOpsIds.split(",");
 		List<Long> ids = Arrays.asList(stringIds).stream().map(x-> new Long(x)).collect(Collectors.toList());
@@ -134,9 +118,6 @@ public class AggregatedWalletOperation {
 		this.amountWithTax = amountWithTax;
 		this.amountWithoutTax = amountWithoutTax;
 		this.amountTax = amountTax;
-		this.unitAmountWithTax = unitAmountWithTax;
-		this.unitAmountWithoutTax = unitAmountWithoutTax;
-		this.unitAmountTax = unitAmountTax;
 		this.quantity = quantity;
 		this.orderNumber = orderNumber;
 		this.parameter1 = parameter1;
@@ -189,22 +170,6 @@ public class AggregatedWalletOperation {
 		this.amountTax = amountTax;
 	}
 
-	public BigDecimal getUnitAmountWithTax() {
-		return unitAmountWithTax;
-	}
-
-	public void setUnitAmountWithTax(BigDecimal unitAmountWithTax) {
-		this.unitAmountWithTax = unitAmountWithTax;
-	}
-
-	public BigDecimal getUnitAmountTax() {
-		return unitAmountTax;
-	}
-
-	public void setUnitAmountTax(BigDecimal unitAmountTax) {
-		this.unitAmountTax = unitAmountTax;
-	}
-
 	public BigDecimal getQuantity() {
 		return quantity;
 	}
@@ -219,14 +184,6 @@ public class AggregatedWalletOperation {
 
 	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
 		this.amountWithoutTax = amountWithoutTax;
-	}
-
-	public BigDecimal getUnitAmountWithoutTax() {
-		return unitAmountWithoutTax;
-	}
-
-	public void setUnitAmountWithoutTax(BigDecimal unitAmountWithoutTax) {
-		this.unitAmountWithoutTax = unitAmountWithoutTax;
 	}
 
 	public Tax getTax() {

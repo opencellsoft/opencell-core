@@ -153,7 +153,7 @@ public class WalletOperationAggregatorQueryBuilder {
 				+ ", o.invoiceSubCategory" //
 				+ ", " + id //
 				+ ", SUM(o.amountWithTax), SUM(o.amountWithoutTax), SUM(o.amountTax)" //
-				+ ", SUM(o.unitAmountWithTax), SUM(o.unitAmountWithoutTax), SUM(o.unitAmountTax), SUM(o.quantity)" //
+				+ ", SUM(o.quantity)" //
 				+ ", " + getOrderNumberField() //
 				+ ", " + getParameter1Field() //
 				+ ", " + getParameter2Field() //
