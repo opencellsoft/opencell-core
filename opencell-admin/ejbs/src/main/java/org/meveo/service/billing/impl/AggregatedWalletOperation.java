@@ -1,11 +1,12 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.WalletOperation;
 
 /**
  * Aggregated wallet operation.
@@ -113,13 +114,16 @@ public class AggregatedWalletOperation {
 	/**
 	 * List of wallet operations.
 	 */
-	private List<WalletOperation> walletOperations;
+	private List<Long> walletOperationsIds;
 
-	public AggregatedWalletOperation(Long sellerId, Integer year, Integer month, Integer day, Tax tax,
+	public AggregatedWalletOperation(String walletOpsIds, Long sellerId, Integer year, Integer month, Integer day, Tax tax,
 			InvoiceSubCategory invoiceSubCategory, Object id, BigDecimal amountWithTax, BigDecimal amountWithoutTax,
 			BigDecimal amountTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountWithoutTax,
 			BigDecimal unitAmountTax, BigDecimal quantity, String orderNumber, String parameter1, String parameter2, String parameter3,
 			String parameterExtra) {
+		String[] stringIds = walletOpsIds.split(",");
+		List<Long> ids = Arrays.asList(stringIds).stream().map(x-> new Long(x)).collect(Collectors.toList());
+		this.walletOperationsIds=ids;
 		this.sellerId = sellerId;
 		this.year = year;
 		this.month = month;
@@ -273,14 +277,6 @@ public class AggregatedWalletOperation {
 		this.sellerId = sellerId;
 	}
 
-	public List<WalletOperation> getWalletOperations() {
-		return walletOperations;
-	}
-
-	public void setWalletOperations(List<WalletOperation> walletOperations) {
-		this.walletOperations = walletOperations;
-	}
-
 	public String getParameter1() {
 		return parameter1;
 	}
@@ -319,6 +315,20 @@ public class AggregatedWalletOperation {
 
 	public void setOrderNumber(String orderNumber) {
 		this.orderNumber = orderNumber;
+	}
+
+	/**
+	 * @return the walletOperationsIds
+	 */
+	public List<Long> getWalletOperationsIds() {
+		return walletOperationsIds;
+	}
+
+	/**
+	 * @param walletOperationsIds the walletOperationsIds to set
+	 */
+	public void setWalletOperationsIds(List<Long> walletOperationsIds) {
+		this.walletOperationsIds = walletOperationsIds;
 	}
 
 }

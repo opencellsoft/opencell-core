@@ -146,6 +146,7 @@ public class WalletOperationAggregatorQueryBuilder {
 
 	public String getGroupQuery() {
 		return "SELECT new org.meveo.service.billing.impl.AggregatedWalletOperation(" //
+				+ "STRING_AGG(cast(o.id as string), ','), "
 				+ "o.seller.id" //
 				+ dateAggregateSelect //
 				+ ", o.tax" //
