@@ -1,0 +1,10 @@
+{
+    "code": "BC_LP_MONTHLY_1ST",
+    "description": "Mensuel 1er du mois",
+    "billingTemplateName": "LAPOSTE",
+    "invoiceDateDelay": "0",
+    "dueDateDelay": "7",
+    "invoiceDateProductionDelay": "0",
+    "invoicingThreshold": 0.01,
+    "calendar": "MONTHLY"
+}

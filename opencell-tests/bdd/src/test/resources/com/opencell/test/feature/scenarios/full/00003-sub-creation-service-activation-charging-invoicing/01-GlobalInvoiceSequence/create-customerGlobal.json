@@ -1,0 +1,38 @@
+{
+    "crmAccountType": "C_UA",
+    "crmParentCode": "SELLER_FR",
+    "code": "RS_FULL_200_CustomerGlobal",
+    "description": "customerA",
+    "externalRef1": "externalRef1",
+    "externalRef2": "externalRef2",
+    "name": {
+        "title": "MR",
+        "firstName": "firstName",
+        "lastName": "lastName"
+    },
+    "address": {
+        "address1": "address1",
+        "address2": "address2",
+        "address3": "address3",
+        "zipCode": "92026",
+        "city": "Courbevoie",
+        "country": "France"
+    },
+    "contactInformation": {
+        "email": "firstName.lastName@$email.fr",
+        "phone": "01 44 87 11 22",
+        "fax": "01 44 87 11 23"
+    },
+    "language": "FRA",
+    "customerCategory": "CLIENT",
+    "currency": "EUR",
+    "billingCycle": "CYC_INV_MT_1",
+    "country": "FR",
+    "invoicingThreshold": "0",
+    "methodOfPayment": [
+        {
+            "paymentMethodType": "CHECK",
+            "alias": "travel"
+        }
+    ]
+}

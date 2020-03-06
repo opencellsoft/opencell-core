@@ -1,0 +1,17 @@
+{
+    "filters": {
+        "entry": [
+            {
+                "key": "wallet.userAccount.code",
+                "value": "RS_FULL_200_UA_INVOICE"
+            },
+            {
+                "key": "chargeInstance.description",
+                "value": "ApplyOneChargeNOTEnterprise"
+            }
+        ]
+    },
+    "limit": "5",
+    "sortBy": "operationDate",
+    "sortOrder": "DESCENDING"
+}

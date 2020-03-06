@@ -1,0 +1,8 @@
+{
+    "code": "RS_FULL_200_${#TestCase#suffix}_NotEnterprise",
+    "description": "Subscription with rating EL",
+    "userAccount": "UA_RS_FULL_200_${#TestCase#suffix}",
+    "offerTemplate": "RS_FULL_200_${#TestCase#suffix}_NotEnterprise",
+    "subscriptionDate": "2016-02-01",
+    "endAgreementDate": "2016-07-01"
+}

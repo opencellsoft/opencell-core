@@ -1,0 +1,10 @@
+{
+    "subscription": "RS_FULL_200_SUB_INVOICE",
+    "servicesToActivate": {
+        "service": {
+            "code": "RS_BASE_SERVICE1",
+            "quantity": "3",
+            "subscriptionDate": "2015-03-22"
+        }
+    }
+}

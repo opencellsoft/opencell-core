@@ -1,0 +1,9 @@
+{
+    "code": "CYC_INV_MT_DELAY_100",
+    "description": "Monthly Invoice Cycle DELAY 100",
+    "transactionDateDelay": "0",
+    "invoiceDateProductionDelay": "0",
+    "dueDateDelay": "2",
+    "invoiceDateDelay": "4",
+    "calendar": "MONTHLY"
+}

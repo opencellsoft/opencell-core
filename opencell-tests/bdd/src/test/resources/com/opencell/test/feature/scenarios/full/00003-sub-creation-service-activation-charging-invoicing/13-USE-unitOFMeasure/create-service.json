@@ -1,0 +1,21 @@
+{
+    "code": "SE_USG_UNIT_UOM",
+    "description": "Unit usage service",
+    "customFields": null,
+    "imageBase64": null,
+    "imagePath": null,
+    "invoicingCalendar": null,
+    "longDescription": null,
+    "mandatory": true,
+    "serviceChargeTemplateUsages": {
+        "serviceChargeTemplateUsage": [
+            {
+                "code": "CH_USG_UNIT_UOM"
+            }
+        ]
+    },
+    "serviceChargeTemplateRecurrings": null,
+    "serviceChargeTemplateSubscriptions": null,
+    "serviceChargeTemplateTerminations": null,
+    "somCode": null
+}

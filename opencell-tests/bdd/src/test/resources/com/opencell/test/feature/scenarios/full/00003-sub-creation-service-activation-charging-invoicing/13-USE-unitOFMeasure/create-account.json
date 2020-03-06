@@ -1,0 +1,56 @@
+{
+    "crmAccountType": "C_UA",
+    "crmParentCode": "MAIN_SELLER",
+    "code": "account.code.uom",
+    "description": "account.description",
+    "name": {
+        "title": "MR",
+        "firstName": "account.firstname",
+        "lastName": "account.lastname"
+    },
+    "address": {
+        "address1": "91 avenue des Parquerettes",
+        "address2": null,
+        "address3": null,
+        "zipCode": "37610",
+        "city": "Saint Breoles",
+        "country": "FR"
+    },
+    "contactInformation": {
+        "email": "recygo@opencellsoft.com",
+        "mobile": "+33123546789"
+    },
+    "email": "billing@opencellsoft.com",
+    "language": "FRA",
+    "methodOfPayment": [
+        {
+            "paymentMethodType": "DIRECTDEBIT",
+            "disabled": false,
+            "alias": "SEPA",
+            "preferred": true,
+            "customerAccountCode": "account.code",
+            "bankCoordinates": {
+                "bankCode": null,
+                "branchCode": null,
+                "accountNumber": null,
+                "key": null,
+                "iban": "FR123456789123456789",
+                "bic": "BDNFR123456",
+                "accountOwner": "account.description",
+                "bankName": "Banque de detail de Normandie",
+                "bankId": null,
+                "issuerNumber": null,
+                "issuerName": null,
+                "ics": "FR01234PSA5678"
+            },
+            "mandateIdentification": "MAN1234568798",
+            "mandateDate": "2018-03-01"
+        }
+    ],
+    "customerCategory": "CLIENT",
+    "currency": "EUR",
+    "billingCycle": "BC_LP_MONTHLY_1ST",
+    "country": "FR",
+    "electronicBilling": true,
+    "customFields": null
+}

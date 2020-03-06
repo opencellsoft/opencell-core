@@ -1,0 +1,164 @@
+{
+    "xmlns:ns2": "http://ws.api.meveo.org/",
+    "xmlns:soap": "http://schemas.xmlsoap.org/soap/envelope/",
+    "id": "*",
+    "code": "RS_FULL_200_SUB_INVOICE",
+    "description": "RS_FULL_200_SUB_Invoice",
+    "auditable": {
+        "created": "*",
+        "creator": "*"
+    },
+    "auditableFields": {
+        "auditableField": [
+            {
+                "entityClass": "org.meveo.model.billing.Subscription",
+                "fieldName": "status",
+                "changeOrigin": "API",
+                "originName": "SubscriptionWs/createOrUpdateSubscription",
+                "currentState": "CREATED",
+                "created": "*",
+                "actor": "opencell.admin"
+            },
+            {
+                "entityClass": "org.meveo.model.billing.Subscription",
+                "fieldName": "status",
+                "changeOrigin": "API",
+                "originName": "SubscriptionWs/activateServices",
+                "previousState": "CREATED",
+                "currentState": "ACTIVE",
+                "created": "*",
+                "actor": "opencell.admin"
+            }
+        ]
+    },
+    "userAccount": "RS_FULL_200_UA_INVOICE",
+    "offerTemplate": "RS_BASE_OFFER1",
+    "subscriptionDate": "2015-02-01T00:00:00*",
+    "endAgreementDate": "2015-05-01T00:00:00*",
+    "status": "ACTIVE",
+    "statusDate": "*",
+    "accesses": {
+        "access": {
+            "code": "RS_FULL_200_ACC",
+            "subscription": "RS_FULL_200_SUB_INVOICE",
+            "disabled": false
+        }
+    },
+    "services": {
+        "serviceInstance": {
+            "id": "*",
+            "code": "RS_BASE_SERVICE1",
+            "description": "RS_BASE_SERVICE1",
+            "auditable": {
+                "created": "*",
+                "updated": "*",
+                "creator": "*",
+                "updater": "*"
+            },
+            "auditableFields": {
+                "auditableField": [
+                    {
+                        "entityClass": "org.meveo.model.billing.ServiceInstance",
+                        "fieldName": "status",
+                        "changeOrigin": "API",
+                        "originName": "SubscriptionWs/activateServices",
+                        "currentState": "INACTIVE",
+                        "created": "*",
+                        "actor": "opencell.admin"
+                    },
+                    {
+                        "entityClass": "org.meveo.model.billing.ServiceInstance",
+                        "fieldName": "status",
+                        "changeOrigin": "API",
+                        "originName": "SubscriptionWs/activateServices",
+                        "previousState": "INACTIVE",
+                        "currentState": "ACTIVE",
+                        "created": "*",
+                        "actor": "opencell.admin"
+                    }
+                ]
+            },
+            "status": "ACTIVE",
+            "statusDate": "*",
+            "subscriptionDate": "2015-02-01T00:00:00*",
+            "quantity": "1.000000000000",
+            "endAgreementDate": "2015-05-01T00:00:00*",
+            "recurringChargeInstances": {
+                "recurringChargeInstance": {
+                    "id": "*",
+                    "code": "RS_BASE_REC1",
+                    "description": "RS_BASE-Forfait Test",
+                    "auditable": {
+                        "created": "*",
+                        "updated": "*",
+                        "creator": "*",
+                        "updater": "*"
+                    },
+                    "status": "ACTIVE",
+                    "sellerCode": "SELLER_FR",
+                    "userAccountCode": "RS_FULL_200_UA_INVOICE"
+                }
+            },
+            "subscriptionChargeInstances": {
+                "subscriptionChargeInstance": {
+                    "id": "*",
+                    "code": "RS_BASE_OS1",
+                    "description": "RS_BASE-Forfait Test",
+                    "auditable": {
+                        "created": "*",
+                        "updated": "*",
+                        "creator": "*",
+                        "updater": "*"
+                    },
+                    "status": "CLOSED",
+                    "sellerCode": "SELLER_FR",
+                    "userAccountCode": "RS_FULL_200_UA_INVOICE"
+                }
+            },
+            "terminationChargeInstances": {
+                "terminationChargeInstance": {
+                    "id": "*",
+                    "code": "RS_BASE_OST1",
+                    "description": "RS_BASE-Termination Test",
+                    "auditable": {
+                        "created": "*",
+                        "creator": "*"
+                    },
+                    "status": "INACTIVE",
+                    "sellerCode": "SELLER_FR",
+                    "userAccountCode": "RS_FULL_200_UA_INVOICE"
+                }
+            },
+            "usageChargeInstances": {
+                "usageChargeInstance": {
+                    "id": "*",
+                    "code": "RS_BASE_USAGE1",
+                    "description": "RS_BASE-Forfait Test",
+                    "auditable": {
+                        "created": "*",
+                        "updated": "*",
+                        "creator": "*",
+                        "updater": "*"
+                    },
+                    "status": "ACTIVE",
+                    "sellerCode": "SELLER_FR",
+                    "userAccountCode": "RS_FULL_200_UA_INVOICE"
+                }
+            },
+            "serviceRenewal": {
+                "initialTermType": "RECURRING",
+                "autoRenew": false,
+                "extendAgreementPeriodToSubscribedTillDate": false
+            }
+        }
+    },
+    "renewed": false,
+    "renewalRule": {
+        "initialTermType": "RECURRING",
+        "autoRenew": false,
+        "extendAgreementPeriodToSubscribedTillDate": false
+    },
+    "seller": "SELLER_FR",
+    "autoEndOfEngagement": false,
+    "electronicBilling": false
+}

@@ -1,0 +1,20 @@
+{
+    "code": "RS_FULL_200_SUB_CAT_SERVICE",
+    "description": "Service",
+    "invoicingCalendar": "MONTHLY",
+    "serviceChargeTemplateRecurrings": {
+        "serviceChargeTemplateRecurring": {
+            "code": "RS_FULL_200_SUB_CAT_REC1"
+        }
+    },
+    "serviceChargeTemplateSubscriptions": {
+        "serviceChargeTemplateSubscription": {
+            "code": "RS_FULL_200_SUB_CAT_OS1"
+        }
+    },
+    "serviceChargeTemplateUsages": {
+        "serviceChargeTemplateUsage": {
+            "code": "RS_FULL_200_SUB_CAT_USAGE1"
+        }
+    }
+}

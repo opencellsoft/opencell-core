@@ -1,0 +1,7 @@
+{
+    "createBillingRunRequest": {
+        "billingCycleCode": "CYC_INV_MT_3",
+        "billingRunTypeEnum": "AUTOMATIC",
+        "lastTransactionDate": "2017-03-31"
+    }
+}

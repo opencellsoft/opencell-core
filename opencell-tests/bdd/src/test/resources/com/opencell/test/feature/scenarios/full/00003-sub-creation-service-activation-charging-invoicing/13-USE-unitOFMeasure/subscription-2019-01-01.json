@@ -1,0 +1,8 @@
+{
+    "code": "subscription.code.uom",
+    "description": "account.description",
+    "userAccount": "account.code.uom",
+    "offerTemplate": "OF_LP_COLLECTE_REMISE",
+    "subscriptionDate": "2019-01-01",
+    "status": null
+}

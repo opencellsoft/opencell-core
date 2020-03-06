@@ -1,0 +1,10 @@
+{
+    "code": "RS_FULL_200_${#TestCase#suffix}_Enterprise",
+    "description": "Service",
+    "invoicingCalendar": "MONTHLY",
+    "serviceChargeTemplateSubscriptions": {
+        "serviceChargeTemplateSubscription": {
+            "code": "RS_FULL_200_${#TestCase#suffix}_Enterprise"
+        }
+    }
+}

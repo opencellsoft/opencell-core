@@ -1,0 +1,8 @@
+{
+    "code": "DPI_200_INVOICE",
+    "discountPlanCode": "DP_200_INVOICE",
+    "invoiceCategoryCode": "SUBSCRIPTION",
+    "invoiceSubCategoryCode": "SUB_DATA",
+    "discountValue": "5",
+    "accountingCode": "DPI_INVOICE"
+}
