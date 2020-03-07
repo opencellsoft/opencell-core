@@ -19052,6 +19052,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <applyAgreement>true</applyAgreement>
             <applyReimbursment>true</applyReimbursment>
             <applyTerminationCharges>true</applyTerminationCharges>
+            <reimburseOneshots>true</reimburseOneshots>
          </terminationReason>
       </ws:createTerminationReason>
    </soapenv:Body>
@@ -19153,6 +19154,48 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/createBillingCycle"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create termination reason - reimburse oneShots" id="9068c693-d423-4d17-acd1-f509ab82b530">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>updateTerminationReason</con:operation>
+          <con:request name="Create termination reason - reimburse oneShots" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="54b299db-de74-47da-a41f-3e5c8b16df8d">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createTerminationReason>
+         <terminationReason code="${#Project#entityPrefix}_${#TestSuite#index}_RATE_TERM_REASON3" description="Reimbursement OneShot">
+            <applyAgreement>true</applyAgreement>
+            <applyReimbursment>true</applyReimbursment>
+            <applyTerminationCharges>false</applyTerminationCharges>
+            <reimburseOneshots>true</reimburseOneshots>
+         </terminationReason>
+      </ws:createTerminationReason>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="8e70b95d-8aae-4766-b241-8235e58a650b" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateBillingCycle"/>
             <con:wsrmConfig version="1.2"/>
           </con:request>
         </con:config>
@@ -20238,6 +20281,391 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:configuration>
                 <path>//walletOperations[1]/quantity</path>
                 <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create Subscription 2" id="f2673773-13b9-4c7f-beb3-1cb44eb97e98">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Create Subscription 2" id="78b62f52-e128-4072-971f-02c3d4c4e3e8">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateSubscription>
+         <subscription code="${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB2" description="${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB">
+            <userAccount>UA_${#Project#entityPrefix}_${#TestSuite#index}_OS_CUST1</userAccount>
+            <offerTemplate>${#Project#entityPrefix}_${#TestSuite#index}_OS_OFFER1</offerTemplate>
+            <subscriptionDate>2017-10-13</subscriptionDate>
+         </subscription>
+      </ws:createOrUpdateSubscription>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="SOAP Response" id="a67c7e53-f712-404e-ba01-eaf27bb22b78">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Activate services 2" id="3bcadfcf-fb6b-44b1-88ff-2e14067c38b6">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>activateServices</con:operation>
+          <con:request name="Activate services 2" id="488f6e2b-07dd-4013-9577-320ed6c6e59e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:activateServices>\r
+         <activateServices>\r
+            <subscription>${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB2</subscription>\r
+            <servicesToActivate>\r
+               <service code="${#Project#entityPrefix}_${#TestSuite#index}_OS_SERVICE1">\r
+                  <quantity>2</quantity>\r
+                  <subscriptionDate>2017-10-15T13:00:00${#Project#timezone}</subscriptionDate>\r
+                 </service>\r
+            </servicesToActivate>\r
+         </activateServices>\r
+      </ws:activateServices>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="89126986-a2b4-40d2-af62-adb80179fbd6"/>
+            <con:assertion type="Simple Contains" name="Contains" id="27042faa-671f-4d07-91e6-b5ce9b308d95">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Apply one shot 2" id="cf1c7a06-6112-4530-b909-16f366da65a6">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Apply one shot 2" id="1286bdbb-331f-4e14-88f7-15faee42196f">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:applyOneShotChargeInstance>       
+         <applyOneShotChargeInstance>
+		  <oneShotCharge>${#Project#entityPrefix}_${#TestSuite#index}_OS_OTHER</oneShotCharge>
+		  <subscription>${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB2</subscription>		  
+		  <operationDate>2017-10-15</operationDate>
+		  <quantity>4</quantity>
+		  <description>OneShot Charge</description>
+		</applyOneShotChargeInstance>
+      </ws:applyOneShotChargeInstance>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="7b16b2d8-0f87-4ad9-ab8d-b1a0076d2e3b"/>
+            <con:assertion type="Simple Contains" name="Contains" id="ff55ce8a-a6f2-418f-bd96-8fa58a9465f2">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find wallet operations - subscription 2" id="0c7e3484-653c-4abc-b8af-fd10ec7c331e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WalletWsSoapBinding</con:interface>
+          <con:operation>findOperations</con:operation>
+          <con:request name="Find wallet operations - subscription 2" id="3fe53558-4625-412b-a28a-27ae41a7b42d">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/WalletWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findOperations>\r
+         <pagingAndFiltering>\r
+            <filters>\r
+               <entry>\r
+                  <key>subscription.code</key>\r
+                  <value xsi:type="xs:string">${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB2</value>\r
+               </entry>\r
+               <entry>\r
+                  <key>chargeInstance.code</key>\r
+                  <value xsi:type="xs:string">${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB</value>\r
+               </entry>\r
+            </filters>\r
+            <limit>50</limit>\r
+            <sortBy>id</sortBy>\r
+            <sortOrder>ASCENDING</sortOrder>\r
+         </pagingAndFiltering>\r
+      </ws:findOperations>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="492ddc7e-7b82-4e4e-b7fb-611a44c1adc4"/>
+            <con:assertion type="XPath Match" id="b33ab00d-0765-4df5-9152-67e797a7e8f1" name="XPath Match 2">
+              <con:configuration>
+                <path>//walletOperations[1]/amountWithoutTax</path>
+                <content>20.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="a76ad2f0-4452-4457-977e-cb269ed4d796" name="XPath Match 6">
+              <con:configuration>
+                <path>//walletOperations/amountWithTax</path>
+                <content>21.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="9e2deaa7-9c17-4d79-8df0-7c200071357a" name="XPath Match 5">
+              <con:configuration>
+                <path>//walletOperations[1]/amountTax</path>
+                <content>1.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="6bff7b3c-8703-418c-b32a-80008efb2863" name="XPath Match 3">
+              <con:configuration>
+                <path>//walletOperations[1]/unitAmountWithoutTax</path>
+                <content>10.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="9df8624e-44e7-4ef6-82f1-5a42d8e23e78" name="XPath Match 22">
+              <con:configuration>
+                <path>count(//walletOperations)</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="74ee67c9-ca43-461b-ab46-19850f66a18d" name="XPath Match">
+              <con:configuration>
+                <path>//walletOperations[1]/quantity</path>
+                <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Terminate subscription" id="1ae0c069-382b-43b0-b80f-e53193eae0ca">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>terminateServices</con:operation>
+          <con:request name="Terminate subscription" id="488f6e2b-07dd-4013-9577-320ed6c6e59e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:terminateSubscription>
+		<terminateSubscription>
+		  <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB2</subscriptionCode>
+		  <terminationReason>${#Project#entityPrefix}_${#TestSuite#index}_RATE_TERM_REASON3</terminationReason>
+		  <terminationDate>2017-10-14</terminationDate>
+		</terminateSubscription>
+      </ws:terminateSubscription>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="89126986-a2b4-40d2-af62-adb80179fbd6"/>
+            <con:assertion type="Simple Contains" name="Contains" id="27042faa-671f-4d07-91e6-b5ce9b308d95">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find wallet operations - subscription 2 after termination" id="b3f1ecfd-1c3e-40a6-8c60-c4279f1a6bd7">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WalletWsSoapBinding</con:interface>
+          <con:operation>findOperations</con:operation>
+          <con:request name="Find wallet operations - subscription 2 after termination" id="3fe53558-4625-412b-a28a-27ae41a7b42d">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/WalletWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findOperations>\r
+         <pagingAndFiltering>\r
+            <filters>\r
+               <entry>\r
+                  <key>subscription.code</key>\r
+                  <value xsi:type="xs:string">${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB2</value>\r
+               </entry>\r
+            </filters>\r
+            <limit>50</limit>\r
+            <sortBy>id</sortBy>\r
+            <sortOrder>ASCENDING</sortOrder>\r
+         </pagingAndFiltering>\r
+      </ws:findOperations>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="492ddc7e-7b82-4e4e-b7fb-611a44c1adc4"/>
+            <con:assertion type="XPath Match" id="b33ab00d-0765-4df5-9152-67e797a7e8f1" name="XPath Match 2">
+              <con:configuration>
+                <path>//walletOperations[1]/amountWithoutTax</path>
+                <content>20.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="a76ad2f0-4452-4457-977e-cb269ed4d796" name="XPath Match 6">
+              <con:configuration>
+                <path>//walletOperations/amountWithTax</path>
+                <content>21.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="9e2deaa7-9c17-4d79-8df0-7c200071357a" name="XPath Match 5">
+              <con:configuration>
+                <path>//walletOperations[1]/amountTax</path>
+                <content>1.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="6bff7b3c-8703-418c-b32a-80008efb2863" name="XPath Match 3">
+              <con:configuration>
+                <path>//walletOperations[1]/unitAmountWithoutTax</path>
+                <content>10.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="9df8624e-44e7-4ef6-82f1-5a42d8e23e78" name="XPath Match 22">
+              <con:configuration>
+                <path>count(//walletOperations)</path>
+                <content>4</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="74ee67c9-ca43-461b-ab46-19850f66a18d" name="XPath Match">
+              <con:configuration>
+                <path>//walletOperations[1]/quantity</path>
+                <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="74ee67c9-ca43-461b-ab46-19850f66a18d" name="XPath Match 3">
+              <con:configuration>
+                <path>//walletOperations[3]/quantity</path>
+                <content>-2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="74ee67c9-ca43-461b-ab46-19850f66a18d" name="XPath Match 7">
+              <con:configuration>
+                <path>//walletOperations[4]/quantity</path>
+                <content>-4.000000000000</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -25342,7 +25770,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:validateBillingRun>
-         <billingRunId>16</billingRunId>
+         <billingRunId>1</billingRunId>
       </ws:validateBillingRun>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -29651,7 +30079,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000030</invoiceNumber>
+         	<invoiceNumber>COM_000000007</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -30665,7 +31093,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <walletTemplate>PRINCIPAL</walletTemplate>
   <seller>SELLER_FR</seller>
   <chargeInstance>${#Project#entityPrefix}_${#TestSuite#index}_CHS_OTHER</chargeInstance>
-  <chargeInstanceId>1004</chargeInstanceId>
+  <chargeInstanceId>*</chargeInstanceId>
   <currency>USD</currency>
   <status>OPEN</status>
   <updated>*</updated>
@@ -30712,7 +31140,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>25</con:value>
+        <con:value>29</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -33776,7 +34204,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>14</con:value>
+        <con:value>18</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39249,7 +39677,7 @@ assert dateFoundStr == nextMonth</scriptText>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000031</invoiceNumber>
+         	<invoiceNumber>COM_000000008</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -39299,7 +39727,7 @@ assert dateFoundStr == nextMonth</scriptText>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000032</invoiceNumber>
+         	<invoiceNumber>COM_000000009</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -39356,7 +39784,7 @@ assert dateFoundStr == nextMonth</scriptText>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000033</invoiceNumber>
+         	<invoiceNumber>COM_000000010</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -40614,7 +41042,7 @@ assert dateFoundStr == nextMonth</scriptText>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>41</con:value>
+        <con:value>45</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -50395,7 +50823,7 @@ assert dateFoundStr == nextMonth</scriptText>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>220</con:value>
+        <con:value>224</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -63303,7 +63731,7 @@ public class DDRequestBuilderDemo extends DDRequestBuilderScript {
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>353</con:value>
+        <con:value>357</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -64196,7 +64624,7 @@ public class DDRequestBuilderDemo extends DDRequestBuilderScript {
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>373</con:value>
+        <con:value>377</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
