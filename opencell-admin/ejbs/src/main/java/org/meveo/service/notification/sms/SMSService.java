@@ -11,6 +11,10 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.crm.impl.CustomerService;
+
+import org.meveo.sms.SMSProvider;
+import org.meveo.sms.SMSProviderFactory;
+import org.meveo.sms.SMSProviderInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,14 +29,19 @@ public class SMSService {
     @Inject
     private CustomerService customerService;
 
-    public SMSInfoResponseDTO send(SMSInfo smsInfo) {
-        String phoneNumberTo = fromCustomer(smsInfo.getCustomerCode());
-        SMSProviderInfo smsProvider =  new SMSProviderInfo(phoneNumberTo, smsInfo.getBody());
-        SMSProvider provider = providerInstance();
-        Message message = provider.send(smsProvider);
+    public SMSInfoResponseDTO send(SMS sms) {
+        SMSProviderInfo providerInfo = buildProviderInfo(sms);
+        SMSProvider provider = new SMSProviderFactory().create(providerInfo);
+        Message message = provider.send(providerInfo);
         log.info(format("Account SID %s sent SMS to %s with status %s",
                 message.getAccountSid(), message.getTo(), message.getStatus().toString()));
         return toResponseDto(message);
+    }
+
+    private SMSProviderInfo buildProviderInfo(SMS smsInfo) {
+        String phoneNumberTo = fromCustomer(smsInfo.getCustomerCode());
+        String providerName = getInstance().getProperty("sms.provider.name", "twilio");
+        return new SMSProviderInfo(providerName, phoneNumberTo, smsInfo.getMessage());
     }
 
     private String fromCustomer(String code) {
@@ -44,13 +53,6 @@ public class SMSService {
                 .map(CustomerAccount::getContactInformation)
                 .map(ContactInformation::getMobile)
                 .orElseThrow(() -> new MeveoApiException("Customer contact information is missing"));
-    }
-
-    private SMSProvider providerInstance() {
-        String accountSid = getInstance().getProperty("twilio.account.sid", "AC6f01746d5c14fa05fb60975c46aa09e3");
-        String token = getInstance().getProperty("twilio.auth.token", "df00b21b07f46f763c6d0da154d03fb7");
-        String from = getInstance().getProperty("twilio.phoneNumberFrom", "+14242342601");
-        return SMSProviderFactory.create(accountSid, token, from);
     }
 
     private SMSInfoResponseDTO toResponseDto(Message message) {

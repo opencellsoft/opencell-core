@@ -1,13 +1,19 @@
-package org.meveo.service.notification.sms;
+package org.meveo.sms;
 
 public class SMSProviderInfo {
 
+    private String providerName;
     private String to;
     private String message;
 
-    public SMSProviderInfo(String to, String message) {
+    public SMSProviderInfo(String providerName, String to, String message) {
+        this.providerName = providerName;
         this.to = to;
         this.message = message;
+    }
+
+    public String getProviderName() {
+        return providerName;
     }
 
     public String getTo() {

@@ -201,6 +201,11 @@
             <artifactId>opencell-api-dto</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.opencellsoft</groupId>
+            <artifactId>opencell-smsGateway</artifactId>
+        </dependency>
+
         <!-- Libraries included in Jboss -->
 
         <dependency>
@@ -310,12 +315,6 @@
 		    <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
 		    <version>1.0.2.Final</version>
 		</dependency>
-
-        <dependency>
-            <groupId>com.twilio.sdk</groupId>
-            <artifactId>twilio</artifactId>
-            <version>7.42.0</version>
-        </dependency>
         <!-- <dependency> -->
         <!-- <groupId>org.javassist</groupId> -->
         <!-- <artifactId>javassist</artifactId> -->

@@ -1,9 +1,8 @@
-package org.meveo.service.notification.sms;
+package org.meveo.sms;
 
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
-import org.meveo.api.exception.MeveoApiException;
 
 public class TwilioProvider implements SMSProvider {
 
@@ -26,7 +25,7 @@ public class TwilioProvider implements SMSProvider {
                     .create();
             return message;
         } catch (Exception e) {
-            throw new MeveoApiException(e.getMessage());
+            throw new ProviderException(e.getMessage());
         }
     }
 }

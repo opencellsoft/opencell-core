@@ -15,6 +15,7 @@
         <module>opencell-admin</module>
         <module>opencell-api</module>
         <module>opencell-client</module>
+        <module>opencell-smsGateway</module>
     </modules>
     
     <properties>
@@ -119,6 +120,11 @@
             <dependency>
                 <groupId>com.opencellsoft</groupId>
                 <artifactId>opencell-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.opencellsoft</groupId>
+                <artifactId>opencell-smsGateway</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
