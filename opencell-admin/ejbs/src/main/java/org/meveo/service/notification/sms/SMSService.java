@@ -2,9 +2,7 @@ package org.meveo.service.notification.sms;
 
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
-import static org.meveo.commons.utils.ParamBean.getInstance;
 
-import com.twilio.rest.api.v2010.account.Message;
 import org.meveo.api.dto.response.notification.SMSInfoResponseDTO;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.crm.Customer;
@@ -12,9 +10,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.crm.impl.CustomerService;
 
-import org.meveo.sms.SMSProvider;
 import org.meveo.sms.SMSProviderFactory;
-import org.meveo.sms.SMSProviderInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,19 +25,18 @@ public class SMSService {
     @Inject
     private CustomerService customerService;
 
-    public SMSInfoResponseDTO send(SMS sms) {
-        SMSProviderInfo providerInfo = buildProviderInfo(sms);
-        SMSProvider provider = new SMSProviderFactory().create(providerInfo);
-        Message message = provider.send(providerInfo);
+    public SMSInfoResponseDTO send(Communication communication) {
+        SMS sms = buildSmsInfo(communication);
+        SMSGateWay smsGateWay = SMSProviderFactory.create();
+        MessageResponse response = smsGateWay.send(sms);
         log.info(format("Account SID %s sent SMS to %s with status %s",
-                message.getAccountSid(), message.getTo(), message.getStatus().toString()));
-        return toResponseDto(message);
+                response.getSid(), response.getSentTo(), response.getStatus()));
+        return toResponseDto(response);
     }
 
-    private SMSProviderInfo buildProviderInfo(SMS smsInfo) {
-        String phoneNumberTo = fromCustomer(smsInfo.getCustomerCode());
-        String providerName = getInstance().getProperty("sms.provider.name", "twilio");
-        return new SMSProviderInfo(providerName, phoneNumberTo, smsInfo.getMessage());
+    private SMS buildSmsInfo(Communication communication) {
+        String phoneNumberTo = fromCustomer(communication.getCustomerCode());
+        return new SMS(phoneNumberTo, communication.getMessage());
     }
 
     private String fromCustomer(String code) {
@@ -55,12 +50,12 @@ public class SMSService {
                 .orElseThrow(() -> new MeveoApiException("Customer contact information is missing"));
     }
 
-    private SMSInfoResponseDTO toResponseDto(Message message) {
+    private SMSInfoResponseDTO toResponseDto(MessageResponse message) {
         SMSInfoResponseDTO response = new SMSInfoResponseDTO();
-        response.setStatus(message.getStatus().toString());
+        response.setStatus(message.getStatus());
         response.setBody(message.getBody());
         response.setUri(message.getUri());
-        response.setSentTo(message.getTo());
+        response.setSentTo(message.getSentTo());
         response.setPrice(message.getPrice());
         ofNullable(message.getErrorCode()).ifPresent(response::setErrorCode);
         ofNullable(message.getErrorMessage()).ifPresent(response::setErrorMessage);

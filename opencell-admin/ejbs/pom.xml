@@ -204,6 +204,7 @@
         <dependency>
             <groupId>com.opencellsoft</groupId>
             <artifactId>opencell-smsGateway</artifactId>
+            <version>9.2.0-SNAPSHOT</version>
         </dependency>
 
         <!-- Libraries included in Jboss -->

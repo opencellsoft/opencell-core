@@ -11,7 +11,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.notification.SMSNotification;
 
-import org.meveo.service.notification.sms.SMS;
+import org.meveo.service.notification.sms.Communication;
 import org.meveo.service.notification.sms.SMSService;
 
 import javax.enterprise.context.RequestScoped;
@@ -28,8 +28,8 @@ public class SMSNotificationImpl extends BaseRs implements SMSNotification {
 
     @Override
     public Response send(SMSInfoDto smsDTO) throws MeveoApiException {
-        SMS sms = new SMS(smsDTO.getCustomerCode(), smsDTO.getBody());
-        SMSInfoResponseDTO response = smsService.send(sms);
+        Communication communication = new Communication(smsDTO.getCustomerCode(), smsDTO.getBody());
+        SMSInfoResponseDTO response = smsService.send(communication);
         return Response.status(nonNull(response.getErrorCode()) ? BAD_REQUEST : OK)
                 .entity(response)
                 .build();
