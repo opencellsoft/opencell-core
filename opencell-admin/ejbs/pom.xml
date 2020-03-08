@@ -203,7 +203,7 @@
 
         <dependency>
             <groupId>com.opencellsoft</groupId>
-            <artifactId>opencell-smsGateway</artifactId>
+            <artifactId>opencell-sms-twilioModule</artifactId>
             <version>9.2.0-SNAPSHOT</version>
         </dependency>
 

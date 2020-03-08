@@ -10,7 +10,7 @@
         <version>9.2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>opencell-smsGateway</artifactId>
+    <artifactId>opencell-sms-twilioModule</artifactId>
     <packaging>jar</packaging>
     <name>Opencell SMS Twilio module</name>
 

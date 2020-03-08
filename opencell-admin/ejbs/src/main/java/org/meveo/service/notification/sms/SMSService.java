@@ -4,18 +4,18 @@ import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 
 import org.meveo.api.dto.response.notification.SMSInfoResponseDTO;
-import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.crm.impl.CustomerService;
 
-import org.meveo.sms.SMSProviderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.ServiceLoader;
 
 @Stateless
 public class SMSService {
@@ -27,7 +27,7 @@ public class SMSService {
 
     public SMSInfoResponseDTO send(Communication communication) {
         SMS sms = buildSmsInfo(communication);
-        SMSGateWay smsGateWay = SMSProviderFactory.create();
+        SMSGateWay smsGateWay = providerInstance();
         MessageResponse response = smsGateWay.send(sms);
         log.info(format("Account SID %s sent SMS to %s with status %s",
                 response.getSid(), response.getSentTo(), response.getStatus()));
@@ -39,15 +39,22 @@ public class SMSService {
         return new SMS(phoneNumberTo, communication.getMessage());
     }
 
+    private SMSGateWay providerInstance() {
+        ServiceLoader<SMSGateWay> loader = ServiceLoader.load(SMSGateWay.class);
+        return loader
+                .findFirst()
+                .orElseThrow(() -> new BusinessApiException("No SMS provider implementation found"));
+    }
+
     private String fromCustomer(String code) {
         Customer customer = ofNullable(customerService.findByCode(code))
-                .orElseThrow(() -> new MeveoApiException("Customer not found"));
+                .orElseThrow(() -> new BusinessApiException("Customer not found"));
         return customer.getCustomerAccounts()
                 .stream()
                 .findFirst()
                 .map(CustomerAccount::getContactInformation)
                 .map(ContactInformation::getMobile)
-                .orElseThrow(() -> new MeveoApiException("Customer contact information is missing"));
+                .orElseThrow(() -> new BusinessApiException("Customer contact information is missing"));
     }
 
     private SMSInfoResponseDTO toResponseDto(MessageResponse message) {
