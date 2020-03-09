@@ -25342,7 +25342,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:validateBillingRun>
-         <billingRunId>16</billingRunId>
+         <billingRunId>1</billingRunId>
       </ws:validateBillingRun>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -29651,7 +29651,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000030</invoiceNumber>
+         	<invoiceNumber>COM_000000007</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -30665,7 +30665,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <walletTemplate>PRINCIPAL</walletTemplate>
   <seller>SELLER_FR</seller>
   <chargeInstance>${#Project#entityPrefix}_${#TestSuite#index}_CHS_OTHER</chargeInstance>
-  <chargeInstanceId>1004</chargeInstanceId>
+  <chargeInstanceId>*</chargeInstanceId>
   <currency>USD</currency>
   <status>OPEN</status>
   <updated>*</updated>
@@ -30712,7 +30712,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>25</con:value>
+        <con:value>26</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -33776,7 +33776,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>14</con:value>
+        <con:value>15</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39249,7 +39249,7 @@ assert dateFoundStr == nextMonth</scriptText>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000031</invoiceNumber>
+         	<invoiceNumber>COM_000000008</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -39299,7 +39299,7 @@ assert dateFoundStr == nextMonth</scriptText>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000032</invoiceNumber>
+         	<invoiceNumber>COM_000000009</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -39356,7 +39356,7 @@ assert dateFoundStr == nextMonth</scriptText>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000033</invoiceNumber>
+         	<invoiceNumber>COM_000000010</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -40614,7 +40614,7 @@ assert dateFoundStr == nextMonth</scriptText>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>41</con:value>
+        <con:value>42</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -50395,7 +50395,7 @@ assert dateFoundStr == nextMonth</scriptText>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>220</con:value>
+        <con:value>221</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -63303,7 +63303,7 @@ public class DDRequestBuilderDemo extends DDRequestBuilderScript {
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>353</con:value>
+        <con:value>354</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -64196,7 +64196,7 @@ public class DDRequestBuilderDemo extends DDRequestBuilderScript {
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>373</con:value>
+        <con:value>374</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
