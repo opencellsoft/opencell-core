@@ -3,14 +3,18 @@
     "description": "RS_FULL_200_SERVICE_Invoice_3",
     "invoicingCalendar": "MONTHLY",
     "serviceChargeTemplateRecurrings": {
-        "serviceChargeTemplateRecurring": {
-            "code": "RS_BASE_REC3"
-        }
+        "serviceChargeTemplateRecurring": [
+            {
+                "code": "RS_BASE_REC3"
+            }
+        ]
     },
     "serviceChargeTemplateSubscriptions": {
-        "serviceChargeTemplateSubscription": {
-            "code": "RS_BASE_OS3"
-        }
+        "serviceChargeTemplateSubscription": [
+            {
+                "code": "RS_BASE_OS3"
+            }
+        ]
     },
     "serviceChargeTemplateUsages": {
         "serviceChargeTemplateUsage": [
