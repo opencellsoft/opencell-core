@@ -146,13 +146,14 @@ public class WalletOperationAggregatorQueryBuilder {
 
 	public String getGroupQuery() {
 		return "SELECT new org.meveo.service.billing.impl.AggregatedWalletOperation(" //
+				+ "STRING_AGG(cast(o.id as string), ','), "
 				+ "o.seller.id" //
 				+ dateAggregateSelect //
 				+ ", o.tax" //
 				+ ", o.invoiceSubCategory" //
 				+ ", " + id //
 				+ ", SUM(o.amountWithTax), SUM(o.amountWithoutTax), SUM(o.amountTax)" //
-				+ ", SUM(o.unitAmountWithTax), SUM(o.unitAmountWithoutTax), SUM(o.unitAmountTax), SUM(o.quantity)" //
+				+ ", SUM(o.quantity)" //
 				+ ", " + getOrderNumberField() //
 				+ ", " + getParameter1Field() //
 				+ ", " + getParameter2Field() //
