@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.api.account;
 
 import org.meveo.admin.exception.BusinessException;
@@ -8,6 +26,7 @@ import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -20,6 +39,7 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
@@ -713,4 +733,23 @@ public class CustomerAccountApi extends AccountEntityApi {
                 transferCustomerAccountDto.getAmount());
     }
 
+    /**
+     * Returns list of counters at a given date for a customer account.
+     * @param customerAccountCode the customer account code
+     * @param date the selected date
+     * @return a counter instance list
+     */
+    public List<CounterInstance> filterCountersByPeriod(String customerAccountCode, Date date) {
+        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
+
+        if (customerAccount == null) {
+            throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
+        }
+
+        if (StringUtils.isBlank(date)) {
+            throw new BusinessApiException("date is null");
+        }
+
+        return new ArrayList<>(customerAccountService.filterCountersByPeriod(customerAccount.getCounters(), date).values());
+    }
 }

@@ -1,0 +1,26 @@
+{
+    "code": "RS_BASE_CUST_3",
+    "description": "RS_BASE_CUST_3",
+    "externalRef1": "EXTREF1",
+    "externalRef2": "EXTREF2",
+    "name": {
+        "title": "MR",
+        "firstName": "firstname",
+        "lastName": "lastname"
+    },
+    "address": {
+        "address1": "adress1",
+        "address3": "adress3",
+        "zipCode": "21000",
+        "city": "Dijon",
+        "country": "France"
+    },
+    "customerCategory": "CLIENT",
+    "customerBrand": "DEFAULT",
+    "seller": "SELLER_FR",
+    "contactInformation": {
+        "email": "RS_BASE@manaty.net",
+        "phone": "+33100000000",
+        "mobile": "+33666666666"
+    }
+}

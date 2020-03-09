@@ -1,29 +1,28 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -92,22 +91,11 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     @JoinColumn(name = "discount_plan_item_id")
     private DiscountPlanItem discountPlanItem;
 
-    /** The sub category taxes transient. */
-    @Transient
-    private Set<Tax> subCategoryTaxesTransient;
-
     /**
      * Discount percent applied
      */
     @Column(name = "discount_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal discountPercent;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tax_id")
-    private Tax tax;
-
-    @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
-    private BigDecimal taxPercent;
 
     // Field no longer used since v.5.2
     @Deprecated
@@ -136,6 +124,12 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     private List<RatedTransaction> ratedtransactionsToAssociate = new ArrayList<>();
 
     /**
+     * Tracks cumulative amounts by tax
+     */
+    @Transient
+    private Map<Tax, BigDecimal> amountsByTax;
+
+    /**
      * Instantiates a new sub category invoice aggregate.
      */
     public SubCategoryInvoiceAgregate() {
@@ -149,21 +143,15 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      * @param billingAccount Billing account
      * @param userAccount User account
      * @param wallet Wallet instance
-     * @param tax Tax applied
      * @param invoice Invoice
      * @param accountingCode Accounting code
      */
-    public SubCategoryInvoiceAgregate(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, WalletInstance wallet, Tax tax,
-            Invoice invoice, AccountingCode accountingCode) {
+    public SubCategoryInvoiceAgregate(InvoiceSubCategory invoiceSubCategory, BillingAccount billingAccount, UserAccount userAccount, WalletInstance wallet, Invoice invoice, AccountingCode accountingCode) {
         super();
         this.invoiceSubCategory = invoiceSubCategory;
         this.billingAccount = billingAccount;
         this.userAccount = userAccount;
         this.wallet = wallet;
-        this.tax = tax;
-        if (tax != null) {
-            this.taxPercent = tax.getPercent();
-        }
         this.invoice = invoice;
         if (invoice != null) {
             this.billingRun = invoice.getBillingRun();
@@ -181,7 +169,6 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         this.setInvoiceSubCategory(subCategoryInvoiceAgregate.getInvoiceSubCategory());
         this.setWallet(subCategoryInvoiceAgregate.getWallet());
         this.setItemNumber(subCategoryInvoiceAgregate.getItemNumber());
-        this.setQuantity(subCategoryInvoiceAgregate.getQuantity());
         this.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
         this.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax());
         this.setAmountTax(subCategoryInvoiceAgregate.getAmountTax());
@@ -231,16 +218,36 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     }
 
     /**
-     * Associate Rated transaction to an aggregate and increment the itemNumber field value.
+     * Associate Rated transaction to an aggregate, increment the itemNumber field value and sum up amounts.
      * 
      * @param ratedTransaction Rated transaction to associate
+     * @param isEnterprise Is it enterprise/b2b installation - interested to track
      */
-    public void addRatedTransaction(RatedTransaction ratedTransaction) {
+    public void addRatedTransaction(RatedTransaction ratedTransaction, boolean isEnterprise) {
         if (this.itemNumber == null) {
             this.itemNumber = 0;
         }
         this.itemNumber++;
         this.ratedtransactionsToAssociate.add(ratedTransaction);
+
+        BigDecimal amount = null;
+        if (isEnterprise) {
+            amount = ratedTransaction.getAmountWithoutTax();
+            addAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
+        } else {
+            amount = ratedTransaction.getAmountWithTax();
+            addAmountWithTax(ratedTransaction.getAmountWithTax());
+        }
+        addAmountTax(ratedTransaction.getAmountTax());
+
+        if (amountsByTax == null) {
+            amountsByTax = new HashMap<>();
+        }
+        if (!amountsByTax.containsKey(ratedTransaction.getTax())) {
+            amountsByTax.put(ratedTransaction.getTax(), amount);
+        } else {
+            amountsByTax.put(ratedTransaction.getTax(), amountsByTax.get(ratedTransaction.getTax()).add(amount));
+        }
     }
 
     /**
@@ -376,10 +383,11 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      */
     @Override
     public int hashCode() {
-        if (id != null)
+        if (id != null) {
             return id.intValue();
-        if (invoiceSubCategory != null)
+        } else if (invoiceSubCategory != null) {
             return invoiceSubCategory.hashCode();
+        }
 
         final int prime = 31;
         int result = super.hashCode();
@@ -409,62 +417,13 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         return this.getInvoiceSubCategory().getCode().equals(other.getInvoiceSubCategory().getCode())
                 && ((this.getUserAccount() == null && other.getUserAccount() == null)
                         || (this.getUserAccount() != null && other.getUserAccount() != null && this.getUserAccount().getId().equals(other.getUserAccount().getId())))
-                && this.isDiscountAggregate() == other.isDiscountAggregate() && this.getTax().getId().equals(other.getTax().getId())
-                && this.getTaxPercent().compareTo(other.getTaxPercent()) == 0;
+                && this.isDiscountAggregate() == other.isDiscountAggregate();
     }
 
     @Override
     public String toString() {
-        return "SubCategoryInvoiceAgregate [id=" + id + ",invoiceSubCategory=" + (invoiceSubCategory == null ? null : invoiceSubCategory.getCode()) + ", oldAmountWithoutTax="
-                + oldAmountWithoutTax + ", oldAmountWithTax=" + oldAmountWithTax + "]";
-    }
-
-    /**
-     * Gets the sub category taxes transient.
-     *
-     * @return the sub category taxes transient
-     */
-    public Set<Tax> getSubCategoryTaxesTransient() {
-        return subCategoryTaxesTransient;
-    }
-
-    /**
-     * Sets the sub category taxes transient.
-     *
-     * @param subCategoryTaxesTransient the new sub category taxes transient
-     */
-    public void setSubCategoryTaxesTransient(Set<Tax> subCategoryTaxesTransient) {
-        this.subCategoryTaxesTransient = subCategoryTaxesTransient;
-    }
-
-    /**
-     * Adds the sub category tax transient.
-     *
-     * @param subCategoryTax the sub category tax
-     */
-    public void addSubCategoryTaxTransient(Tax subCategoryTax) {
-        if (subCategoryTaxesTransient == null) {
-            subCategoryTaxesTransient = new HashSet<>();
-        }
-        if (subCategoryTax != null) {
-            subCategoryTaxesTransient.add(subCategoryTax);
-        }
-    }
-
-    public Tax getTax() {
-        return tax;
-    }
-
-    public void setTax(Tax tax) {
-        this.tax = tax;
-    }
-
-    public BigDecimal getTaxPercent() {
-        return taxPercent;
-    }
-
-    public void setTaxPercent(BigDecimal taxPercent) {
-        this.taxPercent = taxPercent;
+        return "SubCategoryInvoiceAgregate [id=" + id + ",invoiceSubCategory=" + (invoiceSubCategory == null ? null : invoiceSubCategory.getCode()) + ", oldAmountWithoutTax=" + oldAmountWithoutTax + ", oldAmountWithTax="
+                + oldAmountWithTax + "]";
     }
 
     /**
@@ -576,9 +535,24 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      * @param roundingMode Rounding mode to apply
      */
     public void computeDerivedAmounts(boolean isEnterprise, int invoiceRounding, RoundingMode roundingMode) {
-        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(getAmountWithoutTax(), getAmountWithTax(), getTaxPercent(), isEnterprise, invoiceRounding, roundingMode);
+
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmountsWoutTaxPercent(getAmountWithoutTax(), getAmountWithTax(), getAmountTax(), isEnterprise, invoiceRounding, roundingMode);
         setAmountWithoutTax(amounts[0]);
         setAmountWithTax(amounts[1]);
         setAmountTax(amounts[2]);
+    }
+
+    /**
+     * @return Cumulative amounts by tax
+     */
+    public Map<Tax, BigDecimal> getAmountsByTax() {
+        return amountsByTax;
+    }
+
+    /**
+     * @param amountsByTax Cumulative amounts by tax
+     */
+    public void setAmountsByTax(Map<Tax, BigDecimal> amountsByTax) {
+        this.amountsByTax = amountsByTax;
     }
 }

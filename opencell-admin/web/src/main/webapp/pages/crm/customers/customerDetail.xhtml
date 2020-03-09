@@ -77,12 +77,12 @@
 									</h:panelGroup>
 
 
-								<hftl:formField label="#{messages['customer.jobTitle']}"
-												field="jobTitle" newLine="true"/>
-								<hftl:formField label="#{messages['customer.vatNo']}" field="vatNo"/>
-								<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo"/>
+							<hftl:formField label="#{messages['customer.jobTitle']}"
+								field="jobTitle" newLine="true" />
+							<hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />
+							<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
 
-								<hftl:formField
+									<hftl:formField
 										label="#{messages['customer.customerCategory']}"
 										field="customerCategory" valueLabelField="descriptionOrCode"
 										required="true"
@@ -142,40 +142,78 @@
 									field="address" id="address1" childField="address1"
 									popup="false" />
 								<hftl:formField label="#{messages['address.address2']}"
-									field="address" id="address2" childField="address2"
-									popup="false" />
+												field="address" id="address2" childField="address2"
+												popup="false"/>
 								<hftl:formField label="#{messages['address.address3']}"
-									field="address" id="address3" childField="address3"
-									popup="false" />
+												field="address" id="address3" childField="address3"
+												popup="false"/>
 								<hftl:formField label="#{messages['address.zipCode']}"
-									id="zipCode" field="address" childField="zipCode"
-									popup="false" newLine="true" />
+												id="zipCode" field="address" childField="zipCode"
+												popup="false" newLine="true"/>
 								<hftl:formField label="#{messages['address.city']}" id="city"
-									field="address" childField="city" popup="false" />
-								<hftl:formField label="#{messages['address.state']}" id="state" field="address" childField="state" popup="false" />
-								<hftl:formField id="countryPanel" label="#{messages['address.country']}" fkToEntity="false" field="address" childField="country" valueLabelField="description" listBean="#{countryBean}"/> 
+												field="address" childField="city" popup="false"/>
+								<hftl:formField label="#{messages['address.state']}" id="state" field="address" childField="state" popup="false"/>
+								<hftl:formField id="countryPanel" label="#{messages['address.country']}" fkToEntity="false" field="address" childField="country"
+												valueLabelField="description" listBean="#{countryBean}"/>
 							</p:fieldset>
 						</p:tab>
+							<p:tab title="#{messages['counterPeriod.title']}" id="tab3" rendered="#{customerBean.entity.id!=null}">
+
+								<hftl:formPanel formId="counterAccountInfo" backingBean="#{customerBean}" showFormButtons="false" edit="false" showMessages="false">
+									<hftl:formField label="#{messages['businessEntity.code']}" field="code"/>
+									<hftl:formField label="#{messages['businessEntity.description']}" field="description"/>
+									<hftl:formField
+											label="#{messages['customer.customerCategory']}"
+											field="customerCategory" valueLabelField="descriptionOrCode"/>
+									<hftl:formField
+											label="#{messages['customer.customerBrand']}"
+											field="customerBrand" valueLabelField="descriptionOrCode"/>
+								</hftl:formPanel>
 
 
-						<hftl:customFields backingBean="#{customerBean}" messagesId=":formCustomer:messages" />
-								<!-- <hftl:displayWorkflowsHistory entity="#{customerBean.entity}" /> -->
-								<hftl:displayGenericWFsHistory backingBean="#{customerBean}" />
+								<hftl:decorateFormField fieldId="counterPeriod" label="#{messages['counterInstance.title']}">
+									<p:selectOneMenu id="counterPeriod" converter="omnifaces.SelectItemsConverter" value="#{customerBean.selectedCounterInstance}">
+										<f:selectItem itemLabel="#{messages['commons.select']}"/>
+										<f:selectItems value="#{customerBean.entity.counters}" var="item" itemLabel="#{item.code} - #{item.description}"/>
+										<p:ajax event="valueChange" update="@form"/>
+									</p:selectOneMenu>
+								</hftl:decorateFormField>
+
+
+								<p:dataTable id="datatable_counters" var="entity" lazy="true" paginator="true" resizableColumns="true" reflow="true"
+											 value="#{counterPeriodBean.getCounterPeriods(customerBean.selectedCounterInstance)}" rows="10" rowKey="#{entity.id}"
+											 styleClass="custom-grid" sortBy="#{entity.periodStartDate}" sortOrder="DESCENDING">
+
+									<hftl:column label="#{messages['counterTemplate.counterType']}" field="counterType.label" isMessage="true"/>
+									<hftl:column label="#{messages['counterPeriod.periodStartDate']}" field="periodStartDate" isDate="true"/>
+									<hftl:column label="#{messages['counterPeriod.periodEndDate']}" field="periodEndDate" isDate="true"/>
+									<hftl:column label="#{messages['counterPeriod.level']}" field="level" converterParam="4digits" wrapHeader="true"/>
+									<hftl:column label="#{messages['counterPeriod.value']}" field="value" converterParam="4digits" wrapHeader="true"/>
+								</p:dataTable>
+
+							</p:tab>
+
+							<hftl:customFields backingBean="#{customerBean}" messagesId=":formCustomer:messages"/>
+							<!-- <hftl:displayWorkflowsHistory entity="#{customerBean.entity}" /> -->
+							<hftl:displayGenericWFsHistory backingBean="#{customerBean}"/>
 						</p:tabView>
-                                
-	 					 <ui:param name="buttons" value="true"/>
-	                     <ui:define name="buttons">                                
-	                        <h:panelGroup rendered="#{not empty customerBean.entity.id and customerBean.canUserUpdateEntity()}">
-	                            <div class="action-buttons">                                                                                   
-			                        <p:button outcome="addCustomerAccount" rendered="#{not empty customerBean.entity.id and customerBean.canUserUpdateEntity()}" value="#{messages['customer.buttonAddCustomerAccount']}">
-			                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-			                        </p:button>
-	                                <p:commandButton ajax="false" rendered="#{!entity.transient}" value="#{messages['action.export']}" action="#{customerBean.exportCustomerHierarchy()}"/>
-	                                <p:commandButton action="#{customerBean.anonymizeGpdr()}" rendered="#{!entity.transient}" value="#{messages['action.anonymizeGDPR']}" update="@(form)">
-                               	 		<p:confirm header="#{messages['action.confirm']}" message="#{messages['confirmationMessage.confirmGDPRDelete']}" icon="ui-icon-alert" />
-                               	 	</p:commandButton>
-	                            </div>
-	                        </h:panelGroup>
+
+						<ui:param name="buttons" value="true"/>
+						<ui:define name="buttons">
+							<h:panelGroup rendered="#{not empty customerBean.entity.id and customerBean.canUserUpdateEntity()}">
+								<div class="action-buttons">
+									<p:button outcome="addCustomerAccount" rendered="#{not empty customerBean.entity.id and customerBean.canUserUpdateEntity()}"
+											  value="#{messages['customer.buttonAddCustomerAccount']}">
+										<f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+									</p:button>
+									<p:commandButton ajax="false" rendered="#{!entity.transient}" value="#{messages['action.export']}"
+													 action="#{customerBean.exportCustomerHierarchy()}"/>
+									<p:commandButton action="#{customerBean.anonymizeGpdr()}" rendered="#{!entity.transient}" value="#{messages['action.anonymizeGDPR']}"
+													 update="@(form)">
+										<p:confirm header="#{messages['action.confirm']}" message="#{messages['confirmationMessage.confirmGDPRDelete']}" icon="ui-icon-alert"/>
+									</p:commandButton>
+								</div>
+							</h:panelGroup>
 	                    </ui:define>
                 </hftl:formPanel>
             </h:panelGroup>

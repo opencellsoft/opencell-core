@@ -1,0 +1,21 @@
+{
+    "code": "RS_BASE_PC1",
+    "description": "RS_BASE_PieCharts",
+    "measurableQuantity": {
+        "code": "RS_BASE_MQ1"
+    },
+    "width": "123",
+    "height": "123",
+    "style": "style1",
+    "styleClass": "style_class1",
+    "extender": "extender1",
+    "visible": "true",
+    "filled": "false",
+    "legendPosition": "n",
+    "diameter": "120",
+    "sliceMargin": "10",
+    "shadow": "true",
+    "showDataLabels": "false",
+    "legendCols": "23",
+    "legendRows": "23"
+}

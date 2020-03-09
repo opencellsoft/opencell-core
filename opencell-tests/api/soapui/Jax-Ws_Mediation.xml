@@ -151,6 +151,216 @@
       <con:settings/>
     </con:operation>
   </con:interface>
+  <con:interface xsi:type="con:RestService" id="7cdd0ae3-5427-435a-a52c-e8cd6f39974a" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://${#Project#opencell.url}" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>${#Project#opencell.url}</con:endpoint>
+    </con:endpoints>
+    <con:resource name="" path="/api/rest/taxClass" id="aa111c31-bc25-48e5-9d17-7b39ff794313">
+      <con:settings/>
+      <con:parameters>
+        <con:parameter>
+          <con:name>#Project#opencell.url</con:name>
+          <con:value>#Project#opencell.url</con:value>
+          <con:style>TEMPLATE</con:style>
+          <con:default>#Project#opencell.url</con:default>
+          <con:path xsi:nil="true"/>
+          <con:description xsi:nil="true"/>
+        </con:parameter>
+      </con:parameters>
+      <con:method name="POST" id="69c261f4-bb8f-4a9e-87d2-9f21e75eb839" method="POST">
+        <con:settings/>
+        <con:parameters/>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/xml</con:mediaType>
+          <con:params/>
+          <con:element>TaxClass</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>415 400 403</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/json</con:mediaType>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/xml;charset=UTF-8</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>actionStatus</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>text/html;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>html</con:element>
+        </con:representation>
+      </con:method>
+    </con:resource>
+    <con:resource name="" path="/api/rest/taxMapping" id="aa111c31-bc25-48e5-9d17-7b39ff794313">
+      <con:settings/>
+      <con:parameters>
+        <con:parameter>
+          <con:name>#Project#opencell.url</con:name>
+          <con:value>#Project#opencell.url</con:value>
+          <con:style>TEMPLATE</con:style>
+          <con:default>#Project#opencell.url</con:default>
+          <con:path xsi:nil="true"/>
+          <con:description xsi:nil="true"/>
+        </con:parameter>
+      </con:parameters>
+      <con:method name="POST" id="69c261f4-bb8f-4a9e-87d2-9f21e75eb839" method="POST">
+        <con:settings/>
+        <con:parameters/>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/xml</con:mediaType>
+          <con:params/>
+          <con:element>TaxClass</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>415 400 403 500</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/json</con:mediaType>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/xml;charset=UTF-8</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>actionStatus</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>text/html;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>html</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/xml;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>actionStatus</con:element>
+        </con:representation>
+      </con:method>
+    </con:resource>
+    <con:resource name="" path="/api/rest/taxCategory" id="aa111c31-bc25-48e5-9d17-7b39ff794313">
+      <con:settings/>
+      <con:parameters>
+        <con:parameter>
+          <con:name>#Project#opencell.url</con:name>
+          <con:value>#Project#opencell.url</con:value>
+          <con:style>TEMPLATE</con:style>
+          <con:default>#Project#opencell.url</con:default>
+          <con:path xsi:nil="true"/>
+          <con:description xsi:nil="true"/>
+        </con:parameter>
+      </con:parameters>
+      <con:method name="POST" id="69c261f4-bb8f-4a9e-87d2-9f21e75eb839" method="POST">
+        <con:settings/>
+        <con:parameters/>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/xml</con:mediaType>
+          <con:params/>
+          <con:element>TaxClass</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>415 400 403 500</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="REQUEST">
+          <con:mediaType>application/json</con:mediaType>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/json</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType>application/xml;charset=UTF-8</con:mediaType>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>actionStatus</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>text/html;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>html</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>0</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="FAULT">
+          <con:mediaType>application/xml;charset=UTF-8</con:mediaType>
+          <con:status>400</con:status>
+          <con:params/>
+          <con:element>actionStatus</con:element>
+        </con:representation>
+      </con:method>
+    </con:resource>
+  </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" id="9eec342d-acf7-43af-af2e-c3e253644f5f" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
@@ -1159,7 +1369,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <con:testSuite id="0c2315ed-45da-48e2-a86a-8f9083f8a792" name="Setup base data">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
-    <con:testCase id="13a2d7e8-7f01-4b17-8459-2c63d20b3a0b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create scripts" searchProperties="true">
+    <con:testCase id="13a2d7e8-7f01-4b17-8459-2c63d20b3a0b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create data" searchProperties="true">
       <con:settings/>
       <con:testStep type="request" name="Create Mediation_CreateEdr script" id="607fe1ee-fd45-49d9-a40f-05dcc9a75121">
         <con:settings/>
@@ -1745,6 +1955,86 @@ public class ${#TestSuite#baseEntityPrefix}_CreateFile extends Script {
       </con:testStep>
       <con:properties/>
     </con:testCase>
+    <con:testCase id="491ecb1a-4c3e-4628-9e54-e25fccd9d7ec" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create tax class and mapping" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="restrequest" name="Create tax class" id="7fde7992-b372-4351-9050-3790553af023">
+        <con:settings/>
+        <con:config service="http://${#Project#opencell.url}" methodName="POST" resourcePath="/api/rest/taxClass" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create tax class" id="99e74d2f-34b8-4577-86dc-d658d41499a2" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}</con:endpoint>
+            <con:request>{
+"code":"${#Project#baseEntityPrefix}_taxClass",
+"description":"Tax class for ${#Project#baseEntityPrefix}"
+}</con:request>
+            <con:originalUri>http://http//localhost:8080/opencell/%23Project%23opencell.url</con:originalUri>
+            <con:assertion type="Simple Contains" id="4eafa7cc-c06b-4127-bc47-20ae9df005f4" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="#Project#opencell.url" value="#Project#opencell.url"/>
+            </con:parameters>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Create tax mapping" id="378698ac-2a38-40c6-84d0-646aac8eb672">
+        <con:settings/>
+        <con:config service="http://${#Project#opencell.url}" methodName="POST" resourcePath="/api/rest/taxMapping" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create tax mapping" id="99e74d2f-34b8-4577-86dc-d658d41499a2" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}</con:endpoint>
+            <con:request>{
+"accountTaxCategoryCode":"Tax category",
+"chargeTaxClassCode":"${#Project#baseEntityPrefix}_taxClass",
+"taxCode":"TAX_18"
+}</con:request>
+            <con:originalUri>http://http//localhost:8080/opencell/%23Project%23opencell.url</con:originalUri>
+            <con:assertion type="Simple Contains" id="4eafa7cc-c06b-4127-bc47-20ae9df005f4" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="#Project#opencell.url" value="#Project#opencell.url"/>
+            </con:parameters>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:properties>
+        <con:property>
+          <con:name>prefix</con:name>
+          <con:value/>
+        </con:property>
+        <con:property>
+          <con:name>tax</con:name>
+          <con:value/>
+        </con:property>
+      </con:properties>
+    </con:testCase>
     <con:properties/>
   </con:testSuite>
   <con:testSuite id="2f8667b3-2414-48c3-a0d3-35b96d03f0dd" name="Top ten numbers">
@@ -2144,27 +2434,28 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUsageChargeTemplate>
-         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE" description="${#TestSuite#entityPrefix}_VOICE">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            <amountEditable>false</amountEditable>
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Voice topten</description>
-            </languageDescriptions>
-            <inputUnitDescription>in</inputUnitDescription>
-            <ratingUnitDescription>ra</ratingUnitDescription>
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <filterParam1>VOICE</filterParam1>
-            <priority>2</priority>
-         </usageChargeTemplate>
-      </ws:createOrUpdateUsageChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateUsageChargeTemplate>\r
+         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE" description="${#TestSuite#entityPrefix}_VOICE">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Voice topten</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>in</inputUnitDescription>\r
+            <ratingUnitDescription>ra</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <filterParam1>VOICE</filterParam1>\r
+            <priority>2</priority>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </usageChargeTemplate>\r
+      </ws:createOrUpdateUsageChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="ff979100-f8a6-46f3-9dbe-fb59a2ed96e1"/>
             <con:assertion type="Simple Contains" id="50c20447-6ff7-4dfb-9c38-71d1d313983d" name="Contains">
@@ -2249,28 +2540,29 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUsageChargeTemplate>
-         <usageChargeTemplate code="${#TestSuite#entityPrefix}_TOPTEN" description="${#TestSuite#entityPrefix}_TOPTEN">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            <amountEditable>false</amountEditable>
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Voice topten</description>
-            </languageDescriptions>
-            <inputUnitDescription>in</inputUnitDescription>
-            <ratingUnitDescription>ra</ratingUnitDescription>
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <filterParam1>VOICE</filterParam1>
-            <filterParam3>TOPTEN</filterParam3>
-            <priority>1</priority>
-         </usageChargeTemplate>
-      </ws:createOrUpdateUsageChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateUsageChargeTemplate>\r
+         <usageChargeTemplate code="${#TestSuite#entityPrefix}_TOPTEN" description="${#TestSuite#entityPrefix}_TOPTEN">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Voice topten</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>in</inputUnitDescription>\r
+            <ratingUnitDescription>ra</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <filterParam1>VOICE</filterParam1>\r
+            <filterParam3>TOPTEN</filterParam3>\r
+            <priority>1</priority>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </usageChargeTemplate>\r
+      </ws:createOrUpdateUsageChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="ff979100-f8a6-46f3-9dbe-fb59a2ed96e1"/>
             <con:assertion type="Simple Contains" id="ba24ef29-329f-463d-8220-501a7de0f890" name="Contains">
@@ -2306,28 +2598,29 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateRecurringChargeTemplate>
-         <!--Optional:-->
-         <recurringChargeTemplate code="${#TestSuite#entityPrefix}_REC" description="${#TestSuite#entityPrefix}_REC">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            <!--Optional:-->
-            <amountEditable>false</amountEditable>
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Rec1</description>
-            </languageDescriptions>
-            <calendar>MONTHLY</calendar>
-            <subscriptionProrata>true</subscriptionProrata>
-            <terminationProrata>true</terminationProrata>
-            <applyInAdvance>true</applyInAdvance>
-         </recurringChargeTemplate>
-      </ws:createOrUpdateRecurringChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateRecurringChargeTemplate>\r
+         <!--Optional:-->\r
+         <recurringChargeTemplate code="${#TestSuite#entityPrefix}_REC" description="${#TestSuite#entityPrefix}_REC">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <!--Optional:-->\r
+            <amountEditable>false</amountEditable>\r
+            <!--Zero or more repetitions:-->\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Rec1</description>\r
+            </languageDescriptions>\r
+            <calendar>MONTHLY</calendar>\r
+            <subscriptionProrata>true</subscriptionProrata>\r
+            <terminationProrata>true</terminationProrata>\r
+            <applyInAdvance>true</applyInAdvance>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </recurringChargeTemplate>\r
+      </ws:createOrUpdateRecurringChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="77009aab-f6cc-40a8-a2d2-e01330090264"/>
             <con:assertion type="SOAP Fault Assertion" id="7b40c11f-5568-48e0-b176-6c7c3f6640b4"/>
@@ -3138,7 +3431,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>75</con:value>
+        <con:value>83</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -3566,27 +3859,28 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUsageChargeTemplate>
-         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE" description="${#TestSuite#entityPrefix}_VOICE">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            <amountEditable>false</amountEditable>
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Voice topten</description>
-            </languageDescriptions>
-            <inputUnitDescription>in</inputUnitDescription>
-            <ratingUnitDescription>ra</ratingUnitDescription>
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <filterParam1>VOICE</filterParam1>
-            <priority>2</priority>
-         </usageChargeTemplate>
-      </ws:createOrUpdateUsageChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateUsageChargeTemplate>\r
+         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE" description="${#TestSuite#entityPrefix}_VOICE">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Voice topten</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>in</inputUnitDescription>\r
+            <ratingUnitDescription>ra</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <filterParam1>VOICE</filterParam1>\r
+            <priority>2</priority>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </usageChargeTemplate>\r
+      </ws:createOrUpdateUsageChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="ff979100-f8a6-46f3-9dbe-fb59a2ed96e1"/>
             <con:assertion type="Simple Contains" id="5ff0644c-cb46-4b76-a97d-a12d57c55545" name="Contains">
@@ -3671,28 +3965,29 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUsageChargeTemplate>
-         <usageChargeTemplate code="${#TestSuite#entityPrefix}_TOPTEN" description="${#TestSuite#entityPrefix}_TOPTEN">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            <amountEditable>false</amountEditable>
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Voice topten</description>
-            </languageDescriptions>
-            <inputUnitDescription>in</inputUnitDescription>
-            <ratingUnitDescription>ra</ratingUnitDescription>
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <filterParam1>VOICE</filterParam1>
-            <filterParam3>TOPTEN</filterParam3>
-            <priority>1</priority>
-         </usageChargeTemplate>
-      </ws:createOrUpdateUsageChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateUsageChargeTemplate>\r
+         <usageChargeTemplate code="${#TestSuite#entityPrefix}_TOPTEN" description="${#TestSuite#entityPrefix}_TOPTEN">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Voice topten</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>in</inputUnitDescription>\r
+            <ratingUnitDescription>ra</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <filterParam1>VOICE</filterParam1>\r
+            <filterParam3>TOPTEN</filterParam3>\r
+            <priority>1</priority>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </usageChargeTemplate>\r
+      </ws:createOrUpdateUsageChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="ff979100-f8a6-46f3-9dbe-fb59a2ed96e1"/>
             <con:assertion type="Simple Contains" id="5e437569-e024-4f0a-8832-4c571a692757" name="Contains">
@@ -3728,28 +4023,29 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateRecurringChargeTemplate>
-         <!--Optional:-->
-         <recurringChargeTemplate code="${#TestSuite#entityPrefix}_REC" description="${#TestSuite#entityPrefix}_REC">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            <!--Optional:-->
-            <amountEditable>false</amountEditable>
-            <!--Zero or more repetitions:-->
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Rec1</description>
-            </languageDescriptions>
-            <calendar>MONTHLY</calendar>
-            <subscriptionProrata>true</subscriptionProrata>
-            <terminationProrata>true</terminationProrata>
-            <applyInAdvance>true</applyInAdvance>
-         </recurringChargeTemplate>
-      </ws:createOrUpdateRecurringChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateRecurringChargeTemplate>\r
+         <!--Optional:-->\r
+         <recurringChargeTemplate code="${#TestSuite#entityPrefix}_REC" description="${#TestSuite#entityPrefix}_REC">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <!--Optional:-->\r
+            <amountEditable>false</amountEditable>\r
+            <!--Zero or more repetitions:-->\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Rec1</description>\r
+            </languageDescriptions>\r
+            <calendar>MONTHLY</calendar>\r
+            <subscriptionProrata>true</subscriptionProrata>\r
+            <terminationProrata>true</terminationProrata>\r
+            <applyInAdvance>true</applyInAdvance>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </recurringChargeTemplate>\r
+      </ws:createOrUpdateRecurringChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="77009aab-f6cc-40a8-a2d2-e01330090264"/>
             <con:assertion type="SOAP Fault Assertion" id="7b40c11f-5568-48e0-b176-6c7c3f6640b4"/>
@@ -4562,7 +4858,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>74</con:value>
+        <con:value>80</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -4963,29 +5259,30 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUsageChargeTemplate>
-         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE_LOCAL" description="${#TestSuite#entityPrefix}_VOICE">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            <amountEditable>false</amountEditable>
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Voice topten</description>
-            </languageDescriptions>
-            <inputUnitDescription>in</inputUnitDescription>
-            <ratingUnitDescription>ra</ratingUnitDescription>
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <filterParam1>VOICE</filterParam1>
-            <filterParam2>LOCAL</filterParam2>
-            <filterParam3>LOCAL</filterParam3>
-            <priority>1</priority>
-         </usageChargeTemplate>
-      </ws:createOrUpdateUsageChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateUsageChargeTemplate>\r
+         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE_LOCAL" description="${#TestSuite#entityPrefix}_VOICE">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Voice topten</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>in</inputUnitDescription>\r
+            <ratingUnitDescription>ra</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <filterParam1>VOICE</filterParam1>\r
+            <filterParam2>LOCAL</filterParam2>\r
+            <filterParam3>LOCAL</filterParam3>\r
+            <priority>1</priority>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </usageChargeTemplate>\r
+      </ws:createOrUpdateUsageChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="ff979100-f8a6-46f3-9dbe-fb59a2ed96e1"/>
             <con:assertion type="Simple Contains" id="8443e92c-fcdc-48eb-8420-d98b738eb900" name="Contains">
@@ -5021,29 +5318,30 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUsageChargeTemplate>
-         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE_INTERNATIONAL" description="${#TestSuite#entityPrefix}_VOICE_INTERNATIONAL">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            <amountEditable>false</amountEditable>
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Voice international</description>
-            </languageDescriptions>
-            <inputUnitDescription>in</inputUnitDescription>
-            <ratingUnitDescription>ra</ratingUnitDescription>
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <filterParam1>VOICE</filterParam1>
-            <filterParam2>LOCAL</filterParam2>
-            <filterParam3>INTERNATIONAL</filterParam3>
-            <priority>2</priority>
-         </usageChargeTemplate>
-      </ws:createOrUpdateUsageChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateUsageChargeTemplate>\r
+         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE_INTERNATIONAL" description="${#TestSuite#entityPrefix}_VOICE_INTERNATIONAL">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Voice international</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>in</inputUnitDescription>\r
+            <ratingUnitDescription>ra</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <filterParam1>VOICE</filterParam1>\r
+            <filterParam2>LOCAL</filterParam2>\r
+            <filterParam3>INTERNATIONAL</filterParam3>\r
+            <priority>2</priority>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </usageChargeTemplate>\r
+      </ws:createOrUpdateUsageChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="ff979100-f8a6-46f3-9dbe-fb59a2ed96e1"/>
             <con:assertion type="Simple Contains" id="668cd479-8c70-4baa-b2a2-4e2de13eabd2" name="Contains">
@@ -5079,27 +5377,28 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUsageChargeTemplate>
-         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE_ROAMING" description="${#TestSuite#entityPrefix}_VOICE_ROAMING">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            <amountEditable>false</amountEditable>
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Voice roaming</description>
-            </languageDescriptions>
-            <inputUnitDescription>in</inputUnitDescription>
-            <ratingUnitDescription>ra</ratingUnitDescription>
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <filterParam1>VOICE</filterParam1>
-            <priority>3</priority>
-         </usageChargeTemplate>
-      </ws:createOrUpdateUsageChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateUsageChargeTemplate>\r
+         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE_ROAMING" description="${#TestSuite#entityPrefix}_VOICE_ROAMING">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Voice roaming</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>in</inputUnitDescription>\r
+            <ratingUnitDescription>ra</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <filterParam1>VOICE</filterParam1>\r
+            <priority>3</priority>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </usageChargeTemplate>\r
+      </ws:createOrUpdateUsageChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="ff979100-f8a6-46f3-9dbe-fb59a2ed96e1"/>
             <con:assertion type="Simple Contains" id="74c1ada5-d588-4903-929c-65021ef470ca" name="Contains">
@@ -6020,7 +6319,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>71</con:value>
+        <con:value>77</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -6417,29 +6716,30 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUsageChargeTemplate>
-         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE_LOCAL" description="${#TestSuite#entityPrefix}_VOICE">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            <amountEditable>false</amountEditable>
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Voice topten</description>
-            </languageDescriptions>
-            <inputUnitDescription>in</inputUnitDescription>
-            <ratingUnitDescription>ra</ratingUnitDescription>
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <filterParam1>VOICE</filterParam1>
-            <filterParam2>LOCAL</filterParam2>
-            <filterParam3>LOCAL</filterParam3>
-            <priority>1</priority>
-         </usageChargeTemplate>
-      </ws:createOrUpdateUsageChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateUsageChargeTemplate>\r
+         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE_LOCAL" description="${#TestSuite#entityPrefix}_VOICE">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Voice topten</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>in</inputUnitDescription>\r
+            <ratingUnitDescription>ra</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <filterParam1>VOICE</filterParam1>\r
+            <filterParam2>LOCAL</filterParam2>\r
+            <filterParam3>LOCAL</filterParam3>\r
+            <priority>1</priority>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </usageChargeTemplate>\r
+      </ws:createOrUpdateUsageChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="ff979100-f8a6-46f3-9dbe-fb59a2ed96e1"/>
             <con:assertion type="Simple Contains" id="40d0c7e7-2ef3-4f50-a1b6-5209ccd456d2" name="Contains">
@@ -6475,29 +6775,30 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUsageChargeTemplate>
-         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE_INTERNATIONAL" description="${#TestSuite#entityPrefix}_VOICE_INTERNATIONAL">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            <amountEditable>false</amountEditable>
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Voice international</description>
-            </languageDescriptions>
-            <inputUnitDescription>in</inputUnitDescription>
-            <ratingUnitDescription>ra</ratingUnitDescription>
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <filterParam1>VOICE</filterParam1>
-            <filterParam2>LOCAL</filterParam2>
-            <filterParam3>INTERNATIONAL</filterParam3>
-            <priority>2</priority>
-         </usageChargeTemplate>
-      </ws:createOrUpdateUsageChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateUsageChargeTemplate>\r
+         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE_INTERNATIONAL" description="${#TestSuite#entityPrefix}_VOICE_INTERNATIONAL">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Voice international</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>in</inputUnitDescription>\r
+            <ratingUnitDescription>ra</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <filterParam1>VOICE</filterParam1>\r
+            <filterParam2>LOCAL</filterParam2>\r
+            <filterParam3>INTERNATIONAL</filterParam3>\r
+            <priority>2</priority>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </usageChargeTemplate>\r
+      </ws:createOrUpdateUsageChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="ff979100-f8a6-46f3-9dbe-fb59a2ed96e1"/>
             <con:assertion type="Simple Contains" id="8d78afae-903d-428a-bca9-266a71e58a1b" name="Contains">
@@ -6533,27 +6834,28 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUsageChargeTemplate>
-         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE_ROAMING" description="${#TestSuite#entityPrefix}_VOICE_ROAMING">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>
-            <amountEditable>false</amountEditable>
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>Voice roaming</description>
-            </languageDescriptions>
-            <inputUnitDescription>in</inputUnitDescription>
-            <ratingUnitDescription>ra</ratingUnitDescription>
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <filterParam1>VOICE</filterParam1>
-            <priority>3</priority>
-         </usageChargeTemplate>
-      </ws:createOrUpdateUsageChargeTemplate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateUsageChargeTemplate>\r
+         <usageChargeTemplate code="${#TestSuite#entityPrefix}_VOICE_ROAMING" description="${#TestSuite#entityPrefix}_VOICE_ROAMING">\r
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>\r
+            <disabled>false</disabled>\r
+            <amountEditable>false</amountEditable>\r
+            <languageDescriptions>\r
+               <languageCode>FRA</languageCode>\r
+               <description>Voice roaming</description>\r
+            </languageDescriptions>\r
+            <inputUnitDescription>in</inputUnitDescription>\r
+            <ratingUnitDescription>ra</ratingUnitDescription>\r
+            <unitMultiplicator>1</unitMultiplicator>\r
+            <unitNbDecimal>2</unitNbDecimal>\r
+            <filterParam1>VOICE</filterParam1>\r
+            <priority>3</priority>\r
+            <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>\r
+         </usageChargeTemplate>\r
+      </ws:createOrUpdateUsageChargeTemplate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="ff979100-f8a6-46f3-9dbe-fb59a2ed96e1"/>
             <con:assertion type="Simple Contains" id="8d422194-9414-48f3-a851-a9297073a265" name="Contains">
@@ -7475,7 +7777,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>78</con:value>
+        <con:value>84</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -7876,7 +8178,7 @@ public class Mediation_${#Project#baseEntityPrefix}_${#TestSuite#index}_Reject_C
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>17</con:value>
+        <con:value>19</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

@@ -1,4 +1,4 @@
-@invoicing @test
+@invoicing
 Feature: Generate Invoice by API
 
   Background: The classic offer is already executed

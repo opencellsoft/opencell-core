@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.api.catalog;
 
 import java.math.BigDecimal;
@@ -10,10 +28,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceDto;
-import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -21,34 +37,22 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
-import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.RoundingModeEnum;
-import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
-import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.billing.impl.RealtimeChargingService;
 import org.meveo.service.billing.impl.TradingCountryService;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
-import org.meveo.service.finance.RevenueRecognitionRuleService;
 
 @Stateless
-public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate, OneShotChargeTemplateDto> {
+public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTemplate, OneShotChargeTemplateDto> {
 
     @Inject
     private OneShotChargeTemplateService oneShotChargeTemplateService;
-
-    @Inject
-    private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 
     @Inject
     private RealtimeChargingService realtimeChargingService;
@@ -62,15 +66,6 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
     @Inject
     private TradingCountryService tradingCountryService;
 
-    @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
-
-    @Inject
-    private TriggeredEDRTemplateService triggeredEDRTemplateService;
-
-    @Inject
-    private RevenueRecognitionRuleService revenueRecognitionRuleService;
-
     @Override
     public OneShotChargeTemplate create(OneShotChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
@@ -83,6 +78,9 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         if (StringUtils.isBlank(postData.getOneShotChargeTemplateType())) {
             missingParameters.add("oneShotChargeTemplateType");
         }
+        if (StringUtils.isBlank(postData.getTaxClassCode())) {
+            missingParameters.add("taxClassCode");
+        }
 
         handleMissingParametersAndValidate(postData);
 
@@ -91,66 +89,38 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             throw new EntityAlreadyExistsException(OneShotChargeTemplate.class, postData.getCode());
         }
 
-        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
-        if (invoiceSubCategory == null) {
-            throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
-        }
-
-        OneShotChargeTemplate chargeTemplate = new OneShotChargeTemplate();
-        chargeTemplate.setCode(postData.getCode());
-        chargeTemplate.setDescription(postData.getDescription());
-        if (postData.isDisabled() != null) {
-            chargeTemplate.setDisabled(postData.isDisabled());
-        }
-        chargeTemplate.setAmountEditable(postData.getAmountEditable());
-        chargeTemplate.setOneShotChargeTemplateType(postData.getOneShotChargeTemplateType());
-        chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-        chargeTemplate.setImmediateInvoicing(postData.getImmediateInvoicing());
-        chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
-        chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
-        chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
-        chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-        chargeTemplate.setFilterExpression(postData.getFilterExpression());
-        if (postData.getRoundingModeDtoEnum() != null) {
-            chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
-        } else {
-            chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
-        }
-
-        if (postData.getRevenueRecognitionRuleCode() != null) {
-            RevenueRecognitionRule revenueRecognitionScript = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
-            chargeTemplate.setRevenueRecognitionRule(revenueRecognitionScript);
-        }
-
-        if (postData.getTriggeredEdrs() != null) {
-            List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
-
-            for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
-                TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode());
-                if (triggeredEdrTemplate == null) {
-                    throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
-                }
-
-                edrTemplates.add(triggeredEdrTemplate);
-            }
-
-            chargeTemplate.setEdrTemplates(edrTemplates);
-        }
-
-        // populate customFields
-        try {
-            populateCustomFields(postData.getCustomFields(), chargeTemplate, true);
-        } catch (MissingParameterException | InvalidParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
-
-        chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
+        OneShotChargeTemplate chargeTemplate = dtoToEntity(postData, null);
 
         oneShotChargeTemplateService.create(chargeTemplate);
+
+        return chargeTemplate;
+    }
+
+    /**
+     * Convert/update DTO object to an entity object
+     * 
+     * @param postData DTO object
+     * @param chargeTemplate Entity object to update
+     * @return A new or updated entity object
+     * @throws MeveoApiException General API exception
+     * @throws BusinessException General exception
+     */
+    private OneShotChargeTemplate dtoToEntity(OneShotChargeTemplateDto postData, OneShotChargeTemplate chargeTemplate) throws MeveoApiException, BusinessException {
+
+        boolean isNew = chargeTemplate == null;
+
+        if (isNew) {
+            chargeTemplate = new OneShotChargeTemplate();
+            chargeTemplate.setCode(postData.getCode());
+        } else {
+            chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+        }
+
+        super.dtoToEntity(postData, chargeTemplate, isNew);
+
+        chargeTemplate.setOneShotChargeTemplateType(postData.getOneShotChargeTemplateType());
+
+        chargeTemplate.setImmediateInvoicing(postData.getImmediateInvoicing());
 
         return chargeTemplate;
     }
@@ -161,10 +131,13 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
+        if (postData.getInvoiceSubCategory() != null && StringUtils.isBlank(postData.getInvoiceSubCategory())) {
             missingParameters.add("invoiceSubCategory");
         }
-        if (StringUtils.isBlank(postData.getOneShotChargeTemplateType())) {
+        if (postData.getTaxClassCode() != null && StringUtils.isBlank(postData.getTaxClassCode())) {
+            missingParameters.add("taxClassCode");
+        }
+        if (postData.getOneShotChargeTemplateType() != null && StringUtils.isBlank(postData.getOneShotChargeTemplateType())) {
             missingParameters.add("oneShotChargeTemplateType");
         }
 
@@ -176,73 +149,13 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getCode());
         }
 
-        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
-        if (invoiceSubCategory == null) {
-            throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
-        }
-
-        if (postData.getLanguageDescriptions() != null) {
-            chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), chargeTemplate.getDescriptionI18n()));
-        }
-
-        chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setAmountEditable(postData.getAmountEditable());
-        chargeTemplate.setOneShotChargeTemplateType(postData.getOneShotChargeTemplateType());
-        chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-        chargeTemplate.setImmediateInvoicing(postData.getImmediateInvoicing());
-        chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
-        chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
-        chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
-        chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-        chargeTemplate.setFilterExpression(postData.getFilterExpression());
-        if (postData.getRoundingModeDtoEnum() != null) {
-            chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
-        } else {
-            chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
-        }
-
-        if (postData.getRevenueRecognitionRuleCode() != null) {
-            RevenueRecognitionRule revenueRecognitionScript = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
-            chargeTemplate.setRevenueRecognitionRule(revenueRecognitionScript);
-        }
-
-        if (postData.getTriggeredEdrs() != null) {
-            List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
-
-            for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
-                TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode());
-                if (triggeredEdrTemplate == null) {
-                    throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
-                }
-
-                edrTemplates.add(triggeredEdrTemplate);
-            }
-
-            chargeTemplate.setEdrTemplates(edrTemplates);
-        }
-
-        // populate customFields
-        try {
-            populateCustomFields(postData.getCustomFields(), chargeTemplate, false);
-        } catch (MissingParameterException | InvalidParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
+        chargeTemplate = dtoToEntity(postData, chargeTemplate);
 
         chargeTemplate = oneShotChargeTemplateService.update(chargeTemplate);
 
         return chargeTemplate;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.api.ApiService#find(java.lang.String)
-     */
     @Override
     public OneShotChargeTemplateDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
@@ -264,38 +177,30 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         return result;
     }
 
-    public List<OneShotChargeTemplateWithPriceDto> listWithPrice(String languageCode, String countryCode, String currencyCode, String sellerCode, Date date)
-            throws MeveoApiException, BusinessException {
+    public List<OneShotChargeTemplateWithPriceDto> listWithPrice(String languageCode, String buyersCountryCode, String buyersCurrencyCode, String sellerCode, Date date) throws MeveoApiException, BusinessException {
 
         Seller seller = sellerService.findByCode(sellerCode);
-        TradingCurrency currency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode);
-        TradingCountry buyersCountry = tradingCountryService.findByTradingCountryCode(countryCode);
-        TradingCountry sellersCountry = seller.getTradingCountry();
+        TradingCurrency currency = tradingCurrencyService.findByTradingCurrencyCode(buyersCurrencyCode);
+        TradingCountry buyersCountry = tradingCountryService.findByCode(buyersCountryCode);
 
         List<OneShotChargeTemplate> oneShotChargeTemplates = oneShotChargeTemplateService.getSubscriptionChargeTemplates();
         List<OneShotChargeTemplateWithPriceDto> oneShotChargeTemplatesWPrice = new ArrayList<>();
 
-        Date today = new Date();
         for (OneShotChargeTemplate oneShotChargeTemplate : oneShotChargeTemplates) {
             OneShotChargeTemplateWithPriceDto oneShotChargeDto = new OneShotChargeTemplateWithPriceDto();
             oneShotChargeDto.setChargeCode(oneShotChargeTemplate.getCode());
             oneShotChargeDto.setDescription(oneShotChargeTemplate.getDescription());
-            InvoiceSubCategory invoiceSubCategory = oneShotChargeTemplate.getInvoiceSubCategory();
 
             if (buyersCountry == null) {
-                log.warn("country with code={} does not exists", countryCode);
+                log.warn("country with code={} does not exists", buyersCountryCode);
             } else {
 
-                Tax tax = invoiceSubCategoryCountryService.determineTax(invoiceSubCategory, seller, buyersCountry, today, true);
-                if (tax != null) {
-                    oneShotChargeDto.setTaxCode(tax.getCode());
-                    oneShotChargeDto.setTaxDescription(tax.getDescription());
-                    oneShotChargeDto.setTaxPercent(tax.getPercent() == null ? 0.0 : tax.getPercent().doubleValue());
-                }
-                BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(seller, null, currency, buyersCountry, oneShotChargeTemplate, date, null, BigDecimal.ONE, null,
-                    null, null, true, true);
+                Amounts unitPrice = realtimeChargingService.getApplicationPrice(seller, null, currency, buyersCountry, oneShotChargeTemplate, date, null, BigDecimal.ONE, null, null, null, true);
                 if (unitPrice != null) {
-                    oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.doubleValue());
+                    oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.getAmountWithoutTax().doubleValue());
+                    oneShotChargeDto.setTaxCode(unitPrice.getTax().getCode());
+                    oneShotChargeDto.setTaxDescription(unitPrice.getTax().getDescription());
+                    oneShotChargeDto.setTaxPercent(unitPrice.getTax().getPercent().doubleValue());
                 }
             }
 

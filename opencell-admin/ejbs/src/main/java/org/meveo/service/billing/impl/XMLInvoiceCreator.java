@@ -1,20 +1,19 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.service.billing.impl;
 
@@ -104,6 +103,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -186,6 +186,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
     /** temporary map to store billing cycle. */
     private Map<BillingCycle, String> billingCycleMap = new HashMap<>();
+
+	@Inject
+    private SellerService sellerService;
 
     /** all rated transaction for a invoice. */
     // private List<RatedTransaction> ratedTransactions = null;
@@ -1024,10 +1027,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         
         Element country = doc.createElement("country");
         Element countryName = doc.createElement("countryName");
-        if (seller.getAddress() != null && seller.getAddress().getCountry() != null) {
-            Text countryTxt = doc.createTextNode(seller.getAddress().getCountry() != null ? seller.getAddress().getCountry().getCountryCode() : "");
+        seller = sellerService.refreshOrRetrieve(seller);
+		if (seller.getAddress() != null && seller.getAddress().getCountry() != null) {
+			Country countryEntity = seller.getAddress().getCountry();
+            Text countryTxt = doc.createTextNode(countryEntity != null ? countryEntity.getCountryCode() : "");
             country.appendChild(countryTxt);
-            Country countryEntity = seller.getAddress().getCountry();
             Text countryNameTxt;
             if (countryEntity.getDescriptionI18n() != null && countryEntity.getDescriptionI18n().get(languageCode) != null) {
                 // get country description by language code
@@ -1566,10 +1570,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                             subCategory.setAttribute("amountWithTax", toPlainString(subCatInvoiceAgregate.getAmountWithTax()));
                         }
     
-                        Tax tax  = subCatInvoiceAgregate.getTax();
-                        subCategory.setAttribute("taxCode", tax.getCode());
-                        subCategory.setAttribute("taxPercent", toPlainString(tax.getPercent()));
-    
                         for (RatedTransaction ratedTransaction : ratedTransactions) {
                             if (!(ratedTransaction.getWallet() != null && ratedTransaction.getWallet().getId().longValue() == wallet.getId()
                                     && ratedTransaction.getInvoiceSubCategory().getId().longValue() == invoiceSubCat.getId())) {
@@ -2020,9 +2020,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                         code = invoiceSubCat.getCode();
                     }
                     subCategory.setAttribute("code", code);
-                    Tax tax = subCatInvoiceAgregate.getTax();
-                    subCategory.setAttribute("taxCode", tax.getCode());
-                    subCategory.setAttribute("taxPercent", toPlainString(tax.getPercent()));
 
                     if (!entreprise) {
                         subCategory.setAttribute("amountWithTax", toPlainString(subCatInvoiceAgregate.getAmountWithTax()));

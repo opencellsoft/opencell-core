@@ -129,7 +129,6 @@
     <template name="InvoiceCategory" entityToExport="org.meveo.model.billing.InvoiceCategory">
         <classesToExportAsFull>
             <java-class>org.meveo.model.billing.InvoiceSubCategory</java-class>
-            <java-class>org.meveo.model.billing.InvoiceSubcategoryCountry</java-class>
         </classesToExportAsFull>
     </template>
     <template name="ServiceTemplate" entityToExport="org.meveo.model.catalog.ServiceTemplate">

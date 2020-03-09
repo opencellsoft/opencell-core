@@ -1,23 +1,41 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.apiv2.services.generic.filter;
 
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.meveo.apiv2.services.generic.filter.filtermapper.*;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
+import org.meveo.service.base.PersistenceService;
 
 import javax.persistence.EntityManager;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public interface FactoryMapper {
-    default FilterMapper create(String property, Object value, Class clazz, Function<Class, EntityManager> entityManagerResolver) {
-        if("id".equalsIgnoreCase(property) || "type_class".equalsIgnoreCase(property) || clazz != null && clazz.getSimpleName().equalsIgnoreCase(property)){
-            return resolveType(property, value, clazz, entityManagerResolver);
+    Set<String> simpleField = new HashSet<>(Arrays.asList("id", "type_class", "cfValues"));
+    default FilterMapper create(String property, Object value, Class clazz, Function<Class, PersistenceService> entityManagerResolver) {
+        if(simpleField.contains(property) || clazz != null && clazz.getSimpleName().equalsIgnoreCase(property)){
+            return resolveFilterMapperType(property, value, clazz, entityManagerResolver);
         }
         Field field = FieldUtils.getField(clazz, property, true);
         if(field != null){
@@ -25,17 +43,21 @@ public interface FactoryMapper {
                 Type type = field.getGenericType();
                 if (type instanceof ParameterizedType) {
                     Type[] pt = ((ParameterizedType) type).getActualTypeArguments();
-                    return resolveType(property, value, (Class) pt[0], entityManagerResolver);
+                    return resolveFilterMapperType(property, value, (Class) pt[0], entityManagerResolver);
                 }
             }
-            return resolveType(property, value, field.getType(), entityManagerResolver);
+            return resolveFilterMapperType(property, value, field.getType(), entityManagerResolver);
         }
         throw new IllegalArgumentException("Invalid argument : " + property);
     }
 
-    default FilterMapper resolveType(String property, Object value, Class clazz, Function<Class, EntityManager> entityManagerResolver){
+    default FilterMapper resolveFilterMapperType(String property, Object value, Class clazz, Function<Class, PersistenceService> entityManagerResolver){
+        // TODO : to switch
         if("id".equalsIgnoreCase(property)){
             return new ReferenceMapper(property, value, clazz, entityManagerResolver);
+        }
+        if("cfValues".equalsIgnoreCase(property)){
+            return new CustomFieldMapper(property, value, clazz, entityManagerResolver);
         }
         if(Date.class.isAssignableFrom(clazz)){
             return new DateMapper(property, value);

@@ -460,6 +460,41 @@
                             </hftl:actionsColumn>
                         </hftl:dataList>
                     </p:tab>
+                    <p:tab title="#{messages['counterPeriod.title']}" id="tab4" rendered="#{customerAccountBean.entity.id!=null}">
+
+                        <hftl:formPanel formId="counterAccountInfo" backingBean="#{customerAccountBean}" showFormButtons="false" edit="false" showMessages="false">
+                            <hftl:formField label="#{messages['businessEntity.code']}" field="code" />
+                            <hftl:formField label="#{messages['businessEntity.description']}" field="description" />
+                            <hftl:formField id="customerSelectId" label="#{messages['customerAccount.customer']}" field="customer" valueLabelField="code"/>
+                            <hftl:formField id="currencySelectId" label="#{messages['currency.codeCurrency']}" field="tradingCurrency" valueLabelField="currencyCode"/>
+                            <hftl:formField id="trLanguageSelectId" label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage" valueLabelField="languageCode"/>
+
+                        </hftl:formPanel>
+
+                        <hftl:decorateFormPanel formId="counters" edit="false" showMessages="false">
+                            <ui:define name="fields">
+                                <hftl:decorateFormField fieldId="counterPeriod" label="#{messages['counterInstance.title']}">
+                                    <p:selectOneMenu id="counterPeriod" converter="omnifaces.SelectItemsConverter" value="#{customerAccountBean.selectedCounterInstance}">
+                                        <f:selectItem itemLabel="#{messages['commons.select']}" />
+                                        <f:selectItems value="#{customerAccountBean.entity.counters}" var="item" itemLabel="#{item.code} - #{item.description}" />
+                                        <p:ajax event="valueChange" update="@form" />
+                                    </p:selectOneMenu>
+                                </hftl:decorateFormField>
+
+
+                                <p:dataTable id="datatable_counters" var="entity" lazy="true" paginator="true" resizableColumns="true" reflow="true"
+                                             value="#{counterPeriodBean.getCounterPeriods(customerAccountBean.selectedCounterInstance)}" rows="10" rowKey="#{entity.id}"
+                                             styleClass="custom-grid" sortBy="#{entity.periodStartDate}" sortOrder="DESCENDING">
+
+                                    <hftl:column label="#{messages['counterTemplate.counterType']}" field="counterType.label" isMessage="true" />
+                                    <hftl:column label="#{messages['counterPeriod.periodStartDate']}" field="periodStartDate" isDate="true" />
+                                    <hftl:column label="#{messages['counterPeriod.periodEndDate']}" field="periodEndDate" isDate="true" />
+                                    <hftl:column label="#{messages['counterPeriod.level']}" field="level" converterParam="4digits" wrapHeader="true" />
+                                    <hftl:column label="#{messages['counterPeriod.value']}" field="value" converterParam="4digits" wrapHeader="true" />
+                                </p:dataTable>
+                            </ui:define>
+                        </hftl:decorateFormPanel>
+                    </p:tab>
                 </p:tabView>
 
             </h:panelGroup>

@@ -1,0 +1,11 @@
+{
+    "code": "RS_BASE_Timer1",
+    "description": "RS_BASE_Timer_DESCP",
+    "hour": "1",
+    "minute": "10",
+    "second": "45",
+    "year": "*",
+    "month": "*",
+    "dayOfMonth": "*",
+    "dayOfWeek": "*"
+}

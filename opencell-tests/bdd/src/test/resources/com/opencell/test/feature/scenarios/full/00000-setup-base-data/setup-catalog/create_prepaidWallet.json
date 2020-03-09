@@ -1,0 +1,8 @@
+{
+	"code": "RS_BASE_PPW1",
+	"description": "RS_BASE_PrepaidPWallet_Description",
+	"walletType": "PREPAID",
+	"consumptionAlertSet": "false",
+	"fastRatingLevel": "1",
+	"lowBalanceLevel": "2"
+}

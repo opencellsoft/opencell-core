@@ -1,20 +1,19 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.admin.action;
 
@@ -38,6 +37,7 @@ import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.MeveoModuleService;
@@ -62,6 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.Conversation;
+import javax.faces.component.UIInput;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
@@ -71,6 +72,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1547,12 +1549,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
             if (fieldAddedToSql) {
 
-                List entitiesMatched = getPersistenceService().getEntityManager().createQuery(sql.toString()).setParameter("id", referencedEntity).setMaxResults(10)
-                    .getResultList();
+                List entitiesMatched = getPersistenceService().getEntityManager().createQuery(sql.toString()).setParameter("id", referencedEntity).setMaxResults(10).getResultList();
                 if (!entitiesMatched.isEmpty()) {
 
-                    matchedEntityInfo = (matchedEntityInfo == null ? "" : matchedEntityInfo + "; ") + ReflectionUtils.getHumanClassName(classFieldInfo.getKey().getSimpleName())
-                            + ": ";
+                    matchedEntityInfo = (matchedEntityInfo == null ? "" : matchedEntityInfo + "; ") + ReflectionUtils.getHumanClassName(classFieldInfo.getKey().getSimpleName()) + ": ";
                     boolean first = true;
                     for (Object entityIdOrCode : entitiesMatched) {
                         matchedEntityInfo += (first ? "" : ", ") + entityIdOrCode;
@@ -1591,4 +1591,42 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public String getBackMainTab() {
         return backMainTab;
     }
+
+    /**
+     * Validate that if two dates are provided, the From value is before the To value.
+     * 
+     * @param context Faces context
+     * @param components Components being validated
+     * @param values Values to validate
+     * @return Is valid or not
+     */
+    public boolean validateDateRange(FacesContext context, List<UIInput> components, List<Object> values) {
+
+        if (values.size() != 2) {
+            throw new RuntimeException("Please bind validator to two components in the following order: dateFrom, dateTo");
+        }
+//        Date from = (Date) values.get(0);
+//        Date to = (Date) values.get(1);
+        Date from = null;
+        Date to = null;
+
+        if (values.get(0) != null) {
+            if (values.get(0) instanceof String) {
+                from = DateUtils.parseDateWithPattern((String) values.get(0), ParamBean.getInstance().getDateFormat());
+            } else {
+                from = (Date) values.get(0);
+            }
+        }
+        if (values.get(1) != null) {
+            if (values.get(1) instanceof String) {
+                to = DateUtils.parseDateWithPattern((String) values.get(1), ParamBean.getInstance().getDateFormat());
+            } else {
+                to = (Date) values.get(1);
+            }
+        }
+
+        // Check that two dates are one after another
+        return !(from != null && to != null && from.compareTo(to) > 0);
+    }
+
 }

@@ -1,20 +1,19 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.model.billing;
 
@@ -57,12 +56,11 @@ import org.meveo.model.ObservableEntity;
 @CustomFieldEntity(cftCodePrefix = "Tax")
 @ExportIdentifier({ "code" })
 @Table(name = "billing_tax", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_tax_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_tax_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "Tax.getNbTaxesNotAssociated", query = "select count(*) from Tax t where t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)", hints = {
+        @NamedQuery(name = "Tax.getNbTaxesNotAssociated", query = "select count(*) from Tax t where t.id not in (select tm.tax.id from TaxMapping tm where tm.tax.id is not null)", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
-        @NamedQuery(name = "Tax.getTaxesNotAssociated", query = "from Tax t where t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)"),
+        @NamedQuery(name = "Tax.getTaxesNotAssociated", query = "from Tax t where t.id not in (select tm.tax.id from TaxMapping tm where tm.tax.id is not null)"),
         @NamedQuery(name = "Tax.getZeroTax", query = "from Tax t where t.percent=0 ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
         @NamedQuery(name = "Tax.getTaxByCode", query = "from Tax t where t.code=:code ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
         @NamedQuery(name = "Tax.getTaxByPercent", query = "from Tax t where t.percent=:percent ") })
@@ -143,4 +141,30 @@ public class Tax extends BusinessCFEntity {
         return StringUtils.isBlank(id) ? getCode() : String.valueOf(id);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Tax)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+
+        Tax other = (Tax) obj;
+
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
+        if (code == null) {
+            if (other.getCode() != null) {
+                return false;
+            }
+        } else if (!code.equals(other.getCode())) {
+            return false;
+        }
+        return true;
+    }
 }

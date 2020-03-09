@@ -1,0 +1,57 @@
+{
+    "code": "RS_BASE_SERVICE2",
+    "auditable": {
+    },
+    "auditableField": [
+        {
+            "entityClass": "org.meveo.model.billing.ServiceInstance",
+            "fieldName": "status",
+            "changeOrigin": "API",
+            "originName": "/billing/subscription/activateServices",
+            "currentState": "INACTIVE",
+            "actor": "opencell.admin"
+        },
+        {
+            "entityClass": "org.meveo.model.billing.ServiceInstance",
+            "fieldName": "status",
+            "changeOrigin": "API",
+            "originName": "/billing/subscription/activateServices",
+            "previousState": "INACTIVE",
+            "currentState": "ACTIVE",
+            "actor": "opencell.admin"
+        },
+        {
+            "entityClass": "org.meveo.model.billing.ServiceInstance",
+            "fieldName": "status",
+            "changeOrigin": "API",
+            "originName": "/billing/subscription/terminateServices",
+            "previousState": "ACTIVE",
+            "currentState": "TERMINATED",
+            "actor": "opencell.admin"
+        }
+    ],
+    "status": "TERMINATED",
+    "quantity": 2.000000000000,
+    "terminationReason": "TERM_REASON_2",
+    "recurringChargeInstance": [
+        {
+            "auditable": {
+            },
+            "status": "TERMINATED",
+            "sellerCode": "SELLER_FR"
+        }
+    ],
+    "usageChargeInstance": [
+        {
+            "auditable": {
+            },
+            "status": "TERMINATED",
+            "sellerCode": "SELLER_FR"
+        }
+    ],
+    "serviceRenewal": {
+        "initialTermType": "RECURRING",
+        "autoRenew": false,
+        "extendAgreementPeriodToSubscribedTillDate": false
+    }
+}

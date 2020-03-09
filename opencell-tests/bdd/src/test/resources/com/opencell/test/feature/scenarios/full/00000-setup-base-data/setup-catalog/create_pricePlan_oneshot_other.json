@@ -1,0 +1,9 @@
+{
+	"code": "RS_BASE_OS_OTHER",
+	"description": "RS_BASE_OS_OTHER",
+	"eventCode": "RS_BASE_OS_OTHER",
+	"amountWithoutTax": "11",
+	"amountWithTax": "15",
+	"priority": "1",
+	"woDescriptionEL": "#{\"Special \".concat(op.description)}"
+}

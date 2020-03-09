@@ -1,24 +1,27 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.admin.action.catalog;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -29,6 +32,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTemplateLevel;
 import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
@@ -65,11 +69,22 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
 
     /**
      * DataModel for primefaces lazy loading datatable component.
+     *
      * @param counterType counter type enumeration
      * @return LazyDataModel implementation.
      */
     public LazyDataModel<CounterTemplate> getLazyDataModel(CounterTypeEnum counterType) {
         filters.put("counterType", counterType);
+        return getLazyDataModel(filters, false);
+    }
+
+    /**
+     * DataModel for primefaces lazy loading datatable component.
+     *
+     * @return LazyDataModel implementation.
+     */
+    public LazyDataModel<CounterTemplate> getAccumulatorLazyDataModel() {
+        filters.put("accumulator", true);
         return getLazyDataModel(filters, false);
     }
 
@@ -101,7 +116,7 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
 
                     } else if (!level.endsWith("%")) {
                         dblLevel = Double.parseDouble(level);
-                        if (entity.getCeiling() != null && entity.getCeiling().compareTo(BigDecimal.valueOf(dblLevel)) < 0) {
+                        if (entity.getCeiling() != null && entity.getCeiling().compareTo(BigDecimal.valueOf(dblLevel)) < 0 && !entity.getAccumulator()) {
                             facesContext.validationFailed();
                             messages.error(new BundleKey("messages", "counterTemplate.invalidNotificationLevels.higherNumbers"));
                             return null;
@@ -115,7 +130,60 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
             }
 
         }
+        if (entity.getAccumulator()) {
+            entity.setCeiling(BigDecimal.ZERO);
+            entity.setCeilingExpressionEl("");
+        }
 
         return super.saveOrUpdate(killConversation);
     }
+
+    /**
+     * Gets counter types depends if the counter is accumulator or not.
+     *
+     * @return counter types
+     */
+    public Object[] getCounterTypes() {
+        List<Object> allCounterTypes = Arrays.asList(entity.getCounterType().getClass().getEnumConstants());
+        if (entity.getAccumulator()) {
+            allCounterTypes = allCounterTypes.stream().filter(counterType -> ((CounterTypeEnum) counterType).isAccumulator()).sorted(Comparator.comparing(Object::toString)).collect(Collectors.toList());
+
+        } else {
+            allCounterTypes = allCounterTypes.stream().filter(counterType -> !((CounterTypeEnum) counterType).isAccumulator()).sorted(Comparator.comparing(Object::toString)).collect(Collectors.toList());
+
+        }
+
+        return allCounterTypes.toArray();
+    }
+
+    /**
+     * Update counterType and counter level.
+     */
+    public void updateCounterTypeAndCounterLevel() {
+        if (entity.getId() == null && entity.getAccumulator()) {
+            entity.setCounterType(CounterTypeEnum.USAGE);
+            entity.setCounterLevel(CounterTemplateLevel.BA);
+        }
+        if (entity.getId() == null && !entity.getAccumulator()) {
+            entity.setCounterType(CounterTypeEnum.USAGE);
+            entity.setCounterLevel(CounterTemplateLevel.UA);
+        }
+    }
+
+    /**
+     * Gets an array of counter levels depends if the counter is an accumulator or not.
+     *
+     * @return an array of counter levels.
+     */
+    public Object[] getCounterLevels() {
+        List<Object> counterLevels = Arrays.asList(entity.getCounterLevel().getClass().getEnumConstants());
+        if (entity.getAccumulator() == null || !entity.getAccumulator()) {
+            counterLevels = counterLevels.stream().filter(counterLevel -> counterLevel.equals(CounterTemplateLevel.SI) || counterLevel.equals(CounterTemplateLevel.SU) || counterLevel.equals(CounterTemplateLevel.UA)
+                    || counterLevel.equals(CounterTemplateLevel.BA))
+                .sorted(Comparator.comparing(Object::toString)).collect(Collectors.toList());
+        }
+
+        return counterLevels.toArray();
+    }
+
 }

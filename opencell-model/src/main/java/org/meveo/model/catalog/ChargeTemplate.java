@@ -1,37 +1,28 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.model.catalog;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ModuleItem;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.OperationTypeEnum;
-import org.meveo.model.finance.RevenueRecognitionRule;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -52,12 +43,23 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.finance.RevenueRecognitionRule;
+import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.tax.TaxClass;
 
 /**
  * Charge template/definition
@@ -73,8 +75,7 @@ import java.util.Map;
 @CustomFieldEntity(cftCodePrefix = "ChargeTemplate")
 @ExportIdentifier({ "code" })
 @Table(name = "cat_charge_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cat_charge_template_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "cat_charge_template_seq"), })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "charge_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class ChargeTemplate extends EnableBusinessCFEntity {
@@ -141,15 +142,14 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rating_unitofmeasure")
     private UnitOfMeasure ratingUnitOfMeasure;
-    
-    
+
     /**
      * Expression to calculate input unitOfMeasure
      */
     @Column(name = "input_unit_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String inputUnitEL;
-    
+
     /**
      * Expression to calculate input unitOfMeasure
      */
@@ -157,23 +157,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Size(max = 2000)
     private String outputUnitEL;
 
-    public String getInputUnitEL() {
-		return inputUnitEL;
-	}
-
-	public void setInputUnitEL(String inputUnitEL) {
-		this.inputUnitEL = inputUnitEL;
-	}
-
-	public String getOutputUnitEL() {
-		return outputUnitEL;
-	}
-
-	public void setOutputUnitEL(String outputUnitEL) {
-		this.outputUnitEL = outputUnitEL;
-	}
-
-	/**
+    /**
      * Unit multiplicator between input and rating unit
      */
     @Column(name = "unit_multiplicator", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
@@ -220,6 +204,34 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Size(max = 2000)
     private String filterExpressionSpark = null;
 
+    /**
+     * Charge tax class
+     **/
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_class_id", nullable = false)
+    private TaxClass taxClass;
+
+    /**
+     * Expression to determine tax class
+     */
+    @Column(name = "tax_class_el", length = 2000)
+    @Size(max = 2000)
+    private String taxClassEl;
+
+    /**
+     * Expression to determine tax class - for Spark
+     */
+    @Column(name = "tax_class_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String taxClassElSpark;
+
+    /**
+     * Script to handle rating instead of a regular price plan logic
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rating_script_id")
+    private ScriptInstance ratingScript;
+
     // Calculated values
     @Transient
     private boolean roundingValuesComputed;
@@ -229,6 +241,22 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 
     @Transient
     private int roundingEdrNbDecimal = BaseEntity.NB_DECIMALS;
+
+    public String getInputUnitEL() {
+        return inputUnitEL;
+    }
+
+    public void setInputUnitEL(String inputUnitEL) {
+        this.inputUnitEL = inputUnitEL;
+    }
+
+    public String getOutputUnitEL() {
+        return outputUnitEL;
+    }
+
+    public void setOutputUnitEL(String outputUnitEL) {
+        this.outputUnitEL = outputUnitEL;
+    }
 
     public abstract String getChargeType();
 
@@ -280,12 +308,12 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
         this.ratingUnitDescription = ratingUnitDescription;
     }
 
-	public BigDecimal getUnitMultiplicator() {
-		return unitMultiplicator;
-	}
+    public BigDecimal getUnitMultiplicator() {
+        return unitMultiplicator;
+    }
 
-	public void setUnitMultiplicator(BigDecimal unitMultiplicator) {
-		updateUnitMultiplicator(unitMultiplicator);
+    public void setUnitMultiplicator(BigDecimal unitMultiplicator) {
+        updateUnitMultiplicator(unitMultiplicator);
     }
 
     /**
@@ -419,17 +447,72 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
         updateUnitMultiplicator(null);
     }
 
-	private void updateUnitMultiplicator(BigDecimal multiplicator) {
-		this.unitMultiplicator=calculateUnitMultiplicator(multiplicator, this.inputUnitOfMeasure, this.ratingUnitOfMeasure);
-	}
-	
-    private BigDecimal calculateUnitMultiplicator(BigDecimal multiplicator, UnitOfMeasure IUM, UnitOfMeasure RUM) {
-		if(IUM!=null && RUM != null && IUM.isCompatibleWith(RUM)){
-			return BigDecimal.valueOf(IUM.getMultiplicator()).divide(BigDecimal.valueOf(RUM.getMultiplicator()),BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP );
-		} else if(multiplicator!=null) {
-			return multiplicator;
-		}
-		return unitMultiplicator;
-	}
+    private void updateUnitMultiplicator(BigDecimal multiplicator) {
+        this.unitMultiplicator = calculateUnitMultiplicator(multiplicator, this.inputUnitOfMeasure, this.ratingUnitOfMeasure);
+    }
 
+    private BigDecimal calculateUnitMultiplicator(BigDecimal multiplicator, UnitOfMeasure IUM, UnitOfMeasure RUM) {
+        if (IUM != null && RUM != null && IUM.isCompatibleWith(RUM)) {
+            return BigDecimal.valueOf(IUM.getMultiplicator()).divide(BigDecimal.valueOf(RUM.getMultiplicator()), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+        } else if (multiplicator != null) {
+            return multiplicator;
+        }
+        return unitMultiplicator;
+    }
+
+    /**
+     * @return Charge tax class
+     */
+    public TaxClass getTaxClass() {
+        return taxClass;
+    }
+
+    /**
+     * @param taxClass Charge tax class
+     */
+    public void setTaxClass(TaxClass taxClass) {
+        this.taxClass = taxClass;
+    }
+
+    /**
+     * @return Expression to determine tax class
+     */
+    public String getTaxClassEl() {
+        return taxClassEl;
+    }
+
+    /**
+     * @param taxClassEl Expression to determine tax class
+     */
+    public void setTaxClassEl(String taxClassEl) {
+        this.taxClassEl = taxClassEl;
+    }
+
+    /**
+     * @return Expression to determine tax class - for Spark
+     */
+    public String getTaxClassElSpark() {
+        return taxClassElSpark;
+    }
+
+    /**
+     * @param taxClassElSpark Expression to determine tax class - for Spark
+     */
+    public void setTaxClassElSpark(String taxClassElSpark) {
+        this.taxClassElSpark = taxClassElSpark;
+    }
+
+    /**
+     * @return Script to handle rating instead of a regular price plan logic
+     */
+    public ScriptInstance getRatingScript() {
+        return ratingScript;
+    }
+
+    /**
+     * @param ratingScript Script to handle rating instead of a regular price plan logic
+     */
+    public void setRatingScript(ScriptInstance ratingScript) {
+        this.ratingScript = ratingScript;
+    }
 }

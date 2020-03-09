@@ -1,20 +1,19 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.model.billing;
 
@@ -61,6 +60,7 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.tax.TaxCategory;
 
 /**
  * Billing account
@@ -80,8 +80,7 @@ import org.meveo.model.payments.CustomerAccount;
         @NamedQuery(name = "BillingAccount.listByBillingRun", query = "select b from BillingAccount b where b.billingRun.id=:billingRunId order by b.id"),
         @NamedQuery(name = "BillingAccount.PreInv", query = "SELECT b FROM BillingAccount b left join fetch b.customerAccount ca left join fetch ca.paymentMethods where b.billingRun.id=:billingRunId"),
         @NamedQuery(name = "BillingAccount.getMimimumRTUsed", query = "select ba.minimumAmountEl from BillingAccount ba where ba.minimumAmountEl is not null"),
-        @NamedQuery(name = "BillingAccount.getBillingAccountsWithMinAmountELNotNullByBA", query = "select ba from BillingAccount ba where ba.minimumAmountEl is not null AND ba.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND ba=:billingAccount")
-})
+        @NamedQuery(name = "BillingAccount.getBillingAccountsWithMinAmountELNotNullByBA", query = "select ba from BillingAccount ba where ba.minimumAmountEl is not null AND ba.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND ba=:billingAccount")})
 public class BillingAccount extends AccountEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) BillingAccount.class.getAnnotation(DiscriminatorValue.class)).value();
@@ -270,7 +269,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @Column(name = "minimum_label_el_sp", length = 2000)
     @Size(max = 2000)
     private String minimumLabelElSpark;
-    
+
     /** Corresponding invoice subcategory */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_invoice_sub_category_id")
@@ -333,10 +332,23 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     private String ccedEmails;
 
     /**
+     * Account tax category
+     **/
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_category_id")
+    private TaxCategory taxCategory;
+
+    /**
      * A flag to indicate that account is exonerated from taxes
      */
     @Transient
     private Boolean exoneratedFromtaxes;
+
+    /**
+     * Tax category resolved
+     */
+    @Transient
+    private TaxCategory taxCategoryResolved;
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -750,5 +762,33 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      */
     public void setMinimumInvoiceSubCategory(InvoiceSubCategory minimumInvoiceSubCategory) {
         this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
+    }
+
+    /**
+     * @return Account tax category
+     */
+    public TaxCategory getTaxCategory() {
+        return taxCategory;
+    }
+
+    /**
+     * @param taxCategory Account tax category
+     */
+    public void setTaxCategory(TaxCategory taxCategory) {
+        this.taxCategory = taxCategory;
+    }
+
+    /**
+     * @return Tax category resolved
+     */
+    public TaxCategory getTaxCategoryResolved() {
+        return taxCategoryResolved;
+    }
+
+    /**
+     * @param taxCategoryResolved Tax category resolved
+     */
+    public void setTaxCategoryResolved(TaxCategory taxCategoryResolved) {
+        this.taxCategoryResolved = taxCategoryResolved;
     }
 }

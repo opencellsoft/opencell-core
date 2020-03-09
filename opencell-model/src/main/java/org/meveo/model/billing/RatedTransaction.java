@@ -1,20 +1,19 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.model.billing;
 
@@ -35,6 +34,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -50,6 +50,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.tax.TaxClass;
 
 /**
  * Rated transaction - usually corresponds 1-1 to Wallet operation.
@@ -66,10 +67,8 @@ import org.meveo.model.rating.EDR;
 @Entity
 @ObservableEntity
 @Table(name = "billing_rated_transaction")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_rated_transaction_seq"), })
-@NamedQueries({
-        @NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and r.status<>'OPEN' order by usageDate desc "),
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_rated_transaction_seq"), })
+@NamedQueries({ @NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and r.status<>'OPEN' order by usageDate desc "),
 
         @NamedQuery(name = "RatedTransaction.listToInvoiceByOrderNumber", query = "SELECT r FROM RatedTransaction r where r.status='OPEN' AND r.orderNumber=:orderNumber AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate order by r.billingAccount.id "),
         @NamedQuery(name = "RatedTransaction.listToInvoiceBySubscription", query = "SELECT r FROM RatedTransaction r where r.subscription.id=:subscriptionId AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate "),
@@ -124,15 +123,15 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.unInvoiceByInvoice", query = "update RatedTransaction r set r.status='OPEN', r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice=:invoice"),
         @NamedQuery(name = "RatedTransaction.unInvoiceByBR", query = "update RatedTransaction r set r.status='OPEN', r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.billingRun=:billingRun"),
 
-        @NamedQuery(name = "RatedTransaction.deleteMinRTByInvoice", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.invoice=:invoice"),
-        @NamedQuery(name = "RatedTransaction.deleteMinRTByBR", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.billingRun=:billingRun"),
+        @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByInvoice", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.invoice=:invoice"),
+        @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByBR", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.billingRun=:billingRun"),
 
         @NamedQuery(name = "RatedTransaction.countNotInvoicedOpenByBA", query = "SELECT count(r) FROM RatedTransaction r WHERE r.billingAccount=:billingAccount AND r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate "),
 
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByBA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.billingAccount=:billingAccount"),
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByUA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.wallet.userAccount=:userAccount"),
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByCA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.billingAccount.customerAccount=:customerAccount"),
-        
+
         @NamedQuery(name = "RatedTransaction.cancelByRTIds", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED where r.id IN :rsIds "),
         @NamedQuery(name = "RatedTransaction.findByWalletOperationId", query = "SELECT wo.ratedTransaction FROM WalletOperation wo WHERE wo.id=:walletOperationId"),
 
@@ -419,10 +418,33 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     private Date updated;
 
     /**
-     * Was tax explicitly overridden during rating and should not be recalculated at invoice time
+     * Input quantity
      */
-    @Transient
-    private boolean taxOverriden;
+    @Column(name = "input_quantity", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
+    private BigDecimal inputQuantity;
+
+    /**
+     * Raw rating amount without tax from Price plan. Might differ from amountWitouttax when minimumAmount is set on a price plan.
+     */
+    @Deprecated
+    @Column(name = "raw_amount_without_tax", precision = 23, scale = 12)
+    @Digits(integer = 23, fraction = 12)
+    private BigDecimal rawAmountWithoutTax;
+
+    /**
+     * Raw rating amount with tax from Price plan. Might differ from amountWitouttax when minimumAmount is set on a price plan.
+     */
+    @Deprecated
+    @Column(name = "raw_amount_with_tax", precision = 23, scale = 12)
+    @Digits(integer = 23, fraction = 12)
+    private BigDecimal rawAmountWithTax;
+
+    /**
+     * Charge tax class
+     **/
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_class_id", nullable = false)
+    private TaxClass taxClass;
 
     /**
      * Was tax recalculated (changed) during invoicing
@@ -434,11 +456,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         super();
     }
 
-    public RatedTransaction(Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity,
-            BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet, BillingAccount billingAccount,
-            UserAccount userAccount, InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String parameterExtra, String orderNumber,
-            Subscription subscription, String inputUnitDescription, String ratingUnitDescription, PricePlanMatrix priceplan, OfferTemplate offerTemplate, EDR edr, String code,
-            String description, Date startDate, Date endDate, Seller seller, Tax tax, BigDecimal taxPercent, ServiceInstance serviceInstance) {
+    public RatedTransaction(Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax,
+            BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet, BillingAccount billingAccount, UserAccount userAccount, InvoiceSubCategory invoiceSubCategory, String parameter1,
+            String parameter2, String parameter3, String parameterExtra, String orderNumber, Subscription subscription, String inputUnitDescription, String ratingUnitDescription, PricePlanMatrix priceplan,
+            OfferTemplate offerTemplate, EDR edr, String code, String description, Date startDate, Date endDate, Seller seller, Tax tax, BigDecimal taxPercent, ServiceInstance serviceInstance, TaxClass taxClass) {
 
         super();
 
@@ -475,6 +496,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.ratingUnitDescription = ratingUnitDescription;
         this.serviceInstance = serviceInstance;
         this.updated = new Date();
+        this.taxClass = taxClass;
     }
 
     /**
@@ -495,6 +517,9 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.quantity = walletOperation.getQuantity();
         this.amountWithoutTax = walletOperation.getAmountWithoutTax();
         this.amountWithTax = walletOperation.getAmountWithTax();
+        this.inputQuantity = walletOperation.getInputQuantity();
+        this.rawAmountWithTax = walletOperation.getRawAmountWithTax();
+        this.rawAmountWithoutTax = walletOperation.getRawAmountWithoutTax();
         this.amountTax = walletOperation.getAmountTax();
         this.wallet = walletOperation.getWallet();
         this.userAccount = walletOperation.getWallet().getUserAccount();
@@ -517,6 +542,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.serviceInstance = walletOperation.getServiceInstance();
         this.status = RatedTransactionStatusEnum.OPEN;
         this.updated = new Date();
+        this.taxClass = walletOperation.getTaxClass();
 
         this.unityDescription = walletOperation.getInputUnitDescription();
         if (this.unityDescription == null) {
@@ -936,17 +962,11 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     }
 
     /**
-     * @return Was tax explicitly overridden during rating and should not be recalculated at invoice time
+     * @return Was tax explicitly overridden during rating instead of calculated by a lookup in tax mapping table based on account and charge attributes. An absence of tax class
+     *         with a presence of tax means tax was overridden.
      */
     public boolean isTaxOverriden() {
-        return taxOverriden;
-    }
-
-    /**
-     * @param taxOverriden Was tax explicitly overridden during rating and should not be recalculated at invoice time
-     */
-    public void setTaxOverriden(boolean taxOverriden) {
-        this.taxOverriden = taxOverriden;
+        return taxClass == null;
     }
 
     /**
@@ -1033,6 +1053,30 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.updated = updated;
     }
 
+    public BigDecimal getInputQuantity() {
+        return inputQuantity;
+    }
+
+    public void setInputQuantity(BigDecimal inputQuantity) {
+        this.inputQuantity = inputQuantity;
+    }
+
+    public BigDecimal getRawAmountWithoutTax() {
+        return rawAmountWithoutTax;
+    }
+
+    public void setRawAmountWithoutTax(BigDecimal rawAmountWithoutTax) {
+        this.rawAmountWithoutTax = rawAmountWithoutTax;
+    }
+
+    public BigDecimal getRawAmountWithTax() {
+        return rawAmountWithTax;
+    }
+
+    public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
+        this.rawAmountWithTax = rawAmountWithTax;
+    }
+
     /**
      * Change status and update a last updated timestamp
      * 
@@ -1041,5 +1085,19 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     public void changeStatus(RatedTransactionStatusEnum status) {
         this.status = status;
         this.updated = new Date();
+    }
+
+    /**
+     * @return Charge tax class
+     */
+    public TaxClass getTaxClass() {
+        return taxClass;
+    }
+
+    /**
+     * @param taxClass Charge tax class
+     */
+    public void setTaxClass(TaxClass taxClass) {
+        this.taxClass = taxClass;
     }
 }

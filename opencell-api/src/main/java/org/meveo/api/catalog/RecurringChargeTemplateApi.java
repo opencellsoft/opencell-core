@@ -1,56 +1,58 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.api.catalog;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
-import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.RoundingModeEnum;
-import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.finance.RevenueRecognitionRuleService;
+import org.meveo.service.tax.TaxClassService;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTemplate, RecurringChargeTemplateDto> {
+public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringChargeTemplate, RecurringChargeTemplateDto> {
 
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
 
     @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
-
-    @Inject
     private CalendarService calendarService;
-
-    @Inject
-    private TriggeredEDRTemplateService triggeredEDRTemplateService;
-
-    @Inject
-    private RevenueRecognitionRuleService revenueRecognitionRuleService;
 
     @Override
     public RecurringChargeTemplate create(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
@@ -64,6 +66,9 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         if (StringUtils.isBlank(postData.getCalendar())) {
             missingParameters.add("calendar");
         }
+        if (StringUtils.isBlank(postData.getTaxClassCode())) {
+            missingParameters.add("taxClassCode");
+        }
 
         handleMissingParametersAndValidate(postData);
 
@@ -72,81 +77,9 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
             throw new EntityAlreadyExistsException(RecurringChargeTemplate.class, postData.getCode());
         }
 
-        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
-        if (invoiceSubCategory == null) {
-            throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
-        }
-
-        Calendar calendar = calendarService.findByCode(postData.getCalendar());
-        if (calendar == null) {
-            throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
-        }
-
-        RecurringChargeTemplate chargeTemplate = new RecurringChargeTemplate();
-        chargeTemplate.setCode(postData.getCode());
-        chargeTemplate.setDescription(postData.getDescription());
-        if (postData.isDisabled() != null) {
-            chargeTemplate.setDisabled(postData.isDisabled());
-        }
-        chargeTemplate.setAmountEditable(postData.getAmountEditable());
-        chargeTemplate.setDurationTermInMonth(postData.getDurationTermInMonth());
-        chargeTemplate.setSubscriptionProrata(postData.getSubscriptionProrata());
-        chargeTemplate.setTerminationProrata(postData.getTerminationProrata());
-        chargeTemplate.setApplyInAdvance(postData.getApplyInAdvance());
-        chargeTemplate.setShareLevel(LevelEnum.getValue(postData.getShareLevel()));
-        chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-        chargeTemplate.setCalendar(calendar);
-        chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
-        chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
-        chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
-        chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-        chargeTemplate.setFilterExpression(postData.getFilterExpression());
-        chargeTemplate.setDurationTermInMonthEl(postData.getDurationTermInMonthEl());
-        chargeTemplate.setSubscriptionProrataEl(postData.getSubscriptionProrataEl());
-        chargeTemplate.setTerminationProrataEl(postData.getTerminationProrataEl());
-        chargeTemplate.setApplyInAdvanceEl(postData.getApplyInAdvanceEl());
-        chargeTemplate.setCalendarCodeEl(postData.getCalendarCodeEl());
-        if (postData.getRoundingModeDtoEnum() != null) {
-            chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
-        } else {
-            chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
-        }
-
-        if (postData.getRevenueRecognitionRuleCode() != null) {
-            RevenueRecognitionRule revenueRecognitionRule = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
-            chargeTemplate.setRevenueRecognitionRule(revenueRecognitionRule);
-        }
-
-        if (postData.getTriggeredEdrs() != null) {
-            List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
-
-            for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
-                TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode());
-                if (triggeredEdrTemplate == null) {
-                    throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
-                }
-
-                edrTemplates.add(triggeredEdrTemplate);
-            }
-
-            chargeTemplate.setEdrTemplates(edrTemplates);
-        }
-
-        // populate customFields
-        try {
-            populateCustomFields(postData.getCustomFields(), chargeTemplate, true);
-        } catch (MissingParameterException | InvalidParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
-
-        chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
+        RecurringChargeTemplate chargeTemplate = dtoToEntity(postData, null);
 
         recurringChargeTemplateService.create(chargeTemplate);
-
         return chargeTemplate;
     }
 
@@ -156,10 +89,13 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
+        if (postData.getInvoiceSubCategory() != null && StringUtils.isBlank(postData.getInvoiceSubCategory())) {
             missingParameters.add("invoiceSubCategory");
         }
-        if (StringUtils.isBlank(postData.getCalendar())) {
+        if (postData.getTaxClassCode() != null && StringUtils.isBlank(postData.getTaxClassCode())) {
+            missingParameters.add("taxClassCode");
+        }
+        if (postData.getCalendar() != null && StringUtils.isBlank(postData.getCalendar())) {
             missingParameters.add("calendar");
         }
 
@@ -171,77 +107,74 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, postData.getCode());
         }
 
-        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
-        if (invoiceSubCategory == null) {
-            throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
-        }
-
-        Calendar calendar = calendarService.findByCode(postData.getCalendar());
-        if (calendar == null) {
-            throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
-        }
-        chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setAmountEditable(postData.getAmountEditable());
-        chargeTemplate.setDurationTermInMonth(postData.getDurationTermInMonth());
-        chargeTemplate.setSubscriptionProrata(postData.getSubscriptionProrata());
-        chargeTemplate.setTerminationProrata(postData.getTerminationProrata());
-        chargeTemplate.setApplyInAdvance(postData.getApplyInAdvance());
-        chargeTemplate.setShareLevel(LevelEnum.getValue(postData.getShareLevel()));
-        chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-        chargeTemplate.setCalendar(calendar);
-        chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
-        chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
-        chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
-        chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-        chargeTemplate.setFilterExpression(postData.getFilterExpression());
-        chargeTemplate.setDurationTermInMonthEl(postData.getDurationTermInMonthEl());
-        chargeTemplate.setSubscriptionProrataEl(postData.getSubscriptionProrataEl());
-        chargeTemplate.setTerminationProrataEl(postData.getTerminationProrataEl());
-        chargeTemplate.setApplyInAdvanceEl(postData.getApplyInAdvanceEl());
-        chargeTemplate.setCalendarCodeEl(postData.getCalendarCodeEl());
-        if (postData.getRoundingModeDtoEnum() != null) {
-            chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
-        } else {
-            chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
-        }
-
-        if (postData.getRevenueRecognitionRuleCode() != null) {
-            RevenueRecognitionRule revenueRecognitionRule = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
-            chargeTemplate.setRevenueRecognitionRule(revenueRecognitionRule);
-        }
-
-        if (postData.getLanguageDescriptions() != null) {
-            chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), chargeTemplate.getDescriptionI18n()));
-        }
-
-        if (postData.getTriggeredEdrs() != null) {
-            List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
-
-            for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
-                TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode());
-                if (triggeredEdrTemplate == null) {
-                    throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
-                }
-
-                edrTemplates.add(triggeredEdrTemplate);
-            }
-
-            chargeTemplate.setEdrTemplates(edrTemplates);
-        }
-
-        // populate customFields
-        try {
-            populateCustomFields(postData.getCustomFields(), chargeTemplate, false);
-        } catch (MissingParameterException | InvalidParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
+        chargeTemplate = dtoToEntity(postData, chargeTemplate);
 
         chargeTemplate = recurringChargeTemplateService.update(chargeTemplate);
+
+        return chargeTemplate;
+    }
+
+    /**
+     * Convert/update DTO object to an entity object
+     * 
+     * @param postData DTO object
+     * @param chargeTemplate Entity object to update
+     * @return A new or updated entity object
+     * @throws MeveoApiException General API exception
+     * @throws BusinessException General exception
+     */
+    private RecurringChargeTemplate dtoToEntity(RecurringChargeTemplateDto postData, RecurringChargeTemplate chargeTemplate) throws MeveoApiException, BusinessException {
+
+        boolean isNew = chargeTemplate == null;
+
+        if (isNew) {
+            chargeTemplate = new RecurringChargeTemplate();
+            chargeTemplate.setCode(postData.getCode());
+        } else {
+            chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+        }
+
+        super.dtoToEntity(postData, chargeTemplate, isNew);
+
+        if (postData.getCalendar() != null) {
+            Calendar calendar = calendarService.findByCode(postData.getCalendar());
+            if (calendar == null) {
+                throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
+            }
+
+            chargeTemplate.setCalendar(calendar);
+        }
+
+        if (postData.getDurationTermInMonth() != null) {
+            chargeTemplate.setDurationTermInMonth(postData.getDurationTermInMonth());
+        }
+        if (postData.getSubscriptionProrata() != null) {
+            chargeTemplate.setSubscriptionProrata(postData.getSubscriptionProrata());
+        }
+        if (postData.getTerminationProrata() != null) {
+            chargeTemplate.setTerminationProrata(postData.getTerminationProrata());
+        }
+        if (postData.getApplyInAdvance() != null) {
+            chargeTemplate.setApplyInAdvance(postData.getApplyInAdvance());
+        }
+        if (postData.getShareLevel() != null) {
+            chargeTemplate.setShareLevel(LevelEnum.getValue(postData.getShareLevel()));
+        }
+        if (postData.getDurationTermInMonthEl() != null) {
+            chargeTemplate.setDurationTermInMonthEl(StringUtils.getDefaultIfEmpty(postData.getDurationTermInMonthEl(), null));
+        }
+        if (postData.getSubscriptionProrataEl() != null) {
+            chargeTemplate.setSubscriptionProrataEl(StringUtils.getDefaultIfEmpty(postData.getSubscriptionProrataEl(), null));
+        }
+        if (postData.getTerminationProrataEl() != null) {
+            chargeTemplate.setTerminationProrataEl(StringUtils.getDefaultIfEmpty(postData.getTerminationProrataEl(), null));
+        }
+        if (postData.getApplyInAdvanceEl() != null) {
+            chargeTemplate.setApplyInAdvanceEl(StringUtils.getDefaultIfEmpty(postData.getApplyInAdvanceEl(), null));
+        }
+        if (postData.getCalendarCodeEl() != null) {
+            chargeTemplate.setCalendarCodeEl(StringUtils.getDefaultIfEmpty(postData.getCalendarCodeEl(), null));
+        }
 
         return chargeTemplate;
     }

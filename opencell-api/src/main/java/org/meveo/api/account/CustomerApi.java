@@ -1,25 +1,25 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.api.account;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.servlet.http.HttpServletResponse;
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import org.apache.commons.io.IOUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -35,7 +35,6 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
-import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -55,6 +54,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.export.CustomBigDecimalConverter;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
@@ -65,6 +65,7 @@ import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.sequence.GenericSequence;
+import org.meveo.model.tax.TaxCategory;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.AccountingCodeService;
@@ -76,10 +77,29 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.dwh.GdprService;
 import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookService;
+import org.meveo.service.tax.TaxCategoryService;
 import org.primefaces.model.SortOrder;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author Edward P. Legaspi
@@ -131,13 +151,13 @@ public class CustomerApi extends AccountEntityApi {
     private ProviderService providerService;
 
     @Inject
-    private CustomerSequenceApi customerSequenceApi;
-
-    @Inject
     private AccountingCodeService accountingCodeService;
 
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
+
+    @Inject
+    private TaxCategoryService taxCategoryService;
 
     public Customer create(CustomerDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -387,7 +407,7 @@ public class CustomerApi extends AccountEntityApi {
     }
 
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = DEFAULT_SORT_ORDER_CODE, entityClass = Customer.class)}, totalRecords = "customers.totalNumberOfRecords")
+    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = DEFAULT_SORT_ORDER_CODE, entityClass = Customer.class) }, totalRecords = "customers.totalNumberOfRecords")
     public CustomersResponseDto list(CustomerDto postData, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
         return list(postData, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
     }
@@ -483,8 +503,13 @@ public class CustomerApi extends AccountEntityApi {
     public void createCategory(CustomerCategoryDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add(DEFAULT_SORT_ORDER_CODE);
-            handleMissingParametersAndValidate(postData);
         }
+
+        if ((postData.isExoneratedFromTaxes() == null || !postData.isExoneratedFromTaxes()) && postData.getTaxCategoryCode() == null) {
+            missingParameters.add("Exonerated from taxes or tax category code");
+        }
+
+        handleMissingParametersAndValidate(postData);
 
         if (customerCategoryService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(CustomerCategory.class, postData.getCode());
@@ -507,6 +532,17 @@ public class CustomerApi extends AccountEntityApi {
             }
             customerCategory.setAccountingCode(accountingCode);
         }
+        if (!StringUtils.isBlank(postData.getTaxCategoryCode())) {
+            TaxCategory taxCategory = taxCategoryService.findByCode(postData.getTaxCategoryCode());
+            if (taxCategory == null) {
+                throw new EntityDoesNotExistsException(TaxCategory.class, postData.getTaxCategoryCode());
+            }
+            customerCategory.setTaxCategory(taxCategory);
+        }
+
+        customerCategory.setTaxCategoryEl(postData.getTaxCategoryEl());
+        customerCategory.setTaxCategoryElSpark(postData.getTaxCategoryElSpark());
+
         customerCategoryService.create(customerCategory);
     }
 
@@ -556,6 +592,30 @@ public class CustomerApi extends AccountEntityApi {
             }
             customerCategory.setAccountingCode(accountingCode);
         }
+        
+        if (postData.getTaxCategoryCode()!=null && StringUtils.isBlank(postData.getTaxCategoryCode()) && customerCategory.getTaxCategory()!=null) {
+            customerCategory.setTaxCategory(null);
+            toUpdate = true;
+        
+        }else if (!StringUtils.isBlank(postData.getTaxCategoryCode()) && (customerCategory.getTaxCategory()==null || !customerCategory.getTaxCategory().getCode().equals(postData.getTaxCategoryCode())))  {
+            TaxCategory taxCategory = taxCategoryService.findByCode(postData.getTaxCategoryCode());
+            if (taxCategory == null) {
+                throw new EntityDoesNotExistsException(TaxCategory.class, postData.getTaxCategoryCode());
+            }
+            customerCategory.setTaxCategory(taxCategory);
+            toUpdate = true;
+        }
+
+        if (postData.getTaxCategoryEl() != null && StringUtils.compare(postData.getTaxCategoryEl(), customerCategory.getTaxCategoryEl()) != 0) {
+            customerCategory.setTaxCategoryEl(postData.getTaxCategoryEl());
+            toUpdate = true;
+        }
+        
+        if (postData.getTaxCategoryElSpark() != null && StringUtils.compare(postData.getTaxCategoryElSpark(), customerCategory.getTaxCategoryElSpark()) != 0) {
+            customerCategory.setTaxCategoryElSpark(postData.getTaxCategoryElSpark());
+            toUpdate = true;
+        }
+
 
         if (toUpdate) {
             customerCategoryService.update(customerCategory);
@@ -838,4 +898,17 @@ public class CustomerApi extends AccountEntityApi {
         return result;
     }
 
+    public List<CounterInstance> filterCountersByPeriod(String customerCode, Date date) {
+        Customer customer = customerService.findByCode(customerCode);
+
+        if (customer == null) {
+            throw new EntityDoesNotExistsException(Customer.class, customerCode);
+        }
+
+        if (StringUtils.isBlank(date)) {
+            throw new BusinessApiException("date is null");
+        }
+
+        return new ArrayList<>(customerService.filterCountersByPeriod(customer.getCounters(), date).values());
+    }
 }

@@ -44,7 +44,12 @@
 			<hftl:column label="#{messages['terminationReason.applyReimbursment']}"
 				field="applyReimbursment" />
 			<hftl:column label="#{messages['terminationReason.applyTerminationCharges']}"
-				field="applyTerminationCharges" />
+						 field="applyTerminationCharges"/>
+			<hftl:column label="#{messages['terminationReason.overrideProrata']}"
+						 field="overrideProrata"/>
+						 field="applyTerminationCharges"/>
+			<hftl:column label="#{messages['terminationReason.reimburseOneshots']}"
+						 field="reimburseOneshots"/>
 
 			<hftl:actionsColumn
 				permission="#{currentUser.hasRole('administrationManagement')}" />

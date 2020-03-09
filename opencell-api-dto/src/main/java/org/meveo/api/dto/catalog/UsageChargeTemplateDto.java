@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.api.dto.catalog;
 
 import javax.validation.constraints.Size;
@@ -40,22 +58,14 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
     @Size(min = 0, max = 255)
     private String filterParam4 = WILCARD;
 
-    /** The filter expression. */
-    @Size(max = 2000)
-    private String filterExpression = null;
-
-    /** The filter expression. */
-    @Size(max = 2000)
-    private String filterExpressionSpark;
-
     /** The priority. */
-    private int priority = 1;
-    
+    private Integer priority = 1;
+
     /**
      * If true and (charge has no counter associated) then the next matching charge with the full quantity of the EDR.
      */
-    protected Boolean triggerNextCharge = false;
-    
+    protected Boolean triggerNextCharge;
+
     /**
      * Overrides the triggerNextCharge switch.
      */
@@ -80,8 +90,6 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
         filterParam2 = usageChargeTemplate.getFilterParam2();
         filterParam3 = usageChargeTemplate.getFilterParam3();
         filterParam4 = usageChargeTemplate.getFilterParam4();
-        filterExpression = usageChargeTemplate.getFilterExpression();
-        filterExpressionSpark = usageChargeTemplate.getFilterExpressionSpark();
         priority = usageChargeTemplate.getPriority();
         triggerNextCharge = usageChargeTemplate.getTriggerNextCharge();
         triggerNextChargeEL = usageChargeTemplate.getTriggerNextChargeEL();
@@ -164,7 +172,7 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
      *
      * @return the priority
      */
-    public int getPriority() {
+    public Integer getPriority() {
         return priority;
     }
 
@@ -173,59 +181,30 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
      *
      * @param priority the new priority
      */
-    public void setPriority(int priority) {
+    public void setPriority(Integer priority) {
         this.priority = priority;
     }
 
-    /**
-     * @return Expression to determine if charge applies
-     */
-    public String getFilterExpression() {
-        return filterExpression;
+    public Boolean getTriggerNextCharge() {
+        return triggerNextCharge;
     }
 
-    /**
-     * @param filterExpression Expression to determine if charge applies
-     */
-    public void setFilterExpression(String filterExpression) {
-        this.filterExpression = filterExpression;
+    public void setTriggerNextCharge(Boolean triggerNextCharge) {
+        this.triggerNextCharge = triggerNextCharge;
     }
 
-    /**
-     * @return Expression to determine if charge applies - for Spark
-     */
-    public String getFilterExpressionSpark() {
-        return filterExpressionSpark;
+    public String getTriggerNextChargeEL() {
+        return triggerNextChargeEL;
     }
 
-    /**
-     * @param filterExpressionSpark Expression to determine if charge applies - for Spark
-     */
-    public void setFilterExpressionSpark(String filterExpressionSpark) {
-        this.filterExpressionSpark = filterExpressionSpark;
+    public void setTriggerNextChargeEL(String triggerNextChargeEL) {
+        this.triggerNextChargeEL = triggerNextChargeEL;
     }
 
     @Override
     public String toString() {
-        return "UsageChargeTemplateDto [filterParam1=" + filterParam1 + ", filterParam2=" + filterParam2 + ", filterParam3=" + filterParam3 + ", filterParam4=" + filterParam4
-                + ", filterExpression=" + filterExpression + ", filterExpressionSpark=" + filterExpressionSpark + ", priority=" + priority + ", id=" + id + ", code=" + code
-                + ", description=" + description + ", updatedCode=" + updatedCode + "]";
+        return "UsageChargeTemplateDto [" + super.toString() + ",filterParam1=" + filterParam1 + ", filterParam2=" + filterParam2 + ", filterParam3=" + filterParam3 + ", filterParam4=" + filterParam4 + ", priority="
+                + priority + ", triggerNextCharge=" + triggerNextCharge + ", triggerNextChargeEL=" + triggerNextChargeEL + "]";
     }
-
-	public Boolean getTriggerNextCharge() {
-		return triggerNextCharge;
-	}
-
-	public void setTriggerNextCharge(Boolean triggerNextCharge) {
-		this.triggerNextCharge = triggerNextCharge;
-	}
-
-	public String getTriggerNextChargeEL() {
-		return triggerNextChargeEL;
-	}
-
-	public void setTriggerNextChargeEL(String triggerNextChargeEL) {
-		this.triggerNextChargeEL = triggerNextChargeEL;
-	}
 
 }

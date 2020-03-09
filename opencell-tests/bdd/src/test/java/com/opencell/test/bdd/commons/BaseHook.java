@@ -19,6 +19,7 @@ public class BaseHook {
     private WebResponse webResponse;
     private BaseEntityDto entityDto;
     private JsonNode jsonObject;
+    private String body;
     private ValidatableResponse jsonresponse;
 
     private static Set<Class<? extends BaseEntityDto>> dtoClasses;
@@ -111,6 +112,14 @@ public class BaseHook {
 
     public void setJsonresponse(ValidatableResponse jsonresponse) {
         this.jsonresponse = jsonresponse;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
     }
 
 }

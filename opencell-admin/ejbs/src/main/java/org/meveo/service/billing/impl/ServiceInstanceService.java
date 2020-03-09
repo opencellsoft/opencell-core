@@ -1,31 +1,21 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.service.billing.impl;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
@@ -39,6 +29,8 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.OverrideProrataEnum;
+import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Renewal;
 import org.meveo.model.billing.ServiceInstance;
@@ -50,9 +42,9 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
+import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
+import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.payments.PaymentScheduleTemplate;
@@ -66,6 +58,14 @@ import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
 import org.meveo.service.payments.impl.PaymentScheduleTemplateService;
 import org.meveo.service.script.service.ServiceModelScriptService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * ServiceInstanceService.
@@ -339,15 +339,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             serviceInstance.getRecurringChargeInstances().add(chargeInstance);
         }
 
-        for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate.getServiceSubscriptionCharges()) {
-            SubscriptionChargeInstance chargeInstance = (SubscriptionChargeInstance) oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance, serviceChargeTemplate.getChargeTemplate(),
-                subscriptionAmount, null, true, isVirtual);
+        for (ServiceChargeTemplateSubscription serviceChargeTemplate : serviceTemplate.getServiceSubscriptionCharges()) {
+            SubscriptionChargeInstance chargeInstance = (SubscriptionChargeInstance) oneShotChargeInstanceService
+                    .oneShotChargeInstanciation(serviceInstance, serviceChargeTemplate, subscriptionAmount, null, true, isVirtual);
             serviceInstance.getSubscriptionChargeInstances().add(chargeInstance);
         }
 
-        for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate.getServiceTerminationCharges()) {
-            TerminationChargeInstance chargeInstance = (TerminationChargeInstance) oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance, serviceChargeTemplate.getChargeTemplate(),
-                terminationAmount, null, false, isVirtual);
+        for (ServiceChargeTemplateTermination serviceChargeTemplate : serviceTemplate.getServiceTerminationCharges()) {
+            TerminationChargeInstance chargeInstance = (TerminationChargeInstance) oneShotChargeInstanceService
+                    .oneShotChargeInstanciation(serviceInstance, serviceChargeTemplate, terminationAmount, null, false, isVirtual);
             serviceInstance.getTerminationChargeInstances().add(chargeInstance);
         }
 
@@ -525,6 +525,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         boolean applyAgreement = terminationReason.isApplyAgreement();
         boolean applyReimbursment = terminationReason.isApplyReimbursment();
         boolean applyTerminationCharges = terminationReason.isApplyTerminationCharges();
+        OverrideProrataEnum overrideProrata = terminationReason.getOverrideProrata();
 
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
 
@@ -553,7 +554,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             if (endDate.after(nextChargeDate)) {
                 try {
-                    walletOperationService.applyChargeAgreement(recurringChargeInstance, recurringChargeInstance.getRecurringChargeTemplate(), endDate);
+                    walletOperationService.applyChargeAgreement(recurringChargeInstance, recurringChargeInstance.getRecurringChargeTemplate(), endDate, overrideProrata);
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
@@ -571,7 +572,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                         recurringChargeInstance.setTerminationDate(endAgreementDate);
 
                         try {
-                            walletOperationService.applyReimbursment(recurringChargeInstance, orderNumber);
+                            walletOperationService.applyReimbursment(recurringChargeInstance, orderNumber, overrideProrata);
 
                         } catch (RatingException e) {
                             log.trace("Failed to apply reimbursement recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
@@ -588,7 +589,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                     recurringChargeInstance.setTerminationDate(terminationDate);
 
                     try {
-                        walletOperationService.applyReimbursment(recurringChargeInstance, orderNumber);
+                        walletOperationService.applyReimbursment(recurringChargeInstance, orderNumber, overrideProrata);
 
                     } catch (RatingException e) {
                         log.trace("Failed to apply reimbursement recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
@@ -637,6 +638,16 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
             usageChargeInstanceService.terminateUsageChargeInstance(usageChargeInstance, terminationDate);
+        }
+
+        //Apply oneshots refunding
+        if (terminationReason.isReimburseOneshots()) {
+            for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
+                oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity().negate(),
+                        orderNumber);
+                oneShotChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
+                oneShotChargeInstanceService.update(oneShotChargeInstance);
+            }
         }
 
         serviceInstance.setTerminationDate(terminationDate);

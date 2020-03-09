@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.api.ws.impl;
 
 import javax.inject.Inject;
@@ -10,6 +28,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.billing.CdrListDto;
 import org.meveo.api.dto.billing.ChargeCDRDto;
+import org.meveo.api.dto.billing.ChargeCDRResponseDto;
 import org.meveo.api.dto.billing.PrepaidReservationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -18,6 +37,7 @@ import org.meveo.commons.utils.StringUtils;
 
 /**
  * Mediation related API WS implementation
+ * 
  * @lastModifiedVersion willBeSetLater
  * 
  * @author Andrius Karpavicius
@@ -48,17 +68,16 @@ public class MediationWsImpl extends BaseWs implements MediationWs {
     }
 
     @Override
-    public ActionStatus chargeCdr(String cdr) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    public ChargeCDRResponseDto chargeCdr(String cdr, boolean isVirtual, boolean rateTriggeredEdr, boolean returnWalletOperations, Integer maxDepth) {
 
         try {
-            ChargeCDRDto chargeCDRDto = new ChargeCDRDto(cdr, getHttpServletRequest().getRemoteAddr(), false, false, false, 1);
-            mediationApi.chargeCdr(chargeCDRDto);
+            ChargeCDRDto chargeCDRDto = new ChargeCDRDto(cdr, getHttpServletRequest().getRemoteAddr(), isVirtual,  rateTriggeredEdr,  returnWalletOperations,  maxDepth);
+            return mediationApi.chargeCdr(chargeCDRDto);
         } catch (Exception e) {
-            processException(e, result);
+            ChargeCDRResponseDto result = new ChargeCDRResponseDto();
+            processException(e, result.getActionStatus());
+            return result;
         }
-
-        return result;
     }
 
     @Override

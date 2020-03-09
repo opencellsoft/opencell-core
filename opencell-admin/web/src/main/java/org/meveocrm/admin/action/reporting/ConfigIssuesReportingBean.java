@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveocrm.admin.action.reporting;
 
 import java.io.File;
@@ -27,18 +45,19 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.tax.TaxCategory;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.tax.TaxCategoryService;
 import org.primefaces.event.TabChangeEvent;
 
 /**
@@ -75,7 +94,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     private InvoiceCategoryService invoiceCategoryService;
 
     @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
+    private TaxCategoryService taxCategoryService;
 
     @Inject
     private ServiceTemplateService serviceTemplateService;
@@ -91,7 +110,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     private Integer nbrTaxesNotAssociated;
     private Integer nbrLanguageNotAssociated;
     private Integer nbrInvCatNotAssociated;
-    private Integer nbrInvSubCatNotAssociated;
+    private Integer nbrTaxCategoryNotAssociated;
     private Integer nbrServiceWithNotOffer;
     private Integer nbrUsagesChrgNotAssociated;
     private Integer nbrCounterWithNotService;
@@ -107,7 +126,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     List<OneShotChargeTemplate> oneShotChrgWithNotPricePlanList = new ArrayList<OneShotChargeTemplate>();
     List<TradingLanguage> languagesNotAssociatedList = new ArrayList<TradingLanguage>();
     List<InvoiceCategory> invoiceCatNotAssociatedList = new ArrayList<InvoiceCategory>();
-    List<InvoiceSubCategory> invoiceSubCatNotAssociatedList = new ArrayList<InvoiceSubCategory>();
+    List<TaxCategory> taxCatNotAssociatedList = new ArrayList<TaxCategory>();
     List<ServiceTemplate> servicesWithNotOfferList = new ArrayList<ServiceTemplate>();
     List<UsageChargeTemplate> usagesChrgNotAssociatedList = new ArrayList<UsageChargeTemplate>();
     List<CounterTemplate> counterWithNotServicList = new ArrayList<CounterTemplate>();
@@ -132,8 +151,8 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
         invoiceCatNotAssociatedList = invoiceCategoryService.getInvoiceCatNotAssociated();
     }
 
-    public void constructInvoiceSubCatNotAssociated(TabChangeEvent event) {
-        invoiceSubCatNotAssociatedList = invoiceSubCategoryService.getInvoiceSubCatNotAssociated();
+    public void constructTaxCategoryNotAssociated(TabChangeEvent event) {
+        taxCatNotAssociatedList = taxCategoryService.getTaxCategoryNotAssociated();
     }
 
     public void constructServicesWithNotOffer(TabChangeEvent event) {
@@ -286,11 +305,11 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
         return nbrInvCatNotAssociated;
     }
 
-    public Integer getNbInvSubCatNotAssociated() {
-        if (nbrInvSubCatNotAssociated == null) {
-            nbrInvSubCatNotAssociated = invoiceSubCategoryService.getNbInvSubCatNotAssociated();
+    public Integer getNbTaxCategoryNotAssociated() {
+        if (nbrTaxCategoryNotAssociated == null) {
+            nbrTaxCategoryNotAssociated = taxCategoryService.getNbTaxCategoryNotAssociated();
         }
-        return nbrInvSubCatNotAssociated;
+        return nbrTaxCategoryNotAssociated;
     }
 
     public Integer getNbServiceWithNotOffer() {
@@ -337,7 +356,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
 
     public Integer getNbrScriptInstanceWithError() {
         if (nbrScriptInstanceWithError == null) {
-            nbrScriptInstanceWithError = new Long(scriptInstanceService.countScriptInstancesWithError()).intValue();
+            nbrScriptInstanceWithError = Long.valueOf(scriptInstanceService.countScriptInstancesWithError()).intValue();
         }
         return nbrScriptInstanceWithError;
     }
@@ -374,8 +393,8 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
         return invoiceCatNotAssociatedList;
     }
 
-    public List<InvoiceSubCategory> getInvoiceSubCatNotAssociatedList() {
-        return invoiceSubCatNotAssociatedList;
+    public List<TaxCategory> getTaxCategoryNotAssociatedList() {
+        return taxCatNotAssociatedList;
     }
 
     public List<ServiceTemplate> getServicesWithNotOfferList() {

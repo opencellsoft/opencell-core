@@ -67,6 +67,7 @@
                     <h:outputText value=" #{walletOperationBean.entity.reratedWalletOperation.code}" />
                 </h:link>
             </hftl:decorateFormField>
+            <hftl:customFields backingBean="#{walletOperationBean}" messagesId=":walletOperationFormId:messages" />
             <ui:param name="buttons" value="true">
             <ui:define name="buttons">
                 <p:button id="back" value="#{messages['action.back']}" outcome="#{walletOperationBean.back()}" includeViewParams="true" />

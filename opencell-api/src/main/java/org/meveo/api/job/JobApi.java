@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.api.job;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -5,17 +23,22 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.job.JobExecutionResultDto;
+import org.meveo.api.dto.job.JobExecutionResultsDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.job.JobExecutionResultsResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -26,6 +49,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
+import org.primefaces.model.SortOrder;
 
 /**
  * @author anasseh
@@ -189,5 +213,35 @@ public class JobApi extends BaseApi {
         }
 
         return jobExecutionResultDto;
+    }
+
+    public JobExecutionResultsResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+
+        PaginationConfiguration paginationConfig =
+                toPaginationConfiguration(pagingAndFiltering.getSortBy(),
+                        SortOrder.ASCENDING, null, pagingAndFiltering, JobExecutionResultImpl.class);
+
+        Long totalCount = jobExecutionService.count(paginationConfig);
+
+        JobExecutionResultsResponseDto jobExecutionResultsResponse = new JobExecutionResultsResponseDto();
+        JobExecutionResultsDto jobExecutionResult = new JobExecutionResultsDto();
+        jobExecutionResult.setTotalNumberOfRecords(totalCount);
+
+        jobExecutionResultsResponse.setPaging(pagingAndFiltering);
+        jobExecutionResultsResponse.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        if (totalCount > 0) {
+            List<JobExecutionResultImpl> jobExecutionResults = jobExecutionService.list(paginationConfig);
+            jobExecutionResult.setJobExecutionResults(jobExecutionResults
+                                                .stream()
+                                                .map(JobExecutionResultDto::new)
+                                                .collect(Collectors.toList()));
+        }
+        jobExecutionResultsResponse.setJobExecutionResult(jobExecutionResult);
+        return jobExecutionResultsResponse;
     }
 }

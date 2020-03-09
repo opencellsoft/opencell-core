@@ -1,0 +1,9 @@
+{
+	"subscription": "RS_FULL_212_SUB_SERVICE_WFL",
+	"servicesToActivate": {
+		"service": {
+			"code": "RS_BASE_SERVICE1",
+			"subscriptionDate": "2016-12-11"
+		}
+	}
+}

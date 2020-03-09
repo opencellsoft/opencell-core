@@ -1,20 +1,19 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.commons.utils;
 
@@ -87,7 +86,7 @@ public class NumberUtils {
             unitMultiplicator = BigDecimal.ONE;
         }
         if (unitNbDecimal == null) {
-            unitNbDecimal = new Integer(2);
+            unitNbDecimal = 2;
         }
 
         BigDecimal result = unitValue.multiply(unitMultiplicator);
@@ -116,6 +115,7 @@ public class NumberUtils {
 
     /**
      * Get BigDecimal as a string
+     * 
      * @param bigDecimal
      * @return A null-safe Plain String value of the bigDecimal
      */
@@ -124,8 +124,8 @@ public class NumberUtils {
     }
 
     /**
-     * Compute derived amounts amountWithoutTax/amountWithTax/amountTax. If taxPercent is null, or ZERO returned amountWithoutTax and amountWithTax values will be the same (which
-     * one, depending on isEnterprise value)
+     * Compute derived amounts: amountWithoutTax/amountWithTax/amountTax, taking amountWithoutTax or amountWithTax as a base and use tax percent to calculate the rest. <br/>
+     * If taxPercent is null, or ZERO returned amountWithoutTax and amountWithTax values will be the same (which one, depending on isEnterprise value)
      * 
      * @param amountWithoutTax Amount without tax
      * @param amountWithTax Amount with tax
@@ -135,8 +135,7 @@ public class NumberUtils {
      * @param roundingMode Rounding mode to apply
      * @return Calculated amount values as array [amountWithoutTax, amountWithTax, amountTax]
      */
-    public static BigDecimal[] computeDerivedAmounts(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal taxPercent, boolean isEnterprise, int rounding,
-            RoundingMode roundingMode) {
+    public static BigDecimal[] computeDerivedAmounts(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal taxPercent, boolean isEnterprise, int rounding, RoundingMode roundingMode) {
 
         if (taxPercent == null || taxPercent.compareTo(BigDecimal.ZERO) == 0) {
             if (isEnterprise) {
@@ -162,11 +161,46 @@ public class NumberUtils {
         return new BigDecimal[] { amountWithoutTax, amountWithTax, amountTax };
     }
 
+    /**
+     * Compute derived amounts: amountWithoutTax/amountWithTax with rounding applied.
+     * 
+     * @param amountWithoutTax Amount without tax
+     * @param amountWithTax Amount with tax
+     * @param amountTax Tax amount
+     * @param isEnterprise Is application used used in B2B (base prices are without tax) or B2C mode (base prices are with tax)
+     * @param rounding Rounding precision to apply
+     * @param roundingMode Rounding mode to apply
+     * @return Calculated amount values as array [amountWithoutTax, amountWithTax, amountTax]
+     */
+    public static BigDecimal[] computeDerivedAmountsWoutTaxPercent(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, boolean isEnterprise, int rounding, RoundingMode roundingMode) {
+
+        if (isEnterprise) {
+            amountWithoutTax = amountWithoutTax.setScale(rounding, roundingMode);
+            amountTax = amountTax.setScale(rounding, roundingMode);
+            amountWithTax = amountWithoutTax.add(amountTax);
+
+        } else {
+            amountWithTax = amountWithTax.setScale(rounding, roundingMode);
+            amountTax = amountTax.setScale(rounding, roundingMode);
+            amountWithoutTax = amountWithTax.subtract(amountTax);
+        }
+
+        return new BigDecimal[] { amountWithoutTax, amountWithTax, amountTax };
+    }
+    
+	public static BigDecimal computeTax(BigDecimal amountWithoutTax, BigDecimal taxPercent, int rounding,
+			RoundingMode roundingMode) {
+		taxPercent = taxPercent != null ? taxPercent : BigDecimal.ZERO;
+		amountWithoutTax.setScale(rounding, roundingMode);
+		BigDecimal tax = amountWithoutTax.multiply(taxPercent).divide(new BigDecimal(100), rounding, roundingMode);
+		return tax;
+	}
+
     public static long parseLongDefault(String value, long defaultValue) {
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
-            return  defaultValue;
+            return defaultValue;
         }
     }
 }

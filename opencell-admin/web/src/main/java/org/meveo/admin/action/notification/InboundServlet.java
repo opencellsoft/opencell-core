@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.admin.action.notification;
 
 import java.io.BufferedReader;
@@ -20,6 +38,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.qualifier.InboundRequestReceived;
 import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.model.notification.InboundRequest;
@@ -35,13 +55,16 @@ import org.slf4j.Logger;
  * @lastModifiedVersion 8.0.0
  */
 @WebServlet("/inbound/*")
-@ServletSecurity(@HttpConstraint(rolesAllowed = "apiAccess"))
+@ServletSecurity
 public class InboundServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1551787937225264581L;
 
     @Inject
     InboundRequestService inboundRequestService;
+    
+    @Inject
+    ParamBeanFactory paramBeanFactory;
 
     @Inject
     Logger log;
@@ -54,8 +77,15 @@ public class InboundServlet extends HttpServlet {
     private AuditOrigin auditOrigin;
 
     private void doService(HttpServletRequest req, HttpServletResponse res) {
-
+        
         try {
+            
+            ParamBean param = paramBeanFactory.getInstance();
+            boolean authorizationDisabled = "true".equalsIgnoreCase(param.getProperty("inbound.authorization.disabled", "false"));
+            //if(!authorizationDisabled) {
+            //    req.authenticate(res);
+            //}
+            boolean processRequest = authorizationDisabled || req.isUserInRole("apiAccess");
 
             String path = req.getPathInfo();
             log.debug("received request for method {} , path={}", req.getMethod(), path);
@@ -84,20 +114,26 @@ public class InboundServlet extends HttpServlet {
             inReq.setPathInfo(path);
             inReq.setRequestURI(req.getRequestURI());
             inboundRequestService.create(inReq);
-
+            
             int status = HttpURLConnection.HTTP_OK;
-            // process the notifications
-            status = processNotificationAndReturnStatus(inReq, status);
-
-            log.debug("triggered {} notification, resp body= {}", inReq.getNotificationHistories().size(), inReq.getResponseBody());
-            // ONLY ScriptNotifications will produce notification history in
-            // synchronous mode. Other type notifications will produce notification
-            // history in asynchronous mode and thus
-            // will not be related to inbound request.
-
-            if (inReq.getResponseStatus() != null) {
-                status = inReq.getResponseStatus();
+            
+            if(processRequest) {
+                // process the notifications
+                status = processNotificationAndReturnStatus(inReq, status);
+    
+                log.debug("triggered {} notification, resp body= {}", inReq.getNotificationHistories().size(), inReq.getResponseBody());
+                // ONLY ScriptNotifications will produce notification history in
+                // synchronous mode. Other type notifications will produce notification
+                // history in asynchronous mode and thus
+                // will not be related to inbound request.
+    
+                if (inReq.getResponseStatus() != null) {
+                    status = inReq.getResponseStatus();
+                }
+            } else {
+                status = HttpURLConnection.HTTP_UNAUTHORIZED;
             }
+            
             res.setStatus(status);
 
             // produce the response
@@ -113,7 +149,6 @@ public class InboundServlet extends HttpServlet {
         } catch (BusinessException | IOException e) {
             log.error("Failed to process Inbound request ", e);
         }
-
     }
 
     @Override

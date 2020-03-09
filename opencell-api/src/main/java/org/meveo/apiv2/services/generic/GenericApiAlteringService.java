@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.apiv2.services.generic;
 
 import org.apache.commons.lang.reflect.FieldUtils;
@@ -125,7 +143,7 @@ public class GenericApiAlteringService extends GenericApiService {
         Object effectiveValue = ((Map) ((List) value).get(0)).get("value");
         switch (storageType){
             case SINGLE:
-                parseSingleValuedCf(customFieldDto, fieldType, effectiveValue);
+                writeSingleValueToCFDto(customFieldDto, fieldType, effectiveValue);
                 break;
             case LIST:
                 customFieldDto.setListValue(new ArrayList<>());
@@ -157,34 +175,38 @@ public class GenericApiAlteringService extends GenericApiService {
         }
     }
 
-    private void parseSingleValuedCf(CustomFieldDto customFieldDto, CustomFieldTypeEnum fieldType, Object value) {
+    private void writeSingleValueToCFDto(CustomFieldDto customFieldDto, CustomFieldTypeEnum fieldType, Object value) {
         switch (fieldType) {
             case DATE:
-                customFieldDto.setDateValue((Date) getConvertedType(fieldType, value));
+                customFieldDto.setDateValue(new Date((Long) value));
                 break;
             case LONG:
-                customFieldDto.setLongValue((Long) getConvertedType(fieldType, value));
+                customFieldDto.setLongValue(Integer.toUnsignedLong((Integer) value));
                 break;
             case DOUBLE:
-                customFieldDto.setDoubleValue((Double) getConvertedType(fieldType, value));
+                customFieldDto.setDoubleValue((Double) value);
                 break;
             case BOOLEAN:
-                customFieldDto.setBooleanValue((Boolean) getConvertedType(fieldType, value));
+                customFieldDto.setBooleanValue((Boolean) value);
                 break;
             case CHILD_ENTITY:
             case ENTITY:
-                customFieldDto.setEntityReferenceValue((EntityReferenceDto) getConvertedType(fieldType, value));
+                Map<String, String> entityRefDto = (Map<String, String>) value;
+                EntityReferenceDto entityReferenceDto = new EntityReferenceDto();
+                entityReferenceDto.setClassname(entityRefDto.get("classname"));
+                entityReferenceDto.setCode(entityRefDto.get("code"));
+                customFieldDto.setEntityReferenceValue(entityReferenceDto);
                 break;
             case CUSTOM_TABLE_WRAPPER:
                 customFieldDto.setCustomTableCode((String) getConvertedType(fieldType, value));
                 break;
             case LIST:
                 if(!((List)value).isEmpty()){
-                    customFieldDto.setStringValue((String) getConvertedType(fieldType, ((Map)((List)value).get(0)).get("value")));
+                    customFieldDto.setStringValue((String)  ((Map)((List)value).get(0)).get("value"));
                 }
                 break;
             default:
-                customFieldDto.setStringValue((String) getConvertedType(fieldType, value));
+                customFieldDto.setStringValue((String) value);
                 break;
         }
     }
