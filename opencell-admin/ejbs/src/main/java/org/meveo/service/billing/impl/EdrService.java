@@ -301,10 +301,10 @@ public class EdrService extends PersistenceService<EDR> {
 	
 	public <T extends Enum<T>, E extends BaseEntity> long countMediationDataToPurge(String firstTransactionDate, List<T> targetStatus, Class<E> clazz) {
 		if (targetStatus != null && !targetStatus.isEmpty()) {
-			getEntityManager().clear();
 			String sqlString = buildSelectOrCountMediationDataToPurgeQuery(firstTransactionDate, targetStatus, clazz, true, 0);
 			if(sqlString != null) {
 				log.debug("count Mediation Data To Purge query : {}", sqlString);
+				getEntityManager().clear();
 				return ((BigInteger) getEntityManager().createNativeQuery(sqlString).getSingleResult()).longValue();
 			}
 		}
@@ -378,10 +378,10 @@ public class EdrService extends PersistenceService<EDR> {
 	@SuppressWarnings("unchecked")
 	public <T extends Enum<T>, E extends BaseEntity> List<BigInteger> getMediationDataIdsToPurge(String firstTransactionDate, List<T> targetStatus, Class<E> clazz, long lastId) {
 		if (targetStatus != null && !targetStatus.isEmpty()) {
-			getEntityManager().clear();
 			String sqlString = buildSelectOrCountMediationDataToPurgeQuery(firstTransactionDate, targetStatus, clazz, false, lastId);
 			if(sqlString != null) {
 				log.debug("get Mediation Data Ids To Purge query : {}", sqlString);
+				getEntityManager().clear();
 				return (List<BigInteger>) getEntityManager().createNativeQuery(sqlString).setMaxResults(PURGE_MAX_RESULTS).getResultList();
 			}
 		}
