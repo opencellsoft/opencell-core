@@ -319,7 +319,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             }
 
             if (endDate != null) {
-                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false);
+                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false, false);
             }
 
             return qb.getIdQuery(getEntityManager()).getResultList();
