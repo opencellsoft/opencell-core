@@ -3,11 +3,11 @@
     "description": "Offer",
     "name": "RS_FULL_200_SUB_CAT_OFFER",
     "disabled": false,
-    "offerServiceTemplates": {
-        "offerServiceTemplate": {
+    "offerServiceTemplate": [
+        {
             "serviceTemplate": {
                 "code": "RS_FULL_200_SUB_CAT_SERVICE"
             }
         }
-    }
+    ]
 }

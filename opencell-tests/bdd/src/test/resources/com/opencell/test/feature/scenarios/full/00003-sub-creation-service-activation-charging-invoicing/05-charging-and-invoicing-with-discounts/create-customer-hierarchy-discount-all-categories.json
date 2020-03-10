@@ -43,9 +43,9 @@
     "baStatus": "ACTIVE",
     "email": "edward.legaspi@opencellsoft.com",
     "uaStatus": "ACTIVE",
-    "discountPlansForInstantiation": {
-        "discountPlanForInstantiation": {
+    "discountPlanForInstantiation": [
+        {
             "code": "RS_FULL_200_SUB_CAT_DISCOUNT_ALL"
         }
-    }
+    ]
 }
