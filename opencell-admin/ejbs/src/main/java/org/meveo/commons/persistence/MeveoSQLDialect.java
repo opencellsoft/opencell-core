@@ -19,6 +19,7 @@
 package org.meveo.commons.persistence;
 
 import org.hibernate.dialect.PostgreSQL94Dialect;
+import org.hibernate.dialect.function.StandardSQLFunction;
 
 /**
  * @author M.ELAZZOUZI
@@ -26,6 +27,8 @@ import org.hibernate.dialect.PostgreSQL94Dialect;
  */
 public class MeveoSQLDialect extends PostgreSQL94Dialect {
 	public MeveoSQLDialect() {
+		super();
+		registerFunction("string_agg", new StandardSQLFunction("string_agg", new org.hibernate.type.StringType()));
 		registerFunction("numericFromJson", new DoublePostgreSQLJsonSearchFunction());
 		registerFunction("varcharFromJson", new PostgreSQLJsonSearchFunction());
 		registerFunction("bigIntFromJson", new LongPostgreSQLJsonSearchFunction());

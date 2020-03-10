@@ -338,27 +338,29 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setAmountWithTax(aggregatedWo.getAmountWithTax());
         ratedTransaction.setAmountTax(aggregatedWo.getAmountTax());
         ratedTransaction.setAmountWithoutTax(aggregatedWo.getAmountWithoutTax());
-        ratedTransaction.setUnitAmountWithTax(aggregatedWo.getUnitAmountWithTax());
-        ratedTransaction.setUnitAmountTax(aggregatedWo.getUnitAmountTax());
-        ratedTransaction.setUnitAmountWithoutTax(aggregatedWo.getUnitAmountWithoutTax());
         ratedTransaction.setQuantity(aggregatedWo.getQuantity());
+        ratedTransaction.setTaxClass(aggregatedWo.getTaxClass());
 
         if (!isVirtual) {
             create(ratedTransaction);
-
-            WalletOperationAggregatorQueryBuilder woa = new WalletOperationAggregatorQueryBuilder(aggregationSettings);
-            String strQuery = woa.listWoQuery(aggregatedWo);
-            Query query = getEntityManager().createQuery(strQuery);
-            query.setParameter("invoicingDate", invoicingDate);
-            List<WalletOperation> walletOps = (List<WalletOperation>) query.getResultList();
-            
-            for (WalletOperation tempWo : walletOps) {
-                tempWo.changeStatus(WalletOperationStatusEnum.TREATED);
-                tempWo.setRatedTransaction(ratedTransaction);
-            }
+            updateAggregatedWalletOperations(aggregatedWo.getWalletOperationsIds(), ratedTransaction);
         }
 
         return ratedTransaction;
+    }
+    
+    
+	public void updateAggregatedWalletOperations(List<Long> woIds, RatedTransaction ratedTransaction) {
+        // batch update
+        String strQuery = "UPDATE WalletOperation o SET o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED,"
+        		+ " o.ratedTransaction=:ratedTransaction , o.updated=:updated"
+                + " WHERE o.id in (:woIds) ";
+        Query query = getEntityManager().createQuery(strQuery);
+        query.setParameter("woIds", woIds);
+        query.setParameter("ratedTransaction", ratedTransaction);
+        query.setParameter("updated", new Date());
+        int affectedRecords = query.executeUpdate();
+        log.debug("updated record wo count={}", affectedRecords);
     }
 
     /**
