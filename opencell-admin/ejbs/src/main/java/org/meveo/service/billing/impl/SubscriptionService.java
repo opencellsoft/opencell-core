@@ -122,8 +122,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         super.create(subscription);
 
         // Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
-        auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "",
-            String.valueOf(subscription.getStatus()));
+        auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "", String.valueOf(subscription.getStatus()));
 
         // execute subscription script
         OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
@@ -149,8 +148,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     @MeveoAudit
-    public Subscription subscriptionCancellation(Subscription subscription, Date cancelationDate)
-            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+    public Subscription subscriptionCancellation(Subscription subscription, Date cancelationDate) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         if (cancelationDate == null) {
             cancelationDate = new Date();
         }
@@ -166,8 +164,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     @MeveoAudit
-    public Subscription subscriptionSuspension(Subscription subscription, Date suspensionDate)
-            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+    public Subscription subscriptionSuspension(Subscription subscription, Date suspensionDate) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         if (suspensionDate == null) {
             suspensionDate = new Date();
         }
@@ -206,8 +203,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
             reactivationDate = new Date();
         }
 
-        if (subscription.getStatus() != SubscriptionStatusEnum.RESILIATED && subscription.getStatus() != SubscriptionStatusEnum.CANCELED
-                && subscription.getStatus() != SubscriptionStatusEnum.SUSPENDED) {
+        if (subscription.getStatus() != SubscriptionStatusEnum.RESILIATED && subscription.getStatus() != SubscriptionStatusEnum.CANCELED && subscription.getStatus() != SubscriptionStatusEnum.SUSPENDED) {
             throw new ElementNotResiliatedOrCanceledException("subscription", subscription.getCode());
         }
 
@@ -252,8 +248,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
      * @throws BusinessException General business exception
      */
     @MeveoAudit
-    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
-            throws BusinessException {
+    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber) throws BusinessException {
         return terminateSubscription(subscription, terminationDate, terminationReason, orderNumber, null, null);
     }
 
@@ -271,8 +266,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
      * @throws BusinessException General business exception
      */
     @MeveoAudit
-    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber,
-            Long orderItemId, OrderItemActionEnum orderItemAction) throws BusinessException {
+    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction)
+            throws BusinessException {
 
         if (terminationDate == null) {
             terminationDate = new Date();
@@ -297,8 +292,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
     }
 
-    private Subscription terminateSubscriptionWithFutureDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason)
-            throws BusinessException {
+    private Subscription terminateSubscriptionWithFutureDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason) throws BusinessException {
 
         SubscriptionRenewal subscriptionRenewal = subscription.getSubscriptionRenewal();
         subscriptionRenewal.setTerminationReason(PersistenceUtils.initializeAndUnproxy(subscriptionRenewal.getTerminationReason()));
@@ -317,8 +311,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     @MeveoAudit
-    private Subscription terminateSubscriptionWithPastDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber,
-            Long orderItemId, OrderItemActionEnum orderItemAction) throws BusinessException {
+    private Subscription terminateSubscriptionWithPastDate(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber, Long orderItemId,
+            OrderItemActionEnum orderItemAction) throws BusinessException {
 
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
@@ -327,7 +321,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 orderHistoryService.create(orderNumber, orderItemId, serviceInstance, orderItemAction);
             }
         }
-        //Apply oneshot charge of type=Other refunding
+        // Apply oneshot charge of type=Other refunding
         if (terminationReason.isReimburseOneshots()) {
             List<OneShotChargeInstance> oneShotChargeInstances = oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(subscription.getId());
             for (OneShotChargeInstance oneShotChargeInstance : oneShotChargeInstances) {
@@ -336,8 +330,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
                     if (chargeTemplate == null || chargeTemplate.getOneShotChargeTemplateType() == null || !chargeTemplate.getOneShotChargeTemplateType().equals(OneShotChargeTemplateTypeEnum.OTHER)) {
                         continue;
                     }
-                    oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity().negate(),
-                            orderNumber);
+                    oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity().negate(), orderNumber);
                     oneShotChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
                     oneShotChargeInstanceService.update(oneShotChargeInstance);
                 }
@@ -457,8 +450,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
         Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
 
         qb.addCriterionDateRangeToTruncatedToDay("subscriptionDate", higherBound);
-        qb.addCriterionEnum("status", SubscriptionStatusEnum.CREATED, "<>");
-        qb.addCriterionEnum("status", SubscriptionStatusEnum.ACTIVE, "<>");
+        qb.addCriterionEnum("status", SubscriptionStatusEnum.CREATED, "<>", false);
+        qb.addCriterionEnum("status", SubscriptionStatusEnum.ACTIVE, "<>", false);
 
         return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
     }
@@ -569,8 +562,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
      * @return the big decimal
      * @throws Exception the exception
      */
-    private BigDecimal computeOccAmount(Subscription subscription, OperationCategoryEnum operationCategoryEnum, boolean isFuture, boolean isDue, Date to,
-            MatchingStatusEnum... status) throws Exception {
+    private BigDecimal computeOccAmount(Subscription subscription, OperationCategoryEnum operationCategoryEnum, boolean isFuture, boolean isDue, Date to, MatchingStatusEnum... status) throws Exception {
         BigDecimal balance = null;
         QueryBuilder queryBuilder = new QueryBuilder("select sum(unMatchingAmount) from AccountOperation");
         queryBuilder.addCriterionEnum("transactionCategory", operationCategoryEnum);
@@ -651,9 +643,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
      */
     public boolean willBeTerminatedInFuture(Subscription subscription) {
         SubscriptionRenewal subscriptionRenewal = subscription != null ? subscription.getSubscriptionRenewal() : null;
-        return (subscription != null && (subscription.getStatus() == SubscriptionStatusEnum.CREATED || subscription.getStatus() == SubscriptionStatusEnum.ACTIVE)
-                && subscription.getSubscribedTillDate() != null && subscription.getSubscribedTillDate().compareTo(new Date()) > 0 && subscriptionRenewal != null
-                && !subscriptionRenewal.isAutoRenew() && subscriptionRenewal.getTerminationReason() != null
+        return (subscription != null && (subscription.getStatus() == SubscriptionStatusEnum.CREATED || subscription.getStatus() == SubscriptionStatusEnum.ACTIVE) && subscription.getSubscribedTillDate() != null
+                && subscription.getSubscribedTillDate().compareTo(new Date()) > 0 && subscriptionRenewal != null && !subscriptionRenewal.isAutoRenew() && subscriptionRenewal.getTerminationReason() != null
                 && subscriptionRenewal.getEndOfTermAction() == SubscriptionRenewal.EndOfTermActionEnum.TERMINATE);
     }
 
@@ -672,9 +663,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
             Renewal renewal = JacksonUtil.fromString(initialRenewal, Renewal.class);
             subscriptionRenewal = renewal.getValue();
-            subscriptionRenewal.setTerminationReason(
-                subscriptionRenewal.getTerminationReason() != null && subscriptionRenewal.getTerminationReason().getId() != null ? subscriptionRenewal.getTerminationReason()
-                        : null);
+            subscriptionRenewal.setTerminationReason(subscriptionRenewal.getTerminationReason() != null && subscriptionRenewal.getTerminationReason().getId() != null ? subscriptionRenewal.getTerminationReason() : null);
             subscribedTillDate = renewal.getSubscribedTillDate();
 
         }

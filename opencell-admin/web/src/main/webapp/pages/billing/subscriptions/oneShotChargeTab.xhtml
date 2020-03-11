@@ -16,15 +16,15 @@
                 <p:dataTable resizableColumns="true" value="#{subscriptionBean.oneShotChargeInstances}" var="entity">
                     <hftl:column label="#{messages['chargeInstance.code']}" field="code" />
                     <hftl:column label="#{messages['chargeInstance.description']}" field="description" />
-                    <hftl:column label="#{messages['chargeApplication.status']}" field="status" />
-                    <hftl:column label="#{messages['oneShotChargeInstance.chargeDate']}" field="chargeDate" isDate="true" />
+                    <hftl:column label="#{messages['chargeApplication.status']}" field="status" width="7%"/>
+                    <hftl:column label="#{messages['oneShotChargeInstance.chargeDate']}" field="chargeDate" isDate="true" width="12%"/>
                     <hftl:column label="#{messages['serviceInstance.quantity']}" field="quantity" />
-                    <hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" isMessage="false" rendered="#{appProvider.entreprise}"/>
-                    <p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}" rendered="#{!appProvider.entreprise}">
+                    <hftl:column label="#{messages['oneShotChargeInstance.amountWithoutTaxShort']}" field="amountWithoutTax" isMessage="false" rendered="#{appProvider.entreprise}"/>
+                    <p:column headerText="#{messages['oneShotChargeInstance.amountWithTaxShort']}" rendered="#{!appProvider.entreprise}">
                         <h:outputText value="#{entity.amountWithTax}" converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
                     </p:column>
 
-                    <p:column styleClass="actions-column">
+                    <p:column styleClass="actions-column" width="55">
                         <f:facet name="header">
                             <h:outputText value="#{messages['commons.actions']}" />
                         </f:facet>
@@ -106,14 +106,14 @@
                     <span style="height: 1px" />
                     <h:outputText value="#{messages['commons.noItems']}" rendered="#{empty subscriptionBean.oneShotWalletOperations}" />
                     <h:panelGroup rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
-                        <hftl:decorateFormField label="#{messages['chargeApplication.applicationDate']}">
-                            <h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].operationDate}" styleClass="field-value">
-                                <f:convertDateTime pattern="#{paramBean.dateFormat}" />
-                            </h:outputText>
-                        </hftl:decorateFormField>
-                        <hftl:decorateFormField label="#{messages['chargeApplication.description']}">
-                            <h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].description}" styleClass="field-value" />
-                        </hftl:decorateFormField>
+<!--                         <hftl:decorateFormField label="#{messages['chargeApplication.applicationDate']}"> -->
+<!--                             <h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].operationDate}" styleClass="field-value"> -->
+<!--                                 <f:convertDateTime pattern="#{paramBean.dateFormat}" /> -->
+<!--                             </h:outputText> -->
+<!--                         </hftl:decorateFormField> -->
+<!--                         <hftl:decorateFormField label="#{messages['chargeApplication.description']}"> -->
+<!--                             <h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].description}" styleClass="field-value" /> -->
+<!--                         </hftl:decorateFormField> -->
                         <hftl:decorateFormField label="#{messages['invoice.summary.totalAmountWithoutTax']}" rendered="#{appProvider.entreprise}">
                             <h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].amountWithoutTax}" styleClass="field-value" converter="bigDecimal12DigitsConverter" />
                         </hftl:decorateFormField>

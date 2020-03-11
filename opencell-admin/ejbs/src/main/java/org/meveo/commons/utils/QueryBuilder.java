@@ -72,7 +72,20 @@ public class QueryBuilder {
     private Class<?> clazz;
 
     public enum QueryLikeStyleEnum {
-        MATCH_EQUAL, MATCH_BEGINNING, MATCH_ANYWHERE
+        /**
+         * Field match value as provided (value already contains wildcard characters
+         */
+        MATCH_EQUAL,
+
+        /**
+         * Add a wildcard to the end of the value to match field values that start with a value provided
+         */
+        MATCH_BEGINNING,
+
+        /**
+         * Add a wildcard to the start and end of the value to match field values that start or end with a value provided
+         */
+        MATCH_ANYWHERE
     }
 
     public QueryBuilder() {
@@ -372,28 +385,37 @@ public class QueryBuilder {
     }
 
     /**
+     * Add a criteria to check field value is equal to the entity passed
+     * 
      * @param field field name
      * @param entity entity for given name.
      * @return instance of QueryBuilder
      */
     public QueryBuilder addCriterionEntity(String field, Object entity) {
-        return addCriterionEntity(field, entity, " = ");
+        return addCriterionEntity(field, entity, " = ", false);
     }
 
     /**
+     * Add a criteria to check field value is equal to the entity passed
+     * 
      * @param field name of field
      * @param entity entity of given field to add criterion
      * @param condition Comparison type
+     * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
      * @return instance of QueryBuilder
      */
-    public QueryBuilder addCriterionEntity(String field, Object entity, String condition) {
+    public QueryBuilder addCriterionEntity(String field, Object entity, String condition, boolean isFieldValueOptional) {
         if (entity == null) {
             return this;
         }
 
         String param = convertFieldToParam(field);
 
-        return addSqlCriterion(field + condition + ":" + param, param, entity);
+        if (isFieldValueOptional) {
+            return addSqlCriterion("(" + field + " IS NULL or (" + field + condition + ":" + param + "))", param, entity);
+        } else {
+            return addSqlCriterion(field + condition + ":" + param, param, entity);
+        }
     }
 
     /**
@@ -403,84 +425,134 @@ public class QueryBuilder {
      */
     @SuppressWarnings("rawtypes")
     public QueryBuilder addCriterionEnum(String field, Enum enumValue) {
-        return addCriterionEnum(field, enumValue, "=");
+        return addCriterionEnum(field, enumValue, "=", false);
     }
 
     /**
-     * @param field field name
-     * @param enumValue value.
+     * Add a criteria to check field value is equal to the enum passed
+     * 
+     * @param field Field name
+     * @param enumValue Enum value to compare to
      * @param condition Comparison type
+     * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
      * @return instance of QueryBuilder.
      */
     @SuppressWarnings("rawtypes")
-    public QueryBuilder addCriterionEnum(String field, Enum enumValue, String condition) {
+    public QueryBuilder addCriterionEnum(String field, Enum enumValue, String condition, boolean isFieldValueOptional) {
         if (enumValue == null) {
             return this;
         }
 
         String param = convertFieldToParam(field);
 
-        return addSqlCriterion(field + " " + condition + ":" + param, param, enumValue);
+        if (isFieldValueOptional) {
+            return addSqlCriterion("(" + field + " IS NULL or (" + field + " " + condition + ":" + param + "))", param, enumValue);
+        } else {
+            return addSqlCriterion(field + " " + condition + ":" + param, param, enumValue);
+        }
     }
 
     /**
-     * Ajouter un critere like.
+     * Add a criteria to check field value is in a list passed
      * 
-     * @param field field name
-     * @param value value of field
-     * @param style : 0=aucun travail sur la valeur rechercher, 1=Recherche sur dbut du mot, 2=Recherche partout dans le mot
+     * @param field Field name
+     * @param listValue List value to compare to
+     * @param condition Comparison type
+     * @return instance of QueryBuilder.
+     */
+    @SuppressWarnings("rawtypes")
+    public QueryBuilder addCriterionInList(String field, List listValue, String condition) {
+        return addCriterionInList(field, listValue, condition);
+    }
+
+    /**
+     * Add a criteria to check field value is in a list passed
+     * 
+     * @param field Field name
+     * @param listValue List value to compare to
+     * @param condition Comparison type
+     * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
+     * @return instance of QueryBuilder.
+     */
+    @SuppressWarnings("rawtypes")
+    public QueryBuilder addCriterionInList(String field, List listValue, String condition, boolean isFieldValueOptional) {
+        if (listValue == null) {
+            return this;
+        }
+
+        String param = convertFieldToParam(field);
+
+        if (isFieldValueOptional) {
+            return addSqlCriterion("(" + field + " IS NULL or (" + field + " " + condition + ":" + param + "))", param, listValue);
+        } else {
+            return addSqlCriterion(field + " " + condition + ":" + param, param, listValue);
+        }
+    }
+
+    /**
+     * Add a criteria to check field value is like a value passed
+     * 
+     * @param field Field name
+     * @param value Value to compare to
+     * @param matchingStyle : Matching style
      * @param caseInsensitive true/false.
      * @return instance QueryBuiler.
      */
-    public QueryBuilder like(String field, String value, QueryLikeStyleEnum style, boolean caseInsensitive) {
-        return like(field, value, style, caseInsensitive, false);
+    public QueryBuilder like(String field, String value, QueryLikeStyleEnum matchingStyle, boolean caseInsensitive) {
+        return like(field, value, matchingStyle, caseInsensitive, false, false);
     }
 
     /**
-     * Ajouter un critere like.
+     * Add a criteria to check field value is like a value passed
      * 
-     * @param field field name
-     * @param value value
-     * @param style : 0=aucun travail sur la valeur rechercher, 1=Recherche sur dbut du mot, 2=Recherche partout dans le mot
+     * @param field Field name
+     * @param value Value to compare to
+     * @param matchingStyle : Matching style
      * @param caseInsensitive true/false
      * @param addNot Should NOT be added to comparison
+     * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
      * @return instance QueryBuilder
      */
-    public QueryBuilder like(String field, String value, QueryLikeStyleEnum style, boolean caseInsensitive, boolean addNot) {
+    public QueryBuilder like(String field, String value, QueryLikeStyleEnum matchingStyle, boolean caseInsensitive, boolean addNot, boolean isFieldValueOptional) {
         if (StringUtils.isBlank(value)) {
             return this;
         }
 
         String v = value;
 
-        if (style == QueryLikeStyleEnum.MATCH_BEGINNING || style == QueryLikeStyleEnum.MATCH_ANYWHERE) {
+        if (matchingStyle == QueryLikeStyleEnum.MATCH_BEGINNING || matchingStyle == QueryLikeStyleEnum.MATCH_ANYWHERE) {
             v = v + "%";
         }
-        if (style == QueryLikeStyleEnum.MATCH_ANYWHERE) {
+        if (matchingStyle == QueryLikeStyleEnum.MATCH_ANYWHERE) {
             v = "%" + v;
         }
 
-        return addCriterion(field, addNot ? "not like " : " like ", v, caseInsensitive, false);
+        return addCriterion(field, addNot ? "not like " : " like ", v, caseInsensitive, isFieldValueOptional);
     }
 
     /**
+     * Add a criteria to check field value is like a value passed
+     * 
      * @param field field name
      * @param value value.
      * @param caseInsensitive true/false
      * @return instance of QueryBuilder.
      */
     public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive) {
-        return addCriterionWildcard(field, value, caseInsensitive, false);
+        return addCriterionWildcard(field, value, caseInsensitive, false, false);
     }
 
     /**
+     * Add a criteria to check field value is like a value passed
+     * 
      * @param field name of field
      * @param value value of field
      * @param caseInsensitive true/false
      * @param addNot Should NOT be added to comparison
+     * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
      * @return query instance.
      */
-    public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive, boolean addNot) {
+    public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive, boolean addNot, boolean isFieldValueOptional) {
 
         if (StringUtils.isBlank(value)) {
             return this;
@@ -488,17 +560,17 @@ public class QueryBuilder {
         boolean wildcard = (value.indexOf("*") != -1);
 
         if (wildcard) {
-            return like(field, value.replace("*", "%"), QueryLikeStyleEnum.MATCH_EQUAL, caseInsensitive, addNot);
+            return like(field, value.replace("*", "%"), QueryLikeStyleEnum.MATCH_EQUAL, caseInsensitive, addNot, isFieldValueOptional);
         } else {
-            return addCriterion(field, addNot ? " != " : " = ", value, caseInsensitive, false);
+            return addCriterion(field, addNot ? " != " : " = ", value, caseInsensitive, isFieldValueOptional);
         }
     }
 
     /**
-     * add the date field searching support.
+     * Add a criteria to check field value is equal to the date passed considering the time
      * 
-     * @param field entity's field
-     * @param value value of date.
+     * @param field Name of entity's field
+     * @param value Date value to compare to
      * @return instance of QueryBuilder.
      */
     public QueryBuilder addCriterionDate(String field, Date value) {
@@ -517,6 +589,19 @@ public class QueryBuilder {
      * @return instance of QueryBuilder.
      */
     public QueryBuilder addCriterionDateTruncatedToDay(String field, Date value) {
+        return addCriterionDateTruncatedToDay(field, value, false);
+    }
+
+    /**
+     * Add a criteria to check field value is equal to the date passed ignoring the time
+     * 
+     * @param field Name of entity's field
+     * @param value Date value to compare to
+     * @param isFieldValueOptional Is field value optional - a "(field is NULL or ...)" will be added to the criteria
+     * @return instance of QueryBuilder.
+     */
+    public QueryBuilder addCriterionDateTruncatedToDay(String field, Date value, boolean isFieldValueOptional) {
+
         if (StringUtils.isBlank(value)) {
             return this;
         }
@@ -537,7 +622,12 @@ public class QueryBuilder {
 
         String sql = field + ">=:" + startDateParameterName + " and " + field + "<:" + endDateParameterName;
 
-        return addSqlCriterionMultiple(sql, startDateParameterName, start, endDateParameterName, end);
+        if (isFieldValueOptional) {
+            return addSqlCriterionMultiple("(" + field + " IS NULL or (" + sql + "))", startDateParameterName, start, endDateParameterName, end);
+        } else {
+            return addSqlCriterionMultiple(sql, startDateParameterName, start, endDateParameterName, end);
+        }
+
     }
 
     /**
