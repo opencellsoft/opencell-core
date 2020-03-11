@@ -69,35 +69,37 @@ public class PurgeMediationDataJobBeanV2 extends BaseJobBean {
     		}
             
             long nbItems = 0;
-            String report = "";
+            StringBuilder report = new StringBuilder();
             String formattedStartDate = DateUtils.formatDateWithPattern(firstTransactionDate, "yyyy-MM-dd");
             String formattedEndDate = DateUtils.formatDateWithPattern(lastTransactionDate, "yyyy-MM-dd");
+            
             List<WalletOperationStatusEnum> woStatusList = getTargetStatusList(jobInstance, WalletOperationStatusEnum.class, PURGE_MEDIATION_DATA_JOB_WO_STATUS_CF);
             if (!woStatusList.isEmpty()) {
             	log.info("=> starting purge Wallet Operations between {} and {}", formattedStartDate, formattedEndDate);
             	nbItems = purgeMediationData(jobInstance, firstTransactionDate, nbDays, woStatusList, WalletOperation.class);
-                log.info("==>{} WOs rows purged", nbItems);
-                report += "WOs :" + nbItems;
+            	report.append("- Purged WOs : ").append(nbItems);
+    			result.setReport(report.toString());
             }
+            
             List<RatedTransactionStatusEnum> rtStatusList = getTargetStatusList(jobInstance, RatedTransactionStatusEnum.class, PURGE_MEDIATION_DATA_JOB_RT_STATUS_CF);
             if (!rtStatusList.isEmpty()) {
             	log.info("=> starting purge Rated Transactions between {} and {}", formattedStartDate, formattedEndDate);
             	long itemsRemoved = purgeMediationData(jobInstance, firstTransactionDate, nbDays, rtStatusList, RatedTransaction.class);
-                log.info("==>{} RTs rows purged", itemsRemoved);
-                report += ", RTs : " + itemsRemoved;
                 nbItems += itemsRemoved;
+                report.append(" - Purged RTs : ").append(itemsRemoved);
+    			result.setReport(report.toString());
             }
+            
             List<EDRStatusEnum> edrStatusList = getTargetStatusList(jobInstance, EDRStatusEnum.class, PURGE_MEDIATION_DATA_JOB_EDR_STATUS_CF);
             if (!edrStatusList.isEmpty()) {
             	log.info("=> starting purge Edrs between {} and {}", formattedStartDate, formattedEndDate);
             	long itemsRemoved = purgeMediationData(jobInstance, firstTransactionDate, nbDays, edrStatusList, EDR.class);
-                log.info("==>{} EDRs rows purged ", itemsRemoved);
-                report += ", EDRs : " + itemsRemoved;
                 nbItems += itemsRemoved;
+                report.append(" - Purged Edrs : ").append(itemsRemoved);
+    			result.setReport(report.toString());
             }
-            result.setNbItemsToProcess(nbItems);
+            
             result.setNbItemsCorrectlyProcessed(nbItems);
-            result.addReport(report);
             
         } catch (Exception e) {
             log.error("Failed to run purge EDR/WO/RT job", e);
@@ -109,7 +111,7 @@ public class PurgeMediationDataJobBeanV2 extends BaseJobBean {
     @TransactionAttribute(TransactionAttributeType.NEVER)
 	private <T extends Enum<T>, E extends BaseEntity> long purgeMediationData(JobInstance jobInstance, Date firstTransactionDate, int nbDays, List<T> targetStatus, Class<E> clazz) {
 		
-		long subTotalPurgedRows = 0l;
+		long allPeriodPurgedDays = 0l;
 		String formattedStartDate = null;
 		
 		Date tmpFirstTransactionDate = DateUtils.addDaysToDate(firstTransactionDate, 0);
@@ -122,22 +124,24 @@ public class PurgeMediationDataJobBeanV2 extends BaseJobBean {
 			formattedStartDate = DateUtils.formatDateWithPattern(tmpFirstTransactionDate, "yyyyMMdd");
 			long countToPurge = edrService.countMediationDataToPurge(formattedStartDate, targetStatus, clazz);
 			long lastId = 0l;
-			long purgedRowsCount = 0l;
+			long dayPurgedRows = 0l;
 
 			do {
 				List<BigInteger> ids = edrService.getMediationDataIdsToPurge(formattedStartDate, targetStatus, clazz, lastId);
 				if (ids != null && !ids.isEmpty()) {
 					log.debug("=> process packet with size {}", ids.size());
-					purgedRowsCount += edrService.purgeMediationDataPacket(ids, clazz);
-					subTotalPurgedRows += purgedRowsCount;
+					long packetPurgedRows = edrService.purgeMediationDataPacket(ids, clazz);
+					dayPurgedRows += packetPurgedRows;
 					lastId = ids.get(ids.size() - 1).longValue();
-					log.info("=> Purged rows Sub Total : {}", subTotalPurgedRows);
 				}
-			} while (countToPurge > purgedRowsCount);
+			} while (countToPurge > dayPurgedRows);
+			
+			log.info("=> Purged rows for the day : {}", dayPurgedRows);
+			allPeriodPurgedDays += dayPurgedRows;
 			
 		}
 		
-		return subTotalPurgedRows;
+		return allPeriodPurgedDays;
 		
 	}
     
