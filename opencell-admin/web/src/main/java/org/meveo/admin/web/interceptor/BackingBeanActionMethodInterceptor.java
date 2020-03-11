@@ -106,8 +106,10 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
                     break;
 
                 } else if (cause instanceof org.hibernate.exception.ConstraintViolationException) {
-                    log.error("Delete was unsuccessful because entity is already in use.");
-                    messageKey = "error.operation.forbidden";
+
+                	message = ((org.hibernate.exception.ConstraintViolationException)cause).getSQLException().getMessage();
+                    log.error("Database operation was unsuccessful because of constraint violation: "+message);
+                    messageKey = "error.database.constraint.violation";
                     break;
                 }
                 cause = cause.getCause();
@@ -117,7 +119,6 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
 
             if (validation && messageKey != null) {
                 messages.error(new BundleKey("messages", messageKey));
-
             } else if (validation && message != null) {
                 messages.error(message);
 
