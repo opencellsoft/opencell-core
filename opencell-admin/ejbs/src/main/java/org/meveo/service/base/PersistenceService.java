@@ -803,8 +803,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * be used. In either case case insensative matching is used. Applies to String type fields.</li>
      * <li>wildcardOr. Similar to likeCriterias. A wildcard match will always used. A * will be appended to start and end of the value automatically if not present. Applies to
      * <li>wildcardOrIgnoreCase. Similar to wildcardOr but ignoring case String type fields.</li>
+     * <li>eq. Equals. Supports wildcards in case of string value. NOTE: This is a default behavior when condition is not specified
+     * <li>eqOptional. Equals. Supports wildcards in case of string value. Field value is optional.
      * <li>ne. Not equal.
+     * <li>neOptional. Not equal. Field value is optional.
      * </ul>
+     * 
+     * 
+     * "eq" is a default condition when no condition is not specified
      *
      * Following special meaning values are supported:
      * <ul>
@@ -868,7 +874,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     }
 
                     // Key format is: condition field1 field2 or condition-field1-field2-fieldN
-                    // example: "ne code", condition=code, fieldName=code, fieldName2=null
+                    // example: "ne code", condition=ne, fieldName=code, fieldName2=null
                     String[] fieldInfo = key.split(" ");
                     String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
                     String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
@@ -876,6 +882,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     String[] fields = null;
                     if (condition != null) {
                         fields = Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
+                    } else {
+                        condition = "eq";
                     }
                     String fieldWAlias = extractFieldWithAlias(fieldName);
                     String fieldWAlias2 = extractFieldWithAlias(fieldName2);
@@ -1067,7 +1075,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             queryBuilder.addSql((String) filterValue);
                         }
 
+                        // Search by equals/not equals condition
                     } else {
+
+                        // Search by IS NULL
                         if (filterValue instanceof String && SEARCH_IS_NULL.equals(filterValue)) {
                             if (isFieldCollection(fieldName)) {
                                 queryBuilder.addSql(fieldWAlias + " is empty ");
@@ -1075,6 +1086,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                                 queryBuilder.addSql(fieldWAlias + " is null ");
                             }
 
+                            // Search by IS NOT NULL
                         } else if (filterValue instanceof String && SEARCH_IS_NOT_NULL.equals(filterValue)) {
                             if (isFieldCollection(fieldName)) {
                                 queryBuilder.addSql(fieldWAlias + " is not empty ");
@@ -1082,42 +1094,40 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                                 queryBuilder.addSql(fieldWAlias + " is not null ");
                             }
 
+                            // Search by equals/not equals to a string value
                         } else if (filterValue instanceof String) {
 
                             // if contains dot, that means join is needed
                             String filterString = (String) filterValue;
-                            boolean wildcard = (filterString.indexOf("*") != -1);
-                            if (wildcard) {
-                                queryBuilder.addCriterionWildcard(fieldWAlias, filterString, true, "ne".equals(condition));
-                            } else {
-                                queryBuilder.addCriterion(fieldWAlias, "ne".equals(condition) ? " != " : " = ", filterString, true);
-                            }
+                            queryBuilder.addCriterionWildcard(fieldWAlias, filterString, true, condition.startsWith("ne"), condition.endsWith("Optional"));
 
+                            // Search by equals to truncated date value
                         } else if (filterValue instanceof Date) {
-                            queryBuilder.addCriterionDateTruncatedToDay(fieldWAlias, (Date) filterValue);
+                            queryBuilder.addCriterionDateTruncatedToDay(fieldWAlias, (Date) filterValue, condition.endsWith("Optional"));
 
+                            // Search by equals/not equals to a number value
                         } else if (filterValue instanceof Number) {
-                            queryBuilder.addCriterion(fieldWAlias, "ne".equals(condition) ? " != " : " = ", filterValue, true);
+                            queryBuilder.addCriterion(fieldWAlias, condition.startsWith("ne") ? " != " : " = ", filterValue, true, condition.endsWith("Optional"));
 
+                            // Search by equals/not equals to a boolean value
                         } else if (filterValue instanceof Boolean) {
-                            queryBuilder.addCriterion(fieldWAlias, "ne".equals(condition) ? " not is" : " is ", filterValue, true);
+                            queryBuilder.addCriterion(fieldWAlias, condition.startsWith("ne") ? " not is" : " is ", filterValue, true);
 
+                            // Search by equals/not equals to an enum value
                         } else if (filterValue instanceof Enum) {
                             if (filterValue instanceof IdentifiableEnum) {
                                 String enumIdKey = new StringBuilder(fieldName).append("Id").toString();
-                                queryBuilder.addCriterion("a." + enumIdKey, "ne".equals(condition) ? " != " : " = ", ((IdentifiableEnum) filterValue).getId(), true);
+                                queryBuilder.addCriterion("a." + enumIdKey, condition.startsWith("ne") ? " != " : " = ", ((IdentifiableEnum) filterValue).getId(), false, condition.endsWith("Optional"));
                             } else {
-                                queryBuilder.addCriterionEnum(fieldWAlias, (Enum) filterValue, "ne".equals(condition) ? " != " : " = ");
+                                queryBuilder.addCriterionEnum(fieldWAlias, (Enum) filterValue, condition.startsWith("ne") ? " != " : " = ", condition.endsWith("Optional"));
                             }
 
-                        } else if (BaseEntity.class.isAssignableFrom(filterValue.getClass())) {
-                            queryBuilder.addCriterionEntity(fieldWAlias, filterValue, "ne".equals(condition) ? " != " : " = ");
-
-                        } else if (filterValue instanceof UniqueEntity || filterValue instanceof IEntity) {
-                            queryBuilder.addCriterionEntity(fieldWAlias, filterValue, "ne".equals(condition) ? " != " : " = ");
+                        } else if (BaseEntity.class.isAssignableFrom(filterValue.getClass()) || filterValue instanceof UniqueEntity || filterValue instanceof IEntity) {
+                            queryBuilder.addCriterionEntity(fieldWAlias, filterValue, condition.startsWith("ne") ? " != " : " = ", condition.endsWith("Optional"));
 
                         } else if (filterValue instanceof List) {
-                            queryBuilder.addSqlCriterion(fieldWAlias + ("ne".equals(condition) ? " not in  " : " in ") + ":" + fieldName, fieldName, filterValue);
+                            queryBuilder.addCriterionInList(fieldWAlias, (List) filterValue, condition.startsWith("ne") ? " not in " : " in ", condition.endsWith("Optional"));
+
                         } else if ("auditable".equalsIgnoreCase(fieldName) && filterValue instanceof Map) {
                             QueryBuilder queryBuilderHolder = queryBuilder;
                             ((Map) filterValue).forEach((k, value) -> queryBuilderHolder.addCriterionDateTruncatedToDay("a.auditable." + k, (Date) value));

@@ -39,7 +39,7 @@ public class CustomEntityProcessor extends PrimitiveFilterProcessor {
         Map.Entry<CustomFieldTemplate, Object> customFieldEntry = fetchCustomFieldEntry(queryBuilder.getParameterMap(), condition.getOperand());
         if (customFieldEntry != null) {
             BusinessEntity businessEntity = (BusinessEntity) customFieldEntry.getValue();
-            if(businessEntity != null){
+            if (businessEntity != null) {
                 buildQuery(queryBuilder, alias, condition, businessEntity);
             }
         }
@@ -50,8 +50,8 @@ public class CustomEntityProcessor extends PrimitiveFilterProcessor {
         if (condition.getFieldName().indexOf(".") == -1) {
             fieldName = alias + "." + fieldName;
         }
-        if(value != null){
-            queryBuilder.addCriterionEntity(fieldName, value, condition.getOperator());
+        if (value != null) {
+            queryBuilder.addCriterionEntity(fieldName, value, condition.getOperator(), false);
         }
     }
 }

@@ -17,6 +17,31 @@
  */
 package org.meveo.service.base;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
@@ -47,30 +72,6 @@ import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
-
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -645,8 +646,14 @@ public class NativePersistenceService extends BaseService {
      * be used. In either case case insensative matching is used. Applies to String type fields.</li>
      * <li>wildcardOr. Similar to likeCriterias. A wildcard match will always used. A * will be appended to start and end of the value automatically if not present. Applies to
      * <li>wildcardOrIgnoreCase. Similar to wildcardOr but ignoring case String type fields.</li>
+     * <li>eq. Equals. Supports wildcards in case of string value. NOTE: This is a default behavior when condition is not specified
+     * <li>eqOptional. Equals. Supports wildcards in case of string value. Field value is optional.
      * <li>ne. Not equal.
+     * <li>neOptional. Not equal. Field value is optional
      * </ul>
+     * 
+     * 
+     * "eq" is a default condition when no condition is not specified
      * 
      * Following special meaning values are supported:
      * <ul>
@@ -704,7 +711,7 @@ public class NativePersistenceService extends BaseService {
                 }
 
                 // Key format is: condition field1 field2 or condition-field1-field2-fieldN
-                // example: "ne code", condition=code, fieldName=code, fieldName2=null
+                // example: "ne code", condition=ne, fieldName=code, fieldName2=null
                 String[] fieldInfo = key.split(" ");
                 String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
                 String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
@@ -713,6 +720,8 @@ public class NativePersistenceService extends BaseService {
                 String[] fields = null;
                 if (condition != null) {
                     fields = Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
+                } else {
+                    condition = "eq";
                 }
 
                 // if ranged search - field value in between from - to values. Specifies "from" value: e.g value<=field.value
@@ -841,44 +850,49 @@ public class NativePersistenceService extends BaseService {
                         queryBuilder.addSql((String) filterValue);
                     }
 
+                    // Search by equals/not equals condition
                 } else {
+
+                    // Search by IS NULL
                     if (filterValue instanceof String && PersistenceService.SEARCH_IS_NULL.equals(filterValue)) {
                         queryBuilder.addSql("a." + fieldName + " is null ");
 
+                        // Search by IS NOT NULL
                     } else if (filterValue instanceof String && PersistenceService.SEARCH_IS_NOT_NULL.equals(filterValue)) {
                         queryBuilder.addSql("a." + fieldName + " is not null ");
 
+                        // Search by equals/not equals to a string value
                     } else if (filterValue instanceof String) {
 
                         // if contains dot, that means join is needed
                         String filterString = (String) filterValue;
-                        boolean wildcard = (filterString.indexOf("*") != -1);
-                        if (wildcard) {
-                            queryBuilder.addCriterionWildcard("a." + fieldName, filterString, true, "ne".equals(condition));
-                        } else {
-                            queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " != " : " = ", filterString, true);
-                        }
 
+                        queryBuilder.addCriterionWildcard("a." + fieldName, filterString, true, condition.startsWith("ne"), condition.endsWith("Optional"));
+
+                        // Search by equals to truncated date value
                     } else if (filterValue instanceof Date) {
-                        queryBuilder.addCriterionDateTruncatedToDay("a." + fieldName, (Date) filterValue);
+                        queryBuilder.addCriterionDateTruncatedToDay("a." + fieldName, (Date) filterValue, condition.endsWith("Optional"));
 
+                        // Search by equals/not equals to a number value
                     } else if (filterValue instanceof Number) {
-                        queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " != " : " = ", filterValue, true);
+                        queryBuilder.addCriterion("a." + fieldName, condition.startsWith("ne") ? " != " : " = ", filterValue, true, condition.endsWith("Optional"));
 
+                        // Search by equals/not equals to a boolean value
                     } else if (filterValue instanceof Boolean) {
                         boolean bValue = (boolean) filterValue;
-                        queryBuilder.addBooleanCriterion("a." + fieldName, "ne".equals(condition) ? !bValue : bValue);
+                        queryBuilder.addBooleanCriterion("a." + fieldName, condition.startsWith("ne") ? !bValue : bValue);
 
+                        // Search by equals/not equals to an enum value
                     } else if (filterValue instanceof Enum) {
                         if (filterValue instanceof IdentifiableEnum) {
                             String enumIdKey = new StringBuilder(fieldName).append("Id").toString();
-                            queryBuilder.addCriterion("a." + enumIdKey, "ne".equals(condition) ? " != " : " = ", ((IdentifiableEnum) filterValue).getId(), true);
+                            queryBuilder.addCriterion("a." + enumIdKey, condition.startsWith("ne") ? " != " : " = ", ((IdentifiableEnum) filterValue).getId(), true, condition.endsWith("Optional"));
                         } else {
-                            queryBuilder.addCriterionEnum("a." + fieldName, (Enum) filterValue, "ne".equals(condition) ? " != " : " = ");
+                            queryBuilder.addCriterionEnum("a." + fieldName, (Enum) filterValue, condition.startsWith("ne") ? " != " : " = ", condition.endsWith("Optional"));
                         }
 
                     } else if (filterValue instanceof List) {
-                        queryBuilder.addSqlCriterion("a." + fieldName + ("ne".equals(condition) ? " not in  " : " in ") + ":" + fieldName, fieldName, filterValue);
+                        queryBuilder.addCriterionInList("a." + fieldName, (List) filterValue, condition.startsWith("ne") ? " not in " : " in ", condition.endsWith("Optional"));
                     }
                 }
             }
