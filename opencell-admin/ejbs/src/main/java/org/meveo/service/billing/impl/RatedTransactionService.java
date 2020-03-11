@@ -725,7 +725,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             InvoiceSubCategory invoiceSubCategory = oneShotChargeTemplate.getInvoiceSubCategory();
             String mapKey = mapKeyPrefix + invoiceSubCategory.getId();
 
-                TaxInfo taxInfo = taxMappingService.determineTax(null, seller, billingAccount, null, minRatingDate, true, false);
+                TaxInfo taxInfo = taxMappingService.determineTax(oneShotChargeTemplate.getTaxClass(), seller, billingAccount, null, minRatingDate, true, false);
 
             String code = getMinAmountRTCode(entity, accountClass);
             RatedTransaction ratedTransaction = getNewRatedTransaction(billableEntity, billingAccount, minRatingDate, minAmountLabel, entity, seller, invoiceSubCategory, taxInfo,

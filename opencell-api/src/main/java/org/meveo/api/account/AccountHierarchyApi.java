@@ -26,6 +26,7 @@ import org.meveo.api.CurrencyApi;
 import org.meveo.api.LanguageApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.billing.SubscriptionApi;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CRMAccountTypeSearchDto;
 import org.meveo.api.dto.CustomFieldDto;
@@ -330,6 +331,30 @@ public class AccountHierarchyApi extends BaseApi {
         name.setFirstName(postData.getFirstName());
         name.setLastName(postData.getLastName());
 
+        if (postData.getMinimumAmountEl() != null) {
+            if (postData.getMinimumAmountEl().getCustomerMinimumAmountEl() != null) {
+                customerDto.setMinimumAmountEl(postData.getMinimumAmountEl().getCustomerMinimumAmountEl());
+            }
+            if (postData.getMinimumAmountEl().getCustomerMinimumLabelEl() != null) {
+                customerDto.setMinimumLabelEl(postData.getMinimumAmountEl().getCustomerMinimumLabelEl());
+            }
+
+            if (postData.getMinimumAmountEl().getCustomerMinimumTargetAccount() != null) {
+                if (!StringUtils.isBlank(postData.getMinimumAmountEl().getCustomerMinimumTargetAccount())) {
+                    customerDto.setMinimumTargetAccount(postData.getMinimumAmountEl().getCustomerMinimumTargetAccount());
+                } else {
+                    customerDto.setMinimumTargetAccount(null);
+                }
+            }
+            if (postData.getMinimumAmountEl().getCustomerMinimumChargeTemplate() != null) {
+                if (!StringUtils.isBlank(postData.getMinimumAmountEl().getCustomerMinimumChargeTemplate())) {
+                    customerDto.setMinimumChargeTemplate(postData.getMinimumAmountEl().getCustomerMinimumChargeTemplate());
+                } else {
+                    customerDto.setMinimumChargeTemplate(null);
+                }
+            }
+        }
+
         customerApi.create(customerDto);
 
         CustomerAccountDto customerAccountDto = new CustomerAccountDto();
@@ -362,6 +387,29 @@ public class AccountHierarchyApi extends BaseApi {
                     .add(new PaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
         }
         // End compatibility with pre-4.6 versions
+        if (postData.getMinimumAmountEl() != null) {
+            if (postData.getMinimumAmountEl().getCustomerAccountMinimumLabelEl() != null) {
+                customerAccountDto.setMinimumAmountEl(postData.getMinimumAmountEl().getCustomerAccountMinimumAmountEl());
+            }
+            if (postData.getMinimumAmountEl().getCustomerAccountMinimumLabelEl() != null) {
+                customerAccountDto.setMinimumLabelEl(postData.getMinimumAmountEl().getCustomerAccountMinimumLabelEl());
+            }
+
+            if (postData.getMinimumAmountEl().getCustomerAccountMinimumTargetAccount() != null) {
+                if (!StringUtils.isBlank(postData.getMinimumAmountEl().getCustomerAccountMinimumTargetAccount())) {
+                    customerAccountDto.setMinimumTargetAccount(postData.getMinimumAmountEl().getCustomerAccountMinimumTargetAccount());
+                } else {
+                    customerAccountDto.setMinimumTargetAccount(null);
+                }
+            }
+            if (postData.getMinimumAmountEl().getCustomerAccountMinimumChargeTemplate() != null) {
+                if (!StringUtils.isBlank(postData.getMinimumAmountEl().getCustomerAccountMinimumChargeTemplate())) {
+                    customerAccountDto.setMinimumChargeTemplate(postData.getMinimumAmountEl().getCustomerAccountMinimumChargeTemplate());
+                } else {
+                    customerAccountDto.setMinimumChargeTemplate(null);
+                }
+            }
+        }
 
         customerAccountApi.create(customerAccountDto);
 
@@ -389,8 +437,25 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setMailingType(postData.getMailingType());
         billingAccountDto.setEmailTemplate(postData.getEmailTemplate());
         billingAccountDto.setCcedEmails(postData.getCcedEmails());
+        if (postData.getMinimumAmountEl() != null) {
+            if (postData.getMinimumAmountEl().getBillingAccountMinimumAmountEl() != null) {
+                billingAccountDto.setMinimumAmountEl(postData.getMinimumAmountEl().getBillingAccountMinimumAmountEl());
+            }
+            if (postData.getMinimumAmountEl().getBillingAccountMinimumLabelEl() != null) {
+                billingAccountDto.setMinimumLabelEl(postData.getMinimumAmountEl().getBillingAccountMinimumLabelEl());
+            }
 
-        billingAccountApi.create(billingAccountDto);
+            if (postData.getMinimumAmountEl().getBillingAccountMinimumChargeTemplate() != null) {
+                if (!StringUtils.isBlank(postData.getMinimumAmountEl().getBillingAccountMinimumChargeTemplate())) {
+                    billingAccountDto.setMinimumChargeTemplate(postData.getMinimumAmountEl().getBillingAccountMinimumChargeTemplate());
+                } else {
+                    billingAccountDto.setMinimumChargeTemplate(null);
+                }
+            }
+        }
+
+        AccountEntity accountEntity = billingAccountApi.create(billingAccountDto);
+        setMinimumTargetAccountForCustomerAndCA(accountEntity, postData);
 
         String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
         if (postData.getUsePrefix() != null && !postData.getUsePrefix()) {
@@ -403,6 +468,22 @@ public class AccountHierarchyApi extends BaseApi {
         userAccountDto.setCode(userAccountCode);
         userAccountDto.setAddress(address);
         userAccountDto.setJobTitle(postData.getJobTitle());
+        if (postData.getMinimumAmountEl() != null) {
+            if (postData.getMinimumAmountEl().getUserAccountMinimumAmountEl() != null) {
+                userAccountDto.setMinimumAmountEl(postData.getMinimumAmountEl().getUserAccountMinimumAmountEl());
+            }
+            if (postData.getMinimumAmountEl().getUserAccountMinimumLabelEl() != null) {
+                userAccountDto.setMinimumLabelEl(postData.getMinimumAmountEl().getUserAccountMinimumLabelEl());
+            }
+
+            if (postData.getMinimumAmountEl().getUserAccountMinimumChargeTemplate() != null) {
+                if (!StringUtils.isBlank(postData.getMinimumAmountEl().getUserAccountMinimumChargeTemplate())) {
+                    userAccountDto.setMinimumChargeTemplate(postData.getMinimumAmountEl().getUserAccountMinimumChargeTemplate());
+                } else {
+                    userAccountDto.setMinimumChargeTemplate(null);
+                }
+            }
+        }
 
         userAccountApi.create(userAccountDto);
     }
@@ -1011,12 +1092,13 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     private void setMinimumTargetAccountForCustomerAndCA(AccountEntity accountEntity, CRMAccountHierarchyDto postData) {
+
         if (postData.getMinimumAmountEl() != null && postData.getMinimumAmountEl().getCustomerMinimumTargetAccount() != null) {
             String billingAccountCode = postData.getMinimumAmountEl().getCustomerMinimumTargetAccount();
             if (!StringUtils.isBlank(billingAccountCode)) {
                 BillingAccount minimumTargetAccount = billingAccountService.findByCode(billingAccountCode);
                 ((BillingAccount) accountEntity).getCustomerAccount().getCustomer().setMinimumTargetAccount(minimumTargetAccount);
-            }else {
+            } else {
                 ((BillingAccount) accountEntity).getCustomerAccount().getCustomer().setMinimumTargetAccount(null);
             }
 
@@ -1026,12 +1108,37 @@ public class AccountHierarchyApi extends BaseApi {
             if (!StringUtils.isBlank(billingAccountCode)) {
                 BillingAccount minimumTargetAccount = billingAccountService.findByCode(billingAccountCode);
                 ((BillingAccount) accountEntity).getCustomerAccount().setMinimumTargetAccount(minimumTargetAccount);
-            }else {
+            } else {
                 ((BillingAccount) accountEntity).getCustomerAccount().setMinimumTargetAccount(null);
             }
         }
         customerService.update(((BillingAccount) accountEntity).getCustomerAccount().getCustomer());
-        customerAccountService.update(((BillingAccount)accountEntity).getCustomerAccount());
+        customerAccountService.update(((BillingAccount) accountEntity).getCustomerAccount());
+    }
+
+    private void setMinimumTargetAccountForCustomerAndCA(AccountEntity accountEntity, AccountHierarchyDto postData) {
+
+        if (postData.getMinimumAmountEl() != null && postData.getMinimumAmountEl().getCustomerMinimumTargetAccount() != null) {
+            String billingAccountCode = postData.getMinimumAmountEl().getCustomerMinimumTargetAccount();
+            if (!StringUtils.isBlank(billingAccountCode)) {
+                BillingAccount minimumTargetAccount = billingAccountService.findByCode(billingAccountCode);
+                ((BillingAccount) accountEntity).getCustomerAccount().getCustomer().setMinimumTargetAccount(minimumTargetAccount);
+            } else {
+                ((BillingAccount) accountEntity).getCustomerAccount().getCustomer().setMinimumTargetAccount(null);
+            }
+
+        }
+        if (postData.getMinimumAmountEl() != null && postData.getMinimumAmountEl().getCustomerAccountMinimumTargetAccount() != null) {
+            String billingAccountCode = postData.getMinimumAmountEl().getCustomerAccountMinimumTargetAccount();
+            if (!StringUtils.isBlank(billingAccountCode)) {
+                BillingAccount minimumTargetAccount = billingAccountService.findByCode(billingAccountCode);
+                ((BillingAccount) accountEntity).getCustomerAccount().setMinimumTargetAccount(minimumTargetAccount);
+            } else {
+                ((BillingAccount) accountEntity).getCustomerAccount().setMinimumTargetAccount(null);
+            }
+        }
+        customerService.update(((BillingAccount) accountEntity).getCustomerAccount().getCustomer());
+        customerAccountService.update(((BillingAccount) accountEntity).getCustomerAccount());
     }
 
     /**
