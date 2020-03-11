@@ -1,14 +1,7 @@
 package org.meveo.admin.web.interceptor;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.jboss.seam.international.status.Messages;
-import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ValidationException;
-import org.meveo.model.audit.ChangeOriginEnum;
-import org.meveo.service.audit.AuditOrigin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.Serializable;
+import java.sql.SQLException;
 
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -18,8 +11,16 @@ import javax.interceptor.InvocationContext;
 import javax.persistence.TransactionRequiredException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.io.Serializable;
-import java.sql.SQLException;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
+import org.meveo.model.audit.ChangeOriginEnum;
+import org.meveo.service.audit.AuditOrigin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles exceptions of backing bean action methods
@@ -87,8 +88,9 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
                     break;
 
                 } else if (cause instanceof org.hibernate.exception.ConstraintViolationException) {
-                    log.error("Delete was unsuccessful because entity is already in use.");
-                    messageKey = "error.delete.entityUsed";
+                	message = ((org.hibernate.exception.ConstraintViolationException)cause).getSQLException().getMessage();
+                    log.error("Database operation was unsuccessful because of constraint violation: "+message);
+                    messageKey = "error.database.constraint.violation";
                     break;
                 }
                 cause = cause.getCause();
@@ -98,7 +100,6 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
 
             if (validation && messageKey != null) {
                 messages.error(new BundleKey("messages", messageKey));
-
             } else if (validation && message != null) {
                 messages.error(message);
 
