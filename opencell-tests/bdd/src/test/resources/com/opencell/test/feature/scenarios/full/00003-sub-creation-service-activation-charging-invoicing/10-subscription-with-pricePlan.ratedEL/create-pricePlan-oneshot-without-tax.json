@@ -1,7 +1,7 @@
 {
-    "code": "RS_FULL_200_${#TestCase#suffix}_Enterprise",
+    "code": "RS_FULL_200_PP_RATED_EL_Enterprise",
     "description": "Price plan subscription",
-    "eventCode": "RS_FULL_200_${#TestCase#suffix}_Enterprise",
+    "eventCode": "RS_FULL_200_PP_RATED_EL_Enterprise",
     "amountWithoutTax": "10",
     "amountWithTax": "15",
     "priority": "1",

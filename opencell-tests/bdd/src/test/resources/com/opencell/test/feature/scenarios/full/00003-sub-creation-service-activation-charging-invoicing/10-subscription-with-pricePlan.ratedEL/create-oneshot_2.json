@@ -1,5 +1,5 @@
 {
-    "code": "RS_FULL_200_${#TestCase#suffix}_NotEnterprise",
+    "code": "RS_FULL_200_PP_RATED_EL_NotEnterprise",
     "description": "Subscription charge",
     "invoiceSubCategory": "SUB_DATA",
     "disabled": false,

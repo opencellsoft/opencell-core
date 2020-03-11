@@ -1,11 +1,13 @@
 {
     "subscription": "RS_FULL_200_SUB_Reference_Date",
     "servicesToActivate": {
-        "service": {
-            "code": "RS_BASE_SERVICE1",
-            "quantity": "1",
-            "subscriptionDate": "2015-02-01",
-            "rateUntilDate": "2018-03-31"
-        }
+        "service": [
+            {
+                "code": "RS_BASE_SERVICE1",
+                "quantity": "1",
+                "subscriptionDate": "2015-02-01",
+                "rateUntilDate": "2018-03-31"
+            }
+        ]
     }
 }

@@ -16,8 +16,8 @@
     "address2": "Address2",
     "zipCode": "75001",
     "city": "Tunis",
-    "paymentMethods": {
-        "methodOfPayment": {
+    "methodOfPayment": [
+        {
             "paymentMethodType": "DIRECTDEBIT",
             "bankCoordinates": {
                 "bankCode": "12456",
@@ -34,7 +34,7 @@
                 "ics": "5587"
             }
         }
-    },
+    ],
     "registrationNo": "1234",
     "vatNo": "1234",
     "jobTitle": "Software Engineer"

@@ -1,13 +1,13 @@
 {
-    "code": "RS_FULL_200_${#TestCase#suffix}_NotEnterprise",
-    "description": "Offer_${#TestCase#suffix}",
-    "name": "RS_FULL_200_${#TestCase#suffix}",
+    "code": "RS_FULL_200_PP_RATED_EL_NotEnterprise",
+    "description": "Offer_PP_RATED_EL",
+    "name": "RS_FULL_200_PP_RATED_EL",
     "disabled": false,
-    "offerServiceTemplates": {
-        "offerServiceTemplate": {
+    "offerServiceTemplate": [
+        {
             "serviceTemplate": {
-                "code": "RS_FULL_200_${#TestCase#suffix}_NotEnterprise"
+                "code": "RS_FULL_200_PP_RATED_EL_NotEnterprise"
             }
         }
-    }
+    ]
 }

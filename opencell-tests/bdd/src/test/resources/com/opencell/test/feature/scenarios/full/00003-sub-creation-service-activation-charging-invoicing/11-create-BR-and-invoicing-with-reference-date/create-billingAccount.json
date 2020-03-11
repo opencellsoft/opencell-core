@@ -1,11 +1,11 @@
 {
     "code": "RS_FULL_200_BA_Reference_Date",
     "description": "RS_FULL_200_BA_Reference_Date",
-    "discountPlansForInstantiation": {
-        "discountPlanForInstantiation": {
+    "discountPlanForInstantiation": [
+        {
             "code": "DP_200_INVOICE"
         }
-    },
+    ],
     "externalRef1": "EXTREF1",
     "externalRef2": "EXTREF2",
     "name": {

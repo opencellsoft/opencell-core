@@ -1,10 +1,12 @@
 {
-    "code": "RS_FULL_200_${#TestCase#suffix}_NotEnterprise",
+    "code": "RS_FULL_200_PP_RATED_EL_NotEnterprise",
     "description": "Service",
     "invoicingCalendar": "MONTHLY",
     "serviceChargeTemplateSubscriptions": {
-        "serviceChargeTemplateSubscription": {
-            "code": "RS_FULL_200_${#TestCase#suffix}_NotEnterprise"
-        }
+        "serviceChargeTemplateSubscription": [
+            {
+                "code": "RS_FULL_200_PP_RATED_EL_NotEnterprise"
+            }
+        ]
     }
 }

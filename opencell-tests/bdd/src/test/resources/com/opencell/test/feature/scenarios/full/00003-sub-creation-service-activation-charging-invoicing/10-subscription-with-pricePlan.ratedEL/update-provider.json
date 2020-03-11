@@ -1,8 +1,5 @@
 {
     "code": "DEMO",
-    "enterprise": [
-        "?",
-        false
-    ],
+    "enterprise": false,
     "invoiceRounding": "2"
 }

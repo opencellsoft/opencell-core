@@ -1,10 +1,12 @@
 {
-    "subscription": "RS_FULL_200_${#TestCase#suffix}_NotEnterprise",
+    "subscription": "RS_FULL_200_PP_RATED_EL_NotEnterprise",
     "servicesToActivate": {
-        "service": {
-            "code": "RS_FULL_200_${#TestCase#suffix}_NotEnterprise",
-            "quantity": "1",
-            "subscriptionDate": "2017-10-13"
-        }
+        "service": [
+            {
+                "code": "RS_FULL_200_PP_RATED_EL_NotEnterprise",
+                "quantity": "1",
+                "subscriptionDate": "2017-10-13"
+            }
+        ]
     }
 }

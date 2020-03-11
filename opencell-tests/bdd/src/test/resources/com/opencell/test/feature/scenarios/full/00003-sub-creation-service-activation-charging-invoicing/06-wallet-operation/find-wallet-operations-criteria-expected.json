@@ -1,0 +1,76 @@
+{
+    "actionStatus": {
+        "status": "SUCCESS"
+    },
+    "paging": {
+        "fullTextFilter": null,
+        "filters": {
+            "toRange operationDate": 1422748800000,
+            "fromRange operationDate": 1422748800000,
+            "wallet.userAccount.code": "RS_FULL_200_UA_INVOICE"
+        },
+        "fields": null,
+        "offset": null,
+        "limit": null,
+        "sortBy": "id",
+        "sortOrder": "ASCENDING",
+        "totalNumberOfRecords": 2,
+        "loadReferenceDepth": 0
+    },
+    "walletOperations": [
+        {
+            "code": "RS_BASE_OS1",
+            "description": "RS_BASE-Forfait Test",
+            "userAccount": "RS_FULL_200_UA_INVOICE",
+            "walletTemplate": "PRINCIPAL",
+            "seller": "SELLER_FR",
+            "chargeInstance": "RS_BASE_OS1",
+            "chargeInstanceId": 30,
+            "currency": "EUR",
+            "status": "TREATED",
+            "updated": 1583905924127,
+            "ratingUnitDescription": "1",
+            "taxCode": "TAX_05",
+            "taxPercent": 5,
+            "unitAmountWithoutTax": 11,
+            "unitAmountWithTax": 11.55,
+            "unitAmountTax": 0.55,
+            "quantity": 1,
+            "amountWithoutTax": 11,
+            "amountWithTax": 11.55,
+            "amountTax": 0.55,
+            "operationDate": 1422748800000,
+            "subscriptionDate": 1422748800000,
+            "offerCode": "RS_BASE_OFFER1",
+            "ratedTransaction": null
+        },
+        {
+            "code": "RS_BASE_REC1",
+            "description": "RS_BASE-Forfait Test",
+            "userAccount": "RS_FULL_200_UA_INVOICE",
+            "walletTemplate": "PRINCIPAL",
+            "seller": "SELLER_FR",
+            "chargeInstance": "RS_BASE_REC1",
+            "chargeInstanceId": 29,
+            "currency": "EUR",
+            "status": "TREATED",
+            "updated": 1583905924123,
+            "ratingUnitDescription": "1",
+            "taxCode": "TAX_05",
+            "taxPercent": 5,
+            "unitAmountWithoutTax": 10,
+            "unitAmountWithTax": 10.5,
+            "unitAmountTax": 0.5,
+            "quantity": 1,
+            "amountWithoutTax": 10,
+            "amountWithTax": 10.5,
+            "amountTax": 0.5,
+            "startDate": 1422748800000,
+            "endDate": 1425168000000,
+            "operationDate": 1422748800000,
+            "subscriptionDate": 1422748800000,
+            "offerCode": "RS_BASE_OFFER1",
+            "ratedTransaction": null
+        }
+    ]
+}
