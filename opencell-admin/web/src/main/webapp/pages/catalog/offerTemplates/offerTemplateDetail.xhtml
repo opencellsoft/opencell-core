@@ -89,11 +89,11 @@
                                     <hftl:formField label="#{messages['offerTemplate.minimumLabelElSpark']}"
                                                     field="minimumLabelElSpark" id="minimumLabelElSpark" textArea="true"
                                                     rows="1"
-                                                    maxlength="2000" componentWidth="50" newLine="true"/>
+                                                    maxlength="2000" componentWidth="50" newLine="true" rendered="#{paramBean.sparkEnabled}"/>
                                     <hftl:formField
                                             label="#{messages[appProvider.entreprise?'offerTemplate.minimumAmountWithoutTaxElSpark':'offerTemplate.minimumAmountWithTaxElSpark']}"
                                             field="minimumAmountElSpark" id="minimumAmountElSpark" textArea="true"
-                                            rows="1" maxlength="2000" componentWidth="50"/>
+                                            rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.sparkEnabled}"/>
                                     <hftl:formField label="#{messages['account.minimumChargeTemplate']}"
                                                     id="chargeTemplateId" field="minimumChargeTemplate"
                                                     valueLabelField="code" listBean="#{oneShotChargeTemplateBean}"
