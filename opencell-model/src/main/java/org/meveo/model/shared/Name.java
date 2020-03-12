@@ -52,16 +52,16 @@ public class Name implements Serializable, Cloneable {
      * First name or company name
      */
     @Convert(converter=PersonnalDataEncryptor.class)
-    @Column(name = "firstname", length = 100)
-    @Size(max = 100)
+    @Column(name = "firstname", length = 500)
+    @Size(max = 500)
     protected String firstName;
 
     /**
      * Last name
      */
     @Convert(converter=PersonnalDataEncryptor.class)
-    @Column(name = "lastname", length = 100)
-    @Size(max = 100)
+    @Column(name = "lastname", length = 500)
+    @Size(max = 500)
     protected String lastName;
 
     public Name() {

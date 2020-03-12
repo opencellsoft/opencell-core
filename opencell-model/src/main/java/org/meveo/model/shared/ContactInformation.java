@@ -43,24 +43,24 @@ public class ContactInformation implements Serializable, Cloneable {
      * Email
      */
     @Convert(converter=PersonnalDataEncryptor.class)
-    @Column(name = "email", length = 100)
-    @Size(max = 100)
+    @Column(name = "email", length = 500)
+    @Size(max = 500)
     protected String email;
 
     /**
      * Phone number
      */
     @Convert(converter=PersonnalDataEncryptor.class)
-    @Column(name = "phone", length = 100)
-    @Size(max = 100)
+    @Column(name = "phone", length = 500)
+    @Size(max = 500)
     protected String phone;
 
     /**
      * Mobile phone number
      */
     @Convert(converter=PersonnalDataEncryptor.class)
-    @Column(name = "mobile", length = 100)
-    @Size(max = 100)
+    @Column(name = "mobile", length = 500)
+    @Size(max = 500)
     protected String mobile;
 
     /**
