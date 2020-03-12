@@ -34,7 +34,7 @@ public class NumberMapper extends FilterMapper {
 
     @Override
     public Object mapStrategy(Object value) {
-        if(clazz.isAssignableFrom(Long.class)){
+        if(clazz.isAssignableFrom(Long.class) || "id".equalsIgnoreCase(property)){
             return Long.valueOf(value.toString());
         }
         return value;
