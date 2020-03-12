@@ -40,9 +40,7 @@ public class ObjectMapper extends FilterMapper {
                             }
                         });
                 target = targetInstanceHolder;
-            } else if(((Map) value).containsKey("id")){
-                target = new FactoryFilterMapper().create("id", ((Map) value).get("id"), type, serviceFunction).map();
-            }else{
+            } else{
                 target = new FactoryFilterMapper().create("id", value, type, serviceFunction).map();
             }
 
