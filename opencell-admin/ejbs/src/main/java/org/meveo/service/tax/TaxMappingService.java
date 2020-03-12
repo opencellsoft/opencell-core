@@ -245,7 +245,8 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @param userAccount User account
      * @param date Date to determine tax validity
      * @param checkExoneration Check if billing account is exonerated
-     * @param ignoreNoTax Should exception be thrown if no tax was matched
+     * @param ignoreNoTax Should exception be thrown if no tax was matched. True - exception will be ignored and NULL returned. False - IncorrectChargeTemplateException will be
+     *        thrown.
      * @return Tax to apply
      * @throws BusinessException General business exception
      */

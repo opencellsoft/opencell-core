@@ -21,6 +21,7 @@ package org.meveo.model.persistence;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.descriptor.java.AbstractTypeDescriptor;
 import org.hibernate.type.descriptor.java.ImmutableMutabilityPlan;
@@ -62,9 +63,9 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
     @Override
     public CustomFieldValues fromString(String string) {
 
-    	if (string == null) {
-            return null;
-        }
+    	if(StringUtils.isBlank(string)) {
+    		return null;
+    	}
 
         if (TRUE_STR.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_CUSTOM_FIELDS_PROPERTY, FALSE_STR))) {
         	string = decrypt(string);

@@ -347,7 +347,7 @@
 
 									<p:column width="55">
 										<f:facet name="header">
-											<h:outputText value="Actions"/>
+											<h:outputText value="#{messages['commons.actions']}"/>
 										</f:facet>
 										<p:button id="ServiceTerminationButton" outcome="serviceInstanceDetail"
 												  icon="ui-icon-document">
@@ -404,7 +404,7 @@
 																
 								<p:column width="55">
 									<f:facet name="header">
-										<h:outputText value="Actions" />
+										<h:outputText value="#{messages['commons.actions']}" />
 									</f:facet>
 									<p:button id="usagesButton" outcome="serviceInstanceDetail"
 										icon="ui-icon-document">
@@ -840,7 +840,7 @@
 															</p:column>
 															<hftl:column label="#{messages['counterTemplate.title']}"
 																		 field="counter.description" />
-															<p:column styleClass="actions-column">
+															<p:column styleClass="actions-column" width="55">
 																<f:facet name="header">
 																	<h:outputText value="#{messages['commons.actions']}" />
 																</f:facet>
@@ -904,7 +904,7 @@
 														</p:column>
 														<hftl:column label="#{messages['counterTemplate.title']}"
 															field="counter.description" />
-														<p:column styleClass="actions-column">
+														<p:column styleClass="actions-column" width="55">
 															<f:facet name="header">
 																<h:outputText value="#{messages['commons.actions']}" />
 															</f:facet>
@@ -964,7 +964,7 @@
 																field="startDate" isDate="true" time = "true"/>
 															<hftl:column label="#{messages['access.endDate']}"
 																field="endDate" isDate="true" time = "true"/>
-															<p:column styleClass="actions-column">
+															<p:column styleClass="actions-column" width="55">
 																<f:facet name="header">
 																	<h:outputText value="#{messages['commons.actions']}" />
 																</f:facet>
