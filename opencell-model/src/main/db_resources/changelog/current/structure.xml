@@ -2241,7 +2241,7 @@
     	<modifyDataType columnName="unique_constraint_name" newDataType="varchar(120)" tableName="cust_cet" />
    </changeSet>
 
-    <changeSet id="#5057_120382020" author="MounirBoukayoua">
+    <changeSet id="#5057_120382020" author="Mounir_Boukayoua">
         <modifyDataType columnName="firstname" newDataType="VARCHAR(500)" tableName="account_entity"/>
         <modifyDataType columnName="lastname" newDataType="VARCHAR(500)" tableName="account_entity"/>
         <modifyDataType columnName="email" newDataType="VARCHAR(500)" tableName="account_entity"/>
