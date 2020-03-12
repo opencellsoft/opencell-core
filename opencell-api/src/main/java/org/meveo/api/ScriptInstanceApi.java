@@ -26,6 +26,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.ScriptInstanceDto;
 import org.meveo.api.dto.ScriptInstanceErrorDto;
@@ -57,7 +58,7 @@ import org.meveo.service.script.ScriptUtils;
 
 @Stateless
 public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanceDto> {
-    
+
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
@@ -66,6 +67,9 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
     @Inject
     private RoleService roleService;
+
+    @Inject
+    private ResourceBundle resourceMessages;
 
     /**
      * Create ScriptInstance entity. Same as {@link #create(ScriptInstanceDto)}, only returns a list of compilation errors as DTOs
@@ -217,23 +221,39 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
     public void checkDtoAndUpdateCode(CustomScriptDto dto) throws BusinessApiException, MissingParameterException, InvalidParameterException {
 
-        if (StringUtils.isBlank(dto.getScript())) {
-            missingParameters.add("script");
+        if (dto.getType() == ScriptSourceTypeEnum.JAVA_CLASS) {
+            if (StringUtils.isBlank(dto.getCode())) {
+                missingParameters.add("code");
+            }
+
+            handleMissingParameters();
+
+            if (!ScriptUtils.isOverwritesJavaClass(dto.getCode())) {
+                throw new BusinessException(resourceMessages.getString("message.scriptInstance.classDoesNotExist", dto.getCode()));
+            } else if (!ScriptUtils.isScriptInterfaceClass(dto.getCode())) {
+                throw new BusinessException(resourceMessages.getString("message.scriptInstance.classNotScriptInstance", dto.getCode()));
+            }
+            
+        } else {
+
+            if (StringUtils.isBlank(dto.getScript())) {
+                missingParameters.add("script");
+            }
+
+            handleMissingParameters();
+
+            String scriptCode = ScriptUtils.getFullClassname(dto.getScript());
+            if (!StringUtils.isBlank(dto.getCode()) && !dto.getCode().equals(scriptCode)) {
+                throw new BusinessApiException("The code and the canonical script class name must be identical");
+            }
+
+            // check script existed full class name in class path
+            if (ScriptUtils.isOverwritesJavaClass(scriptCode)) {
+                throw new InvalidParameterException("The class with such name already exists");
+            }
+
+            dto.setCode(scriptCode);
         }
-
-        handleMissingParameters();
-
-        String scriptCode = ScriptUtils.getFullClassname(dto.getScript());
-        if (!StringUtils.isBlank(dto.getCode()) && !dto.getCode().equals(scriptCode)) {
-            throw new BusinessApiException("The code and the canonical script class name must be identical");
-        }
-
-        // check script existed full class name in class path
-        if (ScriptUtils.isOverwritesJavaClass(scriptCode)) {
-            throw new InvalidParameterException("The class with such name already exists");
-        }
-
-        dto.setCode(scriptCode);
     }
 
     /**
@@ -256,8 +276,8 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
         scriptInstance.setCode(dto.getCode());
         scriptInstance.setDescription(dto.getDescription());
         scriptInstance.setScript(dto.getScript());
-        
-        if (dto.getReuse()!=null) {
+
+        if (dto.getReuse() != null) {
             scriptInstance.setReuse(dto.getReuse());
         }
 

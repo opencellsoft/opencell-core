@@ -2721,6 +2721,10 @@ END $$;]]>
         <addForeignKeyConstraint baseColumnNames="rating_script_id" baseTableName="cat_charge_template" constraintName="fk_charge_template_rating_script_id" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
     </changeSet>
+    
+    <changeSet id="#5038_2020-03-06" author="AndriusKarpavicius">
+        <dropNotNullConstraint tableName="meveo_script_instance" columnName="script"/>    
+    </changeSet>
 
 </databaseChangeLog>
 

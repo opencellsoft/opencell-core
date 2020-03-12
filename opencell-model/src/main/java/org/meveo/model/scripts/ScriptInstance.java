@@ -60,8 +60,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 @Cacheable
 @ExportIdentifier({ "code" })
 @Table(name = "meveo_script_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "meveo_script_instance_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "meveo_script_instance_seq"), })
 @NamedQueries({ @NamedQuery(name = "CustomScript.countScriptInstanceOnError", query = "select count (*) from ScriptInstance o where o.error=:isError "),
         @NamedQuery(name = "CustomScript.getScriptInstanceOnError", query = "from ScriptInstance o where o.error=:isError "),
         @NamedQuery(name = "CustomScript.getScriptInstanceByTypeActive", query = "from ScriptInstance o where o.sourceTypeEnum=:sourceTypeEnum and o.disabled = false") })
@@ -72,8 +71,7 @@ public class ScriptInstance extends EnableBusinessEntity {
     /**
      * Script contents/source
      */
-    @Column(name = "script", nullable = false, columnDefinition = "TEXT")
-    @NotNull
+    @Column(name = "script", columnDefinition = "TEXT")
     @XStreamConverter(XStreamCDATAConverter.class)
     protected String script;
 

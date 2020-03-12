@@ -20398,10 +20398,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-      <ws:applyOneShotChargeInstance>       
+      <ws:applyOneShotChargeInstance>
          <applyOneShotChargeInstance>
 		  <oneShotCharge>${#Project#entityPrefix}_${#TestSuite#index}_OS_OTHER</oneShotCharge>
-		  <subscription>${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB2</subscription>		  
+		  <subscription>${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB2</subscription>
 		  <operationDate>2017-10-15</operationDate>
 		  <quantity>4</quantity>
 		  <description>OneShot Charge</description>
@@ -20464,9 +20464,33 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="SOAP Response" id="492ddc7e-7b82-4e4e-b7fb-611a44c1adc4"/>
             <con:assertion type="XPath Match" id="b33ab00d-0765-4df5-9152-67e797a7e8f1" name="XPath Match 2">
               <con:configuration>
-                <path>//walletOperations[1]/amountWithoutTax</path>
-                <content>20.000000000000</content>
-                <allowWildcards>false</allowWildcards>
+                <path>//walletOperations[@code="${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB"]</path>
+                <content><![CDATA[<walletOperations code="${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB" description="${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <userAccount>UA_${#Project#entityPrefix}_${#TestSuite#index}_OS_CUST1</userAccount>
+  <walletTemplate>PRINCIPAL</walletTemplate>
+  <seller>SELLER_FR</seller>
+  <chargeInstance>${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB</chargeInstance>
+  <chargeInstanceId>6</chargeInstanceId>
+  <currency>USD</currency>
+  <status>OPEN</status>
+  <updated>*</updated>
+  <ratingUnitDescription>1</ratingUnitDescription>
+  <taxCode>TAX_05</taxCode>
+  <taxPercent>5.000000000000</taxPercent>
+  <unitAmountWithoutTax>10.000000000000</unitAmountWithoutTax>
+  <unitAmountWithTax>10.500000000000</unitAmountWithTax>
+  <unitAmountTax>0.500000000000</unitAmountTax>
+  <quantity>2.000000000000</quantity>
+  <amountWithoutTax>20.000000000000</amountWithoutTax>
+  <amountWithTax>21.000000000000</amountWithTax>
+  <amountTax>1.000000000000</amountTax>
+  <operationDate>2017-10-15T13:00:00${#Project#timezone}</operationDate>
+  <subscriptionDate>2017-10-15T13:00:00${#Project#timezone}</subscriptionDate>
+  <offerCode>${#Project#entityPrefix}_${#TestSuite#index}_OS_OFFER1</offerCode>
+  <walletId>1</walletId>
+  <taxClassCode>${#Project#entityPrefix}_${#TestSuite#index}_RATE_taxClass</taxClassCode>
+</walletOperations>]]></content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -20590,6 +20614,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <key>subscription.code</key>\r
                   <value xsi:type="xs:string">${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB2</value>\r
                </entry>\r
+               <entry>
+                  <key>chargeInstance.code</key>
+                  <value xsi:type="xs:string">${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB</value>
+               </entry>
             </filters>\r
             <limit>50</limit>\r
             <sortBy>id</sortBy>\r
@@ -20638,7 +20666,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="9df8624e-44e7-4ef6-82f1-5a42d8e23e78" name="XPath Match 22">
               <con:configuration>
                 <path>count(//walletOperations)</path>
-                <content>4</content>
+                <content>2</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -20653,18 +20681,90 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="74ee67c9-ca43-461b-ab46-19850f66a18d" name="XPath Match 3">
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find wallet operations - subscription 2 after termination OSO" id="8d569b4e-4bd1-4144-8d11-3e87604d902b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>WalletWsSoapBinding</con:interface>
+          <con:operation>findOperations</con:operation>
+          <con:request name="Find wallet operations - subscription 2 after termination OSO" id="3fe53558-4625-412b-a28a-27ae41a7b42d">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/WalletWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findOperations>\r
+         <pagingAndFiltering>\r
+            <filters>\r
+               <entry>\r
+                  <key>subscription.code</key>\r
+                  <value xsi:type="xs:string">${#Project#entityPrefix}_${#TestSuite#index}_OS_SUB2</value>\r
+               </entry>\r
+               <entry>
+                  <key>chargeInstance.code</key>
+                  <value xsi:type="xs:string">${#Project#entityPrefix}_${#TestSuite#index}_OS_OTHER</value>
+               </entry>
+            </filters>\r
+            <limit>50</limit>\r
+            <sortBy>id</sortBy>\r
+            <sortOrder>ASCENDING</sortOrder>\r
+         </pagingAndFiltering>\r
+      </ws:findOperations>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="492ddc7e-7b82-4e4e-b7fb-611a44c1adc4"/>
+            <con:assertion type="XPath Match" id="b33ab00d-0765-4df5-9152-67e797a7e8f1" name="XPath Match 2">
               <con:configuration>
-                <path>//walletOperations[3]/quantity</path>
-                <content>-2.000000000000</content>
+                <path>count(//walletOperations)</path>
+                <content>2</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="74ee67c9-ca43-461b-ab46-19850f66a18d" name="XPath Match 7">
+            <con:assertion type="XPath Match" id="9e2deaa7-9c17-4d79-8df0-7c200071357a" name="XPath Match 5">
               <con:configuration>
-                <path>//walletOperations[4]/quantity</path>
+                <path>//walletOperations[1]/amountWithoutTax</path>
+                <content>140.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="6bff7b3c-8703-418c-b32a-80008efb2863" name="XPath Match 3">
+              <con:configuration>
+                <path>//walletOperations[2]/amountWithoutTax</path>
+                <content>-140.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="9df8624e-44e7-4ef6-82f1-5a42d8e23e78" name="XPath Match 22">
+              <con:configuration>
+                <path>count(//walletOperations)</path>
+                <content>2</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="74ee67c9-ca43-461b-ab46-19850f66a18d" name="XPath Match">
+              <con:configuration>
+                <path>//walletOperations[2]/quantity</path>
                 <content>-4.000000000000</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -30079,7 +30179,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000007</invoiceNumber>
+         	<invoiceNumber>COM_000000006</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -31140,7 +31240,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>29</con:value>
+        <con:value>27</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -34204,7 +34304,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>18</con:value>
+        <con:value>16</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39677,7 +39777,7 @@ assert dateFoundStr == nextMonth</scriptText>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000008</invoiceNumber>
+         	<invoiceNumber>COM_000000007</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -39727,7 +39827,7 @@ assert dateFoundStr == nextMonth</scriptText>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000009</invoiceNumber>
+         	<invoiceNumber>COM_000000008</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -39784,7 +39884,7 @@ assert dateFoundStr == nextMonth</scriptText>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000010</invoiceNumber>
+         	<invoiceNumber>COM_000000009</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -41042,7 +41142,7 @@ assert dateFoundStr == nextMonth</scriptText>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>45</con:value>
+        <con:value>43</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -50823,7 +50923,7 @@ assert dateFoundStr == nextMonth</scriptText>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>224</con:value>
+        <con:value>222</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -63731,7 +63831,7 @@ public class DDRequestBuilderDemo extends DDRequestBuilderScript {
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>357</con:value>
+        <con:value>355</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -64624,7 +64724,7 @@ public class DDRequestBuilderDemo extends DDRequestBuilderScript {
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>377</con:value>
+        <con:value>375</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
