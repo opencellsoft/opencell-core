@@ -18653,9 +18653,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCustomerCategory>
-         
          <customerCategory code="PARTNER" description="Partner">
             <exoneratedFromTaxes>false</exoneratedFromTaxes>
+            <taxCategoryCode>Tax category</taxCategoryCode>
          </customerCategory>
       </ws:createOrUpdateCustomerCategory>
    </soapenv:Body>
@@ -18724,6 +18724,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          
          <customerCategory code="INDIVIDUAL" description="Individual">
             <exoneratedFromTaxes>false</exoneratedFromTaxes>
+            <taxCategoryCode>Tax category</taxCategoryCode>
          </customerCategory>
       </ws:createOrUpdateCustomerCategory>
    </soapenv:Body>
@@ -18758,6 +18759,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          
          <customerCategory code="GOVERNMENT" description="Governement">
             <exoneratedFromTaxes>true</exoneratedFromTaxes>
+            <taxCategoryCode>Tax category</taxCategoryCode>
          </customerCategory>
       </ws:createOrUpdateCustomerCategory>
    </soapenv:Body>
@@ -18792,6 +18794,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          
          <customerCategory code="COMPANY" description="Company">
             <exoneratedFromTaxes>false</exoneratedFromTaxes>
+            <taxCategoryCode>Tax category</taxCategoryCode>
          </customerCategory>
       </ws:createOrUpdateCustomerCategory>
    </soapenv:Body>
@@ -18826,6 +18829,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          
          <customerCategory code="SOHO" description="Small Office - Home Office">
             <exoneratedFromTaxes>false</exoneratedFromTaxes>
+            <taxCategoryCode>Tax category</taxCategoryCode>
          </customerCategory>
       </ws:createOrUpdateCustomerCategory>
    </soapenv:Body>
@@ -44621,11 +44625,11 @@ public class ForgotPassword extends ModuleScript{
       <con:properties>
         <con:property>
           <con:name>unduePaymentId</con:name>
-          <con:value>12</con:value>
+          <con:value>6</con:value>
         </con:property>
         <con:property>
           <con:name>undueRefundId</con:name>
-          <con:value>13</con:value>
+          <con:value>7</con:value>
         </con:property>
       </con:properties>
     </con:testCase>
@@ -51322,7 +51326,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoice>
-      	<invoiceNumber/>
+      	<invoiceNumber>000000001</invoiceNumber>
       </ws:findXMLInvoice>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -51364,7 +51368,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findPdfInvoice>
-      	<invoiceNumber/>
+      	<invoiceNumber>000000001</invoiceNumber>
 	 </ws:findPdfInvoice>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -61827,7 +61831,7 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>mainOfferId</con:name>
-      <con:value>28</con:value>
+      <con:value>5</con:value>
     </con:property>
     <con:property>
       <con:name>templateCode</con:name>
@@ -61839,11 +61843,11 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>partnerOfferId</con:name>
-      <con:value>27</con:value>
+      <con:value>4</con:value>
     </con:property>
     <con:property>
       <con:name>recOfferId</con:name>
-      <con:value>29</con:value>
+      <con:value>6</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>
