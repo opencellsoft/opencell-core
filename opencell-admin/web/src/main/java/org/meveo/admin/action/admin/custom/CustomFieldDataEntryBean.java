@@ -1274,7 +1274,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             List<Object> listValue = new ArrayList<>();
             if (CustomFieldTypeEnum.CHECKBOX_LIST.name().equalsIgnoreCase(cft.getFieldType().name())) {
-                listValue.addAll(customFieldValue.getListValue());
+            	if(customFieldValue != null && customFieldValue.getListValue() != null) {
+            		listValue.addAll(customFieldValue.getListValue());
+            	}
             } else {
             for (Map<String, Object> listItem : customFieldValue.getMapValuesForGUI()) {
                 if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {

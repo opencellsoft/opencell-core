@@ -17,42 +17,29 @@
  */
 package org.meveo.model.scripts;
 
+/**
+ * Script type
+ * 
+ * @author Andrius Karpavicius
+ */
 public enum ScriptSourceTypeEnum {
-    JAVA(1, "scriptSourceTypeEnum.JAVA");
-    // GROOVY(2, "scriptSourceTypeEnum.GROOVY"),
-    // JAVA_SCRIPT(3, "scriptSourceTypeEnum.JAVA_SCRIPT"),
-    // BEAN_SHELL(4, "scriptSourceTypeEnum.BEAN_SHELL"),
-    // SQL(5, "scriptSourceTypeEnum.SQL"),
-    // PERL(6, "scriptSourceTypeEnum.PERL");
 
-    private Integer id;
-    private String label;
+    /**
+     * Java source code
+     */
+    JAVA,
 
-    private ScriptSourceTypeEnum(Integer id, String label) {
-        this.id = id;
-        this.label = label;
-    }
+    /**
+     * Java class included in a JAR. Can be stateless or statefull bean
+     */
+    JAVA_CLASS;
+    // GROOVY,
+    // JAVA_SCRIPT,
+    // BEAN_SHELL,
+    // SQL,
+    // PERL;
 
     public String getLabel() {
-        return label;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public static ScriptSourceTypeEnum getValue(Integer id) {
-        if (id != null) {
-            for (ScriptSourceTypeEnum status : values()) {
-                if (id.equals(status.getId())) {
-                    return status;
-                }
-            }
-        }
-        return null;
-    }
-
-    public String toString() {
-        return label.toString();
+        return this.getClass().getSimpleName() + "." + this.name();
     }
 }

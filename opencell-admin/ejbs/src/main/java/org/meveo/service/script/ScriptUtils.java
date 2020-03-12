@@ -33,12 +33,30 @@ import org.meveo.commons.utils.StringUtils;
  *
  */
 public abstract class ScriptUtils {
-	
-	/**
+
+    /**
+     * Check that the class implements ScriptInterface interface
+     * 
+     * @param fullClassName Full class name
+     * @return True if class implements ScriptInterface interface
+     */
+    @SuppressWarnings("rawtypes")
+    public static boolean isScriptInterfaceClass(String fullClassName) {
+        try {
+            Class classDefinition = Class.forName(fullClassName);
+
+            return ScriptInterface.class.isAssignableFrom(classDefinition);
+
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    /**
      * Check full class name is existed class path or not.
      * 
-     * @param fullClassName full class name
-     * @return true i class is overridden
+     * @param fullClassName Full class name
+     * @return True if class is overridden
      */
     public static boolean isOverwritesJavaClass(String fullClassName) {
         try {
@@ -48,7 +66,7 @@ public abstract class ScriptUtils {
             return false;
         }
     }
-    
+
     /**
      * Find the package name in a source java text.
      * 
@@ -84,7 +102,7 @@ public abstract class ScriptUtils {
         String className = getClassName(script);
         return (packageName != null ? packageName.trim() + "." : "") + className;
     }
-    
+
     /**
      * Parse parameters encoded in URL like style param=value&amp;param=value.
      * 

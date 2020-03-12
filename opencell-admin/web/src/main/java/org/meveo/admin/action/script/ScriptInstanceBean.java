@@ -33,6 +33,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceCategory;
+import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
@@ -160,18 +161,22 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        String code = ScriptUtils.getFullClassname(entity.getScript());
+        if (entity.getSourceTypeEnum() == ScriptSourceTypeEnum.JAVA) {
 
-        // check script existed full class name in class path
-        if (ScriptUtils.isOverwritesJavaClass(code)) {
-            messages.error(new BundleKey("messages", "message.scriptInstance.classInvalid"), code);
-            return null;
+            String code = ScriptUtils.getFullClassname(entity.getScript());
+
+            // check script existed full class name in class path
+            if (ScriptUtils.isOverwritesJavaClass(code)) {
+                messages.error(new BundleKey("messages", "message.scriptInstance.classInvalid"), code);
+                return null;
+            }
+            entity.setCode(code);
         }
 
         // check duplicate script
-        ScriptInstance scriptDuplicate = scriptInstanceService.findByCode(code);
+        ScriptInstance scriptDuplicate = scriptInstanceService.findByCode(entity.getCode());
         if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
-            messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), code);
+            messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), entity.getCode());
             return null;
         }
 
