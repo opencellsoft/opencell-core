@@ -1344,7 +1344,7 @@
 
     <changeSet id="#4372_20190723" author="RedaDebbache">
     	<addColumn tableName="cust_cet">
-        	<column name="unique_constraint_name" type="varchar(100)" defaultValue="0"></column>
+        	<column name="unique_constraint_name" type="varchar(120)" defaultValue="0"></column>
         </addColumn>
     </changeSet>
 
@@ -2688,6 +2688,13 @@ END $$;]]>
         <dropTable tableName="billing_inv_sub_cat_country"/>
 
     </changeSet>
+    <changeSet id="#4201_20200225" author="khalidHORRI">
+        <addColumn tableName="billing_subscrip_termin_reason">
+            <column name="reimburse_oneshots" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
     <changeSet id="#4071_20200227" author="khalidHORRI">
         <addColumn tableName="cat_charge_template">
             <column name="drop_zero_wo" type="${type.boolean}" defaultValueNumeric="0"/>
@@ -2719,6 +2726,10 @@ END $$;]]>
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="rating_script_id" baseTableName="cat_charge_template" constraintName="fk_charge_template_rating_script_id" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+    </changeSet>
+
+    <changeSet id="#5038_2020-03-06" author="AndriusKarpavicius">
+        <dropNotNullConstraint tableName="meveo_script_instance" columnName="script"/>
     </changeSet>
 
 </databaseChangeLog>

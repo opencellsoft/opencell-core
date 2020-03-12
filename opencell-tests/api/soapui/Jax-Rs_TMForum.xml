@@ -21822,7 +21822,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>2442d2f5-c1a6-493a-aaf7-85c1694d3f41</con:value>
+              <con:value>5ac20add-af43-4f21-8890-bced1401ef17</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -26008,7 +26008,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="e4109034-b04a-41b1-ba04-d08f9f12a44c" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="e7abf757-1227-4015-8713-3d659acd8967" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -27172,7 +27172,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="ad884e7e-d2a9-4160-986a-d6db0574c1db" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="2571bb7c-4bb6-4bef-b9b0-03215a581ccf" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -28242,7 +28242,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="6bb0de6d-1709-4864-86eb-ad9c9b765c67" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="f4422150-4ecc-4af8-96e7-42add927af6c" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -28444,7 +28444,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>serviceId1</con:name>
-              <con:value>48</con:value>
+              <con:value>54</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -31006,7 +31006,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>53</con:value>
+        <con:value>55</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -31371,7 +31371,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000016</invoiceNumber>
+         	<invoiceNumber>SellFact_000000010</invoiceNumber>
          	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
@@ -31739,7 +31739,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000017</invoiceNumber>
+         	<invoiceNumber>SellFact_000000011</invoiceNumber>
          	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
@@ -31756,7 +31756,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="c11d6c95-7a14-4c1e-84fb-cef6cefc651d" name="XPath Match">
               <con:configuration>
                 <path>count(//ratedTransaction)</path>
-                <content>4</content>
+                <content>6</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -31943,7 +31943,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <targetCode>5e3148e1-4818-41a0-985b-bc42a7454ba7</targetCode>
+            <targetCode>2fd9deb4-054a-45dc-a7d5-5aec9d29edf2</targetCode>
             <targetType>ORDER</targetType>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
@@ -32105,7 +32105,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>83374cc3-0884-411d-9dc5-7ec3a664423f</targetCode>
+            <targetCode>eebc29c9-7399-41bc-99d4-f29e344e7899</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -32175,7 +32175,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000018</invoiceNumber>
+         	<invoiceNumber>SellFact_000000012</invoiceNumber>
          	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
@@ -32320,7 +32320,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>8020663c-5d5b-4072-92fd-44356a349fab</targetCode>
+            <targetCode>9b6e5670-2369-412c-a1d4-69cdb2b0299b</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -32390,7 +32390,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000019</invoiceNumber>
+         	<invoiceNumber>SellFact_000000013</invoiceNumber>
          	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
@@ -32407,7 +32407,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="264cc354-6f1c-4e17-a02e-5b0bfae9dd97" name="XPath Match">
               <con:configuration>
                 <path>count(//ratedTransaction)</path>
-                <content>1</content>
+                <content>3</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -32524,7 +32524,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:generateInvoiceData>
          <generateInvoiceRequest>
-            <targetCode>10bda157-a89a-42f2-9a21-211791e236ee</targetCode>
+            <targetCode>491f38e4-4721-4cc7-af9a-697e6a051792</targetCode>
             <targetType>ORDER</targetType>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
          </generateInvoiceRequest>
@@ -32594,7 +32594,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000020</invoiceNumber>
+         	<invoiceNumber>SellFact_000000014</invoiceNumber>
          	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
@@ -32611,7 +32611,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="46049da8-6791-4e75-b3e9-74423a1c5689" name="XPath Match">
               <con:configuration>
                 <path>count(//ratedTransaction)</path>
-                <content>4</content>
+                <content>6</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -32748,7 +32748,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>SellFact_000000021</invoiceNumber>
+         	<invoiceNumber>SellFact_000000015</invoiceNumber>
          	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
@@ -32814,11 +32814,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>103</con:value>
+        <con:value>105</con:value>
       </con:property>
       <con:property>
         <con:name>orderNrThatCreatedSubscription</con:name>
-        <con:value>c418e5ad-3c75-44be-8801-fe343f7fc724</con:value>
+        <con:value>fb6d80e8-246d-4442-b2e9-0262f0a22dc6</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -33552,7 +33552,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>5239b5f2-e1d4-4f94-a191-fa2177ee46ae</con:value>
+              <con:value>00aa951f-a51f-4968-9f42-7b1d994395bb</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -33855,15 +33855,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>orderId1</con:name>
-        <con:value>14346c81-353b-4f0e-9fd2-8acc488024ef</con:value>
+        <con:value>fd79b688-2133-4aa8-bf9f-83e433ebc6cc</con:value>
       </con:property>
       <con:property>
         <con:name>orderId2</con:name>
-        <con:value>c48e1452-ed02-40f6-8dfa-c05b77774277</con:value>
+        <con:value>23ef107c-5f3a-4709-9f53-8737ac761926</con:value>
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>79</con:value>
+        <con:value>81</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

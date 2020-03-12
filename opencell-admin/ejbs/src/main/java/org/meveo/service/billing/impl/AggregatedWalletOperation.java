@@ -1,11 +1,31 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.tax.TaxClass;
 
 /**
  * Aggregated wallet operation.
@@ -34,21 +54,6 @@ public class AggregatedWalletOperation {
 	 * Amount tax
 	 */
 	private BigDecimal amountTax = BigDecimal.ZERO;
-
-	/**
-	 * Unit amount with tax
-	 */
-	private BigDecimal unitAmountWithTax = BigDecimal.ZERO;
-
-	/**
-	 * Unit amount without tax
-	 */
-	private BigDecimal unitAmountWithoutTax = BigDecimal.ZERO;
-
-	/**
-	 * Unit amount tax
-	 */
-	private BigDecimal unitAmountTax = BigDecimal.ZERO;
 
 	/**
 	 * Quantity
@@ -109,17 +114,24 @@ public class AggregatedWalletOperation {
 	 * The order number.
 	 */
 	private String orderNumber;
+	
+	/**
+	 * Tax class
+	 */
+	private TaxClass taxClass;
 
 	/**
 	 * List of wallet operations.
 	 */
-	private List<WalletOperation> walletOperations;
+	private List<Long> walletOperationsIds;
 
-	public AggregatedWalletOperation(Long sellerId, Integer year, Integer month, Integer day, Tax tax,
+	public AggregatedWalletOperation(String walletOpsIds, Long sellerId, Integer year, Integer month, Integer day, Tax tax,
 			InvoiceSubCategory invoiceSubCategory, Object id, BigDecimal amountWithTax, BigDecimal amountWithoutTax,
-			BigDecimal amountTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountWithoutTax,
-			BigDecimal unitAmountTax, BigDecimal quantity, String orderNumber, String parameter1, String parameter2, String parameter3,
+			BigDecimal amountTax, TaxClass taxClass, BigDecimal quantity, String orderNumber, String parameter1, String parameter2, String parameter3,
 			String parameterExtra) {
+		String[] stringIds = walletOpsIds.split(",");
+		List<Long> ids = Arrays.asList(stringIds).stream().map(x-> new Long(x)).collect(Collectors.toList());
+		this.walletOperationsIds=ids;
 		this.sellerId = sellerId;
 		this.year = year;
 		this.month = month;
@@ -130,10 +142,8 @@ public class AggregatedWalletOperation {
 		this.amountWithTax = amountWithTax;
 		this.amountWithoutTax = amountWithoutTax;
 		this.amountTax = amountTax;
-		this.unitAmountWithTax = unitAmountWithTax;
-		this.unitAmountWithoutTax = unitAmountWithoutTax;
-		this.unitAmountTax = unitAmountTax;
 		this.quantity = quantity;
+		this.taxClass = taxClass;
 		this.orderNumber = orderNumber;
 		this.parameter1 = parameter1;
 		this.parameter2 = parameter2;
@@ -185,22 +195,6 @@ public class AggregatedWalletOperation {
 		this.amountTax = amountTax;
 	}
 
-	public BigDecimal getUnitAmountWithTax() {
-		return unitAmountWithTax;
-	}
-
-	public void setUnitAmountWithTax(BigDecimal unitAmountWithTax) {
-		this.unitAmountWithTax = unitAmountWithTax;
-	}
-
-	public BigDecimal getUnitAmountTax() {
-		return unitAmountTax;
-	}
-
-	public void setUnitAmountTax(BigDecimal unitAmountTax) {
-		this.unitAmountTax = unitAmountTax;
-	}
-
 	public BigDecimal getQuantity() {
 		return quantity;
 	}
@@ -215,14 +209,6 @@ public class AggregatedWalletOperation {
 
 	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
 		this.amountWithoutTax = amountWithoutTax;
-	}
-
-	public BigDecimal getUnitAmountWithoutTax() {
-		return unitAmountWithoutTax;
-	}
-
-	public void setUnitAmountWithoutTax(BigDecimal unitAmountWithoutTax) {
-		this.unitAmountWithoutTax = unitAmountWithoutTax;
 	}
 
 	public Tax getTax() {
@@ -273,14 +259,6 @@ public class AggregatedWalletOperation {
 		this.sellerId = sellerId;
 	}
 
-	public List<WalletOperation> getWalletOperations() {
-		return walletOperations;
-	}
-
-	public void setWalletOperations(List<WalletOperation> walletOperations) {
-		this.walletOperations = walletOperations;
-	}
-
 	public String getParameter1() {
 		return parameter1;
 	}
@@ -319,6 +297,34 @@ public class AggregatedWalletOperation {
 
 	public void setOrderNumber(String orderNumber) {
 		this.orderNumber = orderNumber;
+	}
+
+	/**
+	 * @return the walletOperationsIds
+	 */
+	public List<Long> getWalletOperationsIds() {
+		return walletOperationsIds;
+	}
+
+	/**
+	 * @param walletOperationsIds the walletOperationsIds to set
+	 */
+	public void setWalletOperationsIds(List<Long> walletOperationsIds) {
+		this.walletOperationsIds = walletOperationsIds;
+	}
+
+	/**
+	 * @return the taxClass
+	 */
+	public TaxClass getTaxClass() {
+		return taxClass;
+	}
+
+	/**
+	 * @param taxClass the taxClass to set
+	 */
+	public void setTaxClass(TaxClass taxClass) {
+		this.taxClass = taxClass;
 	}
 
 }

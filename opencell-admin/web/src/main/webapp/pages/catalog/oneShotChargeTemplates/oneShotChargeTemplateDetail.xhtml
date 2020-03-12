@@ -34,6 +34,12 @@
             </p:breadCrumb>
         </h:form>
 
+        <hftl:entityPopup id="scriptPopup" header="#{messages['scriptInstance.popup.header']}" backingBean="#{scriptInstanceBean}"
+            selection="#{oneShotChargeTemplateBean.entity.ratingScript}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
+            eventBackingBean="#{oneShotChargeTemplateBean}" updateField=":formId:tabView:ratingScriptSelectId :formId:tabView:ratingScriptSelectId_text">
+        </hftl:entityPopup>
+
         <hftl:formPanel ajaxSubmit="true" submitPartialProcess=":formId:tabView" label="#{messages['oneShotChargeTemplate.chargeTemplatePanel']}"
             backingBean="#{oneShotChargeTemplateBean}" columns="2" showEnableDisableButton="true"
             updateConfirmationMessage="#{oneShotChargeTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}">
@@ -59,12 +65,13 @@
                     <hftl:formField label="#{messages['chargeTemplate.dropZeroWo']}" field="dropZeroWo"/>
                     <hftl:formField label="#{messages['oneShotChargeTemplate.immediateInvoicing']}" field="immediateInvoicing" />
 
-                    <hftl:formField label="#{messages['chargeTemplate.taxClass']}" field="taxClass" valueLabelField="descriptionOrCode" listBean="#{taxClassBean}" newLine="true" />
+                    <hftl:formField id="ratingScriptSelectId" label="#{messages['chargeTemplate.ratingScript']}" field="ratingScript" valueLabelField="code" required="false"
+                        popup="true" popupId="scriptPopup" showResetButton="true" newLine="true" />
+                    <hftl:formField label="#{messages['chargeTemplate.taxClass']}" field="taxClass" valueLabelField="descriptionOrCode" listBean="#{taxClassBean}" />
                     <hftl:formField label="#{messages['chargeTemplate.taxClassEl']}" field="taxClassEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />
                     <hftl:formField label="#{messages['chargeTemplate.taxClassElSpark']}" field="taxClassElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="25"
                         rendered="#{paramBean.sparkEnabled}" />
 
-                    <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
 
                     <hftl:formField label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates" listType="pickUpList" valueLabelField="code"
                         dualListModel="#{oneShotChargeTemplateBean.edrTemplatesModel}" newLine="true" />
@@ -72,6 +79,9 @@
                     <hftl:formField label="#{messages['recurringChargeTemplate.filterExpression']}" field="filterExpression" textArea="true" rows="1" maxlength="2000" />
                     <hftl:formField label="#{messages['usageChargeTemplate.filterExpressionSpark']}" field="filterExpressionSpark" textArea="true" rows="1" maxlength="2000"
                         rendered="#{paramBean.sparkEnabled}" />
+
+                    <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
+
                 </p:tab>
 
                 <p:tab title="#{messages['pricePlanMatrix.panel']}" rendered="#{chargeTemplateBean.objectId!=null}">

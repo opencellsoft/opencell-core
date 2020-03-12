@@ -1,123 +1,85 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-	<ui:define name="metadata">
-		 <f:metadata>
+    <ui:define name="metadata">
+        <f:metadata>
             <f:viewParam name="objectId" value="#{productChargeTemplateBean.objectId}" />
             <f:viewParam name="objectId" value="#{chargeTemplateBean.objectId}" />
             <f:viewParam name="tab" value="#{productChargeTemplateBean.activeTab}" />
         </f:metadata>
-	</ui:define>
+    </ui:define>
 
-	<ui:define name="body">
-		<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-				<p:menuitem outcome="productChargeTemplates"
-					value="#{messages['menu.productChargeTemplates']}" />
-				<p:menuitem value="#{messages['commons.new']} #{messages['productChargeTemplate']}"
-					disabled="true" rendered="#{productChargeTemplateBean.entity.transient}" />
-				<p:menuitem
-					value="#{messages['productChargeTemplate']} #{messages['commons.configuration']} - #{productChargeTemplateBean.entity.code}"
-					disabled="true" rendered="#{!productChargeTemplateBean.entity.transient}" />
-			</p:breadCrumb>
-		</h:form>
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+                <p:menuitem outcome="productChargeTemplates" value="#{messages['menu.productChargeTemplates']}" />
+                <p:menuitem value="#{messages['commons.new']} #{messages['productChargeTemplate']}" disabled="true" rendered="#{productChargeTemplateBean.entity.transient}" />
+                <p:menuitem value="#{messages['productChargeTemplate']} #{messages['commons.configuration']} - #{productChargeTemplateBean.entity.code}" disabled="true"
+                    rendered="#{!productChargeTemplateBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
 
-		<hftl:formPanel ajaxSubmit="true"
-			submitPartialProcess=":formId:tabView"
-			label="#{messages['menu.productChargeTemplates']}"
-			backingBean="#{productChargeTemplateBean}"
-			showEnableDisableButton="true">
+        <hftl:entityPopup id="scriptPopup" header="#{messages['scriptInstance.popup.header']}" backingBean="#{scriptInstanceBean}"
+            selection="#{productChargeTemplateBean.entity.ratingScript}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
+            eventBackingBean="#{productChargeTemplateBean}" updateField=":formId:tabView:ratingScriptSelectId :formId:tabView:ratingScriptSelectId_text">
+        </hftl:entityPopup>
 
-			<p:tabView id="tabView"
-				activeIndex="#{productChargeTemplateBean.activeTab}">
+        <hftl:formPanel ajaxSubmit="true" submitPartialProcess=":formId:tabView" label="#{messages['menu.productChargeTemplates']}" backingBean="#{productChargeTemplateBean}"
+            showEnableDisableButton="true">
 
-				<p:tab title="#{messages['customer.tab.information']}">
-					<hftl:formField label="#{messages['chargeTemplate.code']}"
-						field="code" required="true" validateUnique="true" />
-					<hftl:formField label="#{messages['oneShotChargeTemplate.type']}"
-						field="oneShotChargeTemplateType" required="true" />
-					<hftl:formField
-						label="#{messages['chargeTemplate.inputUnitDescription']}"
-						field="inputUnitDescription" />
-					<hftl:formField
-						label="#{messages['chargeTemplate.ratingUnitDescription']}"
-						field="ratingUnitDescription" />
-					<hftl:formField
-						label="#{messages['chargeTemplate.unitMultiplicator']}"
-						field="unitMultiplicator" converter="bigDecimal12DigitsConverter" />
-					<hftl:formField label="#{messages['chargeTemplate.unitNbDecimal']}"
-						field="unitNbDecimal" />
-					<hftl:formField label="#{messages['chargeTemplate.roundingMode']}"
-						field="roundingMode" />
+            <p:tabView id="tabView" activeIndex="#{productChargeTemplateBean.activeTab}">
 
+                <p:tab title="#{messages['customer.tab.information']}">
+                    <hftl:formField label="#{messages['chargeTemplate.code']}" field="code" required="true" validateUnique="true" />
+                    <hftl:formLanguageFields field="description" componentWidth="50" newLine="false" />
+                    <hftl:formField id="invoiceSubCategorySelectedId" label="#{messages['charge.subCategory']}" field="invoiceSubCategory" valueLabelField="descriptionOrCode"
+                        required="true" listBean="#{invoiceSubCategoryBean}" />
 
-					<hftl:formField id="invoiceSubCategorySelectedId"
-						label="#{messages['charge.subCategory']}"
-						field="invoiceSubCategory" valueLabelField="code" required="true"
-						listBean="#{invoiceSubCategoryBean}" />
-					<hftl:formField id="invoiceSubCategoryId"
-						label="#{messages['invoiceSubCategory.description']}"
-						field="invoiceSubCategory" valueLabelField="descriptionOrCode"
-						edit="false" />
-					<hftl:formField id="productTemplate" field="productTemplate"
-						valueLabelField="code" listBean="#{productTemplateListBean}"
-						label="#{messages['productTemplate.title']}" />
+                    <hftl:formField label="#{messages['chargeTemplate.inputUnitOfMesure']}" field="inputUnitOfMeasure" valueLabelField="symbol" listBean="#{unitOfMeasureBean}"
+                        newLine="true" />
+                    <hftl:formField label="#{messages['chargeTemplate.ratingUnitOfMesure']}" field="ratingUnitOfMeasure" valueLabelField="symbol" listBean="#{unitOfMeasureBean}" />
+                    <hftl:formField label="#{messages['chargeTemplate.unitMultiplicator']}" field="unitMultiplicator" converter="bigDecimal12DigitsConverter" />
+                    <hftl:formField label="#{messages['chargeTemplate.unitNbDecimal']}" field="unitNbDecimal" />
+                    <hftl:formField label="#{messages['chargeTemplate.inputUnitOfMesureEL']}" field="inputUnitEL" textArea="true" rows="1" maxlength="2000" componentWidth="25" />
+                    <hftl:formField label="#{messages['chargeTemplate.ratingUnitOfMesureEL']}" field="outputUnitEL" textArea="true" rows="1" maxlength="2000" componentWidth="25" />
+                    <hftl:formField label="#{messages['chargeTemplate.roundingMode']}" field="roundingMode" />
+                    <hftl:formField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" />
 
-					<hftl:formLanguageFields field="description" />
+                    <hftl:formField id="ratingScriptSelectId" label="#{messages['chargeTemplate.ratingScript']}" field="ratingScript" valueLabelField="code" required="false"
+                        popup="true" popupId="scriptPopup" showResetButton="true" newLine="true" />
+                    <hftl:formField label="#{messages['chargeTemplate.taxClass']}" field="taxClass" valueLabelField="descriptionOrCode" listBean="#{taxClassBean}" />
+                    <hftl:formField label="#{messages['chargeTemplate.taxClassEl']}" field="taxClassEl" textArea="true" rows="1" maxlength="2000" componentWidth="25" />
+                    <hftl:formField label="#{messages['chargeTemplate.taxClassElSpark']}" field="taxClassElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="25"
+                        rendered="#{paramBean.sparkEnabled}" />
 
-					<hftl:formField
-						label="#{messages['chargeTemplate.amountEditable']}"
-						field="amountEditable" />
+                    <hftl:formField label="#{messages['productChargeTemplate.filterExpression']}" field="filterExpression" textArea="true" rows="1" maxlength="2000" />
 
-					<hftl:formField
-						label="#{messages['oneShotChargeTemplate.immediateInvoicing']}"
-						field="immediateInvoicing" />
+                    <hftl:formField label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates" listType="pickUpList" valueLabelField="code"
+                        dualListModel="#{productChargeTemplateBean.edrTemplatesDM}" newLine="true" />
 
-					<hftl:formField label="#{messages['enableEntity.disabled']}"
-						doNotShowOnNew="true" allowEdit="false" field="disabled"
-						isMessage="true" />
-						
-					<hftl:formField label="#{messages['productChargeTemplate.filterExpression']}"
-						   field="filterExpression" textArea="true" rows="1" maxlength="2000"/>
+                    <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
+                </p:tab>
 
-					<hftl:formField label="#{messages['menu.triggeredEdrTemplates']}"
-						field="edrTemplates" listType="pickUpList" valueLabelField="code"
-						dualListModel="#{productChargeTemplateBean.edrTemplatesDM}"
-						newLine="true" />
-				</p:tab>
+                <p:tab title="#{messages['pricePlanMatrix.panel']}" rendered="#{chargeTemplateBean.objectId!=null}">
+                    <p:panel>
+                        <hftl:decorateFormField fieldId="chargeCode" label="#{messages['pricePlanMatrix.eventCode']} :">
+                            <h:outputText id="chargeCode" value="#{productChargeTemplateBean.entity.code}" disabled="true" style="font-weight:bold;" />
+                        </hftl:decorateFormField>
 
-				<p:tab title="#{messages['pricePlanMatrix.panel']}"
-					rendered="#{chargeTemplateBean.objectId!=null}">
-					<p:panel>
-						<hftl:decorateFormField fieldId="chargeCode"
-							label="#{messages['pricePlanMatrix.eventCode']} :">
-							<h:outputText id="chargeCode"
-								value="#{productChargeTemplateBean.entity.code}" disabled="true"
-								style="font-weight:bold;" />
-						</hftl:decorateFormField>
+                        <hftl:decorateFormField fieldId="chargeDescription" label="#{messages['businessEntity.description']} :">
+                            <h:outputText id="chargeDescription" value="#{productChargeTemplateBean.entity.description}" disabled="true" style="font-weight:bold;" />
+                        </hftl:decorateFormField>
+                    </p:panel>
+                    <ui:include src="/pages/catalog/pricePlanMatrixes/pricePlanMatrixList.xhtml" />
+                </p:tab>
 
-						<hftl:decorateFormField fieldId="chargeDescription"
-							label="#{messages['businessEntity.description']} :">
-							<h:outputText id="chargeDescription"
-								value="#{productChargeTemplateBean.entity.description}"
-								disabled="true" style="font-weight:bold;" />
-						</hftl:decorateFormField>
-					</p:panel>
-					<ui:include
-						src="/pages/catalog/pricePlanMatrixes/pricePlanMatrixList.xhtml" />
-				</p:tab>
+                <hftl:customFields backingBean="#{productChargeTemplateBean}" messagesId=":formId:messages" />
 
-				<hftl:customFields backingBean="#{productChargeTemplateBean}"
-					messagesId=":formId:messages" />
+            </p:tabView>
 
-			</p:tabView>
+        </hftl:formPanel>
 
-		</hftl:formPanel>
-
-	</ui:define>
+    </ui:define>
 </ui:composition>
