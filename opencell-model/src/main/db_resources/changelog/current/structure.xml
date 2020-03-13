@@ -2236,5 +2236,9 @@
 		<sql>CREATE INDEX rt_adjusted_rated_tx ON ${db.schema.adapted}billing_rated_transaction (adjusted_rated_tx ASC NULLS LAST)</sql>
 		<sql>CREATE INDEX wo_rt_id ON ${db.schema.adapted}billing_wallet_operation (rated_transaction_id ASC NULLS LAST)</sql>
    </changeSet>
+   
+   <changeSet id="#5026_20200313" author="AbdelmounaimAkadid">
+    	<modifyDataType columnName="unique_constraint_name" newDataType="varchar(120)" tableName="cust_cet" />
+   </changeSet>
     
 </databaseChangeLog>
