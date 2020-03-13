@@ -474,7 +474,9 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
         if (itemClass == null) {
             //#4804 : clear list when un select all form the checkbox menu
-            listStringValue.clear();
+        	if(listStringValue != null) {
+        		listStringValue.clear();
+        	}
         } else if (itemClass == String.class) {
             listStringValue = new ArrayList<>();
             for (Object listItem : listValue) {
