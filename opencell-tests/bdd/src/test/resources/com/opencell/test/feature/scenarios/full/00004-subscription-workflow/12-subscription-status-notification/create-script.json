@@ -1,0 +1,34 @@
+<createOrUpdateScriptInstanceRequest code="org.meveo.service.script.SubscriptionStatusUpdatedScript" description="rating script">
+            <type>JAVA</type>
+            <script>
+            <![CDATA[
+            package org.meveo.service.script;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.script.Script;
+
+import java.util.Map;
+
+public class SubscriptionStatusUpdatedScript extends Script {
+
+    private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+        log.info("<<<<<<< SubscriptionStatusUpdatedScript >>>>>>>>>>");
+        Subscription subscription = (Subscription) methodContext.get("subscription");
+        SubscriptionStatusEnum previousState = (SubscriptionStatusEnum) methodContext.get("previousState");
+        SubscriptionStatusEnum currentState = (SubscriptionStatusEnum) methodContext.get("currentState");
+        log.info("subscription.getCode() : " + subscription.getCode());
+        log.info("currentState : " + currentState.name());
+        log.info("previousState : " + previousState.name());
+        subscription.setDescription("from_" + previousState + "_to_" + currentState);
+        subscriptionService.update(subscription);
+    }
+}
+           ]]>
+            </script>
+         </createOrUpdateScriptInstanceRequest>

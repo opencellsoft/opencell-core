@@ -1,0 +1,4 @@
+         <userAccount code="UA_DELAY_${#TestSuite#index}" description="UA_DELAY_${#TestSuite#index}">
+         
+            <billingAccount>BA_DELAY_${#TestSuite#index}</billingAccount>
+         </userAccount>

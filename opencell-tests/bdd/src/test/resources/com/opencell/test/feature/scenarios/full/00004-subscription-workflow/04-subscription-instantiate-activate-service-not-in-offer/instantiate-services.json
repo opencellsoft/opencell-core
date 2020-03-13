@@ -1,0 +1,9 @@
+         <instantiateServices>
+            <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_NO</subscription>
+            <servicesToInstantiate>
+               <service code="${#Project#baseEntityPrefix}_SERVICE3">
+                  <quantity>1</quantity>
+                  <subscriptionDate>2016-05-01</subscriptionDate>
+               </service>
+            </servicesToInstantiate>
+         </instantiateServices>

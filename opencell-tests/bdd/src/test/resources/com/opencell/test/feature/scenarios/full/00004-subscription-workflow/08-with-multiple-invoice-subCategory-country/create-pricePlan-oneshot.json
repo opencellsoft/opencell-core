@@ -1,0 +1,6 @@
+         <pricePlan code="${#Project#entityPrefix}_TAX_VALIDITY_OS1" description="${#Project#entityPrefix}_TAX_VALIDITY_OS1">
+            <eventCode>${#Project#entityPrefix}_TAX_VALIDITY_OS1</eventCode>
+            <amountWithoutTax>11</amountWithoutTax>
+            <amountWithTax>15</amountWithTax>
+            <priority>1</priority>
+         </pricePlan>

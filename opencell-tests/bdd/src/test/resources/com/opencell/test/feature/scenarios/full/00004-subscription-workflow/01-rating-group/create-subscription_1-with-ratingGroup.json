@@ -1,0 +1,6 @@
+<subscription code="${#Project#baseEntityPrefix}_${#TestSuite#index}_RATING_GROUP_SUB" description="${#Project#baseEntityPrefix}_${#TestSuite#index}_RATING_GROUP_SUB">
+            <userAccount>UA_${#Project#entityPrefix}_${#TestSuite#index}_RATING_GROUP</userAccount>
+            <offerTemplate>${#Project#entityPrefix}_RATING_GROUP_OFFER</offerTemplate>
+            <subscriptionDate>2018-10-13</subscriptionDate>
+            <ratingGroup>ELECTRICITY</ratingGroup>
+         </subscription>

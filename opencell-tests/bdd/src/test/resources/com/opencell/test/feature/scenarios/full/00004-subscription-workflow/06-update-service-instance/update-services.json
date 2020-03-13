@@ -1,0 +1,21 @@
+         <updateServicesRequest>
+            <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB_UPD_SERV_100</subscriptionCode>
+            <servicesToUpdate>
+               <serviceToUpdate code="${#Project#baseEntityPrefix}_SERVICE1">
+                  <endAgreementDate>2017-03-29</endAgreementDate>
+                  <customFields>
+                     <customField code="${#Project#entityPrefix}_${#TestSuite#index}_CF_SERV_UPD_100">
+                        <doubleValue>201</doubleValue>
+                     </customField>
+                  </customFields>
+               </serviceToUpdate>
+               <serviceToUpdate code="${#Project#baseEntityPrefix}_SERVICE2">
+                  <endAgreementDate>2017-03-30</endAgreementDate>
+                  <customFields>
+                     <customField code="${#Project#entityPrefix}_${#TestSuite#index}_CF_SERV_UPD_100">
+                        <doubleValue>202</doubleValue>
+                     </customField>
+                  </customFields>
+               </serviceToUpdate>
+            </servicesToUpdate>
+         </updateServicesRequest>

@@ -1,0 +1,13 @@
+<activateServices>
+            <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_INBETWEEN_2_TERMINATION</subscription>
+            <servicesToActivate>
+               <service code="${#Project#baseEntityPrefix}_SERVICE1">
+                  <quantity>1</quantity>
+                  <subscriptionDate>${#TestCase#5daysBefore}</subscriptionDate>
+               </service>
+               <service code="${#Project#baseEntityPrefix}_SERVICE2">
+                  <quantity>1</quantity>
+                  <subscriptionDate>${#TestCase#2daysBefore}</subscriptionDate>
+               </service>
+            </servicesToActivate>
+         </activateServices>

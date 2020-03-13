@@ -1,0 +1,2 @@
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB_UPD_SERV_100</subscriptionCode>
+         <serviceInstanceCode>${#Project#baseEntityPrefix}_SERVICE1</serviceInstanceCode>

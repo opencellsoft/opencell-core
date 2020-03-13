@@ -1,0 +1,19 @@
+        <notification code="${#Project#entityPrefix}_${#TestSuite#index}_SubscriptionStatusUpdatedNotification">
+          <classNameFilter>org.meveo.model.billing.Subscription</classNameFilter>
+          <eventTypeFilter>STATUS_UPDATED</eventTypeFilter>
+          <scriptInstanceCode>org.meveo.service.script.SubscriptionStatusUpdatedScript</scriptInstanceCode>
+          <scriptParams>
+               <entry>
+                  <key>subscription</key>
+                  <value>#{event.entity}</value>
+               </entry>
+               <entry>
+                  <key>previousState</key>
+                  <value>#{event.previousState}</value>
+               </entry>
+               <entry>
+                  <key>currentState</key>
+                  <value>#{event.currentState}</value>
+               </entry>
+            </scriptParams>
+        </notification>

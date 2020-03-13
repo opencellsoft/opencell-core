@@ -1,0 +1,7 @@
+         <pricePlan code="${#Project#baseEntityPrefix}_REC_SUB_AGE2" description="${#Project#baseEntityPrefix}_REC_SUB_AGE">
+            <eventCode>${#Project#baseEntityPrefix}_REC_SUB_AGE</eventCode>
+            <amountWithoutTax>5</amountWithoutTax>
+            <amountWithTax>10</amountWithTax>
+            <priority>1</priority>
+            <minSubscriptionAgeInMonth>5</minSubscriptionAgeInMonth>
+         </pricePlan>

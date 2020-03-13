@@ -1,0 +1,20 @@
+         <recurringChargeTemplate code="${#Project#baseEntityPrefix}_REC_SUB_AGE" description="${#Project#baseEntityPrefix}_REC1">
+            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+            <disabled>false</disabled>
+            <amountEditable>true</amountEditable>
+            <languageDescriptions>
+               <languageCode>FRA</languageCode>
+               <description>${#Project#baseEntityPrefix}-Subscription Age</description>
+            </languageDescriptions>
+            <calendar>MONTHLY</calendar>
+            <subscriptionProrata>true</subscriptionProrata>
+            <terminationProrata>true</terminationProrata>
+            <applyInAdvance>true</applyInAdvance>
+            <inputUnitDescription>1</inputUnitDescription>
+            <ratingUnitDescription>1</ratingUnitDescription>
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+          <durationTermInMonth>4</durationTermInMonth>
+          <!--shareLevel>1</shareLevel-->
+            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+         </recurringChargeTemplate>

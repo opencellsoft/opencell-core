@@ -1,0 +1,14 @@
+         <usageChargeTemplate code="${#Project#entityPrefix}_TAX_VALIDITY_USAGE1" description="${#Project#entityPrefix}_TAX_VALIDITY_USAGE1">
+            <invoiceSubCategory>INVOICE_SUB_CAT_COUNTRY_TAX_VALIDITY_${#TestSuite#index}</invoiceSubCategory>
+            <disabled>false</disabled>
+            <amountEditable>false</amountEditable>
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+            <filterParam1>USAGE</filterParam1>
+            <filterParam2></filterParam2>
+            <filterParam3></filterParam3>
+            <filterParam4></filterParam4>
+            <filterExpression></filterExpression>
+            <priority>1</priority>
+            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+         </usageChargeTemplate>

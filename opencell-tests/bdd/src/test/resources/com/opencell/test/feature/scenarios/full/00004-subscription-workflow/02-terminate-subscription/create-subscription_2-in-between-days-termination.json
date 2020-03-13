@@ -1,0 +1,5 @@
+<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB_INBETWEEN_2_TERMINATION">
+            <userAccount>${#Project#baseEntityPrefix}_UA_3</userAccount>
+            <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+            <subscriptionDate>${#TestCase#10daysBefore}</subscriptionDate>
+         </subscription>

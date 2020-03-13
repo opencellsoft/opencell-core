@@ -1,0 +1,6 @@
+         <pricePlan code="PP_${#Project#entityPrefix}_MULTI_TAX" description="price plan product">
+            <eventCode>${#Project#entityPrefix}_MULTI_TAX</eventCode>
+            <amountWithoutTax>100</amountWithoutTax>
+            <amountWithTax>12</amountWithTax>
+            <priority>1</priority>
+         </pricePlan>

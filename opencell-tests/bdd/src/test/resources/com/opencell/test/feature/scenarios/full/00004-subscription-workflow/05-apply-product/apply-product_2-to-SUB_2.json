@@ -1,0 +1,14 @@
+         <applyProduct>
+            <product>${#Project#baseEntityPrefix}_PRODUCT2</product>
+            <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_PROD</subscription>
+            <operationDate>2016-04-06</operationDate>
+          <quantity>1</quantity>
+          <description>${#Project#baseEntityPrefix}_Apply-OneShotChargeInstance_Description_SUB</description>
+            <amountWithoutTax>11</amountWithoutTax>
+          <amountWithTax>13</amountWithTax>
+            <customFields>
+            <customField code="${#Project#entityPrefix}_${#TestSuite#index}_CF_PROD_PRICE100">
+                <doubleValue>10</doubleValue>
+            </customField>
+          </customFields>
+         </applyProduct>

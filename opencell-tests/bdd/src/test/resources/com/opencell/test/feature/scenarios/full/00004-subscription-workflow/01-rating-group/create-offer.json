@@ -1,0 +1,11 @@
+
+         <offerTemplate code="${#Project#entityPrefix}_RATING_GROUP_OFFER" description="${#Project#entityPrefix}_${#TestSuite#index}_RATING_GROUP_OFFER">
+              <name>${#Project#entityPrefix}_${#TestSuite#index}_RATING_GROUP_OFFER</name>
+            <offerServiceTemplates>
+               <offerServiceTemplate>
+                  <mandatory>true</mandatory>
+                  <serviceTemplate code="${#Project#entityPrefix}_RATING_GROUP_SERVICE">                    
+                  </serviceTemplate>
+               </offerServiceTemplate>
+            </offerServiceTemplates>
+         </offerTemplate>

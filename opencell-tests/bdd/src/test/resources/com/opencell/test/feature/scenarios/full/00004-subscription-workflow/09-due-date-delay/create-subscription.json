@@ -1,0 +1,6 @@
+         <subscription code="DELAY_SUB_${#TestSuite#index}" description="DELAY_SUB_${#TestSuite#index}">
+            <userAccount>UA_DELAY_${#TestSuite#index}</userAccount>
+            <offerTemplate>${#Project#baseEntityPrefix}_OFFER3</offerTemplate>
+            <subscriptionDate>2017-01-07</subscriptionDate>
+            <endAgreementDate>2017-01-07</endAgreementDate>
+         </subscription>

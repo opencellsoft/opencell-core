@@ -1,0 +1,12 @@
+         <productTemplate code="${#Project#baseEntityPrefix}_PRODUCT100" description="${#Project#baseEntityPrefix}_PRODUCT2 DESC">
+            <!--Optional:-->
+            <name>${#Project#baseEntityPrefix}_PRODUCT100 NAME</name>
+            <!--Optional:-->
+            <productChargeTemplates>
+               <!--1 or more repetitions:-->
+               <productChargeTemplate code="${#Project#baseEntityPrefix}_PC100" description="">
+                  <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
+                  <disabled>FALSE</disabled>
+               </productChargeTemplate>
+            </productChargeTemplates>
+         </productTemplate>

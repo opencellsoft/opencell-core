@@ -1,0 +1,5 @@
+
+         <pricePlan code="PP_${#Project#baseEntityPrefix}_RATING_GROUP_USAGE" description="PP_${#Project#baseEntityPrefix}_RATING_GROUP_USAGE">
+            <eventCode>${#Project#baseEntityPrefix}_RATING_GROUP_USAGE</eventCode>
+            <amountWithoutTax>1</amountWithoutTax>
+         </pricePlan>

@@ -1,0 +1,12 @@
+        <applyOneShotChargeInstance>
+          <oneShotCharge>${#Project#entityPrefix}_TAX_VALIDITY_OS1</oneShotCharge>
+          <subscription>${#Project#entityPrefix}_${#TestSuite#index}_MULTI_TAX_SUB</subscription>
+          <createWallet>false</createWallet>
+          <operationDate>2017-04-10</operationDate>
+          <quantity>1</quantity>
+          <description>${#Project#baseEntityPrefix}_Apply-OneShotChargeInstance_Description</description>
+          <amountWithoutTax>11</amountWithoutTax>
+          <criteria1>criteria1</criteria1>
+          <criteria2>criteria2</criteria2>
+          <criteria3>criteria3</criteria3>
+        </applyOneShotChargeInstance>

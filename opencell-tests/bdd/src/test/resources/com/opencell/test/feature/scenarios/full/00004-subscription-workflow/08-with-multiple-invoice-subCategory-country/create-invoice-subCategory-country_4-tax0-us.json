@@ -1,0 +1,8 @@
+         <invoiceSubCategoryCountry>
+            <invoiceSubCategory>INVOICE_SUB_CAT_COUNTRY_TAX_VALIDITY_${#TestSuite#index}</invoiceSubCategory>
+            
+            <country>US</country>
+            
+            <tax>TAX_20</tax>
+            <startValidityDate>2017-04-17</startValidityDate>
+         </invoiceSubCategoryCountry>

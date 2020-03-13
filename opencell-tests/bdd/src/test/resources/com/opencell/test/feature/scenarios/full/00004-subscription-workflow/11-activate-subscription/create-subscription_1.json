@@ -1,0 +1,5 @@
+         <subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB_ACTIVATION" description="${#Project#entityPrefix}_${#TestSuite#index}_SUB_ACTIVATION">
+            <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+            <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+            <subscriptionDate>2018-10-13</subscriptionDate>
+         </subscription>

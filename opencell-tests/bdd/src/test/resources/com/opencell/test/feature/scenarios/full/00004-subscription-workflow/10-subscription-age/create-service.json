@@ -1,0 +1,8 @@
+         <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE_SUB_AGE" description="${#Project#baseEntityPrefix}_SERVICE_SUB_AGE">
+            <invoicingCalendar>MONTHLY</invoicingCalendar>
+            <serviceChargeTemplateRecurrings>
+               <serviceChargeTemplateRecurring>
+                  <code>${#Project#baseEntityPrefix}_REC_SUB_AGE</code>
+               </serviceChargeTemplateRecurring>
+            </serviceChargeTemplateRecurrings>
+         </serviceTemplate>

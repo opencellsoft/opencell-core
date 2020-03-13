@@ -1,0 +1,5 @@
+         <terminateSubscription>
+            <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB_AGE</subscriptionCode>
+            <terminationReason>TERM_REASON_1</terminationReason>
+            <terminationDate>2017-12-01</terminationDate>
+         </terminateSubscription>

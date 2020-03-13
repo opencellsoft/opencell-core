@@ -1,0 +1,13 @@
+         <activateServices>
+            <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_SUB_AOCI</subscription>
+            <servicesToActivate>
+               <service code="${#Project#baseEntityPrefix}_SERVICE1">
+                  <quantity>1</quantity>
+                  <subscriptionDate>2015-02-02</subscriptionDate>
+               </service>
+               <service code="${#Project#baseEntityPrefix}_SERVICE2">
+                  <quantity>2</quantity>
+                  <subscriptionDate>2015-04-01</subscriptionDate>
+               </service>
+            </servicesToActivate>
+         </activateServices>

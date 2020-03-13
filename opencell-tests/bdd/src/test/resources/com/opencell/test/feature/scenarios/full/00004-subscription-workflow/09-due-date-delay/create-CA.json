@@ -1,0 +1,8 @@
+         <customerAccount code="CA_DELAY_${#TestSuite#index}" description="CA_DELAY_${#TestSuite#index}">
+            
+            <customer>${#Project#baseEntityPrefix}_CUST_3</customer>
+            <currency>USD</currency>
+            <language>ENG</language>
+            <creditCategory>PRO</creditCategory>
+            <dueDateDelayEL>#{ba.customerAccount.auditable.created.date}</dueDateDelayEL>            
+         </customerAccount>

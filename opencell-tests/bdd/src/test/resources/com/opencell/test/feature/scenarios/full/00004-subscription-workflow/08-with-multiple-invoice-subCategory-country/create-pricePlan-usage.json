@@ -1,0 +1,7 @@
+         <pricePlan code="PP_${#Project#entityPrefix}_TAX_VALIDITY_OS1" description="PP_${#Project#entityPrefix}_TAX_VALIDITY_OS1">
+            <eventCode>${#Project#entityPrefix}_TAX_VALIDITY_OS1</eventCode>
+            <offerTemplate>${#Project#entityPrefix}_TAX_VALIDITY_OFFER</offerTemplate>
+            <amountWithoutTax>10</amountWithoutTax>
+            <amountWithTax>12</amountWithTax>
+            <priority>0</priority>
+         </pricePlan>

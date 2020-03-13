@@ -1,0 +1,7 @@
+         <pricePlan code="${#Project#baseEntityPrefix}_PC100_PP" description="price plan product 100">
+            <eventCode>${#Project#baseEntityPrefix}_PC100</eventCode>
+            <amountWithoutTax>5</amountWithoutTax>
+            <amountWithTax>6</amountWithTax>            
+            <priority>1</priority>
+            <amountWithoutTaxEL>#{mv:getInheritedCFValue(productInstance,'${#Project#entityPrefix}_${#TestSuite#index}_CF_PROD_PRICE100')}</amountWithoutTaxEL>
+         </pricePlan>

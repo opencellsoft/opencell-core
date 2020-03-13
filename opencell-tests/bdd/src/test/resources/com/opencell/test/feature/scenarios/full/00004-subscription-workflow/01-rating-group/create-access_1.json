@@ -1,0 +1,3 @@
+<access code="${#Project#baseEntityPrefix}_${#TestSuite#index}_RATING_GROUP_SUB_ACC">
+            <subscription>${#Project#baseEntityPrefix}_${#TestSuite#index}_RATING_GROUP_SUB</subscription>
+         </access>

@@ -1,0 +1,40 @@
+<accountHierarchy>
+            <email>edward.legaspi@manaty.net</email>
+            <customerId>${#Project#entityPrefix}_${#TestSuite#index}_RATING_GROUP</customerId>
+            <sellerCode>SELLER_US</sellerCode>
+            <customerBrandCode>DEFAULT</customerBrandCode>
+            <customerCategoryCode>CLIENT</customerCategoryCode>
+            <currencyCode>USD</currencyCode>
+            <countryCode>US</countryCode>
+            <languageCode>ENG</languageCode>
+            <billingCycleCode>${#Project#entityPrefix}_${#TestSuite#index}_RATING_GROUP</billingCycleCode>
+            <titleCode>MR</titleCode>
+            <firstName>Edward</firstName>
+            <lastName>Legaspi</lastName>
+            <phoneNumber>+102354749</phoneNumber>
+            <address1>Address1</address1>
+            <address2>Address2</address2>
+            <zipCode>75001</zipCode>
+            <city>Tunis</city>
+            <paymentMethods>
+               <methodOfPayment paymentMethodType="DIRECTDEBIT">
+                  <bankCoordinates>
+                     <bankCode>12456</bankCode>
+                     <branchCode>23456</branchCode>
+                     <accountNumber>34589324756</accountNumber>
+                     <key>45</key>
+                     <iban>1212</iban>
+                     <bic>67789456</bic>
+                     <accountOwner>Me and co</accountOwner>
+                     <bankName>Some bank</bankName>
+                     <bankId>78946</bankId>
+                     <issuerNumber>46789</issuerNumber>
+                     <issuerName>Some issuer</issuerName>
+                     <ics>5587</ics>
+                  </bankCoordinates>
+               </methodOfPayment>
+            </paymentMethods>
+            <registrationNo>1234</registrationNo>
+            <vatNo>1234</vatNo>
+            <jobTitle>Software Engineer</jobTitle>
+         </accountHierarchy>

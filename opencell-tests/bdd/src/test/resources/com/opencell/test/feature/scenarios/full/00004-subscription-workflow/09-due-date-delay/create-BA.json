@@ -1,0 +1,7 @@
+         <billingAccount code="BA_DELAY_${#TestSuite#index}" description="BA_DELAY_${#TestSuite#index}">
+          
+            <customerAccount>CA_DELAY_${#TestSuite#index}</customerAccount>
+            <billingCycle>CYC_INV_MT_1</billingCycle>
+            <country>US</country>
+            <language>ENG</language>
+         </billingAccount>

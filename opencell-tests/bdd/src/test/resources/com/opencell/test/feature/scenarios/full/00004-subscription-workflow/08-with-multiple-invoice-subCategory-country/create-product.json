@@ -1,0 +1,10 @@
+         <productTemplate code="${#Project#entityPrefix}_MULTI_TAX" description="${#Project#entityPrefix}_MULTI_TAX_PRODUCT DESC">
+            <!--Optional:-->
+            <name>${#Project#entityPrefix}_MULTI_TAX_PRODUCT NAME</name>
+            <!--Optional:-->
+            <productChargeTemplates>
+               <!--1 or more repetitions:-->
+               <productChargeTemplate code="${#Project#entityPrefix}_MULTI_TAX">
+               </productChargeTemplate>
+            </productChargeTemplates>
+         </productTemplate>

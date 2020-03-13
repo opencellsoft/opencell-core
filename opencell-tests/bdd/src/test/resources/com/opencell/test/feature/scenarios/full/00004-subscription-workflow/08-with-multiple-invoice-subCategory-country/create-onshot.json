@@ -1,0 +1,10 @@
+         <oneShotChargeTemplate code="${#Project#entityPrefix}_TAX_VALIDITY_OS1" description="${#Project#entityPrefix}_TAX_VALIDITY_OS1">
+            <invoiceSubCategory>INVOICE_SUB_CAT_COUNTRY_TAX_VALIDITY_${#TestSuite#index}</invoiceSubCategory>
+            <disabled>false</disabled>            
+            <amountEditable>false</amountEditable>            
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+            <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>
+            <immediateInvoicing>false</immediateInvoicing>
+            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+         </oneShotChargeTemplate>

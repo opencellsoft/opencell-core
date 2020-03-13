@@ -1,0 +1,1 @@
+<subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB_FUTURE_TERMINATION_3</subscriptionCode>

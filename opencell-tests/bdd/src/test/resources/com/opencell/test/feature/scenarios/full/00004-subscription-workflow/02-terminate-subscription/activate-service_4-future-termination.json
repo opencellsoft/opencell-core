@@ -1,0 +1,9 @@
+<<activateServices>
+            <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_FUTURE_TERMINATION_4</subscription>
+            <servicesToActivate>
+               <service code="${#Project#baseEntityPrefix}_SERVICE1">
+                  <quantity>1</quantity>
+                  <subscriptionDate>${#TestCase#today}</subscriptionDate>
+               </service>
+            </servicesToActivate>
+         </activateServices>

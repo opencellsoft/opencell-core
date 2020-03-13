@@ -1,0 +1,8 @@
+<serviceTemplate code="${#Project#entityPrefix}_RATING_GROUP_SERVICE" description="${#Project#entityPrefix}_${#TestSuite#index}_RATING_GROUP_SERVICE">
+            <invoicingCalendar>MONTHLY</invoicingCalendar>
+            <serviceChargeTemplateUsages>
+               <serviceChargeTemplateUsage>
+                  <code>${#Project#baseEntityPrefix}_RATING_GROUP_USAGE</code>
+               </serviceChargeTemplateUsage>               
+            </serviceChargeTemplateUsages>
+         </serviceTemplate>

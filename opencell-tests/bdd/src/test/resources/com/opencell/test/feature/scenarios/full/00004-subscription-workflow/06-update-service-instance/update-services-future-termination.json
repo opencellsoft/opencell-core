@@ -1,0 +1,7 @@
+         <updateServicesRequest>
+            <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB_UPD_SERV_100</subscriptionCode>
+            <servicesToUpdate>
+               <serviceToUpdate code="${#Project#baseEntityPrefix}_SERVICE1"><terminationDate>${#TestCase#terminationDate}</terminationDate><terminationReason>TERM_REASON_1</terminationReason>
+               </serviceToUpdate>
+            </servicesToUpdate>
+         </updateServicesRequest>

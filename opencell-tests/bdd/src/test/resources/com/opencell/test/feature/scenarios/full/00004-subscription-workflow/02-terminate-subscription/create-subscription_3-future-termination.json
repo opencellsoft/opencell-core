@@ -1,0 +1,7 @@
+<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB_FUTURE_TERMINATION_3">
+            <userAccount>${#Project#baseEntityPrefix}_UA_3</userAccount>
+            <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+            <subscriptionDate>${#TestCase#today}</subscriptionDate>
+            <terminationDate>${#TestCase#terminationDate}</terminationDate>
+            <terminationReason>TERM_REASON_1</terminationReason>
+         </subscription>

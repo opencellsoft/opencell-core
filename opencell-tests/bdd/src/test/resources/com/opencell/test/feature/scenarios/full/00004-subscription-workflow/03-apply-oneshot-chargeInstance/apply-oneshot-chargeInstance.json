@@ -1,0 +1,13 @@
+        <applyOneShotChargeInstance>
+          <oneShotCharge>${#Project#baseEntityPrefix}_OS1</oneShotCharge>
+          <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_SUB_AOCI</subscription>
+          <createWallet>false</createWallet>
+          <operationDate>2016-04-06</operationDate>
+          <quantity>1</quantity>
+          <description>${#Project#baseEntityPrefix}_Apply-OneShotChargeInstance_Description</description>
+          <amountWithoutTax>11</amountWithoutTax>
+          <amountWithTax>13</amountWithTax>
+          <criteria1>criteria1</criteria1>
+          <criteria2>criteria2</criteria2>
+          <criteria3>criteria3</criteria3>
+        </applyOneShotChargeInstance>
