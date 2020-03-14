@@ -638,6 +638,18 @@
             <version>${version.ingenico-connect-sdk}</version>
         </dependency>
 
+		<dependency>
+		  <groupId>com.paypal.sdk</groupId>
+		  <artifactId>rest-api-sdk</artifactId>
+		  <version>${version.paypal-sdk}</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.stripe</groupId>
+		  <artifactId>stripe-java</artifactId>
+		  <version>${version.stripe-sdk}</version>
+		</dependency>
+
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-admin-client</artifactId>

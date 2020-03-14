@@ -39,6 +39,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaypalPaymentMethod;
 import org.meveo.model.payments.WirePaymentMethod;
 import org.meveo.security.MeveoUser;
 
@@ -167,6 +168,11 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
      * User identifier.
      */
     private String userId;
+    
+    /**
+     * Email.
+     */
+    private String email;
 
     /**
      * Customer code, used only on dtp validation.
@@ -302,6 +308,9 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
 
         case WIRETRANSFER:
             pmEntity = new WirePaymentMethod(disabledBool, alias, preferred, customerAccount);
+            break;
+        case PAYPAL:
+            pmEntity = new PaypalPaymentMethod(disabledBool, alias, preferred, customerAccount,userId);
             break;
         default:
             break;
@@ -820,12 +829,16 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
         this.customerCode = customerCode;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
+    
+    public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	@Override
     public final String toString() {
         return "PaymentMethodDto [paymentMethodType=" + paymentMethodType + ", id=" + id + ", disabled=" + disabled + ", alias=" + alias + ", preferred=" + preferred
                 + ", customerAccountCode=" + customerAccountCode + ", info1=" + info1 + ", info2=" + info2 + ", info3=" + info3 + ", info4=" + info4 + ", info5=" + info5
