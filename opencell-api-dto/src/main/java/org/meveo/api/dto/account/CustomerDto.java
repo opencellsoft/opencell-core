@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.account;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -66,6 +67,11 @@ public class CustomerDto extends AccountDto {
     private CustomerAccountsDto customerAccounts = new CustomerAccountsDto();
     
     private AdditionalDetailsDto additionalDetails = new AdditionalDetailsDto();
+
+    /**
+     * Invoicing threshold - do not invoice for a lesser amount.
+     */
+    private BigDecimal invoicingThreshold;
     
     
     /**
@@ -223,6 +229,20 @@ public class CustomerDto extends AccountDto {
 		this.additionalDetails = additionalDetails;
 	}
 
+
+	/**
+     * @return the invoicingThreshold
+     */
+    public BigDecimal getInvoicingThreshold() {
+        return invoicingThreshold;
+    }
+
+    /**
+     * @param invoicingThreshold the invoicingThreshold to set
+     */
+    public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+        this.invoicingThreshold = invoicingThreshold;
+    }
 
 	@Override
     public String toString() {

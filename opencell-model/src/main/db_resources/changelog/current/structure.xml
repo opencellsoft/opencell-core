@@ -2726,5 +2726,14 @@ END $$;]]>
         <dropNotNullConstraint tableName="meveo_script_instance" columnName="script"/>    
     </changeSet>
 
+    <changeSet id="#5014_20200313" author="khalidHORRI">
+        <addColumn tableName="crm_customer">
+            <column name="invoicing_threshold" type="numeric(23, 12)"/>
+        </addColumn>
+        <addColumn tableName="ar_customer_account">
+            <column name="invoicing_threshold" type="numeric(23, 12)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
 

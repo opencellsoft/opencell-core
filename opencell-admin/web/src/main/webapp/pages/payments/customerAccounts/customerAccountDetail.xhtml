@@ -111,8 +111,10 @@
                                         <hftl:formField label="#{messages['billingCycle.dueDateDelayELSpark']}" field="dueDateDelayELSpark" required="false"  textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
                                         <hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />
 										<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
-								        <hftl:formField label="#{messages['customerAccount.status']}" field="status" disabled="true" />                                       
-                                        
+								        <hftl:formField label="#{messages['customerAccount.status']}" field="status" disabled="true" />
+                                        <hftl:formField
+                                                label="#{messages['billingAccount.invoicingThreshold']}"
+                                                field="invoicingThreshold" required="false" size="20" />
                                     </p:fieldset>
                                 </p:tab>
 

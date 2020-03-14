@@ -206,6 +206,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             customerAccount.setBusinessAccountModel(businessAccountModel);
         }
         customerAccount.setExcludedFromPayment(postData.isExcludedFromPayment());
+        customerAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), customerAccount, true, checkCustomFields);

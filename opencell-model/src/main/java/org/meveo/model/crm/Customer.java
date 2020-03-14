@@ -32,6 +32,7 @@ import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -41,6 +42,7 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -112,6 +114,13 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     @MapKey(name = "code")
     private Map<String, CounterInstance> counters = new HashMap<>();
+
+    /**
+     * Invoicing threshold - do not invoice for a lesser amount.
+     */
+    @Column(name = "invoicing_threshold")
+    private BigDecimal invoicingThreshold;
+
 
     public AddressBook getAddressbook() {
         return addressbook;
@@ -211,4 +220,19 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     public void setCounters(Map<String, CounterInstance> counters) {
         this.counters = counters;
     }
+
+    /**
+     * @return the invoicingThreshold
+     */
+    public BigDecimal getInvoicingThreshold() {
+        return invoicingThreshold;
+    }
+
+    /**
+     * @param invoicingThreshold the invoicingThreshold to set
+     */
+    public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+        this.invoicingThreshold = invoicingThreshold;
+    }
+
 }

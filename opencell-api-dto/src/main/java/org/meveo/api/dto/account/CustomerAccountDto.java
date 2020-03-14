@@ -137,6 +137,12 @@ public class CustomerAccountDto extends AccountDto {
     private List<AccountOperationDto> accountOperations;
 
     /**
+     * Invoicing threshold - do not invoice for a lesser amount.
+     */
+    private BigDecimal invoicingThreshold;
+
+
+    /**
      * Instantiates a new customer account dto.
      */
     public CustomerAccountDto() {
@@ -577,5 +583,20 @@ public class CustomerAccountDto extends AccountDto {
 
     public void setAccountOperations(List<AccountOperationDto> accountOperations) {
         this.accountOperations = accountOperations;
+    }
+
+
+    /**
+     * @return the invoicingThreshold
+     */
+    public BigDecimal getInvoicingThreshold() {
+        return invoicingThreshold;
+    }
+
+    /**
+     * @param invoicingThreshold the invoicingThreshold to set
+     */
+    public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+        this.invoicingThreshold = invoicingThreshold;
     }
 }

@@ -55,6 +55,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -226,6 +227,12 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
     @OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY)
     @MapKey(name = "code")
     private Map<String, CounterInstance> counters = new HashMap<>();
+
+    /**
+     * Invoicing threshold - do not invoice for a lesser amount.
+     */
+    @Column(name = "invoicing_threshold")
+    private BigDecimal invoicingThreshold;
 
     /**
      * This method is called implicitly by hibernate, used to enable
@@ -668,11 +675,16 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
     }
 
     /**
-     * Sets counters
-     *
-     * @param counters
+     * @return the invoicingThreshold
      */
-    public void setCounters(Map<String, CounterInstance> counters) {
-        this.counters = counters;
+    public BigDecimal getInvoicingThreshold() {
+        return invoicingThreshold;
+    }
+
+    /**
+     * @param invoicingThreshold the invoicingThreshold to set
+     */
+    public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+        this.invoicingThreshold = invoicingThreshold;
     }
 }

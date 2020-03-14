@@ -212,6 +212,7 @@ public class CustomerApi extends AccountEntityApi {
         customer.setSeller(seller);
         customer.setExternalRef1(postData.getExternalRef1());
         customer.setExternalRef2(postData.getExternalRef2());
+        customer.setInvoicingThreshold(postData.getInvoicingThreshold());
 
         if (businessAccountModel != null) {
             customer.setBusinessAccountModel(businessAccountModel);

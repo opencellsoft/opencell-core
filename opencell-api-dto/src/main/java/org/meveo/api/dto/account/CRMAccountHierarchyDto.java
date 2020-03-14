@@ -195,6 +195,7 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
     /** The invoicing threshold. */
     private BigDecimal invoicingThreshold;
 
+
     /** The ua status. */
     // user account
     private AccountStatusEnum uaStatus;
@@ -232,6 +233,12 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
      * a list of emails separated by comma.
      */
     private String ccedEmails;
+
+    /** The invoicing threshold for the customer . */
+    private BigDecimal customerInvoicingThreshold;
+
+    /** The invoicing threshold for the customer account. */
+    private BigDecimal customerAccountInvoicingThreshold;
 
     /**
      * Gets the crm account type.
@@ -1073,5 +1080,35 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
      */
     public void setCcedEmails(String ccedEmails) {
         this.ccedEmails = ccedEmails;
+    }
+
+
+
+    /**
+     * @return the customer's invoicingThreshold
+     */
+    public BigDecimal getCustomerInvoicingThreshold() {
+        return customerInvoicingThreshold;
+    }
+
+    /**
+     * @param customerInvoicingThreshold the customer's invoicingThreshold to set
+     */
+    public void setCustomerInvoicingThreshold(BigDecimal customerInvoicingThreshold) {
+        this.customerInvoicingThreshold = customerInvoicingThreshold;
+    }
+
+    /**
+     * @return the customer account's invoicingThreshold
+     */
+    public BigDecimal getCustomerAccountInvoicingThreshold() {
+        return customerAccountInvoicingThreshold;
+    }
+
+    /**
+     * @param customerAccountInvoicingThreshold the customer account's invoicingThreshold to set
+     */
+    public void setCustomerAccountInvoicingThreshold(BigDecimal customerAccountInvoicingThreshold) {
+        this.customerAccountInvoicingThreshold = customerAccountInvoicingThreshold;
     }
 }

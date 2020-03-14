@@ -180,6 +180,12 @@ public class AccountHierarchyDto implements Serializable {
 
 	private String ccedEmails;
 
+    /** The invoicing threshold for the customer . */
+    private BigDecimal customerInvoicingThreshold;
+
+    /** The invoicing threshold for the customer account. */
+    private BigDecimal customerAccountInvoicingThreshold;
+
     /**
      * Instantiates a new account hierarchy dto.
      */
@@ -885,5 +891,34 @@ public class AccountHierarchyDto implements Serializable {
 	public void setCcedEmails(String ccedEmails) {
 		this.ccedEmails = ccedEmails;
 	}
+
+
+    /**
+     * @return the customer's invoicingThreshold
+     */
+    public BigDecimal getCustomerInvoicingThreshold() {
+        return customerInvoicingThreshold;
+    }
+
+    /**
+     * @param customerInvoicingThreshold the customer's invoicingThreshold to set
+     */
+    public void setCustomerInvoicingThreshold(BigDecimal customerInvoicingThreshold) {
+        this.customerInvoicingThreshold = customerInvoicingThreshold;
+    }
+
+    /**
+     * @return the customer account's invoicingThreshold
+     */
+    public BigDecimal getCustomerAccountInvoicingThreshold() {
+        return customerAccountInvoicingThreshold;
+    }
+
+    /**
+     * @param customerAccountInvoicingThreshold the customer account's invoicingThreshold to set
+     */
+    public void setCustomerAccountInvoicingThreshold(BigDecimal customerAccountInvoicingThreshold) {
+        this.customerAccountInvoicingThreshold = customerAccountInvoicingThreshold;
+    }
 	
 }
