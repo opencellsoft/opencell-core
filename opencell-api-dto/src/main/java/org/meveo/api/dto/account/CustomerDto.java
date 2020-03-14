@@ -111,6 +111,9 @@ public class CustomerDto extends AccountDto {
 		if (e.getAdditionalDetails() != null) {
 			setAdditionalDetails(new AdditionalDetailsDto(e.getAdditionalDetails()));
 		}
+		if (e.getInvoicingThreshold() != null) {
+            setInvoicingThreshold(e.getInvoicingThreshold());
+        }
 	}
 
     /**

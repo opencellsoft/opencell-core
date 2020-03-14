@@ -195,6 +195,9 @@ public class CustomerAccountDto extends AccountDto {
             setPaymentMethod(e.getPaymentMethods().get(0).getPaymentType());
             // End compatibility with pre-4.6 versions
         }
+        if (e.getInvoicingThreshold() != null) {
+            setInvoicingThreshold(e.getInvoicingThreshold());
+        }
     }
 
     /**

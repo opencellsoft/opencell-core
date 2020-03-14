@@ -294,7 +294,7 @@ public class AccountHierarchyApi extends BaseApi {
         customerDto.setJobTitle(postData.getJobTitle());
 
         customerDto.setSeller(postData.getSellerCode());
-        customerDto.setInvoicingThreshold(postData.getCustomerAccountInvoicingThreshold());
+        customerDto.setInvoicingThreshold(postData.getCustomerInvoicingThreshold());
 
         String customerBrandCode = StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode());
         // CustomerBrand customerBrand = null;
@@ -485,7 +485,7 @@ public class AccountHierarchyApi extends BaseApi {
         customerDto.setRegistrationNo(postData.getRegistrationNo());
         customerDto.setVatNo(postData.getVatNo());
         customerDto.setJobTitle(postData.getJobTitle());
-        customerDto.setInvoicingThreshold(postData.getCustomerAccountInvoicingThreshold());
+        customerDto.setInvoicingThreshold(postData.getCustomerInvoicingThreshold());
 
         String customerBrandCode = StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode());
         if (!StringUtils.isBlank(customerBrandCode)) {
