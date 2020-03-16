@@ -164,6 +164,8 @@ public class FlatFileValidator {
             if (!StringUtils.isBlank(flatFile.getCode())) {
                 destName = flatFile.getCode() + "_" + destName;
             }
+
+            log.debug("File " + flatFile.getFileOriginalName() + " will be moved to " + destination);
             FileUtils.moveFile(destination, file, destName);
         }
         return destName;
@@ -192,10 +194,8 @@ public class FlatFileValidator {
      */
     private String getInputDirectory(FileFormat fileFormat, String filePath) throws BusinessException {
         String inputDirectory = filePath;
-        if (StringUtils.isBlank(inputDirectory)) {
-            if (fileFormat != null && !StringUtils.isBlank(fileFormat.getInputDirectory())) {
-                inputDirectory = getDirectory(fileFormat.getInputDirectory());
-            }
+        if (fileFormat != null && !StringUtils.isBlank(fileFormat.getInputDirectory())) {
+            inputDirectory = getDirectory(fileFormat.getInputDirectory());
         }
         if (StringUtils.isBlank(inputDirectory)) {
             throw new BusinessException("The input directory is missing");

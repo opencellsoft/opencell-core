@@ -47,8 +47,7 @@ import org.meveo.model.ExportIdentifier;
 @Cacheable
 @ExportIdentifier("code")
 @Table(name = "adm_file_format")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "adm_file_format_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "adm_file_format_seq"), })
 public class FileFormat extends BusinessEntity {
 
     private static final long serialVersionUID = 1932955932186440723L;
@@ -110,7 +109,7 @@ public class FileFormat extends BusinessEntity {
     private String archiveDirectory;
 
     /**
-     * Job name (e.g : CDR_job).
+     * Job name (e.g : CDR_job) to process file contents.
      */
     @Column(name = "job_code", length = 255)
     @Size(max = 255)
@@ -279,18 +278,14 @@ public class FileFormat extends BusinessEntity {
     }
 
     /**
-     * Gets the jobCode
-     *
-     * @return the jobCode
+     * @return Job name (e.g : CDR_job) to process file contents
      */
     public String getJobCode() {
         return jobCode;
     }
 
     /**
-     * Sets the jobCode.
-     *
-     * @param jobCode the new jobCode
+     * @param jobCode Job name (e.g : CDR_job) to process file contents
      */
     public void setJobCode(String jobCode) {
         this.jobCode = jobCode;

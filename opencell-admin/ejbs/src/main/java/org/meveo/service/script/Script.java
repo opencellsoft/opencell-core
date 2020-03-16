@@ -68,6 +68,11 @@ public abstract class Script implements Serializable, ScriptInterface {
     public static String CONTEXT_PARENT_ENTITY = "CONTEXT_PARENT_ENTITY";
 
     /**
+     * Record, that script process
+     */
+    public static String CONTEXT_RECORD = "record";
+
+    /**
      * Current user
      */
     public static String CONTEXT_CURRENT_USER = "CONTEXT_CURRENT_USER";
