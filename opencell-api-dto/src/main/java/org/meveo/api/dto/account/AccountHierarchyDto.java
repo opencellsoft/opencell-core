@@ -34,6 +34,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.crm.Customer;
 
 /**
@@ -168,6 +169,12 @@ public class AccountHierarchyDto implements Serializable {
      * Registration number. CUST.
      */
     private String registrationNo;
+
+    /**
+     * The option on how to check the threshold.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum checkThreshold;
 
     /**
      * VAT. CUST.
@@ -920,5 +927,20 @@ public class AccountHierarchyDto implements Serializable {
     public void setCustomerAccountInvoicingThreshold(BigDecimal customerAccountInvoicingThreshold) {
         this.customerAccountInvoicingThreshold = customerAccountInvoicingThreshold;
     }
-	
+
+    /**
+     * Gets the threshold option.
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
+    }
 }

@@ -78,6 +78,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.AccountHierarchyTypeEnum;
@@ -392,6 +393,11 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setMailingType(postData.getMailingType());
         billingAccountDto.setEmailTemplate(postData.getEmailTemplate());
         billingAccountDto.setCcedEmails(postData.getCcedEmails());
+        if (postData.getCheckThreshold() == null) {
+            billingAccountDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
+        } else {
+            billingAccountDto.setCheckThreshold(postData.getCheckThreshold());
+        }
 
         billingAccountApi.create(billingAccountDto);
 
@@ -597,18 +603,20 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setDiscountPlansForInstantiation(postData.getDiscountPlansForInstantiation());
         billingAccountDto.setDiscountPlansForTermination(postData.getDiscountPlansForTermination());
         
-        if(postData.getMailingType() != null) {
+        if (postData.getMailingType() != null) {
         	billingAccountDto.setMailingType(postData.getMailingType());
         }
-        
-        if(postData.getEmailTemplate() != null) {
+        if (postData.getEmailTemplate() != null) {
         	billingAccountDto.setEmailTemplate(postData.getEmailTemplate());
         }
 
-        if(postData.getCcedEmails() != null) {
+        if (postData.getCcedEmails() != null) {
         	billingAccountDto.setCcedEmails(postData.getCcedEmails());
         }
-        
+
+        if (postData.getCheckThreshold() != null) {
+            billingAccountDto.setCheckThreshold(postData.getCheckThreshold());
+        }
         billingAccountApi.createOrUpdate(billingAccountDto);
 
         String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
@@ -1114,6 +1122,11 @@ public class AccountHierarchyApi extends BaseApi {
             }
 
             billingAccountDto.setCustomFields(cfsDto);
+        }
+        if (postData.getCheckThreshold() == null) {
+            billingAccountDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
+        } else {
+            billingAccountDto.setCheckThreshold(postData.getCheckThreshold());
         }
 
         return billingAccountDto;

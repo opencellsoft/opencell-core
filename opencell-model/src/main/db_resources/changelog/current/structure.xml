@@ -2733,6 +2733,12 @@ END $$;]]>
         <addColumn tableName="ar_customer_account">
             <column name="invoicing_threshold" type="numeric(23, 12)"/>
         </addColumn>
+        <addColumn tableName="billing_cycle">
+            <column name="check_threshold" type="varchar(250)"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_account">
+            <column name="check_threshold" type="varchar(250)"/>
+        </addColumn>
     </changeSet>
 
 </databaseChangeLog>

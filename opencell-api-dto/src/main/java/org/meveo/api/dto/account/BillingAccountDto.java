@@ -36,6 +36,7 @@ import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -189,6 +190,12 @@ public class BillingAccountDto extends AccountDto {
      * Account tax category code - overrides the value from a customer category
      **/
     private String taxCategoryCode;
+
+    /**
+     * The option on how to check the threshold.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum checkThreshold;
 	
 	
     /**
@@ -217,6 +224,7 @@ public class BillingAccountDto extends AccountDto {
             setBillingCycle(bc.getCode());
             setInvoicingThreshold(bc.getInvoicingThreshold());
         }
+        setCheckThreshold(e.getCheckThreshold());
         if (e.getTradingCountry() != null) {
             setCountry(e.getTradingCountry().getCountryCode());
         }
@@ -797,5 +805,21 @@ public class BillingAccountDto extends AccountDto {
      */
     public void setTaxCategoryCode(String taxCategoryCode) {
         this.taxCategoryCode = taxCategoryCode;
+    }
+
+    /**
+     * Gets the threshold option.
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
     }
 }

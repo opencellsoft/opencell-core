@@ -338,6 +338,13 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     private TaxCategory taxCategory;
 
     /**
+     * The option on how to check the threshold.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "check_threshold", nullable = false)
+    private ThresholdOptionsEnum checkThreshold;
+
+    /**
      * A flag to indicate that account is exonerated from taxes
      */
     @Transient
@@ -789,5 +796,24 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      */
     public void setTaxCategoryResolved(TaxCategory taxCategoryResolved) {
         this.taxCategoryResolved = taxCategoryResolved;
+    }
+
+    /**
+     * Gets the threshold option.
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        if (checkThreshold == null) {
+            checkThreshold = ThresholdOptionsEnum.AFTER_DISCOUNT;
+        }
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
     }
 }

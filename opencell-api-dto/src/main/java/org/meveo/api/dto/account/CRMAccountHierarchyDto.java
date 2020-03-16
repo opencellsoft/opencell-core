@@ -37,6 +37,7 @@ import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -239,6 +240,12 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
 
     /** The invoicing threshold for the customer account. */
     private BigDecimal customerAccountInvoicingThreshold;
+
+    /**
+     * The option on how to check the threshold.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum checkThreshold;
 
     /**
      * Gets the crm account type.
@@ -1110,5 +1117,21 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
      */
     public void setCustomerAccountInvoicingThreshold(BigDecimal customerAccountInvoicingThreshold) {
         this.customerAccountInvoicingThreshold = customerAccountInvoicingThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
     }
 }
