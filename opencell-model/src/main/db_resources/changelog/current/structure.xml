@@ -2726,5 +2726,9 @@ END $$;]]>
         <dropNotNullConstraint tableName="meveo_script_instance" columnName="script"/>    
     </changeSet>
 
+    <changeSet id="#5064_2020-03-15" author="AndriusKarpavicius">    
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob')</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob'</sql>
+    </changeSet>
 </databaseChangeLog>
 

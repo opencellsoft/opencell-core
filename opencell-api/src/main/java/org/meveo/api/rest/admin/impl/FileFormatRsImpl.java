@@ -18,17 +18,21 @@
 
 package org.meveo.api.rest.admin.impl;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.meveo.api.admin.FileFormatApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.admin.FileFormatDto;
+import org.meveo.api.dto.admin.FileFormatListResponseDto;
+import org.meveo.api.dto.admin.FileFormatResponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.admin.FileFormatRs;
 import org.meveo.api.rest.impl.BaseRs;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
 /**
  * File format resource
@@ -57,6 +61,20 @@ public class FileFormatRsImpl extends BaseRs implements FileFormatRs {
     }
 
     @Override
+    public ActionStatus update(FileFormatDto dto) {
+
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            fileFormatApi.update(dto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
     public ActionStatus remove(String code) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -64,6 +82,63 @@ public class FileFormatRsImpl extends BaseRs implements FileFormatRs {
             fileFormatApi.remove(code);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus createOrUpdate(FileFormatDto dto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            fileFormatApi.createOrUpdate(dto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public FileFormatResponseDto find(String code) {
+        FileFormatResponseDto result = new FileFormatResponseDto();
+
+        try {
+            result.setDto(fileFormatApi.find(code));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public FileFormatListResponseDto searchGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+
+        FileFormatListResponseDto result;
+
+        try {
+            result = new FileFormatListResponseDto(fileFormatApi.search(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder)));
+        } catch (Exception e) {
+            result = new FileFormatListResponseDto();
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public FileFormatListResponseDto searchPost(PagingAndFiltering pagingAndFiltering) {
+
+        FileFormatListResponseDto result;
+
+        try {
+            result = new FileFormatListResponseDto(fileFormatApi.search(pagingAndFiltering));
+        } catch (Exception e) {
+            result = new FileFormatListResponseDto();
+            processException(e, result.getActionStatus());
         }
 
         return result;
