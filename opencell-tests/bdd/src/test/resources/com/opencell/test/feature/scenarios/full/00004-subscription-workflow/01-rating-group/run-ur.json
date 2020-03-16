@@ -1,9 +1,11 @@
 {
-    "-code": "U_Job",
+    "code": "U_Job",
     "customFields": {
-        "customField": {
-            "-code": "ratingGroup",
-            "stringValue": "ELECTRICITY"
-        }
+        "customField": [
+            {
+                "code": "ratingGroup",
+                "stringValue": "ELECTRICITY"
+            }
+        ]
     }
 }

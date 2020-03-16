@@ -3,11 +3,11 @@
     "servicesToUpdate": {
         "serviceToUpdate": [
             {
-                "-code": "RS_BASE_SERVICE1",
+                "code": "RS_BASE_SERVICE1",
                 "quantity": "5"
             },
             {
-                "-code": "RS_BASE_SERVICE2",
+                "code": "RS_BASE_SERVICE2",
                 "quantity": "7"
             }
         ]

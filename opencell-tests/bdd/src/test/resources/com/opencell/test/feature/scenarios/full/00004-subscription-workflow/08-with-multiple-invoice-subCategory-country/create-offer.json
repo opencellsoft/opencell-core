@@ -1,12 +1,12 @@
 {
-    "-code": "RS_FULL_TAX_VALIDITY_OFFER",
-    "-description": "RS_BASE_TAX_VALIDITY_OFFER",
+    "code": "RS_FULL_TAX_VALIDITY_OFFER",
+    "description": "RS_BASE_TAX_VALIDITY_OFFER",
     "name": "RS_FULL_TAX_VALIDITY_OFFER",
     "disabled": "false",
     "offerServiceTemplates": {
         "offerServiceTemplate": {
             "serviceTemplate": {
-                "-code": "RS_FULL_TAX_VALIDITY_SERVICE1"
+                "code": "RS_FULL_TAX_VALIDITY_SERVICE1"
             }
         }
     }

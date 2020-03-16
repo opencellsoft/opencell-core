@@ -1,13 +1,13 @@
 {
-    "-code": "RS_FULL_RATING_GROUP_OFFER",
-    "-description": "RS_FULL_164_RATING_GROUP_OFFER",
+    "code": "RS_FULL_RATING_GROUP_OFFER",
+    "description": "RS_FULL_164_RATING_GROUP_OFFER",
     "name": "RS_FULL_164_RATING_GROUP_OFFER",
-    "offerServiceTemplates": {
-        "offerServiceTemplate": {
+    "offerServiceTemplate": [
+        {
             "mandatory": "true",
             "serviceTemplate": {
-                "-code": "RS_FULL_RATING_GROUP_SERVICE"
+                "code": "RS_FULL_RATING_GROUP_SERVICE"
             }
         }
-    }
+    ]
 }

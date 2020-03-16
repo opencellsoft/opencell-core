@@ -1,5 +1,5 @@
 {
-    "-code": "RS_FULL_164_SubscriptionStatusUpdatedNotification",
+    "code": "RS_FULL_164_SubscriptionStatusUpdatedNotification",
     "classNameFilter": "org.meveo.model.billing.Subscription",
     "eventTypeFilter": "STATUS_UPDATED",
     "scriptInstanceCode": "org.meveo.service.script.SubscriptionStatusUpdatedScript",

@@ -8,7 +8,7 @@
     "amountWithTax": "13",
     "customFields": {
         "customField": {
-            "-code": "RS_FULL_164_CF_PROD_PRICE100",
+            "code": "RS_FULL_164_CF_PROD_PRICE100",
             "doubleValue": "101.2"
         }
     }

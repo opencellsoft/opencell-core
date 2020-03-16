@@ -1,6 +1,6 @@
 {
-    "-code": "PP_RS_FULL_TAX_VALIDITY_OS1",
-    "-description": "PP_RS_FULL_TAX_VALIDITY_OS1",
+    "code": "PP_RS_FULL_TAX_VALIDITY_OS1",
+    "description": "PP_RS_FULL_TAX_VALIDITY_OS1",
     "eventCode": "RS_FULL_TAX_VALIDITY_OS1",
     "offerTemplate": "RS_FULL_TAX_VALIDITY_OFFER",
     "amountWithoutTax": "10",
