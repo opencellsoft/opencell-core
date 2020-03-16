@@ -169,7 +169,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         }
 
         log.debug("create chargeInstance for charge {}", chargeCode);
-        RecurringChargeInstance chargeInstance = new RecurringChargeInstance(null, null, recurringChargeTemplate, serviceInstance, InstanceStatusEnum.INACTIVE);
+        RecurringChargeInstance chargeInstance = new RecurringChargeInstance(null, null, recurringChargeTemplate, serviceInstance, InstanceStatusEnum.INACTIVE, recurringChargeTemplate.getCalendar(), recurringChargeTemplate.getApplyInAdvance());
 
         ServiceChargeTemplateRecurring recChTmplServ = serviceInstance.getServiceTemplate().getServiceRecurringChargeByChargeCode(chargeCode);
         // getEntityManager().merge(recChTmplServ); - does not make sence as
@@ -318,7 +318,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 log.debug("Applying recurring charge {} for {}", activeRecurringChargeInstance.getId(), applyChargeFromDate);
 
                 List<WalletOperation> wos = null;
-                boolean isApplyInAdvance = (recurringChargeTemplate.getApplyInAdvance() == null) ? false : recurringChargeTemplate.getApplyInAdvance();
+                boolean isApplyInAdvance = (activeRecurringChargeInstance.getApplyInAdvance() == null) ? false : activeRecurringChargeInstance.getApplyInAdvance();
                 if (!StringUtils.isBlank(recurringChargeTemplate.getApplyInAdvanceEl())) {
                     isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getApplyInAdvanceEl(),
                         activeRecurringChargeInstance.getServiceInstance(), recurringChargeTemplate);
@@ -354,7 +354,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                     while (applyChargeFromDate != null && applyChargeFromDate.getTime() <= endContractDate.getTime()) {
                         log.debug("Schedule applicationDate={}", applyChargeFromDate);
                         applyChargeFromDate = DateUtils.setTimeToZero(applyChargeFromDate);
-                        if (!recurringChargeTemplate.getApplyInAdvance()) {
+                        if (!activeRecurringChargeInstance.getApplyInAdvance()) {
                             walletOperationService.applyNotAppliedinAdvanceReccuringCharge(activeRecurringChargeInstance, false, recurringChargeTemplate);
                         } else {
                             walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false, recurringChargeTemplate, true);

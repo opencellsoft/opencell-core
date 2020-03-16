@@ -2726,5 +2726,19 @@ END $$;]]>
         <dropNotNullConstraint tableName="meveo_script_instance" columnName="script"/>    
     </changeSet>
 
+    <changeSet author="abdelkader.bouazza" id="#4891-Copy-recurrence-calendar-and-applyInAdvance-to-RecurringChargeInstance-from-a-RecurringChargeTemplate">
+        <addColumn tableName="billing_charge_instance">
+            <column name="calendar_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="billing_charge_instance">
+            <column name="apply_in_advance" type="${type.boolean}" />
+        </addColumn>
+        <sql>UPDATE ${db.schema.adapted}billing_charge_instance AS bci
+            SET calendar_id = cct.calendar_id,
+            apply_in_advance = cct.apply_in_advance
+            FROM ${db.schema.adapted}cat_charge_template AS cct
+            WHERE bci.charge_template_id = cct.id
+        </sql>
+    </changeSet>
 </databaseChangeLog>
 
