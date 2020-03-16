@@ -1,2 +1,4 @@
-         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB_UPD_SERV_100</subscriptionCode>
-         <serviceInstanceCode>${#Project#baseEntityPrefix}_SERVICE1</serviceInstanceCode>
+{
+    "subscriptionCode": "RS_FULL_164_SUB_UPD_SERV_100",
+    "serviceInstanceCode": "RS_BASE_SERVICE1"
+}

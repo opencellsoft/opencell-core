@@ -1,13 +1,17 @@
-<s<activateServices>
-            <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_SUB_WFL</subscription>
-            <servicesToActivate>
-               <service code="${#Project#baseEntityPrefix}_SERVICE1">
-                  <quantity>1</quantity>
-                  <subscriptionDate>2015-02-02</subscriptionDate>
-               </service>
-               <service code="${#Project#baseEntityPrefix}_SERVICE2">
-                  <quantity>2</quantity>
-                  <subscriptionDate>2015-04-01</subscriptionDate>
-               </service>
-            </servicesToActivate>
-         </activateServices>
+{
+    "subscription": "RS_FULL_164_SUB_SUB_WFL",
+    "servicesToActivate": {
+        "service": [
+            {
+                "-code": "RS_BASE_SERVICE1",
+                "quantity": "1",
+                "subscriptionDate": "2015-02-02"
+            },
+            {
+                "-code": "RS_BASE_SERVICE2",
+                "quantity": "2",
+                "subscriptionDate": "2015-04-01"
+            }
+        ]
+    }
+}

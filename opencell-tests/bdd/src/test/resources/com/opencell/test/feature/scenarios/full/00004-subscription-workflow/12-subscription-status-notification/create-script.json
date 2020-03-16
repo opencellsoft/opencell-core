@@ -1,34 +1,6 @@
-<createOrUpdateScriptInstanceRequest code="org.meveo.service.script.SubscriptionStatusUpdatedScript" description="rating script">
-            <type>JAVA</type>
-            <script>
-            <![CDATA[
-            package org.meveo.service.script;
-
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.script.Script;
-
-import java.util.Map;
-
-public class SubscriptionStatusUpdatedScript extends Script {
-
-    private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
-
-    @Override
-    public void execute(Map<String, Object> methodContext) throws BusinessException {
-        log.info("<<<<<<< SubscriptionStatusUpdatedScript >>>>>>>>>>");
-        Subscription subscription = (Subscription) methodContext.get("subscription");
-        SubscriptionStatusEnum previousState = (SubscriptionStatusEnum) methodContext.get("previousState");
-        SubscriptionStatusEnum currentState = (SubscriptionStatusEnum) methodContext.get("currentState");
-        log.info("subscription.getCode() : " + subscription.getCode());
-        log.info("currentState : " + currentState.name());
-        log.info("previousState : " + previousState.name());
-        subscription.setDescription("from_" + previousState + "_to_" + currentState);
-        subscriptionService.update(subscription);
-    }
-}
-           ]]>
-            </script>
-         </createOrUpdateScriptInstanceRequest>
+{
+    "-code": "org.meveo.service.script.SubscriptionStatusUpdatedScript",
+    "-description": "rating script",
+    "type": "JAVA",
+    "script": "package org.meveo.service.script;\n\nimport org.meveo.admin.exception.BusinessException;\nimport org.meveo.model.billing.Subscription;\nimport org.meveo.model.billing.SubscriptionStatusEnum;\nimport org.meveo.service.billing.impl.SubscriptionService;\nimport org.meveo.service.script.Script;\n\nimport java.util.Map;\n\npublic class SubscriptionStatusUpdatedScript extends Script {\n\n    private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface(\"SubscriptionService\");\n\n    @Override\n    public void execute(Map<String, Object> methodContext) throws BusinessException {\n        log.info(\"<<<<<<< SubscriptionStatusUpdatedScript >>>>>>>>>>\");\n        Subscription subscription = (Subscription) methodContext.get(\"subscription\");\n        SubscriptionStatusEnum previousState = (SubscriptionStatusEnum) methodContext.get(\"previousState\");\n        SubscriptionStatusEnum currentState = (SubscriptionStatusEnum) methodContext.get(\"currentState\");\n        log.info(\"subscription.getCode() : \" + subscription.getCode());\n        log.info(\"currentState : \" + currentState.name());\n        log.info(\"previousState : \" + previousState.name());\n        subscription.setDescription(\"from_\" + previousState + \"_to_\" + currentState);\n        subscriptionService.update(subscription);\n    }\n} "
+  }

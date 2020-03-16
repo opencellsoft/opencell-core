@@ -1,8 +1,10 @@
-<billingCycle code="${#Project#entityPrefix}_${#TestSuite#index}_RATING_GROUP" description="${#Project#entityPrefix}_${#TestSuite#index}_RATING_GROUP">
-            <invoiceDateDelay>0</invoiceDateDelay>
-            <dueDateDelay>2</dueDateDelay>
-            <invoiceDateProductionDelay>0</invoiceDateProductionDelay>
-            <transactionDateDelay>0</transactionDateDelay>
-            <calendar>MONTHLY</calendar>
-            <type>COM</type>
-            </billingCycle>
+{
+    "-code": "RS_FULL_164_RATING_GROUP",
+    "-description": "RS_FULL_164_RATING_GROUP",
+    "invoiceDateDelay": "0",
+    "dueDateDelay": "2",
+    "invoiceDateProductionDelay": "0",
+    "transactionDateDelay": "0",
+    "calendar": "MONTHLY",
+    "type": "COM"
+}

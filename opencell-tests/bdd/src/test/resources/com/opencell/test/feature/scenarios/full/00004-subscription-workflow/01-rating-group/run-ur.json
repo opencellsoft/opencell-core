@@ -1,7 +1,9 @@
- <jobInstanceInfo code="U_Job">
-            <customFields>
-                <customField code="ratingGroup">
-                    <stringValue>ELECTRICITY</stringValue>
-                </customField>
-            </customFields>
-         </jobInstanceInfo>
+{
+    "-code": "U_Job",
+    "customFields": {
+        "customField": {
+            "-code": "ratingGroup",
+            "stringValue": "ELECTRICITY"
+        }
+    }
+}

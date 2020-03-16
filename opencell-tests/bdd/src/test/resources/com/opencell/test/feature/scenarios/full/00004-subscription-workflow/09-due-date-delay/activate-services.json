@@ -1,13 +1,17 @@
-         <activateServices>
-            <subscription>DELAY_SUB_${#TestSuite#index}</subscription>
-            <servicesToActivate>
-               <service code="${#Project#baseEntityPrefix}_SERVICE3">
-                  <quantity>5</quantity>
-                  <subscriptionDate>2017-03-15</subscriptionDate>
-               </service>
-               <service code="${#Project#baseEntityPrefix}_SERVICE4">
-                  <quantity>10</quantity>
-                  <subscriptionDate>2017-05-15</subscriptionDate>
-               </service>
-            </servicesToActivate>
-         </activateServices>
+{
+    "subscription": "DELAY_SUB_164",
+    "servicesToActivate": {
+        "service": [
+            {
+                "-code": "RS_BASE_SERVICE3",
+                "quantity": "5",
+                "subscriptionDate": "2017-03-15"
+            },
+            {
+                "-code": "RS_BASE_SERVICE4",
+                "quantity": "10",
+                "subscriptionDate": "2017-05-15"
+            }
+        ]
+    }
+}

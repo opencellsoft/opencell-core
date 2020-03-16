@@ -1,8 +1,10 @@
-<serviceTemplate code="${#Project#entityPrefix}_RATING_GROUP_SERVICE" description="${#Project#entityPrefix}_${#TestSuite#index}_RATING_GROUP_SERVICE">
-            <invoicingCalendar>MONTHLY</invoicingCalendar>
-            <serviceChargeTemplateUsages>
-               <serviceChargeTemplateUsage>
-                  <code>${#Project#baseEntityPrefix}_RATING_GROUP_USAGE</code>
-               </serviceChargeTemplateUsage>               
-            </serviceChargeTemplateUsages>
-         </serviceTemplate>
+{
+    "-code": "RS_FULL_RATING_GROUP_SERVICE",
+    "-description": "RS_FULL_164_RATING_GROUP_SERVICE",
+    "invoicingCalendar": "MONTHLY",
+    "serviceChargeTemplateUsages": {
+        "serviceChargeTemplateUsage": {
+            "code": "RS_BASE_RATING_GROUP_USAGE"
+        }
+    }
+}

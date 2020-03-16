@@ -1,6 +1,5 @@
-         <invoiceSubCategoryCountry>
-            <invoiceSubCategory>INVOICE_SUB_CAT_COUNTRY_TAX_VALIDITY_${#TestSuite#index}</invoiceSubCategory>
-            
-            <country>US</country>
-            
-            <tax>TAX_00</tax>
+{
+    "invoiceSubCategory": "INVOICE_SUB_CAT_COUNTRY_TAX_VALIDITY_164",
+    "country": "US",
+    "tax": "TAX_00"
+}

@@ -1,2 +1,4 @@
-         <customFieldTemplateCode>${#Project#entityPrefix}_${#TestSuite#index}_CF_PROD_PRICE100</customFieldTemplateCode>
-         <appliesTo>ProductInstance</appliesTo>
+{
+    "customFieldTemplateCode": "RS_FULL_164_CF_PROD_PRICE100",
+    "appliesTo": "ProductInstance"
+}

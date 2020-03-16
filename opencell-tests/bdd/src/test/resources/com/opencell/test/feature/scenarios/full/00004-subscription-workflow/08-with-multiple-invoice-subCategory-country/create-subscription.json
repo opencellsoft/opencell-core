@@ -1,5 +1,6 @@
-         <subscription code="${#Project#entityPrefix}_${#TestSuite#index}_MULTI_TAX_SUB">
-            <userAccount>${#Project#entityPrefix}_${#TestSuite#index}_MULTI_TAX</userAccount>
-            <offerTemplate>${#Project#entityPrefix}_TAX_VALIDITY_OFFER</offerTemplate>
-            <subscriptionDate>2017-04-04</subscriptionDate>
-         </subscription>
+{
+    "-code": "RS_FULL_164_MULTI_TAX_SUB",
+    "userAccount": "RS_FULL_164_MULTI_TAX",
+    "offerTemplate": "RS_FULL_TAX_VALIDITY_OFFER",
+    "subscriptionDate": "2017-04-04"
+}

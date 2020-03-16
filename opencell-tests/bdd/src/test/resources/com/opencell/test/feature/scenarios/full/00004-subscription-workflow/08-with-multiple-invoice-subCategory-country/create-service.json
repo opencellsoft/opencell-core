@@ -1,18 +1,20 @@
-         <serviceTemplate code="${#Project#entityPrefix}_TAX_VALIDITY_SERVICE1" description="${#Project#entityPrefix}_TAX_VALIDITY_SERVICE1">
-            <invoicingCalendar>MONTHLY</invoicingCalendar>
-            <serviceChargeTemplateRecurrings>
-               <serviceChargeTemplateRecurring>
-                  <code>${#Project#entityPrefix}_TAX_VALIDITY_REC1</code>
-               </serviceChargeTemplateRecurring>
-            </serviceChargeTemplateRecurrings>
-            <serviceChargeTemplateSubscriptions>
-               <serviceChargeTemplateSubscription>
-                  <code>${#Project#entityPrefix}_TAX_VALIDITY_OS1</code>
-               </serviceChargeTemplateSubscription>
-            </serviceChargeTemplateSubscriptions>
-            <serviceChargeTemplateUsages>
-               <serviceChargeTemplateUsage>
-                  <code>${#Project#entityPrefix}_TAX_VALIDITY_USAGE1</code>
-               </serviceChargeTemplateUsage>
-            </serviceChargeTemplateUsages>
-         </serviceTemplate>
+{
+    "-code": "RS_FULL_TAX_VALIDITY_SERVICE1",
+    "-description": "RS_FULL_TAX_VALIDITY_SERVICE1",
+    "invoicingCalendar": "MONTHLY",
+    "serviceChargeTemplateRecurrings": {
+        "serviceChargeTemplateRecurring": {
+            "code": "RS_FULL_TAX_VALIDITY_REC1"
+        }
+    },
+    "serviceChargeTemplateSubscriptions": {
+        "serviceChargeTemplateSubscription": {
+            "code": "RS_FULL_TAX_VALIDITY_OS1"
+        }
+    },
+    "serviceChargeTemplateUsages": {
+        "serviceChargeTemplateUsage": {
+            "code": "RS_FULL_TAX_VALIDITY_USAGE1"
+        }
+    }
+}

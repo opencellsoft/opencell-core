@@ -1,9 +1,13 @@
-         <offerTemplate code="${#Project#entityPrefix}_TAX_VALIDITY_OFFER" description="${#Project#baseEntityPrefix}_TAX_VALIDITY_OFFER">
-              <name>${#Project#entityPrefix}_TAX_VALIDITY_OFFER</name>
-            <disabled>false</disabled>
-            <offerServiceTemplates>
-               <offerServiceTemplate>
-                  <serviceTemplate code="${#Project#entityPrefix}_TAX_VALIDITY_SERVICE1"/>
-               </offerServiceTemplate>               
-            </offerServiceTemplates>
-         </offerTemplate>
+{
+    "-code": "RS_FULL_TAX_VALIDITY_OFFER",
+    "-description": "RS_BASE_TAX_VALIDITY_OFFER",
+    "name": "RS_FULL_TAX_VALIDITY_OFFER",
+    "disabled": "false",
+    "offerServiceTemplates": {
+        "offerServiceTemplate": {
+            "serviceTemplate": {
+                "-code": "RS_FULL_TAX_VALIDITY_SERVICE1"
+            }
+        }
+    }
+}

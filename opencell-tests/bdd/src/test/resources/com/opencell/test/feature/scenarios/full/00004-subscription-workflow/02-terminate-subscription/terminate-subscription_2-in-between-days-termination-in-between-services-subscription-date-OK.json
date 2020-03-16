@@ -1,5 +1,0 @@
-<terminateSubscription>
-          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB_INBETWEEN_2_TERMINATION</subscriptionCode>
-          <terminationReason>TERM_REASON_1</terminationReason>
-          <terminationDate>${#TestCase#3daysBefore}</terminationDate>
-        </terminateSubscription>

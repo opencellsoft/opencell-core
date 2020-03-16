@@ -1,5 +1,6 @@
-<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB_INBETWEEN_TERMINATION">
-            <userAccount>${#Project#baseEntityPrefix}_UA_3</userAccount>
-            <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-            <subscriptionDate>${#TestCase#10daysBefore}</subscriptionDate>
-         </subscription>
+{
+    "-code": "RS_FULL_164_SUB_INBETWEEN_TERMINATION",
+    "userAccount": "RS_BASE_UA_3",
+    "offerTemplate": "RS_BASE_OFFER1",
+    "subscriptionDate": "${#TestCase#10daysBefore}"
+}

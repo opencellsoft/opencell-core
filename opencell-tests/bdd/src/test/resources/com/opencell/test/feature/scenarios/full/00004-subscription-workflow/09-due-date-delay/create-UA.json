@@ -1,4 +1,5 @@
-         <userAccount code="UA_DELAY_${#TestSuite#index}" description="UA_DELAY_${#TestSuite#index}">
-         
-            <billingAccount>BA_DELAY_${#TestSuite#index}</billingAccount>
-         </userAccount>
+{
+    "-code": "UA_DELAY_164",
+    "-description": "UA_DELAY_164",
+    "billingAccount": "BA_DELAY_164"
+}

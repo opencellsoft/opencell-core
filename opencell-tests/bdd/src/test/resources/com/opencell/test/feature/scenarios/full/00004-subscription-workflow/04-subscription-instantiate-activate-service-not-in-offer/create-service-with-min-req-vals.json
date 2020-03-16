@@ -1,3 +1,4 @@
-         <serviceTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE">
-            <invoicingCalendar>Multi period</invoicingCalendar>
-         </serviceTemplate>
+{
+    "-code": "RS_FULL_164_SERVICE",
+    "invoicingCalendar": "Multi period"
+}

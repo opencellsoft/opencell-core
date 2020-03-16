@@ -1,9 +1,13 @@
-         <offerTemplate code="${#Project#baseEntityPrefix}_OFFER_SUB_AGE" description="${#Project#baseEntityPrefix}_OFFER_SUB_AGE">
-              <name>${#Project#baseEntityPrefix}_OFFER2</name>
-            <disabled>false</disabled>
-            <offerServiceTemplates>
-               <offerServiceTemplate>
-                  <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE_SUB_AGE"/>
-               </offerServiceTemplate>
-            </offerServiceTemplates>
-         </offerTemplate>
+{
+    "-code": "RS_BASE_OFFER_SUB_AGE",
+    "-description": "RS_BASE_OFFER_SUB_AGE",
+    "name": "RS_BASE_OFFER2",
+    "disabled": "false",
+    "offerServiceTemplates": {
+      "offerServiceTemplate": {
+        "serviceTemplate": {
+          "-code": "RS_BASE_SERVICE_SUB_AGE"
+        }
+      }
+    }
+}

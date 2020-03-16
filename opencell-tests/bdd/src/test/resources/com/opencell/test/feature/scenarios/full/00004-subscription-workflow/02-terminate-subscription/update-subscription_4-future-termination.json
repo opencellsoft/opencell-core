@@ -1,7 +1,8 @@
-<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB_FUTURE_TERMINATION_4">
-            <userAccount>${#Project#baseEntityPrefix}_UA_3</userAccount>
-            <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-            <subscriptionDate>${#TestCase#today}</subscriptionDate>
-            <terminationDate>${#TestCase#terminationDate}</terminationDate>
-            <terminationReason>TERM_REASON_1</terminationReason>
-         </subscription>
+{
+    "-code": "RS_FULL_164_SUB_FUTURE_TERMINATION_4",
+    "userAccount": "RS_BASE_UA_3",
+    "offerTemplate": "RS_BASE_OFFER1",
+    "subscriptionDate": "${#TestCase#today}",
+    "terminationDate": "${#TestCase#terminationDate}",
+    "terminationReason": "TERM_REASON_1"
+}

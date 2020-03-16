@@ -1,8 +1,8 @@
-         <applyProduct>
-            <product>${#Project#entityPrefix}_MULTI_TAX</product>
-            <userAccount>${#Project#entityPrefix}_${#TestSuite#index}_MULTI_TAX</userAccount>
-            <operationDate>2017-04-18</operationDate>
-          <quantity>1</quantity>
-          <description>${#Project#entityPrefix}_Apply-OneShotChargeInstance_Description_UA</description>
-            <amountWithoutTax>10</amountWithoutTax>
-         </applyProduct>
+{
+    "product": "RS_FULL_MULTI_TAX",
+    "userAccount": "RS_FULL_164_MULTI_TAX",
+    "operationDate": "2017-04-18",
+    "quantity": "1",
+    "description": "RS_FULL_Apply-OneShotChargeInstance_Description_UA",
+    "amountWithoutTax": "10"
+}

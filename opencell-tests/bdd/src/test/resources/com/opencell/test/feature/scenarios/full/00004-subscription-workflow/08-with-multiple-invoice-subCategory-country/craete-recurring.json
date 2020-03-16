@@ -1,14 +1,15 @@
-         <recurringChargeTemplate code="${#Project#entityPrefix}_TAX_VALIDITY_REC1" description="${#Project#entityPrefix}_TAX_VALIDITY_REC1">
-            <invoiceSubCategory>INVOICE_SUB_CAT_COUNTRY_TAX_VALIDITY_${#TestSuite#index}</invoiceSubCategory>
-            <disabled>false</disabled>
-            <amountEditable>true</amountEditable>            
-            <calendar>MONTHLY</calendar>
-            <subscriptionProrata>true</subscriptionProrata>
-            <terminationProrata>true</terminationProrata>
-            <applyInAdvance>true</applyInAdvance>            
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-          <durationTermInMonth>4</durationTermInMonth>
-          <!--shareLevel>1</shareLevel-->
-            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
-         </recurringChargeTemplate>
+{
+    "-code": "RS_FULL_TAX_VALIDITY_REC1",
+    "-description": "RS_FULL_TAX_VALIDITY_REC1",
+    "invoiceSubCategory": "INVOICE_SUB_CAT_COUNTRY_TAX_VALIDITY_164",
+    "disabled": "false",
+    "amountEditable": "true",
+    "calendar": "MONTHLY",
+    "subscriptionProrata": "true",
+    "terminationProrata": "true",
+    "applyInAdvance": "true",
+    "unitMultiplicator": "1",
+    "unitNbDecimal": "2",
+    "durationTermInMonth": "4",
+    "roundingModeDtoEnum": "NEAREST"
+}

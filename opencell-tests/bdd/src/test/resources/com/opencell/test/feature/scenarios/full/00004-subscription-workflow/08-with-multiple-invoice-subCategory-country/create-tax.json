@@ -1,4 +1,5 @@
-         <tax code="TAX_20" description="20%">
-            <percent>20</percent>
-            
-         </tax>
+{
+    "-code": "TAX_20",
+    "-description": "20%",
+    "percent": "20"
+}

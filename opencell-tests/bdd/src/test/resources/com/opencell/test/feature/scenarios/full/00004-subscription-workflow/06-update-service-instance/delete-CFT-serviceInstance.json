@@ -1,2 +1,4 @@
-         <customFieldTemplateCode>${#Project#entityPrefix}_${#TestSuite#index}_CF_SERV_UPD_100</customFieldTemplateCode>
-         <appliesTo>ServiceInstance</appliesTo>
+{
+    "customFieldTemplateCode": "RS_FULL_164_CF_SERV_UPD_100",
+    "appliesTo": "ServiceInstance"
+}

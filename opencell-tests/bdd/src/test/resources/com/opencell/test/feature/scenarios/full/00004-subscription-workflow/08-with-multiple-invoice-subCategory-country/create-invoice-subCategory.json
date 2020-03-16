@@ -1,3 +1,5 @@
-         <invoiceSubCategory code="INVOICE_SUB_CAT_COUNTRY_TAX_VALIDITY_${#TestSuite#index}" description="INVOICE_SUB_CAT_COUNTRY_TAX_VALIDITY_${#TestSuite#index}">
-            <invoiceCategory>CONSUMPTION</invoiceCategory>
-         </invoiceSubCategory>
+{
+    "-code": "INVOICE_SUB_CAT_COUNTRY_TAX_VALIDITY_164",
+    "-description": "INVOICE_SUB_CAT_COUNTRY_TAX_VALIDITY_164",
+    "invoiceCategory": "CONSUMPTION"
+}

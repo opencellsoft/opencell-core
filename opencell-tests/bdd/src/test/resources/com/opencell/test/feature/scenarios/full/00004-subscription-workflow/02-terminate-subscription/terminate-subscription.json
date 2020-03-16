@@ -1,5 +1,5 @@
-<terminateSubscription>
-          <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB_SUB_WFL</subscriptionCode>
-          <terminationReason>TERM_REASON_1</terminationReason>
-          <terminationDate>2016-04-30</terminationDate>
-        </terminateSubscription>
+{
+    "subscriptionCode": "RS_FULL_164_SUB_SUB_WFL",
+    "terminationReason": "TERM_REASON_1",
+    "terminationDate": "2016-04-30"
+}

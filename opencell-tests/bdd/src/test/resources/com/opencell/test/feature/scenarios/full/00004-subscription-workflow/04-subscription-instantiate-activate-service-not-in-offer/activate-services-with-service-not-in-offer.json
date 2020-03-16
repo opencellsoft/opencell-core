@@ -1,9 +1,10 @@
-         <activateServices>
-            <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_NO</subscription>
-            <servicesToActivate>
-               <service code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE">
-                  <quantity>1</quantity>
-                  <subscriptionDate>2015-02-01</subscriptionDate>
-               </service>
-            </servicesToActivate>
-         </activateServices>
+{
+    "subscription": "RS_FULL_164_SUB_NO",
+    "servicesToActivate": {
+        "service": {
+            "-code": "RS_FULL_164_SERVICE",
+            "quantity": "1",
+            "subscriptionDate": "2015-02-01"
+        }
+    }
+}

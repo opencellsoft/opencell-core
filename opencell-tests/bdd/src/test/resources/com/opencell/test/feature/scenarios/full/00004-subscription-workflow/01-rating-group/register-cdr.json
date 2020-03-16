@@ -1,6 +1,6 @@
-
-         <cdrList>
-            <!--Zero or more repetitions:-->
-            <cdr>2018-10-13T00:00:00.000Z;100;${#Project#baseEntityPrefix}_${#TestSuite#index}_RATING_GROUP_SUB_ACC;RATING_GROUP</cdr>
-            <cdr>2018-10-13T00:00:00.000Z;100;${#Project#baseEntityPrefix}_${#TestSuite#index}_RATING_GROUP_SUB_ACC2;RATING_GROUP</cdr>
-         </cdrList>
+{
+    "cdr": [
+        "2018-10-13T00:00:00.000Z;100;RS_BASE_164_RATING_GROUP_SUB_ACC;RATING_GROUP",
+        "2018-10-13T00:00:00.000Z;100;RS_BASE_164_RATING_GROUP_SUB_ACC2;RATING_GROUP"
+    ]
+}

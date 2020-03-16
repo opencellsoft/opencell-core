@@ -1,1 +1,0 @@
-<subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB_SUB_WFL</subscriptionCode>

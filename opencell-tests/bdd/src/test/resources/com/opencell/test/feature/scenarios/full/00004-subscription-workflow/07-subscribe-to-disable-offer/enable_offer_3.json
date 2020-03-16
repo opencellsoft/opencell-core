@@ -1,1 +1,3 @@
-<code>${#Project#baseEntityPrefix}_OFFER3</code>
+{
+    "code": "RS_BASE_OFFER3"
+}

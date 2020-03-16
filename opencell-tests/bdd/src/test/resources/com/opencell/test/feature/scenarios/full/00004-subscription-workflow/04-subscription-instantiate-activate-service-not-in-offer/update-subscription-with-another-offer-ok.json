@@ -1,6 +1,8 @@
-         <subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB_NO" description="${#Project#entityPrefix}_${#TestSuite#index}_SUB_NO">
-            <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-            <offerTemplate>${#Project#baseEntityPrefix}_OFFER2</offerTemplate>
-            <subscriptionDate>2015-02-01</subscriptionDate>
-            <endAgreementDate>2015-05-01</endAgreementDate>
-         </subscription>
+{
+    "-code": "RS_FULL_164_SUB_NO",
+    "-description": "RS_FULL_164_SUB_NO",
+    "userAccount": "RS_BASE_UA",
+    "offerTemplate": "RS_BASE_OFFER2",
+    "subscriptionDate": "2015-02-01",
+    "endAgreementDate": "2015-05-01"
+}

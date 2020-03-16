@@ -1,14 +1,15 @@
-         <applyProduct>
-            <product>${#Project#baseEntityPrefix}_PRODUCT2</product>
-            <subscription>${#Project#entityPrefix}_${#TestSuite#index}_SUB_PROD</subscription>
-            <operationDate>2016-04-06</operationDate>
-          <quantity>1</quantity>
-          <description>${#Project#baseEntityPrefix}_Apply-OneShotChargeInstance_Description_SUB</description>
-            <amountWithoutTax>11</amountWithoutTax>
-          <amountWithTax>13</amountWithTax>
-            <customFields>
-            <customField code="${#Project#entityPrefix}_${#TestSuite#index}_CF_PROD_PRICE100">
-                <doubleValue>10</doubleValue>
-            </customField>
-          </customFields>
-         </applyProduct>
+{
+    "product": "RS_BASE_PRODUCT2",
+    "subscription": "RS_FULL_164_SUB_PROD",
+    "operationDate": "2016-04-06",
+    "quantity": "1",
+    "description": "RS_BASE_Apply-OneShotChargeInstance_Description_SUB",
+    "amountWithoutTax": "11",
+    "amountWithTax": "13",
+    "customFields": {
+        "customField": {
+            "-code": "RS_FULL_164_CF_PROD_PRICE100",
+            "doubleValue": "10"
+        }
+    }
+}

@@ -1,9 +1,11 @@
-         <productChargeTemplate code="${#Project#baseEntityPrefix}_PC100" description="${#Project#baseEntityPrefix}_PC100">
-            <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
-            <disabled>false</disabled>            
-            <amountEditable>false</amountEditable>            
-            <languageDescriptions>
-               <languageCode>FRA</languageCode>
-               <description>${#Project#baseEntityPrefix}-Produit 100 Test</description>
-            </languageDescriptions>         
-         </productChargeTemplate>
+{
+    "-code": "RS_BASE_PC100",
+    "-description": "RS_BASE_PC100",
+    "invoiceSubCategory": "SUB_DATA",
+    "disabled": "false",
+    "amountEditable": "false",
+    "languageDescriptions": {
+        "languageCode": "FRA",
+        "description": "RS_BASE-Produit 100 Test"
+    }
+}

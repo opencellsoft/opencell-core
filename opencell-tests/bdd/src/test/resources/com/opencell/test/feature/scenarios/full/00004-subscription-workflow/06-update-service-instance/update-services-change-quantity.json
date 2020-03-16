@@ -1,11 +1,15 @@
-         <updateServicesRequest>
-            <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB_UPD_SERV_100</subscriptionCode>
-            <servicesToUpdate>
-               <serviceToUpdate code="${#Project#baseEntityPrefix}_SERVICE1">
-                  <quantity>5</quantity>
-               </serviceToUpdate>
-               <serviceToUpdate code="${#Project#baseEntityPrefix}_SERVICE2">
-                  <quantity>7</quantity>
-               </serviceToUpdate>
-            </servicesToUpdate>
-         </updateServicesRequest>
+{
+    "subscriptionCode": "RS_FULL_164_SUB_UPD_SERV_100",
+    "servicesToUpdate": {
+        "serviceToUpdate": [
+            {
+                "-code": "RS_BASE_SERVICE1",
+                "quantity": "5"
+            },
+            {
+                "-code": "RS_BASE_SERVICE2",
+                "quantity": "7"
+            }
+        ]
+    }
+}

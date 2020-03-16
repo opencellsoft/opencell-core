@@ -1,6 +1,8 @@
-         <customField code="${#Project#entityPrefix}_${#TestSuite#index}_CF_SERV_UPD_100" description="${#Project#entityPrefix}_${#TestSuite#index}_CF_PROD_PRICE100"> 
-            <fieldType>DOUBLE</fieldType>
-            <appliesTo>ServiceInstance</appliesTo>
-            <storageType>SINGLE</storageType>
-            <defaultValue>101</defaultValue>
-         </customField>
+{
+    "-code": "RS_FULL_164_CF_SERV_UPD_100",
+    "-description": "RS_FULL_164_CF_PROD_PRICE100",
+    "fieldType": "DOUBLE",
+    "appliesTo": "ServiceInstance",
+    "storageType": "SINGLE",
+    "defaultValue": "101"
+}

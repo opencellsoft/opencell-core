@@ -1,3 +1,4 @@
-<access code="${#Project#baseEntityPrefix}_${#TestSuite#index}_RATING_GROUP_SUB_ACC2">
-            <subscription>${#Project#baseEntityPrefix}_${#TestSuite#index}_RATING_GROUP_SUB2</subscription>
-         </access>
+{
+    "-code": "RS_BASE_164_RATING_GROUP_SUB_ACC2",
+    "subscription": "RS_BASE_164_RATING_GROUP_SUB2"
+}
