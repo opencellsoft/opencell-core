@@ -1,6 +1,6 @@
 {
-    "-code": "RS_FULL_164_SUB_ACTIVATION2",
-    "-description": "RS_FULL_164_SUB_ACTIVATION2",
+    "code": "RS_FULL_164_SUB_ACTIVATION2",
+    "description": "RS_FULL_164_SUB_ACTIVATION2",
     "userAccount": "RS_BASE_UA",
     "offerTemplate": "RS_BASE_OFFER1",
     "subscriptionDate": "2018-10-13"

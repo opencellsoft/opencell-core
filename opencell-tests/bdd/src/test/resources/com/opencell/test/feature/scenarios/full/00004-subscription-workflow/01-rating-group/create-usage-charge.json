@@ -1,41 +1,7 @@
 {
-    "email": "edward.legaspi@manaty.net",
-    "customerId": "RS_FULL_164_RATING_GROUP",
-    "sellerCode": "SELLER_US",
-    "customerBrandCode": "DEFAULT",
-    "customerCategoryCode": "CLIENT",
-    "currencyCode": "USD",
-    "countryCode": "US",
-    "languageCode": "ENG",
-    "billingCycleCode": "RS_FULL_164_RATING_GROUP",
-    "titleCode": "MR",
-    "firstName": "Edward",
-    "lastName": "Legaspi",
-    "phoneNumber": "+102354749",
-    "address1": "Address1",
-    "address2": "Address2",
-    "zipCode": "75001",
-    "city": "Tunis",
-    "paymentMethods": {
-        "methodOfPayment": {
-            "-paymentMethodType": "DIRECTDEBIT",
-            "bankCoordinates": {
-                "bankCode": "12456",
-                "branchCode": "23456",
-                "accountNumber": "34589324756",
-                "key": "45",
-                "iban": "1212",
-                "bic": "67789456",
-                "accountOwner": "Me and co",
-                "bankName": "Some bank",
-                "bankId": "78946",
-                "issuerNumber": "46789",
-                "issuerName": "Some issuer",
-                "ics": "5587"
-            }
-        }
-    },
-    "registrationNo": "1234",
-    "vatNo": "1234",
-    "jobTitle": "Software Engineer"
+    "code": "RS_BASE_RATING_GROUP_USAGE",
+    "description": "RS_BASE_RATING_GROUP_USAGE",
+    "invoiceSubCategory": "CMP_DATA",
+    "unitMultiplicator": "1",
+    "filterParam1": "RATING_GROUP"
 }

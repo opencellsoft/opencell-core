@@ -3,12 +3,12 @@
     "servicesToActivate": {
         "service": [
             {
-                "-code": "RS_BASE_SERVICE1",
+                "code": "RS_BASE_SERVICE1",
                 "quantity": "1",
                 "subscriptionDate": "2017-03-15"
             },
             {
-                "-code": "RS_BASE_SERVICE2",
+                "code": "RS_BASE_SERVICE2",
                 "quantity": "2",
                 "subscriptionDate": "2017-03-15"
             }

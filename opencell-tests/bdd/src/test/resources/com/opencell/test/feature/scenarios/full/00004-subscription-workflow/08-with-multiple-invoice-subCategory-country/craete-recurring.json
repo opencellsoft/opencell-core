@@ -1,6 +1,6 @@
 {
-    "-code": "RS_FULL_TAX_VALIDITY_REC1",
-    "-description": "RS_FULL_TAX_VALIDITY_REC1",
+    "code": "RS_FULL_TAX_VALIDITY_REC1",
+    "description": "RS_FULL_TAX_VALIDITY_REC1",
     "invoiceSubCategory": "INVOICE_SUB_CAT_COUNTRY_TAX_VALIDITY_164",
     "disabled": "false",
     "amountEditable": "true",

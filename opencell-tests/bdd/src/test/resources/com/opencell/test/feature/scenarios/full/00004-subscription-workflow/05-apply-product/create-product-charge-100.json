@@ -1,6 +1,6 @@
 {
-    "-code": "RS_BASE_PC100",
-    "-description": "RS_BASE_PC100",
+    "code": "RS_BASE_PC100",
+    "description": "RS_BASE_PC100",
     "invoiceSubCategory": "SUB_DATA",
     "disabled": "false",
     "amountEditable": "false",

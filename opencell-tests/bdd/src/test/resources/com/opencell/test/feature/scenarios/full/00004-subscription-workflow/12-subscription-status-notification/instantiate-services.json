@@ -2,7 +2,7 @@
     "subscription": "RS_FULL_164_SUB_STATUS_NOTIFICATION",
     "servicesToInstantiate": {
         "service": {
-            "-code": "RS_BASE_SERVICE1",
+            "code": "RS_BASE_SERVICE1",
             "quantity": "1",
             "subscriptionDate": "2018-10-13"
         }

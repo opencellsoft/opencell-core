@@ -2,7 +2,7 @@
     "subscription": "RS_FULL_164_SUB_NO",
     "servicesToActivate": {
         "service": {
-            "-code": "RS_FULL_164_SERVICE",
+            "code": "RS_FULL_164_SERVICE",
             "quantity": "1",
             "subscriptionDate": "2015-02-01"
         }

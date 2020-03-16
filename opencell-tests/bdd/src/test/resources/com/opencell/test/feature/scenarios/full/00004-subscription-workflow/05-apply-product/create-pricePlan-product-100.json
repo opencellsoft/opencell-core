@@ -1,6 +1,6 @@
 {
-    "-code": "RS_BASE_PC100_PP",
-    "-description": "price plan product 100",
+    "code": "RS_BASE_PC100_PP",
+    "description": "price plan product 100",
     "eventCode": "RS_BASE_PC100",
     "amountWithoutTax": "5",
     "amountWithTax": "6",

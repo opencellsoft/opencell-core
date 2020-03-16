@@ -1,6 +1,6 @@
 {
-    "-code": "RS_FULL_164_CF_SERV_UPD_100",
-    "-description": "RS_FULL_164_CF_PROD_PRICE100",
+    "code": "RS_FULL_164_CF_SERV_UPD_100",
+    "description": "RS_FULL_164_CF_PROD_PRICE100",
     "fieldType": "DOUBLE",
     "appliesTo": "ServiceInstance",
     "storageType": "SINGLE",

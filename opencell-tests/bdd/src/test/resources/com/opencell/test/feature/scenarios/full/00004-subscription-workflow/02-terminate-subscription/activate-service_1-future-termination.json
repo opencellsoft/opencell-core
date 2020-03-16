@@ -2,7 +2,7 @@
     "subscription": "RS_FULL_164_SUB_FUTURE_TERMINATION",
     "servicesToActivate": {
         "service": {
-            "-code": "RS_BASE_SERVICE2",
+            "code": "RS_BASE_SERVICE2",
             "quantity": "1",
             "subscriptionDate": "${#TestCase#today}"
         }
