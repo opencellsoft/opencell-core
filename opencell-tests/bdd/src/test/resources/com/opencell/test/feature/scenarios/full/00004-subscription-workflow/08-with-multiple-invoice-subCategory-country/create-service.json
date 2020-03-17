@@ -3,18 +3,24 @@
     "description": "RS_FULL_TAX_VALIDITY_SERVICE1",
     "invoicingCalendar": "MONTHLY",
     "serviceChargeTemplateRecurrings": {
-        "serviceChargeTemplateRecurring": {
-            "code": "RS_FULL_TAX_VALIDITY_REC1"
-        }
+        "serviceChargeTemplateRecurring": [
+            {
+                "code": "RS_FULL_TAX_VALIDITY_REC1"
+            }
+        ]
     },
     "serviceChargeTemplateSubscriptions": {
-        "serviceChargeTemplateSubscription": {
-            "code": "RS_FULL_TAX_VALIDITY_OS1"
-        }
+        "serviceChargeTemplateSubscription": [
+            {
+                "code": "RS_FULL_TAX_VALIDITY_OS1"
+            }
+        ]
     },
     "serviceChargeTemplateUsages": {
-        "serviceChargeTemplateUsage": {
-            "code": "RS_FULL_TAX_VALIDITY_USAGE1"
-        }
+        "serviceChargeTemplateUsage": [
+            {
+                "code": "RS_FULL_TAX_VALIDITY_USAGE1"
+            }
+        ]
     }
 }

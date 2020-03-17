@@ -1,52 +1,44 @@
 {
     "productInstance": [
         {
-            "id": "*",
             "code": "RS_BASE_PRODUCT2",
             "description": "RS_BASE_Apply-OneShotChargeInstance_Description_SUB",
             "auditable": {
-                "created": "*",
-                "creator": "*"
             },
-            "applicationDate": "2016-04-06T00:00:00*",
-            "quantity": "1.000000000000",
-            "productChargeInstance": {
-                "id": "*",
-                "code": "RS_BASE_PRODUCT2",
-                "description": "RS_BASE_Apply-OneShotChargeInstance_Description_SUB",
-                "auditable": {
-                    "created": "*",
-                    "creator": "*"
-                },
-                "status": "ACTIVE",
-                "sellerCode": "SELLER_FR",
-                "userAccountCode": "RS_BASE_UA",
-                "quantity": "1.000000000000"
-            }
+            "applicationDate": 1459900800000,
+            "quantity": 1.000000000000,
+            "productChargeInstance": [
+                {
+                    "code": "RS_BASE_PRODUCT2",
+                    "description": "RS_BASE_Apply-OneShotChargeInstance_Description_SUB",
+                    "auditable": {
+                    },
+                    "status": "ACTIVE",
+                    "sellerCode": "SELLER_FR",
+                    "userAccountCode": "RS_BASE_UA",
+                    "quantity": 1.000000000000
+                }
+            ]
         },
         {
-            "id": "*",
             "code": "RS_BASE_PRODUCT100",
             "description": "RS_BASE_Apply-OneShotChargeInstance_Description_SUB",
             "auditable": {
-                "created": "*",
-                "creator": "*"
             },
-            "applicationDate": "2016-04-06T00:00:00*",
-            "quantity": "1.000000000000",
-            "productChargeInstance": {
-                "id": "*",
-                "code": "RS_BASE_PRODUCT100",
-                "description": "RS_BASE_Apply-OneShotChargeInstance_Description_SUB",
-                "auditable": {
-                    "created": "*",
-                    "creator": "*"
-          s      },
-                "status": "ACTIVE",
-                "sellerCode": "SELLER_FR",
-                "userAccountCode": "RS_BASE_UA",
-                "quantity": "1.000000000000"
-            }
+            "applicationDate": 1459900800000,
+            "quantity": 1.000000000000,
+            "productChargeInstance": [
+                {
+                    "code": "RS_BASE_PRODUCT100",
+                    "description": "RS_BASE_Apply-OneShotChargeInstance_Description_SUB",
+                    "auditable": {
+                    },
+                    "status": "ACTIVE",
+                    "sellerCode": "SELLER_FR",
+                    "userAccountCode": "RS_BASE_UA",
+                    "quantity": 1.000000000000
+                }
+            ]
         }
     ]
 }

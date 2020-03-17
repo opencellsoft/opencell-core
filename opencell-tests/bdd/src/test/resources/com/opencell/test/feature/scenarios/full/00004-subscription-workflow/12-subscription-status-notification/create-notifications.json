@@ -4,19 +4,8 @@
     "eventTypeFilter": "STATUS_UPDATED",
     "scriptInstanceCode": "org.meveo.service.script.SubscriptionStatusUpdatedScript",
     "scriptParams": {
-        "entry": [
-            {
-                "key": "subscription",
-                "value": "#{event.entity}"
-            },
-            {
-                "key": "previousState",
-                "value": "#{event.previousState}"
-            },
-            {
-                "key": "currentState",
-                "value": "#{event.currentState}"
-            }
-        ]
+        "subscription": "#{event.entity}",
+        "previousState": "#{event.previousState}",
+        "currentState": "#{event.currentState}"
     }
 }

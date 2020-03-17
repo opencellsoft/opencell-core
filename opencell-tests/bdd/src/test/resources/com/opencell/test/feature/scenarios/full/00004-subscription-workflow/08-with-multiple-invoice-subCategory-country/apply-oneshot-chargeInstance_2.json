@@ -1,7 +1,7 @@
 {
     "oneShotCharge": "RS_FULL_TAX_VALIDITY_OS1",
     "subscription": "RS_FULL_164_MULTI_TAX_SUB",
-    "createWallet": "false",
+    "createWallet": false,
     "operationDate": "2017-04-03",
     "quantity": "1",
     "description": "RS_BASE_Apply-OneShotChargeInstance_Description",

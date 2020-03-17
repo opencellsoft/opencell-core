@@ -1,4 +1,4 @@
-@full @test
+@full @ignore
 Feature: Rating Group
 
   @admin

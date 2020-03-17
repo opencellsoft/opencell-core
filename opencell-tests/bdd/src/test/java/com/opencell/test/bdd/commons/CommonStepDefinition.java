@@ -86,10 +86,12 @@ public class CommonStepDefinition implements En {
                 break;
             case "delete":
             case "Delete":
+                response = RestApiUtils.delete(api + base.getCode().get(), bodyRequest);
+                break;
             case "Del":
             case "del":
             case "DEL":
-                response = RestApiUtils.delete(api + base.getCode().get(), bodyRequest);
+                response = RestApiUtils.delete(api, bodyRequest);
                 break;
             }
             ActionStatus actionStatus = null;

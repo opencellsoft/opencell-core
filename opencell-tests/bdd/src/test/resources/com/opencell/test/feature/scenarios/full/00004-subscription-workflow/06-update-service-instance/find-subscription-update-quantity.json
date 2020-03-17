@@ -1,3 +1,35 @@
 {
-    "subscriptionCode": "RS_FULL_164_SUB_UPD_SERV_100"
+    "code": "RS_FULL_164_SUB_UPD_SERV_100",
+    "userAccount": "RS_BASE_UA_3",
+    "offerTemplate": "RS_BASE_OFFER1",
+    "services": {
+        "serviceInstance": [
+            {
+                "quantity": 5,
+                "customFields": {
+                    "customField": [
+                        {
+                            "code": "RS_FULL_164_CF_SERV_UPD_100",
+                            "description": "RS_FULL_164_CF_PROD_PRICE100",
+                            "fieldType": "DOUBLE",
+                            "doubleValue": 201
+                        }
+                    ]
+                }
+            },
+            {
+                "quantity": 7,
+                "customFields": {
+                    "customField": [
+                        {
+                            "code": "RS_FULL_164_CF_SERV_UPD_100",
+                            "description": "RS_FULL_164_CF_PROD_PRICE100",
+                            "fieldType": "DOUBLE",
+                            "doubleValue": 202
+                        }
+                    ]
+                }
+            }
+        ]
+    }
 }

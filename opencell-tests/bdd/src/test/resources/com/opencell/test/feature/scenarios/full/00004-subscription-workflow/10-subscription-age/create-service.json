@@ -3,8 +3,10 @@
     "description": "RS_BASE_SERVICE_SUB_AGE",
     "invoicingCalendar": "MONTHLY",
     "serviceChargeTemplateRecurrings": {
-        "serviceChargeTemplateRecurring": {
-            "code": "RS_BASE_REC_SUB_AGE"
-        }
+        "serviceChargeTemplateRecurring": [
+            {
+                "code": "RS_BASE_REC_SUB_AGE"
+            }
+        ]
     }
 }

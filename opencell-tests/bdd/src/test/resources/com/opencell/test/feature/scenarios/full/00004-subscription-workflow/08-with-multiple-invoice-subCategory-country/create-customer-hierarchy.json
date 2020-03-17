@@ -37,7 +37,7 @@
     "seller": "SELLER_US",
     "country": "US",
     "nextInvoiceDate": "2017-04-01",
-    "electronicBilling": "true",
+    "electronicBilling": true,
     "baStatus": "ACTIVE",
     "email": "edward.legaspi@opencellsoft.com",
     "uaStatus": "ACTIVE"

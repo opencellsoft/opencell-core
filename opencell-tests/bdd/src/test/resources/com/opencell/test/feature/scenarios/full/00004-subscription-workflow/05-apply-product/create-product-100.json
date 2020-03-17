@@ -2,11 +2,11 @@
     "code": "RS_BASE_PRODUCT100",
     "description": "RS_BASE_PRODUCT2 DESC",
     "name": "RS_BASE_PRODUCT100 NAME",
-    "productChargeTemplates": {
-        "productChargeTemplate": {
+    "productChargeTemplate": [
+        {
             "code": "RS_BASE_PC100",
             "invoiceSubCategory": "SUB_DATA",
-            "disabled": "FALSE"
+            "disabled": false
         }
-    }
+    ]
 }

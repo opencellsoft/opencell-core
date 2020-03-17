@@ -3,6 +3,6 @@
     "targetType": "BILLINGACCOUNT",
     "invoicingDate": "2018-10-01T00:00:00",
     "lastTransactionDate": "2018-10-30T00:00:00",
-    "generateXML": "false",
-    "generatePDF": "false"
+    "generateXML": false,
+    "generatePDF": false
 }

@@ -2,6 +2,6 @@
     "code": "RS_FULL_MULTI_TAX",
     "description": "RS_FULL_MULTI_TAX",
     "invoiceSubCategory": "INVOICE_SUB_CAT_COUNTRY_TAX_VALIDITY_164",
-    "disabled": "false",
-    "amountEditable": "false"
+    "disabled": false,
+    "amountEditable": false
 }

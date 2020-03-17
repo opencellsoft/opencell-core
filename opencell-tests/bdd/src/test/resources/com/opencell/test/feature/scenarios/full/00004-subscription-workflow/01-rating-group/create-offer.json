@@ -4,7 +4,7 @@
     "name": "RS_FULL_164_RATING_GROUP_OFFER",
     "offerServiceTemplate": [
         {
-            "mandatory": "true",
+            "mandatory": true,
             "serviceTemplate": {
                 "code": "RS_FULL_RATING_GROUP_SERVICE"
             }

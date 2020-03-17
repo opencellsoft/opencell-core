@@ -1,9 +1,9 @@
 {
-    "code": "PP_RS_FULL_TAX_VALIDITY_OS1",
-    "description": "PP_RS_FULL_TAX_VALIDITY_OS1",
-    "eventCode": "RS_FULL_TAX_VALIDITY_OS1",
+    "code": "PP_RS_FULL_TAX_VALIDITY_REC1",
+    "description": "RS_FULL_TAX_VALIDITY_REC1",
+    "eventCode": "RS_FULL_TAX_VALIDITY_REC1",
     "offerTemplate": "RS_FULL_TAX_VALIDITY_OFFER",
     "amountWithoutTax": "10",
     "amountWithTax": "12",
-    "priority": "0"
+    "priority": "1"
 }

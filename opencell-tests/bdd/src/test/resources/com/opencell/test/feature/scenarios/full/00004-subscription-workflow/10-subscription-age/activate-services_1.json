@@ -1,11 +1,11 @@
 {
-    "subscription": "RS_FULL_164_SUB_AGE2",
+    "subscription": "RS_FULL_164_SUB_AGE",
     "servicesToActivate": {
         "service": [
             {
                 "code": "RS_BASE_SERVICE_SUB_AGE",
                 "quantity": "1",
-                "subscriptionDate": "2017-07-01"
+                "subscriptionDate": "2017-05-01"
             }
         ]
     }
