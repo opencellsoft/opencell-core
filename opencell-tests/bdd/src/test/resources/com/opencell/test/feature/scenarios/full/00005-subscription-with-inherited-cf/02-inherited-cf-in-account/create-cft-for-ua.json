@@ -1,0 +1,23 @@
+{
+    "code": "RS_FULL_ACCOUNT_CF_INHERITED",
+    "description": "RS_FULL_SUB_UA_CF_INHERITED",
+    "fieldType": "STRING",
+    "appliesTo": "UserAccount",
+    "storageType": "MATRIX",
+    "defaultValue": "INHERITED_CF",
+    "mapKeyType": "STRING",
+    "matrixColumn": [
+        {
+            "code": "MAT_1",
+            "position": "1",
+            "label": "One",
+            "keyType": "STRING"
+        },
+        {
+            "code": "MAT_2",
+            "position": "2",
+            "label": "Two",
+            "keyType": "RON"
+        }
+    ]
+}

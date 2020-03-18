@@ -1,0 +1,16 @@
+{
+    "code": "RS_FULL_432_SUB_InheritedCF",
+    "description": "RS_FULL_432_SUB_InheritedCF",
+    "userAccount": "RS_FULL_432_UA_3_InheritedCF",
+    "offerTemplate": "RS_BASE_OFFER1",
+    "subscriptionDate": "2015-02-01",
+    "endAgreementDate": "2015-05-01",
+    "customFields": {
+        "customField": [
+            {
+                "code": "RS_FULL_SUB_CF_INHERITED",
+                "stringValue": "SUB_INHERITED"
+            }
+        ]
+    }
+}

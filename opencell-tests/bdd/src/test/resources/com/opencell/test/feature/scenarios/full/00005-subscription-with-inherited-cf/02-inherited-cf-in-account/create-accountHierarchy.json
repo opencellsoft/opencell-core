@@ -1,0 +1,20 @@
+{
+    "email": "RS_FULL_432@manaty.net",
+    "paymentMethod": "2",
+    "customerId": "RS_FULL_432_CUST1",
+    "sellerCode": "SELLER_FR",
+    "customerBrandCode": "DEFAULT",
+    "customerCategoryCode": "CLIENT",
+    "currencyCode": "USD",
+    "countryCode": "US",
+    "languageCode": "ENG",
+    "billingCycleCode": "CYC_INV_MT_1",
+    "titleCode": "MR",
+    "firstName": "firstName",
+    "lastName": "lastName",
+    "phoneNumber": "+102354749",
+    "address1": "Address1",
+    "address2": "Address2",
+    "zipCode": "75001",
+    "city": "Tunis"
+}
