@@ -30,7 +30,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 
 /**
@@ -79,6 +81,20 @@ public class RecurringChargeInstance extends ChargeInstance {
     @NotNull
     protected BigDecimal quantity = BigDecimal.ONE;
 
+    /**
+     * The calendar
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "calendar_id")
+    private Calendar calendar;
+
+    /**
+     * Apply charge in advance - at the beginning of the period. If false, charge will be applied at the end of the period
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "apply_in_advance")
+    private Boolean applyInAdvance;
+
     public RecurringChargeInstance() {
 
     }
@@ -92,7 +108,12 @@ public class RecurringChargeInstance extends ChargeInstance {
         this.quantity = serviceInstance.getQuantity() == null ? BigDecimal.ONE : serviceInstance.getQuantity();
 
     }
-
+    public RecurringChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, RecurringChargeTemplate recurringChargeTemplate, ServiceInstance serviceInstance,
+                                   InstanceStatusEnum status, Calendar calendar, Boolean applyInAdvance) {
+        this(amountWithoutTax, amountWithTax, recurringChargeTemplate, serviceInstance, status);
+        this.calendar = calendar;
+        this.applyInAdvance = applyInAdvance;
+    }
     public RecurringChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, Date subscriptionDate, Subscription subscription, Seller seller,
             TradingCountry tradingCountry, TradingCurrency tradingCurrency, RecurringChargeTemplate recurringChargeTemplate) {
 
@@ -160,5 +181,41 @@ public class RecurringChargeInstance extends ChargeInstance {
 
     public void setCounter(CounterInstance counter) {
         this.counter = counter;
+    }
+
+    /**
+     * Gets the calendar.
+     *
+     * @return the calendar
+     */
+    public Calendar getCalendar() {
+        return calendar;
+    }
+
+    /**
+     * Sets the calendar.
+     *
+     * @param calendar the new calendar
+     */
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
+    }
+
+    /**
+     * Gets the apply in advance.
+     *
+     * @return the apply in advance
+     */
+    public Boolean getApplyInAdvance() {
+        return applyInAdvance;
+    }
+
+    /**
+     * Sets the apply in advance.
+     *
+     * @param applyInAdvance the new apply in advance
+     */
+    public void setApplyInAdvance(Boolean applyInAdvance) {
+        this.applyInAdvance = applyInAdvance;
     }
 }
