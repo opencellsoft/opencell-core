@@ -18,13 +18,16 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
@@ -36,11 +39,9 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> {
 
-	public BigDecimal findTotalAmountByWalletSubCat(WalletInstance wallet, InvoiceSubCategory invoiceSubCategory,
-			Invoice invoice) {
-		QueryBuilder qb = new QueryBuilder("select sum(amountWithoutTax) from "
-				+ SubCategoryInvoiceAgregate.class.getSimpleName());
-		
+	public BigDecimal findTotalAmountByWalletSubCat(WalletInstance wallet, InvoiceSubCategory invoiceSubCategory, Invoice invoice) {
+		QueryBuilder qb = new QueryBuilder("select sum(amountWithoutTax) from " + SubCategoryInvoiceAgregate.class.getSimpleName());
+
 		qb.addCriterionEntity("invoiceSubCategory", invoiceSubCategory);
 		qb.addCriterionEntity("wallet", wallet);
 		qb.addCriterionEntity("invoice", invoice);
@@ -55,8 +56,7 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 	}
 
 	public Object[] findTotalAmountsForDiscountAggregates(Invoice invoice) {
-		QueryBuilder qb = new QueryBuilder("select sum(amountWithoutTax),sum(amountTax),sum(amountWithTax) from "
-				+ SubCategoryInvoiceAgregate.class.getSimpleName());
+		QueryBuilder qb = new QueryBuilder("select sum(amountWithoutTax),sum(amountTax),sum(amountWithTax) from " + SubCategoryInvoiceAgregate.class.getSimpleName());
 		qb.addBooleanCriterion("discountAggregate", true);
 		try {
 			Object[] result = (Object[]) qb.getQuery(getEntityManager()).getSingleResult();
@@ -72,16 +72,14 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 		QueryBuilder qb = new QueryBuilder(SubCategoryInvoiceAgregate.class, "s");
 		qb.addBooleanCriterion("s.discountAggregate", true);
 		qb.addCriterionEntity("s.invoice", invoice);
-		List<SubCategoryInvoiceAgregate> result = (List<SubCategoryInvoiceAgregate>) qb.getQuery(getEntityManager())
-				.getResultList();
+		List<SubCategoryInvoiceAgregate> result = (List<SubCategoryInvoiceAgregate>) qb.getQuery(getEntityManager()).getResultList();
 		return result;
 
 	}
 
 	@SuppressWarnings({ "unchecked" })
 	public List<? extends InvoiceAgregate> listByInvoiceAndType(Invoice invoice, String type) {
-		QueryBuilder qb = new QueryBuilder("from " + InvoiceAgregate.class.getSimpleName()
-				+ " i WHERE i.invoice=:invoice AND i.class=:clazz");
+		QueryBuilder qb = new QueryBuilder("from " + InvoiceAgregate.class.getSimpleName() + " i WHERE i.invoice=:invoice AND i.class=:clazz");
 
 		Query query = qb.getQuery(getEntityManager());
 		query.setParameter("invoice", invoice);
@@ -93,40 +91,57 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Sets invoice to null of the given list of InvoiceAggregate id.
-	 * 
+	 *
 	 * @param ids list of InvoiceAggregate ids
 	 */
 	public void setInvoiceToNull(List<Long> ids) {
-		 String stringQuery = "UPDATE InvoiceAgregate SET invoice=null WHERE id IN (:ids)";
+		String stringQuery = "UPDATE InvoiceAgregate SET invoice=null WHERE id IN (:ids)";
 
-        Query query = getEntityManager().createQuery(stringQuery);
-        query.setParameter("ids", ids);
-        query.executeUpdate();
+		Query query = getEntityManager().createQuery(stringQuery);
+		query.setParameter("ids", ids);
+		query.executeUpdate();
 	}
-	
+
 	/**
 	 * Sets invoice to null of the InvoiceAggregate with the given id.
-	 * 
+	 *
 	 * @param id InvoiceAggregate ids
 	 */
 	public void setInvoiceToNull(Long id) {
-		 String stringQuery = "UPDATE InvoiceAgregate SET invoice=null WHERE id=:id";
+		String stringQuery = "UPDATE InvoiceAgregate SET invoice=null WHERE id=:id";
 
-       Query query = getEntityManager().createQuery(stringQuery);
-       query.setParameter("id", id);
-       query.executeUpdate();
+		Query query = getEntityManager().createQuery(stringQuery);
+		query.setParameter("id", id);
+		query.executeUpdate();
 	}
-	
-    /**
-     * Delete invoiceAgregates associated to a billing run
-     * 
-     * @param billingRun Billing run
-     */
-    public void deleteInvoiceAgregates(BillingRun billingRun) {
-        getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
-        getEntityManager().createNamedQuery("InvoiceAgregate.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
-    }
+
+	/**
+	 * Delete invoiceAgregates associated to a billing run
+	 *
+	 * @param billingRun Billing run
+	 */
+	public void deleteInvoiceAgregates(BillingRun billingRun) {
+		getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
+		getEntityManager().createNamedQuery("InvoiceAgregate.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
+	}
+
+	/**
+	 * Retrun the total discount amounts grouped by billing account for a billing run.
+	 *
+	 * @param billingRun the billing run
+	 * @return a map of discount amounts grouped by billing account.
+	 */
+	public Map<Long, Amounts> getTotalDiscountAmount(BillingRun billingRun) {
+		List<Object[]> resultSet = getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.sumAmountsDiscount").setParameter("billingRunId", billingRun.getId())
+				.getResultList();
+		Map<Long, Amounts> discountAmounts = new HashMap<>();
+		for (Object[] result : resultSet) {
+			Amounts amounts = new Amounts((BigDecimal) result[0], (BigDecimal) result[1]);
+			discountAmounts.put((Long) result[2], amounts);
+		}
+		return discountAmounts;
+	}
 }

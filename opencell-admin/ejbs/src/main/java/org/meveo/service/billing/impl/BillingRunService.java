@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -44,6 +46,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
@@ -55,7 +58,10 @@ import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RejectedBillingAccount;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
@@ -853,6 +859,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             minRTsUsed = ratedTransactionService.isMinRTsUsed();
         }
         boolean includesFirstRun = false;
+        // First Step
+        /**
+         * Calculate amount to invoice for each BA
+         */
         if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 
             int totalEntityCount = 0;
@@ -920,14 +930,19 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             includesFirstRun = true;
 
             log.info("Will update BR amount totals for Billing run {}. Will invoice {} out of {} entities of type {}", billingRun.getId(),
-                (billableEntities != null ? billableEntities.size() : 0), totalEntityCount, type);
+                    (billableEntities != null ? billableEntities.size() : 0), totalEntityCount, type);
             billingRunExtensionService.updateBRAmounts(billingRun.getId(), billableEntities);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), totalEntityCount, billableEntities.size(), BillingRunStatusEnum.PREINVOICED, new Date());
         }
-
-        boolean proceedToPostInvoicing = BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus()) || (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())
-                && ((billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC)
-                        || appProvider.isAutomaticInvoicing()));
+        /**
+         * Second step:
+         * Generate min RTs
+         * Calculate discounts
+         * Generate Invoices
+         */
+        boolean proceedToPostInvoicing = BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus()) || (BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) && (
+                (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) || appProvider
+                        .isAutomaticInvoicing()));
 
         if (proceedToPostInvoicing) {
 
@@ -943,10 +958,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
             createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billableEntities, !includesFirstRun && minRTsUsed[0], !includesFirstRun && minRTsUsed[1],
                 !includesFirstRun && minRTsUsed[2]);
+
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
             if (billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
                 billingRun = billingRunExtensionService.findById(billingRun.getId());
             }
+            applyThreshold(billingRun, billableEntities);
         }
 
         if (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) && billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
@@ -963,9 +980,103 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
     }
 
+    private void applyThreshold(BillingRun billingRun, List<IBillableEntity> billableEntities) {
+        Map<Customer, List<Invoice>> customerInvoices = new HashMap<>();
+        Map<CustomerAccount, List<Invoice>> customerAccountInvoices = new HashMap<>();
+        Map<BillingAccount, List<Invoice>> billingAccountInvoices = new HashMap<>();
+        List<Invoice> invoicesToRemove = new ArrayList<>();
+        Map<Long, Amounts> discountAmounts = invoiceAgregateService.getTotalDiscountAmount(billingRun);
+        Map<Long, Amounts> customerDiscountAmounts = new HashMap<>();
+        Map<Long, Amounts> caDiscountAmounts = new HashMap<>();
+        for (IBillableEntity billableEntity : billableEntities) {
+            BillingAccount ba;
+            if (billableEntity instanceof Subscription) {
+                ba = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
+            } else {
+                ba = (BillingAccount) billableEntity;
+            }
+        }
+
+        Map<Long, Amounts> positiveRTAmounts = ratedTransactionService.getTotalPositiveRTAmounts(billingRun);
+        Map<Long, Amounts> customerPositiveRTAmounts = new HashMap<>();
+        Map<Long, Amounts> caPositiveRTAmounts = new HashMap<>();
+
+        Boolean isEntreprise = appProvider.isEntreprise();
+        List<Invoice> invoices = invoiceService.getInvoices(billingRun);
+
+        for (Invoice invoice : invoices) {
+            BillingAccount ba = invoice.getBillingAccount();
+            if (billingAccountInvoices.get(ba) == null) {
+                List<Invoice> baInvoices = new ArrayList<>();
+                baInvoices.add(invoice);
+                billingAccountInvoices.put(ba, baInvoices);
+            } else {
+                billingAccountInvoices.get(ba).add(invoice);
+            }
+            CustomerAccount ca = ba.getCustomerAccount();
+            if (customerAccountInvoices.get(ca) == null) {
+                List<Invoice> caInvoices = new ArrayList<>();
+                caInvoices.add(invoice);
+                customerAccountInvoices.put(ca, caInvoices);
+            } else {
+                customerAccountInvoices.get(ca).add(invoice);
+            }
+
+            Customer customer = ca.getCustomer();
+            if (customerInvoices.get(customer) == null) {
+                List<Invoice> custInvoices = new ArrayList<>();
+                custInvoices.add(invoice);
+                customerInvoices.put(customer, custInvoices);
+            } else {
+                customerInvoices.get(customer).add(invoice);
+            }
+        }
+        for (BillingAccount ba : billingAccountInvoices.keySet()) {
+            BigDecimal threshold = ba.getInvoicingThreshold();
+            if (threshold == null && ba.getBillingCycle() != null) {
+                threshold = ba.getBillingCycle().getInvoicingThreshold();
+            }
+            if (threshold == null) {
+                continue;
+            }
+            List<Invoice> baInvoices = billingAccountInvoices.get(ba);
+            BigDecimal baTotalInvoiced = baInvoices.stream().map(invoice -> (isEntreprise) ? invoice.getAmountWithoutTax() : invoice.getAmountWithTax())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            switch (ba.getCheckThreshold()) {
+            case POSITIVE_RT:
+                Amounts baPositiveRTAmounts = positiveRTAmounts.get(ba.getId());
+                BigDecimal amount = (isEntreprise) ? baPositiveRTAmounts.getAmountWithoutTax() : baPositiveRTAmounts.getAmountWithTax();
+                if (amount.compareTo(threshold) < 0) {
+                    invoicesToRemove.addAll(baInvoices);
+                }
+                break;
+            case AFTER_DISCOUNT:
+                if (baTotalInvoiced.compareTo(threshold) < 0) {
+                    invoicesToRemove.addAll(baInvoices);
+                }
+                break;
+            case BEFORE_DISCOUNT:
+                BigDecimal discoutAmount = BigDecimal.ZERO;
+                if (discountAmounts != null && !discountAmounts.isEmpty() && discountAmounts.get(ba) != null) {
+                    discoutAmount = (isEntreprise) ? discountAmounts.get(ba).getAmountWithoutTax() : discountAmounts.get(ba).getAmountWithTax();
+                }
+                BigDecimal amountBeforeDiscount = baTotalInvoiced.add(discoutAmount);
+                if (amountBeforeDiscount.compareTo(threshold) < 0) {
+                    invoicesToRemove.addAll(baInvoices);
+                }
+                break;
+            default:
+                break;
+            }
+
+        }
+
+    }
+
     /**
      * Get amounts to invoice grouped by a billable entity a configured in billing run
-     * 
+     *
      * @param billingRun Billing run
      * @return A list of Object array consisting billable entity id and amounts
      */

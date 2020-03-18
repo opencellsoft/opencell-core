@@ -1759,4 +1759,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
     }
 
+    /**
+     * Retrun the total of positive rated transaction grouped by billing account for a billing run.
+     * @param billingRun the billing run
+     * @return a map of positive rated transaction grouped by billing account.
+     */
+    public Map<Long, Amounts> getTotalPositiveRTAmounts(BillingRun billingRun) {
+
+        List<Object[]> resultSet = getEntityManager().createNamedQuery("RatedTransaction.sumPositiveRTByBR").setParameter("billingRunId", billingRun.getId()).getResultList();
+        Map<Long, Amounts> positveRTAmounts = new HashMap<>();
+        for (Object[] result : resultSet) {
+            Amounts amounts = new Amounts((BigDecimal) result[0], (BigDecimal) result[1]);
+            positveRTAmounts.put((Long) result[2], amounts);
+        }
+        return positveRTAmounts;
+    }
 }
