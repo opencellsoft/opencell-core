@@ -117,8 +117,7 @@ public class FilesApi extends BaseApi {
             throw new BusinessApiException("Directory does not exists: " + file.getPath());
         }
 
-        try (FileOutputStream fos = new FileOutputStream(new File(FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip"));
-                ZipOutputStream zos = new ZipOutputStream(fos)) {
+        try (FileOutputStream fos = new FileOutputStream(new File(FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip")); ZipOutputStream zos = new ZipOutputStream(fos)) {
             FileUtils.addDirToArchive(getProviderRootDir(), file.getPath(), zos);
             fos.flush();
         } catch (IOException e) {
@@ -133,17 +132,18 @@ public class FilesApi extends BaseApi {
      * @throws BusinessApiException business api exeption.
      */
     public void uploadFile(byte[] data, String filename, String fileFormat) throws BusinessApiException {
-        File file = new File(getProviderRootDir() + File.separator + filename);
         FileOutputStream fop = null;
         try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+//            if (!file.exists()) {
+//                file.createNewFile();
+//            }
 
+            File file = new File(getProviderRootDir() + File.separator + filename);
             fop = new FileOutputStream(file);
 
             fop.write(data);
-            fop.flush();
+            fop.close();
+            fop = null;
 
             if (FilenameUtils.getExtension(file.getName()).equals("zip")) {
                 // unzip
@@ -159,7 +159,9 @@ public class FilesApi extends BaseApi {
         } catch (Exception e) {
             throw new BusinessApiException("Error uploading file: " + filename + ". " + e.getMessage());
         } finally {
-            IOUtils.closeQuietly(fop);
+            if (fop != null) {
+                IOUtils.closeQuietly(fop);
+            }
         }
     }
 
@@ -230,7 +232,6 @@ public class FilesApi extends BaseApi {
             throw new BusinessApiException("Error unziping file: " + filePath + ". " + e.getMessage());
         }
     }
-    
 
     public void suppressFile(String filePath) throws BusinessApiException {
         String filename = getProviderRootDir() + File.separator + filePath;

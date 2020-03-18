@@ -20,7 +20,7 @@ package org.meveo.api.admin;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -28,8 +28,8 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.admin.FileFormatDto;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -200,7 +200,7 @@ public class FileFormatApi extends BaseCrudApi<FileFormat, FileFormatDto> {
     }
 
     @Override
-    protected Function<FileFormat, FileFormatDto> getEntityToDtoFunction() {
+    protected BiFunction<FileFormat, CustomFieldsDto, FileFormatDto> getEntityToDtoFunction() {
         return FileFormatDto::new;
     }
 }

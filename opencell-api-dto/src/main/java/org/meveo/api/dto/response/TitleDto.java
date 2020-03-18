@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.shared.Title;
 
@@ -57,8 +58,9 @@ public class TitleDto extends BusinessEntityDto {
      * Instantiates a new title dto.
      *
      * @param title the title entity
+     * @param customFieldInstances Custom field values. Not applicable here.
      */
-    public TitleDto(Title title) {
+    public TitleDto(Title title, CustomFieldsDto customFieldInstances) {
         super(title);
         isCompany = title.getIsCompany();
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(title.getDescriptionI18n()));
