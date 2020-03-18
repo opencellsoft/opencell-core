@@ -18,7 +18,7 @@
 
 package org.meveo.api.tax;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.tax.TaxMappingDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -130,7 +131,7 @@ public class TaxMappingApi extends BaseCrudApi<TaxMapping, TaxMappingDto> {
     }
 
     @Override
-    protected Function<TaxMapping, TaxMappingDto> getEntityToDtoFunction() {
+    protected BiFunction<TaxMapping, CustomFieldsDto, TaxMappingDto> getEntityToDtoFunction() {
         return TaxMappingDto::new;
     }
 
