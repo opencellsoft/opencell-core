@@ -162,7 +162,7 @@ public class FlatFileValidator {
                 destName += "_COPY_" + DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT);
             }
             if (!StringUtils.isBlank(flatFile.getCode())) {
-                destName = flatFile.getCode() + "_" + destName;
+                destName = flatFile.getCode().replace(' ', '_') + "_" + destName;
             }
 
             log.debug("File " + flatFile.getFileOriginalName() + " will be moved to " + destination);
@@ -320,9 +320,10 @@ public class FlatFileValidator {
         if (StringUtils.isBlank(configurationTemplate)) {
             throw new BusinessException("The configuration template is missing");
         }
+        IFileParser fileParser = null;
         try {
 
-            IFileParser fileParser = getFileParser(configurationTemplate);
+            fileParser = getFileParser(configurationTemplate);
             if (fileParser != null) {
                 fileParser.setDataFile(file);
                 fileParser.setMappingDescriptor(configurationTemplate);
@@ -343,6 +344,10 @@ public class FlatFileValidator {
         } catch (Exception e) {
             log.error("Failed to valid file {}", fileName, e);
             errors.append(e.getMessage());
+        } finally {
+            if (fileParser != null) {
+                fileParser.close();
+            }
         }
 
         // Default validation (with extension).
