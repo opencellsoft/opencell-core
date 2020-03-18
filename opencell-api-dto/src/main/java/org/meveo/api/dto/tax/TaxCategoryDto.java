@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.tax.TaxCategory;
 
@@ -45,6 +46,9 @@ public class TaxCategoryDto extends BusinessEntityDto implements Serializable {
      **/
     protected List<LanguageDescriptionDto> descriptionI18n;
 
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
+
     /**
      * Default constructor
      */
@@ -56,9 +60,12 @@ public class TaxCategoryDto extends BusinessEntityDto implements Serializable {
      * Instantiates a new TaxCategory Dto.
      *
      * @param entity The Tax category entity
+     * @param customFieldInstances the custom field instances
      */
-    public TaxCategoryDto(TaxCategory entity) {
+    public TaxCategoryDto(TaxCategory entity, CustomFieldsDto customFieldInstances) {
         super(entity);
+
+        customFields = customFieldInstances;
 
         if (entity.getDescriptionI18n() != null) {
             this.descriptionI18n = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(entity.getDescriptionI18n());
@@ -79,4 +86,21 @@ public class TaxCategoryDto extends BusinessEntityDto implements Serializable {
         this.descriptionI18n = descriptionI18n;
     }
 
+    /**
+     * Gets the custom fields.
+     *
+     * @return the customFields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the customFields to set
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 }

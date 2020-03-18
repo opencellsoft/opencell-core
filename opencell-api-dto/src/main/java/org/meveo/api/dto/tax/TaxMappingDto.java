@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.AuditableEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEntityDto;
 import org.meveo.api.dto.IVersionedDto;
 import org.meveo.model.tax.TaxMapping;
@@ -130,8 +131,9 @@ public class TaxMappingDto extends AuditableEntityDto implements Serializable, I
      * Instantiates a new TaxMapping Dto.
      *
      * @param entity The Tax mapping entity
+     * @param customFieldInstances Custom field values. Not applicable here.
      */
-    public TaxMappingDto(TaxMapping entity) {
+    public TaxMappingDto(TaxMapping entity, CustomFieldsDto customFieldInstances) {
         super(entity);
 
         this.id = entity.getId();

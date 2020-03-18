@@ -35,6 +35,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
 
@@ -47,6 +48,7 @@ import org.meveo.model.ISearchable;
 @Entity
 @Cacheable
 @ExportIdentifier({ "code" })
+@CustomFieldEntity(cftCodePrefix = "TaxCategory")
 @Table(name = "billing_tax_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_tax_category_seq"), })
 @NamedQueries({ @NamedQuery(name = "TaxCategory.getByCode", query = "from TaxCategory t where t.code=:code ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),

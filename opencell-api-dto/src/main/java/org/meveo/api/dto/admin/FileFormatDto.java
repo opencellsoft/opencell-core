@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.admin.FileFormat;
 import org.meveo.model.admin.FileType;
 
@@ -98,8 +99,11 @@ public class FileFormatDto extends BusinessEntityDto {
 
     /**
      * Constructor
+     * 
+     * @param fileFormat File format entity to convert to DTO
+     * @param customFieldInstances Custom field values. Not applicable here.
      */
-    public FileFormatDto(FileFormat fileFormat) {
+    public FileFormatDto(FileFormat fileFormat, CustomFieldsDto customFieldInstances) {
         super(fileFormat);
         this.archiveDirectory = fileFormat.getArchiveDirectory();
         this.configurationTemplate = fileFormat.getConfigurationTemplate();
