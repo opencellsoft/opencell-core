@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.catalog.OfferTemplateCategory;
 
@@ -70,6 +71,9 @@ public class OfferTemplateCategoryDto extends EnableBusinessDto {
     /** The image base 64. */
     private String imageBase64;
 
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
+
     /**
      * Instantiates a new offer template category dto.
      */
@@ -90,8 +94,9 @@ public class OfferTemplateCategoryDto extends EnableBusinessDto {
      * Instantiates a new offer template category dto.
      *
      * @param offerTemplateCategory the offer template category
+     * @param customFieldInstances the custom field instances
      */
-    public OfferTemplateCategoryDto(OfferTemplateCategory offerTemplateCategory) {
+    public OfferTemplateCategoryDto(OfferTemplateCategory offerTemplateCategory, CustomFieldsDto customFieldInstances) {
         super(offerTemplateCategory);
 
         if (offerTemplateCategory != null) {
@@ -101,6 +106,8 @@ public class OfferTemplateCategoryDto extends EnableBusinessDto {
             this.setLastModified(offerTemplateCategory.getAuditable().getLastModified());
             this.setActive(offerTemplateCategory.isActive());
             this.imagePath = offerTemplateCategory.getImagePath();
+
+            customFields = customFieldInstances;
 
             OfferTemplateCategory parent = offerTemplateCategory.getOfferTemplateCategory();
 
@@ -115,10 +122,11 @@ public class OfferTemplateCategoryDto extends EnableBusinessDto {
      * Instantiates a new offer template category dto.
      *
      * @param offerTemplateCategory the offer template category
+     * @param customFieldInstances the custom field instances
      * @param baseUri the base uri
      */
-    public OfferTemplateCategoryDto(OfferTemplateCategory offerTemplateCategory, String baseUri) {
-        this(offerTemplateCategory);
+    public OfferTemplateCategoryDto(OfferTemplateCategory offerTemplateCategory, CustomFieldsDto customFieldInstances, String baseUri) {
+        this(offerTemplateCategory, customFieldInstances);
         this.setHref(String.format("%scatalogManagement/category/%s", baseUri, this.getId()));
     }
 
@@ -226,7 +234,7 @@ public class OfferTemplateCategoryDto extends EnableBusinessDto {
      * Sets the active.
      *
      * @param active the new active
-     */    
+     */
     public void setActive(Boolean active) {
         this.active = active;
     }
@@ -284,11 +292,28 @@ public class OfferTemplateCategoryDto extends EnableBusinessDto {
     public void setImageBase64(String imageBase64) {
         this.imageBase64 = imageBase64;
     }
-    
+
+    /**
+     * Gets the custom fields.
+     *
+     * @return the customFields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the customFields to set
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
+
     @Override
     public String toString() {
-        return "OfferTemplateCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", name=" + name + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode
-                + ", id=" + id + ", href=" + href + ", version=" + version + ", lastModified=" + lastModified + ", active=" + active + ", parentId=" + parentId + ", imagePath="
-                + imagePath + "]";
+        return "OfferTemplateCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", name=" + name + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", id=" + id + ", href=" + href
+                + ", version=" + version + ", lastModified=" + lastModified + ", active=" + active + ", parentId=" + parentId + ", imagePath=" + imagePath + "]";
     }
 }

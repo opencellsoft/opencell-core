@@ -18,17 +18,25 @@
 
 package org.meveo.api.rest.admin;
 
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.admin.FileFormatDto;
-import org.meveo.api.rest.IBaseRs;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.admin.FileFormatDto;
+import org.meveo.api.dto.admin.FileFormatListResponseDto;
+import org.meveo.api.dto.admin.FileFormatResponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.rest.IBaseRs;
 
 /**
  * File format resource
@@ -42,9 +50,9 @@ import javax.ws.rs.core.MediaType;
 public interface FileFormatRs extends IBaseRs {
 
     /**
-     * Create a new file format
+     * Create a new File format
      *
-     * @param postData The file format's data
+     * @param postData The File format's data
      * @return Request processing status
      */
     @POST
@@ -52,12 +60,69 @@ public interface FileFormatRs extends IBaseRs {
     ActionStatus create(FileFormatDto postData);
 
     /**
-     * Remove an existing file format with a given code
+     * Update an existing File format
+     * 
+     * @param dto The File format's data
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/")
+    ActionStatus update(FileFormatDto dto);
+
+    /**
+     * Remove an existing File format with a given code
      *
-     * @param code The web hook notification's code
+     * @param code File format's code
      * @return Request processing status
      */
     @DELETE
     @Path("/{code}")
     ActionStatus remove(@PathParam("code") String code);
+
+    /**
+     * Create new or update an existing File formats
+     * 
+     * @param dto The File format data
+     * @return Request processing status
+     */
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(FileFormatDto dto);
+
+    /**
+     * Search for a File format with a given code
+     * 
+     * @param code The File format's code
+     * @return A File format's data
+     */
+    @GET
+    @Path("/")
+    FileFormatResponseDto find(@QueryParam("code") String code);
+
+    /**
+     * Search File formats by matching a given criteria
+     * 
+     * @param query Search criteria
+     * @param fields Data retrieval options/fieldnames separated by a comma
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return List of File formats
+     */
+    @GET
+    @Path("/list")
+    public FileFormatListResponseDto searchGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+            @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * Search for File formats by matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return List of File formats
+     */
+    @POST
+    @Path("/list")
+    public FileFormatListResponseDto searchPost(PagingAndFiltering pagingAndFiltering);
+
 }

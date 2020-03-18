@@ -622,6 +622,7 @@ public class UserBean extends CustomFieldBean<User> {
                 out.write(bytes, 0, read);
             }
             out.flush();
+            out.close();
             log.debug("New file created!");
             buildFileList();
         } catch (IOException e) {
