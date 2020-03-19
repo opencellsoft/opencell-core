@@ -1,0 +1,28 @@
+{
+    "code": "RS_FULL_432_UA_3_InheritedCF",
+    "description": "RS_FULL_432_UA_3_InheritedCF",
+    "billingAccount": "RS_BASE_BA_3",
+    "externalRef1": "EXTREF1",
+    "externalRef2": "EXTREF2",
+    "name": {
+        "title": "MR",
+        "firstName": "Edward",
+        "lastName": "Legaspi"
+    },
+    "address": {
+        "address1": "adress1",
+        "address3": "adress3",
+        "zipCode": "21000",
+        "city": "Dijon",
+        "country": "France"
+    },
+    "subscriptionDate": "2016-03-10",
+    "customFields": {
+        "customField": [
+            {
+                "code": "RS_FULL_UA_CF_INHERITED",
+                "stringValue": "UA_INHERITED"
+            }
+        ]
+    }
+}
