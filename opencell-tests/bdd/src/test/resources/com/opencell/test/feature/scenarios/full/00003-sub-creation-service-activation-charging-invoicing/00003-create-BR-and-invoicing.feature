@@ -1,5 +1,5 @@
 @full
-Feature: Create BR and Invoicing
+Feature: Sub creation, Service Activation, Charging and invoicing - Create BR and Invoicing
 
   @admin
   Scenario Outline: <title>

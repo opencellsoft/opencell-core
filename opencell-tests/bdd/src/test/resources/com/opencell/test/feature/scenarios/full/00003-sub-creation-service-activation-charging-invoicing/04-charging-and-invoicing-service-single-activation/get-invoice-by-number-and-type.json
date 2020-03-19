@@ -2,7 +2,7 @@
     "auditable": {
     },
     "invoiceType": "RS_BASE_TEST-Type_200",
-    "billingAccountCode": "WS_FULL_200_BA_INVOICE",
+    "billingAccountCode": "RS_FULL_200_BA_INVOICE",
     "sellerCode": "SELLER_FR",
     "dueDate": "2016-05-03T00:00:00${#Project#timezone}",
     "invoiceDate": "2016-05-01T00:00:00${#Project#timezone}",
@@ -10,7 +10,7 @@
         {
             "categoryInvoiceCode": "SUBSCRIPTION",
             "description": "Subscription",
-            "userAccountCode": "WS_FULL_200_UA_INVOICE",
+            "userAccountCode": "RS_FULL_200_UA_INVOICE",
             "itemNumber": 9,
             "amountWithoutTax": 350.700000000000,
             "amountTax": 17.540000000000,
@@ -25,7 +25,7 @@
                 "amountTax": 17.540000000000,
                 "amountWithTax": 368.240000000000,
                 "invoiceSubCategoryCode": "SUB_DATA",
-                "userAccountCode": "WS_FULL_200_UA_INVOICE",
+                "userAccountCode": "RS_FULL_200_UA_INVOICE",
                 "ratedTransaction": [
                     {
                         "usageDate": "2016-03-01T00:00:00${#Project#timezone}",
@@ -40,12 +40,12 @@
                         "status": "BILLED",
                         "description": "RS_BASE-Forfait Test",
                         "unityDescription": 1,
-                        "priceplanCode": "WS_BASE_USAGE1",
+                        "priceplanCode": "RS_BASE_USAGE1",
                         "doNotTriggerInvoicing": false,
                         "taxCode": "TAX_05",
                         "taxPercent": 5.000000000000,
                         "sellerCode": "SELLER_FR",
-                        "billingAccountCode": "WS_FULL_200_BA_INVOICE"
+                        "billingAccountCode": "RS_FULL_200_BA_INVOICE"
                     },
                     {
                         "usageDate": "2016-04-01T00:00:00${#Project#timezone}",
@@ -60,12 +60,12 @@
                         "status": "BILLED",
                         "description": "RS_BASE-Forfait Test",
                         "unityDescription": 1,
-                        "priceplanCode": "WS_BASE_USAGE1",
+                        "priceplanCode": "RS_BASE_USAGE1",
                         "doNotTriggerInvoicing": false,
                         "taxCode": "TAX_05",
                         "taxPercent": 5.000000000000,
                         "sellerCode": "SELLER_FR",
-                        "billingAccountCode": "WS_FULL_200_BA_INVOICE"
+                        "billingAccountCode": "RS_FULL_200_BA_INVOICE"
                     },
                     {
                         "usageDate": "2016-09-30T00:00:00${#Project#timezone}",
@@ -76,15 +76,15 @@
                         "amountWithoutTax": 1.000000000000,
                         "amountWithTax": 1.050000000000,
                         "amountTax": 0.050000000000,
-                        "code": "WS_BASE_PC1",
+                        "code": "RS_BASE_PC1",
                         "status": "BILLED",
                         "description": "Product application of subscription",
-                        "priceplanCode": "WS_BASE_PC1_PP2",
+                        "priceplanCode": "RS_BASE_PC1_PP2",
                         "doNotTriggerInvoicing": false,
                         "taxCode": "TAX_05",
                         "taxPercent": 5.000000000000,
                         "sellerCode": "SELLER_FR",
-                        "billingAccountCode": "WS_FULL_200_BA_INVOICE"
+                        "billingAccountCode": "RS_FULL_200_BA_INVOICE"
                     },
                     {
                         "usageDate": "2016-09-30T00:00:00${#Project#timezone}",
@@ -95,15 +95,15 @@
                         "amountWithoutTax": 35.000000000000,
                         "amountWithTax": 36.750000000000,
                         "amountTax": 1.750000000000,
-                        "code": "WS_BASE_PC2",
+                        "code": "RS_BASE_PC2",
                         "status": "BILLED",
                         "description": "Product application on UA",
-                        "priceplanCode": "WS_BASE_PC2_PP",
+                        "priceplanCode": "RS_BASE_PC2_PP",
                         "doNotTriggerInvoicing": false,
                         "taxCode": "TAX_05",
                         "taxPercent": 5.000000000000,
                         "sellerCode": "SELLER_FR",
-                        "billingAccountCode": "WS_FULL_200_BA_INVOICE"
+                        "billingAccountCode": "RS_FULL_200_BA_INVOICE"
                     },
                     {
                         "usageDate": "2016-11-01T00:00:00${#Project#timezone}",
@@ -118,14 +118,14 @@
                         "status": "BILLED",
                         "description": "RS_BASE-Forfait Test",
                         "unityDescription": 1,
-                        "priceplanCode": "WS_BASE_REC1",
+                        "priceplanCode": "RS_BASE_REC1",
                         "doNotTriggerInvoicing": false,
                         "startDate": "2016-11-01T00:00:00${#Project#timezone}",
                         "endDate": "2016-12-01T00:00:00${#Project#timezone}",
                         "taxCode": "TAX_05",
                         "taxPercent": 5.000000000000,
                         "sellerCode": "SELLER_FR",
-                        "billingAccountCode": "WS_FULL_200_BA_INVOICE"
+                        "billingAccountCode": "RS_FULL_200_BA_INVOICE"
                     },
                     {
                         "usageDate": "2016-11-20T00:00:00${#Project#timezone}",
@@ -140,14 +140,14 @@
                         "status": "BILLED",
                         "description": "RS_BASE-Forfait Test",
                         "unityDescription": 1,
-                        "priceplanCode": "WS_BASE_REC3",
+                        "priceplanCode": "RS_BASE_REC3",
                         "doNotTriggerInvoicing": false,
                         "startDate": "2016-11-20T00:00:00${#Project#timezone}",
                         "endDate": "2016-12-01T00:00:00${#Project#timezone}",
                         "taxCode": "TAX_05",
                         "taxPercent": 5.000000000000,
                         "sellerCode": "SELLER_FR",
-                        "billingAccountCode": "WS_FULL_200_BA_INVOICE"
+                        "billingAccountCode": "RS_FULL_200_BA_INVOICE"
                     },
                     {
                         "usageDate": "2016-11-20T00:00:00${#Project#timezone}",
@@ -162,12 +162,12 @@
                         "status": "BILLED",
                         "description": "RS_BASE-Forfait Test",
                         "unityDescription": 1,
-                        "priceplanCode": "WS_BASE_OS3",
+                        "priceplanCode": "RS_BASE_OS3",
                         "doNotTriggerInvoicing": false,
                         "taxCode": "TAX_05",
                         "taxPercent": 5.000000000000,
                         "sellerCode": "SELLER_FR",
-                        "billingAccountCode": "WS_FULL_200_BA_INVOICE"
+                        "billingAccountCode": "RS_FULL_200_BA_INVOICE"
                     },
                     {
                         "usageDate": "2016-12-01T00:00:00${#Project#timezone}",
@@ -182,14 +182,14 @@
                         "status": "BILLED",
                         "description": "RS_BASE-Forfait Test",
                         "unityDescription": 1,
-                        "priceplanCode": "WS_BASE_REC1",
+                        "priceplanCode": "RS_BASE_REC1",
                         "doNotTriggerInvoicing": false,
                         "startDate": "2016-12-01T00:00:00${#Project#timezone}",
                         "endDate": "2017-01-01T00:00:00${#Project#timezone}",
                         "taxCode": "TAX_05",
                         "taxPercent": 5.000000000000,
                         "sellerCode": "SELLER_FR",
-                        "billingAccountCode": "WS_FULL_200_BA_INVOICE"
+                        "billingAccountCode": "RS_FULL_200_BA_INVOICE"
                     },
                     {
                         "usageDate": "2016-12-01T00:00:00${#Project#timezone}",
@@ -204,14 +204,14 @@
                         "status": "BILLED",
                         "description": "RS_BASE-Forfait Test",
                         "unityDescription": 1,
-                        "priceplanCode": "WS_BASE_REC3",
+                        "priceplanCode": "RS_BASE_REC3",
                         "doNotTriggerInvoicing": false,
                         "startDate": "2016-12-01T00:00:00${#Project#timezone}",
                         "endDate": "2017-01-01T00:00:00${#Project#timezone}",
                         "taxCode": "TAX_05",
                         "taxPercent": 5.000000000000,
                         "sellerCode": "SELLER_FR",
-                        "billingAccountCode": "WS_FULL_200_BA_INVOICE"
+                        "billingAccountCode": "RS_FULL_200_BA_INVOICE"
                     }
                 ]
             },
@@ -225,7 +225,7 @@
                     "amountTax": -0.880000000000,
                     "amountWithTax": -18.420000000000,
                     "invoiceSubCategoryCode": "SUB_DATA",
-                    "userAccountCode": "WS_FULL_200_UA_INVOICE",
+                    "userAccountCode": "RS_FULL_200_UA_INVOICE",
                     "discountPlanItemCode": "DPI_200_INVOICE",
                     "discountPercent": 5.000000000000
                 }

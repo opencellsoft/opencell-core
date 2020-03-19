@@ -1,5 +1,5 @@
 @full
-Feature: Wallet operations
+Feature: Sub creation, Service Activation, Charging and invoicing - Wallet operations
 
   @admin
   Scenario Outline: <title>

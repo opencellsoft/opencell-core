@@ -1,5 +1,5 @@
 @full
-Feature: Subscription with pricePlan.ratedEL
+Feature: Sub creation, Service Activation, Charging and invoicing - Subscription with pricePlan.ratedEL
 
   @admin
   Scenario Outline: <title>
