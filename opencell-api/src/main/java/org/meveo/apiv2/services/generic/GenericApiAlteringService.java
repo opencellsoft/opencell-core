@@ -93,9 +93,10 @@ public class GenericApiAlteringService extends GenericApiService {
                             .stream()
                             .map(o -> o.getId() == null ? o : entityManagerWrapper.getEntityManager().getReference(o.getClass(), o.getId()))
                             .collect(Collectors.toCollection(ArrayList::new));
-                } else if(updatedField.getType().isAnnotationPresent(Entity.class) && ((BaseEntity) newValue).getId() != null){
-                    newValue = entityManagerWrapper.getEntityManager().getReference(newValue.getClass(), ((BaseEntity) newValue).getId());
-                } else if(readValueMap.get(fieldName) instanceof Map) {
+                } else if(updatedField.getType().isAnnotationPresent(Entity.class)){
+                    newValue = ((BaseEntity) newValue).getId() != null ? entityManagerWrapper.getEntityManager().getReference(newValue.getClass(), ((BaseEntity) newValue).getId()) : null;
+                }
+                else if(readValueMap.get(fieldName) instanceof Map) {
                     refreshEntityWithDotFields((Map<String, Object>) readValueMap.get(fieldName), newValue, newValue);
                 }
                 updatedField.set(fetchedEntity, newValue);
