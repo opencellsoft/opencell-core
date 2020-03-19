@@ -1,5 +1,5 @@
 @full
-Feature: Charging and invoicing with discounts
+Feature: Sub creation, Service Activation, Charging and invoicing - Charging and invoicing with discounts
 
   @admin
   Scenario Outline: <title>

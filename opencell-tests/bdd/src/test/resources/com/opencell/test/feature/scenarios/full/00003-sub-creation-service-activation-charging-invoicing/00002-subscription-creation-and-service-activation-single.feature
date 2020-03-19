@@ -1,5 +1,5 @@
 @full
-Feature: Subscription creation and Service activation - service single activation
+Feature: Sub creation, Service Activation, Charging and invoicing - Subscription creation and Service activation - service single activation
 
   @admin
   Scenario Outline: <title>

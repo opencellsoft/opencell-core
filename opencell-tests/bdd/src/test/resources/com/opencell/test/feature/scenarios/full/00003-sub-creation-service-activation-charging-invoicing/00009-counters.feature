@@ -1,5 +1,5 @@
 @full
-Feature: Counters
+Feature: Sub creation, Service Activation, Charging and invoicing - Counters
 
   @admin
   Scenario Outline: <title>

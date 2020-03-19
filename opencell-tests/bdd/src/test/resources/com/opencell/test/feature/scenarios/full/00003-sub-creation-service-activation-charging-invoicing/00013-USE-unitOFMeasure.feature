@@ -1,5 +1,5 @@
 @full
-Feature: USE UnitOfMeasure
+Feature: Sub creation, Service Activation, Charging and invoicing - USE UnitOfMeasure
 
   @admin
   Scenario Outline: <title>

@@ -1,5 +1,5 @@
 @full
-Feature: Due date delay BC
+Feature: Sub creation, Service Activation, Charging and invoicing - Due date delay BC
 
   @admin
   Scenario Outline: <title>

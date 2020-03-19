@@ -1,5 +1,5 @@
 @full
-Feature: Create BR and Invoicing with Reference Date
+Feature: Sub creation, Service Activation, Charging and invoicing - Create BR and Invoicing with Reference Date
 
   @admin
   Scenario Outline: <title>

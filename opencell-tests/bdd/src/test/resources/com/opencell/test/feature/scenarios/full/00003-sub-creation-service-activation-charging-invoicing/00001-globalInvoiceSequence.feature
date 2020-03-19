@@ -1,5 +1,5 @@
 @full
-Feature: Global Invoice Sequence
+Feature: Sub creation, Service Activation, Charging and invoicing - Global Invoice Sequence
 
   @admin
   Scenario Outline: <title>
