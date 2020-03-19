@@ -86,20 +86,24 @@ public class GenericWorkflowJobBean extends BaseJobBean {
                 log.debug("The workflow " + genericWfCode + " is disabled, the job will exit.");
                 return;
             }
-
-            // Create wf instances
-            List<BusinessEntity> entities = workflowInstanceService.findEntitiesWithoutWFInstance(genericWf);
             
-            Filter wfFilter = genericWf.getFilter();
-            if(wfFilter!=null) {
-            	Filter filter = filterService.findById(wfFilter.getId());
-	            if (filter != null) {
-	            	entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
-	            }
+            // Create wf instances for entities without WF
+            List<BusinessEntity> entitiesWithoutWFInstance = workflowInstanceService.findEntitiesForWorkflow(genericWf, true);
+            for (BusinessEntity entity : entitiesWithoutWFInstance) {
+                workflowInstanceService.create(entity, genericWf);
             }
             
-            for (BusinessEntity entity : entities) {
-                workflowInstanceService.create(entity, genericWf);
+            Filter wfFilter = genericWf.getFilter();
+            Filter filter = null;
+            if(wfFilter!=null) {
+            	filter = filterService.findById(wfFilter.getId());
+            }
+            
+            List<BusinessEntity> entities = null;
+            if (filter != null) {
+            	entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
+            } else {
+            	entities = workflowInstanceService.findEntitiesForWorkflow(genericWf, false);
             }
 
             List<WorkflowInstance> wfInstances = genericWorkflowService.findByCode(genericWfCode, Arrays.asList("wfInstances")).getWfInstances();
@@ -107,8 +111,6 @@ public class GenericWorkflowJobBean extends BaseJobBean {
             if (genericWf.getId() != null) {
                 genericWf = genericWorkflowService.refreshOrRetrieve(genericWf);
             }
-            
-            
             
             Map<Long, BusinessEntity> mapFilteredEntities = entities.stream().collect(Collectors.toMap(x->x.getId(), x->x));
             
