@@ -1419,8 +1419,8 @@
             <column name="flat_file_job_code" type="varchar(255)" />
         </addColumn>
     </changeSet>
-    
-    <changeSet id="#4326_20190709" author="AndriusKarpavicius" failOnError="false"> 
+
+    <changeSet id="#4326_20190709" author="AndriusKarpavicius" failOnError="false">
         <dropForeignKeyConstraint baseTableName="billing_wallet_operation" constraintName="fk_wallet_operation_rated_transaction"/>
         <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_rated_transaction"/>
     </changeSet>
@@ -1460,7 +1460,7 @@
             </column>
     	</addColumn>
     </changeSet>
-   
+
 
     <changeSet id="#4512_20190819" author="AbdellatifBARI">
         <dropColumn tableName="flat_file">
@@ -1472,7 +1472,7 @@
             <column name="file_current_name" type="varchar(255)" />
         </addColumn>
     </changeSet>
-    
+
  	<changeSet id="#4480_250919" author="MohammedElAzzouzi">
 		<sql>UPDATE ${db.schema.adapted}billing_invoice SET payment_method_id=null WHERE payment_method_id IS NOT NULL AND payment_method_id NOT IN (SELECT APT.id FROM ${db.schema.adapted}ar_payment_token APT)</sql>
     </changeSet>
@@ -1501,7 +1501,7 @@
             </column>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#4313_17062019" author="mohamed.el.youssoufi">
 		<addColumn tableName="wf_generic_workflow">
 			<column name="cf_values_accum" type="${type.json}"></column>
@@ -1522,7 +1522,7 @@
 		</addColumn>
 	</changeSet>
 
-   	<changeSet id="#4606_260919" author="AbdelmounaimAkadid"> 	
+   	<changeSet id="#4606_260919" author="AbdelmounaimAkadid">
      	<addColumn tableName="billing_subscription">
             <column name="minimum_invoice_sub_category_id" type="bigint"></column>
         </addColumn>
@@ -2721,12 +2721,12 @@ END $$;]]>
         <addForeignKeyConstraint baseColumnNames="rating_script_id" baseTableName="cat_charge_template" constraintName="fk_charge_template_rating_script_id" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
     </changeSet>
-    
+
     <changeSet id="#5038_2020-03-06" author="AndriusKarpavicius">
-        <dropNotNullConstraint tableName="meveo_script_instance" columnName="script"/>    
+        <dropNotNullConstraint tableName="meveo_script_instance" columnName="script"/>
     </changeSet>
 
-    <changeSet id="#5064_2020-03-15" author="AndriusKarpavicius">    
+    <changeSet id="#5064_2020-03-15" author="AndriusKarpavicius">
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob')</sql>
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob'</sql>
     </changeSet>
@@ -2744,5 +2744,11 @@ END $$;]]>
             WHERE bci.charge_template_id = cct.id
         </sql>
     </changeSet>
+    <changeSet id="#4879_20190121" author="AmineBENAICHA">
+       <addColumn tableName="cat_counter_template">
+           <column name="calendar_code_el" type="varchar(2000)" />
+       </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
 
