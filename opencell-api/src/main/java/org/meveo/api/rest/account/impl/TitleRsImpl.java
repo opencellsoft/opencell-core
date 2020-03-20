@@ -92,7 +92,6 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
         TitlesResponseDto result = new TitlesResponseDto();
 
         PagingAndFiltering pagingAndFiltering = new PagingAndFiltering();
-        pagingAndFiltering.addFilter("disabled", false);
 
         try {
             result = new TitlesResponseDto(titleApi.search(pagingAndFiltering));
