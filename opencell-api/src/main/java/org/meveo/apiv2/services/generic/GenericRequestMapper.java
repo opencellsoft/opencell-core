@@ -60,8 +60,12 @@ public class GenericRequestMapper {
         return Stream.of(filters.keySet().toArray())
                 .map(key -> {
                     String keyObject = (String) key;
-                    String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
-                    return Collections.singletonMap(keyObject, new FactoryFilterMapper().create(fieldName, filters.get(key), entity, serviceFunction).map());
+                    if(!"SQL".equalsIgnoreCase(keyObject) && !"$FILTER".equalsIgnoreCase(keyObject)){
+
+                        String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
+                        return Collections.singletonMap(keyObject, new FactoryFilterMapper().create(fieldName, filters.get(key), entity, serviceFunction).map());
+                    }
+                    return Collections.singletonMap(keyObject, filters.get(key));
                 })
                 .flatMap (map -> map.entrySet().stream())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
