@@ -235,17 +235,33 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
      */
     private String ccedEmails;
 
-    /** The invoicing threshold for the customer . */
+    /**
+     * The invoicing threshold for the customer .
+     */
     private BigDecimal customerInvoicingThreshold;
 
-    /** The invoicing threshold for the customer account. */
+    /**
+     * The invoicing threshold for the customer account.
+     */
     private BigDecimal customerAccountInvoicingThreshold;
 
     /**
-     * The option on how to check the threshold.
+     * The option on how to check the threshold for billingAccount.
      */
     @XmlElement
     private ThresholdOptionsEnum checkThreshold;
+
+    /**
+     * The option on how to check the threshold for customer Account.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum customerAccountCheckThreshold;
+
+    /**
+     * The option on how to check the threshold for customer.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum customerCheckThreshold;
 
     /**
      * Gets the crm account type.
@@ -1129,9 +1145,46 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
 
     /**
      * Sets the threshold option.
+     *
      * @param checkThreshold the threshold option
      */
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
         this.checkThreshold = checkThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCustomerAccountCheckThreshold() {
+        return customerAccountCheckThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param customerAccountCheckThreshold the threshold option
+     */
+    public void setCustomerAccountCheckThreshold(ThresholdOptionsEnum customerAccountCheckThreshold) {
+        this.customerAccountCheckThreshold = customerAccountCheckThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCustomerCheckThreshold() {
+        return customerCheckThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param customerCheckThreshold the threshold option
+     */
+    public void setCustomerCheckThreshold(ThresholdOptionsEnum customerCheckThreshold) {
+        this.customerCheckThreshold = customerCheckThreshold;
     }
 }

@@ -46,11 +46,16 @@ import org.meveo.model.catalog.DiscountPlanItem;
  */
 @Entity
 @DiscriminatorValue("F")
-@NamedQueries({
-    @NamedQuery(name = "SubCategoryInvoiceAgregate.deleteByBR", query = "delete from SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId"),
-    @NamedQuery(name = "SubCategoryInvoiceAgregate.sumAmountsDiscount", query = "select sum(ia.amountWithoutTax), sum(ia.amountWithTax), ia.billingAccount.id "
-            + "from  SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId and ia.discountAggregate = true group by ia.billingAccount.id")
-})
+@NamedQueries({ @NamedQuery(name = "SubCategoryInvoiceAgregate.deleteByBR", query = "delete from SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId"),
+        @NamedQuery(name = "SubCategoryInvoiceAgregate.sumAmountsDiscountByBillingAccount", query =
+                "select sum(ia.amountWithoutTax), sum(ia.amountWithTax), ia.invoice.id ,ia.billingAccount.id,  ia.billingAccount.customerAccount.id, ia.billingAccount.customerAccount.customer.id"
+                        + " from  SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId and ia.discountAggregate = true group by ia.invoice.id, ia.billingAccount.id, ia.billingAccount.customerAccount.id, ia.billingAccount.customerAccount.customer.id"),
+        @NamedQuery(name = "SubCategoryInvoiceAgregate.sumAmountsDiscountByCustomerAccount", query =
+                "select sum(ia.amountWithoutTax), sum(ia.amountWithTax), ia.invoice.id, ia.billingAccount.customerAccount.id"
+                        + " from  SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId and ia.discountAggregate = true group by ia.invoice.id, ia.billingAccount.customerAccount.id"),
+        @NamedQuery(name = "SubCategoryInvoiceAgregate.sumAmountsDiscountByCustomer", query =
+                "select sum(ia.amountWithoutTax), sum(ia.amountWithTax), ia.invoice.id, ia.billingAccount.customerAccount.customer.id"
+                        + " from  SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId and ia.discountAggregate = true group by ia.invoice.id, ia.billingAccount.customerAccount.customer.id") })
 public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
     /** The Constant serialVersionUID. */

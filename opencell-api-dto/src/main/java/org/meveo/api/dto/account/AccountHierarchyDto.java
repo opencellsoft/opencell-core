@@ -177,15 +177,27 @@ public class AccountHierarchyDto implements Serializable {
     private ThresholdOptionsEnum checkThreshold;
 
     /**
+     * The option on how to check the threshold for customer Account.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum customerAccountCheckThreshold;
+
+    /**
+     * The option on how to check the threshold for customer.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum customerCheckThreshold;
+
+    /**
      * VAT. CUST.
      */
     private String vatNo;
 
-	private String mailingType;
+    private String mailingType;
 
-	private String emailTemplate;
+    private String emailTemplate;
 
-	private String ccedEmails;
+    private String ccedEmails;
 
     /** The invoicing threshold for the customer . */
     private BigDecimal customerInvoicingThreshold;
@@ -938,9 +950,46 @@ public class AccountHierarchyDto implements Serializable {
 
     /**
      * Sets the threshold option.
+     *
      * @param checkThreshold the threshold option
      */
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
         this.checkThreshold = checkThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCustomerAccountCheckThreshold() {
+        return customerAccountCheckThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param customerAccountCheckThreshold the threshold option
+     */
+    public void setCustomerAccountCheckThreshold(ThresholdOptionsEnum customerAccountCheckThreshold) {
+        this.customerAccountCheckThreshold = customerAccountCheckThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCustomerCheckThreshold() {
+        return customerCheckThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param customerCheckThreshold the threshold option
+     */
+    public void setCustomerCheckThreshold(ThresholdOptionsEnum customerCheckThreshold) {
+        this.customerCheckThreshold = customerCheckThreshold;
     }
 }

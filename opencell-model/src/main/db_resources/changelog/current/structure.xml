@@ -2729,15 +2729,21 @@ END $$;]]>
     <changeSet id="#5014_20200313" author="khalidHORRI">
         <addColumn tableName="crm_customer">
             <column name="invoicing_threshold" type="numeric(23, 12)"/>
+            <column name="check_threshold" type="varchar(250)">
+            </column>
         </addColumn>
         <addColumn tableName="ar_customer_account">
             <column name="invoicing_threshold" type="numeric(23, 12)"/>
+            <column name="check_threshold" type="varchar(250)" defaultValue="">
+            </column>
         </addColumn>
         <addColumn tableName="billing_cycle">
-            <column name="check_threshold" type="varchar(250)"/>
+            <column name="check_threshold" type="varchar(250)">
+            </column>
         </addColumn>
         <addColumn tableName="billing_billing_account">
-            <column name="check_threshold" type="varchar(250)"/>
+            <column name="check_threshold" type="varchar(250)">
+            </column>
         </addColumn>
     </changeSet>
 

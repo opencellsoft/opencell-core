@@ -296,6 +296,11 @@ public class AccountHierarchyApi extends BaseApi {
 
         customerDto.setSeller(postData.getSellerCode());
         customerDto.setInvoicingThreshold(postData.getCustomerInvoicingThreshold());
+        if (postData.getCustomerCheckThreshold() == null) {
+            customerDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
+        } else {
+            customerDto.setCheckThreshold(postData.getCustomerCheckThreshold());
+        }
 
         String customerBrandCode = StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode());
         // CustomerBrand customerBrand = null;
@@ -354,7 +359,11 @@ public class AccountHierarchyApi extends BaseApi {
         customerAccountDto.setLanguage(postData.getLanguageCode());
         customerAccountDto.setDateDunningLevel(new Date());
         customerAccountDto.setJobTitle(postData.getJobTitle());
-        customerAccountDto.setInvoicingThreshold(postData.getCustomerAccountInvoicingThreshold());
+        if (postData.getCustomerAccountCheckThreshold() == null) {
+            customerAccountDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
+        } else {
+            customerAccountDto.setCheckThreshold(postData.getCustomerAccountCheckThreshold());
+        }
 
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
@@ -363,7 +372,7 @@ public class AccountHierarchyApi extends BaseApi {
         } else if (postData.getPaymentMethod() != null) {
             customerAccountDto.setPaymentMethods(new ArrayList<>());
             customerAccountDto.getPaymentMethods()
-                .add(new PaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
+                    .add(new PaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
         }
         // End compatibility with pre-4.6 versions
 
@@ -492,6 +501,9 @@ public class AccountHierarchyApi extends BaseApi {
         customerDto.setVatNo(postData.getVatNo());
         customerDto.setJobTitle(postData.getJobTitle());
         customerDto.setInvoicingThreshold(postData.getCustomerInvoicingThreshold());
+        if (postData.getCustomerCheckThreshold() != null) {
+            customerDto.setCheckThreshold(postData.getCustomerCheckThreshold());
+        }
 
         String customerBrandCode = StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode());
         if (!StringUtils.isBlank(customerBrandCode)) {
@@ -556,6 +568,9 @@ public class AccountHierarchyApi extends BaseApi {
         customerAccountDto.setLanguage(postData.getLanguageCode());
         customerAccountDto.setJobTitle(postData.getJobTitle());
         customerAccountDto.setInvoicingThreshold(postData.getCustomerAccountInvoicingThreshold());
+        if (postData.getCustomerAccountCheckThreshold() != null) {
+            customerAccountDto.setCheckThreshold(postData.getCustomerAccountCheckThreshold());
+        }
 
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
@@ -564,7 +579,7 @@ public class AccountHierarchyApi extends BaseApi {
         } else if (postData.getPaymentMethod() != null && (postData.getPaymentMethod().intValue() == 1 || postData.getPaymentMethod().intValue() == 4)) {
             customerAccountDto.setPaymentMethods(new ArrayList<>());
             customerAccountDto.getPaymentMethods()
-                .add(new PaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
+                    .add(new PaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
         }
         // End compatibility with pre-4.6 versions
 
@@ -1165,6 +1180,11 @@ public class AccountHierarchyApi extends BaseApi {
         customerAccountDto.setRegistrationNo(postData.getRegistrationNo());
         customerAccountDto.setVatNo(postData.getVatNo());
         customerAccountDto.setInvoicingThreshold(postData.getCustomerAccountInvoicingThreshold());
+        if (postData.getCustomerAccountCheckThreshold() == null) {
+            customerAccountDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
+        } else {
+            customerAccountDto.setCheckThreshold(postData.getCustomerAccountCheckThreshold());
+        }
 
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
@@ -1219,6 +1239,11 @@ public class AccountHierarchyApi extends BaseApi {
         customerDto.setVatNo(postData.getVatNo());
         customerDto.setJobTitle(postData.getJobTitle());
         customerDto.setInvoicingThreshold(postData.getCustomerInvoicingThreshold());
+        if (postData.getCustomerCheckThreshold() == null) {
+            customerDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
+        } else {
+            customerDto.setCheckThreshold(postData.getCustomerCheckThreshold());
+        }
 
         CustomFieldsDto cfsDto = new CustomFieldsDto();
         if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {

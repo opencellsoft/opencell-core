@@ -28,6 +28,7 @@ import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
@@ -54,6 +55,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -233,6 +235,13 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
      */
     @Column(name = "invoicing_threshold")
     private BigDecimal invoicingThreshold;
+
+    /**
+     * The option on how to check the threshold.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "check_threshold", nullable = false)
+    private ThresholdOptionsEnum checkThreshold;
 
     /**
      * This method is called implicitly by hibernate, used to enable
@@ -686,5 +695,26 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
      */
     public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
         this.invoicingThreshold = invoicingThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        if (checkThreshold == null) {
+            checkThreshold = ThresholdOptionsEnum.AFTER_DISCOUNT;
+        }
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
     }
 }

@@ -22,12 +22,16 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -59,6 +63,7 @@ import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.ThresholdAmounts;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.CustomerAccount;
@@ -67,6 +72,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
 
 /**
@@ -119,9 +125,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @Inject
     private OrderService orderService;
-    
+
     @Inject
     InvoiceAgregateService invoiceAgregateService;
+
+    @Inject
+    CustomerService customerService;
 
     /**
      * Generate pre invoicing reports.
@@ -981,97 +990,211 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     private void applyThreshold(BillingRun billingRun, List<IBillableEntity> billableEntities) {
-        Map<Customer, List<Invoice>> customerInvoices = new HashMap<>();
-        Map<CustomerAccount, List<Invoice>> customerAccountInvoices = new HashMap<>();
-        Map<BillingAccount, List<Invoice>> billingAccountInvoices = new HashMap<>();
-        List<Invoice> invoicesToRemove = new ArrayList<>();
-        Map<Long, Amounts> discountAmounts = invoiceAgregateService.getTotalDiscountAmount(billingRun);
-        Map<Long, Amounts> customerDiscountAmounts = new HashMap<>();
-        Map<Long, Amounts> caDiscountAmounts = new HashMap<>();
-        for (IBillableEntity billableEntity : billableEntities) {
-            BillingAccount ba;
+        Set<Long> invoicesToRemove = new HashSet<>();
+        Map<Class, Map<Long, ThresholdAmounts>> discountAmounts = invoiceAgregateService.getTotalDiscountAmountByBillingAccount(billingRun);
+        Map<Class, Map<Long, ThresholdAmounts>> positiveRTAmounts = ratedTransactionService.getTotalPositiveRTAmountsByBillingAccount(billingRun);
+        Map<Class, Map<Long, ThresholdAmounts>> invoiceableAmounts = invoiceService.getTotalInvoiceableAmountByBR(billingRun);
+
+        invoicesToRemove.addAll(getInvoicesToRemoveByBillingAccount(billableEntities, discountAmounts.get(BillingAccount.class), positiveRTAmounts.get(BillingAccount.class),
+                invoiceableAmounts.get(BillingAccount.class)));
+        invoicesToRemove.addAll(getInvoicesToRemoveByCustomerAccount(billableEntities, discountAmounts.get(CustomerAccount.class), positiveRTAmounts.get(CustomerAccount.class),
+                invoiceableAmounts.get(CustomerAccount.class)));
+        invoicesToRemove.addAll(getInvoicesToRemoveByCustomer(billableEntities, discountAmounts.get(Customer.class), positiveRTAmounts.get(Customer.class),
+                invoiceableAmounts.get(Customer.class)));
+        System.out.println(invoicesToRemove);
+        // uninvoice RT for this invoices
+        // Remove invoices
+        // update the billing run
+    }
+
+    private List<Long> getInvoicesToRemoveByBillingAccount(List<IBillableEntity> billableEntities, Map<Long, ThresholdAmounts> discountThresholdAmounts,
+            Map<Long, ThresholdAmounts> positiveRTThresholdAmounts, Map<Long, ThresholdAmounts> invoiceableThresholdAmounts) {
+        List<Long> invoicesToRemove = new ArrayList<>();
+        billableEntities.forEach(billableEntity -> {
+            BillingAccount billingAccount;
             if (billableEntity instanceof Subscription) {
-                ba = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
+                billingAccount = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
+            } else if (billableEntity instanceof BillingAccount) {
+                billingAccount = (BillingAccount) billableEntity;
             } else {
-                ba = (BillingAccount) billableEntity;
+                billingAccount = null;
             }
-        }
-
-        Map<Long, Amounts> positiveRTAmounts = ratedTransactionService.getTotalPositiveRTAmounts(billingRun);
-        Map<Long, Amounts> customerPositiveRTAmounts = new HashMap<>();
-        Map<Long, Amounts> caPositiveRTAmounts = new HashMap<>();
-
-        Boolean isEntreprise = appProvider.isEntreprise();
-        List<Invoice> invoices = invoiceService.getInvoices(billingRun);
-
-        for (Invoice invoice : invoices) {
-            BillingAccount ba = invoice.getBillingAccount();
-            if (billingAccountInvoices.get(ba) == null) {
-                List<Invoice> baInvoices = new ArrayList<>();
-                baInvoices.add(invoice);
-                billingAccountInvoices.put(ba, baInvoices);
-            } else {
-                billingAccountInvoices.get(ba).add(invoice);
-            }
-            CustomerAccount ca = ba.getCustomerAccount();
-            if (customerAccountInvoices.get(ca) == null) {
-                List<Invoice> caInvoices = new ArrayList<>();
-                caInvoices.add(invoice);
-                customerAccountInvoices.put(ca, caInvoices);
-            } else {
-                customerAccountInvoices.get(ca).add(invoice);
+            if (billingAccount == null) {
+                return;
             }
 
-            Customer customer = ca.getCustomer();
-            if (customerInvoices.get(customer) == null) {
-                List<Invoice> custInvoices = new ArrayList<>();
-                custInvoices.add(invoice);
-                customerInvoices.put(customer, custInvoices);
-            } else {
-                customerInvoices.get(customer).add(invoice);
-            }
-        }
-        for (BillingAccount ba : billingAccountInvoices.keySet()) {
-            BigDecimal threshold = ba.getInvoicingThreshold();
-            if (threshold == null && ba.getBillingCycle() != null) {
-                threshold = ba.getBillingCycle().getInvoicingThreshold();
+            BigDecimal threshold = billingAccount.getInvoicingThreshold();
+            if (threshold == null && billingAccount.getBillingCycle() != null) {
+                threshold = billingAccount.getBillingCycle().getInvoicingThreshold();
             }
             if (threshold == null) {
-                continue;
+                return;
             }
-            List<Invoice> baInvoices = billingAccountInvoices.get(ba);
-            BigDecimal baTotalInvoiced = baInvoices.stream().map(invoice -> (isEntreprise) ? invoice.getAmountWithoutTax() : invoice.getAmountWithTax())
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-            switch (ba.getCheckThreshold()) {
+            switch (billingAccount.getCheckThreshold()) {
             case POSITIVE_RT:
-                Amounts baPositiveRTAmounts = positiveRTAmounts.get(ba.getId());
-                BigDecimal amount = (isEntreprise) ? baPositiveRTAmounts.getAmountWithoutTax() : baPositiveRTAmounts.getAmountWithTax();
-                if (amount.compareTo(threshold) < 0) {
-                    invoicesToRemove.addAll(baInvoices);
+                ThresholdAmounts thresholdAmounts = positiveRTThresholdAmounts.get(billingAccount.getId());
+                if (thresholdAmounts != null) {
+                    Amounts baAmounts = positiveRTThresholdAmounts.get(billingAccount.getId()).getAmount();
+                    BigDecimal amount = (appProvider.isEntreprise()) ? baAmounts.getAmountWithoutTax() : baAmounts.getAmountWithTax();
+                    if (amount.compareTo(threshold) < 0) {
+                        invoicesToRemove.addAll(thresholdAmounts.getInvoices());
+                    }
                 }
                 break;
             case AFTER_DISCOUNT:
-                if (baTotalInvoiced.compareTo(threshold) < 0) {
-                    invoicesToRemove.addAll(baInvoices);
+                thresholdAmounts = invoiceableThresholdAmounts.get(billingAccount.getId());
+                if (thresholdAmounts != null) {
+                    Amounts baAmounts = invoiceableThresholdAmounts.get(billingAccount.getId()).getAmount();
+                    BigDecimal amount = (appProvider.isEntreprise()) ? baAmounts.getAmountWithoutTax() : baAmounts.getAmountWithTax();
+                    if (amount.compareTo(threshold) < 0) {
+                        invoicesToRemove.addAll(thresholdAmounts.getInvoices());
+                    }
                 }
                 break;
             case BEFORE_DISCOUNT:
-                BigDecimal discoutAmount = BigDecimal.ZERO;
-                if (discountAmounts != null && !discountAmounts.isEmpty() && discountAmounts.get(ba) != null) {
-                    discoutAmount = (isEntreprise) ? discountAmounts.get(ba).getAmountWithoutTax() : discountAmounts.get(ba).getAmountWithTax();
-                }
-                BigDecimal amountBeforeDiscount = baTotalInvoiced.add(discoutAmount);
-                if (amountBeforeDiscount.compareTo(threshold) < 0) {
-                    invoicesToRemove.addAll(baInvoices);
+                thresholdAmounts = invoiceableThresholdAmounts.get(billingAccount.getId());
+                ThresholdAmounts discountAmounts = discountThresholdAmounts.get(billingAccount.getId());
+                if (thresholdAmounts != null) {
+                    if (discountAmounts != null) {
+                        thresholdAmounts.getAmount().addAmounts(discountAmounts.getAmount());
+                    }
+
+                    BigDecimal amount = (appProvider.isEntreprise()) ? thresholdAmounts.getAmount().getAmountWithoutTax() : thresholdAmounts.getAmount().getAmountWithTax();
+                    if (amount.compareTo(threshold) < 0) {
+                        invoicesToRemove.addAll(thresholdAmounts.getInvoices());
+                    }
                 }
                 break;
             default:
                 break;
             }
+        });
+        return invoicesToRemove;
+    }
 
-        }
+    private List<Long> getInvoicesToRemoveByCustomer(List<IBillableEntity> billableEntities, Map<Long, ThresholdAmounts> discountThresholdAmounts,
+            Map<Long, ThresholdAmounts> positiveRTThresholdAmounts, Map<Long, ThresholdAmounts> invoiceableThresholdAmounts) {
+        List<Long> invoicesToRemove = new ArrayList<>();
+        billableEntities.forEach(billableEntity -> {
+            BillingAccount billingAccount;
+            if (billableEntity instanceof Subscription) {
+                billingAccount = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
+            } else if (billableEntity instanceof BillingAccount) {
+                billingAccount = (BillingAccount) billableEntity;
+            } else {
+                billingAccount = null;
+            }
+            if (billingAccount == null) {
+                return;
+            }
+            Customer customer = billingAccount.getCustomerAccount().getCustomer();
+            customer = customerService.retrieveIfNotManaged(customer);
+            BigDecimal threshold = customer.getInvoicingThreshold();
+            if (threshold == null) {
+                return;
+            }
+            switch (customer.getCheckThreshold()) {
+            case POSITIVE_RT:
+                ThresholdAmounts thresholdAmounts = positiveRTThresholdAmounts.get(customer.getId());
+                if (thresholdAmounts != null) {
+                    Amounts baAmounts = positiveRTThresholdAmounts.get(customer.getId()).getAmount();
+                    BigDecimal amount = (appProvider.isEntreprise()) ? baAmounts.getAmountWithoutTax() : baAmounts.getAmountWithTax();
+                    if (amount.compareTo(threshold) < 0) {
+                        invoicesToRemove.addAll(thresholdAmounts.getInvoices());
+                    }
+                }
+                break;
+            case AFTER_DISCOUNT:
+                thresholdAmounts = invoiceableThresholdAmounts.get(customer.getId());
+                if (thresholdAmounts != null) {
+                    Amounts baAmounts = invoiceableThresholdAmounts.get(customer.getId()).getAmount();
+                    BigDecimal amount = (appProvider.isEntreprise()) ? baAmounts.getAmountWithoutTax() : baAmounts.getAmountWithTax();
+                    if (amount.compareTo(threshold) < 0) {
+                        invoicesToRemove.addAll(thresholdAmounts.getInvoices());
+                    }
+                }
+                break;
+            case BEFORE_DISCOUNT:
+                thresholdAmounts = invoiceableThresholdAmounts.get(customer.getId());
+                ThresholdAmounts discountAmounts = discountThresholdAmounts.get(customer.getId());
+                if (thresholdAmounts != null) {
+                    if (discountAmounts != null) {
+                        thresholdAmounts.getAmount().addAmounts(discountAmounts.getAmount());
+                    }
 
+                    BigDecimal amount = (appProvider.isEntreprise()) ? thresholdAmounts.getAmount().getAmountWithoutTax() : thresholdAmounts.getAmount().getAmountWithTax();
+                    if (amount.compareTo(threshold) < 0) {
+                        invoicesToRemove.addAll(thresholdAmounts.getInvoices());
+                    }
+                }
+                break;
+            default:
+                break;
+            }
+        });
+        return invoicesToRemove;
+    }
+
+    private List<Long> getInvoicesToRemoveByCustomerAccount(List<IBillableEntity> billableEntities, Map<Long, ThresholdAmounts> discountThresholdAmounts,
+            Map<Long, ThresholdAmounts> positiveRTThresholdAmounts, Map<Long, ThresholdAmounts> invoiceableThresholdAmounts) {
+        List<Long> invoicesToRemove = new ArrayList<>();
+        billableEntities.forEach(billableEntity -> {
+            BillingAccount billingAccount;
+            if (billableEntity instanceof Subscription) {
+                billingAccount = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
+            } else if (billableEntity instanceof BillingAccount) {
+                billingAccount = (BillingAccount) billableEntity;
+            } else {
+                billingAccount = null;
+            }
+            if (billingAccount == null) {
+                return;
+            }
+            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+            BigDecimal threshold = customerAccount.getInvoicingThreshold();
+            if (threshold == null) {
+                return;
+            }
+            switch (customerAccount.getCheckThreshold()) {
+            case POSITIVE_RT:
+                ThresholdAmounts thresholdAmounts = positiveRTThresholdAmounts.get(customerAccount.getId());
+                if (thresholdAmounts != null) {
+                    Amounts baAmounts = positiveRTThresholdAmounts.get(customerAccount.getId()).getAmount();
+                    BigDecimal amount = (appProvider.isEntreprise()) ? baAmounts.getAmountWithoutTax() : baAmounts.getAmountWithTax();
+                    if (amount.compareTo(threshold) < 0) {
+                        invoicesToRemove.addAll(thresholdAmounts.getInvoices());
+                    }
+                }
+                break;
+            case AFTER_DISCOUNT:
+                thresholdAmounts = invoiceableThresholdAmounts.get(customerAccount.getId());
+                if (thresholdAmounts != null) {
+                    Amounts baAmounts = invoiceableThresholdAmounts.get(customerAccount.getId()).getAmount();
+                    BigDecimal amount = (appProvider.isEntreprise()) ? baAmounts.getAmountWithoutTax() : baAmounts.getAmountWithTax();
+                    if (amount.compareTo(threshold) < 0) {
+                        invoicesToRemove.addAll(thresholdAmounts.getInvoices());
+                    }
+                }
+                break;
+            case BEFORE_DISCOUNT:
+                thresholdAmounts = invoiceableThresholdAmounts.get(customerAccount.getId());
+                ThresholdAmounts discountAmounts = discountThresholdAmounts.get(customerAccount.getId());
+                if (thresholdAmounts != null) {
+                    if (discountAmounts != null) {
+                        thresholdAmounts.getAmount().addAmounts(discountAmounts.getAmount());
+                    }
+
+                    BigDecimal amount = (appProvider.isEntreprise()) ? thresholdAmounts.getAmount().getAmountWithoutTax() : thresholdAmounts.getAmount().getAmountWithTax();
+                    if (amount.compareTo(threshold) < 0) {
+                        invoicesToRemove.addAll(thresholdAmounts.getInvoices());
+                    }
+                }
+                break;
+            default:
+                break;
+            }
+        });
+        return invoicesToRemove;
     }
 
     /**

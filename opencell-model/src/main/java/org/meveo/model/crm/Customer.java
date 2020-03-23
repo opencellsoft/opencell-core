@@ -27,6 +27,7 @@ import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
@@ -35,6 +36,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -42,6 +45,7 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,6 +125,12 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     @Column(name = "invoicing_threshold")
     private BigDecimal invoicingThreshold;
 
+    /**
+     * The option on how to check the threshold.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "check_threshold", nullable = false)
+    private ThresholdOptionsEnum checkThreshold;
 
     public AddressBook getAddressbook() {
         return addressbook;
@@ -235,4 +245,24 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
         this.invoicingThreshold = invoicingThreshold;
     }
 
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        if (checkThreshold == null) {
+            checkThreshold = ThresholdOptionsEnum.AFTER_DISCOUNT;
+        }
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
+    }
 }

@@ -211,6 +211,9 @@ public class Amounts implements Serializable {
      * @param amountsToAdd Amounts to add
      */
     public void addAmounts(Amounts amountsToAdd) {
+        if (amountsToAdd == null) {
+            return;
+        }
         this.amountWithoutTax = this.amountWithoutTax.add(amountsToAdd.getAmountWithoutTax());
         this.amountWithTax = this.amountWithTax.add(amountsToAdd.getAmountWithTax());
         this.amountTax = this.amountTax.add(amountsToAdd.getAmountTax());

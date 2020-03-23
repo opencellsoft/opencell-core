@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.crm.AdditionalDetailsDto;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.crm.Customer;
 
 /**
@@ -65,22 +66,27 @@ public class CustomerDto extends AccountDto {
      * Use for GET / LIST only.
      */
     private CustomerAccountsDto customerAccounts = new CustomerAccountsDto();
-    
+
     private AdditionalDetailsDto additionalDetails = new AdditionalDetailsDto();
 
     /**
      * Invoicing threshold - do not invoice for a lesser amount.
      */
     private BigDecimal invoicingThreshold;
-    
-    
+
+    /**
+     * The option on how to check the threshold.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum checkThreshold;
+
     /**
      * Instantiates a new customer dto.
      */
     public CustomerDto() {
         super();
     }
-    
+
     /**
      * Instantiates a new customer dto.
      * 
@@ -247,7 +253,25 @@ public class CustomerDto extends AccountDto {
         this.invoicingThreshold = invoicingThreshold;
     }
 
-	@Override
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
+    }
+
+    @Override
     public String toString() {
         return "CustomerDto [customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller=" + seller + ", mandateIdentification=" + mandateIdentification
                 + ", mandateDate=" + mandateDate + ", contactInformation=" + getContactInformation() + ", customerAccounts=" + customerAccounts + "]";

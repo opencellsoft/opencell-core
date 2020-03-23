@@ -212,7 +212,12 @@ public class CustomerApi extends AccountEntityApi {
         customer.setSeller(seller);
         customer.setExternalRef1(postData.getExternalRef1());
         customer.setExternalRef2(postData.getExternalRef2());
-        customer.setInvoicingThreshold(postData.getInvoicingThreshold());
+        if (postData.getInvoicingThreshold() != null) {
+            customer.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
+        if (postData.getCheckThreshold() != null) {
+            customer.setCheckThreshold(postData.getCheckThreshold());
+        }
 
         if (businessAccountModel != null) {
             customer.setBusinessAccountModel(businessAccountModel);
@@ -221,7 +226,12 @@ public class CustomerApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getCode())) {
             customer.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
         }
-
+        if (postData.getInvoicingThreshold() != null) {
+            customer.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
+        if (postData.getCheckThreshold() != null) {
+            customer.setCheckThreshold(postData.getCheckThreshold());
+        }
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), customer, true, checkCustomFields);
@@ -318,7 +328,18 @@ public class CustomerApi extends AccountEntityApi {
         if (businessAccountModel != null) {
             customer.setBusinessAccountModel(businessAccountModel);
         }
-
+        if (postData.getInvoicingThreshold() != null) {
+            customer.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
+        if (postData.getCheckThreshold() != null) {
+            customer.setCheckThreshold(postData.getCheckThreshold());
+        }
+        if (postData.getInvoicingThreshold() != null) {
+            customer.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
+        if (postData.getCheckThreshold() != null) {
+            customer.setCheckThreshold(postData.getCheckThreshold());
+        }
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), customer, false, checkCustomFields);

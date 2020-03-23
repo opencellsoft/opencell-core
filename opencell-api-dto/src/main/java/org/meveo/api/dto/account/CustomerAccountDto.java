@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
@@ -141,6 +142,11 @@ public class CustomerAccountDto extends AccountDto {
      */
     private BigDecimal invoicingThreshold;
 
+    /**
+     * The option on how to check the threshold.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum checkThreshold;
 
     /**
      * Instantiates a new customer account dto.
@@ -601,5 +607,23 @@ public class CustomerAccountDto extends AccountDto {
      */
     public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
         this.invoicingThreshold = invoicingThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
     }
 }
