@@ -413,17 +413,16 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
                 throw new ImportInvoiceException("Cant find negative OccTemplate");
             }
             netToPay = netToPay.abs();
-            if (amountWithoutTax != null) {
-                amountWithoutTax = amountWithoutTax.abs();
-            }
-            if (amountTax != null) {
-                amountTax = amountTax.abs();
-            }
-            if (amountWithTax != null) {
-                amountWithTax = amountWithTax.abs();
-            }
         }
-
+        if (amountWithoutTax != null) {
+            amountWithoutTax = amountWithoutTax.abs();
+        }
+        if (amountTax != null) {
+            amountTax = amountTax.abs();
+        }
+        if (amountWithTax != null) {
+            amountWithTax = amountWithTax.abs();
+        }
         recordedInvoice.setAccountingCode(occTemplate.getAccountingCode());
         recordedInvoice.setCode(occTemplate.getCode());
         recordedInvoice.setDescription(occTemplate.getDescription());
