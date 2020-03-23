@@ -1,0 +1,37 @@
+{
+    "crmAccountType": "C_UA",
+    "crmParentCode": "SELLER_FR",
+    "code": "RS_FULL_171_3842",
+    "description": "RS_FULL_171_3842",
+    "name": {
+        "title": "MR",
+        "firstName": "Edward",
+        "lastName": "Legaspi"
+    },
+    "address": {
+        "address1": "Address1",
+        "address2": "Address2",
+        "zipCode": "20250",
+        "city": "Dijon",
+        "country": "France",
+        "state": "Paris"
+    },
+    "contactInformation": {
+        "email": "RS_FULL_171@yahoo.fr",
+        "phone": "+0122674100",
+        "mobile": "+0139154716"
+    },
+    "language": "ENG",
+    "customerCategory": "CLIENT",
+    "customerBrand": "DEFAULT",
+    "currency": "USD",
+    "caStatus": "ACTIVE",
+    "creditCategory": "VIP",
+    "billingCycle": "CYC_INV_MT_1",
+    "country": "US",
+    "methodOfPayment": [
+        {
+            "paymentMethodType": "CHECK"
+        }
+    ]
+}

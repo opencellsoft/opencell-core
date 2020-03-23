@@ -1,0 +1,14 @@
+{
+    "code": "RS_FULL_171_3842_OFFER1",
+    "description": "RS_FULL_171_3842_OFFER1",
+    "name": "RS_FULL_171_3842_OFFER1",
+    "disabled": false,
+    "offerServiceTemplate": [
+        {
+            "serviceTemplate": {
+                "code": "RS_FULL_171_3842_SERVICE1"
+            }
+        }
+    ],
+    "lifeCycleStatus": "ACTIVE"
+}

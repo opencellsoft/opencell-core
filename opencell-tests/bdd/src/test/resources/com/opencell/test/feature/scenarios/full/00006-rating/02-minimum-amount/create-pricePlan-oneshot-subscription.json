@@ -1,0 +1,10 @@
+{
+    "code": "RS_BASE_MA_OS1",
+    "description": "RS_BASE_MA_OS1",
+    "eventCode": "RS_BASE_MA_OS1",
+    "amountWithoutTax": "10",
+    "amountWithTax": "12",
+    "minimumAmountWithoutTaxEl": "#{pp.amountWithoutTax * 100}",
+    "minimumAmountWithTaxEl": "#{pp.amountWithTax * 100}",
+    "priority": "1"
+}

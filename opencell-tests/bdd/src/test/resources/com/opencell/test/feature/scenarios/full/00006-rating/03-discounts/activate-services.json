@@ -1,0 +1,12 @@
+{
+    "subscription": "RS_BASE_171_DP_MULTIPLE_SUB",
+    "servicesToActivate": {
+        "service": [
+            {
+                "code": "RS_FULL_MULTIPLE_DP_SERVICE",
+                "quantity": "1",
+                "subscriptionDate": "2018-10-13"
+            }
+        ]
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "code": "RS_FULL_171_RECURRING_SERVICE",
+    "description": "Recurring charge service",
+    "invoicingCalendar": "MONTHLY",
+    "serviceChargeTemplateRecurrings": {
+        "serviceChargeTemplateRecurring": [
+            {
+                "code": "RS_FULL_171_REC_5_DAYS_IN_ADVANCE"
+            },
+            {
+                "code": "RS_FULL_171_REC_5_DAYS_NOT_ADVANCE"
+            },
+            {
+                "code": "RS_FULL_171_REC_120_HOURS_IN_ADVANCE"
+            },
+            {
+                "code": "RS_FULL_171_REC_120_HOURS_NOT_ADVANCE"
+            }
+        ]
+    }
+}
