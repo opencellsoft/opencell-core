@@ -78,6 +78,7 @@ import org.meveo.model.mediation.Access;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductChargeInstanceService;
@@ -178,6 +179,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     
     @Inject
     private FacesContext facesContext;
+    
+    @Inject
+    private BillingAccountService billingAccountService;
 
     private ServiceInstance selectedServiceInstance;
 
@@ -1215,7 +1219,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         if (entity.getOffer() != null) {
             List<DiscountPlan> allowedDiscountPlans = entity.getOffer().getAllowedDiscountPlans();
             if (entity.getUserAccount() != null) {
-                BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
+                BillingAccount billingAccount = billingAccountService.retrieveIfNotManaged(entity.getUserAccount().getBillingAccount());
                 billingAccount.getDiscountPlanInstances().forEach(dpi -> allowedDiscountPlans.remove(dpi.getDiscountPlan()));
             }
             return allowedDiscountPlans;

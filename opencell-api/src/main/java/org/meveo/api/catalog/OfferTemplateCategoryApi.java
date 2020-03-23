@@ -39,6 +39,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 
 @Stateless
@@ -99,6 +100,18 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
             offerTemplateCategory.setOfferTemplateCategory(parentOfferTemplateCategory);
         }
 
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), offerTemplateCategory, true, true);
+
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+
         offerTemplateCategoryService.create(offerTemplateCategory);
 
         return offerTemplateCategory;
@@ -152,6 +165,18 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
             offerTemplateCategory.setOfferTemplateCategory(parentOfferTemplateCategory);
         }
 
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), offerTemplateCategory, false, true);
+
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+
         offerTemplateCategory = offerTemplateCategoryService.update(offerTemplateCategory);
 
         return offerTemplateCategory;
@@ -173,7 +198,7 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
             throw new EntityDoesNotExistsException(OfferTemplateCategory.class, code);
         }
 
-        offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory);
+        offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory, entityToDtoConverter.getCustomFieldsDTO(offerTemplateCategory, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
         return offerTemplateCategoryDto;
 
@@ -199,7 +224,8 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
             throw new EntityDoesNotExistsException(OfferTemplateCategory.class, code);
         }
 
-        OfferTemplateCategoryDto offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory, uriInfo.getBaseUri().toString());
+        OfferTemplateCategoryDto offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory, entityToDtoConverter.getCustomFieldsDTO(offerTemplateCategory, CustomFieldInheritanceEnum.INHERIT_NO_MERGE),
+            uriInfo.getBaseUri().toString());
 
         return offerTemplateCategoryDto;
     }
@@ -215,7 +241,8 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         List<OfferTemplateCategory> offerTemplateCategories = offerTemplateCategoryService.list();
         if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
             for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
-                OfferTemplateCategoryDto offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory);
+                OfferTemplateCategoryDto offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory,
+                    entityToDtoConverter.getCustomFieldsDTO(offerTemplateCategory, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                 offerTemplateCategoryDtos.add(offerTemplateCategoryDto);
             }
         }
@@ -258,7 +285,8 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         List<OfferTemplateCategory> offerTemplateCategories = offerTemplateCategoryService.listActive();
         if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
             for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
-                OfferTemplateCategoryDto offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory, uriInfo.getBaseUri().toString());
+                OfferTemplateCategoryDto offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory,
+                    entityToDtoConverter.getCustomFieldsDTO(offerTemplateCategory, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), uriInfo.getBaseUri().toString());
                 offerTemplateCategoryDtos.add(offerTemplateCategoryDto);
             }
         }
@@ -285,7 +313,7 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         if (offerTemplateCategory == null) {
             throw new EntityDoesNotExistsException(OfferTemplateCategory.class, code);
         }
-        offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory);
+        offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory, entityToDtoConverter.getCustomFieldsDTO(offerTemplateCategory, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
         return offerTemplateCategoryDto;
     }
@@ -311,7 +339,8 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
             throw new EntityDoesNotExistsException(OfferTemplateCategory.class, code);
         }
 
-        OfferTemplateCategoryDto offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory, uriInfo.getBaseUri().toString());
+        OfferTemplateCategoryDto offerTemplateCategoryDto = new OfferTemplateCategoryDto(offerTemplateCategory, entityToDtoConverter.getCustomFieldsDTO(offerTemplateCategory, CustomFieldInheritanceEnum.INHERIT_NO_MERGE),
+            uriInfo.getBaseUri().toString());
 
         return offerTemplateCategoryDto;
     }

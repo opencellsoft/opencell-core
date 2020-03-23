@@ -116,6 +116,16 @@
                             <projectFile>${basedir}/api/soapui/Jax-Ws_CFs.xml</projectFile>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>Rating</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <projectFile>${basedir}/api/soapui/Rating-and-invoicing.xml</projectFile>
+                        </configuration>
+                    </execution>
                 </executions>
                 <dependencies>
                     <dependency>

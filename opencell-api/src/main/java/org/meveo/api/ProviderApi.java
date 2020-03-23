@@ -324,7 +324,7 @@ public class ProviderApi extends BaseApi {
         List<Title> titles = titleService.list();
         if (titles != null) {
             for (Title title : titles) {
-                result.getTitles().getTitle().add(new TitleDto(title));
+                result.getTitles().getTitle().add(new TitleDto(title, null));
             }
         }
 
@@ -502,7 +502,7 @@ public class ProviderApi extends BaseApi {
         InvoiceConfigurationDto invoiceConfigurationDto = postData.getInvoiceConfiguration();
         if (invoiceConfigurationDto != null) {
             InvoiceConfiguration providerInvoiceConfiguration = provider.getInvoiceConfiguration();
-			if (providerInvoiceConfiguration == null) {
+            if (providerInvoiceConfiguration == null) {
                 InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
                 provider.setInvoiceConfiguration(invoiceConfiguration);
             }

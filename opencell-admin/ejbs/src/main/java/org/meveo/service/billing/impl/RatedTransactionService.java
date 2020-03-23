@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -849,19 +848,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return computeInvoiceableAmountForServicesWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate);
         }
         if (accountClass.equals(Subscription.class)) {
-            return computeInvoiceableAmountForSubscriptions(billableEntity, firstTransactionDate, lastTransactionDate);
+            return computeInvoiceableAmountForSubscriptionsWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate);
         }
         if (accountClass.equals(UserAccount.class)) {
-            return computeInvoiceableAmountForUserAccounts(billableEntity, firstTransactionDate, lastTransactionDate);
+            return computeInvoiceableAmountForUserAccountsWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate);
         }
         if (accountClass.equals(BillingAccount.class)) {
-            return computeInvoiceableAmountForBillingAccount(billableEntity, firstTransactionDate, lastTransactionDate);
+            return computeInvoiceableAmountForBillingAccountWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate);
         }
         if (accountClass.equals(CustomerAccount.class)) {
-            return computeInvoiceableAmountForCustomerAccount(billableEntity, firstTransactionDate, lastTransactionDate);
+            return computeInvoiceableAmountForCustomerAccountWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate);
         }
         if (accountClass.equals(Customer.class)) {
-            return computeInvoiceableAmountForCustomer(billableEntity, firstTransactionDate, lastTransactionDate);
+            return computeInvoiceableAmountForCustomerWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate);
         }
         return null;
     }
@@ -875,22 +874,22 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return getSubscriptionsWithMinAmount(billableEntity);
         }
         if (accountClass.equals(UserAccount.class)) {
-            return getUserAccountsWithMinAmountELNotNullByBA(billableEntity);
+            return getUserAccountsWithMinAmountELNotNull(billableEntity);
         }
         if (accountClass.equals(BillingAccount.class)) {
-            return getBillingAccountsWithMinAmountELNotNullByBA(billableEntity);
+            return getBillingAccountsWithMinAmountELNotNull(billableEntity);
         }
         if (accountClass.equals(CustomerAccount.class)) {
-            return getCustomerAccountsWithMinAmountELNotNullByBA(billableEntity);
+            return getCustomerAccountsWithMinAmountELNotNull(billableEntity);
         }
         if (accountClass.equals(Customer.class)) {
-            return getCustomersWithMinAmountELNotNullByBA(billableEntity);
+            return getCustomersWithMinAmountELNotNull(billableEntity);
         }
 
         return new ArrayList<>();
     }
 
-    private List<BusinessEntity> getBillingAccountsWithMinAmountELNotNullByBA(IBillableEntity billableEntity) {
+    private List<BusinessEntity> getBillingAccountsWithMinAmountELNotNull(IBillableEntity billableEntity) {
 
         if (billableEntity instanceof Subscription) {
             billableEntity = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
@@ -900,7 +899,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return q.getResultList();
     }
 
-    private List<BusinessEntity> getCustomerAccountsWithMinAmountELNotNullByBA(IBillableEntity billableEntity) {
+    private List<BusinessEntity> getCustomerAccountsWithMinAmountELNotNull(IBillableEntity billableEntity) {
         if (billableEntity instanceof Subscription) {
             billableEntity = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
         }
@@ -909,7 +908,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return q.getResultList();
     }
 
-    private List<BusinessEntity> getCustomersWithMinAmountELNotNullByBA(IBillableEntity billableEntity) {
+    private List<BusinessEntity> getCustomersWithMinAmountELNotNull(IBillableEntity billableEntity) {
         if (billableEntity instanceof Subscription) {
             billableEntity = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
         }
@@ -1015,12 +1014,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 Map<String, Amounts> extraAmounts = extraMinAmount.getCreatedAmount();
                 for (Entry<String, Amounts> amountInfo : extraAmounts.entrySet()) {
                     minAmountDataInfo.getAmounts().addAmounts(amountInfo.getValue());
-                    /*if (minAmountDataInfo.getInvoiceSubCategoryAmounts().containsKey(Long.parseLong(amountInfo.getKey().split("_")[1]))) {
-                        minAmountDataInfo.getInvoiceSubCategoryAmounts().get(Long.parseLong(amountInfo.getKey().split("_")[1])).addAmounts(amountInfo.getValue());
-                    } else {
-                        minAmountDataInfo.getInvoiceSubCategoryAmounts().put(Long.parseLong(amountInfo.getKey().split("_")[1]), amountInfo.getValue().clone());
-
-                    }*/
                 }
             }
 
@@ -1078,7 +1071,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return false;
     }
 
-    private List<BusinessEntity> getUserAccountsWithMinAmountELNotNullByBA(IBillableEntity billableEntity) {
+    private List<BusinessEntity> getUserAccountsWithMinAmountELNotNull(IBillableEntity billableEntity) {
 
         if (billableEntity instanceof Subscription) {
             Query q = getEntityManager().createNamedQuery("UserAccount.getUserAccountsWithMinAmountELNotNullByUA")
@@ -1201,23 +1194,25 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     /**
      * Summed rated transaction amounts applied on subscriptions, that have minimum invoiceable amount rule, grouped by invoice subCategory for a given billable entity.
-     * 
-     * @param billableEntity Billable entity
+     *
+     * @param billableEntity       Billable entity
      * @param firstTransactionDate First transaction date.
-     * @param lastTransactionDate Last transaction date
+     * @param lastTransactionDate  Last transaction date
      * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, invoice subcategory id, subscription
      */
     @SuppressWarnings("unchecked")
-    private List<Object[]> computeInvoiceableAmountForSubscriptions(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
+    private List<Object[]> computeInvoiceableAmountForSubscriptionsWithMinAmountRule(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
 
         if (billableEntity instanceof Subscription) {
-            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableBySubscriptionWithMinAmountBySubscription").setParameter("subscription", (Subscription) billableEntity)
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableBySubscriptionWithMinAmountBySubscription")
+                    .setParameter("subscription", (Subscription) billableEntity).setParameter("firstTransactionDate", firstTransactionDate)
+                    .setParameter("lastTransactionDate", lastTransactionDate);
             return q.getResultList();
 
         } else if (billableEntity instanceof BillingAccount) {
-            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableBySubscriptionWithMinAmountByBA").setParameter("billingAccount", (BillingAccount) billableEntity)
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableBySubscriptionWithMinAmountByBA")
+                    .setParameter("billingAccount", (BillingAccount) billableEntity).setParameter("firstTransactionDate", firstTransactionDate)
+                    .setParameter("lastTransactionDate", lastTransactionDate);
             return q.getResultList();
         }
         return null;
@@ -1231,15 +1226,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param lastTransactionDate  Last transaction date
      * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, invoice subcategory id, subscription
      */
-    private List<Object[]> computeInvoiceableAmountForUserAccounts(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
+    private List<Object[]> computeInvoiceableAmountForUserAccountsWithMinAmountRule(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
 
         if (billableEntity instanceof Subscription) {
-            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableForUABySubscription").setParameter("subscription", billableEntity)
+            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableForUAWithMinAmountBySubscription").setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
             return q.getResultList();
         }
 
-        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableByUA").setParameter("billingAccount", billableEntity)
+        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableWithMinAmountByUA").setParameter("billingAccount", billableEntity)
                 .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
         return q.getResultList();
     }
@@ -1252,15 +1247,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param lastTransactionDate  Last transaction date
      * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, invoice subcategory id, seller id
      */
-    private List<Object[]> computeInvoiceableAmountForBillingAccount(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
+    private List<Object[]> computeInvoiceableAmountForBillingAccountWithMinAmountRule(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
 
         if (billableEntity instanceof Subscription) {
-            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableForBABySubscription").setParameter("subscription", billableEntity)
+            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableForBAWithMinAmountBySubscription").setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
             return q.getResultList();
         }
 
-        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableByBA").setParameter("billingAccount", billableEntity)
+        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableWithMinAmountByBA").setParameter("billingAccount", billableEntity)
                 .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
         return q.getResultList();
     }
@@ -1270,19 +1265,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      *
      * @param billableEntity       Billing account
      * @param firstTransactionDate First transaction date.
-     * @param lastTransactionDate Last transaction date
+     * @param lastTransactionDate  Last transaction date
      * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, invoice subcategory id, seller id
      */
-    private List<Object[]> computeInvoiceableAmountForCustomerAccount(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
+    private List<Object[]> computeInvoiceableAmountForCustomerAccountWithMinAmountRule(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
 
         if (billableEntity instanceof Subscription) {
-            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableForCABySubscription").setParameter("subscription", billableEntity)
+            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableForCAWithMinAmountBySubscription").setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
             return q.getResultList();
         }
 
-        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableByCA").setParameter("customerAccount", ((BillingAccount) billableEntity).getCustomerAccount())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableWithMinAmountByCA")
+                .setParameter("customerAccount", ((BillingAccount) billableEntity).getCustomerAccount()).setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate);
         return q.getResultList();
     }
 
@@ -1291,17 +1287,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      *
      * @param billableEntity       BillingAccount or subscription
      * @param firstTransactionDate First transaction date.
-     * @param lastTransactionDate Last transaction date
+     * @param lastTransactionDate  Last transaction date
      * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, invoice subcategory id, seller id
      */
-    private List<Object[]> computeInvoiceableAmountForCustomer(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
+    private List<Object[]> computeInvoiceableAmountForCustomerWithMinAmountRule(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
 
         if (billableEntity instanceof Subscription) {
-            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableForCustomerBySubscription").setParameter("subscription", billableEntity)
+            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableForCustomerWithMinAmountBySubscription").setParameter("subscription", billableEntity)
                     .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
             return q.getResultList();
         }
-        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableByCustomer")
+        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableWithMinAmountByCustomer")
                 .setParameter("customer", ((BillingAccount) billableEntity).getCustomerAccount().getCustomer()).setParameter("firstTransactionDate", firstTransactionDate)
                 .setParameter("lastTransactionDate", lastTransactionDate);
         return q.getResultList();

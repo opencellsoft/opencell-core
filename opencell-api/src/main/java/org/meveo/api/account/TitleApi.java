@@ -18,13 +18,14 @@
 
 package org.meveo.api.account;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -114,7 +115,7 @@ public class TitleApi extends BaseCrudApi<Title, TitleDto> {
     }
 
     @Override
-    protected Function<Title, TitleDto> getEntityToDtoFunction() {
+    protected BiFunction<Title, CustomFieldsDto, TitleDto> getEntityToDtoFunction() {
         return TitleDto::new;
     }
 }
