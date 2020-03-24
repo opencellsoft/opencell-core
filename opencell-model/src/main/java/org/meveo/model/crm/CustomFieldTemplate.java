@@ -264,6 +264,14 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     private boolean allowEdit = true;
 
     /**
+     * Allow to edit value
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "anonymize_gdpr")
+    @NotNull
+    private boolean anonymizeGdpr;
+
+    /**
      * If true, field wont be visible/appicable on new entity entry
      */
     @Type(type = "numeric_boolean")
@@ -684,8 +692,16 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     public void setAllowEdit(boolean allowEdit) {
         this.allowEdit = allowEdit;
     }
+    
+    public boolean isAnonymizeGdpr() {
+		return anonymizeGdpr;
+	}
 
-    public boolean isHideOnNew() {
+	public void setAnonymizeGdpr(boolean anonymizeGdpr) {
+		this.anonymizeGdpr = anonymizeGdpr;
+	}
+
+	public boolean isHideOnNew() {
         return hideOnNew;
     }
 
