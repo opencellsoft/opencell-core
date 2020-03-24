@@ -49,6 +49,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.tax.TaxClass;
 
@@ -437,6 +438,20 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
      */
     @Transient
     private boolean taxRecalculated;
+    
+    /**
+     * input_unit_unitOfMeasure
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "input_unitofmeasure")
+    private UnitOfMeasure inputUnitOfMeasure;
+
+	/**
+     * rating_unit_unitOfMeasure
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rating_unitofmeasure")
+    private UnitOfMeasure ratingUnitOfMeasure;
 
     public RatedTransaction() {
         super();
@@ -529,6 +544,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.status = RatedTransactionStatusEnum.OPEN;
         this.updated = new Date();
         this.taxClass = walletOperation.getTaxClass();
+        this.inputUnitOfMeasure = walletOperation.getInputUnitOfMeasure();
+        this.ratingUnitOfMeasure = walletOperation.getRatingUnitOfMeasure();
 
         this.unityDescription = walletOperation.getInputUnitDescription();
         if (this.unityDescription == null) {
@@ -1086,4 +1103,20 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     public void setTaxClass(TaxClass taxClass) {
         this.taxClass = taxClass;
     }
+    
+    public UnitOfMeasure getInputUnitOfMeasure() {
+		return inputUnitOfMeasure;
+	}
+
+	public void setInputUnitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
+		this.inputUnitOfMeasure = inputUnitOfMeasure;
+	}
+
+	public UnitOfMeasure getRatingUnitOfMeasure() {
+		return ratingUnitOfMeasure;
+	}
+
+	public void setRatingUnitOfMeasure(UnitOfMeasure ratingUnitOfMeasure) {
+		this.ratingUnitOfMeasure = ratingUnitOfMeasure;
+	}
 }

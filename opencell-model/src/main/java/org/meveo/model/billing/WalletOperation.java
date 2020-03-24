@@ -1171,7 +1171,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         return inputUnitOfMeasure;
     }
 
-    public void setInput_unitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
+    public void setInputUnitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
         this.inputUnitOfMeasure = inputUnitOfMeasure;
     }
 

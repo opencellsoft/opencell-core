@@ -2750,5 +2750,16 @@ END $$;]]>
             WHERE bci.charge_template_id = cct.id
         </sql>
     </changeSet>
+    
+	<changeSet id="#5052_20200323" author="MohammedELAZZOUZI">
+        <addColumn tableName="billing_rated_transaction">
+            <column name="input_unitofmeasure" type="bigint"/>
+            <column name="rating_unitofmeasure" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="input_unitofmeasure" baseTableName="billing_rated_transaction" constraintName="fk_input_billing_rated_transaction_cat_unit_of_measure" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
+        <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="billing_rated_transaction" constraintName="fk_rating_billing_rated_transaction_cat_unit_of_measure" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
+    </changeSet>
 </databaseChangeLog>
 
