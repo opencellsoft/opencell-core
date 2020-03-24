@@ -32,6 +32,8 @@ import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.dwh.BarChart;
+import org.meveo.model.order.Order;
+import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.service.base.PersistenceService;
 import org.mockito.ArgumentCaptor;
@@ -44,7 +46,6 @@ import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -165,7 +166,7 @@ public class GenericApiAlteringServiceTest {
     }
 
     @Test
-    public void should_successfully_create_object_with_non_existing_reference_entity() {
+    public void should_successfully_create_object() {
         //Given
         long id =123L;
         String dto = "{\"id\":"+id+", \"code\":\"xxx\", \"addressbook\": {\"code\":\"xxx\"}}";
@@ -175,7 +176,8 @@ public class GenericApiAlteringServiceTest {
         assertThat(customer.getId()).isNotNull();
         assertThat(customer.getId()).isEqualTo(id);
         assertThat(customer.getCode()).isEqualTo("xxx");
-        assertNull(customer.getAddressbook());
+        assertThat(customer.getAddressbook().getId()).isNull();
+        assertThat(customer.getAddressbook().getCode()).isEqualTo("xxx");
     }
 
     @Test
@@ -200,13 +202,14 @@ public class GenericApiAlteringServiceTest {
     }
     
     @Test
-    public void should_not_be_able_to_update_an_entity_field_with_non_existing_referenced_entity() {
+    public void should_not_be_able_to_update_an_entity_field() {
         //Given
         String dto = "{\n" + "\t\"addressbook\": {\"code\":\"xxx\"}}";
         //When
         Customer customer = captureParamOnUpdate(dto, Customer.class);
         assertThat(customer).isNotNull();
-        assertNull(customer.getAddressbook());
+        assertThat(customer.getAddressbook().getId()).isNull();
+        assertThat(customer.getAddressbook().getCode()).isEqualTo("xxx");
     }
     
     @Test
@@ -220,19 +223,7 @@ public class GenericApiAlteringServiceTest {
         assertThat(billingCycle).isNotNull();
         assertThat(billingCycle.getAuditable()).isNull();
     }
-    
-    @Test
-    public void should_not_able_to_update_code() {
-        //Given
-        String dto = "{\n" + "\t\"code\":\"xxxx\"\n" + "}\n";
-        //When
-        BillingCycle billingCycle = captureParamOnUpdate(dto, BillingCycle.class);
-        
-        //Then
-        assertThat(billingCycle).isNotNull();
-        assertThat(billingCycle.getCode()).isEqualTo("xxxx");
-    }
-//should be implemented in a service
+
     @Test
     public void should_not_be_able_to_update_uuid() {
         //Given
