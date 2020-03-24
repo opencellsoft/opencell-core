@@ -1,0 +1,5 @@
+{
+    "code": "org.meveo.service.script.TheRS_BASE_ScriptEL",
+    "type": "JAVA",
+    "script": "package org.meveo.service.script;           \n            import java.util.Map;\n            import java.math.BigDecimal;\n            import org.meveo.admin.exception.BusinessException;\n            import org.meveo.model.admin.User;\n            import org.meveo.model.crm.Provider;\n            import org.meveo.model.BusinessEntity;\n            import org.slf4j.Logger;\n            import org.slf4j.LoggerFactory;\n            public class TheRS_BASE_ScriptEL extends Script {\n                private static final Logger log = LoggerFactory.getLogger(TheRS_BASE_ScriptEL.class);\n                public void execute(Map<String,Object> context) throws BusinessException{\n                    log.debug(\"TheRS_BASE_ScriptEL called\");\n                    context.put(Script.RESULT_VALUE, ((BusinessEntity)context.get(Script.CONTEXT_ENTITY)).getCode()!=null && ((BusinessEntity)context.get(Script.CONTEXT_ENTITY)).getCode().startsWith(\"EL_\"));                 \n                }\n            }"
+}

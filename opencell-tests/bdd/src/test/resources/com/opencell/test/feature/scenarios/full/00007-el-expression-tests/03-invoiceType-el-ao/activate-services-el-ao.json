@@ -1,0 +1,12 @@
+{
+    "subscription": "RS_FULL_43_INV_SUB_ElAO",
+    "servicesToActivate": {
+        "service": [
+            {
+                "code": "RS_FULL_EL_INV_SERVICE1",
+                "quantity": "1",
+                "subscriptionDate": "2050-10-13"
+            }
+        ]
+    }
+}
