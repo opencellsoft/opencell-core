@@ -19,11 +19,10 @@
 package org.meveo.apiv2.services.generic.JsonGenericApiMapper;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonStreamContext;
 import com.fasterxml.jackson.core.util.VersionUtil;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
@@ -32,6 +31,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.apiv2.generic.GenericPaginatedResource;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.billing.Tax;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -50,6 +50,17 @@ class GenericModule extends SimpleModule {
         this.nestedEntities = nestedEntities;
         addSerializer(HibernateProxy.class, new LazyProxySerializer());
         addSerializer(List.class, new ListCustomSerializer());
+        addKeyDeserializer(Tax.class, new KeyDeserializer() {
+            @Override
+            public Object deserializeKey(String key, DeserializationContext ctxt)
+                    throws IOException, JsonProcessingException {
+                try {
+                    return Class.forName(key);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     private class LazyProxySerializer extends StdSerializer<HibernateProxy> {
