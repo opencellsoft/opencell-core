@@ -226,7 +226,7 @@
 														required="true" listBean="#{tradingLanguageBean}"  componentWidth="10"/> 
 <!--                                                         popup="true" popupId="tradingLanguagePopup" /> -->
 
-                                                
+                                    <hftl:formField label="#{messages['billingAccount.taxCategory']}" field="taxCategory" valueLabelField="descriptionOrCode" listBean="#{taxCategoryBean}"/>
                                                 
                                     <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" valueLabelField2="descriptionNotNull" required="false"
                                         listBean="#{titleBean}" listenerUpdate=":parentTab:formId:childTab:userNamePanel" styleClass="clearLeft"/>
@@ -244,8 +244,8 @@
                                  	                                 	
                                  	<hftl:formField label="#{messages['billingAccount.minimumLabelEl']}" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />   
                                  	<hftl:formField label="#{messages[appProvider.entreprise?'billingAccount.minimumAmountWithoutTaxEl':'billingAccount.minimumAmountWithTaxEl']}" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
-                                 	<hftl:formField label="#{messages['billingAccount.minimumLabelElSpark']}" field="minimumLabelElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true"/>   
-                                 	<hftl:formField label="#{messages[appProvider.entreprise?'billingAccount.minimumAmountWithoutTaxElSpark':'billingAccount.minimumAmountWithTaxElSpark']}" field="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                                 	<hftl:formField label="#{messages['billingAccount.minimumLabelElSpark']}" field="minimumLabelElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" rendered="#{paramBean.sparkEnabled}"/>   
+                                 	<hftl:formField label="#{messages[appProvider.entreprise?'billingAccount.minimumAmountWithoutTaxElSpark':'billingAccount.minimumAmountWithTaxElSpark']}" field="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50"  rendered="#{paramBean.sparkEnabled}"/>
                                  	<hftl:formField label="#{messages['billingAccount.minimumInvoiceSubCategory']}" id="invoiceSubCategoryId" field="minimumInvoiceSubCategory" valueLabelField="code" listBean="#{invoiceSubCategoryBean}" /> 
                                  	
                                     <hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />

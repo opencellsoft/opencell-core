@@ -1,0 +1,56 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:hftl="http://hftl.org"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{taxMappingListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+                <p:menuitem value="#{messages['menu.taxMappings']}" outcome="taxMappings" />
+            </p:breadCrumb>
+        </h:form>
+
+        <hftl:searchPanel label="#{messages['taxMapping.search']}" backingBean="#{taxMappingListBean}" columns="3">
+            <hftl:searchField label="#{messages['taxMapping.accountTaxCategory']}" field="accountTaxCategory" valueLabelField="descriptionOrCode" listBean="#{taxCategoryBean}" />
+            <hftl:searchField label="#{messages['taxMapping.chargeTaxClass']}" field="chargeTaxClass" valueLabelField="descriptionOrCode" listBean="#{taxClassBean}" />
+            <hftl:searchField label="#{messages['commons.validFrom']}" field="valid.from" rangeSearch="true" />
+            <hftl:searchField label="#{messages['commons.validTo']}" field="valid.to" rangeSearch="true" />
+            <hftl:searchField label="#{messages['taxMapping.sellerCountry']}" field="sellerCountry" valueLabelField="descriptionOrCode" listBean="#{tradingCountryBean}" />
+            <hftl:searchField label="#{messages['taxMapping.buyerCountry']}" field="buyerCountry" valueLabelField="descriptionOrCode" listBean="#{tradingCountryBean}" />
+            <hftl:searchField label="#{messages['taxMapping.filterEL']}" field="filterEL" />
+            <hftl:searchField label="#{messages['taxMapping.filterELSpark']}" field="filterELSpark" />
+            <hftl:searchField label="#{messages['taxMapping.tax']}" field="tax" valueLabelField="descriptionOrCode" listBean="#{taxBean}" />
+            <hftl:searchField label="#{messages['taxMapping.taxEL']}" field="taxEL" />
+            <hftl:searchField label="#{messages['taxMapping.taxELSpark']}" field="taxELSpark" />
+            <hftl:searchField label="#{messages['taxMapping.taxScript']}" field="taxScript" valueLabelField="descriptionOrCode" listBean="#{scriptInstanceBean}" />
+            <hftl:searchField label="#{messages['taxMapping.source']}" field="source" />
+<!--             <hftl:searchField label="#{messages['taxMapping.originId']}" field="originId" /> -->
+        </hftl:searchPanel>
+
+        <hftl:dataList label="#{messages['taxMapping.title']}" backingBean="#{taxMappingListBean}" sortBy="id">
+            <hftl:column label="#{messages['baseEntity.id']}" field="id" valueIdField="id" entityView="taxMappingDetail" />
+            <hftl:column label="#{messages['taxMapping.accountTaxCategory']}" field="accountTaxCategory.code" valueIdField="accountTaxCategory.id" entityView="taxCategoryDetail"
+                backView="taxMappings" />
+            <hftl:column label="#{messages['taxMapping.chargeTaxClass']}" field="chargeTaxClass.code" valueIdField="chargeTaxClass.id" entityView="taxClassDetail"
+                backView="taxMappings" />
+            <hftl:column label="#{messages['commons.validFrom']}" field="valid.from" isDate="true" />
+            <hftl:column label="#{messages['commons.validTo']}" field="valid.to" isDate="true" />
+            <hftl:column label="#{messages['taxMapping.sellerCountry']}" field="sellerCountry.code" valueIdField="sellerCountry.id" entityView="tradingCountryDetail"
+                backView="taxMappings" />
+            <hftl:column label="#{messages['taxMapping.buyerCountry']}" field="buyerCountry.code" valueIdField="buyerCountry.id" entityView="tradingCountryDetail"
+                backView="taxMappings" />
+            <hftl:column label="#{messages['taxMapping.filterEL']}" field="filterEL" />
+            <hftl:column label="#{messages['taxMapping.tax']}" field="tax.code" valueIdField="tax.id" entityView="taxDetail" backView="taxMappings" />
+            <hftl:column label="#{messages['taxMapping.taxEL']}" field="taxEL" />
+            <hftl:column label="#{messages['taxMapping.taxScript']}" field="taxScript.code" valueIdField="taxScript.id" entityView="scriptInstanceDetail" backView="taxMappings" />
+            <hftl:actionsColumn permission="#{currentUser.hasRole('catalogManagement')}" />
+        </hftl:dataList>
+
+    </ui:define>
+
+</ui:composition>

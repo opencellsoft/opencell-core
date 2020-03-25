@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.api.admin;
 
 import org.apache.commons.codec.binary.Base64;
@@ -99,8 +117,7 @@ public class FilesApi extends BaseApi {
             throw new BusinessApiException("Directory does not exists: " + file.getPath());
         }
 
-        try (FileOutputStream fos = new FileOutputStream(new File(FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip"));
-                ZipOutputStream zos = new ZipOutputStream(fos)) {
+        try (FileOutputStream fos = new FileOutputStream(new File(FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip")); ZipOutputStream zos = new ZipOutputStream(fos)) {
             FileUtils.addDirToArchive(getProviderRootDir(), file.getPath(), zos);
             fos.flush();
         } catch (IOException e) {
@@ -115,17 +132,18 @@ public class FilesApi extends BaseApi {
      * @throws BusinessApiException business api exeption.
      */
     public void uploadFile(byte[] data, String filename, String fileFormat) throws BusinessApiException {
-        File file = new File(getProviderRootDir() + File.separator + filename);
         FileOutputStream fop = null;
         try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+//            if (!file.exists()) {
+//                file.createNewFile();
+//            }
 
+            File file = new File(getProviderRootDir() + File.separator + filename);
             fop = new FileOutputStream(file);
 
             fop.write(data);
-            fop.flush();
+            fop.close();
+            fop = null;
 
             if (FilenameUtils.getExtension(file.getName()).equals("zip")) {
                 // unzip
@@ -141,7 +159,9 @@ public class FilesApi extends BaseApi {
         } catch (Exception e) {
             throw new BusinessApiException("Error uploading file: " + filename + ". " + e.getMessage());
         } finally {
-            IOUtils.closeQuietly(fop);
+            if (fop != null) {
+                IOUtils.closeQuietly(fop);
+            }
         }
     }
 
@@ -212,7 +232,6 @@ public class FilesApi extends BaseApi {
             throw new BusinessApiException("Error unziping file: " + filePath + ". " + e.getMessage());
         }
     }
-    
 
     public void suppressFile(String filePath) throws BusinessApiException {
         String filename = getProviderRootDir() + File.separator + filePath;

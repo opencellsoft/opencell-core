@@ -1,20 +1,19 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.model.admin;
 
@@ -48,8 +47,7 @@ import org.meveo.model.ExportIdentifier;
 @Cacheable
 @ExportIdentifier("code")
 @Table(name = "adm_file_format")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "adm_file_format_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "adm_file_format_seq"), })
 public class FileFormat extends BusinessEntity {
 
     private static final long serialVersionUID = 1932955932186440723L;
@@ -111,7 +109,7 @@ public class FileFormat extends BusinessEntity {
     private String archiveDirectory;
 
     /**
-     * Job name (e.g : CDR_job).
+     * Job name (e.g : CDR_job) to process file contents.
      */
     @Column(name = "job_code", length = 255)
     @Size(max = 255)
@@ -280,18 +278,14 @@ public class FileFormat extends BusinessEntity {
     }
 
     /**
-     * Gets the jobCode
-     *
-     * @return the jobCode
+     * @return Job name (e.g : CDR_job) to process file contents
      */
     public String getJobCode() {
         return jobCode;
     }
 
     /**
-     * Sets the jobCode.
-     *
-     * @param jobCode the new jobCode
+     * @param jobCode Job name (e.g : CDR_job) to process file contents
      */
     public void setJobCode(String jobCode) {
         this.jobCode = jobCode;

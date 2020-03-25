@@ -1,9 +1,28 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.api;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +30,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEntityDto;
 import org.meveo.api.dto.response.GenericSearchResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -19,6 +39,8 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 import org.primefaces.model.SortOrder;
@@ -97,8 +119,8 @@ public abstract class BaseCrudApi<E extends BaseEntity, T extends BaseEntityDto>
 
         if (dataDto instanceof BusinessEntityDto && ((BusinessEntityDto) dataDto).getCode() != null) {
             entity = ((BusinessService) ps).findByCode(((BusinessEntityDto) dataDto).getCode());
-        } else if (dataDto instanceof IEntityDto && ((IEntityDto)dataDto).getId() != null) {
-            entity = ps.findById(((IEntityDto)dataDto).getId());
+        } else if (dataDto instanceof IEntityDto && ((IEntityDto) dataDto).getId() != null) {
+            entity = ps.findById(((IEntityDto) dataDto).getId());
         }
 
         if (entity == null) {
@@ -205,7 +227,11 @@ public abstract class BaseCrudApi<E extends BaseEntity, T extends BaseEntityDto>
             throw new EntityDoesNotExistsException(entityClass, code);
         }
 
-        return getEntityToDtoFunction().apply(entity);
+        if (entity instanceof ICustomFieldEntity) {
+            return getEntityToDtoFunction().apply(entity, entityToDtoConverter.getCustomFieldsDTO((ICustomFieldEntity) entity, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+        } else {
+            return getEntityToDtoFunction().apply(entity, null);
+        }
     }
 
     /**
@@ -226,7 +252,11 @@ public abstract class BaseCrudApi<E extends BaseEntity, T extends BaseEntityDto>
             throw new EntityDoesNotExistsException(entityClass, id);
         }
 
-        return getEntityToDtoFunction().apply(entity);
+        if (entity instanceof ICustomFieldEntity) {
+            return getEntityToDtoFunction().apply(entity, entityToDtoConverter.getCustomFieldsDTO((ICustomFieldEntity) entity, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+        } else {
+            return getEntityToDtoFunction().apply(entity, null);
+        }
     }
 
     /**
@@ -248,7 +278,7 @@ public abstract class BaseCrudApi<E extends BaseEntity, T extends BaseEntityDto>
      * @return Search results including repeated pagination and filtering criteria plus total record count
      * @throws MeveoApiException Api related exception
      */
-    protected GenericSearchResponse<T> search(PagingAndFiltering pagingAndFiltering, Function<E, T> entityToDtoFunction) throws MeveoApiException {
+    protected GenericSearchResponse<T> search(PagingAndFiltering pagingAndFiltering, BiFunction<E, CustomFieldsDto, T> entityToDtoFunction) throws MeveoApiException {
 
         if (pagingAndFiltering == null) {
             pagingAndFiltering = new PagingAndFiltering();
@@ -263,8 +293,12 @@ public abstract class BaseCrudApi<E extends BaseEntity, T extends BaseEntityDto>
         List<T> dtos = new ArrayList<T>();
         if (totalCount > 0) {
             List<E> entityList = ps.list(paginationConfig);
-            for (E wo : entityList) {
-                dtos.add(entityToDtoFunction.apply(wo));
+            for (E entity : entityList) {
+                if (entity instanceof ICustomFieldEntity) {
+                    dtos.add(entityToDtoFunction.apply(entity, entityToDtoConverter.getCustomFieldsDTO((ICustomFieldEntity) entity, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+                } else {
+                    dtos.add(entityToDtoFunction.apply(entity, null));
+                }
             }
         }
 
@@ -275,7 +309,7 @@ public abstract class BaseCrudApi<E extends BaseEntity, T extends BaseEntityDto>
     /**
      * @return A function to convert entity object to DTO object
      */
-    protected Function<E, T> getEntityToDtoFunction() {
+    protected BiFunction<E, CustomFieldsDto, T> getEntityToDtoFunction() {
 
         return null;
     }

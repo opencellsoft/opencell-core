@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
@@ -12,10 +30,10 @@ import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
-import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
@@ -41,13 +59,9 @@ public class RealtimeChargingService {
     @Inject
     protected Logger log;
 
-    /** The invoice sub category country service. */
-    @Inject
-    private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
-
     /** The charge application rating service. */
     @Inject
-    private RatingService chargeApplicationRatingService;
+    private RatingService ratingService;
 
     /** The wallet operation service. */
     @Inject
@@ -60,7 +74,7 @@ public class RealtimeChargingService {
     /**
      * Gets the application price.
      *
-     * @param ba the ba
+     * @param ba Billing account
      * @param chargeTemplate the charge template
      * @param subscriptionDate the subscription date
      * @param offerCode the offer code
@@ -69,11 +83,11 @@ public class RealtimeChargingService {
      * @param param2 the param 2
      * @param param3 the param 3
      * @param priceWithoutTax the price without tax
-     * @return the application price
+     * @return The application price as amounts
      * @throws BusinessException the business exception
      */
-    public BigDecimal getApplicationPrice(Seller seller, BillingAccount ba, OneShotChargeTemplate chargeTemplate, Date subscriptionDate, OfferTemplate offerTemplate,
-            BigDecimal quantity, String param1, String param2, String param3, boolean priceWithoutTax) throws BusinessException {
+    public Amounts getApplicationPrice(Seller seller, BillingAccount ba, OneShotChargeTemplate chargeTemplate, Date subscriptionDate, OfferTemplate offerTemplate, BigDecimal quantity, String param1, String param2,
+            String param3) throws BusinessException {
 
         TradingCurrency currency = ba.getCustomerAccount().getTradingCurrency();
         if (currency == null) {
@@ -89,7 +103,7 @@ public class RealtimeChargingService {
             seller = ba.getCustomerAccount().getCustomer().getSeller();
         }
 
-        return getApplicationPrice(seller, ba, currency, tradingCountry, chargeTemplate, subscriptionDate, offerTemplate, quantity, param1, param2, param3, priceWithoutTax, false);
+        return getApplicationPrice(seller, ba, currency, tradingCountry, chargeTemplate, subscriptionDate, offerTemplate, quantity, param1, param2, param3, false);
     }
 
     /**
@@ -106,29 +120,25 @@ public class RealtimeChargingService {
      * @param param1 the param 1
      * @param param2 the param 2
      * @param param3 the param 3
-     * @param priceWithoutTax the price without tax
      * @param ignoreNoTax Should exception be thrown if no tax was matched
-     * @return the application price
+     * @return The application price as amounts
      * @throws BusinessException the business exception
      */
-    public BigDecimal getApplicationPrice(Seller seller, BillingAccount ba, TradingCurrency currency, TradingCountry buyersCountry, OneShotChargeTemplate chargeTemplate,
-            Date subscriptionDate, OfferTemplate offerTemplate, BigDecimal inputQuantity, String param1, String param2, String param3, boolean priceWithoutTax, boolean ignoreNoTax)
-            throws BusinessException {
-
-        Tax tax = invoiceSubCategoryCountryService.determineTax(chargeTemplate.getInvoiceSubCategory(), seller, ba, subscriptionDate, ignoreNoTax);
+    public Amounts getApplicationPrice(Seller seller, BillingAccount ba, TradingCurrency currency, TradingCountry buyersCountry, OneShotChargeTemplate chargeTemplate, Date subscriptionDate, OfferTemplate offerTemplate,
+            BigDecimal inputQuantity, String param1, String param2, String param3, boolean ignoreNoTax) throws BusinessException {
 
         OneShotChargeInstance ci = new OneShotChargeInstance();
         ci.setCountry(buyersCountry);
         ci.setCurrency(currency);
         ci.setChargeTemplate(chargeTemplate);
 
-        WalletOperation op = new WalletOperation(ci, inputQuantity, null, subscriptionDate, null, param1, param2, param3, null, tax, null, null);
+        WalletOperation op = new WalletOperation(ci, inputQuantity, null, subscriptionDate, null, param1, param2, param3, null, null, null, null);
 
         op.setOfferTemplate(offerTemplate);
         op.setSeller(seller);
 
         try {
-            chargeApplicationRatingService.rateBareWalletOperation(op, null, null, buyersCountry.getId(), currency);
+            ratingService.rateBareWalletOperation(op, null, null, buyersCountry.getId(), currency);
 
         } catch (RatingException e) {
             log.trace("Failed to rate a wallet operation {}: {}", op, e.getRejectionReason());
@@ -139,7 +149,7 @@ public class RealtimeChargingService {
             throw e;
         }
 
-        return priceWithoutTax ? op.getAmountWithoutTax() : op.getAmountWithTax();
+        return new Amounts(op.getAmountWithoutTax(), op.getAmountWithTax(), op.getAmountTax(), op.getTax());
     }
 
     /**
@@ -156,11 +166,11 @@ public class RealtimeChargingService {
      * @return the first recurring price
      * @throws BusinessException the business exception
      */
-    public BigDecimal getFirstRecurringPrice(BillingAccount ba, RecurringChargeTemplate chargeTemplate, Date subscriptionDate, BigDecimal quantity, String param1, String param2,
-            String param3, boolean priceWithoutTax) throws BusinessException {
+    public BigDecimal getFirstRecurringPrice(BillingAccount ba, RecurringChargeTemplate chargeTemplate, Date subscriptionDate, BigDecimal quantity, String param1, String param2, String param3, boolean priceWithoutTax)
+            throws BusinessException {
 
-        RecurringChargeInstance chargeInstance = new RecurringChargeInstance(null, null, quantity, subscriptionDate, null, ba.getCustomerAccount().getCustomer().getSeller(),
-            ba.getTradingCountry(), ba.getCustomerAccount().getTradingCurrency(), chargeTemplate);
+        RecurringChargeInstance chargeInstance = new RecurringChargeInstance(null, null, quantity, subscriptionDate, null, ba.getCustomerAccount().getCustomer().getSeller(), ba.getTradingCountry(),
+            ba.getCustomerAccount().getTradingCurrency(), chargeTemplate);
 
         Date nextApplicationDate = walletOperationService.initChargeDateAndGetNextChargeDate(chargeInstance);
         List<WalletOperation> ops;
@@ -175,9 +185,8 @@ public class RealtimeChargingService {
             log.error("Failed to rate a recurring charge {}: {}", chargeInstance, e.getMessage(), e);
             throw e;
         }
-        return ops.stream().filter(walletOperation -> walletOperation != null)
-                .map(walletOperation -> priceWithoutTax ? walletOperation.getAmountWithoutTax() : walletOperation.getAmountWithTax())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return ops.stream().filter(walletOperation -> walletOperation != null).map(walletOperation -> priceWithoutTax ? walletOperation.getAmountWithoutTax() : walletOperation.getAmountWithTax()).reduce(BigDecimal.ZERO,
+            BigDecimal::add);
 
     }
 
@@ -199,15 +208,16 @@ public class RealtimeChargingService {
     /*
      * Warning : this method does not handle calendars at service level
      */
-    public BigDecimal getActivationServicePrice(Seller seller, BillingAccount ba, ServiceTemplate serviceTemplate, Date subscriptionDate, OfferTemplate offerTemplate,
-            BigDecimal quantity, String param1, String param2, String param3, boolean priceWithoutTax) throws BusinessException {
+    public BigDecimal getActivationServicePrice(Seller seller, BillingAccount ba, ServiceTemplate serviceTemplate, Date subscriptionDate, OfferTemplate offerTemplate, BigDecimal quantity, String param1, String param2,
+            String param3, boolean priceWithoutTax) throws BusinessException {
 
         BigDecimal result = BigDecimal.ZERO;
 
         if (serviceTemplate.getServiceSubscriptionCharges() != null) {
             for (ServiceChargeTemplate<OneShotChargeTemplate> charge : serviceTemplate.getServiceSubscriptionCharges()) {
-                result = result
-                    .add(getApplicationPrice(seller, ba, charge.getChargeTemplate(), subscriptionDate, offerTemplate, quantity, param1, param2, param3, priceWithoutTax));
+                Amounts applicationPrice = getApplicationPrice(seller, ba, charge.getChargeTemplate(), subscriptionDate, offerTemplate, quantity, param1, param2, param3);
+
+                result = result.add(priceWithoutTax ? applicationPrice.getAmountWithoutTax() : applicationPrice.getAmountWithTax());
             }
         }
 
@@ -215,8 +225,7 @@ public class RealtimeChargingService {
             for (ServiceChargeTemplate<RecurringChargeTemplate> charge : serviceTemplate.getServiceRecurringCharges()) {
                 boolean isApplyInAdvance = (charge.getChargeTemplate().getApplyInAdvance() == null) ? false : charge.getChargeTemplate().getApplyInAdvance();
                 if (!StringUtils.isBlank(charge.getChargeTemplate().getApplyInAdvanceEl())) {
-                    isApplyInAdvance = recurringChargeTemplateService.matchExpression(charge.getChargeTemplate().getApplyInAdvanceEl(), null, serviceTemplate,
-                        charge.getChargeTemplate());
+                    isApplyInAdvance = recurringChargeTemplateService.matchExpression(charge.getChargeTemplate().getApplyInAdvanceEl(), null, serviceTemplate, charge.getChargeTemplate());
                 }
                 if (isApplyInAdvance) {
                     result = result.add(getFirstRecurringPrice(ba, charge.getChargeTemplate(), subscriptionDate, quantity, param1, param2, param3, priceWithoutTax));

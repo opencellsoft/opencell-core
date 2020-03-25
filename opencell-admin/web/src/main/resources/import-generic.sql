@@ -984,9 +984,9 @@ insert into crm_seller (id, version, disabled, created, provider_id, creator_id,
 insert into crm_seller (id, version, disabled, created, provider_id, creator_id, code, description, parent_seller_id, trading_currency_id, trading_language_id) values (3, 0, false, CURRENT_TIMESTAMP, 1, 1, 'SELLER_FR', 'France Seller',1, 2, 2);
 
 /* Termination Reasons */
-insert into BILLING_SUBSCRIP_TERMIN_REASON (id, version, provider_id, code, description, apply_agreement, apply_reimbursment, apply_termination_charges) values (1, 0, 1, 'TERM_REASON_1', 'Agreement Reimbursement Charge', true, true, true);
-insert into BILLING_SUBSCRIP_TERMIN_REASON (id, version, provider_id, code, description, apply_agreement, apply_reimbursment, apply_termination_charges) values (2, 0, 1, 'TERM_REASON_2', 'Agreement', true, false, false);
-insert into BILLING_SUBSCRIP_TERMIN_REASON (id, version, provider_id, code, description, apply_agreement, apply_reimbursment, apply_termination_charges) values (3, 0, 1, 'TERM_REASON_3', 'Charge', false, true, false);
+insert into BILLING_SUBSCRIP_TERMIN_REASON (id, version, provider_id, code, description, apply_agreement, apply_reimbursment, apply_termination_charges, override_prorata) values (1, 0, 1, 'TERM_REASON_1', 'Agreement Reimbursement Charge', true, true, true,'NO_OVERRIDE');
+insert into BILLING_SUBSCRIP_TERMIN_REASON (id, version, provider_id, code, description, apply_agreement, apply_reimbursment, apply_termination_charges, override_prorata) values (2, 0, 1, 'TERM_REASON_2', 'Agreement', true, false, false,'PRORATA');
+insert into BILLING_SUBSCRIP_TERMIN_REASON (id, version, provider_id, code, description, apply_agreement, apply_reimbursment, apply_termination_charges, override_prorata) values (3, 0, 1, 'TERM_REASON_3', 'Charge', false, true, false,'NO_PRORATA');
 
 
 /* AR_OCC_TEMPLATE  */

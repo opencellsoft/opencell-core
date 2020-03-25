@@ -1,10 +1,26 @@
-package org.meveo.api.catalog;
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+package org.meveo.api.catalog;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -14,8 +30,14 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.CounterTemplateLevel;
+import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.math.BigDecimal;
 
 /**
  * @author Edward P. Legaspi
@@ -66,7 +88,11 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         }
         counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
         counterTemplate.setNotificationLevels(postData.getNotificationLevels());
-
+        counterTemplate.setAccumulator(postData.getAccumulator());
+        if (counterTemplate.getAccumulator() != null && counterTemplate.getAccumulator()) {
+            counterTemplate.setCeilingExpressionEl(null);
+            counterTemplate.setCeiling(BigDecimal.ZERO);
+        }
         counterTemplateService.create(counterTemplate);
 
         return counterTemplate;
@@ -105,7 +131,11 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         }
         counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
         counterTemplate.setNotificationLevels(postData.getNotificationLevels());
-
+        counterTemplate.setAccumulator(postData.getAccumulator());
+        if (counterTemplate.getAccumulator() != null && counterTemplate.getAccumulator()) {
+            counterTemplate.setCeilingExpressionEl(null);
+            counterTemplate.setCeiling(BigDecimal.ZERO);
+        }
         counterTemplate = counterTemplateService.update(counterTemplate);
 
         return counterTemplate;
@@ -123,5 +153,35 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         }
 
         return new CounterTemplateDto(counterTemplate);
+    }
+
+    /**
+     * Check if any parameters are missing and throw and exception.
+     *
+     * @param dto base data transfer object.
+     * @throws MeveoApiException meveo api exception.
+     */
+    @Override
+    protected void handleMissingParametersAndValidate(BaseEntityDto dto) throws MeveoApiException {
+        validate(dto);
+        handleMissingParameters(dto);
+        CounterTemplateDto counterTemplateDto = (CounterTemplateDto) dto;
+        if (counterTemplateDto.getAccumulator() != null) {
+            if (counterTemplateDto.getAccumulator() && counterTemplateDto.getType().equals(CounterTypeEnum.NOTIFICATION)) {
+                log.error("The counter type is invalid if the counter is accumulator counter, deactivate the accumulator or change the counter type");
+                throw new InvalidParameterException("The counter type is invalid if the counter is accumulator counter, deactivate the accumulator or change the counter type");
+            }
+            if (!counterTemplateDto.getAccumulator() && (counterTemplateDto.getType().equals(CounterTypeEnum.USAGE_AMOUNT))) {
+                log.error("The accumulator should be activated if the following counter type are used : {}, {} or {}", CounterTypeEnum.USAGE_AMOUNT.getLabel(),
+                        CounterTypeEnum.USAGE_AMOUNT.getLabel(), CounterTypeEnum.USAGE_AMOUNT.getLabel());
+                throw new InvalidParameterException("The accumulator must be activated to use the counter type " + counterTemplateDto.getType());
+            }
+            if (!counterTemplateDto.getAccumulator() && counterTemplateDto.getType().equals(CounterTypeEnum.USAGE)
+                    && (counterTemplateDto.getCounterLevel().equals(CounterTemplateLevel.CA) || counterTemplateDto.getCounterLevel().equals(CounterTemplateLevel.CUST))) {
+                log.error("The accumulator should be activated if the following counter level are used : {}, {}", CounterTemplateLevel.CA.getLabel(),
+                        CounterTemplateLevel.CUST.getLabel());
+                throw new InvalidParameterException("The accumulator must be activated to use the counter level " + counterTemplateDto.getCounterLevel());
+            }
+        }
     }
 }

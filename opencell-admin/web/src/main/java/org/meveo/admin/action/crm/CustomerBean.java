@@ -1,20 +1,19 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.admin.action.crm;
 
@@ -29,19 +28,21 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.account.CustomerApi;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.dwh.GdprService;
 
 /**
  * Standard backing bean for {@link Customer} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
- * 
+ *
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.2
  */
@@ -51,7 +52,9 @@ public class CustomerBean extends AccountBean<Customer> {
 
     private static final long serialVersionUID = 1L;
 
-    /** Injected @{link Customer} service. Extends {@link PersistenceService}. */
+    /**
+     * Injected @{link Customer} service. Extends {@link PersistenceService}.
+     */
     @Inject
     private CustomerService customerService;
 
@@ -60,6 +63,11 @@ public class CustomerBean extends AccountBean<Customer> {
 
     @Inject
     private GdprService gpdrService;
+
+    @Inject
+    private CounterInstanceService counterInstanceService;
+
+    private CounterInstance selectedCounterInstance;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -80,6 +88,7 @@ public class CustomerBean extends AccountBean<Customer> {
         if (entity.getContactInformation() == null) {
             entity.setContactInformation(new ContactInformation());
         }
+        selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
         return entity;
     }
 
@@ -139,5 +148,30 @@ public class CustomerBean extends AccountBean<Customer> {
         }
 
         return null;
+    }
+
+    /**
+     * Gets selected counter instances.
+     *
+     * @return the selected counter instances
+     */
+    public CounterInstance getSelectedCounterInstance() {
+        if (entity == null) {
+            initEntity();
+        }
+        return selectedCounterInstance;
+    }
+
+    /**
+     * Select counter instance.
+     *
+     * @param selectedCounterInstance selected counter instance
+     */
+    public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
+        if (selectedCounterInstance != null) {
+            this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
+        } else {
+            this.selectedCounterInstance = null;
+        }
     }
 }

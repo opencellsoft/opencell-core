@@ -1,23 +1,23 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.service.script;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +51,7 @@ import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceError;
+import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.model.security.Role;
 import org.meveo.service.base.BusinessService;
 
@@ -85,8 +86,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @return list of custom script.
      */
     public List<ScriptInstance> getScriptInstancesWithError() {
-        return ((List<ScriptInstance>) getEntityManager().createNamedQuery("CustomScript.getScriptInstanceOnError", ScriptInstance.class).setParameter("isError", Boolean.TRUE)
-            .getResultList());
+        return ((List<ScriptInstance>) getEntityManager().createNamedQuery("CustomScript.getScriptInstanceOnError", ScriptInstance.class).setParameter("isError", Boolean.TRUE).getResultList());
     }
 
     /**
@@ -199,63 +199,95 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
     @Override
     public void create(ScriptInstance script) throws BusinessException {
 
-        String className = ScriptUtils.getClassName(script.getScript());
-        if (className == null) {
-            throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
+        if (script.getSourceTypeEnum() == ScriptSourceTypeEnum.JAVA_CLASS) {
+
+            if (!ScriptUtils.isOverwritesJavaClass(script.getCode())) {
+                throw new BusinessException(resourceMessages.getString("message.scriptInstance.classDoesNotExist", script.getCode()));
+            } else if (!ScriptUtils.isScriptInterfaceClass(script.getCode())) {
+                throw new BusinessException(resourceMessages.getString("message.scriptInstance.classNotScriptInstance", script.getCode()));
+            }
+            super.create(script);
+
+        } else {
+
+            String className = ScriptUtils.getClassName(script.getScript());
+            if (className == null) {
+                throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
+            }
+            String fullClassName = ScriptUtils.getFullClassname(script.getScript());
+
+            if (ScriptUtils.isOverwritesJavaClass(fullClassName)) {
+                throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid", fullClassName));
+            }
+            script.setCode(fullClassName);
+
+            super.create(script);
+            scriptCompilerService.compileScript(script, false);
+
+            clusterEventPublisher.publishEvent(script, CrudActionEnum.create);
         }
-        String fullClassName = ScriptUtils.getFullClassname(script.getScript());
-
-        if (ScriptUtils.isOverwritesJavaClass(fullClassName)) {
-            throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid", fullClassName));
-        }
-        script.setCode(fullClassName);
-
-        super.create(script);
-        scriptCompilerService.compileScript(script, false);
-
-        clusterEventPublisher.publishEvent(script, CrudActionEnum.create);
     }
 
     @Override
     public ScriptInstance update(ScriptInstance script) throws BusinessException {
 
-        String className = ScriptUtils.getClassName(script.getScript());
-        if (className == null) {
-            throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
+        if (script.getSourceTypeEnum() == ScriptSourceTypeEnum.JAVA_CLASS) {
+
+            if (!ScriptUtils.isOverwritesJavaClass(script.getCode())) {
+                throw new BusinessException(resourceMessages.getString("message.scriptInstance.classDoesNotExist", script.getCode()));
+            } else if (!ScriptUtils.isScriptInterfaceClass(script.getCode())) {
+                throw new BusinessException(resourceMessages.getString("message.scriptInstance.classNotScriptInstance", script.getCode()));
+            }
+            script = super.update(script);
+
+        } else {
+
+            String className = ScriptUtils.getClassName(script.getScript());
+            if (className == null) {
+                throw new BusinessException(resourceMessages.getString("message.scriptInstance.sourceInvalid"));
+            }
+
+            String fullClassName = ScriptUtils.getFullClassname(script.getScript());
+            if (ScriptUtils.isOverwritesJavaClass(fullClassName)) {
+                throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid", fullClassName));
+            }
+
+            script.setCode(fullClassName);
+
+            script = super.update(script);
+
+            scriptCompilerService.compileScript(script, false);
+
+            clusterEventPublisher.publishEvent(script, CrudActionEnum.update);
+
         }
-
-        String fullClassName = ScriptUtils.getFullClassname(script.getScript());
-        if (ScriptUtils.isOverwritesJavaClass(fullClassName)) {
-            throw new BusinessException(resourceMessages.getString("message.scriptInstance.classInvalid", fullClassName));
-        }
-
-        script.setCode(fullClassName);
-
-        script = super.update(script);
-
-        scriptCompilerService.compileScript(script, false);
-
-        clusterEventPublisher.publishEvent(script, CrudActionEnum.update);
         return script;
+
     }
 
     @Override
     public void remove(ScriptInstance script) throws BusinessException {
         super.remove(script);
-        clusterEventPublisher.publishEvent(script, CrudActionEnum.remove);
+        if (script.getSourceTypeEnum() != ScriptSourceTypeEnum.JAVA_CLASS) {
+            clusterEventPublisher.publishEvent(script, CrudActionEnum.remove);
+        }
     }
 
     @Override
     public ScriptInstance enable(ScriptInstance script) throws BusinessException {
         script = super.enable(script);
-        clusterEventPublisher.publishEvent(script, CrudActionEnum.enable);
+        if (script.getSourceTypeEnum() != ScriptSourceTypeEnum.JAVA_CLASS) {
+            clusterEventPublisher.publishEvent(script, CrudActionEnum.enable);
+        }
         return script;
     }
 
     @Override
     public ScriptInstance disable(ScriptInstance script) throws BusinessException {
         script = super.disable(script);
-        clusterEventPublisher.publishEvent(script, CrudActionEnum.disable);
+        if (script.getSourceTypeEnum() != ScriptSourceTypeEnum.JAVA_CLASS) {
+            clusterEventPublisher.publishEvent(script, CrudActionEnum.disable);
+        }
         return script;
     }
 
@@ -479,7 +511,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
             String javaSrc = scriptInstance.getScript();
             javaSrc = javaSrc.replaceAll("\\blog.", "logTest.");
             Class<ScriptInterface> compiledScript = scriptCompilerService.compileJavaSource(javaSrc);
-            ScriptInterface scriptClassInstance = compiledScript.newInstance();
+            ScriptInterface scriptClassInstance = compiledScript.getDeclaredConstructor().newInstance();
 
             executeWInitAndFinalize(scriptClassInstance, context);
 
@@ -556,20 +588,27 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      * @throws ElementNotFoundException Script not found
      */
     public ScriptInterface getScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
-        Class<ScriptInterface> scriptClass = getScriptInterface(scriptCode);
 
-        try {
-            ScriptInterface script = scriptClass.newInstance();
-            return script;
+        // First check if it is a deployed script
+        ScriptInterface script = (ScriptInterface) EjbUtils.getServiceInterface(scriptCode.lastIndexOf('.') > 0 ? scriptCode.substring(scriptCode.lastIndexOf('.') + 1) : scriptCode);
 
-        } catch (InstantiationException | IllegalAccessException e) {
-            log.error("Failed to instantiate script {}", scriptCode, e);
-            throw new InvalidScriptException(scriptCode, getEntityClass().getName());
+        // Otherwise get it from the compiled source code
+        if (script == null) {
+            Class<ScriptInterface> scriptClass = getScriptInterface(scriptCode);
+
+            try {
+                script = scriptClass.getDeclaredConstructor().newInstance();
+
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                log.error("Failed to instantiate script {}", scriptCode, e);
+                throw new InvalidScriptException(scriptCode, getEntityClass().getName());
+            }
         }
+        return script;
     }
 
     /**
-     * Get a the same/single/cached instance of compiled script class. A subsequent call to this method will retun the same instance of scipt.
+     * Get a the same/single/cached instance of compiled script class. A subsequent call to this method will return the same instance of script.
      * 
      * @param scriptCode Script code
      * @return A compiled script class
@@ -579,11 +618,21 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
     public ScriptInterface getCachedScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         CacheKeyStr cacheKey = new CacheKeyStr(currentUser.getProviderCode(), EjbUtils.getCurrentClusterNode() + "_" + scriptCode);
 
+        // First check if there is a compiled script already
         CompiledScript compiledScript = compiledScripts.get(cacheKey);
-        if (compiledScript == null) {
-            return scriptCompilerService.getScriptInstanceWCompile(scriptCode);
+        if (compiledScript != null) {
+
+            return compiledScript.getScriptInstance();
         }
-        return compiledScript.getScriptInstance();
+
+        // Then check if it is a deployed script
+        ScriptInterface script = (ScriptInterface) EjbUtils.getServiceInterface(scriptCode.lastIndexOf('.') > 0 ? scriptCode.substring(scriptCode.lastIndexOf('.') + 1) : scriptCode);
+        if (script != null) {
+            return script;
+        }
+
+        // And lastly get it from the compiled source code
+        return scriptCompilerService.getScriptInstanceWCompile(scriptCode);
     }
 
     /**

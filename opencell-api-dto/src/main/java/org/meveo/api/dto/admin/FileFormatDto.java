@@ -1,13 +1,34 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.api.dto.admin;
 
-import org.meveo.api.dto.AuditableEntityDto;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.admin.FileFormat;
+import org.meveo.model.admin.FileType;
 
 /**
  * The Class FileFormatDto.
@@ -17,23 +38,12 @@ import java.util.List;
  */
 @XmlRootElement(name = "FileFormat")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FileFormatDto extends AuditableEntityDto {
+public class FileFormatDto extends BusinessEntityDto {
 
     /**
      * The Constant serialVersionUID.
      */
     private static final long serialVersionUID = -2539099102487957375L;
-
-    /**
-     * The FileFormat code.
-     */
-    @XmlElement(required = true)
-    private String code;
-
-    /**
-     * The FileFormat description.
-     */
-    private String description;
 
     /**
      * The file name pattern.
@@ -63,7 +73,6 @@ public class FileFormatDto extends AuditableEntityDto {
     /**
      * The output directory.
      */
-    @XmlElement(required = true)
     private String outputDirectory;
 
     /**
@@ -77,30 +86,40 @@ public class FileFormatDto extends AuditableEntityDto {
     private String archiveDirectory;
 
     /**
-     * Gets the code
-     *
-     * @return the code
+     * Job name (e.g : CDR_job) to process file contents
      */
-    public String getCode() {
-        return code;
+    private String jobCode;
+
+    /**
+     * Constructor
+     */
+    public FileFormatDto() {
+        super();
     }
 
     /**
-     * Sets the code.
-     *
-     * @param code the new code
+     * Constructor
+     * 
+     * @param fileFormat File format entity to convert to DTO
+     * @param customFieldInstances Custom field values. Not applicable here.
      */
-    public void setCode(String code) {
-        this.code = code;
-    }
+    public FileFormatDto(FileFormat fileFormat, CustomFieldsDto customFieldInstances) {
+        super(fileFormat);
+        this.archiveDirectory = fileFormat.getArchiveDirectory();
+        this.configurationTemplate = fileFormat.getConfigurationTemplate();
+        this.fileNamePattern = fileFormat.getFileNamePattern();
+        this.inputDirectory = fileFormat.getInputDirectory();
+        this.jobCode = fileFormat.getJobCode();
+        this.outputDirectory = fileFormat.getOutputDirectory();
+        this.recordName = fileFormat.getRecordName();
+        this.rejectDirectory = fileFormat.getRejectDirectory();
 
-    /**
-     * Gets the description
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
+        if (fileFormat.getFileTypes() != null && !fileFormat.getFileTypes().isEmpty()) {
+            this.fileTypes = new ArrayList<String>();
+            for (FileType fileType : fileFormat.getFileTypes()) {
+                this.fileTypes.add(fileType.getCode());
+            }
+        }
     }
 
     /**
@@ -254,5 +273,19 @@ public class FileFormatDto extends AuditableEntityDto {
      */
     public void setArchiveDirectory(String archiveDirectory) {
         this.archiveDirectory = archiveDirectory;
+    }
+
+    /**
+     * @return Job name (e.g : CDR_job) to process file contents
+     */
+    public String getJobCode() {
+        return jobCode;
+    }
+
+    /**
+     * @param jobCode Job name (e.g : CDR_job) to process file contents
+     */
+    public void setJobCode(String jobCode) {
+        this.jobCode = jobCode;
     }
 }

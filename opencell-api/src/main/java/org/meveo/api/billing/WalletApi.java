@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.api.billing;
 
 import java.math.BigDecimal;
@@ -41,6 +59,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
@@ -562,6 +581,19 @@ public class WalletApi extends BaseApi {
         if (postData.getStatus() != WalletOperationStatusEnum.OPEN) {
             walletOperation.setStatus(postData.getStatus());
         }
+
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), walletOperation, true, true);
+
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+
         walletOperationService.create(walletOperation);
 
         return walletOperation;
@@ -594,7 +626,7 @@ public class WalletApi extends BaseApi {
         if (totalCount > 0) {
             List<WalletOperation> walletOperations = walletOperationService.list(paginationConfig);
             for (WalletOperation wo : walletOperations) {
-                WalletOperationDto woDto = new WalletOperationDto(wo);
+                WalletOperationDto woDto = new WalletOperationDto(wo, entityToDtoConverter.getCustomFieldsDTO(wo, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                 if (includeRatedTransactions) {
                     RatedTransaction rt = this.ratedTransactionService.findByWalletOperationId(wo.getId());
                     if (rt != null) {

@@ -1,20 +1,19 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.model.billing;
 
@@ -31,7 +30,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 
 /**
@@ -80,6 +81,20 @@ public class RecurringChargeInstance extends ChargeInstance {
     @NotNull
     protected BigDecimal quantity = BigDecimal.ONE;
 
+    /**
+     * The calendar
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "calendar_id")
+    private Calendar calendar;
+
+    /**
+     * Apply charge in advance - at the beginning of the period. If false, charge will be applied at the end of the period
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "apply_in_advance")
+    private Boolean applyInAdvance;
+
     public RecurringChargeInstance() {
 
     }
@@ -93,7 +108,12 @@ public class RecurringChargeInstance extends ChargeInstance {
         this.quantity = serviceInstance.getQuantity() == null ? BigDecimal.ONE : serviceInstance.getQuantity();
 
     }
-
+    public RecurringChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, RecurringChargeTemplate recurringChargeTemplate, ServiceInstance serviceInstance,
+                                   InstanceStatusEnum status, Calendar calendar, Boolean applyInAdvance) {
+        this(amountWithoutTax, amountWithTax, recurringChargeTemplate, serviceInstance, status);
+        this.calendar = calendar;
+        this.applyInAdvance = applyInAdvance;
+    }
     public RecurringChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, Date subscriptionDate, Subscription subscription, Seller seller,
             TradingCountry tradingCountry, TradingCurrency tradingCurrency, RecurringChargeTemplate recurringChargeTemplate) {
 
@@ -161,5 +181,41 @@ public class RecurringChargeInstance extends ChargeInstance {
 
     public void setCounter(CounterInstance counter) {
         this.counter = counter;
+    }
+
+    /**
+     * Gets the calendar.
+     *
+     * @return the calendar
+     */
+    public Calendar getCalendar() {
+        return calendar;
+    }
+
+    /**
+     * Sets the calendar.
+     *
+     * @param calendar the new calendar
+     */
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
+    }
+
+    /**
+     * Gets the apply in advance.
+     *
+     * @return the apply in advance
+     */
+    public Boolean getApplyInAdvance() {
+        return applyInAdvance;
+    }
+
+    /**
+     * Sets the apply in advance.
+     *
+     * @param applyInAdvance the new apply in advance
+     */
+    public void setApplyInAdvance(Boolean applyInAdvance) {
+        this.applyInAdvance = applyInAdvance;
     }
 }

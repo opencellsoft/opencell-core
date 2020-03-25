@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.api.dto.account;
 
 import java.math.BigDecimal;
@@ -166,6 +184,13 @@ public class BillingAccountDto extends AccountDto {
      * a list of emails separated by comma
      */
 	private String ccedEmails;
+	
+    /**
+     * Account tax category code - overrides the value from a customer category
+     **/
+    private String taxCategoryCode;
+	
+	
     /**
      * Instantiates a new billing account dto.
      */
@@ -217,6 +242,10 @@ public class BillingAccountDto extends AccountDto {
         setMailingType(e.getMailingType() != null ? e.getMailingType().getLabel() : null);
         setEmailTemplate(e.getEmailTemplate() != null ? e.getEmailTemplate().getCode() : null);
         setCcedEmails(e.getCcedEmails());
+        
+        if (e.getTaxCategory() != null) {
+            taxCategoryCode = e.getTaxCategory().getCode();
+        }
 
         // Start compatibility with pre-4.6 versions
 
@@ -750,5 +779,20 @@ public class BillingAccountDto extends AccountDto {
      */
     public void setMinimumInvoiceSubCategory(String minimumInvoiceSubCategory) {
         this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
+    }
+
+
+    /**
+     * @return Account tax category code - overrides the value from a customer category
+     */
+    public String getTaxCategoryCode() {
+        return taxCategoryCode;
+    }
+
+    /**
+     * @param taxCategory Account tax category code - overrides the value from a customer category
+     */
+    public void setTaxCategoryCode(String taxCategoryCode) {
+        this.taxCategoryCode = taxCategoryCode;
     }
 }

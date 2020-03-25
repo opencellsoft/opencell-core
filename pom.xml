@@ -4,7 +4,7 @@
     <groupId>com.opencellsoft</groupId>
     <artifactId>opencell</artifactId>
     <packaging>pom</packaging>
-    <version>9.1.1-SNAPSHOT</version>
+    <version>9.2.1-SNAPSHOT</version>
     <name>Opencell Parent Project</name>
     
     <modules>
@@ -26,7 +26,7 @@
         <version.pdfbox>2.0.17</version.pdfbox>
         <version.barcode>2.1</version.barcode>
         
-        <jackson.version>2.10.1</jackson.version> <!-- wildfly 11 -->
+        <jackson.version>2.10.2</jackson.version> <!-- wildfly 11 -->
         <!-- <jackson.version>2.7.4</jackson.version> --> <!-- wildfly 10 -->
         <dbtype>generic</dbtype>
 
@@ -416,6 +416,16 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-cbor</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-parameter-names</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
             

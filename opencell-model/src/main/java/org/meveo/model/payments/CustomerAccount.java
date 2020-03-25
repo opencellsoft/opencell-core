@@ -1,30 +1,38 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.model.payments;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.hibernate.annotations.Type;
+import org.meveo.model.AccountEntity;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ICounterEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.dunning.DunningDocument;
+import org.meveo.model.intcrm.AddressBook;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,6 +43,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -46,21 +55,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.hibernate.annotations.Type;
-import org.meveo.model.AccountEntity;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IWFEntity;
-import org.meveo.model.WorkflowedEntity;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.dunning.DunningDocument;
-import org.meveo.model.intcrm.AddressBook;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 /**
  * Customer Account
@@ -75,14 +76,15 @@ import org.meveo.model.intcrm.AddressBook;
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CA")
 @Table(name = "ar_customer_account")
-@NamedQueries({
-        @NamedQuery(name = "CustomerAccount.listCAIdsForPayment", query = "Select ca.id  from CustomerAccount as ca, AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and "
+@NamedQueries({ @NamedQuery(name = "CustomerAccount.listCAIdsForPayment", query =
+        "Select ca.id  from CustomerAccount as ca, AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and "
                 + "                   ao.matchingStatus ='O' and ca.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and ao.customerAccount.id = ca.id and pm.paymentType =:paymentMethodIN  and "
                 + "                   ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN  group by ca.id having sum(ao.unMatchingAmount) <> 0"),
-        @NamedQuery(name = "CustomerAccount.listCAIdsForRefund", query = "Select ca.id  from CustomerAccount as ca, AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='CREDIT' and "
-                + "                   ao.type not in ('P','AP') and ao.matchingStatus ='O' and ca.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and ao.customerAccount.id = ca.id and "
-                + "                   pm.paymentType =:paymentMethodIN  and ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN group by ca.id having sum(ao.unMatchingAmount) <> 0") })
-public class CustomerAccount extends AccountEntity implements IWFEntity {
+        @NamedQuery(name = "CustomerAccount.listCAIdsForRefund", query =
+                "Select ca.id  from CustomerAccount as ca, AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='CREDIT' and "
+                        + "                   ao.type not in ('P','AP') and ao.matchingStatus ='O' and ca.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and ao.customerAccount.id = ca.id and "
+                        + "                   pm.paymentType =:paymentMethodIN  and ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN group by ca.id having sum(ao.unMatchingAmount) <> 0") })
+public class CustomerAccount extends AccountEntity implements IWFEntity, ICounterEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) CustomerAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
@@ -219,19 +221,26 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
     private Map<String, List<PaymentMethod>> auditedMethodPayments;
 
     /**
+     * Accumulator Counters instantiated on the customer account with Counter template code as a key.
+     */
+    @OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
+    private Map<String, CounterInstance> counters = new HashMap<>();
+
+    /**
      * This method is called implicitly by hibernate, used to enable
-	 * encryption for custom fields of this entity
+     * encryption for custom fields of this entity
      */
     @PrePersist
-	@PreUpdate
-	public void preUpdate() {
-		if (cfValues != null) {
-			cfValues.setEncrypted(true);
-		}
-		if (cfAccumulatedValues != null) {
-			cfAccumulatedValues.setEncrypted(true);
-		}
-	}
+    @PreUpdate
+    public void preUpdate() {
+        if (cfValues != null) {
+            cfValues.setEncrypted(true);
+        }
+        if (cfAccumulatedValues != null) {
+            cfAccumulatedValues.setEncrypted(true);
+        }
+    }
 
     public CustomerAccount() {
         accountType = ACCOUNT_TYPE;
@@ -646,5 +655,24 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
             PaymentMethods.add(paymentMethod);
             getAuditedMethodPayments().put(action, PaymentMethods);
         }
+    }
+
+    /**
+     * Gets a counters map.
+     *
+     * @return a counters map
+     */
+    @Override
+    public Map<String, CounterInstance> getCounters() {
+        return counters;
+    }
+
+    /**
+     * Sets counters
+     *
+     * @param counters
+     */
+    public void setCounters(Map<String, CounterInstance> counters) {
+        this.counters = counters;
     }
 }

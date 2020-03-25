@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.admin.job;
 
 import java.util.ArrayList;
@@ -86,20 +104,24 @@ public class GenericWorkflowJobBean extends BaseJobBean {
                 log.debug("The workflow " + genericWfCode + " is disabled, the job will exit.");
                 return;
             }
-
-            // Create wf instances
-            List<BusinessEntity> entities = workflowInstanceService.findEntitiesWithoutWFInstance(genericWf);
             
-            Filter wfFilter = genericWf.getFilter();
-            if(wfFilter!=null) {
-            	Filter filter = filterService.findById(wfFilter.getId());
-	            if (filter != null) {
-	            	entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
-	            }
+            // Create wf instances for entities without WF
+            List<BusinessEntity> entitiesWithoutWFInstance = workflowInstanceService.findEntitiesForWorkflow(genericWf, true);
+            for (BusinessEntity entity : entitiesWithoutWFInstance) {
+                workflowInstanceService.create(entity, genericWf);
             }
             
-            for (BusinessEntity entity : entities) {
-                workflowInstanceService.create(entity, genericWf);
+            Filter wfFilter = genericWf.getFilter();
+            Filter filter = null;
+            if(wfFilter!=null) {
+            	filter = filterService.findById(wfFilter.getId());
+            }
+            
+            List<BusinessEntity> entities = null;
+            if (filter != null) {
+            	entities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter);
+            } else {
+            	entities = workflowInstanceService.findEntitiesForWorkflow(genericWf, false);
             }
 
             List<WorkflowInstance> wfInstances = genericWorkflowService.findByCode(genericWfCode, Arrays.asList("wfInstances")).getWfInstances();
@@ -107,8 +129,6 @@ public class GenericWorkflowJobBean extends BaseJobBean {
             if (genericWf.getId() != null) {
                 genericWf = genericWorkflowService.refreshOrRetrieve(genericWf);
             }
-            
-            
             
             Map<Long, BusinessEntity> mapFilteredEntities = entities.stream().collect(Collectors.toMap(x->x.getId(), x->x));
             

@@ -1,23 +1,22 @@
-package org.meveo.model.crm.custom;
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import org.meveo.commons.utils.CustomDateSerializer;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.IReferenceEntity;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.shared.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package org.meveo.model.crm.custom;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -33,6 +32,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.TreeMap;
+
+import org.meveo.commons.utils.CustomDateSerializer;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.IReferenceEntity;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.shared.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * Encapsulates a custom field value. Supports the following data types:
@@ -486,7 +506,9 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
         if (itemClass == null) {
             //#4804 : clear list when un select all form the checkbox menu
-            listStringValue.clear();
+        	if(listStringValue != null) {
+        		listStringValue.clear();
+        	}
         } else if (itemClass == String.class) {
             listStringValue = new ArrayList<>();
             for (Object listItem : listValue) {
@@ -1490,6 +1512,66 @@ public class CustomFieldValue implements Serializable, Cloneable {
             return longValue;
         } else if (entityReferenceValue != null) {
             return entityReferenceValue;
+        }
+        return null;
+    }
+    
+    public Map<String,Object> getkeyValueMap() {
+    	Map<String,Object> result = new TreeMap<String, Object>();
+        if (mapStringValue != null && !mapStringValue.isEmpty()) {
+        	result.put("mapString", mapStringValue);
+            return result;
+        } else if (mapDateValue != null && !mapDateValue.isEmpty()) {
+        	result.put("mapDate", mapDateValue);
+            return result;
+        } else if (mapLongValue != null && !mapLongValue.isEmpty()) {
+        	result.put("mapLong", mapLongValue);
+            return result;
+        } else if (mapDoubleValue != null && !mapDoubleValue.isEmpty()) {
+        	result.put("mapDouble", mapDoubleValue);
+            return result;
+        } else if (mapBooleanValue != null && !mapBooleanValue.isEmpty()) {
+        	result.put("mapBoolean", mapBooleanValue);
+            return result;
+        } else if (mapEntityValue != null && !mapEntityValue.isEmpty()) {
+        	result.put("mapEntity", mapEntityValue);
+            return result;
+        } else if (listStringValue != null && !listStringValue.isEmpty()) {
+        	result.put("listString", listStringValue);
+            return result;
+        } else if (listDateValue != null && !listDateValue.isEmpty()) {
+        	result.put("listDate", listDateValue);
+            return result;
+        } else if (listLongValue != null && !listLongValue.isEmpty()) {
+        	result.put("listLong", listLongValue);
+            return result;
+        } else if (listDoubleValue != null && !listDoubleValue.isEmpty()) {
+        	result.put("listDouble", listDoubleValue);
+            return result;
+        } else if (listBooleanValue != null && !listBooleanValue.isEmpty()) {
+        	result.put("listBoolean", listBooleanValue);
+            return result;
+        } else if (listEntityValue != null && !listEntityValue.isEmpty()) {
+        	result.put("listEntity", listEntityValue);
+            return result;
+        } else if (stringValue != null) {
+        	result.put("string", stringValue);
+            return result;
+        } else if (dateValue != null) {
+        	result.put("date", dateValue);
+            return result;
+        } else if (doubleValue != null) {
+        	result.put("double", doubleValue);
+            return result;
+        } else if (booleanValue != null) {
+        	result.put("boolean", booleanValue);
+            return result;
+        } else if (longValue != null) {
+        	result.put("long", longValue);
+            return result;
+        } else if (entityReferenceValue != null) {
+        	result.put("entity", entityReferenceValue);
+            return result;
         }
         return null;
     }

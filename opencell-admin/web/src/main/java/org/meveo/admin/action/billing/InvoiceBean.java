@@ -1,20 +1,19 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.admin.action.billing;
 
@@ -27,7 +26,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -67,7 +65,6 @@ import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -116,9 +113,6 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     @Inject
     @Param
     private Long adjustedInvoiceIdParam;
-
-    @Inject
-    private ServiceSingleton serviceSingleton;
 
     @Inject
     @Param
@@ -267,8 +261,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         }
         Collections.sort(categoryInvoiceAgregates, new Comparator<CategoryInvoiceAgregate>() {
             public int compare(CategoryInvoiceAgregate c0, CategoryInvoiceAgregate c1) {
-                if (c0.getInvoiceCategory() != null && c1.getInvoiceCategory() != null && c0.getInvoiceCategory().getSortIndex() != null
-                        && c1.getInvoiceCategory().getSortIndex() != null) {
+                if (c0.getInvoiceCategory() != null && c1.getInvoiceCategory() != null && c0.getInvoiceCategory().getSortIndex() != null && c1.getInvoiceCategory().getSortIndex() != null) {
                     return c0.getInvoiceCategory().getSortIndex().compareTo(c1.getInvoiceCategory().getSortIndex());
                 }
                 return 0;
@@ -280,56 +273,56 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
             InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
             InvoiceCategoryDTO headerCat = new InvoiceCategoryDTO();
-                headerCat.setDescription(invoiceCategory.getDescription());
-                headerCat.setCode(invoiceCategory.getCode());
-                headerCat.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
-                headerCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
+            headerCat.setDescription(invoiceCategory.getDescription());
+            headerCat.setCode(invoiceCategory.getCode());
+            headerCat.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
+            headerCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
             headerCategories.add(headerCat);
 
             Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
             LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = headerCat.getInvoiceSubCategoryDTOMap();
             for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
-                if(!subCatInvoiceAgregate.isDiscountAggregate()) {
+                if (!subCatInvoiceAgregate.isDiscountAggregate()) {
                     InvoiceSubCategory invoiceSubCategory = subCatInvoiceAgregate.getInvoiceSubCategory();
                     InvoiceSubCategoryDTO headerSubCat = new InvoiceSubCategoryDTO();
                     headerSubCat.setId(subCatInvoiceAgregate.getId());
-                        headerSubCat.setDescription(invoiceSubCategory.getDescription());
-                        headerSubCat.setCode(invoiceSubCategory.getCode());
-                        headerSubCat.setAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
-                        headerSubCat.setAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
+                    headerSubCat.setDescription(invoiceSubCategory.getDescription());
+                    headerSubCat.setCode(invoiceSubCategory.getCode());
+                    headerSubCat.setAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
+                    headerSubCat.setAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
                     headerSubCategories.put(invoiceSubCategory.getId().toString(), headerSubCat);
 
                     ServiceBasedLazyDataModel<RatedTransaction> rtDM = new ServiceBasedLazyDataModel<RatedTransaction>() {
-    
+
                         private static final long serialVersionUID = 8879L;
-    
+
                         @Override
                         protected Map<String, Object> getSearchCriteria() {
-    
+
                             Map<String, Object> filters = new HashMap<>();
                             filters.put("invoice", entity);
                             filters.put("invoiceAgregateF", subCatInvoiceAgregate);
                             return filters;
                         }
-    
+
                         @Override
                         protected String getDefaultSortImpl() {
                             return "usageDate";
                         }
-    
+
                         @Override
                         protected IPersistenceService<RatedTransaction> getPersistenceServiceImpl() {
                             return ratedTransactionService;
                         }
-    
+
                         @Override
                         protected ElasticClient getElasticClientImpl() {
                             return null;
                         }
                     };
-    
+
                     ratedTransactionsDM.put(subCatInvoiceAgregate.getId(), rtDM);
-                    
+
                 }
 
             }
@@ -661,10 +654,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         return total;
     }
 
-    public void reComputeInvoiceAdjustment(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) throws BusinessException {
-        // invoiceService.recomputeSubCategoryAggregate(entity);
-        invoiceService.recomputeAggregates(entity);
-    }
+//    public void reComputeInvoiceAdjustment(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) throws BusinessException {
+//        // invoiceService.recomputeSubCategoryAggregate(entity);
+//        invoiceService.recomputeAggregates(entity);
+//    }
 
     public void reComputeDetailedInvoiceAdjustment(RatedTransaction ratedTx) {
         ratedTx.recompute(appProvider.isEntreprise());
@@ -700,44 +693,44 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
         return outcome;
     }
-
-    public String saveOrUpdateInvoiceAdjustment() throws Exception {
-        if (entity.isTransient()) {
-            if (isDetailed()) {
-                for (RatedTransaction rt : uiRatedTransactions) {
-                    ratedTransactionService.create(rt);
-                }
-            }
-            if (billingAccountId != 0) {
-                BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
-                entity.setBillingAccount(billingAccount);
-                entity = serviceSingleton.assignInvoiceNumber(entity);
-            }
-
-            super.saveOrUpdate(false);
-        }
-        if (isDetailed()) {
-            invoiceService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, new Date());
-            entity = invoiceService.update(entity);
-
-        } else {
-            if (entity.getAmountWithoutTax() == null) {
-                invoiceService.recomputeAggregates(entity);
-            }
-            entity = invoiceService.update(entity);
-        }
-
-        entity.getAdjustedInvoice().getLinkedInvoices().add(entity);
-        invoiceService.update(entity.getAdjustedInvoice());
-
-        invoiceService.commit();
-
-        // create xml and pdf for invoice adjustment
-        entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
-
-        return "/pages/billing/invoices/invoiceDetail.jsf?objectId=" + entity.getAdjustedInvoice().getId() + "&cid=" + conversation.getId()
-                + "&faces-redirect=true&includeViewParams=true";
-    }
+//
+//    public String saveOrUpdateInvoiceAdjustment() throws Exception {
+//        if (entity.isTransient()) {
+//            if (isDetailed()) {
+//                for (RatedTransaction rt : uiRatedTransactions) {
+//                    ratedTransactionService.create(rt);
+//                }
+//            }
+//            if (billingAccountId != 0) {
+//                BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
+//                entity.setBillingAccount(billingAccount);
+//                entity = serviceSingleton.assignInvoiceNumber(entity);
+//            }
+//
+//            super.saveOrUpdate(false);
+//        }
+//        if (isDetailed()) {
+//            invoiceService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, new Date());
+//            entity = invoiceService.update(entity);
+//
+//        } else {
+//            if (entity.getAmountWithoutTax() == null) {
+//                invoiceService.recomputeAggregates(entity);
+//            }
+//            entity = invoiceService.update(entity);
+//        }
+//
+//        entity.getAdjustedInvoice().getLinkedInvoices().add(entity);
+//        invoiceService.update(entity.getAdjustedInvoice());
+//
+//        invoiceService.commit();
+//
+//        // create xml and pdf for invoice adjustment
+//        entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
+//
+//        return "/pages/billing/invoices/invoiceDetail.jsf?objectId=" + entity.getAdjustedInvoice().getId() + "&cid=" + conversation.getId()
+//                + "&faces-redirect=true&includeViewParams=true";
+//    }
 
     public void onRowSelectCheckbox(SelectEvent event) {
         isSelectedInvoices = true;
@@ -868,7 +861,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public LazyDataModel<RatedTransaction> getRatedTransactions(InvoiceSubCategoryDTO invoiceSubCategoryDTO) {
         return ratedTransactionsDM.get(invoiceSubCategoryDTO.getId());
-        }
+    }
 
     /**
      * Activate/deactivate New aggregated invoice adjustment

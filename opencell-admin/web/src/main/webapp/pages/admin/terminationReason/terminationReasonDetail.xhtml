@@ -26,19 +26,24 @@
 		</h:form>
 
 		<hftl:formPanel label="#{messages['terminationReason.title']}"
-			backingBean="#{terminationReasonBean}" columns="2">
+						backingBean="#{terminationReasonBean}" columns="3">
 			<hftl:formField label="#{messages['BusinessEntity.code']}" field="code"
-				required="true" />
+							required="true"/>
 			<hftl:formField label="#{messages['BusinessEntity.description']}"
-				field="description"/>
+							field="description"/>
+			<hftl:formField label="#{messages['terminationReason.overrideProrata']}"
+							field="overrideProrata"/>
 			<hftl:formField label="#{messages['terminationReason.applyAgreement']}"
-				field="applyAgreement" newLine="true"/>
+							field="applyAgreement" newLine="true"/>
 			<hftl:formField
-				label="#{messages['terminationReason.applyReimbursment']}"
-				field="applyReimbursment" />
+					label="#{messages['terminationReason.applyReimbursment']}"
+					field="applyReimbursment"/>
 			<hftl:formField
-				label="#{messages['terminationReason.applyTerminationCharges']}"
-				field="applyTerminationCharges" />
+					label="#{messages['terminationReason.applyTerminationCharges']}"
+					field="applyTerminationCharges"/>
+			<hftl:formField
+					label="#{messages['terminationReason.reimburseOneshots']}"
+					field="reimburseOneshots"/>
 		</hftl:formPanel>
 
 	</ui:define>

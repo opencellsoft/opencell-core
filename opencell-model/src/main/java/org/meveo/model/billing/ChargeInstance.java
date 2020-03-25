@@ -1,20 +1,19 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.model.billing;
 
@@ -61,6 +60,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.tax.TaxClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,8 +76,7 @@ import org.slf4j.LoggerFactory;
 @Cacheable
 @CustomFieldEntity(cftCodePrefix = "ChargeInstance", inheritCFValuesFrom = "chargeTemplate")
 @Table(name = "billing_charge_instance")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_charge_instance_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_charge_instance_seq"), })
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "charge_type", discriminatorType = DiscriminatorType.STRING)
@@ -195,14 +194,14 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     protected Subscription subscription;
 
     /**
-     * Currency
+     * Buyer's currency
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_currency")
     protected TradingCurrency currency;
 
     /**
-     * Country
+     * Buyer's country
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trading_country")
@@ -248,6 +247,12 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     protected String orderNumber;
+
+    /**
+     * Resolved taxClass
+     */
+    @Transient
+    private TaxClass taxClassResolved;
 
     public ChargeInstance() {
     }
@@ -385,6 +390,7 @@ public abstract class ChargeInstance extends BusinessCFEntity {
             sortedWalletOperations = new ArrayList<WalletOperation>(getWalletOperations());
 
             Collections.sort(sortedWalletOperations, new Comparator<WalletOperation>() {
+                @Override
                 public int compare(WalletOperation c0, WalletOperation c1) {
                     return c1.getOperationDate().compareTo(c0.getOperationDate());
                 }
@@ -500,6 +506,28 @@ public abstract class ChargeInstance extends BusinessCFEntity {
      */
     public void setServiceInstance(ServiceInstance serviceInstance) {
         this.serviceInstance = serviceInstance;
+    }
+
+    /**
+     * @return Resolved tax class
+     */
+    public TaxClass getTaxClassResolved() {
+        return taxClassResolved;
+    }
+
+    /**
+     * @param taxClass Resolved tax class
+     */
+    public void setTaxClassResolved(TaxClass taxClass) {
+        this.taxClassResolved = taxClass;
+    }
+    /**
+     * Gets a counter instance.
+     *
+     * @return CounterInstance
+     */
+    public CounterInstance getCounter() {
+        return null;
     }
 
 }

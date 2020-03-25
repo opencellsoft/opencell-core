@@ -23,15 +23,16 @@ xmlns:h="http://xmlns.jcp.org/jsf/html"
             <hftl:searchField label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" />
             <hftl:searchField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
             <hftl:searchField label="#{messages['billingAccount.electronicBilling']}" field="electronicBilling" />
-            <hftl:searchField label="#{messages['billingAccount.countryCode']}" field="tradingCountry.country.countryCode" />
-            <hftl:searchField label="#{messages['billingAccount.languageCode']}" field="tradingLanguage.language.languageCode" />
+            <hftl:searchField label="#{messages['tradingCountry.tradingCountry']}" field="tradingCountry" valueLabelField="descriptionOrCode" listBean="#{tradingCountryBean}" />
+            <hftl:searchField label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage" valueLabelField="prDescription" listBean="#{tradingLanguageBean}" />
+            <hftl:searchField label="#{messages['billingAccount.taxCategory']}" field="taxCategory" valueLabelField="descriptionOrCode" listBean="#{taxCategoryBean}" />
         </hftl:searchPanel>
 
         <hftl:dataList label="#{messages['billingAccount.title']}" backingBean="#{billingAccountListBean}" sortBy="code">
             <hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true" />
             <hftl:column label="#{messages['businessEntity.description']}" field="description" />
             <hftl:column label="#{messages['billingAccount.name']}" field="name" />
-            <hftl:column label="#{messages['address.address1']}" field="address.address1" />
+            <hftl:column label="#{messages['commons.address']}" field="address.address1" />
             <hftl:column label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" isDate="true" />
             <hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" isDate="true" /> 
             <hftl:column label="#{messages['billingAccount.status']}" field="status.label" isMessage="true" />

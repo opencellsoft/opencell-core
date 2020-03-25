@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.api.ws;
 
 import java.util.Date;
@@ -15,7 +33,6 @@ import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.InvoiceCategoryDto;
-import org.meveo.api.dto.InvoiceSubCategoryCountryDto;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.OccTemplateDto;
@@ -45,7 +62,6 @@ import org.meveo.api.dto.response.GetDescriptionsResponse;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
 import org.meveo.api.dto.response.GetInvoiceSequenceResponse;
 import org.meveo.api.dto.response.GetInvoiceSequencesResponse;
-import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
 import org.meveo.api.dto.response.GetInvoiceTypeResponse;
 import org.meveo.api.dto.response.GetInvoiceTypesResponse;
@@ -363,25 +379,6 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     ActionStatus removeInvoiceSubCategory(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode);
-
-    // invoice sub category country
-
-    @WebMethod
-    ActionStatus createInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
-
-    @WebMethod
-    ActionStatus updateInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
-
-    @WebMethod
-    GetInvoiceSubCategoryCountryResponse findInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode,
-            @WebParam(name = "sellersCountry") String sellersCountry, @WebParam(name = "country") String country);
-
-    @WebMethod
-    ActionStatus removeInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCode") String invoiceSubCategoryCode, @WebParam(name = "sellersCountry") String sellersCountry,
-            @WebParam(name = "country") String country);
-
-    @WebMethod
-    ActionStatus createOrUpdateInvoiceSubCategoryCountry(@WebParam(name = "invoiceSubCategoryCountry") InvoiceSubCategoryCountryDto postData);
 
     // calendar
 

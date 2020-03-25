@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.admin.job;
 
 import java.util.ArrayList;
@@ -62,6 +80,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
             RatedTransactionsJobAggregationSetting aggregationSetting = new RatedTransactionsJobAggregationSetting();
 
             aggregationSetting.setEnable((boolean) this.getParamOrCFValue(jobInstance, "activateAggregation", false));
+            removeZeroWalletOperation();
             if (aggregationSetting.isEnable()) {
                 aggregationSetting.setAggregateGlobally((boolean) this.getParamOrCFValue(jobInstance, "globalAggregation"));
                 aggregationSetting.setAggregateByDay((boolean) this.getParamOrCFValue(jobInstance, "aggregateByDay"));
@@ -85,6 +104,11 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         } catch (Exception e) {
             log.error("Failed to rate transactions", e);
         }
+    }
+
+    private void removeZeroWalletOperation() {
+        log.info("Remove wellet oprations rated to 0");
+        walletOperationService.removeZeroWalletOperation();
     }
 
     private void executeWithoutAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis) throws Exception {
@@ -155,8 +179,6 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         for (Future<String> futureItsNow : asyncReturns) {
             futureItsNow.get();
         }
-
-        walletOperationService.updateAggregatedWalletOperations(invoicingDate);
     }
 
 }

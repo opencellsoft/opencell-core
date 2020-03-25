@@ -1,10 +1,28 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.apiv2.services.generic.JsonGenericApiMapper;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonStreamContext;
 import com.fasterxml.jackson.core.util.VersionUtil;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
@@ -13,6 +31,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.apiv2.generic.GenericPaginatedResource;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.billing.Tax;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -31,6 +50,17 @@ class GenericModule extends SimpleModule {
         this.nestedEntities = nestedEntities;
         addSerializer(HibernateProxy.class, new LazyProxySerializer());
         addSerializer(List.class, new ListCustomSerializer());
+        addKeyDeserializer(Tax.class, new KeyDeserializer() {
+            @Override
+            public Object deserializeKey(String key, DeserializationContext ctxt)
+                    throws IOException, JsonProcessingException {
+                try {
+                    return Class.forName(key);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     private class LazyProxySerializer extends StdSerializer<HibernateProxy> {
@@ -45,7 +75,8 @@ class GenericModule extends SimpleModule {
 
          @Override
          public void serialize(HibernateProxy value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-             if(DATA_ROOT_ELEMENT.equals(gen.getOutputContext().getParent().getCurrentName())){
+             JsonStreamContext outputContext = gen.getOutputContext();
+             if(DATA_ROOT_ELEMENT.equals(outputContext.getParent().getCurrentName()) || nestedEntities.contains(outputContext.getCurrentName())){
                  Hibernate.initialize(value);
                  Object implementation = value.getHibernateLazyInitializer().getImplementation();
                  gen.writeObject(implementation);

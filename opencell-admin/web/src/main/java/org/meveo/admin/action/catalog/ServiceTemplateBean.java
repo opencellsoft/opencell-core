@@ -1,20 +1,19 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.admin.action.catalog;
 
@@ -81,9 +80,9 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     private ServiceChargeTemplateRecurringService serviceChargeTemplateRecurringService;
     @Inject
     private ServiceChargeTemplateUsageService serviceChargeTemplateUsageService;
-    
+
     @Inject
-    private  RecurringChargeTemplateService recurringChargeTemplateService;
+    private RecurringChargeTemplateService recurringChargeTemplateService;
 
     private DualListModel<WalletTemplate> usageWallets;
     private DualListModel<WalletTemplate> recurringWallets;
@@ -107,6 +106,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
         this.recurringWallets = null;
     }
 
+    @Produces
+    @Named
     private ServiceChargeTemplateSubscription serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
 
     public ServiceChargeTemplateSubscription getServiceChargeTemplateSubscription() {
@@ -122,6 +123,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
         this.subscriptionWallets = null;
     }
 
+    @Produces
+    @Named
     private ServiceChargeTemplateTermination serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
 
     public ServiceChargeTemplateTermination getServiceChargeTemplateTermination() {
@@ -244,8 +247,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
         List<ServiceChargeTemplateRecurring> recurringCharges = entity.getServiceRecurringCharges();
         for (ServiceChargeTemplateRecurring recurringCharge : recurringCharges) {
             boolean isApplyInAdvance = recurringCharge.getChargeTemplate().getApplyInAdvance() == null ? false : recurringCharge.getChargeTemplate().getApplyInAdvance();
-            if(!StringUtils.isBlank(recurringCharge.getChargeTemplate().getApplyInAdvanceEl())) {
-                isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringCharge.getChargeTemplate().getApplyInAdvanceEl(), null,entity, recurringCharge.getChargeTemplate());
+            if (!StringUtils.isBlank(recurringCharge.getChargeTemplate().getApplyInAdvanceEl())) {
+                isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringCharge.getChargeTemplate().getApplyInAdvanceEl(), null, entity, recurringCharge.getChargeTemplate());
             }
             if (!isApplyInAdvance) {
                 break;
@@ -269,8 +272,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
                 return;
             }
             for (ServiceChargeTemplateSubscription inc : entity.getServiceSubscriptionCharges()) {
-                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateSubscription.getChargeTemplate().getCode())
-                        && !inc.getId().equals(serviceChargeTemplateSubscription.getId())) {
+                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateSubscription.getChargeTemplate().getCode()) && !inc.getId().equals(serviceChargeTemplateSubscription.getId())) {
                     throw new Exception();
                 }
             }
@@ -326,8 +328,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
                 return;
             }
             for (ServiceChargeTemplateTermination inc : entity.getServiceTerminationCharges()) {
-                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateTermination.getChargeTemplate().getCode())
-                        && !inc.getId().equals(serviceChargeTemplateTermination.getId())) {
+                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateTermination.getChargeTemplate().getCode()) && !inc.getId().equals(serviceChargeTemplateTermination.getId())) {
                     throw new Exception();
                 }
             }
@@ -347,7 +348,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             } else {
                 serviceChargeTemplateTermination.setServiceTemplate(entity);
                 serviceChargeTemplateTerminationService.create(serviceChargeTemplateTermination);
-                
+
                 entity = getPersistenceService().refreshOrRetrieve(entity);
                 entity.getServiceTerminationCharges().add(serviceChargeTemplateTermination);
                 serviceTemplateService.update(entity);
@@ -383,9 +384,9 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             }
 
             for (ServiceChargeTemplateRecurring inc : entity.getServiceRecurringCharges()) {
-                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateRecurring.getChargeTemplate().getCode())
-                        && !inc.getId().equals(serviceChargeTemplateRecurring.getId()) && ((inc.getCounterTemplate() == null && serviceChargeTemplateRecurring.getCounterTemplate() == null)
-                        || inc.getCounterTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateRecurring.getCounterTemplate().getCode()))) {
+                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateRecurring.getChargeTemplate().getCode()) && !inc.getId().equals(serviceChargeTemplateRecurring.getId())
+                        && ((inc.getCounterTemplate() == null && serviceChargeTemplateRecurring.getCounterTemplate() == null)
+                                || inc.getCounterTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateRecurring.getCounterTemplate().getCode()))) {
                     throw new Exception();
                 }
             }
@@ -405,7 +406,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             } else {
                 serviceChargeTemplateRecurring.setServiceTemplate(entity);
                 serviceChargeTemplateRecurringService.create(serviceChargeTemplateRecurring);
-                
+
                 entity = getPersistenceService().refreshOrRetrieve(entity);
                 entity.getServiceRecurringCharges().add(serviceChargeTemplateRecurring);
                 serviceTemplateService.update(entity);
@@ -440,8 +441,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
                 return;
             }
             for (ServiceChargeTemplateUsage inc : entity.getServiceUsageCharges()) {
-                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateUsage.getChargeTemplate().getCode())
-                        && !inc.getId().equals(serviceChargeTemplateUsage.getId()) && ((inc.getCounterTemplate() == null && serviceChargeTemplateUsage.getCounterTemplate() == null)
+                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateUsage.getChargeTemplate().getCode()) && !inc.getId().equals(serviceChargeTemplateUsage.getId())
+                        && ((inc.getCounterTemplate() == null && serviceChargeTemplateUsage.getCounterTemplate() == null)
                                 || inc.getCounterTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateUsage.getCounterTemplate().getCode()))) {
                     log.error("exception when applying one serviceUsageChargeTemplate !");
                     messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
@@ -464,7 +465,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             } else {
                 serviceChargeTemplateUsage.setServiceTemplate(entity);
                 serviceChargeTemplateUsageService.create(serviceChargeTemplateUsage);
-               
+
                 entity = getPersistenceService().refreshOrRetrieve(entity);
                 entity.getServiceUsageCharges().add(serviceChargeTemplateUsage);
                 serviceTemplateService.update(entity);
@@ -540,4 +541,5 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 
         return serviceInstanceService.hasInstances(entity, null);
     }
+
 }

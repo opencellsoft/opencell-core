@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.api.dto.billing;
 
 import java.math.BigDecimal;
@@ -9,6 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEntityDto;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.billing.WalletOperation;
@@ -160,6 +179,15 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
      */
     private Long walletId;
 
+
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
+
+    /**
+     * Charge tax class code
+     */
+    private String taxClassCode;
+
     /**
      * Instantiates a new wallet operation dto.
      */
@@ -173,6 +201,9 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
      * @param walletOperation the WalletOperation entity
      */
     public WalletOperationDto(WalletOperation walletOperation) {
+        this(walletOperation, null);
+    }
+    public WalletOperationDto(WalletOperation walletOperation, CustomFieldsDto customFields) {
 
         code = walletOperation.getCode();
         description = walletOperation.getDescription();
@@ -211,13 +242,14 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         subscriptionDate = walletOperation.getSubscriptionDate();
         walletTemplate = walletOperation.getWallet().getCode();
         userAccount = walletOperation.getWallet().getUserAccount().getCode();
-        offerCode = walletOperation.getOfferCode() != null ? walletOperation.getOfferCode()
-                : walletOperation.getOfferTemplate() != null ? walletOperation.getOfferTemplate().getCode() : null;
+        offerCode = walletOperation.getOfferCode() != null ? walletOperation.getOfferCode() : walletOperation.getOfferTemplate() != null ? walletOperation.getOfferTemplate().getCode() : null;
         chargeInstance = walletOperation.getChargeInstance().getCode();
         chargeInstanceId = walletOperation.getChargeInstance().getId();
         rawAmountWithoutTax = walletOperation.getRawAmountWithoutTax();
         rawAmountWithTax = walletOperation.getRawAmountWithTax();
         updated = walletOperation.getUpdated();
+        this.customFields = customFields;
+        taxClassCode = walletOperation.getTaxClass() != null ? walletOperation.getTaxClass().getCode() : null;
     }
 
     /**
@@ -866,14 +898,45 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         this.description = description;
     }
 
+    /**
+     * @return Charge tax class code
+     */
+    public String getTaxClassCode() {
+        return taxClassCode;
+    }
+
+    /**
+     * @param taxClassCode Charge tax class code
+     */
+    public void setTaxClassCode(String taxClassCode) {
+        this.taxClassCode = taxClassCode;
+    }
+
+    /**
+     * Gets the custom fields.
+     *
+     * @return the custom fields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the new custom fields
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
+
     @Override
     public String toString() {
-        return "WalletOperationDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate="
-                + walletTemplate + ", seller=" + seller + ", chargeInstance=" + chargeInstance + ", chargeInstanceId=" + chargeInstanceId + ", currency=" + currency + ", type="
-                + type + ", status=" + status + ", ratingUnitDescription=" + ratingUnitDescription + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax
-                + ", unitAmountWithTax=" + unitAmountWithTax + ", unitAmountTax=" + unitAmountTax + ", quantity=" + quantity + ", amountWithoutTax=" + amountWithoutTax
-                + ", amountWithTax=" + amountWithTax + ", amountTax=" + amountTax + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3
-                + ", parameterExtra=" + parameterExtra + ", orderNumber=" + orderNumber + ", startDate=" + startDate + ", endDate=" + endDate + ", operationDate=" + operationDate
-                + ", subscriptionDate=" + subscriptionDate + ", offerCode=" + offerCode + "]";
+        return "WalletOperationDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate=" + walletTemplate + ", seller=" + seller
+                + ", chargeInstance=" + chargeInstance + ", chargeInstanceId=" + chargeInstanceId + ", currency=" + currency + ", type=" + type + ", status=" + status + ", ratingUnitDescription=" + ratingUnitDescription
+                + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", unitAmountWithTax=" + unitAmountWithTax + ", unitAmountTax=" + unitAmountTax + ", quantity=" + quantity
+                + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", amountTax=" + amountTax + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3
+                + ", parameterExtra=" + parameterExtra + ", orderNumber=" + orderNumber + ", startDate=" + startDate + ", endDate=" + endDate + ", operationDate=" + operationDate + ", subscriptionDate="
+                + subscriptionDate + ", offerCode=" + offerCode + "]";
     }
 }

@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.admin.util;
 
 import java.io.File;
@@ -68,8 +86,6 @@ public class FlatFileValidator {
 
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
-
-    private static final String FLAT_FILE_PROCESSING_JOB_INPUT_DIR = "FlatFileProcessingJob_inputDir";
 
     /**
      * The Constant DATETIME_FORMAT.
@@ -146,8 +162,10 @@ public class FlatFileValidator {
                 destName += "_COPY_" + DateUtils.formatDateWithPattern(new Date(), DATETIME_FORMAT);
             }
             if (!StringUtils.isBlank(flatFile.getCode())) {
-                destName = flatFile.getCode() + "_" + destName;
+                destName = flatFile.getCode().replace(' ', '_') + "_" + destName;
             }
+
+            log.debug("File " + flatFile.getFileOriginalName() + " will be moved to " + destination);
             FileUtils.moveFile(destination, file, destName);
         }
         return destName;
@@ -176,10 +194,8 @@ public class FlatFileValidator {
      */
     private String getInputDirectory(FileFormat fileFormat, String filePath) throws BusinessException {
         String inputDirectory = filePath;
-        if (StringUtils.isBlank(inputDirectory)) {
-            if (fileFormat != null && !StringUtils.isBlank(fileFormat.getInputDirectory())) {
-                inputDirectory = getDirectory(fileFormat.getInputDirectory());
-            }
+        if (fileFormat != null && !StringUtils.isBlank(fileFormat.getInputDirectory())) {
+            inputDirectory = getDirectory(fileFormat.getInputDirectory());
         }
         if (StringUtils.isBlank(inputDirectory)) {
             throw new BusinessException("The input directory is missing");
@@ -304,9 +320,10 @@ public class FlatFileValidator {
         if (StringUtils.isBlank(configurationTemplate)) {
             throw new BusinessException("The configuration template is missing");
         }
+        IFileParser fileParser = null;
         try {
 
-            IFileParser fileParser = getFileParser(configurationTemplate);
+            fileParser = getFileParser(configurationTemplate);
             if (fileParser != null) {
                 fileParser.setDataFile(file);
                 fileParser.setMappingDescriptor(configurationTemplate);
@@ -327,6 +344,10 @@ public class FlatFileValidator {
         } catch (Exception e) {
             log.error("Failed to valid file {}", fileName, e);
             errors.append(e.getMessage());
+        } finally {
+            if (fileParser != null) {
+                fileParser.close();
+            }
         }
 
         // Default validation (with extension).
@@ -460,33 +481,13 @@ public class FlatFileValidator {
         FileFormat fileFormat = flatFile != null ? flatFile.getFileFormat() : null;
         if (flatFile != null && flatFile.getStatus() == FileStatusEnum.WELL_FORMED && fileFormat != null && !StringUtils.isBlank(fileFormat.getJobCode())) {
             JobInstance jobInstance = jobInstanceService.findByCode(fileFormat.getJobCode());
-            if (jobInstance == null) {
-                throw new BusinessException("Job instance with code=" + fileFormat.getJobCode() + " does not exists.");
-            }
-
-            String jobInputDirectory = (String) jobInstance.getParamValue(FLAT_FILE_PROCESSING_JOB_INPUT_DIR);
-            if (jobInputDirectory == null) {
-                jobInputDirectory = (String) customFieldInstanceService.getCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_INPUT_DIR);
-            }
-
-            if (StringUtils.isBlank(jobInputDirectory)) {
-                throw new BusinessException("The input directory is missing for the " + fileFormat.getJobCode() + " job");
-            }
-
-            // FIXME : replace the job CFs by FileFormat
-            if (!jobInputDirectory.equalsIgnoreCase(fileFormat.getInputDirectory())) {
-                throw new BusinessException("The input directory for the " + fileFormat.getJobCode() + " job is note same with faile format input directory");
-            }
-
-            if (!isAllowedToExecute(jobInstance)) {
-                throw new BusinessException("the " + fileFormat.getJobCode() + " job can not be run on a current server or cluster node");
-            }
-
-            try {
-                jobExecutionService.manualExecute(jobInstance);
-            } catch (Exception e) {
-                log.error("execute flat file job fail", e);
-                throw new BusinessException(e.getMessage(), e);
+            if (jobInstance != null && isAllowedToExecute(jobInstance)) {
+                try {
+                    jobExecutionService.manualExecute(jobInstance);
+                } catch (Exception e) {
+                    log.error("execute flat file job fail", e);
+                    throw new BusinessException(e.getMessage(), e);
+                }
             }
         }
     }

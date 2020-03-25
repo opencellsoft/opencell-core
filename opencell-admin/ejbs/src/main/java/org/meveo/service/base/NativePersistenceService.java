@@ -1,22 +1,46 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.service.base;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
@@ -48,31 +72,6 @@ import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
-
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -118,7 +117,7 @@ public class NativePersistenceService extends BaseService {
     private CustomFieldTemplateService customFieldTemplateService;
 
     @Inject
-	private CustomEntityTemplateService customEntityTemplateService;
+    private CustomEntityTemplateService customEntityTemplateService;
 
     @Inject
     protected Event<CustomTableEvent> entityChangeEventProducer;
@@ -134,25 +133,23 @@ public class NativePersistenceService extends BaseService {
 
         try {
             Session session = getEntityManager().unwrap(Session.class);
-            StringBuilder selectQuery = new StringBuilder("select * from ")
-                    .append(tableName)
-                    .append(" e where id=:id");
+            StringBuilder selectQuery = new StringBuilder("select * from ").append(tableName).append(" e where id=:id");
             SQLQuery query = session.createSQLQuery(selectQuery.toString());
             query.setParameter("id", id);
             query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
 
             Map<String, Object> values = (Map<String, Object>) query.uniqueResult();
-            if(values!=null) {
-            for (String key : values.keySet()) {
-                if (values.get(key) instanceof java.sql.Timestamp) {
-                    java.sql.Timestamp date = (java.sql.Timestamp) values.get(key);
-                    values.put(key, new Date(date.getTime()));
+            if (values != null) {
+                for (String key : values.keySet()) {
+                    if (values.get(key) instanceof java.sql.Timestamp) {
+                        java.sql.Timestamp date = (java.sql.Timestamp) values.get(key);
+                        values.put(key, new Date(date.getTime()));
+                    }
                 }
-            }
 
-            return values;
+                return values;
             } else {
-            	throw new BusinessException("Failed to retrieve values from table "+tableName+" by id "+ id );
+                throw new BusinessException("Failed to retrieve values from table " + tableName + " by id " + id);
             }
         } catch (Exception e) {
             log.error("Failed to retrieve values from table by id {}/{} sql {}", tableName, id, e);
@@ -254,7 +251,6 @@ public class NativePersistenceService extends BaseService {
                                 preparedStatement.setNull(i, Types.NULL);
                             }
 
-
                             i++;
                         }
 
@@ -278,6 +274,7 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * List all fields with thier default values of tableName
+     * 
      * @param tableName the table name
      * @return
      */
@@ -344,9 +341,9 @@ public class NativePersistenceService extends BaseService {
             StringBuffer findIdFields = new StringBuffer();
 
             boolean first = true;
-            if(values.isEmpty()){
+            if (values.isEmpty()) {
                 sql.append(" DEFAULT VALUES");
-            }else {
+            } else {
                 for (String fieldName : values.keySet()) {
                     // Ignore a null ID field
                     if (fieldName.equals(FIELD_ID) && values.get(fieldName) == null) {
@@ -380,37 +377,36 @@ public class NativePersistenceService extends BaseService {
             }
             query.executeUpdate();
 
-
-            Long result=null;
+            Long result = null;
             // Find the identifier of the last inserted record
-            if(fireNotifications) {
-            	returnId=true;
+            if (fireNotifications) {
+                returnId = true;
             }
-			if (returnId) {
-				if (id != null) {
-					if (id instanceof Number) {
-						result = ((Number) id).longValue();
-					}
+            if (returnId) {
+                if (id != null) {
+                    if (id instanceof Number) {
+                        result = ((Number) id).longValue();
+                    }
 
-				} else {
-					StringBuffer requestConstruction = buildSqlInsertionRequest(tableName, findIdFields);
+                } else {
+                    StringBuffer requestConstruction = buildSqlInsertionRequest(tableName, findIdFields);
 
-					query = getEntityManager().createNativeQuery(requestConstruction.toString()).setMaxResults(1);
-					for (String fieldName : values.keySet()) {
-						if (values.get(fieldName) == null) {
-							continue;
-						}
-						query.setParameter(fieldName, values.get(fieldName));
-					}
-					id = query.getSingleResult();
-					if (id instanceof Number) {
-						result = ((Number) id).longValue();
-					}
-				}
-			}
-			if(fireNotifications) {
-				entityChangeEventProducer.fire(new CustomTableEvent(tableName, result, values, NotificationEventTypeEnum.CREATED));
-			}
+                    query = getEntityManager().createNativeQuery(requestConstruction.toString()).setMaxResults(1);
+                    for (String fieldName : values.keySet()) {
+                        if (values.get(fieldName) == null) {
+                            continue;
+                        }
+                        query.setParameter(fieldName, values.get(fieldName));
+                    }
+                    id = query.getSingleResult();
+                    if (id instanceof Number) {
+                        result = ((Number) id).longValue();
+                    }
+                }
+            }
+            if (fireNotifications) {
+                entityChangeEventProducer.fire(new CustomTableEvent(tableName, result, values, NotificationEventTypeEnum.CREATED));
+            }
             return result;
         } catch (Exception e) {
             log.error("Failed to insert values into OR find ID of table {} {} sql {}", tableName, values, sql, e);
@@ -420,7 +416,7 @@ public class NativePersistenceService extends BaseService {
 
     StringBuffer buildSqlInsertionRequest(String tableName, StringBuffer findIdFields) {
         StringBuffer requestConstruction = new StringBuffer("select id from " + tableName);
-        if(StringUtils.isNotEmpty(findIdFields)){
+        if (StringUtils.isNotEmpty(findIdFields)) {
             requestConstruction.append(" where " + findIdFields);
         }
         requestConstruction.append(" order by id desc");
@@ -437,8 +433,8 @@ public class NativePersistenceService extends BaseService {
      */
     public void update(String tableName, Map<String, Object> value, boolean fireNotifications) throws BusinessException {
 
-        Number id = ((Number)value.get(FIELD_ID));
-		if (id == null) {
+        Number id = ((Number) value.get(FIELD_ID));
+        if (id == null) {
             throw new BusinessException("'id' field value not provided to update values in native table");
         }
 
@@ -471,9 +467,9 @@ public class NativePersistenceService extends BaseService {
                 }
             }
             query.executeUpdate();
-            if(fireNotifications) {
-				entityChangeEventProducer.fire(new CustomTableEvent(tableName, id.longValue(), value, NotificationEventTypeEnum.UPDATED));
-			}
+            if (fireNotifications) {
+                entityChangeEventProducer.fire(new CustomTableEvent(tableName, id.longValue(), value, NotificationEventTypeEnum.UPDATED));
+            }
 
         } catch (Exception e) {
             log.error("Failed to insert values into table {} {} sql {}", tableName, value, sql, e);
@@ -492,18 +488,12 @@ public class NativePersistenceService extends BaseService {
      */
     public void updateValue(String tableName, Long id, String fieldName, Object value) throws BusinessException {
 
-        StringBuilder updateQuery = new StringBuilder("update ")
-                .append(tableName)
-                .append(" set ")
-                .append(fieldName)
-                .append(value == null ? "= null" : "= :" + fieldName)
-                .append(" where id= :id");
+        StringBuilder updateQuery = new StringBuilder("update ").append(tableName).append(" set ").append(fieldName).append(value == null ? "= null" : "= :" + fieldName).append(" where id= :id");
         try {
             if (value == null) {
                 getEntityManager().createNativeQuery(updateQuery.toString()).setParameter("id", id).executeUpdate();
             } else {
-                getEntityManager().createNativeQuery(updateQuery.toString()).setParameter(fieldName, value).setParameter("id", id)
-                    .executeUpdate();
+                getEntityManager().createNativeQuery(updateQuery.toString()).setParameter(fieldName, value).setParameter("id", id).executeUpdate();
             }
 
         } catch (Exception e) {
@@ -521,7 +511,7 @@ public class NativePersistenceService extends BaseService {
      */
     public void disable(String tableName, Long id) throws BusinessException {
         getEntityManager().createNativeQuery("update " + tableName + " set disabled=1 where id=" + id).executeUpdate();
-		entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.DISABLED));
+        entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.DISABLED));
     }
 
     /**
@@ -532,7 +522,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void disable(String tableName, Set<Long> ids) throws BusinessException {
-       getEntityManager().createNativeQuery("update " + tableName + " set disabled=1 where id in :ids").setParameter("ids", ids).executeUpdate();
+        getEntityManager().createNativeQuery("update " + tableName + " set disabled=1 where id in :ids").setParameter("ids", ids).executeUpdate();
     }
 
     /**
@@ -556,11 +546,7 @@ public class NativePersistenceService extends BaseService {
      */
     public void enable(String tableName, Set<Long> ids) throws BusinessException {
 
-        StringBuilder updateQuery = new StringBuilder("update ")
-                .append(tableName)
-                .append(" set ")
-                .append(FIELD_DISABLED)
-                .append("=0 where id in :ids");
+        StringBuilder updateQuery = new StringBuilder("update ").append(tableName).append(" set ").append(FIELD_DISABLED).append("=0 where id in :ids");
         getEntityManager().createNativeQuery(updateQuery.toString()).setParameter("ids", ids).executeUpdate();
     }
 
@@ -596,8 +582,7 @@ public class NativePersistenceService extends BaseService {
      * @throws BusinessException General exception
      */
     public void remove(String tableName) throws BusinessException {
-        StringBuilder deleteQuery = new StringBuilder("delete from ")
-                .append(tableName);
+        StringBuilder deleteQuery = new StringBuilder("delete from ").append(tableName);
         getEntityManager().createNativeQuery(deleteQuery.toString()).executeUpdate();
 
     }
@@ -645,8 +630,11 @@ public class NativePersistenceService extends BaseService {
      * 
      * Following conditions are supported:
      * <ul>
-     * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=fiel.value. Applies to date and number type fields.</li>
+     * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=field.value. Applies to date and number type fields.</li>
      * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value&lt;=value</li>
+     * <li>fromOptionalRange. Ranged search - field value in between from - to values. Field value is optional. Specifies "from" part value: e.g value&lt;=field.value. Applies to
+     * date and number type fields.</li>
+     * <li>toOptionalRange. Ranged search - field value in between from - to values. Field value is optional. Specifies "to" part value: e.g field.value&lt;=value</li>
      * <li>list. Value is in field's list value. Applies to date and number type fields.</li>
      * <li>inList/not-inList. Field value is [not] in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value
      * of one item</li>
@@ -658,8 +646,14 @@ public class NativePersistenceService extends BaseService {
      * be used. In either case case insensative matching is used. Applies to String type fields.</li>
      * <li>wildcardOr. Similar to likeCriterias. A wildcard match will always used. A * will be appended to start and end of the value automatically if not present. Applies to
      * <li>wildcardOrIgnoreCase. Similar to wildcardOr but ignoring case String type fields.</li>
+     * <li>eq. Equals. Supports wildcards in case of string value. NOTE: This is a default behavior when condition is not specified
+     * <li>eqOptional. Equals. Supports wildcards in case of string value. Field value is optional.
      * <li>ne. Not equal.
+     * <li>neOptional. Not equal. Field value is optional
      * </ul>
+     * 
+     * 
+     * "eq" is a default condition when no condition is not specified
      * 
      * Following special meaning values are supported:
      * <ul>
@@ -700,8 +694,8 @@ public class NativePersistenceService extends BaseService {
      */
     @SuppressWarnings({ "rawtypes" })
     public QueryBuilder getQuery(String tableName, PaginationConfiguration config) {
-        String fileds = (config!=null && config.getFetchFields()!=null)?config.getFetchFields().stream().map(x->" a."+x).collect(Collectors.joining(",")):"*";
-		QueryBuilder queryBuilder = new QueryBuilder("select "+fileds+" from " + tableName + " a ", "a");
+        String fileds = (config != null && config.getFetchFields() != null) ? config.getFetchFields().stream().map(x -> " a." + x).collect(Collectors.joining(",")) : "*";
+        QueryBuilder queryBuilder = new QueryBuilder("select " + fileds + " from " + tableName + " a ", "a");
         if (config == null) {
             return queryBuilder;
         }
@@ -717,7 +711,7 @@ public class NativePersistenceService extends BaseService {
                 }
 
                 // Key format is: condition field1 field2 or condition-field1-field2-fieldN
-                // example: "ne code", condition=code, fieldName=code, fieldName2=null
+                // example: "ne code", condition=ne, fieldName=code, fieldName2=null
                 String[] fieldInfo = key.split(" ");
                 String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
                 String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
@@ -726,28 +720,30 @@ public class NativePersistenceService extends BaseService {
                 String[] fields = null;
                 if (condition != null) {
                     fields = Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
+                } else {
+                    condition = "eq";
                 }
 
                 // if ranged search - field value in between from - to values. Specifies "from" value: e.g value<=field.value
-                if ("fromRange".equals(condition)) {
+                if ("fromRange".equals(condition) || "fromOptionalRange".equals(condition)) {
                     if (filterValue instanceof Double) {
                         BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
-                        queryBuilder.addCriterion("a." + fieldName, " >= ", rationalNumber, true);
+                        queryBuilder.addCriterion("a." + fieldName, " >= ", rationalNumber, false, "fromOptionalRange".equals(condition));
                     } else if (filterValue instanceof Number) {
-                        queryBuilder.addCriterion("a." + fieldName, " >= ", filterValue, true);
+                        queryBuilder.addCriterion("a." + fieldName, " >= ", filterValue, false, "fromOptionalRange".equals(condition));
                     } else if (filterValue instanceof Date) {
-                        queryBuilder.addCriterionDateRangeFromTruncatedToDay("a." + fieldName, (Date) filterValue);
+                        queryBuilder.addCriterionDateRangeFromTruncatedToDay("a." + fieldName, (Date) filterValue, "fromOptionalRange".equals(condition));
                     }
 
                     // if ranged search - field value in between from - to values. Specifies "to" value: e.g field.value<=value
-                } else if ("toRange".equals(condition)) {
+                } else if ("toRange".equals(condition) || "toOptionalRange".equals(condition)) {
                     if (filterValue instanceof Double) {
                         BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
-                        queryBuilder.addCriterion("a." + fieldName, " <= ", rationalNumber, true);
+                        queryBuilder.addCriterion("a." + fieldName, " <= ", rationalNumber, false, "toOptionalRange".equals(condition));
                     } else if (filterValue instanceof Number) {
-                        queryBuilder.addCriterion("a." + fieldName, " <= ", filterValue, true);
+                        queryBuilder.addCriterion("a." + fieldName, " <= ", filterValue, false, "toOptionalRange".equals(condition));
                     } else if (filterValue instanceof Date) {
-                        queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + fieldName, (Date) filterValue);
+                        queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + fieldName, (Date) filterValue, true, "toOptionalRange".equals(condition));
                     }
 
                     // Value is in field value (list)
@@ -795,9 +791,8 @@ public class NativePersistenceService extends BaseService {
 
                     String paramName = queryBuilder.convertFieldToParam(fieldName);
 
-                    String sql = "((a." + fieldName + " IS NULL and a." + fieldName2 + " IS NULL) or (a." + fieldName + "<=:" + paramName + " and :" + paramName + "<a."
-                            + fieldName2 + ") or (a." + fieldName + "<=:" + paramName + " and a." + fieldName2 + " IS NULL) or (a." + fieldName + " IS NULL and :" + paramName
-                            + "<a." + fieldName2 + "))";
+                    String sql = "((a." + fieldName + " IS NULL and a." + fieldName2 + " IS NULL) or (a." + fieldName + "<=:" + paramName + " and :" + paramName + "<a." + fieldName2 + ") or (a." + fieldName + "<=:"
+                            + paramName + " and a." + fieldName2 + " IS NULL) or (a." + fieldName + " IS NULL and :" + paramName + "<a." + fieldName2 + "))";
                     queryBuilder.addSqlCriterionMultiple(sql, paramName, filterValue);
 
                     // The value range is overlapping two field values with either them being optional
@@ -806,10 +801,9 @@ public class NativePersistenceService extends BaseService {
                     String paramNameFrom = queryBuilder.convertFieldToParam(fieldName);
                     String paramNameTo = queryBuilder.convertFieldToParam(fieldName2);
 
-                    String sql = "(( a." + fieldName + " IS NULL and a." + fieldName2 + " IS NULL) or  ( a." + fieldName + " IS NULL and a." + fieldName2 + ">:" + paramNameFrom
-                            + ") or (a." + fieldName2 + " IS NULL and a." + fieldName + "<:" + paramNameTo + ") or (a." + fieldName + " IS NOT NULL and a." + fieldName2
-                            + " IS NOT NULL and ((a." + fieldName + "<=:" + paramNameFrom + " and :" + paramNameFrom + "<a." + fieldName2 + ") or (:" + paramNameFrom + "<=a."
-                            + fieldName + " and a." + fieldName + "<:" + paramNameTo + "))))";
+                    String sql = "(( a." + fieldName + " IS NULL and a." + fieldName2 + " IS NULL) or  ( a." + fieldName + " IS NULL and a." + fieldName2 + ">:" + paramNameFrom + ") or (a." + fieldName2
+                            + " IS NULL and a." + fieldName + "<:" + paramNameTo + ") or (a." + fieldName + " IS NOT NULL and a." + fieldName2 + " IS NOT NULL and ((a." + fieldName + "<=:" + paramNameFrom + " and :"
+                            + paramNameFrom + "<a." + fieldName2 + ") or (:" + paramNameFrom + "<=a." + fieldName + " and a." + fieldName + "<:" + paramNameTo + "))))";
 
                     if (filterValue.getClass().isArray()) {
                         queryBuilder.addSqlCriterionMultiple(sql, paramNameFrom, ((Object[]) filterValue)[0], paramNameTo, ((Object[]) filterValue)[1]);
@@ -856,44 +850,49 @@ public class NativePersistenceService extends BaseService {
                         queryBuilder.addSql((String) filterValue);
                     }
 
+                    // Search by equals/not equals condition
                 } else {
+
+                    // Search by IS NULL
                     if (filterValue instanceof String && PersistenceService.SEARCH_IS_NULL.equals(filterValue)) {
                         queryBuilder.addSql("a." + fieldName + " is null ");
 
+                        // Search by IS NOT NULL
                     } else if (filterValue instanceof String && PersistenceService.SEARCH_IS_NOT_NULL.equals(filterValue)) {
                         queryBuilder.addSql("a." + fieldName + " is not null ");
 
+                        // Search by equals/not equals to a string value
                     } else if (filterValue instanceof String) {
 
                         // if contains dot, that means join is needed
                         String filterString = (String) filterValue;
-                        boolean wildcard = (filterString.indexOf("*") != -1);
-                        if (wildcard) {
-                            queryBuilder.addCriterionWildcard("a." + fieldName, filterString, true, "ne".equals(condition));
-                        } else {
-                            queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " != " : " = ", filterString, true);
-                        }
 
+                        queryBuilder.addCriterionWildcard("a." + fieldName, filterString, true, condition.startsWith("ne"), condition.endsWith("Optional"));
+
+                        // Search by equals to truncated date value
                     } else if (filterValue instanceof Date) {
-                        queryBuilder.addCriterionDateTruncatedToDay("a." + fieldName, (Date) filterValue);
+                        queryBuilder.addCriterionDateTruncatedToDay("a." + fieldName, (Date) filterValue, condition.endsWith("Optional"));
 
+                        // Search by equals/not equals to a number value
                     } else if (filterValue instanceof Number) {
-                        queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " != " : " = ", filterValue, true);
+                        queryBuilder.addCriterion("a." + fieldName, condition.startsWith("ne") ? " != " : " = ", filterValue, true, condition.endsWith("Optional"));
 
+                        // Search by equals/not equals to a boolean value
                     } else if (filterValue instanceof Boolean) {
-                    	boolean bValue= (boolean)filterValue;
-                        queryBuilder.addBooleanCriterion("a." + fieldName, "ne".equals(condition) ? !bValue :  bValue);
+                        boolean bValue = (boolean) filterValue;
+                        queryBuilder.addBooleanCriterion("a." + fieldName, condition.startsWith("ne") ? !bValue : bValue);
 
+                        // Search by equals/not equals to an enum value
                     } else if (filterValue instanceof Enum) {
                         if (filterValue instanceof IdentifiableEnum) {
                             String enumIdKey = new StringBuilder(fieldName).append("Id").toString();
-                            queryBuilder.addCriterion("a." + enumIdKey, "ne".equals(condition) ? " != " : " = ", ((IdentifiableEnum) filterValue).getId(), true);
+                            queryBuilder.addCriterion("a." + enumIdKey, condition.startsWith("ne") ? " != " : " = ", ((IdentifiableEnum) filterValue).getId(), true, condition.endsWith("Optional"));
                         } else {
-                            queryBuilder.addCriterionEnum("a." + fieldName, (Enum) filterValue, "ne".equals(condition) ? " != " : " = ");
+                            queryBuilder.addCriterionEnum("a." + fieldName, (Enum) filterValue, condition.startsWith("ne") ? " != " : " = ", condition.endsWith("Optional"));
                         }
 
                     } else if (filterValue instanceof List) {
-                        queryBuilder.addSqlCriterion("a." + fieldName + ("ne".equals(condition) ? " not in  " : " in ") + ":" + fieldName, fieldName, filterValue);
+                        queryBuilder.addCriterionInList("a." + fieldName, (List) filterValue, condition.startsWith("ne") ? " not in " : " in ", condition.endsWith("Optional"));
                     }
                 }
             }
@@ -999,8 +998,8 @@ public class NativePersistenceService extends BaseService {
      *        converted accordingly. If a single value is passed, it will be added to a list.
      * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
      *        standard date and time and then date only patterns will be applied.
-     * @param cft 
-     * @param regExp 
+     * @param cft
+     * @param regExp
      * @return A converted data type
      * @throws ValidationException Value can not be cast to a target class
      */
@@ -1010,9 +1009,9 @@ public class NativePersistenceService extends BaseService {
         // log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
         // value != null ? value.getClass().isArray() : null);
 
-		// Nothing to cast - same data type
+        // Nothing to cast - same data type
         if (targetClass.isAssignableFrom(value.getClass()) && !expectedList) {
-			return extractString(value, targetClass, cft);
+            return extractString(value, targetClass, cft);
             // A list is expected as value. If value is not a list, parse value as comma separated string and convert each value separately
         } else if (expectedList) {
             if (value instanceof List || value instanceof Set || value.getClass().isArray()) {
@@ -1068,28 +1067,25 @@ public class NativePersistenceService extends BaseService {
 
         try {
             if (targetClass == String.class) {
-            	return extractString(value, targetClass, cft);
-            } else if(targetClass == EntityReferenceWrapper.class){
+                return extractString(value, targetClass, cft);
+            } else if (targetClass == EntityReferenceWrapper.class) {
                 long id = Long.parseLong(value.toString());
-                boolean exist=validateRecordExistance(cft, id);
+                boolean exist = validateRecordExistance(cft, id);
                 if (!exist) {
                     throw new ElementNotFoundException(id, cft.getEntityClazz());
                 }
-				return id;
+                return id;
 
             } else if (targetClass == Boolean.class || (targetClass.isPrimitive() && targetClass.getName().equals("boolean"))) {
                 if (booleanVal != null) {
                     return value;
-                } else {
-                    return Boolean.parseBoolean(value.toString());
                 }
-
             } else if (targetClass == Date.class) {
                 if (dateVal != null || listVal != null) {
                     return value;
                 } else if (numberVal != null) {
                     return new Date(numberVal.longValue());
-                } else if (stringVal != null && ! stringVal.isEmpty()) {
+                } else if (stringVal != null && !stringVal.isEmpty()) {
 
                     // Use provided date patterns or try default patterns if they were not provided
                     if (datePatterns != null) {
@@ -1114,7 +1110,7 @@ public class NativePersistenceService extends BaseService {
                         }
                     }
                 }
-                
+
             } else if (targetClass.isEnum()) {
                 if (listVal != null || targetClass.isAssignableFrom(value.getClass())) {
                     return value;
@@ -1177,95 +1173,82 @@ public class NativePersistenceService extends BaseService {
             }
 
         } catch (NumberFormatException e) {
-            throw new ValidationException("wrong value format for filter, cannot cast '"+value+"' to "+targetClass, e);
+            throw new ValidationException("wrong value format for filter, cannot cast '" + value + "' to " + targetClass, e);
         }
         throw new ValidationException("Failed to cast value [" + value + "] to class: " + targetClass.getSimpleName());
     }
 
-	private Object extractString(Object value, Class targetClass, CustomFieldTemplate cft) {
-		if (targetClass == String.class) {
-			if (cft.getRegExp() != null) {
-				final Pattern pattern = Pattern.compile(cft.getRegExp());
-				if (!pattern.matcher((String) value).matches()) {
-					throw new ValidationException( "value of String " + value + " not accepted for regexp" + pattern.toString());
-				}
-			}
-			if(CustomFieldTypeEnum.LIST.equals(cft.getFieldType())) {
-				Map<String, String> listValues = cft.getListValuesSorted();
-				if(!listValues.containsKey(value)) {
-					throw new ValidationException( "value " + value + " is not accepted as value for enum " + cft.getCode());
-				}
-			}
-		}
-		return value;
-	}
-    
-    public Map<String, Object> findByClassAndId(String className, Long id) {
-		try {
-			Class clazz = Class.forName(className);
-			String tableName= getTableNameForClass(clazz);
-	        return findById(tableName, id);
-		} catch (ClassNotFoundException e) {
-			throw new BusinessException("Exception when trying to get class with name: "+className);
-		}
+    private Object extractString(Object value, Class targetClass, CustomFieldTemplate cft) {
+        if (targetClass == String.class) {
+            if (cft.getRegExp() != null) {
+                final Pattern pattern = Pattern.compile(cft.getRegExp());
+                if (!pattern.matcher((String) value).matches()) {
+                    throw new ValidationException("value of String " + value + " not accepted for regexp" + pattern.toString());
+                }
+            }
+            if (CustomFieldTypeEnum.LIST.equals(cft.getFieldType())) {
+                Map<String, String> listValues = cft.getListValuesSorted();
+                if (!listValues.containsKey(value)) {
+                    throw new ValidationException("value " + value + " is not accepted as value for enum " + cft.getCode());
+                }
+            }
+        }
+        return value;
     }
-    
-    public String getTableNameForClass(Class entityClass){
+
+    public Map<String, Object> findByClassAndId(String className, Long id) {
+        try {
+            Class clazz = Class.forName(className);
+            String tableName = getTableNameForClass(clazz);
+            return findById(tableName, id);
+        } catch (ClassNotFoundException e) {
+            throw new BusinessException("Exception when trying to get class with name: " + className);
+        }
+    }
+
+    public String getTableNameForClass(Class entityClass) {
         SessionFactory sessionFactory = ((Session) getEntityManager().getDelegate()).getSessionFactory();
         ClassMetadata classMetadata = sessionFactory.getClassMetadata(entityClass);
         SessionFactoryImpl sessionFactoryImpl = (SessionFactoryImpl) sessionFactory;
         AbstractEntityPersister entityPersister = (AbstractEntityPersister) sessionFactoryImpl.getEntityPersister(classMetadata.getEntityName());
         return entityPersister.getTableName();
     }
-    
+
     public boolean validateRecordExistance(CustomFieldTemplate field, Long id) {
-    	String tableName =null;
-    	
-		CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(field.tableName());
-		try {
-			if (relatedEntity != null) {
-				if (relatedEntity.isStoreAsTable()) {
-					tableName = relatedEntity.getDbTablename();
-				} else {
-					tableName = getTableNameForClass(CustomEntityInstance.class);
-				}
-			} else {
-				tableName = getTableNameForClass(Class.forName(field.getEntityClazz()));
-			}
-		} catch (ClassNotFoundException e) {
-			throw new BusinessException("Exception when trying to get class with name: "+field.getEntityClazz());
-		}
-        
+        String tableName = null;
+
+        CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(field.tableName());
+        try {
+            if (relatedEntity != null) {
+                if (relatedEntity.isStoreAsTable()) {
+                    tableName = relatedEntity.getDbTablename();
+                } else {
+                    tableName = getTableNameForClass(CustomEntityInstance.class);
+                }
+            } else {
+                tableName = getTableNameForClass(Class.forName(field.getEntityClazz()));
+            }
+        } catch (ClassNotFoundException e) {
+            throw new BusinessException("Exception when trying to get class with name: " + field.getEntityClazz());
+        }
+
         return validateRecordExistanceByTableName(tableName, id);
     }
 
-	public boolean validateRecordExistanceByTableName(String tableName,Long id) {
-		Session session = getEntityManager().unwrap(Session.class);
-		StringBuilder selectQuery = new StringBuilder("select ")
-                .append(FIELD_ID)
-                .append(" from ")
-                .append(tableName)
-                .append(" e where ")
-                .append(FIELD_ID)
-                .append("=:id");
-		SQLQuery query = session.createSQLQuery(selectQuery.toString());
+    public boolean validateRecordExistanceByTableName(String tableName, Long id) {
+        Session session = getEntityManager().unwrap(Session.class);
+        StringBuilder selectQuery = new StringBuilder("select ").append(FIELD_ID).append(" from ").append(tableName).append(" e where ").append(FIELD_ID).append("=:id");
+        SQLQuery query = session.createSQLQuery(selectQuery.toString());
         query.setParameter("id", id);
-        return query.uniqueResult()!=null;
-	}
-	
-	
-	@SuppressWarnings("unchecked")
-	public List<BigInteger> filterExistingRecordsOnTable(String tableName,List<Long> ids) {
-		Session session = getEntityManager().unwrap(Session.class);
-		StringBuilder selectQuery = new StringBuilder("select ")
-                .append(FIELD_ID)
-                .append(" from ")
-                .append(tableName)
-                .append(" e where ")
-                .append(FIELD_ID)
-                .append(" in (:ids)");
+        return query.uniqueResult() != null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<BigInteger> filterExistingRecordsOnTable(String tableName, List<Long> ids) {
+        Session session = getEntityManager().unwrap(Session.class);
+        StringBuilder selectQuery = new StringBuilder("select ").append(FIELD_ID).append(" from ").append(tableName).append(" e where ").append(FIELD_ID).append(" in (:ids)");
         SQLQuery query = session.createSQLQuery(selectQuery.toString());
         query.setParameterList("ids", ids);
-        return (List<BigInteger>)query.list();
-	}
+        return (List<BigInteger>) query.list();
+    }
 }

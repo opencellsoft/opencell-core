@@ -1,24 +1,34 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.service.payments.impl;
 
-import org.apache.commons.beanutils.BeanUtils;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+
+import org.apache.commons.lang3.SerializationUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.account.TransferAccountOperationDto;
 import org.meveo.api.dto.account.TransferCustomerAccountDto;
@@ -35,17 +45,6 @@ import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * AccountOperation service implementation.
@@ -289,9 +288,9 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     /**
      * Get the account operation reference
      *
-     * @param accountOperationId        the account operation Id
+     * @param accountOperationId the account operation Id
      * @param accountOperationReference the account operation reference
-     * @param accountOperationAction    the account operation action ('s' : source, 't' : transfer, 'c' cancelation)
+     * @param accountOperationAction the account operation action ('s' : source, 't' : transfer, 'c' cancelation)
      * @return the account operation reference
      */
     public String getRefrence(Long accountOperationId, String accountOperationReference, String accountOperationAction) {
@@ -302,7 +301,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * Create the new account operation on the fromCustomerAccountCode to settle the old one.
      *
      * @param accountOperation the account operation to transfer
-     * @param amount           the amount to transfer
+     * @param amount the amount to transfer
      * @return the other credit and charge
      * @throws BusinessException business exception
      */
@@ -310,7 +309,6 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
         ParamBean paramBean = paramBeanFactory.getInstance();
         String debitOccTemplateCode = null;
-
 
         if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
             debitOccTemplateCode = paramBean.getProperty("occ.transferAccountOperation.credit", "CRD_TRS");
@@ -361,39 +359,36 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     /**
      * Create the new account operation on the toCustomerAccountCode which is equivalent to the transfer.
      *
-     * @param accountOperation  the account operation to transfer
+     * @param accountOperation the account operation to transfer
      * @param toCustomerAccount the destination customer account
-     * @param amount            the amount to transfer
+     * @param amount the amount to transfer
      * @return the account operation.
+     * @throws BusinessException business exception
      */
-    public AccountOperation createToAccountOperation(AccountOperation accountOperation, CustomerAccount toCustomerAccount, BigDecimal amount) {
+    public AccountOperation createToAccountOperation(AccountOperation accountOperation, CustomerAccount toCustomerAccount, BigDecimal amount) throws BusinessException {
 
-        try {
-            AccountOperation newAccountOperation = (AccountOperation) BeanUtils.cloneBean(accountOperation);
-            newAccountOperation.setId(null);
-            newAccountOperation.setMatchingAmount(BigDecimal.ZERO);
-            newAccountOperation.setMatchingStatus(MatchingStatusEnum.O);
-            newAccountOperation.setUnMatchingAmount(amount);
-            newAccountOperation.setAmount(amount);
-            newAccountOperation.setCustomerAccount(toCustomerAccount);
-            newAccountOperation.setAccountingWritings(new ArrayList<>());
-            newAccountOperation.setInvoices(null);
-            newAccountOperation.setMatchingAmounts(new ArrayList<>());
-            newAccountOperation.setTransactionDate(new Date());
-            //newAccountOperation.setDueDate(new Date());
-            create(newAccountOperation);
+        AccountOperation newAccountOperation = SerializationUtils.clone(accountOperation);
+        newAccountOperation.setId(null);
+        newAccountOperation.setMatchingAmount(BigDecimal.ZERO);
+        newAccountOperation.setMatchingStatus(MatchingStatusEnum.O);
+        newAccountOperation.setUnMatchingAmount(amount);
+        newAccountOperation.setAmount(amount);
+        newAccountOperation.setCustomerAccount(toCustomerAccount);
+        newAccountOperation.setAccountingWritings(new ArrayList<>());
+        newAccountOperation.setInvoices(null);
+        newAccountOperation.setMatchingAmounts(new ArrayList<>());
+        newAccountOperation.setTransactionDate(new Date());
+        // newAccountOperation.setDueDate(new Date());
+        create(newAccountOperation);
 
-            newAccountOperation.setReference(getRefrence(newAccountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.t.name()));
-            return newAccountOperation;
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-            throw new BusinessException("Failed to create new account operation on the customer account " + toCustomerAccount.getCode(), e);
-        }
+        newAccountOperation.setReference(getRefrence(newAccountOperation.getId(), accountOperation.getReference(), AccountOperationActionEnum.t.name()));
+        return newAccountOperation;
     }
 
     /**
      * Transfer an account operation from a customer account to an other.
      *
-     * @param accountOperation           the account operation
+     * @param accountOperation the account operation
      * @param transferCustomerAccountDto destination customer account
      * @throws BusinessException business exception
      */
@@ -444,7 +439,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 
         if (!fromCustomerAccount.equals(accountOperation.getCustomerAccount())) {
             throw new BusinessException(
-                    "the account operation " + accountOperationId + " to be the transfer doesn't belong to the source customer account " + fromCustomerAccountCode);
+                "the account operation " + accountOperationId + " to be the transfer doesn't belong to the source customer account " + fromCustomerAccountCode);
         }
 
         if (transferAccountOperationDto.getToCustomerAccounts() != null && !transferAccountOperationDto.getToCustomerAccounts().isEmpty()) {

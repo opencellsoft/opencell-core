@@ -1,20 +1,19 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.service.generic.wf;
 
@@ -36,7 +35,6 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.model.generic.wf.WorkflowInstance;
-import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.filter.FilterService;
 
@@ -44,9 +42,6 @@ import com.google.common.collect.Maps;
 
 @Stateless
 public class WorkflowInstanceService extends PersistenceService<WorkflowInstance> {
-
-    @Inject
-    private BusinessEntityService businessEntityService;
 
     @Inject
     private WFStatusService wfStatusService;
@@ -81,16 +76,18 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
         return (List<WorkflowInstance>) executeSelectQuery(query, params);
     }
 
-    public List<BusinessEntity> findEntitiesWithoutWFInstance(GenericWorkflow gwf) throws BusinessException {
+    public List<BusinessEntity> findEntitiesForWorkflow(GenericWorkflow gwf, boolean withoutWFInstance) throws BusinessException {
 
         Map<String, Object> params = Maps.newHashMap();
         if (gwf.getId() != null) {
             gwf = genericWorkflowService.findById(gwf.getId());
         }
+        String operator = withoutWFInstance ? "not ":"";
         if (gwf.getFilter() != null) {
 
-            String query = "From " + gwf.getTargetEntityClass()
-                    + " be where be.id not in (select wi.entityInstanceId from WorkflowInstance wi where wi.targetEntityClass=:entityClass)";
+            
+			String query = "From " + gwf.getTargetEntityClass()
+                    + " be where be.id " + operator  + "in (select wi.entityInstanceId from WorkflowInstance wi where wi.targetEntityClass=:entityClass)";
             params.put("entityClass", gwf.getTargetEntityClass());
 
             List<BusinessEntity> listAllEntitiesWithoutWFInstance = (List<BusinessEntity>) executeSelectQuery(query, params);
@@ -121,7 +118,7 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
             return listFilteredEntitiesWithoutWFInstance;
         } else {
             String query = "From " + gwf.getTargetEntityClass()
-                    + " be where be.id not in (select wi.entityInstanceId from WorkflowInstance wi where wi.targetEntityClass=:entityClass)";
+                    + " be where be.id " + operator  + "in (select wi.entityInstanceId from WorkflowInstance wi where wi.targetEntityClass=:entityClass)";
             params.put("entityClass", gwf.getTargetEntityClass());
 
             return (List<BusinessEntity>) executeSelectQuery(query, params);

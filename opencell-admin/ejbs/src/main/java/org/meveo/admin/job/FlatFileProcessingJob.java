@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.admin.job;
 
 import java.io.File;
@@ -14,7 +32,9 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.admin.FileFormat;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
@@ -22,6 +42,7 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
+import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.job.Job;
 
 /**
@@ -60,6 +81,8 @@ public class FlatFileProcessingJob extends Job {
 
     private static final String TWO_POINTS_PARENT_DIR = "\\..";
 
+    private static final String FLAT_FILE_PROCESSING_JOB_FILE_FORMAT = "FlatFileProcessingJob_fileFormat";
+
     private static final String FLAT_FILE_PROCESSING_JOB_INPUT_DIR = "FlatFileProcessingJob_inputDir";
 
     private static final String FLAT_FILE_PROCESSING_JOB_MAPPING_CONF = "FlatFileProcessingJob_mappingConf";
@@ -76,6 +99,9 @@ public class FlatFileProcessingJob extends Job {
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
+    @Inject
+    private FileFormatService fileFormatService;
+
     /** The Constant CONTINUE. */
     public static final String CONTINUE = "CONTINUE";
 
@@ -90,9 +116,6 @@ public class FlatFileProcessingJob extends Job {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         try {
-            String mappingConf = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_MAPPING_CONF);
-            String inputDir = paramBeanFactory.getChrootDir() + File.separator
-                    + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_INPUT_DIR)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
             String outputDir = null;
             String archiveDir = null;
             String rejectDir = null;
@@ -104,31 +127,44 @@ public class FlatFileProcessingJob extends Job {
             String formatTransfo = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FORMAT_TRANSFO);
             String errorAction = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ERROR_ACTION);
             Map<String, Object> initContext = new HashMap<String, Object>();
+            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES) != null) {
+                initContext = (Map<String, Object>) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES);
+            }
 
             Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", 1L);
             if (nbRuns == -1) {
                 nbRuns = (long) Runtime.getRuntime().availableProcessors();
             }
             Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+
             Boolean oneFilePerJob = (Boolean) this.getParamOrCFValue(jobInstance, "oneFilePerJob", Boolean.FALSE);
 
-            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES) != null) {
-                initContext = (Map<String, Object>) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES);
+            EntityReferenceWrapper fileFormatWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_FORMAT);
+            FileFormat fileFormat = null;
+            if (fileFormatWrapper != null && fileFormatWrapper.getCode() != null) {
+                fileFormat = fileFormatService.findByCode(fileFormatWrapper.getCode());
             }
-            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR) != null) {
+
+            String mappingConf = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_MAPPING_CONF, fileFormat != null ? fileFormat.getConfigurationTemplate() : null);
+
+            String inputDir = paramBeanFactory.getChrootDir() + File.separator
+                    + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_INPUT_DIR, fileFormat != null ? fileFormat.getInputDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+
+            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR, fileFormat != null ? fileFormat.getOutputDirectory() : null) != null) {
                 outputDir = paramBeanFactory.getChrootDir() + File.separator
-                        + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+                        + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR, fileFormat != null ? fileFormat.getOutputDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
             }
-            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_REJECT_DIR) != null) {
+            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_REJECT_DIR, fileFormat != null ? fileFormat.getRejectDirectory() : null) != null) {
                 rejectDir = paramBeanFactory.getChrootDir() + File.separator
-                        + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_REJECT_DIR)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+                        + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_REJECT_DIR, fileFormat != null ? fileFormat.getRejectDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
             }
-            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR) != null) {
+            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR, fileFormat != null ? fileFormat.getArchiveDirectory() : null) != null) {
                 archiveDir = paramBeanFactory.getChrootDir() + File.separator
-                        + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+                        + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR, fileFormat != null ? fileFormat.getArchiveDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR,
+                            EMPTY_STRING);
             }
-            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER) != null) {
-                fileNameFilter = ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER));
+            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER, fileFormat != null ? fileFormat.getFileNamePattern() : null) != null) {
+                fileNameFilter = ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER, fileFormat != null ? fileFormat.getFileNamePattern() : null));
                 fileNameFilter = fileNameFilter.replaceAll(Pattern.quote("*"), "");
             }
 
@@ -175,8 +211,8 @@ public class FlatFileProcessingJob extends Job {
                 }
 
                 String fileName = file.getName();
-                flatFileProcessingJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext,
-                    filenameVariableName, formatTransfo, errorAction, nbRuns, waitingMillis);
+                flatFileProcessingJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext, filenameVariableName, formatTransfo,
+                    errorAction, nbRuns, waitingMillis);
 
                 result.addReport("Processed file: " + fileName);
                 if (oneFilePerJob) {
@@ -204,6 +240,19 @@ public class FlatFileProcessingJob extends Job {
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
+        CustomFieldTemplate fileFormatCF = new CustomFieldTemplate();
+        fileFormatCF.setCode(FLAT_FILE_PROCESSING_JOB_FILE_FORMAT);
+        fileFormatCF.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
+        fileFormatCF.setActive(true);
+        fileFormatCF.setDescription(resourceMessages.getString("flatFile.fileFormat"));
+        fileFormatCF.setFieldType(CustomFieldTypeEnum.ENTITY);
+        fileFormatCF.setEntityClazz(FileFormat.class.getName());
+        fileFormatCF.setDefaultValue(null);
+        fileFormatCF.setValueRequired(false);
+        fileFormatCF.setMaxValue(256L);
+        fileFormatCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:0");
+        result.put(FLAT_FILE_PROCESSING_JOB_FILE_FORMAT, fileFormatCF);
+
         CustomFieldTemplate inputDirectoryCF = new CustomFieldTemplate();
         inputDirectoryCF.setCode(FLAT_FILE_PROCESSING_JOB_INPUT_DIR);
         inputDirectoryCF.setAppliesTo(JOB_FLAT_FILE_PROCESSING_JOB);
@@ -211,9 +260,9 @@ public class FlatFileProcessingJob extends Job {
         inputDirectoryCF.setDescription(resourceMessages.getString("flatFile.inputDir"));
         inputDirectoryCF.setFieldType(CustomFieldTypeEnum.STRING);
         inputDirectoryCF.setDefaultValue(null);
-        inputDirectoryCF.setValueRequired(true);
+        inputDirectoryCF.setValueRequired(false);
         inputDirectoryCF.setMaxValue(256L);
-        inputDirectoryCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:0");
+        inputDirectoryCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:1");
         result.put(FLAT_FILE_PROCESSING_JOB_INPUT_DIR, inputDirectoryCF);
 
         CustomFieldTemplate archiveDirectoryCF = new CustomFieldTemplate();
@@ -225,7 +274,7 @@ public class FlatFileProcessingJob extends Job {
         archiveDirectoryCF.setDefaultValue(null);
         archiveDirectoryCF.setValueRequired(false);
         archiveDirectoryCF.setMaxValue(256L);
-        archiveDirectoryCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:1");
+        archiveDirectoryCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:2");
         result.put(FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR, archiveDirectoryCF);
 
         CustomFieldTemplate rejectDirectoryCF = new CustomFieldTemplate();
@@ -237,7 +286,7 @@ public class FlatFileProcessingJob extends Job {
         rejectDirectoryCF.setDefaultValue(null);
         rejectDirectoryCF.setValueRequired(false);
         rejectDirectoryCF.setMaxValue(256L);
-        rejectDirectoryCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:2");
+        rejectDirectoryCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:3");
         result.put(FLAT_FILE_PROCESSING_JOB_REJECT_DIR, rejectDirectoryCF);
 
         CustomFieldTemplate outputDirectoryCF = new CustomFieldTemplate();
@@ -249,7 +298,7 @@ public class FlatFileProcessingJob extends Job {
         outputDirectoryCF.setDefaultValue(null);
         outputDirectoryCF.setValueRequired(false);
         outputDirectoryCF.setMaxValue(256L);
-        outputDirectoryCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:3");
+        outputDirectoryCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:4");
         result.put(FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR, outputDirectoryCF);
 
         CustomFieldTemplate fileNameKeyCF = new CustomFieldTemplate();
@@ -261,7 +310,7 @@ public class FlatFileProcessingJob extends Job {
         fileNameKeyCF.setDefaultValue(null);
         fileNameKeyCF.setValueRequired(false);
         fileNameKeyCF.setMaxValue(256L);
-        fileNameKeyCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:4");
+        fileNameKeyCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:5");
         result.put(FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER, fileNameKeyCF);
 
         CustomFieldTemplate fileNameExtensionCF = new CustomFieldTemplate();
@@ -273,7 +322,7 @@ public class FlatFileProcessingJob extends Job {
         fileNameExtensionCF.setDefaultValue("csv");
         fileNameExtensionCF.setValueRequired(true);
         fileNameExtensionCF.setMaxValue(256L);
-        fileNameExtensionCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:5");
+        fileNameExtensionCF.setGuiPosition("tab:Configuration:0;fieldGroup:File configuration:1;field:6");
         result.put(FLAT_FILE_PROCESSING_JOB_FILE_NAME_EXTENSION, fileNameExtensionCF);
 
         CustomFieldTemplate mappingConf = new CustomFieldTemplate();
@@ -283,7 +332,7 @@ public class FlatFileProcessingJob extends Job {
         mappingConf.setDescription(resourceMessages.getString("flatFile.mappingConf"));
         mappingConf.setFieldType(CustomFieldTypeEnum.TEXT_AREA);
         mappingConf.setDefaultValue(EMPTY_STRING);
-        mappingConf.setValueRequired(true);
+        mappingConf.setValueRequired(false);
         mappingConf.setGuiPosition("tab:Configuration:0;fieldGroup:Record configuration:2;field:0");
         result.put(FLAT_FILE_PROCESSING_JOB_MAPPING_CONF, mappingConf);
 

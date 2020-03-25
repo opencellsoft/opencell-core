@@ -1,20 +1,19 @@
 /*
- * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
- * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * This program is not suitable for any direct or indirect application in MILITARY industry
- * See the GNU Affero General Public License for more details.
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 package org.meveo.admin.action.payments;
 
@@ -25,7 +24,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -39,6 +37,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CheckPaymentMethod;
@@ -53,6 +52,7 @@ import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -63,7 +63,7 @@ import org.meveo.service.payments.impl.PaymentMethodService;
 /**
  * Standard backing bean for {@link CustomerAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
- * 
+ *
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
@@ -84,10 +84,10 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
      */
     @Inject
     private CustomerService customerService;
-    
+
     @Inject
     private RatedTransactionService ratedTransactionService;
-    
+
     @Inject
     private WalletOperationService walletOperationService;
 
@@ -96,6 +96,9 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
     @Inject
     private PaymentMethodService paymentMethodService;
+
+    @Inject
+    private CounterInstanceService counterInstanceService;
 
     /**
      * Customer Id passed as a parameter. Used when creating new Customer Account from customer account window, so default customer account will be set on newly created customer
@@ -109,6 +112,8 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
     private PaymentMethodEnum newPaymentMethodType = PaymentMethodEnum.CARD;
     private PaymentMethod selectedPaymentMethod;
+
+    private CounterInstance selectedCounterInstance;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -136,14 +141,14 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
                 }
             }
         }
-
+        selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
         return entity;
     }
-    
+
     @Override
     public CustomerAccount getEntity() {
         CustomerAccount ca = super.getEntity();
-       this.initNestedFields(ca);
+        this.initNestedFields(ca);
         return ca;
     }
 
@@ -166,29 +171,29 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         if (entity.getPreferredPaymentMethod() == null) {
             throw new ValidationException("CustomerAccount does not have a preferred payment method", "paymentMethod.noPreferredPaymentMethod");
         }
-        
-        if(!entity.isTransient()) {
-        	CustomerAccount customerAccountFromDB = customerAccountService.findByCode(entity.getCode());
-        	if (!entity.getCustomer().equals(customerAccountFromDB.getCustomer())) {
-		        // a safeguard to allow this only if all the WO/RT have been invoiced.
-		        Long countNonTreatedWO = walletOperationService.countNonTreatedWOByCA(entity);
-		        if(countNonTreatedWO > 0) {
-		            messages.error(new BundleKey("messages", "customerAccount.nontreatedWO"));
-		            return null;
-		        }
-		        Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByCA(entity);
-		        if(countNonInvoicedRT > 0) {
-		            messages.error(new BundleKey("messages", "customerAccount.nonInvoicedRT"));
-		            return null;
-		        }
-		        Long countUnmatchedAO = accountOperationService.countUnmatchedAOByCA(entity);
-		        if(countUnmatchedAO > 0) {
-		            messages.error(new BundleKey("messages", "customerAccount.unmatchedAO"));
-		            return null;
-		        }
-        	}
+
+        if (!entity.isTransient()) {
+            CustomerAccount customerAccountFromDB = customerAccountService.findByCode(entity.getCode());
+            if (!entity.getCustomer().equals(customerAccountFromDB.getCustomer())) {
+                // a safeguard to allow this only if all the WO/RT have been invoiced.
+                Long countNonTreatedWO = walletOperationService.countNonTreatedWOByCA(entity);
+                if (countNonTreatedWO > 0) {
+                    messages.error(new BundleKey("messages", "customerAccount.nontreatedWO"));
+                    return null;
+                }
+                Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByCA(entity);
+                if (countNonInvoicedRT > 0) {
+                    messages.error(new BundleKey("messages", "customerAccount.nonInvoicedRT"));
+                    return null;
+                }
+                Long countUnmatchedAO = accountOperationService.countUnmatchedAOByCA(entity);
+                if (countUnmatchedAO > 0) {
+                    messages.error(new BundleKey("messages", "customerAccount.unmatchedAO"));
+                    return null;
+                }
+            }
         }
-        
+
         entity.setCustomer(customerService.findById(entity.getCustomer().getId()));
 
         String outcome = super.saveOrUpdate(killConversation);
@@ -244,8 +249,9 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     public BigDecimal getBalanceDue() throws BusinessException {
         if (entity.getId() == null) {
             return new BigDecimal(0);
-        } else
+        } else {
             return customerAccountService.customerAccountBalanceDue(entity, new Date());
+        }
     }
 
     /**
@@ -416,6 +422,14 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
                 }
             }
 
+            if (selectedPaymentMethod instanceof DDPaymentMethod) {
+                DDPaymentMethod ddPaymentMethod = (DDPaymentMethod) selectedPaymentMethod;
+                String error = paymentMethodService.validateBankCoordinates(ddPaymentMethod, entity.getCustomer(), false);
+                if (!StringUtils.isBlank(error)) {
+                    throw new BusinessException(error);
+                }
+            }
+
             if (entity.getPaymentMethods() == null) {
                 entity.setPaymentMethods(new ArrayList<PaymentMethod>());
             }
@@ -468,19 +482,28 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         } else {
             showMessage = true;
         }
-
-        paymentMethodToPrefer.setPreferred(true);
-        entity.addPaymentMethodToAudit(new Object() {
-        }.getClass().getEnclosingMethod().getName(), paymentMethodToPrefer);
-        for (PaymentMethod paymentMethod : entity.getPaymentMethods()) {
-            if (!paymentMethod.equals(paymentMethodToPrefer)) {
-                paymentMethod.setPreferred(false);
-            }
+        String error = null;
+        if (paymentMethodToPrefer instanceof DDPaymentMethod) {
+            DDPaymentMethod ddPaymentMethod = (DDPaymentMethod) paymentMethodToPrefer;
+            error = paymentMethodService.validateBankCoordinates(ddPaymentMethod, entity.getCustomer(), true);
         }
-        entity.addPaymentMethodToAudit(new Object() {
-        }.getClass().getEnclosingMethod().getName(), paymentMethodToPrefer);
-        if (showMessage) {
-            messages.info(new BundleKey("messages", "paymentMethod.setPreferred.ok"));
+        if (!StringUtils.isBlank(error)) {
+            log.error("cannot define as preferred payment method : " + error);
+            messages.error(new BundleKey("messages", "paymentMethod.setPreferred.ko"), error);
+        } else {
+            paymentMethodToPrefer.setPreferred(true);
+            entity.addPaymentMethodToAudit(new Object() {
+            }.getClass().getEnclosingMethod().getName(), paymentMethodToPrefer);
+            for (PaymentMethod paymentMethod : entity.getPaymentMethods()) {
+                if (!paymentMethod.equals(paymentMethodToPrefer)) {
+                    paymentMethod.setPreferred(false);
+                }
+            }
+            entity.addPaymentMethodToAudit(new Object() {
+            }.getClass().getEnclosingMethod().getName(), paymentMethodToPrefer);
+            if (showMessage) {
+                messages.info(new BundleKey("messages", "paymentMethod.setPreferred.ok"));
+            }
         }
     }
 
@@ -538,6 +561,21 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
                     throw new Exception("Missing BIC.");
                 }
             }
+        }
+    }
+
+    public CounterInstance getSelectedCounterInstance() {
+        if (entity == null) {
+            initEntity();
+        }
+        return selectedCounterInstance;
+    }
+
+    public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
+        if (selectedCounterInstance != null) {
+            this.selectedCounterInstance = counterInstanceService.refreshOrRetrieve(selectedCounterInstance);
+        } else {
+            this.selectedCounterInstance = null;
         }
     }
 }

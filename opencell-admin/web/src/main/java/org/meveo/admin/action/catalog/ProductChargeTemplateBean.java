@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
@@ -28,75 +46,72 @@ import org.primefaces.model.DualListModel;
 @ViewScoped
 public class ProductChargeTemplateBean extends BaseBean<ProductChargeTemplate> {
 
-	private static final long serialVersionUID = -1167691337353764450L;
+    private static final long serialVersionUID = -1167691337353764450L;
 
-	@Inject
-	protected ProductChargeTemplateService productChargeTemplateService;
+    @Inject
+    protected ProductChargeTemplateService productChargeTemplateService;
 
-	@Inject
-	private TriggeredEDRTemplateService triggeredEDRTemplateService;
-	
-	@Inject
-	private RecurringChargeTemplateService recurringChargeTemplateService;
+    @Inject
+    private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
-	@Inject
-	private UsageChargeTemplateService usageChargeTemplateService;
+    @Inject
+    private RecurringChargeTemplateService recurringChargeTemplateService;
 
-	@Inject
-	private OneShotChargeTemplateService oneShotChargeTemplateService;
+    @Inject
+    private UsageChargeTemplateService usageChargeTemplateService;
 
-	private DualListModel<TriggeredEDRTemplate> edrTemplatesDM;
+    @Inject
+    private OneShotChargeTemplateService oneShotChargeTemplateService;
 
-	public ProductChargeTemplateBean() {
-		super(ProductChargeTemplate.class);
-	}
+    private DualListModel<TriggeredEDRTemplate> edrTemplatesDM;
 
-	@Override
-	protected IPersistenceService<ProductChargeTemplate> getPersistenceService() {
-		return productChargeTemplateService;
-	}
+    public ProductChargeTemplateBean() {
+        super(ProductChargeTemplate.class);
+    }
 
-	@Override
-	@ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		// check for unicity
-		if (oneShotChargeTemplateService.findByCode(entity.getCode()) != null
-				|| usageChargeTemplateService.findByCode(entity.getCode()) != null
-				|| recurringChargeTemplateService.findByCode(entity.getCode()) != null) {
-			messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
-			return null;
-		}
+    @Override
+    protected IPersistenceService<ProductChargeTemplate> getPersistenceService() {
+        return productChargeTemplateService;
+    }
 
-		getEntity().getEdrTemplates().clear();
-		getEntity().getEdrTemplates().addAll(triggeredEDRTemplateService.refreshOrRetrieve(edrTemplatesDM.getTarget()));
+    @Override
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        // check for unicity
+        if (oneShotChargeTemplateService.findByCode(entity.getCode()) != null || usageChargeTemplateService.findByCode(entity.getCode()) != null || recurringChargeTemplateService.findByCode(entity.getCode()) != null) {
+            messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
+            return null;
+        }
 
-		boolean newEntity = (entity.getId() == null);
-		
-		String outcome = super.saveOrUpdate(killConversation);
+        getEntity().setEdrTemplates(triggeredEDRTemplateService.refreshOrRetrieve(edrTemplatesDM.getTarget()));
 
-		if (outcome != null) {
-			return newEntity ? getEditViewName() : outcome;
-		}
-		
-		return null;
-	}
+        boolean newEntity = (entity.getId() == null);
 
-	public DualListModel<TriggeredEDRTemplate> getEdrTemplatesDM() {
-		if (edrTemplatesDM == null) {
-			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService.list();
-			List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
-			if (getEntity().getEdrTemplates() != null) {
-				target.addAll(getEntity().getEdrTemplates());
-			}
+        String outcome = super.saveOrUpdate(killConversation);
 
-			source.removeAll(target);
-			edrTemplatesDM = new DualListModel<TriggeredEDRTemplate>(source, target);
-		}
-		return edrTemplatesDM;
-	}
+        if (outcome != null) {
+            return newEntity ? getEditViewName() : outcome;
+        }
 
-	public void setEdrTemplatesDM(DualListModel<TriggeredEDRTemplate> edrTemplatesDM) {
-		this.edrTemplatesDM = edrTemplatesDM;
-	}
+        return null;
+    }
+
+    public DualListModel<TriggeredEDRTemplate> getEdrTemplatesDM() {
+        if (edrTemplatesDM == null) {
+            List<TriggeredEDRTemplate> source = triggeredEDRTemplateService.list();
+            List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
+            if (getEntity().getEdrTemplates() != null) {
+                target.addAll(getEntity().getEdrTemplates());
+            }
+
+            source.removeAll(target);
+            edrTemplatesDM = new DualListModel<TriggeredEDRTemplate>(source, target);
+        }
+        return edrTemplatesDM;
+    }
+
+    public void setEdrTemplatesDM(DualListModel<TriggeredEDRTemplate> edrTemplatesDM) {
+        this.edrTemplatesDM = edrTemplatesDM;
+    }
 
 }

@@ -1,9 +1,28 @@
+/*
+ * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+ * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
+ * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
+ * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
+ * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ *
+ * For more information on the GNU Affero General Public License, please consult
+ * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ */
+
 package org.meveo.api.dto.catalog;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -51,11 +70,11 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     /** The unit multiplicator. */
     @Deprecated
     private BigDecimal unitMultiplicator;
-    
+
     private String inputUnitOfMeasureCode;
-    
+
     private String ratingUnitOfMeasureCode;
-    
+
     private String inputUnitEL;
 
     private String outputUnitEL;
@@ -63,7 +82,7 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     /**
      * EDR and WO quantity field value precision
      */
-    private int unitNbDecimal = BaseEntity.NB_DECIMALS;
+    private Integer unitNbDecimal = BaseEntity.NB_DECIMALS;
 
     /**
      * EDR and WO quantity field value rounding
@@ -73,11 +92,44 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     /** The revenue recognition rule code. */
     private String revenueRecognitionRuleCode;
 
+    /** The filter expression. */
+    @Size(max = 2000)
+    private String filterExpression = null;
+
+    /** The filter expression. */
+    @Size(max = 2000)
+    private String filterExpressionSpark;
+
+    /**
+     * Charge tax class code
+     **/
+    private String taxClassCode;
+
+    /**
+     * Expression to determine tax class
+     */
+    private String taxClassEl;
+
+    /**
+     * Expression to determine tax class - for Spark
+     */
+    private String taxClassElSpark;
+
+    /**
+     * Code of a rating script
+     */
+    private String ratingScriptCode;
+
     /** The custom fields. */
     private CustomFieldsDto customFields;
 
     /** The triggered edrs. */
     private TriggeredEdrTemplatesDto triggeredEdrs = new TriggeredEdrTemplatesDto();
+
+    /**
+     * Enable/disable removing WO rated to 0.
+     */
+    private boolean dropZeroWo;
 
     /**
      * Instantiates a new charge template dto.
@@ -106,10 +158,10 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
         }
         roundingModeDtoEnum = chargeTemplate.getRoundingMode();
         customFields = customFieldInstances;
-        inputUnitOfMeasureCode=chargeTemplate.getInputUnitOfMeasure()!=null?chargeTemplate.getInputUnitOfMeasure().getCode():null;
-        ratingUnitOfMeasureCode=chargeTemplate.getRatingUnitOfMeasure()!=null?chargeTemplate.getRatingUnitOfMeasure().getCode():null;
-        inputUnitEL=chargeTemplate.getInputUnitEL();
-        outputUnitEL=chargeTemplate.getOutputUnitEL();
+        inputUnitOfMeasureCode = chargeTemplate.getInputUnitOfMeasure() != null ? chargeTemplate.getInputUnitOfMeasure().getCode() : null;
+        ratingUnitOfMeasureCode = chargeTemplate.getRatingUnitOfMeasure() != null ? chargeTemplate.getRatingUnitOfMeasure().getCode() : null;
+        inputUnitEL = chargeTemplate.getInputUnitEL();
+        outputUnitEL = chargeTemplate.getOutputUnitEL();
         inputUnitDescription = chargeTemplate.getInputUnitDescription();
         ratingUnitDescription = chargeTemplate.getRatingUnitDescription();
         unitMultiplicator = chargeTemplate.getUnitMultiplicator();
@@ -117,6 +169,19 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
         roundingModeDtoEnum = chargeTemplate.getRoundingMode();
         revenueRecognitionRuleCode = chargeTemplate.getRevenueRecognitionRule() == null ? null : chargeTemplate.getRevenueRecognitionRule().getCode();
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getDescriptionI18n()));
+        if (chargeTemplate.getTaxClass() != null) {
+            taxClassCode = chargeTemplate.getTaxClass().getCode();
+        }
+        taxClassEl = chargeTemplate.getTaxClassEl();
+        taxClassElSpark = chargeTemplate.getTaxClassElSpark();
+
+        filterExpression = chargeTemplate.getFilterExpression();
+        filterExpressionSpark = chargeTemplate.getFilterExpressionSpark();
+
+        if (chargeTemplate.getRatingScript() != null) {
+            ratingScriptCode = chargeTemplate.getRatingScript().getCode();
+        }
+        dropZeroWo = chargeTemplate.isDropZeroWo();
     }
 
     /**
@@ -232,7 +297,7 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
      *
      * @return the unit nb decimal
      */
-    public int getUnitNbDecimal() {
+    public Integer getUnitNbDecimal() {
         return unitNbDecimal;
     }
 
@@ -241,7 +306,7 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
      *
      * @param unitNbDecimal the new unit nb decimal
      */
-    public void setUnitNbDecimal(int unitNbDecimal) {
+    public void setUnitNbDecimal(Integer unitNbDecimal) {
         this.unitNbDecimal = unitNbDecimal;
     }
 
@@ -319,65 +384,166 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
 
     @Override
     public String toString() {
-        return "ChargeTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + isDisabled()
-                + ", amountEditable=" + amountEditable + ", languageDescriptions=" + languageDescriptions + ", inputUnitDescription=" + inputUnitDescription
-                + ", ratingUnitDescription=" + ratingUnitDescription + ", unitMultiplicator=" + unitMultiplicator + ", unitNbDecimal=" + unitNbDecimal + ", customFields="
-                + customFields + ", triggeredEdrs=" + triggeredEdrs + ",roundingModeDtoEnum=" + roundingModeDtoEnum + "]";
+        return "code=" + getCode() + ", description=" + getDescription() + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + isDisabled() + ", amountEditable=" + amountEditable + ", languageDescriptions="
+                + languageDescriptions + ", inputUnitDescription=" + inputUnitDescription + ", ratingUnitDescription=" + ratingUnitDescription + ", unitMultiplicator=" + unitMultiplicator + ", unitNbDecimal="
+                + unitNbDecimal + ", customFields=" + customFields + ", triggeredEdrs=" + triggeredEdrs + ",roundingModeDtoEnum=" + roundingModeDtoEnum + ", filterExpression=" + filterExpression
+                + ", filterExpressionSpark=" + filterExpressionSpark;
     }
 
-	/**
-	 * @return the inputUnitOfMeasureCode
-	 */
-	public String getInputUnitOfMeasureCode() {
-		return inputUnitOfMeasureCode;
-	}
+    /**
+     * @return the inputUnitOfMeasureCode
+     */
+    public String getInputUnitOfMeasureCode() {
+        return inputUnitOfMeasureCode;
+    }
 
-	/**
-	 * @param inputUnitOfMeasureCode the inputUnitOfMeasureCode to set
-	 */
-	public void setInputUnitOfMeasureCode(String inputUnitOfMeasureCode) {
-		this.inputUnitOfMeasureCode = inputUnitOfMeasureCode;
-	}
+    /**
+     * @param inputUnitOfMeasureCode the inputUnitOfMeasureCode to set
+     */
+    public void setInputUnitOfMeasureCode(String inputUnitOfMeasureCode) {
+        this.inputUnitOfMeasureCode = inputUnitOfMeasureCode;
+    }
 
-	/**
-	 * @return the ratingUnitOfMeasureCode
-	 */
-	public String getRatingUnitOfMeasureCode() {
-		return ratingUnitOfMeasureCode;
-	}
+    /**
+     * @return the ratingUnitOfMeasureCode
+     */
+    public String getRatingUnitOfMeasureCode() {
+        return ratingUnitOfMeasureCode;
+    }
 
-	/**
-	 * @param ratingUnitOfMeasureCode the ratingUnitOfMeasureCode to set
-	 */
-	public void setRatingUnitOfMeasureCode(String ratingUnitOfMeasureCode) {
-		this.ratingUnitOfMeasureCode = ratingUnitOfMeasureCode;
-	}
+    /**
+     * @param ratingUnitOfMeasureCode the ratingUnitOfMeasureCode to set
+     */
+    public void setRatingUnitOfMeasureCode(String ratingUnitOfMeasureCode) {
+        this.ratingUnitOfMeasureCode = ratingUnitOfMeasureCode;
+    }
 
-	/**
-	 * @return the inputUnitEL
-	 */
-	public String getInputUnitEL() {
-		return inputUnitEL;
-	}
+    /**
+     * @return the inputUnitEL
+     */
+    public String getInputUnitEL() {
+        return inputUnitEL;
+    }
 
-	/**
-	 * @param inputUnitEL the inputUnitEL to set
-	 */
-	public void setInputUnitEL(String inputUnitEL) {
-		this.inputUnitEL = inputUnitEL;
-	}
+    /**
+     * @param inputUnitEL the inputUnitEL to set
+     */
+    public void setInputUnitEL(String inputUnitEL) {
+        this.inputUnitEL = inputUnitEL;
+    }
 
-	/**
-	 * @return the outputUnitEL
-	 */
-	public String getOutputUnitEL() {
-		return outputUnitEL;
-	}
+    /**
+     * @return the outputUnitEL
+     */
+    public String getOutputUnitEL() {
+        return outputUnitEL;
+    }
 
-	/**
-	 * @param outputUnitEL the outputUnitEL to set
-	 */
-	public void setOutputUnitEL(String outputUnitEL) {
-		this.outputUnitEL = outputUnitEL;
-	}
+    /**
+     * @param outputUnitEL the outputUnitEL to set
+     */
+    public void setOutputUnitEL(String outputUnitEL) {
+        this.outputUnitEL = outputUnitEL;
+    }
+
+    /**
+     * @return Charge tax class code
+     */
+    public String getTaxClassCode() {
+        return taxClassCode;
+    }
+
+    /**
+     * @param taxClassCode Charge tax class code
+     */
+    public void setTaxClassCode(String taxClassCode) {
+        this.taxClassCode = taxClassCode;
+    }
+
+    /**
+     * @return Expression to determine tax class
+     */
+    public String getTaxClassEl() {
+        return taxClassEl;
+    }
+
+    /**
+     * @param taxClassEl Expression to determine tax class
+     */
+    public void setTaxClassEl(String taxClassEl) {
+        this.taxClassEl = taxClassEl;
+    }
+
+    /**
+     * @return Expression to determine tax class - for Spark
+     */
+    public String getTaxClassElSpark() {
+        return taxClassElSpark;
+    }
+
+    /**
+     * @param taxClassElSpark Expression to determine tax class - for Spark
+     */
+    public void setTaxClassElSpark(String taxClassElSpark) {
+        this.taxClassElSpark = taxClassElSpark;
+    }
+
+    /**
+     * @return Expression to determine if charge applies
+     */
+    public String getFilterExpression() {
+        return filterExpression;
+    }
+
+    /**
+     * @param filterExpression Expression to determine if charge applies
+     */
+    public void setFilterExpression(String filterExpression) {
+        this.filterExpression = filterExpression;
+    }
+
+    /**
+     * @return Expression to determine if charge applies - for Spark
+     */
+    public String getFilterExpressionSpark() {
+        return filterExpressionSpark;
+    }
+
+    /**
+     * @param filterExpressionSpark Expression to determine if charge applies - for Spark
+     */
+    public void setFilterExpressionSpark(String filterExpressionSpark) {
+        this.filterExpressionSpark = filterExpressionSpark;
+    }
+
+    /**
+     * @return Code of a rating script
+     */
+    public String getRatingScriptCode() {
+        return ratingScriptCode;
+    }
+
+    /**
+     * @param ratingScriptCode Code of a rating script
+     */
+    public void setRatingScriptCode(String ratingScriptCode) {
+        this.ratingScriptCode = ratingScriptCode;
+    }
+    /**
+     * Check if removing WO rated to 0 is enabled or not.
+     *
+     * @return true if is enabled false else.
+     */
+    public boolean isDropZeroWo() {
+        return dropZeroWo;
+    }
+
+    /**
+     * Enable/disable removing WO rated to 0.
+     *
+     * @param dropZeroWo
+     */
+    public void setDropZeroWo(boolean dropZeroWo) {
+        this.dropZeroWo = dropZeroWo;
+    }
 }
