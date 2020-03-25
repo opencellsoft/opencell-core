@@ -5,10 +5,9 @@ import org.apache.commons.lang.reflect.FieldUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.services.generic.filter.FactoryFilterMapper;
 import org.meveo.apiv2.services.generic.filter.FilterMapper;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.IEntity;
 import org.meveo.service.base.PersistenceService;
 
-import javax.persistence.EntityManager;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
@@ -43,7 +42,7 @@ public class ObjectMapper extends FilterMapper {
                         });
                 target = targetInstanceHolder;
 
-                if(target instanceof BaseEntity && ((BaseEntity) target).isTransient()){
+                if(target instanceof IEntity && ((IEntity) target).isTransient()){
                     target = serviceFunction.apply(target.getClass()).list(new PaginationConfiguration((Map) value));
                 }
             } else{

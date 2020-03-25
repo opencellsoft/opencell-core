@@ -5,10 +5,9 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering;
 import org.meveo.apiv2.services.generic.filter.FactoryFilterMapper;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.IEntity;
 import org.meveo.service.base.PersistenceService;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -38,7 +37,7 @@ public class GenericRequestMapper {
                 org.primefaces.model.SortOrder.valueOf(genericPagingAndFiltering.getSortOrder()));
     }
     @VisibleForTesting
-    public Map<String, Object> evaluateFilters(Map<String, Object> filters, Class<? extends BaseEntity> entity) {
+    public Map<String, Object> evaluateFilters(Map<String, Object> filters, Class<? extends IEntity> entity) {
         return Stream.of(filters.keySet().toArray())
                 .map(key -> {
                     String keyObject = (String) key;

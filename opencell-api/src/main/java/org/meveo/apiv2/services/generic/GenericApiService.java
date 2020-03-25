@@ -1,22 +1,15 @@
 package org.meveo.apiv2.services.generic;
 
 import org.meveo.commons.utils.EjbUtils;
-import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.IEntity;
+import org.meveo.service.base.BaseEntityService;
 import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static org.meveo.apiv2.ValidationUtils.checkEntityClass;
-import static org.meveo.apiv2.ValidationUtils.checkEntityName;
 import static org.meveo.apiv2.ValidationUtils.checkRecord;
 
 @Stateless
@@ -26,8 +19,8 @@ public abstract class GenericApiService {
     @MeveoJpa
     protected EntityManagerWrapper entityManagerWrapper;
     
-    public BaseEntity find(Class entityClass, Long id) {
-        return checkRecord((BaseEntity) entityManagerWrapper.getEntityManager().find(entityClass, id),
+    public IEntity find(Class entityClass, Long id) {
+        return checkRecord((IEntity) entityManagerWrapper.getEntityManager().find(entityClass, id),
                 entityClass.getSimpleName(), id);
     }
 
@@ -36,7 +29,12 @@ public abstract class GenericApiService {
     }
 
     public PersistenceService getPersistenceService(Class entityClass) {
-        return (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Service");
+        PersistenceService serviceInterface = (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Service");
+        if(serviceInterface == null){
+            serviceInterface = (PersistenceService) EjbUtils.getServiceInterface("BaseEntityService");
+            ((BaseEntityService) serviceInterface).setEntityClass(entityClass);
+        }
+        return serviceInterface;
     }
 
     public static Class getEntityClass(String entityName) {

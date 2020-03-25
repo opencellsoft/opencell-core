@@ -2,8 +2,6 @@ package org.meveo.apiv2.services.generic.filter.filtermapper;
 
 import org.meveo.apiv2.services.generic.filter.FilterMapper;
 
-import java.lang.reflect.Field;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
