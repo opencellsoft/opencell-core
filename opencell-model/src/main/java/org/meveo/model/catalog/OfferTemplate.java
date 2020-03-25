@@ -47,7 +47,8 @@ import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 @DiscriminatorValue("OFFER")
 @NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE businessOfferModel is not null and lifeCycleStatus='ACTIVE'"),
         @NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE businessOfferModel is not null and lifeCycleStatus<>'ACTIVE'"),
-        @NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinusXDay<validity.to and validity.to<=NOW() and businessOfferModel is not null") })
+        @NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinusXDay<validity.to and validity.to<=NOW() and businessOfferModel is not null"),
+        @NamedQuery(name = "OfferTemplate.findByServiceTemplate", query = "SELECT t FROM OfferTemplate t JOIN t.offerServiceTemplates ost WHERE ost.serviceTemplate = :serviceTemplate") })
 public class OfferTemplate extends ProductOffering implements IWFEntity, ISearchable {
     private static final long serialVersionUID = 1L;
 
@@ -85,12 +86,8 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @Size(max = 2000)
     private String minimumAmountElSpark;
 
-
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name="cat_offer_tmpl_discount_plan",
-            joinColumns=@JoinColumn(name="offer_tmpl_id", referencedColumnName="id"),
-            inverseJoinColumns=@JoinColumn(name="discount_plan_id", referencedColumnName="id"))
+    @JoinTable(name = "cat_offer_tmpl_discount_plan", joinColumns = @JoinColumn(name = "offer_tmpl_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "discount_plan_id", referencedColumnName = "id"))
     private List<DiscountPlan> allowedDiscountPlans;
 
     /**
@@ -99,7 +96,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @Column(name = "minimum_label_el_sp", length = 2000)
     @Size(max = 2000)
     private String minimumLabelElSpark;
-    
+
     /** Corresponding invoice subcategory */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_invoice_sub_category_id")
