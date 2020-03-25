@@ -54,6 +54,7 @@ public abstract class GenericApiService {
     }
 
     public PersistenceService getPersistenceService(Class entityClass) {
+        checkEntityClass(entityClass);
         return (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Service");
     }
 

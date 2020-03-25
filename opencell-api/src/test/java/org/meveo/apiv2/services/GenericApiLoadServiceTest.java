@@ -122,7 +122,7 @@ public class GenericApiLoadServiceTest {
 
         Optional<String> filteredFields = sut.findByClassNameAndId("Customer",1L, searchConfig, fields);
         //Then
-        assertThat(filteredFields.get()).isEqualTo("{\"data\":{\"id\":1,\"name\":{\"title\":{\"code\":\"title\",\"isCompany\":false,\"descriptionNotNull\":\"title\"},\"firstName\":\"customerFirstName\",\"lastName\":\"customerLastName\",\"fullName\":\"title customerFirstName customerLastName\"},\"defaultLevel\":true,\"accountType\":\"ACCT_CUST\",\"parentEntityType\":\"org.meveo.model.admin.Seller\",\"contactInformationNullSafe\":{}}}");
+        assertThat(filteredFields.get()).isEqualTo("{\"data\":{\"id\":1,\"name\":{\"title\":{\"code\":\"title\",\"isCompany\":false},\"firstName\":\"customerFirstName\",\"lastName\":\"customerLastName\"},\"defaultLevel\":true,\"accountType\":\"ACCT_CUST\"}}");
     }
 
     @Test
@@ -215,22 +215,6 @@ public class GenericApiLoadServiceTest {
     }
 
     @Test
-    public void given_null_entity_name_when_find_paginate_recprds_then_should_throw_meveo_exception() {
-        //Given
-        String entityName = null;
-        PaginationConfiguration searchConfig = new PaginationConfiguration(Collections.emptyMap());
-        assertFindPaginateRecords(null, searchConfig, null, EntityDoesNotExistsException.class, "The entityName should not be null or empty");
-    }
-
-    @Test
-    public void given_empty_entity_name_when_find_paginate_records_then_should_throw_meveo_exception() {
-        //Given
-        String entityName = "";
-        PaginationConfiguration searchConfig = new PaginationConfiguration(Collections.emptyMap());
-        assertFindPaginateRecords(null, searchConfig, null, EntityDoesNotExistsException.class, "The entityName should not be null or empty");
-    }
-
-    @Test
     public void should_transform_paging_and_filtering_to_pagination_configuration() {
         //Given
         HashMap<String, Object> map = new HashMap<>();
@@ -261,7 +245,7 @@ public class GenericApiLoadServiceTest {
         //When
         String response = sut.findPaginatedRecords(Customer.class, paginationConfiguration, Collections.emptySet());
         //Then
-        assertThat(response).contains("{\"id\":0,\"defaultLevel\":true,\"accountType\":\"ACCT_CUST\",\"addressbook\":{\"id\":0},\"parentEntityType\":\"org.meveo.model.admin.Seller\",\"contactInformationNullSafe\":{}},{\"id\":1,\"defaultLevel\":true,\"accountType\":\"ACCT_CUST\",\"addressbook\":{\"id\":1},\"parentEntityType\":\"org.meveo.model.admin.Seller\",\"contactInformationNullSafe\":{}}");
+        assertThat(response).contains("{\"total\":0,\"limit\":3,\"offset\":0,\"data\":[{\"id\":0,\"defaultLevel\":true,\"accountType\":\"ACCT_CUST\",\"addressbook\":{\"id\":0}},{\"id\":1,\"defaultLevel\":true,\"accountType\":\"ACCT_CUST\",\"addressbook\":{\"id\":1}}]}");
     }
 
     private void assertFindPaginateRecords(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Class exception, String message) {
