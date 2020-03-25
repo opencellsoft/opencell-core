@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -139,7 +140,7 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 	 * @param billingRun the billing run
 	 * @return a map of discount amounts grouped by billing account.
 	 */
-	public Map<Class, Map<Long, ThresholdAmounts>> getTotalDiscountAmountByBillingAccount(BillingRun billingRun) {
+	public Map<Class, Map<Long, ThresholdAmounts>> getTotalDiscountAmountByBR(BillingRun billingRun) {
 		List<Object[]> resultSet = getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.sumAmountsDiscountByBillingAccount")
 				.setParameter("billingRunId", billingRun.getId()).getResultList();
 		return getAmountsMap(resultSet);
@@ -150,7 +151,7 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 		Map<Long, ThresholdAmounts> caAmounts = new HashMap<>();
 		Map<Long, ThresholdAmounts> custAmounts = new HashMap<>();
 		for (Object[] result : resultSet) {
-			Amounts amounts = new Amounts((BigDecimal) result[0], (BigDecimal) result[1]);
+
 			Long baId = (Long) result[3];
 			Long caId = (Long) result[4];
 			Long custId = (Long) result[5];
@@ -158,31 +159,31 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 			if (baAmounts.get(baId) == null) {
 				List<Long> invoiceIds = new ArrayList<>();
 				invoiceIds.add((Long) result[2]);
-				ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts, invoiceIds);
+				ThresholdAmounts thresholdAmounts = new ThresholdAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]), invoiceIds);
 				baAmounts.put(baId, thresholdAmounts);
 			} else {
 				ThresholdAmounts thresholdAmounts = baAmounts.get(baId);
-				thresholdAmounts.getAmount().addAmounts(amounts);
+				thresholdAmounts.getAmount().addAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]));
 				thresholdAmounts.getInvoices().add((Long) result[2]);
 			}
 			if (caAmounts.get(caId) == null) {
 				List<Long> invoiceIds = new ArrayList<>();
 				invoiceIds.add((Long) result[2]);
-				ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts, invoiceIds);
+				ThresholdAmounts thresholdAmounts = new ThresholdAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]), invoiceIds);
 				caAmounts.put(caId, thresholdAmounts);
 			} else {
 				ThresholdAmounts thresholdAmounts = caAmounts.get(caId);
-				thresholdAmounts.getAmount().addAmounts(amounts);
+				thresholdAmounts.getAmount().addAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]));
 				thresholdAmounts.getInvoices().add((Long) result[2]);
 			}
 			if (custAmounts.get(custId) == null) {
 				List<Long> invoiceIds = new ArrayList<>();
 				invoiceIds.add((Long) result[2]);
-				ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts, invoiceIds);
+				ThresholdAmounts thresholdAmounts = new ThresholdAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]), invoiceIds);
 				custAmounts.put(custId, thresholdAmounts);
 			} else {
 				ThresholdAmounts thresholdAmounts = custAmounts.get(custId);
-				thresholdAmounts.getAmount().addAmounts(amounts);
+				thresholdAmounts.getAmount().addAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]));
 				thresholdAmounts.getInvoices().add((Long) result[2]);
 			}
 		}
@@ -193,4 +194,9 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 		return accountsAmounts;
 	}
 
+	public void deleteInvoiceAgregates(Set<Long> invoicesIds) {
+		getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.deleteByInvoiceIds").setParameter("invoicesIds", invoicesIds).executeUpdate();
+		getEntityManager().createNamedQuery("InvoiceAgregate.deleteByInvoiceIds").setParameter("invoicesIds", invoicesIds).executeUpdate();
+
+	}
 }

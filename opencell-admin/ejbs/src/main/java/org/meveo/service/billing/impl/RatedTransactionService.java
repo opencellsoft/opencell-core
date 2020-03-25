@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -1767,7 +1768,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param billingRun the billing run
      * @return a map of positive rated transaction grouped by billing account.
      */
-    public Map<Class, Map<Long, ThresholdAmounts>> getTotalPositiveRTAmountsByBillingAccount(BillingRun billingRun) {
+    public Map<Class, Map<Long, ThresholdAmounts>> getTotalPositiveRTAmountsByBR(BillingRun billingRun) {
 
         List<Object[]> resultSet = getEntityManager().createNamedQuery("RatedTransaction.sumPositiveRTByBillingAccount").setParameter("billingRunId", billingRun.getId())
                 .getResultList();
@@ -1779,7 +1780,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<Long, ThresholdAmounts> caAmounts = new HashMap<>();
         Map<Long, ThresholdAmounts> custAmounts = new HashMap<>();
         for (Object[] result : resultSet) {
-            Amounts amounts = new Amounts((BigDecimal) result[0], (BigDecimal) result[1]);
+
             Long baId = (Long) result[3];
             Long caId = (Long) result[4];
             Long custId = (Long) result[5];
@@ -1787,31 +1788,32 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if (baAmounts.get(baId) == null) {
                 List<Long> invoiceIds = new ArrayList<>();
                 invoiceIds.add((Long) result[2]);
-                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts, invoiceIds);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]), invoiceIds);
                 baAmounts.put(baId, thresholdAmounts);
             } else {
                 ThresholdAmounts thresholdAmounts = baAmounts.get(baId);
-                thresholdAmounts.getAmount().addAmounts(amounts);
+                thresholdAmounts.getAmount().addAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]));
                 thresholdAmounts.getInvoices().add((Long) result[2]);
             }
+
             if (caAmounts.get(caId) == null) {
                 List<Long> invoiceIds = new ArrayList<>();
                 invoiceIds.add((Long) result[2]);
-                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts, invoiceIds);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]), invoiceIds);
                 caAmounts.put(caId, thresholdAmounts);
             } else {
                 ThresholdAmounts thresholdAmounts = caAmounts.get(caId);
-                thresholdAmounts.getAmount().addAmounts(amounts);
+                thresholdAmounts.getAmount().addAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]));
                 thresholdAmounts.getInvoices().add((Long) result[2]);
             }
             if (custAmounts.get(custId) == null) {
                 List<Long> invoiceIds = new ArrayList<>();
                 invoiceIds.add((Long) result[2]);
-                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts, invoiceIds);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]), invoiceIds);
                 custAmounts.put(custId, thresholdAmounts);
             } else {
                 ThresholdAmounts thresholdAmounts = custAmounts.get(custId);
-                thresholdAmounts.getAmount().addAmounts(amounts);
+                thresholdAmounts.getAmount().addAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]));
                 thresholdAmounts.getInvoices().add((Long) result[2]);
             }
         }
@@ -1820,5 +1822,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         accountsAmounts.put(CustomerAccount.class, caAmounts);
         accountsAmounts.put(Customer.class, custAmounts);
         return accountsAmounts;
+    }
+
+    /**
+     * Uninvoice RT by a list of invoices Ids.
+     *
+     * @param invoicesIds invoices Ids
+     */
+    public void uninvoiceRTs(Set<Long> invoicesIds) {
+        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoiceIds").setParameter("invoiceIds", invoicesIds).executeUpdate();
+
+    }
+
+    public void deleteSupplementalRTs(Set<Long> invoicesIds) {
+        getEntityManager().createNamedQuery("RatedTransaction.deleteSupplementalRTByInvoiceIds").setParameter("invoicesIds", invoicesIds).executeUpdate();
+
     }
 }

@@ -3633,11 +3633,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Delete invoices associated to a billing run
-     * 
+     *
      * @param billingRun Billing run
      */
     public void deleteInvoices(BillingRun billingRun) {
         getEntityManager().createNamedQuery("Invoice.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
+    }
+
+    public void deleteInvoices(Set<Long> invoicesIds) {
+        getEntityManager().createNamedQuery("Invoice.deleteByIds").setParameter("invoicesIds", invoicesIds).executeUpdate();
     }
 
     /**

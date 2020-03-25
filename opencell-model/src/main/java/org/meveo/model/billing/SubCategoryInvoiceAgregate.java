@@ -55,7 +55,8 @@ import org.meveo.model.catalog.DiscountPlanItem;
                         + " from  SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId and ia.discountAggregate = true group by ia.invoice.id, ia.billingAccount.customerAccount.id"),
         @NamedQuery(name = "SubCategoryInvoiceAgregate.sumAmountsDiscountByCustomer", query =
                 "select sum(ia.amountWithoutTax), sum(ia.amountWithTax), ia.invoice.id, ia.billingAccount.customerAccount.customer.id"
-                        + " from  SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId and ia.discountAggregate = true group by ia.invoice.id, ia.billingAccount.customerAccount.customer.id") })
+                        + " from  SubCategoryInvoiceAgregate ia where ia.billingRun.id=:billingRunId and ia.discountAggregate = true group by ia.invoice.id, ia.billingAccount.customerAccount.customer.id"),
+        @NamedQuery(name = "SubCategoryInvoiceAgregate.deleteByInvoiceIds", query = "delete from SubCategoryInvoiceAgregate ia where ia.invoice.id IN (:invoicesIds)") })
 public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
     /** The Constant serialVersionUID. */

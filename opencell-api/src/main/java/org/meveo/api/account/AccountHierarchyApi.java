@@ -359,6 +359,7 @@ public class AccountHierarchyApi extends BaseApi {
         customerAccountDto.setLanguage(postData.getLanguageCode());
         customerAccountDto.setDateDunningLevel(new Date());
         customerAccountDto.setJobTitle(postData.getJobTitle());
+        customerAccountDto.setInvoicingThreshold(postData.getCustomerAccountInvoicingThreshold());
         if (postData.getCustomerAccountCheckThreshold() == null) {
             customerAccountDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
         } else {
