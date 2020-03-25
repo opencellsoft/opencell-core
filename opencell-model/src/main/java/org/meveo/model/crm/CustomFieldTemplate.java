@@ -269,7 +269,7 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
     @Type(type = "numeric_boolean")
     @Column(name = "anonymize_gdpr")
     @NotNull
-    private boolean anonymizeGdpr;
+    private boolean anonymizeGdpr = false;
 
     /**
      * If true, field wont be visible/appicable on new entity entry
