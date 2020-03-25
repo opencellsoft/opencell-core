@@ -230,8 +230,8 @@ public class GenericApiLoadServiceTest {
         //Then
         assertThat(searchConfig.getFirstRow()).isEqualTo(offset);
         assertThat(searchConfig.getNumberOfRows()).isEqualTo(limit);
-        assertThat(searchConfig.getSortField()).isEqualTo(sortBy);
-        assertThat(searchConfig.getOrdering().name()).isEqualTo(order.name());
+        assertThat(searchConfig.getFirstSortField()).isEqualTo(sortBy);
+        assertThat(searchConfig.getFirstSortOrder().name()).isEqualTo(order.name());
     }
 
     @Test
