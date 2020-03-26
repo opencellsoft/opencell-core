@@ -116,7 +116,7 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
 
     /**
      * Convert/update DTO object to an entity object
-     * 
+     *
      * @param postData DTO object
      * @param chargeTemplate Entity object to update
      * @return A new or updated entity object

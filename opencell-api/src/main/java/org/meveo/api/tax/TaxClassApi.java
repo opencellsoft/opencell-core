@@ -18,7 +18,7 @@
 
 package org.meveo.api.tax;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -26,10 +26,13 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.tax.TaxClassDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.tax.TaxClassService;
 
@@ -121,7 +124,7 @@ public class TaxClassApi extends BaseCrudApi<TaxClass, TaxClassDto> {
     }
 
     @Override
-    protected Function<TaxClass, TaxClassDto> getEntityToDtoFunction() {
+    protected BiFunction<TaxClass, CustomFieldsDto, TaxClassDto> getEntityToDtoFunction() {
         return TaxClassDto::new;
     }
 
@@ -146,5 +149,16 @@ public class TaxClassApi extends BaseCrudApi<TaxClass, TaxClassDto> {
             entity.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getDescriptionI18n(), entity.getDescriptionI18n()));
         }
 
+        // populate customFields
+        try {
+            populateCustomFields(dto.getCustomFields(), entity, isNew, true);
+
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
     }
 }

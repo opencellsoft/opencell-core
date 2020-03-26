@@ -2695,6 +2695,12 @@ END $$;]]>
             </column>
         </addColumn>
     </changeSet>
+    <changeSet id="#4071_20200227" author="khalidHORRI">
+        <addColumn tableName="cat_charge_template">
+            <column name="drop_zero_wo" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
 
     <changeSet author="abdelkader.bouazza"  id="#4894-Additional_fields_in_RT">
         <addColumn tableName="billing_rated_transaction">
@@ -2721,11 +2727,29 @@ END $$;]]>
         <addForeignKeyConstraint baseColumnNames="rating_script_id" baseTableName="cat_charge_template" constraintName="fk_charge_template_rating_script_id" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
     </changeSet>
-    
+
     <changeSet id="#5038_2020-03-06" author="AndriusKarpavicius">
-        <dropNotNullConstraint tableName="meveo_script_instance" columnName="script"/>    
+        <dropNotNullConstraint tableName="meveo_script_instance" columnName="script"/>
     </changeSet>
 
+    <changeSet id="#5064_2020-03-15" author="AndriusKarpavicius">
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob')</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_FlatFileProcessingJob'</sql>
+    </changeSet>
+    <changeSet author="abdelkader.bouazza" id="#4891-Copy-recurrence-calendar-and-applyInAdvance-to-RecurringChargeInstance-from-a-RecurringChargeTemplate">
+        <addColumn tableName="billing_charge_instance">
+            <column name="calendar_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="billing_charge_instance">
+            <column name="apply_in_advance" type="${type.boolean}" />
+        </addColumn>
+        <sql>UPDATE ${db.schema.adapted}billing_charge_instance AS bci
+            SET calendar_id = cct.calendar_id,
+            apply_in_advance = cct.apply_in_advance
+            FROM ${db.schema.adapted}cat_charge_template AS cct
+            WHERE bci.charge_template_id = cct.id
+        </sql>
+    </changeSet>
     <changeSet id="#5014_20200313" author="khalidHORRI">
         <addColumn tableName="crm_customer">
             <column name="invoicing_threshold" type="numeric(23, 12)"/>

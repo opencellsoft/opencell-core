@@ -80,6 +80,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
             RatedTransactionsJobAggregationSetting aggregationSetting = new RatedTransactionsJobAggregationSetting();
 
             aggregationSetting.setEnable((boolean) this.getParamOrCFValue(jobInstance, "activateAggregation", false));
+            removeZeroWalletOperation();
             if (aggregationSetting.isEnable()) {
                 aggregationSetting.setAggregateGlobally((boolean) this.getParamOrCFValue(jobInstance, "globalAggregation"));
                 aggregationSetting.setAggregateByDay((boolean) this.getParamOrCFValue(jobInstance, "aggregateByDay"));
@@ -89,6 +90,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
                 }
                 aggregationSetting.setAggregationLevel(AggregationLevelEnum.valueOf(aggregationLevel));
                 aggregationSetting.setAggregateByOrder((boolean) this.getParamOrCFValue(jobInstance, "aggregateByOrder", false));
+                aggregationSetting.setAggregateByUnitAmount((boolean) this.getParamOrCFValue(jobInstance, "aggregateByUnitAmount", false));
                 aggregationSetting.setAggregateByParam1((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam1", false));
                 aggregationSetting.setAggregateByParam2((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam2", false));
                 aggregationSetting.setAggregateByParam3((boolean) this.getParamOrCFValue(jobInstance, "aggregateByParam3", false));
@@ -103,6 +105,11 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         } catch (Exception e) {
             log.error("Failed to rate transactions", e);
         }
+    }
+
+    private void removeZeroWalletOperation() {
+        log.info("Remove wellet oprations rated to 0");
+        walletOperationService.removeZeroWalletOperation();
     }
 
     private void executeWithoutAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis) throws Exception {

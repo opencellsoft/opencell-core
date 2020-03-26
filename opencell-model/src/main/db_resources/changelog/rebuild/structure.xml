@@ -10002,6 +10002,5 @@ $$ LANGUAGE plpgsql;
     <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
         <delete tableName="DATABASECHANGELOG" />
     </changeSet>
-    
 </databaseChangeLog>
 

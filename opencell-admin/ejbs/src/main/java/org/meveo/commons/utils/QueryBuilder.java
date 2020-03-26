@@ -35,6 +35,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
+import org.primefaces.model.SortOrder;
 
 /**
  * Query builder class for building JPA queries.
@@ -1020,7 +1021,10 @@ public class QueryBuilder {
         }
 
         if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1) {
-            addOrderCriterion(((alias != null) ? (alias + ".") : "") + paginationConfiguration.getSortField(), paginationConfiguration.isAscendingSorting());
+            Object[] orderings = paginationConfiguration.getOrderings();
+            for (int i = 0; i < orderings.length; i = i + 2) {
+                addOrderCriterion(((alias != null) ? (alias + ".") : "") + orderings[i], orderings[i + 1] == SortOrder.ASCENDING);
+            }
         }
     }
 

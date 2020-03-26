@@ -98,7 +98,7 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
 
     /**
      * Convert/update DTO object to an entity object
-     * 
+     *
      * @param postData DTO object
      * @param chargeTemplate Entity object to update
      * @return A new or updated entity object

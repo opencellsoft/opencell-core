@@ -81,6 +81,7 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.customEntities.CustomTableRecord;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.NativePersistenceService;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.index.ElasticSearchClassInfo;
@@ -105,8 +106,8 @@ public class CustomTableService extends NativePersistenceService {
 
     public static final String ONLY_DIGIT_REGEX = "^-{0,1}[0-9]*$";
 
-	private static final int MAX_DISPLAY_COLUMNS = 5;
-    
+    private static final int MAX_DISPLAY_COLUMNS = 5;
+
     @Inject
     private ElasticClient elasticClient;
 
@@ -124,7 +125,6 @@ public class CustomTableService extends NativePersistenceService {
 
     @Inject
     private CustomEntityTemplateService customEntityTemplateService;
-
 
     @Override
     public Long create(String tableName, Map<String, Object> values) throws BusinessException {
@@ -162,7 +162,7 @@ public class CustomTableService extends NativePersistenceService {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void createInNewTx(String tableName, String code , List<Map<String, Object>> values, boolean updateES) throws BusinessException {
+    public void createInNewTx(String tableName, String code, List<Map<String, Object>> values, boolean updateES) throws BusinessException {
 
         // Insert record to db, with ID returned, but flush to ES after the values are processed
         if (updateES) {
@@ -233,22 +233,22 @@ public class CustomTableService extends NativePersistenceService {
 
     @Override
     public void remove(String tableName, Long id) throws BusinessException {
-    	validateExistance(tableName, Arrays.asList(id));
-    	super.remove(tableName, id);
-    	elasticClient.remove(CustomTableRecord.class, tableName, id, true);
+        validateExistance(tableName, Arrays.asList(id));
+        super.remove(tableName, id);
+        elasticClient.remove(CustomTableRecord.class, tableName, id, true);
     }
 
     @Override
     public void remove(String tableName, Set<Long> ids) throws BusinessException {
-    	validateExistance(tableName, new ArrayList<Long>(ids));
-    	removeWithoutCheck(tableName, ids);
+        validateExistance(tableName, new ArrayList<Long>(ids));
+        removeWithoutCheck(tableName, ids);
     }
 
-	public void removeWithoutCheck(String tableName, Set<Long> ids) {
-		super.remove(tableName, ids);
+    public void removeWithoutCheck(String tableName, Set<Long> ids) {
+        super.remove(tableName, ids);
         customEntityInstanceService.remove(tableName, ids);
         elasticClient.remove(CustomTableRecord.class, tableName, ids, true);
-	}
+    }
 
     @Override
     public void remove(String tableName) throws BusinessException {
@@ -407,10 +407,10 @@ public class CustomTableService extends NativePersistenceService {
             }
         });
 
-        Map<String, CustomFieldTemplate> cftsMap = new HashMap<>(); 
+        Map<String, CustomFieldTemplate> cftsMap = new HashMap<>();
         for (CustomFieldTemplate cft : fields) {
-        	cftsMap.put(cft.getCode(), cft);
-        	cftsMap.put(cft.getDbFieldname(), cft);
+            cftsMap.put(cft.getCode(), cft);
+            cftsMap.put(cft.getDbFieldname(), cft);
         }
 
         String tableName = customEntityTemplate.getDbTablename();
@@ -437,7 +437,7 @@ public class CustomTableService extends NativePersistenceService {
                 // Save to DB every 500 records
                 if (importedLines >= 500) {
 
-                	values = convertValues(values, cftsMap, false);
+                    values = convertValues(values, cftsMap, false);
                     customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), values, updateESImediately);
 
                     values.clear();
@@ -458,7 +458,6 @@ public class CustomTableService extends NativePersistenceService {
             // Save to DB remaining records
             values = convertValues(values, cftsMap, false);
             customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), values, updateESImediately);
-            
 
             // Re-populate ES index
             if (!updateESImediately) {
@@ -481,8 +480,8 @@ public class CustomTableService extends NativePersistenceService {
      * Import data into custom table
      *
      * @param customEntityTemplate Custom table definition
-     * @param values               A list of records to import. Each record is a map of values with field name as a map key and field value as a value.
-     * @param append               True if data should be appended to the existing data
+     * @param values A list of records to import. Each record is a map of values with field name as a map key and field value as a value.
+     * @param append True if data should be appended to the existing data
      * @return Number of records imported
      * @throws BusinessException General business exception
      */
@@ -507,12 +506,12 @@ public class CustomTableService extends NativePersistenceService {
             }
         });
 
-        Map<String, CustomFieldTemplate> cftsMap = new HashMap<>(); 
+        Map<String, CustomFieldTemplate> cftsMap = new HashMap<>();
         for (CustomFieldTemplate cft : fields) {
-        	cftsMap.put(cft.getCode(), cft);
-        	cftsMap.put(cft.getDbFieldname(), cft);
+            cftsMap.put(cft.getCode(), cft);
+            cftsMap.put(cft.getDbFieldname(), cft);
         }
-       
+
         String tableName = customEntityTemplate.getDbTablename();
         int importedLines = 0;
         int importedLinesTotal = 0;
@@ -535,7 +534,7 @@ public class CustomTableService extends NativePersistenceService {
 
                 // Save to DB every 1000 records
                 if (importedLines >= 1000) {
-                	valuesPartial = convertValues(valuesPartial, cftsMap, false);
+                    valuesPartial = convertValues(valuesPartial, cftsMap, false);
                     customTableService.createInNewTx(tableName, customEntityTemplate.getCode(), valuesPartial, updateESImediately);
 
                     valuesPartial.clear();
@@ -576,8 +575,7 @@ public class CustomTableService extends NativePersistenceService {
         builder.addColumn(NativePersistenceService.FIELD_ID, ColumnType.NUMBER);
 
         for (CustomFieldTemplate cft : fields) {
-            builder.addColumn(cft.getDbFieldname(),
-                cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE ? ColumnType.NUMBER : ColumnType.STRING);
+            builder.addColumn(cft.getDbFieldname(), cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE ? ColumnType.NUMBER : ColumnType.STRING);
         }
 
         CsvSchema schema = builder.setUseHeader(true).setStrictHeaders(true).setReorderColumns(true).build();
@@ -597,15 +595,13 @@ public class CustomTableService extends NativePersistenceService {
         builder.addColumn(NativePersistenceService.FIELD_ID, ColumnType.NUMBER);
 
         for (CustomFieldTemplate cft : fields) {
-            builder.addColumn(cft.getDbFieldname(),
-                cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE ? ColumnType.NUMBER : ColumnType.STRING);
+            builder.addColumn(cft.getDbFieldname(), cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE ? ColumnType.NUMBER : ColumnType.STRING);
         }
 
         CsvSchema schema = builder.setUseHeader(true).build();
         CsvMapper mapper = new CsvMapper();
 
-        return mapper.writerFor(Map.class).with(schema).with(new SimpleDateFormat(ParamBean.getInstance().getDateTimeFormat(appProvider.getCode())))
-            .with(Feature.WRITE_BIGDECIMAL_AS_PLAIN);
+        return mapper.writerFor(Map.class).with(schema).with(new SimpleDateFormat(ParamBean.getInstance().getDateTimeFormat(appProvider.getCode()))).with(Feature.WRITE_BIGDECIMAL_AS_PLAIN);
     }
 
     /**
@@ -622,8 +618,8 @@ public class CustomTableService extends NativePersistenceService {
      * @return Search result
      * @throws BusinessException General business exception
      */
-    public List<Map<String, Object>> search(String cetCodeOrTablename, Map<String, Object> queryValues, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders,
-            String[] returnFields) throws BusinessException {
+    public List<Map<String, Object>> search(String cetCodeOrTablename, Map<String, Object> queryValues, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields)
+            throws BusinessException {
 
         ElasticSearchClassInfo classInfo = new ElasticSearchClassInfo(CustomTableRecord.class, cetCodeOrTablename);
         SearchResponse searchResult = elasticClient.search(queryValues, from, size, sortFields, sortOrders, returnFields, Arrays.asList(classInfo));
@@ -679,7 +675,7 @@ public class CustomTableService extends NativePersistenceService {
         }
     }
 
-     void removeEmptyKeys(Map<String, Object> queryValues) {
+    void removeEmptyKeys(Map<String, Object> queryValues) {
         queryValues.entrySet().removeIf(e -> e.getKey().isEmpty());
     }
 
@@ -698,8 +694,8 @@ public class CustomTableService extends NativePersistenceService {
         Map<String, Object> values = new HashMap<>(queryValues);
         values.put("minmaxRange valid_from valid_to", date);
 
-        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_VALID_PRIORITY, FIELD_VALID_FROM, FIELD_ID },
-            new SortOrder[] { SortOrder.DESC, SortOrder.DESC, SortOrder.DESC }, new String[] { fieldToReturn });
+        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_VALID_PRIORITY, FIELD_VALID_FROM, FIELD_ID }, new SortOrder[] { SortOrder.DESC, SortOrder.DESC, SortOrder.DESC },
+            new String[] { fieldToReturn });
 
         if (results == null || results.isEmpty()) {
             return null;
@@ -745,8 +741,8 @@ public class CustomTableService extends NativePersistenceService {
         Map<String, Object> values = new HashMap<>(queryValues);
         values.put("minmaxRange valid_from valid_to", date);
 
-        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_VALID_PRIORITY, FIELD_VALID_FROM, FIELD_ID },
-            new SortOrder[] { SortOrder.DESC, SortOrder.DESC, SortOrder.DESC }, fieldsToReturn);
+        List<Map<String, Object>> results = search(cetCodeOrTablename, values, 0, 1, new String[] { FIELD_VALID_PRIORITY, FIELD_VALID_FROM, FIELD_ID }, new SortOrder[] { SortOrder.DESC, SortOrder.DESC, SortOrder.DESC },
+            fieldsToReturn);
 
         if (results == null || results.isEmpty()) {
             return null;
@@ -770,10 +766,10 @@ public class CustomTableService extends NativePersistenceService {
             return null;
         }
 
-        Map<String, CustomFieldTemplate> cftsMap = new HashMap<>(); 
+        Map<String, CustomFieldTemplate> cftsMap = new HashMap<>();
         for (CustomFieldTemplate cft : fields) {
-        	cftsMap.put(cft.getCode(), cft);
-        	cftsMap.put(cft.getDbFieldname(), cft);
+            cftsMap.put(cft.getCode(), cft);
+            cftsMap.put(cft.getDbFieldname(), cft);
         }
 
         return convertValues(values, cftsMap, discardNull);
@@ -786,13 +782,12 @@ public class CustomTableService extends NativePersistenceService {
      * @param values A map of values with field name of customFieldTemplate code as a key and field value as a value
      * @param fields Field definitions with field name or field code as a key and data class as a value
      * @param discardNull If True, null values will be discarded
-     * @param regexpFields 
-     * @param classNames 
+     * @param regexpFields
+     * @param classNames
      * @return Converted values with db field name as a key and field value as value.
      * @throws ValidationException
      */
-    public List<Map<String, Object>> convertValues(List<Map<String, Object>> values, Map<String, CustomFieldTemplate> cftsMap, boolean discardNull)
-            throws ValidationException {
+    public List<Map<String, Object>> convertValues(List<Map<String, Object>> values, Map<String, CustomFieldTemplate> cftsMap, boolean discardNull) throws ValidationException {
 
         if (values == null) {
             return null;
@@ -819,17 +814,16 @@ public class CustomTableService extends NativePersistenceService {
      * @return Converted values with db field name as a key and field value as value.
      * @throws ValidationException
      */
-    public Map<String, Object> convertValue(Map<String, Object> values, Collection<CustomFieldTemplate> fields, boolean discardNull, String[] datePatterns)
-            throws ValidationException {
+    public Map<String, Object> convertValue(Map<String, Object> values, Collection<CustomFieldTemplate> fields, boolean discardNull, String[] datePatterns) throws ValidationException {
 
         if (values == null) {
             return null;
         }
 
-        Map<String, CustomFieldTemplate> cftsMap = new HashMap<>(); 
+        Map<String, CustomFieldTemplate> cftsMap = new HashMap<>();
         for (CustomFieldTemplate cft : fields) {
-        	cftsMap.put(cft.getCode(), cft);
-        	cftsMap.put(cft.getDbFieldname(), cft);
+            cftsMap.put(cft.getCode(), cft);
+            cftsMap.put(cft.getDbFieldname(), cft);
         }
 
         return convertValue(values, cftsMap, discardNull, datePatterns);
@@ -843,14 +837,13 @@ public class CustomTableService extends NativePersistenceService {
      * @param discardNull If True, null values will be discarded
      * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
      *        standard date and time and then date only patterns will be applied.
-     * @param classNames 
-     * @param regexpFields 
+     * @param classNames
+     * @param regexpFields
      * @return Converted values with db field name as a key and field value as value.
      * @throws ValidationException
      */
     @SuppressWarnings("rawtypes")
-    private Map<String, Object> convertValue(Map<String, Object> values, Map<String, CustomFieldTemplate> cftsMap, boolean discardNull, String[] datePatterns)
-            throws ValidationException {
+    private Map<String, Object> convertValue(Map<String, Object> values, Map<String, CustomFieldTemplate> cftsMap, boolean discardNull, String[] datePatterns) throws ValidationException {
 
         if (values == null) {
             return null;
@@ -861,7 +854,7 @@ public class CustomTableService extends NativePersistenceService {
         // Handle ID field
         Object id = values.get(FIELD_ID);
         if (id != null) {
-            valuesConverted.put(FIELD_ID, castValue(id, Long.class, false, datePatterns,null));
+            valuesConverted.put(FIELD_ID, castValue(id, Long.class, false, datePatterns, null));
         }
 
         // Convert field based on data type
@@ -871,30 +864,37 @@ public class CustomTableService extends NativePersistenceService {
                 String key = valueEntry.getKey();
                 String[] fieldInfo = key.split(" ");
                 String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1]; // field name here can be a db field name or a custom field code
-                
+                Object value = valueEntry.getValue();
+
                 if (fieldName.equals(FIELD_ID)) {
                     continue; // Was handled before already
                 }
-                
-                CustomFieldTemplate cft = cftsMap.get(fieldName);  
+
+                if (PersistenceService.SEARCH_ATTR_TYPE_CLASS.equals(fieldName) || PersistenceService.SEARCH_SQL.equals(key)
+                        || (value != null && value instanceof String && (PersistenceService.SEARCH_IS_NOT_NULL.equals((String) value) || PersistenceService.SEARCH_IS_NULL.equals((String) value)))) {
+                    valuesConverted.put(key, value);
+                    continue;
+                }
+
+                CustomFieldTemplate cft = cftsMap.get(fieldName);
                 if (cft == null) {
                     throw new ValidationException("No field definition " + fieldName + " was found");
                 }
-                if (valueEntry.getValue() == null && !discardNull) {
+                if (value == null && !discardNull) {
                     // must check the default value
                     valuesConverted.put(key, cft.getDefaultValueConverted());
 
-                } else if (FIELD_DISABLED.equals(key) && (BigDecimal) valueEntry.getValue() != BigDecimal.ZERO) {
+                } else if (FIELD_DISABLED.equals(key) && (BigDecimal) value != BigDecimal.ZERO) {
 
                     valuesConverted.put(key, 1);
 
-                } else if (valueEntry.getValue() != null) {
+                } else if (value != null) {
 
                     Class dataClass = cft.getFieldType().getDataClass();
                     if (dataClass == null) {
                         throw new ValidationException("No field definition " + fieldName + " was found");
                     }
-					Object value = castValue(valueEntry.getValue(), dataClass, false, datePatterns, cft);
+                    value = castValue(value, dataClass, false, datePatterns, cft);
 
                     // Replace cft code with db field name if needed
                     String dbFieldname = CustomFieldTemplate.getDbFieldname(fieldName);
@@ -918,7 +918,7 @@ public class CustomTableService extends NativePersistenceService {
     }
 
     @SuppressWarnings("unchecked")
-	private Map<String, Object> findRecordByIdAndTableName(Long id, String tableName) {
+    private Map<String, Object> findRecordByIdAndTableName(Long id, String tableName) {
         QueryBuilder queryBuilder = getQuery(tableName, null);
         queryBuilder.addCriterion("id", "=", id, true);
         Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
@@ -927,130 +927,125 @@ public class CustomTableService extends NativePersistenceService {
 
     public List<CustomTableRecordDto> selectAllRecordsOfATableAsRecord(String tableName, String wildCode) {
 
-		try {
-			String endOfLine = "}";
-			Map<String, CustomFieldTemplate> cftl = customFieldTemplateService.findCFTsByDbTbleName(tableName);
-			List<String> fields = cftl.values().stream().filter(x -> x.isUniqueConstraint())
-					.map(x -> x.getDbFieldname()).collect(Collectors.toList());
-			if (fields.isEmpty()) {
-				fields = cftl.values().stream().filter(x -> x.getGUIFieldPosition() < MAX_DISPLAY_COLUMNS)
-						.map(x -> x.getDbFieldname()).collect(Collectors.toList());
-				if (cftl.size() > MAX_DISPLAY_COLUMNS) {
-					endOfLine = ", ... }";
-				}
-			}
-			String eol = endOfLine;
-			List<Map<String, Object>> mapList = extractMapListByFields(tableName, wildCode, fields);
-			return mapList.stream().map(x-> new CustomTableRecordDto(getDisplay(tableName, x, eol),x)).collect(Collectors.toList());
-        } catch (Exception ex) {
-            return Collections.EMPTY_LIST;
-        }
-	}
-	
-    private String getDisplay(String tableName, Map<String, Object> line, String endOfLine) {
-    	String vals = line.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
-        .collect(Collectors.joining(","));
-		return tableName + " {"+vals+endOfLine;
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Map<String, Object>> selectAllRecordsOfATableAsMap(String tableName, String wildCode) {
         try {
-        	Map<String, CustomFieldTemplate> cftl = customFieldTemplateService.findCFTsByDbTbleName(tableName);
-        	List<String> fields = cftl.values().stream().filter(x->x.isUniqueConstraint() ).map(x->x.getDbFieldname()).collect(Collectors.toList());
-    		if(fields.isEmpty()) {
-    			fields= cftl.values().stream().filter(x->x.getGUIFieldPosition()<MAX_DISPLAY_COLUMNS).map(x->x.getDbFieldname()).collect(Collectors.toList());
-    		}
-        	return extractMapListByFields(tableName, wildCode, fields);
+            String endOfLine = "}";
+            Map<String, CustomFieldTemplate> cftl = customFieldTemplateService.findCFTsByDbTbleName(tableName);
+            List<String> fields = cftl.values().stream().filter(x -> x.isUniqueConstraint()).map(x -> x.getDbFieldname()).collect(Collectors.toList());
+            if (fields.isEmpty()) {
+                fields = cftl.values().stream().filter(x -> x.getGUIFieldPosition() < MAX_DISPLAY_COLUMNS).map(x -> x.getDbFieldname()).collect(Collectors.toList());
+                if (cftl.size() > MAX_DISPLAY_COLUMNS) {
+                    endOfLine = ", ... }";
+                }
+            }
+            String eol = endOfLine;
+            List<Map<String, Object>> mapList = extractMapListByFields(tableName, wildCode, fields);
+            return mapList.stream().map(x -> new CustomTableRecordDto(getDisplay(tableName, x, eol), x)).collect(Collectors.toList());
         } catch (Exception ex) {
             return Collections.EMPTY_LIST;
         }
     }
 
-	public List<Map<String, Object>> extractMapListByFields(String tableName, String wildCode, List<String> fields) {
-		List<String> fetchFields= new ArrayList<>();
-		fetchFields.add(FIELD_ID);
-		fetchFields.addAll(fields);
-		PaginationConfiguration pc = new PaginationConfiguration(null);
-		pc.setFetchFields(fetchFields);
-		QueryBuilder qb = getQuery(tableName, pc );
-		if(!StringUtils.isEmpty(wildCode)) {
-			qb.addSql(" cast("+FIELD_ID+" as varchar(100)) like :id");
-		}
-		Query query = qb.getNativeQuery(getEntityManager(), true);
-		if(!StringUtils.isEmpty(wildCode)) {
-			query.setParameter("id", "%" + wildCode.toLowerCase() + "%");
-		}
-		return  query.list();
-	}
-    
+    private String getDisplay(String tableName, Map<String, Object> line, String endOfLine) {
+        String vals = line.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining(","));
+        return tableName + " {" + vals + endOfLine;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> selectAllRecordsOfATableAsMap(String tableName, String wildCode) {
+        try {
+            Map<String, CustomFieldTemplate> cftl = customFieldTemplateService.findCFTsByDbTbleName(tableName);
+            List<String> fields = cftl.values().stream().filter(x -> x.isUniqueConstraint()).map(x -> x.getDbFieldname()).collect(Collectors.toList());
+            if (fields.isEmpty()) {
+                fields = cftl.values().stream().filter(x -> x.getGUIFieldPosition() < MAX_DISPLAY_COLUMNS).map(x -> x.getDbFieldname()).collect(Collectors.toList());
+            }
+            return extractMapListByFields(tableName, wildCode, fields);
+        } catch (Exception ex) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    public List<Map<String, Object>> extractMapListByFields(String tableName, String wildCode, List<String> fields) {
+        List<String> fetchFields = new ArrayList<>();
+        fetchFields.add(FIELD_ID);
+        fetchFields.addAll(fields);
+        PaginationConfiguration pc = new PaginationConfiguration(null);
+        pc.setFetchFields(fetchFields);
+        QueryBuilder qb = getQuery(tableName, pc);
+        if (!StringUtils.isEmpty(wildCode)) {
+            qb.addSql(" cast(" + FIELD_ID + " as varchar(100)) like :id");
+        }
+        Query query = qb.getNativeQuery(getEntityManager(), true);
+        if (!StringUtils.isEmpty(wildCode)) {
+            query.setParameter("id", "%" + wildCode.toLowerCase() + "%");
+        }
+        return query.list();
+    }
+
     public boolean containsRecordOfTableByColumn(String tableName, String columnName, Long id) {
         QueryBuilder queryBuilder = getQuery(tableName, null);
         queryBuilder.addCriterion(columnName, "=", id, true);
         Query query = queryBuilder.getNativeQuery(getEntityManager(), true);
         return !query.list().isEmpty();
     }
-    
-	/**
-	 * Fetch entity from a referenceWrapper. This method return the wrapped object if it's an entity managed or a CustomEntity,
-	 *  but return a map of values if the wrapped object is a reference to a custom table
-	 * 
-	 * @param referenceWrapper
-	 * @return
-	 */
-	public Object findEntityFromReference(EntityReferenceWrapper referenceWrapper) {
-		String classname = referenceWrapper.getClassname();
-		String code = referenceWrapper.getCode();
-		String classnameCode = referenceWrapper.getClassnameCode();
-		return findEntityByClassNameAndKey(classname, code, classnameCode);
-	}
 
-	private Object findEntityByClassNameAndKey(String classname, String code, String classnameCode) {
-		if (classname.equals(CustomEntityInstance.class.getName())) {
-			CustomEntityTemplate cet = customEntityTemplateService.findByCode(classnameCode);
-			if (cet.isStoreAsTable()) {
-				return findRecordByIdAndTableName( Long.parseLong(code),cet.getDbTablename());
-			}else {
-				return customEntityInstanceService.findByCodeByCet(cet.getDbTablename(), code);
-			}
-		} else {
-			try {
-				return customEntityInstanceService.findByEntityClassAndCode(Class.forName(classname), code);
-			} catch (ClassNotFoundException e) {
-				log.error("class in the ClassRefWrapper " + classname + " not found ", e);
-			}
-		}
-		return null;
-	}
+    /**
+     * Fetch entity from a referenceWrapper. This method return the wrapped object if it's an entity managed or a CustomEntity, but return a map of values if the wrapped object is
+     * a reference to a custom table
+     * 
+     * @param referenceWrapper
+     * @return
+     */
+    public Object findEntityFromReference(EntityReferenceWrapper referenceWrapper) {
+        String classname = referenceWrapper.getClassname();
+        String code = referenceWrapper.getCode();
+        String classnameCode = referenceWrapper.getClassnameCode();
+        return findEntityByClassNameAndKey(classname, code, classnameCode);
+    }
 
-	public List<Map<String, Object>> completeWithEntities(List<Map<String, Object>> list, Map<String, CustomFieldTemplate> cfts, int loadReferenceDepth) {
+    private Object findEntityByClassNameAndKey(String classname, String code, String classnameCode) {
+        if (classname.equals(CustomEntityInstance.class.getName())) {
+            CustomEntityTemplate cet = customEntityTemplateService.findByCode(classnameCode);
+            if (cet.isStoreAsTable()) {
+                return findRecordByIdAndTableName(Long.parseLong(code), cet.getDbTablename());
+            } else {
+                return customEntityInstanceService.findByCodeByCet(cet.getDbTablename(), code);
+            }
+        } else {
+            try {
+                return customEntityInstanceService.findByEntityClassAndCode(Class.forName(classname), code);
+            } catch (ClassNotFoundException e) {
+                log.error("class in the ClassRefWrapper " + classname + " not found ", e);
+            }
+        }
+        return null;
+    }
+
+    public List<Map<String, Object>> completeWithEntities(List<Map<String, Object>> list, Map<String, CustomFieldTemplate> cfts, int loadReferenceDepth) {
         list.forEach(map -> completeWithEntities(cfts, map, 0, loadReferenceDepth));
         return list;
     }
 
-	public void completeWithEntities(Map<String, CustomFieldTemplate> cfts, Map<String, Object> map, int currentDepth, int maxDepth) {
+    public void completeWithEntities(Map<String, CustomFieldTemplate> cfts, Map<String, Object> map, int currentDepth, int maxDepth) {
         if (currentDepth < maxDepth) {
             Map<String, CustomFieldTemplate> reference = toLowerCaseKeys(cfts);
-            map.entrySet().stream().filter(entry -> reference.containsKey(entry.getKey().toLowerCase()))
-                    .forEach(entry -> replaceIdValueByItsRepresentation(reference, entry, currentDepth, maxDepth));
+            map.entrySet().stream().filter(entry -> reference.containsKey(entry.getKey().toLowerCase())).forEach(entry -> replaceIdValueByItsRepresentation(reference, entry, currentDepth, maxDepth));
         }
     }
 
     public void replaceIdValueByItsRepresentation(Map<String, CustomFieldTemplate> reference, Map.Entry<String, Object> entry, int currentDepth, int maxDepth) {
         if (entry.getValue() != null && entry.getValue().toString().matches(ONLY_DIGIT_REGEX)) {
             CustomFieldTemplate customFieldTemplate = reference.get(entry.getKey().toLowerCase());
-            Optional.ofNullable(customFieldTemplate).filter(field -> Objects.nonNull(field.getEntityClazz()))
-                    .map(field -> getEitherTableOrEntityValue(field, Long.valueOf(entry.getValue().toString()))).filter(values -> values.size() > 0)
-                    .ifPresent(values -> replaceValue(entry, customFieldTemplate, values, currentDepth, maxDepth));
+            Optional.ofNullable(customFieldTemplate).filter(field -> Objects.nonNull(field.getEntityClazz())).map(field -> getEitherTableOrEntityValue(field, Long.valueOf(entry.getValue().toString())))
+                .filter(values -> values.size() > 0).ifPresent(values -> replaceValue(entry, customFieldTemplate, values, currentDepth, maxDepth));
         }
     }
-    
+
     public Map<String, Object> getEitherTableOrEntityValue(CustomFieldTemplate field, Long id) {
         CustomEntityTemplate relatedEntity = customEntityTemplateService.findByCode(field.tableName());
-        if (relatedEntity != null ) {
-        	if(relatedEntity.isStoreAsTable()) {
-        		return findRecordOfTableById(field, id);
-        	}
+        if (relatedEntity != null) {
+            if (relatedEntity.isStoreAsTable()) {
+                return findRecordOfTableById(field, id);
+            }
             return Optional.ofNullable(customEntityInstanceService.findById(id)).map(customEntityInstanceService::customEntityInstanceAsMapWithCfValues).orElse(new HashMap<>());
         }
         return findByClassAndId(field.getEntityClazz(), id);
@@ -1060,61 +1055,61 @@ public class CustomTableService extends NativePersistenceService {
         entry.setValue(values);
         final int depth = ++currentDepth;
         Optional.ofNullable(customEntityTemplateService.findByCodeOrDbTablename(customFieldTemplate.tableName()))
-                .ifPresent(cet -> completeWithEntities(customFieldTemplateService.findByAppliesTo(cet.getAppliesTo()), values, depth, maxDepth));
+            .ifPresent(cet -> completeWithEntities(customFieldTemplateService.findByAppliesTo(cet.getAppliesTo()), values, depth, maxDepth));
     }
 
     public Map<String, CustomFieldTemplate> toLowerCaseKeys(Map<String, CustomFieldTemplate> cfts) {
         return cfts.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().toLowerCase(), Map.Entry::getValue));
     }
-    
-	public Map<String, CustomFieldTemplate> validateCfts(CustomEntityTemplate cet, boolean checkDisabledField) {
-		Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
+
+    public Map<String, CustomFieldTemplate> validateCfts(CustomEntityTemplate cet, boolean checkDisabledField) {
+        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
         if (cfts == null || cfts.isEmpty()) {
             throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
         }
         if (checkDisabledField && !cfts.containsKey(NativePersistenceService.FIELD_DISABLED)) {
             throw new ValidationException("Custom table does not contain a field 'disabled'", "customTable.noDisabledField");
         }
-		return cfts;
-	}
-	
-	public CustomEntityTemplate getCET(String customTableCode) {
-		CustomEntityTemplate cet = customEntityTemplateService.findByCodeOrDbTablename(customTableCode);
-		if (cet == null) {
-			throw new EntityDoesNotExistsException(CustomEntityTemplate.class, customTableCode);
-		}
-		return cet;
-	}
-	
-	public void updateRecords(String dbTablename, Collection<CustomFieldTemplate> cftsValues, List<CustomTableRecordDto> valuesWithIds) {
-		List<Long> inputIds=valuesWithIds.stream().map(x -> (castToLong(x.getValues().get(FIELD_ID)))).collect(toList());
-		validateExistance(dbTablename, inputIds);
-		SubListCreator<CustomTableRecordDto> subListCreator = new SubListCreator<CustomTableRecordDto>(valuesWithIds, 500);
-		while (subListCreator.isHasNext()) {
-			List<Map<String, Object>> values = subListCreator.getNextWorkSet().stream().map(x -> x.getValues()).collect(toList());
-			values = convertValues(values, cftsValues, false);
-			update(dbTablename, values);
-		}
-	}
+        return cfts;
+    }
 
-	private void validateExistance(String dbTablename, List<Long> inputIds) {
-		List<BigInteger> existingRecords=filterExistingRecordsOnTable(dbTablename, inputIds);
-		
-        Map<Boolean, List<Long>> partitioned = inputIds.stream().collect(Collectors.partitioningBy(x -> existingRecords.stream().anyMatch(y->x.equals(y.longValue()))));
+    public CustomEntityTemplate getCET(String customTableCode) {
+        CustomEntityTemplate cet = customEntityTemplateService.findByCodeOrDbTablename(customTableCode);
+        if (cet == null) {
+            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, customTableCode);
+        }
+        return cet;
+    }
 
-		List<Long> invalidList = partitioned.get(false);
-		if(!invalidList.isEmpty()) {
-			throw new EntityDoesNotExistsException(dbTablename, invalidList);
-		}
-	}
-	
-	private Long castToLong(Object id) {
+    public void updateRecords(String dbTablename, Collection<CustomFieldTemplate> cftsValues, List<CustomTableRecordDto> valuesWithIds) {
+        List<Long> inputIds = valuesWithIds.stream().map(x -> (castToLong(x.getValues().get(FIELD_ID)))).collect(toList());
+        validateExistance(dbTablename, inputIds);
+        SubListCreator<CustomTableRecordDto> subListCreator = new SubListCreator<CustomTableRecordDto>(valuesWithIds, 500);
+        while (subListCreator.isHasNext()) {
+            List<Map<String, Object>> values = subListCreator.getNextWorkSet().stream().map(x -> x.getValues()).collect(toList());
+            values = convertValues(values, cftsValues, false);
+            update(dbTablename, values);
+        }
+    }
+
+    private void validateExistance(String dbTablename, List<Long> inputIds) {
+        List<BigInteger> existingRecords = filterExistingRecordsOnTable(dbTablename, inputIds);
+
+        Map<Boolean, List<Long>> partitioned = inputIds.stream().collect(Collectors.partitioningBy(x -> existingRecords.stream().anyMatch(y -> x.equals(y.longValue()))));
+
+        List<Long> invalidList = partitioned.get(false);
+        if (!invalidList.isEmpty()) {
+            throw new EntityDoesNotExistsException(dbTablename, invalidList);
+        }
+    }
+
+    private Long castToLong(Object id) {
         if (id instanceof String) {
             return Long.parseLong((String) id);
         } else if (id instanceof Number) {
             return ((Number) id).longValue();
         }
-        throw new InvalidParameterException("Invalid id value found: "+id );
-	}
-	
+        throw new InvalidParameterException("Invalid id value found: " + id);
+    }
+
 }
