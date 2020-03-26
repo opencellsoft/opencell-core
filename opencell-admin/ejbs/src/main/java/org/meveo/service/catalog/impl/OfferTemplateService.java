@@ -70,7 +70,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
     @SuppressWarnings("unchecked")
     public List<OfferTemplate> findByServiceTemplate(ServiceTemplate serviceTemplate) {
-        Query query = getEntityManager().createQuery("FROM OfferTemplate t WHERE :serviceTemplate MEMBER OF t.serviceTemplates");
+        Query query = getEntityManager().createNamedQuery("OfferTemplate.findByServiceTemplate");
         query.setParameter("serviceTemplate", serviceTemplate);
 
         try {
