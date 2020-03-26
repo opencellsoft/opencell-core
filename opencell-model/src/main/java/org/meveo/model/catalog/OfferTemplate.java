@@ -51,7 +51,7 @@ import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 
 /**
- * @author Edward P. Legaspi
+ * @author Edward P. Legaspi, Andrius Karpavicius
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
