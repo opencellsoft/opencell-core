@@ -19,6 +19,7 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -194,7 +195,7 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 		return accountsAmounts;
 	}
 
-	public void deleteInvoiceAgregates(Set<Long> invoicesIds) {
+	public void deleteInvoiceAgregates(Collection<Long> invoicesIds) {
 		getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.deleteByInvoiceIds").setParameter("invoicesIds", invoicesIds).executeUpdate();
 		getEntityManager().createNamedQuery("InvoiceAgregate.deleteByInvoiceIds").setParameter("invoicesIds", invoicesIds).executeUpdate();
 

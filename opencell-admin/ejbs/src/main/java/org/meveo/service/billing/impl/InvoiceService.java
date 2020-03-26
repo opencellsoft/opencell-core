@@ -3025,12 +3025,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         // If invoice is prepaid, skip threshold test
-        if (!invoice.isPrepaid()) {
+        /*if (!invoice.isPrepaid()) {
             BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold() : billingAccount.getInvoicingThreshold();
             if ((invoicingThreshold != null) && (invoicingThreshold.compareTo(isEnterprise ? invoice.getAmountWithoutTax() : invoice.getAmountWithTax()) > 0)) {
                 throw new BusinessException("Invoice amount below the threshold");
             }
-        }
+        }*/
 
         // Update net to pay amount
         invoice.setNetToPay(invoice.getAmountWithTax().add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
@@ -3640,8 +3640,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         getEntityManager().createNamedQuery("Invoice.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
     }
 
-    public void deleteInvoices(Set<Long> invoicesIds) {
+    public void deleteInvoices(Collection<Long> invoicesIds) {
         getEntityManager().createNamedQuery("Invoice.deleteByIds").setParameter("invoicesIds", invoicesIds).executeUpdate();
+    }
+
+    public List<Long> excludePrepaidInvoices(Collection<Long> invoicesIds) {
+        return getEntityManager().createNamedQuery("Invoice.excludePrpaidInvoices").setParameter("invoicesIds", invoicesIds).getResultList();
+
     }
 
     /**
@@ -3805,21 +3810,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (caAmounts.get(caId) == null) {
                 List<Long> invoiceIds = new ArrayList<>();
                 invoiceIds.add((Long) result[2]);
-                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts, invoiceIds);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
                 caAmounts.put(caId, thresholdAmounts);
             } else {
                 ThresholdAmounts thresholdAmounts = caAmounts.get(caId);
-                thresholdAmounts.getAmount().addAmounts(amounts);
+                thresholdAmounts.getAmount().addAmounts(amounts.clone());
                 thresholdAmounts.getInvoices().add((Long) result[2]);
             }
             if (custAmounts.get(custId) == null) {
                 List<Long> invoiceIds = new ArrayList<>();
                 invoiceIds.add((Long) result[2]);
-                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts, invoiceIds);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
                 custAmounts.put(custId, thresholdAmounts);
             } else {
                 ThresholdAmounts thresholdAmounts = custAmounts.get(custId);
-                thresholdAmounts.getAmount().addAmounts(amounts);
+                thresholdAmounts.getAmount().addAmounts(amounts.clone());
                 thresholdAmounts.getInvoices().add((Long) result[2]);
             }
         }

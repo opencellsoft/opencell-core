@@ -234,10 +234,22 @@ public class Amounts implements Serializable {
 
     /**
      * Get a copy of the object
-     * 
+     *
      * @return A copy of an object
      */
     public Amounts clone() {
         return new Amounts(amountWithoutTax, amountWithTax, amountTax, tax);
+    }
+
+    /**
+     * Negate amounts.
+     *
+     * @return a nagated amounts
+     */
+    public Amounts negate() {
+        this.amountWithoutTax = this.amountWithoutTax.negate();
+        this.amountWithTax = this.amountWithTax.negate();
+        this.amountTax = this.amountTax.negate();
+        return this;
     }
 }

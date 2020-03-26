@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -483,14 +484,18 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (entity instanceof Order) {
             entity = orderService.findById((Long) entity.getId());
             if ((((Order) entity).getUserAccounts() != null) && !((Order) entity).getUserAccounts().isEmpty()) {
-                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ? (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() : null;
+                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ?
+                        (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() :
+                        null;
             }
         }
 
-        calculateAmountsAndCreateMinAmountTransactions(entity, null, billingRun.getLastTransactionDate(), true, instantiateMinRtsForService, instantiateMinRtsForSubscription, instantiateMinRtsForBA);
+        calculateAmountsAndCreateMinAmountTransactions(entity, null, billingRun.getLastTransactionDate(), true, instantiateMinRtsForService, instantiateMinRtsForSubscription,
+                instantiateMinRtsForBA);
 
         BigDecimal invoiceAmount = entity.getTotalInvoicingAmountWithoutTax();
-        if (invoiceAmount != null) {
+        // TODO KH to be removed, threslhold rules moved to BillingRunService.applyThreshold
+        /*if (invoiceAmount != null) {
             BigDecimal invoicingThreshold = null;
             if (billingAccount != null) {
                 invoicingThreshold = billingAccount.getInvoicingThreshold();
@@ -505,7 +510,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
 
             log.debug("{}/{} will be updated with BR amount {}. Invoice threshold applied {}", entity.getClass().getSimpleName(), entity.getId(), invoiceAmount, invoicingThreshold);
-        }
+        }*/
 
         entity.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
 
@@ -553,7 +558,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         case ORDER:
             entity = orderService.findById(entityId);
             if ((((Order) entity).getUserAccounts() != null) && !((Order) entity).getUserAccounts().isEmpty()) {
-                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ? (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() : null;
+                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ?
+                        (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() :
+                        null;
             }
             break;
         }
@@ -562,7 +569,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         entity.setTotalInvoicingAmountTax(totalAmounts.getAmountTax());
 
         BigDecimal invoiceAmount = totalAmounts.getAmountWithoutTax();
-        BigDecimal invoicingThreshold = null;
+        // TODO KH to be removed, threshold rules moved to BillingRunService.applyThreshold
+        /*BigDecimal invoicingThreshold = null;
         if (billingAccount != null) {
             invoicingThreshold = billingAccount.getInvoicingThreshold();
         }
@@ -576,7 +584,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         log.debug("{}/{} will be updated with BR amount {}. Invoice threshold applied {}", entity.getClass().getSimpleName(), entity.getId(), invoiceAmount, invoicingThreshold);
-
+*/
         entity.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
 
         if (entity instanceof BillingAccount) {
@@ -1780,7 +1788,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         Map<Long, ThresholdAmounts> caAmounts = new HashMap<>();
         Map<Long, ThresholdAmounts> custAmounts = new HashMap<>();
         for (Object[] result : resultSet) {
-
+            Amounts amounts = new Amounts((BigDecimal) result[0], (BigDecimal) result[1]);
             Long baId = (Long) result[3];
             Long caId = (Long) result[4];
             Long custId = (Long) result[5];
@@ -1788,32 +1796,32 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if (baAmounts.get(baId) == null) {
                 List<Long> invoiceIds = new ArrayList<>();
                 invoiceIds.add((Long) result[2]);
-                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]), invoiceIds);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts, invoiceIds);
                 baAmounts.put(baId, thresholdAmounts);
             } else {
                 ThresholdAmounts thresholdAmounts = baAmounts.get(baId);
-                thresholdAmounts.getAmount().addAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]));
+                thresholdAmounts.getAmount().addAmounts(amounts);
                 thresholdAmounts.getInvoices().add((Long) result[2]);
             }
 
             if (caAmounts.get(caId) == null) {
                 List<Long> invoiceIds = new ArrayList<>();
                 invoiceIds.add((Long) result[2]);
-                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]), invoiceIds);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
                 caAmounts.put(caId, thresholdAmounts);
             } else {
                 ThresholdAmounts thresholdAmounts = caAmounts.get(caId);
-                thresholdAmounts.getAmount().addAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]));
+                thresholdAmounts.getAmount().addAmounts(amounts.clone());
                 thresholdAmounts.getInvoices().add((Long) result[2]);
             }
             if (custAmounts.get(custId) == null) {
                 List<Long> invoiceIds = new ArrayList<>();
                 invoiceIds.add((Long) result[2]);
-                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]), invoiceIds);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
                 custAmounts.put(custId, thresholdAmounts);
             } else {
                 ThresholdAmounts thresholdAmounts = custAmounts.get(custId);
-                thresholdAmounts.getAmount().addAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]));
+                thresholdAmounts.getAmount().addAmounts(amounts.clone());
                 thresholdAmounts.getInvoices().add((Long) result[2]);
             }
         }
@@ -1829,12 +1837,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      *
      * @param invoicesIds invoices Ids
      */
-    public void uninvoiceRTs(Set<Long> invoicesIds) {
+    public void uninvoiceRTs(Collection<Long> invoicesIds) {
         getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoiceIds").setParameter("invoiceIds", invoicesIds).executeUpdate();
 
     }
 
-    public void deleteSupplementalRTs(Set<Long> invoicesIds) {
+    public void deleteSupplementalRTs(Collection<Long> invoicesIds) {
         getEntityManager().createNamedQuery("RatedTransaction.deleteSupplementalRTByInvoiceIds").setParameter("invoicesIds", invoicesIds).executeUpdate();
 
     }
