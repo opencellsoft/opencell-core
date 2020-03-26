@@ -451,12 +451,7 @@ public class AccountHierarchyApi extends BaseApi {
             customerCodeOrId = postData.getCustomerId();
         }
         SellerDto sellerDto = null;
-        try {
-            sellerDto = sellerApi.find(postData.getSellerCode());
-        } catch (Exception e) {
-            sellerDto = new SellerDto();
-            sellerDto.setCode(postData.getSellerCode());
-        }
+        sellerDto = sellerApi.find(postData.getSellerCode());
 
         countryApi.findOrCreate(postData.getCountryCode());
         currencyApi.findOrCreate(postData.getCurrencyCode());
@@ -475,7 +470,7 @@ public class AccountHierarchyApi extends BaseApi {
         try {
             customerDto = customerApi.find(customerCode);
         } catch (Exception e) {
-            throw new MeveoApiException("Customer " + customerCode + " isn't found");
+            throw new EntityDoesNotExistsException("Customer " + customerCode + " isn't found");
         }
         customerDto.setSeller(postData.getSellerCode());
         customerDto.setVatNo(postData.getVatNo());
