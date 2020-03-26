@@ -547,7 +547,7 @@ public class SubscriptionApi extends BaseApi {
         if (StringUtils.isBlank(activateServicesDto.getSubscription())) {
             missingParameters.add("subscription");
         }
-        if (activateServicesDto.getServicesToActivateDto().getService() == null || activateServicesDto.getServicesToActivateDto().getService().size() == 0) {
+        if (activateServicesDto.getServicesToActivateDto()==null || activateServicesDto.getServicesToActivateDto().getService() == null || activateServicesDto.getServicesToActivateDto().getService().size() == 0) {
             missingParameters.add("services");
         }
 
