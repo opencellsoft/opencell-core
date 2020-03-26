@@ -3,10 +3,9 @@ package org.meveo.apiv2.services.generic.filter;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.meveo.apiv2.services.generic.filter.filtermapper.*;
 import org.meveo.model.Auditable;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.IEntity;
 import org.meveo.service.base.PersistenceService;
 
-import javax.persistence.EntityManager;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -56,7 +55,7 @@ public interface FactoryMapper {
         if("type_class".equalsIgnoreCase(property)){
             return new TypeClassMapper(property, value);
         }
-        if(value instanceof Map || BaseEntity.class.isAssignableFrom(clazz)){
+        if(value instanceof Map || IEntity.class.isAssignableFrom(clazz)){
             return new ObjectMapper(property, value, clazz, entityManagerResolver);
         }
         return new DefaultMapper(property, value);
