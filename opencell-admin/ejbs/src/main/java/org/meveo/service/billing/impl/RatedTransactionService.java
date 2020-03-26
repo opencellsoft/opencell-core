@@ -340,6 +340,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setAmountWithoutTax(aggregatedWo.getAmountWithoutTax());
         ratedTransaction.setQuantity(aggregatedWo.getQuantity());
         ratedTransaction.setTaxClass(aggregatedWo.getTaxClass());
+        ratedTransaction.setUnitAmountWithTax(aggregatedWo.getUnitAmountWithTax());
+        ratedTransaction.setUnitAmountTax(aggregatedWo.getUnitAmountTax());
+        ratedTransaction.setUnitAmountWithoutTax(aggregatedWo.getUnitAmountWithoutTax());
 
         if (!isVirtual) {
             create(ratedTransaction);
