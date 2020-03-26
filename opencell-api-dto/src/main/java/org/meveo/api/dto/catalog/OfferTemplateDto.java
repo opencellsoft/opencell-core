@@ -89,7 +89,18 @@ public class OfferTemplateDto extends ProductOfferingDto {
      */
     private String minimumLabelElSpark;
 
+    /**
+     * Corresponding to minimum invoice subcategory
+     */
+    private String minimumInvoiceSubCategory;
+
+
     private Boolean autoEndOfEngagement;
+
+    /**
+     * Corresponding to minimum one shot charge template code.
+     */
+    private String minimumChargeTemplate;
 
     /**
      * Instantiates a new offer template dto.
@@ -322,4 +333,28 @@ public class OfferTemplateDto extends ProductOfferingDto {
         this.autoEndOfEngagement = autoEndOfEngagement;
     }
 
+    /**
+     * Gets the Minimum InvoiceSubCategory used in the offer code
+     * @return the Minimum InvoiceSubCategory used in the offer code
+     */
+    public String getMinimumInvoiceSubCategory() {
+        return minimumInvoiceSubCategory;
+    }
+
+    /**
+     * Sets the Minimum InvoiceSubCategory used in the offer code
+     *
+     * @param minimumInvoiceSubCategory
+     */
+    public void setMinimumInvoiceSubCategory(String minimumInvoiceSubCategory) {
+        this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
+    }
+
+    public String getMinimumChargeTemplate() {
+        return minimumChargeTemplate;
+    }
+
+    public void setMinimumChargeTemplate(String minimumChargeTemplate) {
+        this.minimumChargeTemplate = minimumChargeTemplate;
+    }
 }
