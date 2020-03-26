@@ -190,8 +190,8 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     @Override
     public List<CustomEntityTemplate> list(PaginationConfiguration config) {
 
-        if (useCETCache && (config.getFilters() == null || config.getFilters().isEmpty()
-                || (config.getFilters().size() == 1 && config.getFilters().get("disabled") != null && !(boolean) config.getFilters().get("disabled")))) {
+        if (useCETCache
+                && (config.getFilters() == null || config.getFilters().isEmpty() || (config.getFilters().size() == 1 && config.getFilters().get("disabled") != null && !(boolean) config.getFilters().get("disabled")))) {
             List<CustomEntityTemplate> cets = new ArrayList<CustomEntityTemplate>();
             cets.addAll(customFieldsCache.getCustomEntityTemplates());
 
@@ -205,21 +205,21 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
             // Order the list
             try {
-                if (config.getSortField() != null) {
+                if (config.getFirstSortField() != null) {
                     Comparator<CustomEntityTemplate> comparator = null;
-                    if ("description".equals(config.getSortField())) {
+                    if ("description".equals(config.getFirstSortField())) {
                         comparator = Comparator.comparing(CustomEntityTemplate::getDescription);
-                    } else if ("code".equals(config.getSortField())) {
+                    } else if ("code".equals(config.getFirstSortField())) {
                         comparator = Comparator.comparing(CustomEntityTemplate::getCode);
-                    } else if ("name".equals(config.getSortField())) {
+                    } else if ("name".equals(config.getFirstSortField())) {
                         comparator = Comparator.comparing(CustomEntityTemplate::getName);
                     }
-                    if (!config.isAscendingSorting()) {
+                    if (!config.isFirstSortAscending()) {
                         comparator = comparator.reversed();
                     }
                     cets.sort(comparator);
                 }
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 return cets;
             }
             return cets;
@@ -246,11 +246,11 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
      * @return customer field entity
      */
     @SuppressWarnings("unchecked")
-	public ICustomFieldEntity findByClassAndKeyValue(Class entityClass,String columnName, Object value) {
+    public ICustomFieldEntity findByClassAndKeyValue(Class entityClass, String columnName, Object value) {
         ICustomFieldEntity result = null;
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-		queryBuilder.addCriterion(columnName, "=", value, true);
-        List<ICustomFieldEntity> entities =  (List<ICustomFieldEntity>) queryBuilder.getQuery(getEntityManager()).setMaxResults(1).getResultList();
+        queryBuilder.addCriterion(columnName, "=", value, true);
+        List<ICustomFieldEntity> entities = (List<ICustomFieldEntity>) queryBuilder.getQuery(getEntityManager()).setMaxResults(1).getResultList();
         if (entities != null && !entities.isEmpty()) {
             result = entities.get(0);
         }

@@ -22,7 +22,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
@@ -48,7 +62,8 @@ import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 @NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE businessOfferModel is not null and lifeCycleStatus='ACTIVE'"),
         @NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE businessOfferModel is not null and lifeCycleStatus<>'ACTIVE'"),
         @NamedQuery(name = "OfferTemplate.getMimimumRTUsed", query = "select ot.minimumAmountEl from OfferTemplate ot where ot.minimumAmountEl is not null"),
-        @NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinusXDay<validity.to and validity.to<=NOW() and businessOfferModel is not null") })
+        @NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinusXDay<validity.to and validity.to<=NOW() and businessOfferModel is not null"),
+        @NamedQuery(name = "OfferTemplate.findByServiceTemplate", query = "SELECT t FROM OfferTemplate t JOIN t.offerServiceTemplates ost WHERE ost.serviceTemplate = :serviceTemplate") })
 public class OfferTemplate extends ProductOffering implements IWFEntity, ISearchable {
     private static final long serialVersionUID = 1L;
 
@@ -86,12 +101,8 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @Size(max = 2000)
     private String minimumAmountElSpark;
 
-
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name="cat_offer_tmpl_discount_plan",
-            joinColumns = @JoinColumn(name = "offer_tmpl_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "discount_plan_id", referencedColumnName = "id"))
+    @JoinTable(name = "cat_offer_tmpl_discount_plan", joinColumns = @JoinColumn(name = "offer_tmpl_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "discount_plan_id", referencedColumnName = "id"))
     private List<DiscountPlan> allowedDiscountPlans;
 
     /**

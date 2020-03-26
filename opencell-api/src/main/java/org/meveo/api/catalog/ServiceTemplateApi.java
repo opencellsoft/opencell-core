@@ -18,6 +18,8 @@
 
 package org.meveo.api.catalog;
 
+import static java.util.Optional.ofNullable;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
@@ -140,11 +142,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
     private void setServiceChargeTemplate(ServiceTemplate serviceTemplate, ServiceChargeTemplate serviceChargeTemplate, BaseServiceChargeTemplateDto serviceChargeTemplateDto,
             ChargeTemplate chargeTemplate) throws MeveoApiException {
-        if (chargeTemplate == null) {
-            throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, serviceChargeTemplateDto.getCode());
-        }
 
-        List<WalletTemplate> wallets = new ArrayList<WalletTemplate>();
+        List<WalletTemplate> wallets = new ArrayList<>();
         for (String walletCode : serviceChargeTemplateDto.getWallets().getWallet()) {
             if (!walletCode.equals(WalletTemplate.PRINCIPAL)) {
                 WalletTemplate walletTemplate = walletTemplateService.findByCode(walletCode);
@@ -179,7 +178,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
     private void createServiceChargeTemplateRecurring(ServiceTemplate serviceTemplate, ServiceChargeTemplateRecurringDto serviceChargeTemplateDto)
             throws MeveoApiException, BusinessException {
-        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
+        RecurringChargeTemplate chargeTemplate = ofNullable(recurringChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode()))
+                .orElseThrow(() -> new EntityDoesNotExistsException(RecurringChargeTemplate.class, serviceChargeTemplateDto.getCode()));
         ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
         setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, serviceChargeTemplateDto, chargeTemplate);
         serviceChargeTemplateRecurringService.create(serviceChargeTemplate);
@@ -187,7 +187,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
     private void createServiceChargeTemplateSubscription(ServiceTemplate serviceTemplate, ServiceChargeTemplateSubscriptionDto serviceChargeTemplateDto)
             throws MeveoApiException, BusinessException {
-        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
+        OneShotChargeTemplate chargeTemplate = ofNullable(oneShotChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode()))
+                .orElseThrow(() -> new EntityDoesNotExistsException(OneShotChargeTemplate.class, serviceChargeTemplateDto.getCode()));
         ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
         setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, serviceChargeTemplateDto, chargeTemplate);
         serviceChargeTemplateSubscriptionService.create(serviceChargeTemplate);
@@ -195,7 +196,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     
     private void createServiceChargeTemplateTermination(ServiceTemplate serviceTemplate, ServiceChargeTemplateTerminationDto serviceChargeTemplateDto)
             throws MeveoApiException, BusinessException {
-        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
+        OneShotChargeTemplate chargeTemplate = ofNullable(oneShotChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode()))
+                .orElseThrow(() -> new EntityDoesNotExistsException(OneShotChargeTemplate.class, serviceChargeTemplateDto.getCode()));
         ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
         setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, serviceChargeTemplateDto, chargeTemplate);
         serviceChargeTemplateTerminationService.create(serviceChargeTemplate);
@@ -203,7 +205,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     
     private void createServiceChargeTemplateUsage(ServiceTemplate serviceTemplate, ServiceUsageChargeTemplateDto serviceChargeTemplateDto)
             throws MeveoApiException, BusinessException {
-        UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode());
+        UsageChargeTemplate chargeTemplate = ofNullable(usageChargeTemplateService.findByCode(serviceChargeTemplateDto.getCode()))
+                .orElseThrow(() -> new EntityDoesNotExistsException(UsageChargeTemplate.class, serviceChargeTemplateDto.getCode()));
         ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();
         setServiceChargeTemplate(serviceTemplate, serviceChargeTemplate, serviceChargeTemplateDto, chargeTemplate);
         serviceUsageChargeTemplateService.create(serviceChargeTemplate);
@@ -476,28 +479,28 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     }
     
     private void setAllWalletTemplatesToNull(ServiceTemplate serviceTemplate) {
-        List<ServiceChargeTemplateRecurring> listRec = new ArrayList<ServiceChargeTemplateRecurring>();
+        List<ServiceChargeTemplateRecurring> listRec = new ArrayList<>();
         for (ServiceChargeTemplateRecurring recurring : serviceTemplate.getServiceRecurringCharges()) {
             recurring.setWalletTemplates(null);
             listRec.add(recurring);
         }
         serviceTemplate.setServiceRecurringCharges(listRec);
         
-        List<ServiceChargeTemplateSubscription> listSubs = new ArrayList<ServiceChargeTemplateSubscription>();
+        List<ServiceChargeTemplateSubscription> listSubs = new ArrayList<>();
         for (ServiceChargeTemplateSubscription subscription : serviceTemplate.getServiceSubscriptionCharges()) {
             subscription.setWalletTemplates(null);
             listSubs.add(subscription);
         }
         serviceTemplate.setServiceSubscriptionCharges(listSubs);
         
-        List<ServiceChargeTemplateTermination> listTerms = new ArrayList<ServiceChargeTemplateTermination>();
+        List<ServiceChargeTemplateTermination> listTerms = new ArrayList<>();
         for (ServiceChargeTemplateTermination termination : serviceTemplate.getServiceTerminationCharges()) {
             termination.setWalletTemplates(null);
             listTerms.add(termination);
         }
         serviceTemplate.setServiceTerminationCharges(listTerms);
         
-        List<ServiceChargeTemplateUsage> listUsages = new ArrayList<ServiceChargeTemplateUsage>();
+        List<ServiceChargeTemplateUsage> listUsages = new ArrayList<>();
         for (ServiceChargeTemplateUsage usage : serviceTemplate.getServiceUsageCharges()) {
             usage.setWalletTemplates(null);
             listUsages.add(usage);
