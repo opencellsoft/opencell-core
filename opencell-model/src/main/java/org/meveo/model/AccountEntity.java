@@ -224,8 +224,12 @@ public abstract class AccountEntity extends BusinessCFEntity {
     }
 
     public void anonymize(String code) {
-        name.anonymize(code);
-        address.anonymize(code);
+        if (name != null ) {
+            name.anonymize(code);
+        }
+        if (address != null ) {
+            address.anonymize(code);
+        }
         getContactInformationNullSafe().anonymize(code);
     }
 
