@@ -344,12 +344,12 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
                     CDR cdr = new CDR();
                     String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), walletOperation, ua);
-                    cdr.setAccess_id(subCode);
-                    cdr.setTimestamp(applicationDate);
-                    cdr.setParam1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), walletOperation, ua));
-                    cdr.setParam2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), walletOperation, ua));
-                    cdr.setParam3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), walletOperation, ua));
-                    cdr.setParam4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua));
+                    cdr.setAccessCode(subCode);
+                    cdr.setEventDate(applicationDate);
+                    cdr.setParameter1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), walletOperation, ua));
+                    cdr.setParameter2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), walletOperation, ua));
+                    cdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), walletOperation, ua));
+                    cdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua));
                     cdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua)));
 
                     String url = "api/rest/billing/mediation/chargeCdr";
