@@ -5,10 +5,9 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering;
 import org.meveo.apiv2.services.generic.filter.FactoryFilterMapper;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.IEntity;
 import org.meveo.service.base.PersistenceService;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -38,12 +37,16 @@ public class GenericRequestMapper {
                 org.primefaces.model.SortOrder.valueOf(genericPagingAndFiltering.getSortOrder()));
     }
     @VisibleForTesting
-    public Map<String, Object> evaluateFilters(Map<String, Object> filters, Class<? extends BaseEntity> entity) {
+    public Map<String, Object> evaluateFilters(Map<String, Object> filters, Class<? extends IEntity> entity) {
         return Stream.of(filters.keySet().toArray())
                 .map(key -> {
                     String keyObject = (String) key;
-                    String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
-                    return Collections.singletonMap(keyObject, new FactoryFilterMapper().create(fieldName, filters.get(key), entity, serviceFunction).map());
+                    if(!"SQL".equalsIgnoreCase(keyObject) && !"$FILTER".equalsIgnoreCase(keyObject)){
+
+                        String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
+                        return Collections.singletonMap(keyObject, new FactoryFilterMapper().create(fieldName, filters.get(key), entity, serviceFunction).map());
+                    }
+                    return Collections.singletonMap(keyObject, filters.get(key));
                 })
                 .flatMap (map -> map.entrySet().stream())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

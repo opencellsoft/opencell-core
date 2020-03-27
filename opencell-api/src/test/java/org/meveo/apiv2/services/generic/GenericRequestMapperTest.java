@@ -1,7 +1,9 @@
 package org.meveo.apiv2.services.generic;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
 import org.junit.Test;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.mediation.Access;
@@ -11,22 +13,38 @@ import org.meveo.service.base.PersistenceService;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class GenericRequestMapperTest {
+
+    private GenericRequestMapper requestMapper;
+
+    @Before
+    public void setUp() throws Exception {
+
+        PersistenceService persistenceServiceMock = mock(PersistenceService.class);
+        Function<Class, PersistenceService> serviceFunction = aClass -> persistenceServiceMock;
+        requestMapper = new GenericRequestMapper(null, serviceFunction);
+    }
+
     @Test
     public void evaluateFiltersObjectWithId() throws IOException {
         PersistenceService persistenceServiceMock = mock(PersistenceService.class);
         Function<Class, PersistenceService> serviceFunction = aClass -> persistenceServiceMock;
         CustomerCategory customerCategory = new CustomerCategory();
         customerCategory.setId(2L);
-        when(persistenceServiceMock.getEntityManager().getReference(CustomerCategory.class, 2L)).thenReturn(customerCategory);
+        EntityManager entityManager = mock(EntityManager.class);
+        when(persistenceServiceMock.getEntityManager()).thenReturn(entityManager);
+        when(entityManager.getReference(CustomerCategory.class, 2L)).thenReturn(customerCategory);
         GenericRequestMapper requestMapper = new GenericRequestMapper(CustomerCategory.class, serviceFunction);
 
         String filter = "{\"customerCategory\":{\"id\":2}}";
@@ -39,19 +57,25 @@ public class GenericRequestMapperTest {
     }
 
     @Test
-    public void evaluateFiltersObjectWithString() throws IOException {
-        GenericRequestMapper requestMapper = new GenericRequestMapper(null, null);
+    public void evaluateFiltersObjectWithReferenceProperties() throws IOException {
+        PersistenceService persistenceServiceMock = mock(PersistenceService.class);
+        Function<Class, PersistenceService> serviceFunction = aClass -> persistenceServiceMock;
+        requestMapper = new GenericRequestMapper(null, serviceFunction);
         String filter = "{\"customerCategory\":{\"code\":\"code-123\"}}";
         ObjectMapper objectMapper = new ObjectMapper();
+        CustomerCategory customerCategory = new CustomerCategory();
+        customerCategory.setId(2L);
+        customerCategory.setCode("code-123");
+        when(persistenceServiceMock.list((PaginationConfiguration) any())).thenReturn(Collections.singletonList(customerCategory));
         Map filtersMap = objectMapper.readValue(filter, Map.class);
         Map map = requestMapper.evaluateFilters(filtersMap, Customer.class);
-        assertEquals(map.get("customerCategory").getClass(), CustomerCategory.class);
-        assertEquals(((CustomerCategory)map.get("customerCategory")).getCode(), "code-123");
+        CustomerCategory returnedObject = (CustomerCategory) ((List) map.get("customerCategory")).get(0);
+        assertEquals(returnedObject.getClass(), CustomerCategory.class);
+        assertEquals(returnedObject.getCode(), "code-123");
     }
 
     @Test
     public void evaluateFiltersDate() throws IOException {
-        GenericRequestMapper requestMapper = new GenericRequestMapper(null, null);
         long time = new Date().getTime();
         String filter = "{\"startDate\":" + time +"}";
         ObjectMapper objectMapper = new ObjectMapper();
@@ -63,7 +87,6 @@ public class GenericRequestMapperTest {
 
     @Test
     public void evaluateFiltersObjectWithAuditable() throws IOException {
-        GenericRequestMapper requestMapper = new GenericRequestMapper(null, null);
         long time = new Date().getTime();
         String filter = "{\"auditable\":{\"created\" : " + time + "}}";
         ObjectMapper objectMapper = new ObjectMapper();
@@ -76,7 +99,6 @@ public class GenericRequestMapperTest {
 
     @Test
     public void evaluateFiltersObjectWithEnum() throws IOException {
-        GenericRequestMapper requestMapper = new GenericRequestMapper(null, null);
         String filter = "{\"paymentType\":\"WIRETRANSFER\"}";
         ObjectMapper objectMapper = new ObjectMapper();
         Map filtersMap = objectMapper.readValue(filter, Map.class);

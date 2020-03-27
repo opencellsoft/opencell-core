@@ -2,9 +2,6 @@ package org.meveo.apiv2.services.generic.filter.filtermapper;
 
 import org.meveo.apiv2.services.generic.filter.FilterMapper;
 
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class NumberMapper extends FilterMapper {
     private final Class clazz;
@@ -16,7 +13,7 @@ public class NumberMapper extends FilterMapper {
 
     @Override
     public Object mapStrategy(Object value) {
-        if(clazz.isAssignableFrom(Long.class)){
+        if(clazz.isAssignableFrom(Long.class) || "id".equalsIgnoreCase(property)){
             return Long.valueOf(value.toString());
         }
         return value;

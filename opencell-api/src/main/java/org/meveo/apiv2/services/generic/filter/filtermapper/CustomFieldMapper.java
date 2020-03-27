@@ -1,7 +1,6 @@
 package org.meveo.apiv2.services.generic.filter.filtermapper;
 
-import org.meveo.api.dto.EntityReferenceDto;
-import org.meveo.apiv2.services.generic.GenericApiAlteringService;
+
 import org.meveo.apiv2.services.generic.filter.FilterMapper;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -11,9 +10,6 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
-import javax.persistence.EntityManager;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
 

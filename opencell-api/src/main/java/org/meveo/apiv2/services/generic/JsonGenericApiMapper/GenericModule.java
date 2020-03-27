@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.apiv2.generic.GenericPaginatedResource;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.IEntity;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -77,10 +77,10 @@ class GenericModule extends SimpleModule {
         @Override
         public void serialize(List list, JsonGenerator gen, SerializerProvider provider) throws IOException {
             if(shouldReturnOnlyIds(list, gen.getCurrentValue(), gen.getOutputContext().getCurrentName())){
-                List<? extends BaseEntity> listBaseEntity = (List<? extends BaseEntity>) list;
+                List<? extends IEntity> listBaseEntity = (List<? extends IEntity>) list;
                 gen.writeStartArray(listBaseEntity.size());
                 for (int i=0; i<listBaseEntity.size(); i++){
-                    gen.writeNumber(listBaseEntity.get(i).getId());
+                    gen.writeNumber((Long) listBaseEntity.get(i).getId());
                 }
                 gen.writeEndArray();
             }else {
@@ -96,7 +96,7 @@ class GenericModule extends SimpleModule {
         }
 
         private boolean shouldReturnOnlyIds(List list, Object currentValue, String currentName) {
-            return (!list.isEmpty() && list.get(0) instanceof BaseEntity)
+            return (!list.isEmpty() && list.get(0) instanceof IEntity)
                     && !(currentValue instanceof GenericPaginatedResource)
                     && !(nestedEntities != null && nestedEntities.contains(currentName));
         }
