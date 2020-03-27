@@ -17,14 +17,16 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -46,15 +48,20 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Amounts;
+import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.CreateMinAmountsResult;
+import org.meveo.model.billing.ExtraMinAmount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.MinAmountData;
+import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.billing.MinAmountsResult;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionMinAmountTypeEnum;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
@@ -67,6 +74,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
@@ -91,7 +99,8 @@ import org.meveo.service.tax.TaxMappingService.TaxInfo;
  * @author Said Ramli
  * @author Abdelmounaim Akadid
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @author Khalid HORRI
+ * @lastModifiedVersion 10.0
  */
 @Stateless
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
@@ -355,13 +364,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         return ratedTransaction;
     }
-    
-    
-	public void updateAggregatedWalletOperations(List<Long> woIds, RatedTransaction ratedTransaction) {
+
+    public void updateAggregatedWalletOperations(List<Long> woIds, RatedTransaction ratedTransaction) {
         // batch update
-        String strQuery = "UPDATE WalletOperation o SET o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED,"
-        		+ " o.ratedTransaction=:ratedTransaction , o.updated=:updated"
-                + " WHERE o.id in (:woIds) ";
+        String strQuery = "UPDATE WalletOperation o SET o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED," + " o.ratedTransaction=:ratedTransaction , o.updated=:updated" + " WHERE o.id in (:woIds) ";
         Query query = getEntityManager().createQuery(strQuery);
         query.setParameter("woIds", woIds);
         query.setParameter("ratedTransaction", ratedTransaction);
@@ -468,8 +474,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public IBillableEntity updateEntityTotalAmountsAndLinkToBR(IBillableEntity entity, BillingRun billingRun, boolean instantiateMinRtsForService, boolean instantiateMinRtsForSubscription, boolean instantiateMinRtsForBA)
-            throws BusinessException {
+    public IBillableEntity updateEntityTotalAmountsAndLinkToBR(IBillableEntity entity, BillingRun billingRun, MinAmountForAccounts minAmountForAccounts) throws BusinessException {
 
         log.debug("Calculating total amounts and creating min RTs for {}/{}", entity.getClass().getSimpleName(), entity.getId());
 
@@ -492,9 +497,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                         null;
             }
         }
-
-        calculateAmountsAndCreateMinAmountTransactions(entity, null, billingRun.getLastTransactionDate(), true, instantiateMinRtsForService, instantiateMinRtsForSubscription,
-                instantiateMinRtsForBA);
+        // MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts(instantiateMinRtsForBA, false, instantiateMinRtsForSubscription, instantiateMinRtsForService);
+        calculateAmountsAndCreateMinAmountTransactions(entity, null, billingRun.getLastTransactionDate(), true, minAmountForAccounts);
 
         BigDecimal invoiceAmount = entity.getTotalInvoicingAmountWithoutTax();
         // TODO KH to be removed, threslhold rules moved to BillingRunService.applyThreshold
@@ -608,123 +612,48 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param billableEntity The billable entity
      * @param lastTransactionDate Last transaction date
      * @param calculateAndUpdateTotalAmounts Should total amounts be calculated and entity updated with those amounts
-     * @param instantiateMinRtsForService Should rated transactions to reach minimum invoicing amount be checked and instantiated on service level.
-     * @param instantiateMinRtsForSubscription Should rated transactions to reach minimum invoicing amount be checked and instantiated on subscription level.
-     * @param instantiateMinRtsForBA Should rated transactions to reach minimum invoicing amount be checked and instantiated on Billing account level.
+     * @param minAmountForAccounts Booleans to knows if an accounts has minimum amount activated
      * @throws BusinessException General business exception
      */
     public void calculateAmountsAndCreateMinAmountTransactions(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate, boolean calculateAndUpdateTotalAmounts,
-            boolean instantiateMinRtsForService, boolean instantiateMinRtsForSubscription, boolean instantiateMinRtsForBA) throws BusinessException {
+            MinAmountForAccounts minAmountForAccounts) throws BusinessException {
 
         Amounts totalInvoiceableAmounts = null;
 
         List<RatedTransaction> minAmountTransactions = new ArrayList<RatedTransaction>();
+        List<ExtraMinAmount> extraMinAmounts = new ArrayList<>();
 
         Date minRatingDate = DateUtils.addDaysToDate(lastTransactionDate, -1);
 
-        if (billableEntity instanceof Order && calculateAndUpdateTotalAmounts) {
-            totalInvoiceableAmounts = computeTotalOrderInvoiceAmount((Order) billableEntity, new Date(0), lastTransactionDate);
-
-        } else if (billableEntity instanceof Subscription) {
-
-            BillingAccount billingAccount = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
-
-            Map<Long, Map<String, Amounts>> createdAmountServices = null;
-            if (instantiateMinRtsForService) {
-                CreateMinAmountsResult createMinAmountsResultServices = createMinRTForServices(billableEntity, billingAccount, lastTransactionDate, minRatingDate);
-                createdAmountServices = createMinAmountsResultServices.getCreatedAmountServices();
-                minAmountTransactions.addAll(createMinAmountsResultServices.getMinAmountTransactions());
-            }
-
-            Map<String, Amounts> createdAmountSubscription = null;
-            if (instantiateMinRtsForSubscription && !StringUtils.isBlank(((Subscription) billableEntity).getMinimumAmountEl())) {
-                CreateMinAmountsResult createMinAmountsResultSubscription = createMinRTForSubscriptions(billableEntity, billingAccount, lastTransactionDate, minRatingDate, createdAmountServices);
-                createdAmountSubscription = createMinAmountsResultSubscription.getCreatedAmountSubscription();
-                minAmountTransactions.addAll(createMinAmountsResultSubscription.getMinAmountTransactions());
-            }
-
+        if (billableEntity instanceof Order) {
             if (calculateAndUpdateTotalAmounts) {
-                // Get total invoiceable amount for subscription and add created amounts during min RT creation
-                totalInvoiceableAmounts = computeTotalInvoiceableAmountForSubscription((Subscription) billableEntity, new Date(0), lastTransactionDate);
+                totalInvoiceableAmounts = computeTotalOrderInvoiceAmount((Order) billableEntity, new Date(0), lastTransactionDate);
+            }
+        } else {
+            // Create Min Amount RTs for hierarchy
 
-                // Sum up
-                if (createdAmountServices != null) {
-                    for (Map<String, Amounts> amountInfo : createdAmountServices.values()) {
-                        for (Amounts amounts : amountInfo.values()) {
-                            totalInvoiceableAmounts.addAmounts(amounts);
-                        }
-                    }
-                }
-                if (createdAmountSubscription != null) {
-                    for (Amounts amounts : createdAmountSubscription.values()) {
-                        totalInvoiceableAmounts.addAmounts(amounts);
-                    }
+            BillingAccount billingAccount = (billableEntity instanceof Subscription) ? ((Subscription) billableEntity).getUserAccount().getBillingAccount() : (BillingAccount) billableEntity;
+
+            Class[] accountClasses = new Class[] { ServiceInstance.class, Subscription.class, UserAccount.class, BillingAccount.class, CustomerAccount.class, Customer.class };
+            for (Class accountClass : accountClasses) {
+                if (minAmountForAccounts.isMinAmountForAccountsActivated(accountClass, billableEntity)) {
+                    MinAmountsResult minAmountsResults = createMinRTForAccount(billableEntity, billingAccount, lastTransactionDate, minRatingDate, extraMinAmounts, accountClass);
+                    extraMinAmounts = minAmountsResults.getExtraMinAmounts();
+                    minAmountTransactions.addAll(minAmountsResults.getMinAmountTransactions());
                 }
             }
+            // get totalInvoicable for the billableEntity
+            totalInvoiceableAmounts = computeTotalInvoiceableAmount(billableEntity, new Date(0), lastTransactionDate);
 
-        } else if (billableEntity instanceof BillingAccount) {
+            // Sum up
+            final Amounts totalAmounts = new Amounts();
+            extraMinAmounts.forEach(extraMinAmount -> {
+                extraMinAmount.getCreatedAmount().values().forEach(amounts -> {
+                    totalAmounts.addAmounts(amounts);
+                });
+            });
+            totalInvoiceableAmounts.addAmounts(totalAmounts);
 
-            BillingAccount billingAccount = (BillingAccount) billableEntity;
-
-            Map<Long, Map<String, Amounts>> createdAmountServices = null;
-            if (instantiateMinRtsForService) {
-                CreateMinAmountsResult createMinAmountsResultServices = createMinRTForServices(billableEntity, billingAccount, lastTransactionDate, minRatingDate);
-                createdAmountServices = createMinAmountsResultServices.getCreatedAmountServices();
-                minAmountTransactions.addAll(createMinAmountsResultServices.getMinAmountTransactions());
-            }
-
-            Map<String, Amounts> createdAmountSubscription = null;
-            if (instantiateMinRtsForSubscription) {
-                CreateMinAmountsResult createMinAmountsResultSubscription = createMinRTForSubscriptions(billableEntity, billingAccount, lastTransactionDate, minRatingDate, createdAmountServices);
-                createdAmountSubscription = createMinAmountsResultSubscription.getCreatedAmountSubscription();
-                minAmountTransactions.addAll(createMinAmountsResultSubscription.getMinAmountTransactions());
-            }
-
-            if (calculateAndUpdateTotalAmounts || (instantiateMinRtsForBA && isAppliesMinRTForBA(billingAccount, null))) {
-                // Get total invoiceable amount for billing account and add created amounts during min RT creation for service and subscription
-                totalInvoiceableAmounts = computeTotalInvoiceableAmountForBillingAccount(billingAccount, new Date(0), lastTransactionDate);
-
-                // Sum up
-                if (createdAmountServices != null) {
-                    for (Map<String, Amounts> serviceAmountInfo : createdAmountServices.values()) {
-                        for (Amounts amounts : serviceAmountInfo.values()) {
-                            totalInvoiceableAmounts.addAmounts(amounts);
-                        }
-                    }
-                }
-
-                if (createdAmountSubscription != null) {
-                    for (Amounts amounts : createdAmountSubscription.values()) {
-                        totalInvoiceableAmounts.addAmounts(amounts);
-                    }
-                }
-
-                if (instantiateMinRtsForBA && isAppliesMinRTForBA(billingAccount, totalInvoiceableAmounts)) {
-
-                    Map<String, Amounts> extraAmounts = new HashMap<>();
-                    if (createdAmountSubscription != null) {
-                        extraAmounts.putAll(createdAmountSubscription);
-                    }
-                    if (createdAmountServices != null) {
-                        for (Map<String, Amounts> serviceAmountInfo : createdAmountServices.values()) {
-
-                            for (Entry<String, Amounts> amountInfo : serviceAmountInfo.entrySet()) {
-                                if (extraAmounts.containsKey(amountInfo.getKey())) {
-                                    extraAmounts.get(amountInfo.getKey()).addAmounts(amountInfo.getValue());
-                                } else {
-                                    extraAmounts.put(amountInfo.getKey(), amountInfo.getValue());
-                                }
-                            }
-                        }
-                    }
-
-                    // Create min RTs for billing account and add to the total amount
-                    Map<String, Amounts> createdAmountBillingAccount = createMinRTForBillingAccount(billingAccount, lastTransactionDate, minRatingDate, minAmountTransactions, totalInvoiceableAmounts, extraAmounts);
-                    for (Amounts amounts : createdAmountBillingAccount.values()) {
-                        totalInvoiceableAmounts.addAmounts(amounts);
-                    }
-                }
-            }
         }
 
         billableEntity.setMinRatedTransactions(minAmountTransactions);
@@ -738,500 +667,524 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
     }
 
-    /**
-     * Create Rated transactions to reach minimum invoiced amount per service level. Only those services that have minimum invoice amount rule are considered. Updates
-     * minAmountTransactions parameter.
-     * 
-     * @param billableEntity Entity to bill - entity for which minimum rated transactions should be created
-     * @param billingAccount Billing account to associate new minimum amount Rated transactions with
-     * @param lastTransactionDate Last transaction date
-     * @param minRatingDate Date to assign to newly created minimum amount Rated transactions
-     * @return CreateMinAmountsResult Contains createMinRTForServices result
-     * @throws BusinessException General business exception
-     */
-    @SuppressWarnings("unchecked")
-    private CreateMinAmountsResult createMinRTForServices(IBillableEntity billableEntity, BillingAccount billingAccount, Date lastTransactionDate, Date minRatingDate) throws BusinessException {
-
-        EntityManager em = getEntityManager();
-
-        CreateMinAmountsResult createMinAmountsResult = new CreateMinAmountsResult();
-
-        // Service id as a key and array of <min amount>, <min amount label>, <total amounts>, map of <Invoice subCategory id, amounts], serviceInstance>
-        Map<Long, Object[]> serviceInstanceToMinAmount = new HashMap<>();
-
-        Subscription billingSubscription = null;
+    private Amounts computeTotalInvoiceableAmount(IBillableEntity billableEntity, Date date, Date lastTransactionDate) {
         if (billableEntity instanceof Subscription) {
-            billingSubscription = (Subscription) billableEntity;
+            return computeTotalInvoiceableAmountForSubscription((Subscription) billableEntity, date, lastTransactionDate);
         }
-
-        // Only interested in services with minAmount condition
-        // Calculate amounts on service level grouped by invoice category and service instance
-        // Calculate a total sum of amounts on service level
-        List<Object[]> amountsList = computeInvoiceableAmountForServicesWithMinAmountRule(billableEntity, new Date(0), lastTransactionDate);
-
-        for (Object[] amounts : amountsList) {
-            BigDecimal invSubcategoryAmountWithoutTax = (BigDecimal) amounts[0];
-            BigDecimal invSubcategoryAmountWithTax = (BigDecimal) amounts[1];
-
-            Long invSubCategoryId = (Long) amounts[2];
-            ServiceInstance serviceInstance = em.find(ServiceInstance.class, amounts[3]);
-
-            Object[] minAmountInfo = serviceInstanceToMinAmount.get(serviceInstance.getId());
-
-            if (minAmountInfo == null) {
-                String minAmountEL = serviceInstance.getMinimumAmountEl();
-                String minAmountLabelEL = serviceInstance.getMinimumLabelEl();
-                BigDecimal minAmount = evaluateMinAmountExpression(minAmountEL, null, null, serviceInstance);
-                String minAmountLabel = evaluateMinAmountLabelExpression(minAmountLabelEL, null, null, serviceInstance);
-                Amounts serviceAmounts = new Amounts(invSubcategoryAmountWithoutTax, invSubcategoryAmountWithTax, null);
-                Map<Long, Amounts> amountMap = new HashMap<Long, Amounts>();
-                amountMap.put(invSubCategoryId, serviceAmounts);
-
-                serviceInstanceToMinAmount.put(serviceInstance.getId(), new Object[] { minAmount, minAmountLabel, serviceAmounts, amountMap, serviceInstance });
-            } else {
-                ((Amounts) minAmountInfo[2]).addAmounts(invSubcategoryAmountWithoutTax, invSubcategoryAmountWithTax, null);
-                ((Map<Long, Amounts>) minAmountInfo[3]).put(invSubCategoryId, new Amounts(invSubcategoryAmountWithoutTax, invSubcategoryAmountWithTax, null));
-            }
-        }
-
-        List<ServiceInstance> servicesWithMinAmount = getServicesWithMinAmount(billableEntity);
-        for (ServiceInstance serviceWithMinAmount : servicesWithMinAmount) {
-            Object[] minAmountInfo = serviceInstanceToMinAmount.get(serviceWithMinAmount.getId());
-            if (minAmountInfo == null) {
-                BigDecimal invSubcategoryAmountWithoutTax = BigDecimal.ZERO;
-                BigDecimal invSubcategoryAmountWithTax = BigDecimal.ZERO;
-                String minAmountEL = serviceWithMinAmount.getMinimumAmountEl();
-                String minAmountLabelEL = serviceWithMinAmount.getMinimumLabelEl();
-                BigDecimal minAmount = evaluateMinAmountExpression(minAmountEL, null, null, serviceWithMinAmount);
-                String minAmountLabel = evaluateMinAmountLabelExpression(minAmountLabelEL, null, null, serviceWithMinAmount);
-
-                Amounts serviceAmounts = new Amounts(invSubcategoryAmountWithoutTax, invSubcategoryAmountWithTax, null);
-                Map<Long, Amounts> amountMap = new HashMap<Long, Amounts>();
-                InvoiceSubCategory invoiceSubCategory = serviceWithMinAmount.getMinimumInvoiceSubCategory();
-                if (invoiceSubCategory != null) {
-                    amountMap.put(invoiceSubCategory.getId(), serviceAmounts);
-                    serviceInstanceToMinAmount.put(serviceWithMinAmount.getId(), new Object[] { minAmount, minAmountLabel, serviceAmounts, amountMap, serviceWithMinAmount });
-                } else {
-                    throw new BusinessException("minAmountInvoiceSubCategory not defined for service code=" + serviceWithMinAmount.getCode());
-                }
-            } else {
-                // Service amount exceed the minimum amount per service
-                if (((BigDecimal) minAmountInfo[0]).compareTo(appProvider.isEntreprise() ? ((Amounts) minAmountInfo[2]).getAmountWithoutTax() : ((Amounts) minAmountInfo[2]).getAmountWithTax()) <= 0) {
-                    serviceInstanceToMinAmount.put(serviceWithMinAmount.getId(), null);
-                    continue;
-                }
-            }
-        }
-
-        // Create Rated transactions to reach a minimum amount per service
-        Map<Long, Map<String, Amounts>> minRTAmountMap = new HashMap<>();
-
-        for (Entry<Long, Object[]> serviceAmounts : serviceInstanceToMinAmount.entrySet()) {
-
-            if (serviceAmounts.getValue() == null) {
-                continue;
-            }
-            BigDecimal minAmount = (BigDecimal) serviceAmounts.getValue()[0];
-            String minAmountLabel = (String) serviceAmounts.getValue()[1];
-            BigDecimal totalServiceAmount = appProvider.isEntreprise() ? ((Amounts) serviceAmounts.getValue()[2]).getAmountWithoutTax() : ((Amounts) serviceAmounts.getValue()[2]).getAmountWithTax();
-            ServiceInstance serviceInstance = (ServiceInstance) serviceAmounts.getValue()[4];
-
-            Subscription subscription = serviceInstance.getSubscription();
-            Seller seller = subscription.getSeller();
-            String mapKeyPrefix = seller.getId().toString() + "_";
-
-            BigDecimal totalRatio = BigDecimal.ZERO;
-            Iterator<Entry<Long, Amounts>> amountIterator = ((Map<Long, Amounts>) serviceAmounts.getValue()[3]).entrySet().iterator();
-
-            Map<String, Amounts> minRTAmountSubscriptionMap = new HashMap<>();
-            minRTAmountMap.put(subscription.getId(), minRTAmountSubscriptionMap);
-
-            BigDecimal diff = minAmount.subtract(totalServiceAmount);
-
-            while (amountIterator.hasNext()) {
-                Entry<Long, Amounts> amountsEntry = amountIterator.next();
-
-                Long invoiceSubCategoryId = amountsEntry.getKey();
-                if (invoiceSubCategoryId == null) {
-                    invoiceSubCategoryId = -1l;
-                }
-
-                String mapKey = mapKeyPrefix + invoiceSubCategoryId;
-                InvoiceSubCategory invoiceSubCategory = em.getReference(InvoiceSubCategory.class, invoiceSubCategoryId);
-                TaxInfo taxInfo = taxMappingService.determineTax(null, seller, billingAccount, null, minRatingDate, true, false);
-                Tax tax = taxInfo.tax;
-
-                BigDecimal invSubcategoryAmount = appProvider.isEntreprise() ? amountsEntry.getValue().getAmountWithoutTax() : amountsEntry.getValue().getAmountWithTax();
-
-                BigDecimal ratio = totalServiceAmount.compareTo(invSubcategoryAmount) == 0 ? BigDecimal.ONE : invSubcategoryAmount.divide(totalServiceAmount, 4, RoundingMode.HALF_UP);
-
-                // Ensure that all ratios sum up to 1
-                if (!amountIterator.hasNext()) {
-                    ratio = BigDecimal.ONE.subtract(totalRatio);
-                }
-
-                BigDecimal rtMinAmount = diff.multiply(ratio);
-
-                BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-                BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), appProvider.getRounding(),
-                    appProvider.getRoundingMode().getRoundingMode());
-
-                RatedTransaction ratedTransaction = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN,
-                    null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, billingSubscription, null, null, null, null, null,
-                    RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode() + "_" + serviceInstance.getCode(), minAmountLabel, null, null, seller, tax, tax.getPercent(), serviceInstance, taxInfo.taxClass);
-
-                createMinAmountsResult.addMinAmountRT(ratedTransaction);
-
-                // Remember newly "created" transaction amounts, as they are not persisted yet to DB
-                minRTAmountSubscriptionMap.put(mapKey, new Amounts(amounts[0], amounts[1], amounts[2]));
-
-                totalRatio = totalRatio.add(ratio);
-            }
-        }
-
-        createMinAmountsResult.setCreatedAmountServices(minRTAmountMap);
-        return createMinAmountsResult;
+        return computeTotalInvoiceableAmountForBillingAccount((BillingAccount) billableEntity, date, lastTransactionDate);
     }
 
     /**
      * Create Rated transactions to reach minimum invoiced amount per subscription level. Only those subscriptions that have minimum invoice amount rule are considered. Updates
      * minAmountTransactions parameter.
-     * 
+     *
      * @param billableEntity Entity to bill - entity for which minimum rated transactions should be created
      * @param billingAccount Billing account to associate new minimum amount Rated transactions with
      * @param lastTransactionDate Last transaction date
      * @param minRatingDate Date to assign to newly created minimum amount Rated transactions
-     * @param extraAmountsPerSubscription Additional Rated transaction amounts created to reach minimum invoicing amount per service. A map of amounts created with subscription id
-     *        as a main key and a secondary map of "&lt;seller.id&gt;_&lt;invoiceSubCategory.id&gt; as a key a and amounts as values" as a value
-     * @return CreateMinAmountsResult Contains createMinRTForSubscriptions result
+     * @param extraMinAmounts Additional Rated transaction amounts created to reach minimum invoicing amount per account level
+     * @param accountClass the account class which can be : ServiceInstance, Subscription or any class for the accounts hierarchy
+     * @return MinAmountsResult Contains new rated transaction created to reach the minimum for an account class and the extra amount.
      * @throws BusinessException General Business exception
      */
-    @SuppressWarnings("unchecked")
-    private CreateMinAmountsResult createMinRTForSubscriptions(IBillableEntity billableEntity, BillingAccount billingAccount, Date lastTransactionDate, Date minRatingDate,
-            Map<Long, Map<String, Amounts>> extraAmountsPerSubscription) throws BusinessException {
+    private MinAmountsResult createMinRTForAccount(IBillableEntity billableEntity, BillingAccount billingAccount, Date lastTransactionDate, Date minRatingDate, List<ExtraMinAmount> extraMinAmounts, Class accountClass)
+            throws BusinessException {
 
-        CreateMinAmountsResult createMinAmountsResult = new CreateMinAmountsResult();
+        MinAmountsResult minAmountsResult = new MinAmountsResult();
 
-        EntityManager em = getEntityManager();
+        Map<Long, MinAmountData> accountToMinAmount = getInvoiceableAmountDataPerAccount(billableEntity, billingAccount, lastTransactionDate, extraMinAmounts, accountClass);
 
-        // Subscription id as a key and array of <min amount>, <min amount label>, <total amounts>, map of <Invoice subCategory id, amounts], subscription>
-        Map<Long, Object[]> subscriptionToMinAmount = new HashMap<>();
+        accountToMinAmount = prepareAccountsWithMinAmount(billableEntity, billingAccount, extraMinAmounts, accountClass, accountToMinAmount);
 
-        Subscription billingSubscription = null;
-        if (billableEntity instanceof Subscription) {
-            billingSubscription = (Subscription) billableEntity;
-        }
+        // Create Rated transactions to reach a minimum amount per account level
 
-        // Only interested in subscriptions with minAmount condition
-        // Calculate amounts on subscription level grouped by invoice category and subscription
-        // Calculate a total sum of amounts on subscription level
-        List<Object[]> amountsList = computeInvoiceableAmountForSubscriptions(billableEntity, new Date(0), lastTransactionDate);
+        for (Entry<Long, MinAmountData> accountAmounts : accountToMinAmount.entrySet()) {
+            Map<String, Amounts> minRTAmountMap = new HashMap<>();
 
-        for (Object[] amounts : amountsList) {
-            BigDecimal invSubcategoryAmountWithoutTax = (BigDecimal) amounts[0];
-            BigDecimal invSubcategoryAmountWithTax = (BigDecimal) amounts[1];
-            Long invSubCategoryId = (Long) amounts[2];
-            Subscription subscription = em.find(Subscription.class, amounts[3]);
-
-            Object[] minAmountInfo = subscriptionToMinAmount.get(subscription.getId());
-
-            // Resolve if minimal invoice amount rule applies
-            if (minAmountInfo == null) {
-                String minAmountEL = subscription.getMinimumAmountEl();
-                String minAmountLabelEL = subscription.getMinimumLabelEl();
-                BigDecimal minAmount = evaluateMinAmountExpression(minAmountEL, null, subscription, null);
-                String minAmountLabel = evaluateMinAmountLabelExpression(minAmountLabelEL, null, subscription, null);
-                subscriptionToMinAmount.put(subscription.getId(), new Object[] { minAmount, minAmountLabel, new Amounts(), new HashMap<Long, Amounts>(), subscription });
-
-                // Append extra amounts from service level
-                if (extraAmountsPerSubscription != null && extraAmountsPerSubscription.containsKey(subscription.getId())) {
-
-                    Object[] subscriptionToMinAmountInfo = subscriptionToMinAmount.get(subscription.getId());
-                    Map<String, Amounts> extraAmounts = extraAmountsPerSubscription.get(subscription.getId());
-
-                    for (Entry<String, Amounts> amountInfo : extraAmounts.entrySet()) {
-                        ((Amounts) subscriptionToMinAmountInfo[2]).addAmounts(amountInfo.getValue());
-                        // Key consist of sellerId_invoiceSubCategoryId. Interested in invoiceSubCategoryId only
-                        ((Map<Long, Amounts>) subscriptionToMinAmountInfo[3]).put(Long.parseLong(amountInfo.getKey().split("_")[1]), amountInfo.getValue().clone());
-                    }
-                }
-            }
-
-            minAmountInfo = subscriptionToMinAmount.get(subscription.getId());
-            ((Amounts) minAmountInfo[2]).addAmounts(invSubcategoryAmountWithoutTax, invSubcategoryAmountWithTax, null);
-            Amounts subCatAmounts = ((Map<Long, Amounts>) minAmountInfo[3]).get(invSubCategoryId);
-            if (subCatAmounts == null) {
-                subCatAmounts = new Amounts(invSubcategoryAmountWithoutTax, invSubcategoryAmountWithTax, null);
-                ((Map<Long, Amounts>) minAmountInfo[3]).put(invSubCategoryId, subCatAmounts);
-            } else {
-                subCatAmounts.addAmounts(invSubcategoryAmountWithoutTax, invSubcategoryAmountWithTax, null);
-            }
-        }
-
-        List<Subscription> subscriptionsWithMinAmount = new ArrayList<Subscription>();
-        if (billableEntity instanceof Subscription) {
-            if (StringUtils.isNotBlank(((Subscription) billableEntity).getMinimumAmountEl())) {
-                subscriptionsWithMinAmount.add((Subscription) billableEntity);
-            }
-        } else {
-            subscriptionsWithMinAmount = getSubscriptionsWithMinAmount(billableEntity);
-        }
-
-        for (Subscription subscriptionWithMinAmount : subscriptionsWithMinAmount) {
-            Object[] minAmountInfo = subscriptionToMinAmount.get(subscriptionWithMinAmount.getId());
-            if (minAmountInfo == null) {
-                BigDecimal invSubcategoryAmountWithoutTax = BigDecimal.ZERO;
-                BigDecimal invSubcategoryAmountWithTax = BigDecimal.ZERO;
-                String minAmountEL = subscriptionWithMinAmount.getMinimumAmountEl();
-                String minAmountLabelEL = subscriptionWithMinAmount.getMinimumLabelEl();
-                BigDecimal minAmount = evaluateMinAmountExpression(minAmountEL, null, subscriptionWithMinAmount, null);
-                String minAmountLabel = evaluateMinAmountLabelExpression(minAmountLabelEL, null, subscriptionWithMinAmount, null);
-
-                Amounts subscriptionAmounts = new Amounts(invSubcategoryAmountWithoutTax, invSubcategoryAmountWithTax, null);
-                Map<Long, Amounts> amountMap = new HashMap<Long, Amounts>();
-                InvoiceSubCategory invoiceSubCategory = subscriptionWithMinAmount.getMinimumInvoiceSubCategory();
-                if (invoiceSubCategory != null) {
-                    amountMap.put(invoiceSubCategory.getId(), subscriptionAmounts);
-                    subscriptionToMinAmount.put(subscriptionWithMinAmount.getId(), new Object[] { minAmount, minAmountLabel, subscriptionAmounts, amountMap, subscriptionWithMinAmount });
-
-                    // Append extra amounts from service level
-                    if (extraAmountsPerSubscription.containsKey(subscriptionWithMinAmount.getId())) {
-
-                        Object[] subscriptionToMinAmountInfo = subscriptionToMinAmount.get(subscriptionWithMinAmount.getId());
-                        Map<String, Amounts> extraAmounts = extraAmountsPerSubscription.get(subscriptionWithMinAmount.getId());
-
-                        for (Entry<String, Amounts> amountInfo : extraAmounts.entrySet()) {
-                            ((Amounts) subscriptionToMinAmountInfo[2]).addAmounts(amountInfo.getValue());
-                            // Key consist of sellerId_invoiceSubCategoryId. Interested in invoiceSubCategoryId only
-                            ((Map<Long, Amounts>) subscriptionToMinAmountInfo[3]).put(Long.parseLong(amountInfo.getKey().split("_")[1]), amountInfo.getValue().clone());
-                        }
-                    }
-
-                } else {
-                    throw new BusinessException("minAmountInvoiceSubCategory not defined for subscription code=" + subscriptionWithMinAmount.getCode());
-                }
-            } else {
-                // Service amount exceed the minimum amount per service
-                if (((BigDecimal) minAmountInfo[0]).compareTo(appProvider.isEntreprise() ? ((Amounts) minAmountInfo[2]).getAmountWithoutTax() : ((Amounts) minAmountInfo[2]).getAmountWithTax()) <= 0) {
-                    subscriptionToMinAmount.put(subscriptionWithMinAmount.getId(), null);
-                    continue;
-                }
-            }
-        }
-
-        // Create Rated transactions to reach a minimum amount per subscription
-        Map<String, Amounts> minRTAmountMap = new HashMap<>();
-
-        for (Entry<Long, Object[]> subscriptionAmounts : subscriptionToMinAmount.entrySet()) {
-
-            if (subscriptionAmounts.getValue() == null) {
+            if (accountAmounts.getValue() == null || accountAmounts.getValue().getMinAmount() == null) {
                 continue;
             }
-            BigDecimal minAmount = (BigDecimal) subscriptionAmounts.getValue()[0];
-            String minAmountLabel = (String) subscriptionAmounts.getValue()[1];
-            BigDecimal totalSubscriptionAmount = appProvider.isEntreprise() ? ((Amounts) subscriptionAmounts.getValue()[2]).getAmountWithoutTax() : ((Amounts) subscriptionAmounts.getValue()[2]).getAmountWithTax();
-            Subscription subscription = (Subscription) subscriptionAmounts.getValue()[4];
 
-            Seller seller = subscription.getSeller();
+            BigDecimal minAmount = accountAmounts.getValue().getMinAmount();
+            String minAmountLabel = accountAmounts.getValue().getMinAmountLabel();
+            BigDecimal totalInvoiceableAmount = appProvider.isEntreprise() ? accountAmounts.getValue().getAmounts().getAmountWithoutTax() : accountAmounts.getValue().getAmounts().getAmountWithTax();
+            BusinessEntity entity = accountAmounts.getValue().getEntity();
+
+            Seller seller = accountAmounts.getValue().getSeller();
+            if (seller == null) {
+                throw new BusinessException("Default Seller is mandatory for invoice minimum (Customer.seller)");
+            }
             String mapKeyPrefix = seller.getId().toString() + "_";
 
-            BigDecimal totalRatio = BigDecimal.ZERO;
-            Iterator<Entry<Long, Amounts>> amountIterator = ((Map<Long, Amounts>) subscriptionAmounts.getValue()[3]).entrySet().iterator();
-
-            BigDecimal diff = minAmount.subtract(totalSubscriptionAmount);
-
-            while (amountIterator.hasNext()) {
-                Entry<Long, Amounts> amountsEntry = amountIterator.next();
-
-                Long invoiceSubCategoryId = amountsEntry.getKey();
-                String mapKey = mapKeyPrefix + invoiceSubCategoryId;
-
-                InvoiceSubCategory invoiceSubCategory = em.getReference(InvoiceSubCategory.class, invoiceSubCategoryId);
-                TaxInfo taxInfo = taxMappingService.determineTax(null, seller, billingAccount, null, minRatingDate, true, false);
-                Tax tax = taxInfo.tax;
-
-                BigDecimal invSubcategoryAmount = appProvider.isEntreprise() ? amountsEntry.getValue().getAmountWithoutTax() : amountsEntry.getValue().getAmountWithTax();
-
-                BigDecimal ratio = totalSubscriptionAmount.compareTo(invSubcategoryAmount) == 0 ? BigDecimal.ONE : invSubcategoryAmount.divide(totalSubscriptionAmount, 4, RoundingMode.HALF_UP);
-
-                // Ensure that all ratios sum up to 1
-                if (!amountIterator.hasNext()) {
-                    ratio = BigDecimal.ONE.subtract(totalRatio);
-                }
-
-                BigDecimal rtMinAmount = diff.multiply(ratio);
-
-                BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-                BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), appProvider.getRounding(),
-                    appProvider.getRoundingMode().getRoundingMode());
-
-                RatedTransaction ratedTransaction = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN,
-                    null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, billingSubscription, null, null, null, null, null,
-                    RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode() + "_" + subscription.getCode(), minAmountLabel, null, null, seller, tax, tax.getPercent(), null, taxInfo.taxClass);
-
-                createMinAmountsResult.addMinAmountRT(ratedTransaction);
-
-                // Remember newly "created" transaction amounts, as they are not persisted yet to DB
-                minRTAmountMap.put(mapKey, new Amounts(amounts[0], amounts[1], amounts[2]));
-
-                totalRatio = totalRatio.add(ratio);
-            }
-        }
-
-        createMinAmountsResult.setCreatedAmountSubscription(minRTAmountMap);
-        return createMinAmountsResult;
-    }
-
-    /**
-     * Determine if any extra Rated transactions must be created to reach minimal invoiceable amount per Billing account
-     * 
-     * @param billingAccount Billing account
-     * @param invoiceableAmounts Invoiceable amounts calculated per Billing account or null if just want to check if Billing account has any minimum invoiceable amount required
-     * @return True in extra Rated transactions should be created
-     * @throws BusinessException General business exception
-     */
-    private boolean isAppliesMinRTForBA(BillingAccount billingAccount, Amounts invoiceableAmounts) throws BusinessException {
-
-        // Interested in Billing accounts with minimum amount criteria
-        BigDecimal minAmount = null;
-
-        String minAmountEL = billingAccount.getMinimumAmountEl();
-
-        if (!StringUtils.isBlank(minAmountEL)) {
-            minAmount = evaluateMinAmountExpression(minAmountEL, billingAccount, null, null);
-        }
-
-        if (minAmount == null) {
-            return false;
-        }
-
-        if (invoiceableAmounts == null) {
-            return true;
-        }
-
-        BigDecimal totalBaAmount = appProvider.isEntreprise() ? invoiceableAmounts.getAmountWithoutTax() : invoiceableAmounts.getAmountWithTax();
-
-        // Billing account level amount is less than the minimum amount required per Billing account
-        return totalBaAmount.compareTo(minAmount) < 0;
-    }
-
-    /**
-     * Create Rated transactions to reach minimum invoiced amount per Billing account and update total amount sum. Updates minAmountTransactions, baLeveltotalAmounts and
-     * baLevelAmounts parameters.
-     * 
-     * @param billingAccount Billing account
-     * @param lastTransactionDate Last transaction date
-     * @param minRatingDate Date to assign to newly created minimum amount Rated transactions
-     * @param minAmountTransactions Newly created minimum amount Rated transactions. ARE UPDATED by this method. Rated trancastions created in this method are appended.
-     * @param totalInvoiceableAmounts Invoiceable amounts calculated per Billing account. Already includes amounts created in service and subscription levels.
-     * @param extraAmounts Amounts of extra rated transactions that were created on service and subscription levels. A map with &lt;Seller.id&gt;_&lt;InvoiceSubCategory.id&gt; as a
-     *        key and amounts as values
-     * @throws BusinessException General business exception
-     */
-    private Map<String, Amounts> createMinRTForBillingAccount(BillingAccount billingAccount, Date lastTransactionDate, Date minRatingDate, List<RatedTransaction> minAmountTransactions, Amounts totalInvoiceableAmounts,
-            Map<String, Amounts> extraAmounts) throws BusinessException {
-
-        EntityManager em = getEntityManager();
-
-        // <Seller.id>_<InvoiceSubCategory.id> as a key and amounts as values
-        Map<String, Amounts> baToMinAmounts = new HashMap<>();
-
-        // Interested in Billing accounts with minimum amount criteria
-        BigDecimal minAmount = null;
-        String minAmountLabel = null;
-
-        String minAmountEL = billingAccount.getMinimumAmountEl();
-        String minAmountLabelEL = billingAccount.getMinimumLabelEl();
-
-        // Calculate amounts on billing account level grouped by invoice category and seller
-        // Calculate a total sum of amounts for billing account
-        List<Object[]> amountsList = computeInvoiceableAmountForBillingAccount(billingAccount, new Date(0), lastTransactionDate);
-        for (Object[] amounts : amountsList) {
-            String amountsKey = amounts[3] + "_" + amounts[2];
-            baToMinAmounts.put(amountsKey, new Amounts((BigDecimal) amounts[0], (BigDecimal) amounts[1], null));
-        }
-
-        // Add previously created amounts
-        for (Entry<String, Amounts> extraAmount : extraAmounts.entrySet()) {
-
-            if (baToMinAmounts.containsKey(extraAmount.getKey())) {
-                baToMinAmounts.get(extraAmount.getKey()).addAmounts(extraAmount.getValue());
-            } else {
-                baToMinAmounts.put(extraAmount.getKey(), extraAmount.getValue().clone());
-            }
-        }
-
-        if (!StringUtils.isBlank(minAmountEL)) {
-            minAmount = evaluateMinAmountExpression(minAmountEL, billingAccount, null, null);
-            minAmountLabel = evaluateMinAmountLabelExpression(minAmountLabelEL, billingAccount, null, null);
-            Map<Long, Amounts> amountMap = new HashMap<Long, Amounts>();
-            if (baToMinAmounts.size() == 0) {
-                InvoiceSubCategory invoiceSubCategory = billingAccount.getMinimumInvoiceSubCategory();
-                if (invoiceSubCategory != null) {
-                    Amounts baAmounts = new Amounts(BigDecimal.ZERO, BigDecimal.ZERO, null);
-                    amountMap.put(invoiceSubCategory.getId(), baAmounts);
-                    String key = billingAccount.getCustomerAccount().getCustomer().getSeller().getId() + "_" + invoiceSubCategory.getId();
-                    baToMinAmounts.put(key, baAmounts);
-                } else {
-                    throw new BusinessException("minAmountInvoiceSubCategory not defined for billingAccount code=" + billingAccount.getCode());
-                }
-            }
-        }
-
-        BigDecimal totalBaAmount = appProvider.isEntreprise() ? totalInvoiceableAmounts.getAmountWithoutTax() : totalInvoiceableAmounts.getAmountWithTax();
-
-        // Billing account level amount exceeds the minimum amount required per Billing account
-        if (totalBaAmount.compareTo(minAmount) >= 0) {
-            return new HashMap<>();
-        }
-
-        BigDecimal diff = minAmount.subtract(totalBaAmount);
-
-        // Create Rated transactions to reach minimum amount per Billing account
-        BigDecimal totalRatio = BigDecimal.ZERO;
-        Map<String, Amounts> minRTAmountMap = new HashMap<>();
-        Iterator<Entry<String, Amounts>> amountIterator = baToMinAmounts.entrySet().iterator();
-
-        while (amountIterator.hasNext()) {
-            Entry<String, Amounts> amountsEntry = amountIterator.next();
-
-            String mapKey = amountsEntry.getKey();
-
-            BigDecimal baAmount = appProvider.isEntreprise() ? amountsEntry.getValue().getAmountWithoutTax() : amountsEntry.getValue().getAmountWithTax();
-
-            BigDecimal ratio = totalBaAmount.compareTo(baAmount) == 0 ? BigDecimal.ONE : baAmount.divide(totalBaAmount, 4, RoundingMode.HALF_UP);
-
-            // Ensure that all ratios sum up to 1
-            if (!amountIterator.hasNext()) {
-                ratio = BigDecimal.ONE.subtract(totalRatio);
+            BigDecimal diff = minAmount.subtract(totalInvoiceableAmount);
+            if (diff.compareTo(BigDecimal.ZERO) <= 0) {
+                continue;
             }
 
-            String[] ids = mapKey.split("_");
-            Long sellerId = Long.parseLong(amountsEntry.getKey().substring(0, amountsEntry.getKey().indexOf("_")));
-            Seller seller = sellerService.findById(sellerId);
-            InvoiceSubCategory invoiceSubCategory = em.getReference(InvoiceSubCategory.class, Long.parseLong(ids[1]));
+            OneShotChargeTemplate oneShotChargeTemplate = getMinimumChargeTemplate(entity);
+            if (oneShotChargeTemplate == null) {
+                log.error("The charge template target is not defined for the entity: {}", entity);
+                continue;
+            }
 
-            TaxInfo taxInfo = taxMappingService.determineTax(null, seller, billingAccount, null, minRatingDate, true, false);
-            Tax tax = taxInfo.tax;
+            InvoiceSubCategory invoiceSubCategory = oneShotChargeTemplate.getInvoiceSubCategory();
+            String mapKey = mapKeyPrefix + invoiceSubCategory.getId();
 
-            BigDecimal rtMinAmount = diff.multiply(ratio);
+            TaxInfo taxInfo = taxMappingService.determineTax(oneShotChargeTemplate.getTaxClass(), seller, billingAccount, null, minRatingDate, true, false);
 
-            BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-            BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+            String code = getMinAmountRTCode(entity, accountClass);
+            RatedTransaction ratedTransaction = getNewRatedTransaction(billableEntity, billingAccount, minRatingDate, minAmountLabel, entity, seller, invoiceSubCategory, taxInfo, diff, code);
 
-            RatedTransaction ratedTransaction = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN,
-                null, billingAccount, null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, null, null,
-                RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_BA.getCode() + "_" + billingAccount.getCode(), minAmountLabel, null, null, seller, tax, tax.getPercent(), null, taxInfo.taxClass);
-
-            minAmountTransactions.add(ratedTransaction);
+            minAmountsResult.addMinAmountRT(ratedTransaction);
 
             // Remember newly "created" transaction amounts, as they are not persisted yet to DB
-            minRTAmountMap.put(mapKey, new Amounts(amounts[0], amounts[1], amounts[2]));
+            minRTAmountMap.put(mapKey, new Amounts(ratedTransaction.getUnitAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax()));
+            extraMinAmounts.add(new ExtraMinAmount(entity, minRTAmountMap));
 
-            totalRatio = totalRatio.add(ratio);
         }
 
-        return minRTAmountMap;
+        minAmountsResult.setExtraMinAmounts(extraMinAmounts);
+        return minAmountsResult;
+    }
+
+    /**
+     * Prepare each account level with minimum amount activated to generate the minimum RT.
+     *
+     * @param billableEntity the billable entity can be a subscription or a billing account
+     * @param billingAccount The billing account
+     * @param extraMinAmounts The extra minimum amount generated in children levels
+     * @param accountClass The account class
+     * @param accountToMinAmount where to store the entity and new generated amounts to reach the minimum
+     * @return A map where to store amounts for each entity
+     */
+    private Map<Long, MinAmountData> prepareAccountsWithMinAmount(IBillableEntity billableEntity, BillingAccount billingAccount, List<ExtraMinAmount> extraMinAmounts, Class accountClass,
+            Map<Long, MinAmountData> accountToMinAmount) {
+        List<BusinessEntity> accountsWithMinAmount = new ArrayList<>();
+
+        accountsWithMinAmount = getAccountsWithMinAmountElNotNull(billableEntity, accountClass);
+
+        for (BusinessEntity entity : accountsWithMinAmount) {
+            MinAmountData minAmountInfo = accountToMinAmount.get(entity.getId());
+            if (minAmountInfo == null) {
+                String minAmountEL = getMinimumAmountElInfo(entity, "getMinimumAmountEl");
+                String minAmountLabelEL = getMinimumAmountElInfo(entity, "getMinimumLabelEl");
+                BigDecimal minAmount = evaluateMinAmountExpression(minAmountEL, entity);
+                String minAmountLabel = evaluateMinAmountLabelExpression(minAmountLabelEL, entity);
+
+                Amounts accountAmounts = new Amounts(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+                accountToMinAmount.put(entity.getId(), new MinAmountData(minAmount, minAmountLabel, accountAmounts.clone(), null, entity, getSeller(billingAccount, entity)));
+
+                if (extraMinAmounts != null) {
+                    accountToMinAmount = appendExtraAmount(extraMinAmounts, accountToMinAmount, entity);
+                }
+
+            } else {
+                // The amount exceed the minimum amount per account level
+                if ((minAmountInfo.getMinAmount()).compareTo(appProvider.isEntreprise() ? minAmountInfo.getAmounts().getAmountWithoutTax() : minAmountInfo.getAmounts().getAmountWithTax()) <= 0) {
+                    accountToMinAmount.put(entity.getId(), null);
+                }
+            }
+        }
+        return accountToMinAmount;
+    }
+
+    /**
+     * Gets the invoiceable amount for each level account.
+     *
+     * @param billableEntity The billable entity
+     * @param billingAccount The billing account
+     * @param lastTransactionDate last transaction date
+     * @param extraMinAmounts The extra minimum amounts generated in children levels
+     * @param accountClass The account level's class
+     * @return return invoiceable amount grouped by entity
+     */
+    private Map<Long, MinAmountData> getInvoiceableAmountDataPerAccount(IBillableEntity billableEntity, BillingAccount billingAccount, Date lastTransactionDate, List<ExtraMinAmount> extraMinAmounts, Class accountClass) {
+        EntityManager em = getEntityManager();
+
+        Map<Long, MinAmountData> accountToMinAmount = new HashMap<>();
+
+        // Get the invoiceable amount per account level
+        List<Object[]> amountsList = computeInvoiceableAmountForAccount(billableEntity, new Date(0), lastTransactionDate, accountClass);
+
+        for (Object[] amounts : amountsList) {
+            BigDecimal amountWithoutTax = (BigDecimal) amounts[0];
+            BigDecimal amountWithTax = (BigDecimal) amounts[1];
+            BusinessEntity entity = (BusinessEntity) em.find(accountClass, amounts[2]);
+            Seller seller = getSeller(billingAccount, entity);
+
+            MinAmountData minAmountDataInfo = accountToMinAmount.get(entity.getId());
+
+            // Resolve if minimal invoice amount rule applies
+            if (minAmountDataInfo == null) {
+                String minAmountEL = getMinimumAmountElInfo(entity, "getMinimumAmountEl");
+                String minAmountLabelEL = getMinimumAmountElInfo(entity, "getMinimumLabelEl");
+                BigDecimal minAmount = evaluateMinAmountExpression(minAmountEL, entity);
+                String minAmountLabel = evaluateMinAmountLabelExpression(minAmountLabelEL, entity);
+                if (minAmount == null) {
+                    continue;
+                }
+                MinAmountData minAmountData = new MinAmountData(minAmount, minAmountLabel, new Amounts(), null, entity, seller);
+                accountToMinAmount.put(entity.getId(), minAmountData);
+
+                if (extraMinAmounts != null) {
+                    accountToMinAmount = appendExtraAmount(extraMinAmounts, accountToMinAmount, entity);
+                }
+            }
+
+            minAmountDataInfo = accountToMinAmount.get(entity.getId());
+            minAmountDataInfo.getAmounts().addAmounts(amountWithoutTax, amountWithTax, null);
+
+        }
+        return accountToMinAmount;
+    }
+
+    /**
+     * Gets the minimum amount RT code used in Rated transaction.
+     *
+     * @param entity the entity
+     * @param accountClass the account class
+     * @return the minimum amount RT code
+     */
+    private String getMinAmountRTCode(BusinessEntity entity, Class accountClass) {
+        String prefix = "";
+        if (accountClass.equals(ServiceInstance.class)) {
+            prefix = RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode();
+        }
+        if (accountClass.equals(Subscription.class)) {
+            prefix = RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode();
+        }
+        if (accountClass.equals(UserAccount.class)) {
+            prefix = RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_UA.getCode();
+        }
+        if (accountClass.equals(BillingAccount.class)) {
+            prefix = RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_BA.getCode();
+        }
+        if (accountClass.equals(CustomerAccount.class)) {
+            prefix = RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_CA.getCode();
+        }
+        if (accountClass.equals(Customer.class)) {
+            prefix = RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_CUST.getCode();
+        }
+
+        return prefix + "_" + entity.getCode();
+    }
+
+    /**
+     * Gets the invoiceable amount for an entity in each hierarchy level.
+     *
+     * @param billableEntity the billable entity
+     * @param firstTransactionDate first Transaction Date
+     * @param lastTransactionDate last Transaction Date
+     * @param accountClass account class
+     * @return invoiceable amount
+     */
+    private List<Object[]> computeInvoiceableAmountForAccount(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate, Class accountClass) {
+        if (accountClass.equals(ServiceInstance.class)) {
+            return computeInvoiceableAmountForServicesWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate);
+        }
+        if (accountClass.equals(Subscription.class)) {
+            return computeInvoiceableAmountForSubscriptionsWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate);
+        }
+        if (accountClass.equals(UserAccount.class)) {
+            return computeInvoiceableAmountForUserAccountsWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate);
+        }
+        if (accountClass.equals(BillingAccount.class)) {
+            return computeInvoiceableAmountForBillingAccountWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate);
+        }
+        if (accountClass.equals(CustomerAccount.class)) {
+            return computeInvoiceableAmountForCustomerAccountWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate);
+        }
+        if (accountClass.equals(Customer.class)) {
+            return computeInvoiceableAmountForCustomerWithMinAmountRule(billableEntity, firstTransactionDate, lastTransactionDate);
+        }
+        return null;
+    }
+
+    /**
+     * Gets Accounts, subscriptions or services where the minimum amounts is activated.
+     *
+     * @param billableEntity the billable entity
+     * @param accountClass the account class
+     * @return a list of entities where the minimum amounts is activated.
+     */
+    private List<BusinessEntity> getAccountsWithMinAmountElNotNull(IBillableEntity billableEntity, Class<? extends BusinessEntity> accountClass) {
+
+        if (accountClass.equals(ServiceInstance.class)) {
+            return getServicesWithMinAmount(billableEntity);
+        }
+        if (accountClass.equals(Subscription.class)) {
+            return getSubscriptionsWithMinAmount(billableEntity);
+        }
+        if (accountClass.equals(UserAccount.class)) {
+            return getUserAccountsWithMinAmountELNotNull(billableEntity);
+        }
+        if (accountClass.equals(BillingAccount.class)) {
+            return getBillingAccountsWithMinAmountELNotNull(billableEntity);
+        }
+        if (accountClass.equals(CustomerAccount.class)) {
+            return getCustomerAccountsWithMinAmountELNotNull(billableEntity);
+        }
+        if (accountClass.equals(Customer.class)) {
+            return getCustomersWithMinAmountELNotNull(billableEntity);
+        }
+
+        return new ArrayList<>();
+    }
+
+    /**
+     * Gets billing account where the minimum amount is activated.
+     *
+     * @param billableEntity the billable entity;
+     * @return a list of billing account
+     */
+    private List<BusinessEntity> getBillingAccountsWithMinAmountELNotNull(IBillableEntity billableEntity) {
+
+        if (billableEntity instanceof Subscription) {
+            billableEntity = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
+        }
+
+        Query q = getEntityManager().createNamedQuery("BillingAccount.getBillingAccountsWithMinAmountELNotNullByBA").setParameter("billingAccount", billableEntity);
+        return q.getResultList();
+    }
+
+    /**
+     * Gets Customer accounts where the minimum amount is activated.
+     *
+     * @param billableEntity the billable entity;
+     * @return a list of customer accounts
+     */
+    private List<BusinessEntity> getCustomerAccountsWithMinAmountELNotNull(IBillableEntity billableEntity) {
+        if (billableEntity instanceof Subscription) {
+            billableEntity = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
+        }
+        Query q = getEntityManager().createNamedQuery("CustomerAccount.getCustomerAccountsWithMinAmountELNotNullByBA").setParameter("customerAccount", ((BillingAccount) billableEntity).getCustomerAccount());
+        return q.getResultList();
+    }
+
+    /**
+     * Gets Customers where the minimum amount is activated.
+     *
+     * @param billableEntity the billable entity;
+     * @return a list of customers
+     */
+    private List<BusinessEntity> getCustomersWithMinAmountELNotNull(IBillableEntity billableEntity) {
+        if (billableEntity instanceof Subscription) {
+            billableEntity = ((Subscription) billableEntity).getUserAccount().getBillingAccount();
+        }
+        Query q = getEntityManager().createNamedQuery("Customer.getCustomersWithMinAmountELNotNullByBA").setParameter("customer", ((BillingAccount) billableEntity).getCustomerAccount().getCustomer());
+        return q.getResultList();
+    }
+
+    @Deprecated
+    private InvoiceSubCategory getMinimumInvoiceSubCategory(BillingAccount billingAccount, BusinessEntity entity) {
+        if (entity instanceof ServiceInstance) {
+            InvoiceSubCategory invoiceSubCategory = ((ServiceInstance) entity).getMinimumInvoiceSubCategory();
+            if (invoiceSubCategory == null && ((ServiceInstance) entity).getServiceTemplate().getMinimumInvoiceSubCategory() != null) {
+                invoiceSubCategory = ((ServiceInstance) entity).getServiceTemplate().getMinimumInvoiceSubCategory();
+            }
+            return invoiceSubCategory;
+        }
+        if (entity instanceof Subscription) {
+            InvoiceSubCategory invoiceSubCategory = ((Subscription) entity).getMinimumInvoiceSubCategory();
+            if (invoiceSubCategory == null && ((Subscription) entity).getOffer().getMinimumInvoiceSubCategory() != null) {
+                invoiceSubCategory = ((Subscription) entity).getOffer().getMinimumInvoiceSubCategory();
+            }
+            return invoiceSubCategory;
+        } else {
+            return billingAccount.getMinimumInvoiceSubCategory();
+        }
+
+    }
+
+    private OneShotChargeTemplate getMinimumChargeTemplate(BusinessEntity entity) {
+        try {
+            Method method = entity.getClass().getMethod("getMinimumChargeTemplate", null);
+            return (OneShotChargeTemplate) method.invoke(entity, null);
+        } catch (NoSuchMethodException e) {
+            throw new BusinessException("The method getMinimumChargeTemplate is not defined for the entity: " + entity.getClass().getName(), e);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new BusinessException("Error when calling the getMinimumChargeTemplate on : " + entity.getClass().getName(), e);
+        }
+    }
+
+    /**
+     * Extract minimum amount EL.
+     *
+     * @param entity the entity
+     * @param method the method used to get the minimum amount EL
+     * @return the minimum amount as String
+     */
+    private String getMinimumAmountElInfo(BusinessEntity entity, String method) {
+        try {
+            Method getMinimumAmountElMethod = entity.getClass().getMethod(method);
+            if (getMinimumAmountElMethod != null) {
+                String value = (String) getMinimumAmountElMethod.invoke(entity);
+                if (value == null && entity instanceof ServiceInstance) {
+                    getMinimumAmountElMethod = ((ServiceInstance) entity).getServiceTemplate().getClass().getMethod(method);
+                    value = (String) getMinimumAmountElMethod.invoke(((ServiceInstance) entity).getServiceTemplate());
+                }
+                if (value == null && entity instanceof Subscription) {
+                    getMinimumAmountElMethod = ((Subscription) entity).getOffer().getClass().getMethod(method);
+                    value = (String) getMinimumAmountElMethod.invoke(((Subscription) entity).getOffer());
+                }
+                return value;
+            } else {
+                throw new BusinessException("The method getMinimumAmountEl () is not defined for the entity " + entity.getClass().getSimpleName());
+            }
+
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new BusinessException("The method getMinimumAmountEl () is not defined for the entity " + entity.getClass().getSimpleName());
+        }
+    }
+
+    /**
+     * Generate the minimum amount rated transaction
+     *
+     * @param billableEntity the billable entity
+     * @param billingAccount the billing account
+     * @param minRatingDate the rated transaction date
+     * @param minAmountLabel the rated transaction label
+     * @param entity the entity
+     * @param seller the seller
+     * @param invoiceSubCategory the invoice subcategory
+     * @param taxInfo the tax info
+     * @param rtMinAmount the rated transaction amount
+     * @param code the rated transaction code.
+     * @return a rated transaction
+     */
+    private RatedTransaction getNewRatedTransaction(IBillableEntity billableEntity, BillingAccount billingAccount, Date minRatingDate, String minAmountLabel, BusinessEntity entity, Seller seller,
+            InvoiceSubCategory invoiceSubCategory, TaxInfo taxInfo, BigDecimal rtMinAmount, String code) {
+        Tax tax = taxInfo.tax;
+        BigDecimal[] unitAmounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+        BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(rtMinAmount, rtMinAmount, tax.getPercent(), appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+        RatedTransaction rt = new RatedTransaction(minRatingDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], BigDecimal.ONE, amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount,
+            null, invoiceSubCategory, null, null, null, null, null, null, null, null, null, null, null, code, minAmountLabel, null, null, seller, tax, tax.getPercent(), null, taxInfo.taxClass);
+        if (entity instanceof ServiceInstance) {
+            rt.setServiceInstance((ServiceInstance) entity);
+        }
+        if (entity instanceof Subscription) {
+            rt.setSubscription((Subscription) entity);
+        }
+        if (billableEntity instanceof Subscription) {
+            rt.setSubscription((Subscription) billableEntity);
+        }
+        return rt;
+    }
+
+    /**
+     * Gets the seller.
+     *
+     * @param billingAccount the billing account
+     * @param entity the entity, can be ServiceInstance, subscription or billinAccount
+     * @return a seller
+     */
+    private Seller getSeller(BillingAccount billingAccount, BusinessEntity entity) {
+        if (entity instanceof ServiceInstance) {
+            return ((ServiceInstance) entity).getSubscription().getSeller();
+        }
+        if (entity instanceof Subscription) {
+            return ((Subscription) entity).getSeller();
+        }
+        return billingAccount.getCustomerAccount().getCustomer().getSeller();
+    }
+
+    /**
+     * For each level in the account's hierarchy, append the extra minimum generated in a level to its parent level.
+     *
+     * @param extraMinAmounts the extra amounts generated
+     * @param accountToMinAmount a map amounts grouped by an entity.
+     * @param entity the entity
+     * @return a map amounts grouped by an entity.
+     */
+    private Map<Long, MinAmountData> appendExtraAmount(List<ExtraMinAmount> extraMinAmounts, Map<Long, MinAmountData> accountToMinAmount, BusinessEntity entity) {
+        MinAmountData minAmountDataInfo = accountToMinAmount.get(entity.getId());
+
+        extraMinAmounts.forEach(extraMinAmount -> {
+            BusinessEntity extraMinAmountEntity = extraMinAmount.getEntity();
+
+            if (isExtraMinAmountEntityChildOfEntity(extraMinAmountEntity, entity)) {
+                Map<String, Amounts> extraAmounts = extraMinAmount.getCreatedAmount();
+                for (Entry<String, Amounts> amountInfo : extraAmounts.entrySet()) {
+                    minAmountDataInfo.getAmounts().addAmounts(amountInfo.getValue());
+                }
+            }
+
+        });
+
+        return accountToMinAmount;
+    }
+
+    /**
+     * Check if an entity is a child of an other entity
+     *
+     * @param child the child entity
+     * @param parent the parent entity
+     * @return true if is a child
+     */
+    private boolean isExtraMinAmountEntityChildOfEntity(BusinessEntity child, BusinessEntity parent) {
+        if (parent instanceof Subscription && child instanceof ServiceInstance) {
+            return ((ServiceInstance) child).getSubscription().equals(parent);
+        }
+        if (parent instanceof UserAccount && child instanceof ServiceInstance) {
+            return ((ServiceInstance) child).getSubscription().getUserAccount().equals(parent);
+        }
+        if (parent instanceof UserAccount && child instanceof Subscription) {
+            return ((Subscription) child).getUserAccount().equals(parent);
+        }
+        if (parent instanceof BillingAccount && child instanceof ServiceInstance) {
+            return ((ServiceInstance) child).getSubscription().getUserAccount().getBillingAccount().equals(parent);
+        }
+        if (parent instanceof BillingAccount && child instanceof Subscription) {
+            return ((Subscription) child).getUserAccount().getBillingAccount().equals(parent);
+        }
+        if (parent instanceof BillingAccount && child instanceof UserAccount) {
+            return ((UserAccount) child).getBillingAccount().equals(parent);
+        }
+        if (parent instanceof CustomerAccount && child instanceof ServiceInstance) {
+            return ((ServiceInstance) child).getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().equals(parent);
+        }
+        if (parent instanceof CustomerAccount && child instanceof Subscription) {
+            return ((Subscription) child).getUserAccount().getBillingAccount().getCustomerAccount().equals(parent);
+        }
+        if (parent instanceof CustomerAccount && child instanceof UserAccount) {
+            return ((UserAccount) child).getBillingAccount().getCustomerAccount().equals(parent);
+        }
+        if (parent instanceof CustomerAccount && child instanceof BillingAccount) {
+            return ((BillingAccount) child).getCustomerAccount().equals(parent);
+        }
+        if (parent instanceof Customer && child instanceof ServiceInstance) {
+            return ((ServiceInstance) child).getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().equals(parent);
+        }
+        if (parent instanceof Customer && child instanceof Subscription) {
+            return ((Subscription) child).getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().equals(parent);
+        }
+        if (parent instanceof Customer && child instanceof UserAccount) {
+            return ((UserAccount) child).getBillingAccount().getCustomerAccount().getCustomer().equals(parent);
+        }
+        if (parent instanceof Customer && child instanceof BillingAccount) {
+            return ((BillingAccount) child).getCustomerAccount().getCustomer().equals(parent);
+        }
+        if (parent instanceof Customer && child instanceof CustomerAccount) {
+            return ((CustomerAccount) child).getCustomer().equals(parent);
+        }
+        return false;
+    }
+
+    /**
+     * Gets user accounts for a billable entity where the minimum amount is activated.
+     *
+     * @param billableEntity the billable entity
+     * @return a list of user account
+     */
+    private List<BusinessEntity> getUserAccountsWithMinAmountELNotNull(IBillableEntity billableEntity) {
+
+        if (billableEntity instanceof Subscription) {
+            Query q = getEntityManager().createNamedQuery("UserAccount.getUserAccountsWithMinAmountELNotNullByUA").setParameter("userAccount", ((Subscription) billableEntity).getUserAccount());
+            return q.getResultList();
+        }
+
+        Query q = getEntityManager().createNamedQuery("UserAccount.getUserAccountsWithMinAmountELNotNullByBA").setParameter("billingAccount", (BillingAccount) billableEntity);
+        return q.getResultList();
     }
 
     /**
@@ -1285,8 +1238,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return (Amounts) q.getSingleResult();
     }
 
-    @SuppressWarnings("unchecked")
-    private List<ServiceInstance> getServicesWithMinAmount(IBillableEntity billableEntity) {
+    private List<BusinessEntity> getServicesWithMinAmount(IBillableEntity billableEntity) {
 
         if (billableEntity instanceof Subscription) {
             Query q = getEntityManager().createNamedQuery("ServiceInstance.getServicesWithMinAmountBySubscription").setParameter("subscription", (Subscription) billableEntity);
@@ -1294,14 +1246,18 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         } else if (billableEntity instanceof BillingAccount) {
             Query q = getEntityManager().createNamedQuery("ServiceInstance.getServicesWithMinAmountByBA").setParameter("billingAccount", (BillingAccount) billableEntity);
-            ;
             return q.getResultList();
         }
-        return null;
+        return Collections.emptyList();
     }
 
-    @SuppressWarnings("unchecked")
-    private List<Subscription> getSubscriptionsWithMinAmount(IBillableEntity billableEntity) {
+    /**
+     * Gets subscriptions where the minimum amount is activated
+     *
+     * @param billableEntity the billable entity.
+     * @return a list of subscription
+     */
+    private List<BusinessEntity> getSubscriptionsWithMinAmount(IBillableEntity billableEntity) {
 
         if (billableEntity instanceof Subscription) {
             Query q = getEntityManager().createNamedQuery("Subscription.getSubscriptionsWithMinAmountBySubscription").setParameter("subscription", (Subscription) billableEntity);
@@ -1309,10 +1265,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         } else if (billableEntity instanceof BillingAccount) {
             Query q = getEntityManager().createNamedQuery("Subscription.getSubscriptionsWithMinAmountByBA").setParameter("billingAccount", (BillingAccount) billableEntity);
-            ;
+
             return q.getResultList();
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @SuppressWarnings("unchecked")
@@ -1346,15 +1302,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Summed rated transaction amounts applied on subscriptions, that have minimum invoiceable amount rule, grouped by invoice subCategory for a given billable entity.
-     * 
+     * Summed rated transaction amounts applied on subscriptions, that have minimum invoiceable amount rule for a given billable entity.
+     *
      * @param billableEntity Billable entity
      * @param firstTransactionDate First transaction date.
      * @param lastTransactionDate Last transaction date
-     * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, invoice subcategory id, subscription
+     * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, subscription
      */
     @SuppressWarnings("unchecked")
-    private List<Object[]> computeInvoiceableAmountForSubscriptions(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
+    private List<Object[]> computeInvoiceableAmountForSubscriptionsWithMinAmountRule(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
 
         if (billableEntity instanceof Subscription) {
             Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableBySubscriptionWithMinAmountBySubscription").setParameter("subscription", (Subscription) billableEntity)
@@ -1370,17 +1326,85 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Summed rated transaction amounts grouped by invoice subcategory and seller for a given billing account
-     * 
-     * @param billingAccount Billing account
+     * Summed rated transaction amounts applied on UserAccounts, that have minimum invoiceable amount rule for a given billable entity.
+     *
+     * @param billableEntity Billable entity
      * @param firstTransactionDate First transaction date.
      * @param lastTransactionDate Last transaction date
-     * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, invoice subcategory id, seller id
+     * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, subscription
      */
-    @SuppressWarnings("unchecked")
-    private List<Object[]> computeInvoiceableAmountForBillingAccount(BillingAccount billingAccount, Date firstTransactionDate, Date lastTransactionDate) {
-        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableByBA").setParameter("billingAccount", billingAccount).setParameter("firstTransactionDate", firstTransactionDate)
+    private List<Object[]> computeInvoiceableAmountForUserAccountsWithMinAmountRule(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
+
+        if (billableEntity instanceof Subscription) {
+            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableForUAWithMinAmountBySubscription").setParameter("subscription", billableEntity)
+                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+            return q.getResultList();
+        }
+
+        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableWithMinAmountByUA").setParameter("billingAccount", billableEntity).setParameter("firstTransactionDate", firstTransactionDate)
             .setParameter("lastTransactionDate", lastTransactionDate);
+        return q.getResultList();
+    }
+
+    /**
+     * Summed rated transaction amounts grouped by and seller for a given billing account
+     *
+     * @param billableEntity Billing account
+     * @param firstTransactionDate First transaction date.
+     * @param lastTransactionDate Last transaction date
+     * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, seller id
+     */
+    private List<Object[]> computeInvoiceableAmountForBillingAccountWithMinAmountRule(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
+
+        if (billableEntity instanceof Subscription) {
+            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableForBAWithMinAmountBySubscription").setParameter("subscription", billableEntity)
+                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+            return q.getResultList();
+        }
+
+        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableWithMinAmountByBA").setParameter("billingAccount", billableEntity).setParameter("firstTransactionDate", firstTransactionDate)
+            .setParameter("lastTransactionDate", lastTransactionDate);
+        return q.getResultList();
+    }
+
+    /**
+     * Summed rated transaction amounts grouped by seller for a given customer account
+     *
+     * @param billableEntity Billing account
+     * @param firstTransactionDate First transaction date.
+     * @param lastTransactionDate Last transaction date
+     * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, seller id
+     */
+    private List<Object[]> computeInvoiceableAmountForCustomerAccountWithMinAmountRule(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
+
+        if (billableEntity instanceof Subscription) {
+            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableForCAWithMinAmountBySubscription").setParameter("subscription", billableEntity)
+                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+            return q.getResultList();
+        }
+
+        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableWithMinAmountByCA").setParameter("customerAccount", ((BillingAccount) billableEntity).getCustomerAccount())
+            .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+        return q.getResultList();
+    }
+
+    /**
+     * Summed rated transaction amounts grouped by invoice subcategory and seller for a given customer account
+     *
+     * @param billableEntity BillingAccount or subscription
+     * @param firstTransactionDate First transaction date.
+     * @param lastTransactionDate Last transaction date
+     * @return Summed rated transaction amounts as array: sum of amounts without tax, sum of amounts with tax, seller id
+     */
+    private List<Object[]> computeInvoiceableAmountForCustomerWithMinAmountRule(IBillableEntity billableEntity, Date firstTransactionDate, Date lastTransactionDate) {
+
+        if (billableEntity instanceof Subscription) {
+            Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableForCustomerWithMinAmountBySubscription").setParameter("subscription", billableEntity)
+                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+            return q.getResultList();
+        }
+        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumInvoiceableWithMinAmountByCustomer").setParameter("customer", ((BillingAccount) billableEntity).getCustomerAccount().getCustomer())
+            .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
         return q.getResultList();
     }
 
@@ -1399,9 +1423,67 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
 
-        Map<Object, Object> userMap = constructElContext(expression, ba, subscription, serviceInstance);
+        Map<Object, Object> userMap = constructElContext(expression, ba, subscription, serviceInstance, null);
 
         return ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
+    }
+
+    /**
+     * Evaluate double expression. Either ba, ua, subscription or service instance must be specified.
+     *
+     * @param expression EL expression
+     * @param entity Business Entity
+     * @return evaluated expression
+     * @throws BusinessException business exception
+     */
+    private BigDecimal evaluateMinAmountExpression(String expression, BusinessEntity entity) throws BusinessException {
+        if (StringUtils.isBlank(expression)) {
+            return null;
+        }
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        if (entity instanceof BillingAccount) {
+            userMap = constructElContext(expression, (BillingAccount) entity, null, null, null);
+        }
+        if (entity instanceof UserAccount) {
+            userMap = constructElContext(expression, null, null, null, (UserAccount) entity);
+        }
+        if (entity instanceof Subscription) {
+            userMap = constructElContext(expression, null, (Subscription) entity, null, null);
+        }
+        if (entity instanceof ServiceInstance) {
+            userMap = constructElContext(expression, null, null, (ServiceInstance) entity, null);
+        }
+
+        return ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);
+    }
+
+    /**
+     * Evaluate string expression.
+     *
+     * @param expression EL expression
+     * @param entity Business Entity
+     * @return evaluated expression
+     * @throws BusinessException business exception
+     */
+    private String evaluateMinAmountLabelExpression(String expression, BusinessEntity entity) throws BusinessException {
+        if (StringUtils.isBlank(expression)) {
+            return null;
+        }
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        if (entity instanceof BillingAccount) {
+            userMap = constructElContext(expression, (BillingAccount) entity, null, null, null);
+        }
+        if (entity instanceof UserAccount) {
+            userMap = constructElContext(expression, null, null, null, (UserAccount) entity);
+        }
+        if (entity instanceof Subscription) {
+            userMap = constructElContext(expression, null, (Subscription) entity, null, null);
+        }
+        if (entity instanceof ServiceInstance) {
+            userMap = constructElContext(expression, null, null, (ServiceInstance) entity, null);
+        }
+
+        return ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
     }
 
     /**
@@ -1417,7 +1499,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
 
-        Map<Object, Object> userMap = constructElContext(expression, ba, subscription, serviceInstance);
+        Map<Object, Object> userMap = constructElContext(expression, ba, subscription, serviceInstance, null);
 
         return ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
     }
@@ -1431,54 +1513,62 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param serviceInstance Service instance
      * @return Context of variable
      */
-    private Map<Object, Object> constructElContext(String expression, BillingAccount ba, Subscription subscription, ServiceInstance serviceInstance) {
+    private Map<Object, Object> constructElContext(String expression, BillingAccount ba, Subscription subscription, ServiceInstance serviceInstance, UserAccount ua) {
 
         Map<Object, Object> contextMap = new HashMap<Object, Object>();
-
-        if (expression.indexOf("serviceInstance") >= 0) {
-            contextMap.put("serviceInstance", serviceInstance);
-        }
-
-        if (expression.indexOf("sub") >= 0) {
-            if (subscription == null) {
-                subscription = serviceInstance.getSubscription();
-            }
-            contextMap.put("sub", subscription);
-        }
-        if (expression.indexOf("offer") >= 0) {
-            if (subscription == null) {
-                subscription = serviceInstance.getSubscription();
-            }
-            contextMap.put("offer", subscription.getOffer());
-        }
-
-        if (expression.indexOf("ba") >= 0) {
-            if (ba == null) {
-                ba = subscription != null ? subscription.getUserAccount().getBillingAccount() : serviceInstance.getSubscription().getUserAccount().getBillingAccount();
+        if (expression.startsWith("#{")) {
+            if (expression.indexOf("serviceInstance") >= 0) {
+                contextMap.put("serviceInstance", serviceInstance);
             }
 
-            contextMap.put("ba", ba);
-        }
-
-        if (expression.indexOf("ca") >= 0) {
-
-            if (ba == null) {
-                ba = subscription != null ? subscription.getUserAccount().getBillingAccount() : serviceInstance.getSubscription().getUserAccount().getBillingAccount();
+            if (expression.indexOf("sub") >= 0) {
+                if (subscription == null) {
+                    subscription = serviceInstance.getSubscription();
+                }
+                contextMap.put("sub", subscription);
             }
-            contextMap.put("ca", ba.getCustomerAccount());
-        }
-
-        if (expression.indexOf("c") >= 0) {
-            if (ba == null) {
-                ba = subscription != null ? subscription.getUserAccount().getBillingAccount() : serviceInstance.getSubscription().getUserAccount().getBillingAccount();
+            if (expression.indexOf("offer") >= 0) {
+                if (subscription == null) {
+                    subscription = serviceInstance.getSubscription();
+                }
+                contextMap.put("offer", subscription.getOffer());
             }
-            contextMap.put("c", ba.getCustomerAccount().getCustomer());
-        }
 
-        if (expression.indexOf("prov") >= 0) {
-            contextMap.put("prov", appProvider);
-        }
+            if (expression.indexOf("ua") >= 0) {
+                if (ua == null) {
+                    ua = subscription != null ? subscription.getUserAccount() : serviceInstance.getSubscription().getUserAccount();
+                }
 
+                contextMap.put("ua", ua);
+            }
+
+            if (expression.indexOf("ba") >= 0) {
+                if (ba == null) {
+                    ba = subscription != null ? subscription.getUserAccount().getBillingAccount() : serviceInstance.getSubscription().getUserAccount().getBillingAccount();
+                }
+
+                contextMap.put("ba", ba);
+            }
+
+            if (expression.indexOf("ca") >= 0) {
+
+                if (ba == null) {
+                    ba = subscription != null ? subscription.getUserAccount().getBillingAccount() : serviceInstance.getSubscription().getUserAccount().getBillingAccount();
+                }
+                contextMap.put("ca", ba.getCustomerAccount());
+            }
+
+            if (expression.indexOf("c") >= 0) {
+                if (ba == null) {
+                    ba = subscription != null ? subscription.getUserAccount().getBillingAccount() : serviceInstance.getSubscription().getUserAccount().getBillingAccount();
+                }
+                contextMap.put("c", ba.getCustomerAccount().getCustomer());
+            }
+
+            if (expression.indexOf("prov") >= 0) {
+                contextMap.put("prov", appProvider);
+            }
+        }
         return contextMap;
     }
 
@@ -1546,6 +1636,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * 
      * @return True if exists any serviceInstance with minimumAmountEl value
      */
+    @Deprecated
     public boolean isServiceMinRTsUsed() {
 
         try {
@@ -1561,6 +1652,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * 
      * @return True if exists any subscription with minimumAmountEl value
      */
+    @Deprecated
     public boolean isSubscriptionMinRTsUsed() {
 
         try {
@@ -1576,6 +1668,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * 
      * @return True if exists any billing account with minimumAmountEl value
      */
+    @Deprecated
     public boolean isBAMinRTsUsed() {
 
         try {
@@ -1599,9 +1692,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         boolean baMin = false;
         boolean subMin = false;
         boolean servMin = false;
+        boolean uaMin = false;
+        boolean caMin = false;
+        boolean custMin = false;
         try {
             em.createNamedQuery("BillingAccount.getMimimumRTUsed").setMaxResults(1).getSingleResult();
             baMin = true;
+        } catch (NoResultException e) {
+        }
+        try {
+            em.createNamedQuery("UserAccount.getMimimumRTUsed").setMaxResults(1).getSingleResult();
+            uaMin = true;
         } catch (NoResultException e) {
         }
         try {
@@ -1614,7 +1715,37 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             servMin = true;
         } catch (NoResultException e) {
         }
-        return new boolean[] { servMin, subMin, baMin };
+        try {
+            getEntityManager().createNamedQuery("CustomerAccount.getMimimumRTUsed").setMaxResults(1).getSingleResult();
+            caMin = true;
+        } catch (NoResultException e) {
+        }
+        try {
+            getEntityManager().createNamedQuery("Customer.getMimimumRTUsed").setMaxResults(1).getSingleResult();
+            custMin = true;
+        } catch (NoResultException e) {
+        }
+        return new boolean[] { servMin, subMin, uaMin, baMin, caMin, custMin };
+    }
+
+    /**
+     * Determine if minimum RT transactions functionality is used at all accounts hierarchy. A check is done on serviceInstance, subscription, userAccount, billing account,
+     * customer account and customer entities for minimumAmountEl field.
+     *
+     * @return the MinAmountForAccounts
+     */
+    public MinAmountForAccounts isMinAmountForAccountsActivated(IBillableEntity entity, ApplyMinimumModeEnum applyMinimumModeEnum) {
+        return new MinAmountForAccounts(isMinRTsUsed(), entity, applyMinimumModeEnum);
+    }
+
+    /**
+     * Determine if minimum RT transactions functionality is used at all accounts hierarchy. A check is done on serviceInstance, subscription, userAccount, billing account,
+     * customer account and customer entities for minimumAmountEl field.
+     *
+     * @return the MinAmountForAccounts
+     */
+    public MinAmountForAccounts isMinAmountForAccountsActivated() {
+        return new MinAmountForAccounts(isMinRTsUsed());
     }
 
     /**

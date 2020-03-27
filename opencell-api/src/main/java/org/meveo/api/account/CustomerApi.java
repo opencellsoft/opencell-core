@@ -212,6 +212,9 @@ public class CustomerApi extends AccountEntityApi {
         customer.setSeller(seller);
         customer.setExternalRef1(postData.getExternalRef1());
         customer.setExternalRef2(postData.getExternalRef2());
+        customer.setMinimumAmountEl(postData.getMinimumAmountEl());
+        customer.setMinimumLabelEl(postData.getMinimumLabelEl());
+
         if (postData.getInvoicingThreshold() != null) {
             customer.setInvoicingThreshold(postData.getInvoicingThreshold());
         }
@@ -328,6 +331,14 @@ public class CustomerApi extends AccountEntityApi {
         if (businessAccountModel != null) {
             customer.setBusinessAccountModel(businessAccountModel);
         }
+        if (postData.getMinimumAmountEl() != null) {
+            customer.setMinimumAmountEl(postData.getMinimumAmountEl());
+        }
+        if (postData.getMinimumLabelEl() != null) {
+            customer.setMinimumLabelEl(postData.getMinimumLabelEl());
+        }
+
+
         if (postData.getInvoicingThreshold() != null) {
             customer.setInvoicingThreshold(postData.getInvoicingThreshold());
         }

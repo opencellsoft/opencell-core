@@ -18,17 +18,6 @@
 
 package org.meveo.api.dto.account;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
@@ -41,6 +30,16 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.ContactInformation;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The Class BillingAccountDto.
@@ -107,19 +106,9 @@ public class BillingAccountDto extends AccountDto {
     protected String phone;
 
     /**
-     * Expression to determine minimum amount value
-     */
-    private String minimumAmountEl;
-
-    /**
      * Expression to determine minimum amount value - for Spark
      */
     private String minimumAmountElSpark;
-
-    /**
-     * Expression to determine rated transaction description to reach minimum amount value
-     */
-    private String minimumLabelEl;
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
@@ -185,7 +174,7 @@ public class BillingAccountDto extends AccountDto {
      * a list of emails separated by comma
      */
 	private String ccedEmails;
-	
+
     /**
      * Account tax category code - overrides the value from a customer category
      **/
@@ -196,7 +185,7 @@ public class BillingAccountDto extends AccountDto {
      */
     @XmlElement
     private ThresholdOptionsEnum checkThreshold;
-	
+
 	
     /**
      * Instantiates a new billing account dto.
@@ -253,7 +242,7 @@ public class BillingAccountDto extends AccountDto {
         setMailingType(e.getMailingType() != null ? e.getMailingType().getLabel() : null);
         setEmailTemplate(e.getEmailTemplate() != null ? e.getEmailTemplate().getCode() : null);
         setCcedEmails(e.getCcedEmails());
-        
+
         if (e.getTaxCategory() != null) {
             taxCategoryCode = e.getTaxCategory().getCode();
         }
@@ -627,20 +616,6 @@ public class BillingAccountDto extends AccountDto {
     }
 
     /**
-     * @return Expression to determine minimum amount value
-     */
-    public String getMinimumAmountEl() {
-        return minimumAmountEl;
-    }
-
-    /**
-     * @param minimumAmountEl Expression to determine minimum amount value
-     */
-    public void setMinimumAmountEl(String minimumAmountEl) {
-        this.minimumAmountEl = minimumAmountEl;
-    }
-
-    /**
      * @return Expression to determine minimum amount value - for Spark
      */
     public String getMinimumAmountElSpark() {
@@ -652,20 +627,6 @@ public class BillingAccountDto extends AccountDto {
      */
     public void setMinimumAmountElSpark(String minimumAmountElSpark) {
         this.minimumAmountElSpark = minimumAmountElSpark;
-    }
-
-    /**
-     * @return Expression to determine rated transaction description to reach minimum amount value
-     */
-    public String getMinimumLabelEl() {
-        return minimumLabelEl;
-    }
-
-    /**
-     * @param minimumLabelEl Expression to determine rated transaction description to reach minimum amount value
-     */
-    public void setMinimumLabelEl(String minimumLabelEl) {
-        this.minimumLabelEl = minimumLabelEl;
     }
 
     /**

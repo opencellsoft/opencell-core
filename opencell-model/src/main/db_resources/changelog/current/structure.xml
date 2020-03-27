@@ -2750,6 +2750,76 @@ END $$;]]>
             WHERE bci.charge_template_id = cct.id
         </sql>
     </changeSet>
+    <changeSet author="khalid.horri" id="#4757_20191118">
+        <addColumn tableName="account_entity">
+            <column name="minimum_amount_el" type="varchar(2000)" />
+            <column name="minimum_label_el" type="varchar(2000)" />
+            <column name="minimum_amount_el_sp" type="varchar(2000)" />
+            <column name="minimum_label_el_sp" type="varchar(2000)" />
+            <column name="minimum_charge_template_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="crm_customer">
+            <column name="minimum_target_account_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="ar_customer_account">
+            <column name="minimum_target_account_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_subscription">
+            <column name="minimum_charge_template_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_service_instance">
+            <column name="minimum_charge_template_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="cat_offer_template">
+            <column name="minimum_charge_template_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="cat_service_template">
+            <column name="minimum_charge_template_id" type="bigint"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="minimum_target_account_id" baseTableName="crm_customer"
+                                 constraintName="fk_customer_minimum_target_account_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="billing_billing_account"/>
+        <addForeignKeyConstraint baseColumnNames="minimum_target_account_id" baseTableName="ar_customer_account"
+                                 constraintName="fk_ca_minimum_target_account_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="billing_billing_account"/>
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="account_entity"
+                                 constraintName="fk_ca_minimum_charge_template_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cat_charge_template"/>
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="billing_subscription"
+                                 constraintName="fk_su_minimum_charge_template_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cat_charge_template"/>
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="billing_service_instance"
+                                 constraintName="fk_si_minimum_charge_template_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cat_charge_template"/>
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="cat_offer_template"
+                                 constraintName="fk_ot_minimum_charge_template_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cat_charge_template"/>
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="cat_service_template"
+                                 constraintName="fk_st_minimum_charge_template_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cat_charge_template"/>
+    </changeSet>
     <changeSet id="#5014_20200313" author="khalidHORRI">
         <addColumn tableName="crm_customer">
             <column name="invoicing_threshold" type="numeric(23, 12)"/>

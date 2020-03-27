@@ -95,6 +95,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -109,6 +110,7 @@ import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionGroup;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
@@ -647,11 +649,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public List<Invoice> createAgregatesAndInvoiceInNewTransaction(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate, Date firstTransactionDate,
-            Date lastTransactionDate, boolean instantiateMinRtsForService, boolean instantiateMinRtsForSubscription, boolean instantiateMinRtsForBA, boolean isDraft) throws BusinessException {
-
-        return createAgregatesAndInvoice(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate, instantiateMinRtsForService, instantiateMinRtsForSubscription,
-            instantiateMinRtsForBA, isDraft);
+    public List<Invoice> createAgregatesAndInvoiceInNewTransaction(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
+            Date firstTransactionDate, Date lastTransactionDate, MinAmountForAccounts minAmountForAccounts,
+            boolean isDraft) throws BusinessException {
+        //MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts(instantiateMinRtsForBA, false, instantiateMinRtsForSubscription, instantiateMinRtsForService);
+        return createAgregatesAndInvoice(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts,
+                isDraft);
     }
 
     /**
@@ -670,8 +673,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
-    public List<Invoice> createAgregatesAndInvoice(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate,
-            boolean instantiateMinRtsForService, boolean instantiateMinRtsForSubscription, boolean instantiateMinRtsForBA, boolean isDraft) throws BusinessException {
+    public List<Invoice> createAgregatesAndInvoice(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
+            Date firstTransactionDate, Date lastTransactionDate, MinAmountForAccounts minAmountForAccounts, boolean isDraft) throws BusinessException {
 
         log.debug("Will create invoice and aggregates for {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
 
@@ -718,10 +721,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             // Instantiate additional RTs to reach minimum amount to invoice on service, subscription or BA level if needed
-            if (instantiateMinRtsForService || (instantiateMinRtsForSubscription && (entityToInvoice instanceof Subscription && !StringUtils.isBlank(((Subscription) entityToInvoice).getMinimumAmountEl())))
-                    || (instantiateMinRtsForBA && (entityToInvoice instanceof BillingAccount && !StringUtils.isBlank(((BillingAccount) entityToInvoice).getMinimumAmountEl())))) {
-                ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, false, instantiateMinRtsForService, instantiateMinRtsForSubscription,
-                    instantiateMinRtsForBA);
+            if ( minAmountForAccounts.isMinAmountCalculationActivated()) {
+                ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, false, minAmountForAccounts);
                 minAmountTransactions = entityToInvoice.getMinRatedTransactions();
             }
 
@@ -780,6 +781,30 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
         return null;
+    }
+
+    /**
+     * @param entityToInvoice
+     * @param minAmountForAccounts
+     * @return
+     */
+    private boolean isMinAmountApplies(IBillableEntity entityToInvoice, MinAmountForAccounts minAmountForAccounts) {
+        if (minAmountForAccounts.isServiceHasMinAmount()) {
+            return true;
+        }
+        if ((minAmountForAccounts.isSubscriptionHasMinAmount() && (entityToInvoice instanceof Subscription && !StringUtils
+                .isBlank(((Subscription) entityToInvoice).getMinimumAmountEl())))) {
+            return true;
+        }
+        if(minAmountForAccounts.isUaHasMinAmount()){
+            return true;
+        }
+
+        if ((minAmountForAccounts.isBaHasMinAmount() && (entityToInvoice instanceof BillingAccount && !StringUtils
+                .isBlank(((BillingAccount) entityToInvoice).getMinimumAmountEl())))) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -2013,6 +2038,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Date invoiceDate = generateInvoiceRequestDto.getInvoicingDate();
         Date firstTransactionDate = generateInvoiceRequestDto.getFirstTransactionDate();
         Date lastTransactionDate = generateInvoiceRequestDto.getLastTransactionDate();
+        ApplyMinimumModeEnum applyMinimumModeEnum = ApplyMinimumModeEnum.NO_PARENT;
+        if(generateInvoiceRequestDto.getApplyMinimum()!= null) {
+            applyMinimumModeEnum = ApplyMinimumModeEnum.valueOf(generateInvoiceRequestDto.getApplyMinimum());
+        }
 
         if (StringUtils.isBlank(entity)) {
             throw new BusinessException("entity is null");
@@ -2038,9 +2067,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Create missing rated transactions up to a last transaction date
         ratedTransactionService.createRatedTransaction(entity, lastTransactionDate);
 
-        boolean[] minRTsUsed = ratedTransactionService.isMinRTsUsed();
+        MinAmountForAccounts minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated(entity,applyMinimumModeEnum);
 
-        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, minRTsUsed[0], minRTsUsed[1], minRTsUsed[2], isDraft);
+        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft);
 
         return invoices;
     }
@@ -3121,7 +3150,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Determine a discount amount or percent to apply
-     * 
+     *
      * @param invoice Invoice to apply discount on
      * @param scAggregate Subcategory aggregate to apply discount on
      * @param amount Amount to apply discount on
@@ -3215,7 +3244,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return amount
      * @throws BusinessException business exception
      */
-    private BigDecimal evaluateDiscountPercentExpression(String expression, UserAccount userAccount, WalletInstance wallet, Invoice invoice, BigDecimal subCatTotal) throws BusinessException {
+    private BigDecimal evaluateDiscountPercentExpression(String expression, UserAccount userAccount, WalletInstance wallet, Invoice invoice, BigDecimal subCatTotal)
+            throws BusinessException {
 
         if (StringUtils.isBlank(expression)) {
             return null;
@@ -3706,7 +3736,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Add two maps with BigDecimal values. In case number of keys don't match, a cumulative set of keys will be considered.
-     * 
+     *
      * @param <T> Map key
      * @param one One map of BigDecimal values
      * @param two Another map of BigDecimal values
@@ -3729,7 +3759,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Sum up BigDecimal values from a map
-     * 
+     *
      * @param <T> Map key
      * @param values A map of BigDecimal values
      * @return A sum of values
@@ -3747,7 +3777,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Retrieve first BigDecimal values until exhausting a limit of sum of values while preserving a key
-     * 
+     *
      * @param <T> Map key
      * @param values A map of BigDecimal values
      * @param limitToGet A limit of sum of values to get

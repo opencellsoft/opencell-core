@@ -53,6 +53,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.intcrm.impl.AddressBookService;
@@ -100,12 +101,15 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     @EJB
     private AccountHierarchyApi accountHierarchyApi;
-    
+
     @Inject
     private BillingAccountApi billingAccountApi;
-    
-	@Inject
-	private AddressBookService addressBookService;
+
+    @Inject
+    private AddressBookService addressBookService;
+
+    @Inject
+    private BillingAccountService billingAccountService;
 
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
@@ -206,6 +210,8 @@ public class CustomerAccountApi extends AccountEntityApi {
             customerAccount.setBusinessAccountModel(businessAccountModel);
         }
         customerAccount.setExcludedFromPayment(postData.isExcludedFromPayment());
+        customerAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
+        customerAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
         if (postData.getInvoicingThreshold() != null) {
             customerAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
         }
@@ -224,11 +230,10 @@ public class CustomerAccountApi extends AccountEntityApi {
             throw e;
         }
 
+        AddressBook addressBook = new AddressBook("CA_" + customerAccount.getCode());
+        addressBookService.create(addressBook);
 
-		AddressBook addressBook = new AddressBook("CA_" + customerAccount.getCode());
-		addressBookService.create(addressBook);
-		
-		customerAccount.setAddressbook(addressBook);
+        customerAccount.setAddressbook(addressBook);
 
         customerAccountService.create(customerAccount);
 
@@ -243,8 +248,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         return update(postData, true, null);
     }
 
-    public CustomerAccount update(CustomerAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel)
-            throws MeveoApiException, BusinessException {
+    public CustomerAccount update(CustomerAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -274,7 +278,7 @@ public class CustomerAccountApi extends AccountEntityApi {
                 throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
             } else if (!customerAccount.getCustomer().equals(customer)) {
                 throw new InvalidParameterException(
-                    "Can not change the parent account. Customer account's current parent account (customer) is " + customerAccount.getCustomer().getCode());
+                        "Can not change the parent account. Customer account's current parent account (customer) is " + customerAccount.getCustomer().getCode());
             }
             customerAccount.setCustomer(customer);
         }
@@ -307,10 +311,10 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getExternalRef2())) {
             customerAccount.setExternalRef2(postData.getExternalRef2());
         }
-        if (postData.getDueDateDelayEL()!=null) {
+        if (postData.getDueDateDelayEL() != null) {
             customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
         }
-        if (postData.getDueDateDelayELSpark()!=null) {
+        if (postData.getDueDateDelayELSpark() != null) {
             customerAccount.setDueDateDelayELSpark(postData.getDueDateDelayELSpark());
         }
 
@@ -343,7 +347,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
             if (defaultPaymentMethod != null && !defaultPaymentMethod.isSimple()) {
                 throw new InvalidParameterException(
-                    "Please specify payment method via 'paymentMethods' attribute, as currently specified payment method requires additional information");
+                        "Please specify payment method via 'paymentMethods' attribute, as currently specified payment method requires additional information");
             } else if (defaultPaymentMethod == null) {
                 // End of compatibility with pre-4.6 versions
 
@@ -352,11 +356,18 @@ public class CustomerAccountApi extends AccountEntityApi {
 
             if (defaultPaymentMethod == null || !defaultPaymentMethod.isSimple()) {
                 throw new InvalidParameterException(
-                    "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethodType) is invalid or requires additional information");
+                        "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethodType) is invalid or requires additional information");
             }
 
             PaymentMethod paymentMethodFromDto = (new PaymentMethodDto(defaultPaymentMethod)).fromDto(customerAccount, currentUser);
             customerAccount.addPaymentMethod(paymentMethodFromDto);
+        }
+
+        if (postData.getMinimumAmountEl() != null) {
+            customerAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
+        }
+        if (postData.getMinimumLabelEl() != null) {
+            customerAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
         }
 
         // Validate and populate customFields
@@ -371,11 +382,11 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         if (customerAccount.getAddressbook() == null) {
-			AddressBook addressBook = new AddressBook("CA_" + customerAccount.getCode());
-			addressBookService.create(addressBook);
-			customerAccount.setAddressbook(addressBook);
-		}
-         
+            AddressBook addressBook = new AddressBook("CA_" + customerAccount.getCode());
+            addressBookService.create(addressBook);
+            customerAccount.setAddressbook(addressBook);
+        }
+
         try {
             customerAccount = customerAccountService.update(customerAccount);
         } catch (BusinessException e1) {
@@ -404,10 +415,8 @@ public class CustomerAccountApi extends AccountEntityApi {
                     PaymentMethod paymentMethod = customerAccount.getPaymentMethods().get(index);
                     paymentMethod.updateWith(paymentMethodFromDto);
                     paymentMethodsFromDto.add(paymentMethod);
-                    customerAccount.addPaymentMethodToAudit(new Object() {}
-                            .getClass()
-                            .getEnclosingMethod()
-                            .getName(),paymentMethod);
+                    customerAccount.addPaymentMethodToAudit(new Object() {
+                    }.getClass().getEnclosingMethod().getName(), paymentMethod);
                 }
 
             }
@@ -465,7 +474,8 @@ public class CustomerAccountApi extends AccountEntityApi {
             if (accountOperations != null && !accountOperations.isEmpty()) {
                 List<AccountOperationDto> accountOperationsDto = new ArrayList<>();
                 for (AccountOperation accountOperation : accountOperations) {
-                    AccountOperationDto accountOperationDto = new AccountOperationDto(accountOperation, entityToDtoConverter.getCustomFieldsDTO(accountOperation, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+                    AccountOperationDto accountOperationDto = new AccountOperationDto(accountOperation,
+                            entityToDtoConverter.getCustomFieldsDTO(accountOperation, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
                     accountOperationsDto.add(accountOperationDto);
                 }
                 customerAccountDto.setAccountOperations(accountOperationsDto);
@@ -521,7 +531,6 @@ public class CustomerAccountApi extends AccountEntityApi {
         return result;
     }
 
-
     public void createCreditCategory(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -541,9 +550,7 @@ public class CustomerAccountApi extends AccountEntityApi {
     }
 
     /**
-     * 
      * @param postData posted data to API
-     * 
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
@@ -567,9 +574,7 @@ public class CustomerAccountApi extends AccountEntityApi {
     }
 
     /**
-     * 
      * @param postData posted data to API
-     * 
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
@@ -682,10 +687,10 @@ public class CustomerAccountApi extends AccountEntityApi {
                 }
             }
             if (!StringUtils.isBlank(customerAccountDto.getVatNo())) {
-            	existedCustomerAccountDto.setVatNo(customerAccountDto.getVatNo());
+                existedCustomerAccountDto.setVatNo(customerAccountDto.getVatNo());
             }
             if (!StringUtils.isBlank(customerAccountDto.getRegistrationNo())) {
-            	existedCustomerAccountDto.setRegistrationNo(customerAccountDto.getRegistrationNo());
+                existedCustomerAccountDto.setRegistrationNo(customerAccountDto.getRegistrationNo());
             }
             accountHierarchyApi.populateNameAddress(existedCustomerAccountDto, customerAccountDto);
             if (customerAccountDto.getCustomFields() != null && !customerAccountDto.getCustomFields().isEmpty()) {
@@ -697,27 +702,27 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     /**
      * Exports a json representation of the CustomerAcount hierarchy. It include subscription, accountOperations and invoices.
-     * 
+     *
      * @param ca the selected CustomerAccount
      * @return DTO representation of a CustomerAccount
      */
-	public CustomerAccountDto exportCustomerAccountHierarchy(CustomerAccount ca) {
-		CustomerAccountDto result = new CustomerAccountDto(ca);
-		
-		if(ca.getAccountOperations() != null && !ca.getAccountOperations().isEmpty()) {
-			for(AccountOperation ao : ca.getAccountOperations()) {
-				result.getAccountOperations().add(new AccountOperationDto(ao));
-			}
-		}
-		
-		if(ca.getBillingAccounts() != null && !ca.getBillingAccounts().isEmpty()) {
-			for(BillingAccount ba : ca.getBillingAccounts()) {
-				result.getBillingAccounts().getBillingAccount().add(billingAccountApi.exportBillingAccountHierarchy(ba));
-			}
-		}
-		
-		return result;
-	}
+    public CustomerAccountDto exportCustomerAccountHierarchy(CustomerAccount ca) {
+        CustomerAccountDto result = new CustomerAccountDto(ca);
+
+        if (ca.getAccountOperations() != null && !ca.getAccountOperations().isEmpty()) {
+            for (AccountOperation ao : ca.getAccountOperations()) {
+                result.getAccountOperations().add(new AccountOperationDto(ao));
+            }
+        }
+
+        if (ca.getBillingAccounts() != null && !ca.getBillingAccounts().isEmpty()) {
+            for (BillingAccount ba : ca.getBillingAccounts()) {
+                result.getBillingAccounts().getBillingAccount().add(billingAccountApi.exportBillingAccountHierarchy(ba));
+            }
+        }
+
+        return result;
+    }
 
     /**
      * Transfer amount from a customer account to an other.

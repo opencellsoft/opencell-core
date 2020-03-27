@@ -48,6 +48,7 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -57,16 +58,20 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.base.IVersionedBusinessEntityService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
@@ -75,7 +80,6 @@ import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
  * @author Wassim Drira
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
- *
  */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -98,15 +102,18 @@ public class UserAccountApi extends AccountEntityApi {
 
     @Inject
     private ProductInstanceService productInstanceService;
-    
+
     @Inject
     private WalletOperationService walletOperationService;
-    
+
     @Inject
     private RatedTransactionService ratedTransactionService;
-    
+
     @Inject
     private SellerService sellerService;
+
+    @Inject
+    private OneShotChargeTemplateService oneShotChargeTemplateService;
 
     public UserAccount create(UserAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -141,6 +148,18 @@ public class UserAccountApi extends AccountEntityApi {
 
         if (businessAccountModel != null) {
             userAccount.setBusinessAccountModel(businessAccountModel);
+        }
+        if (postData.getMinimumLabelEl() != null) {
+            userAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
+            userAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
+        }
+        if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
+            OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
+            if (minimumChargeTemplate == null) {
+                throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getMinimumChargeTemplate());
+            } else {
+                userAccount.setMinimumChargeTemplate(minimumChargeTemplate);
+            }
         }
 
         // Validate and populate customFields
@@ -191,11 +210,11 @@ public class UserAccountApi extends AccountEntityApi {
             } else if (!userAccount.getBillingAccount().equals(billingAccount)) {
                 // a safeguard to allow this only if all the WO/RT have been invoiced.
                 Long countNonTreatedWO = walletOperationService.countNonTreatedWOByUA(userAccount);
-                if(countNonTreatedWO > 0) {
+                if (countNonTreatedWO > 0) {
                     throw new BusinessApiException("Can not change the parent account. User account have non treated WO");
                 }
                 Long countNonInvoicedRT = ratedTransactionService.countNotInvoicedRTByUA(userAccount);
-                if(countNonInvoicedRT > 0) {
+                if (countNonInvoicedRT > 0) {
                     throw new BusinessApiException("Can not change the parent account. User account have non invoiced RT");
                 }
             }
@@ -208,14 +227,20 @@ public class UserAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getExternalRef1())) {
             userAccount.setExternalRef2(postData.getExternalRef2());
         }
-        
+
         updateAccount(userAccount, postData, checkCustomFields);
-        
+
         if (!StringUtils.isBlank(postData.getSubscriptionDate())) {
             userAccount.setSubscriptionDate(postData.getSubscriptionDate());
         }
         if (businessAccountModel != null) {
             userAccount.setBusinessAccountModel(businessAccountModel);
+        }
+        if (postData.getMinimumAmountEl() != null) {
+            userAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
+        }
+        if (postData.getMinimumLabelEl() != null) {
+            userAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
         }
         // Validate and populate customFields
         try {
@@ -304,7 +329,7 @@ public class UserAccountApi extends AccountEntityApi {
 
     /**
      * Create or update User Account entity based on code.
-     * 
+     *
      * @param postData posted data to API
      * @return the user account
      * @throws MeveoApiException meveo api exception
@@ -417,29 +442,29 @@ public class UserAccountApi extends AccountEntityApi {
         ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct(), postData.getOperationDate());
         if (productTemplate == null) {
             throw new EntityDoesNotExistsException(ProductTemplate.class,
-                postData.getProduct() + "/" + DateUtils.formatDateWithPattern(postData.getOperationDate(), paramBeanFactory.getInstance().getDateTimeFormat()));
+                    postData.getProduct() + "/" + DateUtils.formatDateWithPattern(postData.getOperationDate(), paramBeanFactory.getInstance().getDateTimeFormat()));
         }
 
         UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount());
         if (userAccount == null) {
             throw new EntityDoesNotExistsException(UserAccount.class, postData.getUserAccount());
         }
-        
+
         Seller seller = null;
         if (StringUtils.isBlank(postData.getSeller())) {
-        	// v5.2 : code for API backward compatibility call, seller code must be mandatory in future versions
+            // v5.2 : code for API backward compatibility call, seller code must be mandatory in future versions
             seller = userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
         } else {
-	        seller = sellerService.findByCode(postData.getSeller());
-	        if (seller == null) {
-	            throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
-	        }
-	        
-	        if(productTemplate.getSellers().size() > 0) {
-                if(!productTemplate.getSellers().contains(seller)) {
-    	            throw new EntityNotAllowedException(Seller.class, ProductInstance.class, postData.getSeller());
+            seller = sellerService.findByCode(postData.getSeller());
+            if (seller == null) {
+                throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
+            }
+
+            if (productTemplate.getSellers().size() > 0) {
+                if (!productTemplate.getSellers().contains(seller)) {
+                    throw new EntityNotAllowedException(Seller.class, ProductInstance.class, postData.getSeller());
                 }
-            } 
+            }
         }
 
         if (userAccount.getStatus() != AccountStatusEnum.ACTIVE) {
@@ -449,7 +474,7 @@ public class UserAccountApi extends AccountEntityApi {
         List<WalletOperation> walletOperations = null;
 
         ProductInstance productInstance = new ProductInstance(userAccount, null, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
-            postData.getDescription(), null, seller);
+                postData.getDescription(), null, seller);
 
         // Validate and populate customFields
         try {
@@ -474,19 +499,19 @@ public class UserAccountApi extends AccountEntityApi {
 
     /**
      * Exports a json representation of the UserAcount hierarchy. It include subscription, accountOperations and invoices.
-     * 
+     *
      * @param ua the selected UserAccount
      * @return DTO representation of the UserAccount
      */
-	public UserAccountDto exportUserAccountHierarchy(UserAccount ua) {
-		UserAccountDto result = new UserAccountDto(ua);
-		
-		if (ua.getSubscriptions() != null && !ua.getSubscriptions().isEmpty()) {
-			for (Subscription sub : ua.getSubscriptions()) {
-				result.getSubscriptions().getSubscription().add(new SubscriptionDto(sub));
-			}
-		}
+    public UserAccountDto exportUserAccountHierarchy(UserAccount ua) {
+        UserAccountDto result = new UserAccountDto(ua);
 
-		return result;
-	}
+        if (ua.getSubscriptions() != null && !ua.getSubscriptions().isEmpty()) {
+            for (Subscription sub : ua.getSubscriptions()) {
+                result.getSubscriptions().getSubscription().add(new SubscriptionDto(sub));
+            }
+        }
+
+        return result;
+    }
 }

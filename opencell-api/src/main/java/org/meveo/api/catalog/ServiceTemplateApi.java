@@ -288,7 +288,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if (autoEndOfEngagement != null) {
             serviceTemplate.setAutoEndOfEngagement(autoEndOfEngagement);
         }
-        
+
         serviceTemplate.setBusinessServiceModel(businessService);
         serviceTemplate.setCode(postData.getCode());
         serviceTemplate.setDescription(postData.getDescription());
@@ -299,20 +299,20 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
         serviceTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         serviceTemplate.setServiceRenewal(subscriptionApi.subscriptionRenewalFromDto(serviceTemplate.getServiceRenewal(), postData.getRenewalRule(), false));
-        
-        if (!StringUtils.isBlank(postData.getMinimumInvoiceSubCategory())) {
-            InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
-            if (minimumInvoiceSubCategory == null) {
-                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
+
+        if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
+            OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
+            if (minimumChargeTemplate == null) {
+                throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getMinimumChargeTemplate());
             } else {
-                serviceTemplate.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
+                serviceTemplate.setMinimumChargeTemplate(minimumChargeTemplate);
             }
         }
-        
+
         if (postData.isDisabled() != null) {
             serviceTemplate.setDisabled(postData.isDisabled());
         }
-        
+
         try {
             saveImage(serviceTemplate, postData.getImagePath(), postData.getImageBase64());
         } catch (IOException e1) {
@@ -384,8 +384,17 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if (postData.getMinimumLabelElSpark() != null) {
             serviceTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
+
+        if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
+            OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
+            if (minimumChargeTemplate == null) {
+                throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getMinimumChargeTemplate());
+            } else {
+                serviceTemplate.setMinimumChargeTemplate(minimumChargeTemplate);
+            }
+        }
         serviceTemplate.setServiceRenewal(subscriptionApi.subscriptionRenewalFromDto(serviceTemplate.getServiceRenewal(), postData.getRenewalRule(), false));
-        
+
         Calendar invoicingCalendar = null;
         if (postData.getInvoicingCalendar() != null) {
             invoicingCalendar = calendarService.findByCode(postData.getInvoicingCalendar());
