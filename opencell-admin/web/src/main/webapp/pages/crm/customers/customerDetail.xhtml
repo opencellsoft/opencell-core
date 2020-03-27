@@ -17,7 +17,18 @@
 		</f:metadata>
 	</ui:define>
 
-	<ui:define name="body">	
+
+	<ui:define name="body">
+		<hftl:entityPopup id="billingAccountPopup"
+						  header="#{messages['billingAccount.popup.header']}"
+						  backingBean="#{billingAccountBean}"
+						  searchField1Label="#{messages['billingAccount.code']}"
+						  searchField1="code"
+						  column1Label="#{messages['billingAccount.code']}"
+						  column1="code"
+						  selection="#{customerBean.entity.minimumTargetAccount}"
+						  updateField=":formCustomer:tabView:minimumTargetAccount :formCustomer:tabView:minimumTargetAccount_text">
+		</hftl:entityPopup>
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.customers']}" disabled="true" />
@@ -56,12 +67,13 @@
 							 	required="false" listBean="#{titleBean}" listenerUpdate=":formCustomer:tabView:userNamePanel" styleClass="clearLeft"/>
 
 									<h:panelGroup id="userNamePanel" layout="block">
-											<hftl:formField label="#{messages[(customerBean.entity.name.title != null and customerBean.entity.name.title.isCompany)?'name.company':'name.lastName']}"
-												field="name" childField="lastName" 
+										<hftl:formField
+												label="#{messages[(customerBean.entity.name.title != null and customerBean.entity.name.title.isCompany)?'name.company':'name.lastName']}"
+												field="name" childField="lastName"
 												required="#{customerBean.entity.name.title != null}"/>
-                                            <hftl:formField label="#{messages['name.firstName']}"
-                                                field="name" childField="firstName" 
-                                                rendered="#{customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany}"/>
+										<hftl:formField label="#{messages['name.firstName']}"
+														field="name" childField="firstName"
+														rendered="#{customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany}"/>
 									</h:panelGroup>
 
 
@@ -74,15 +86,40 @@
 										label="#{messages['customer.customerCategory']}"
 										field="customerCategory" valueLabelField="descriptionOrCode"
 										required="true"
-										listBean="#{customerCategoryBean}" styleClass="clearLeft" />
-									<hftl:formField
-											label="#{messages['customer.customerBrand']}"
-											field="customerBrand" valueLabelField="descriptionOrCode"
-											listBean="#{customerBrandBean}"/>
+										listBean="#{customerCategoryBean}" styleClass="clearLeft"/>
+								<hftl:formField
+										label="#{messages['customer.customerBrand']}"
+										field="customerBrand" valueLabelField="descriptionOrCode"
+										listBean="#{customerBrandBean}"/>
 								<hftl:formField id="parentSelectId"
 												label="#{messages['seller.parent']}" field="seller"
-												valueLabelField="descriptionOrCode" listBean="#{sellerBean}" listenerUpdate="@this"/>
-<!--                                         popup="true" popupId="sellerParentPopup" /> -->
+												valueLabelField="descriptionOrCode" listBean="#{sellerBean}"
+												listenerUpdate="@this"/>
+								<hftl:formField label="#{messages['userAccount.minimumLabelEl']}" field="minimumLabelEl"
+												id="minimumLabelEl" textArea="true" rows="1" maxlength="2000"
+												componentWidth="50" newLine="true"/>
+								<hftl:formField
+										label="#{messages[appProvider.entreprise?'userAccount.minimumAmountWithoutTaxEl':'userAccount.minimumAmountWithTaxEl']}"
+										field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1"
+										maxlength="2000" componentWidth="50" />
+								<hftl:formField label="#{messages['account.minimumLabelElSpark']}"
+												field="minimumLabelElSpark" id="minimumLabelElSpark" textArea="true"
+												rows="1"
+												maxlength="2000" componentWidth="50" newLine="true" rendered="#{paramBean.sparkEnabled}"/>
+								<hftl:formField
+										label="#{messages[appProvider.entreprise?'account.minimumAmountWithoutTaxElSpark':'account.minimumAmountWithTaxElSpark']}"
+										field="minimumAmountElSpark" id="minimumAmountElSpark" textArea="true"
+										rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.sparkEnabled}"/>
+								<hftl:formField id="minimumTargetAccount"
+												label="#{messages['customerAccount.minimumTargetAccount']}"
+												field="minimumTargetAccount" valueLabelField="code"
+												popup="true" popupId="billingAccountPopup" allowEdit="true"
+												componentWidth="20"/>
+								<hftl:formField label="#{messages['account.minimumChargeTemplate']}"
+												id="chargeTemplateId" field="minimumChargeTemplate"
+												valueLabelField="code" listBean="#{oneShotChargeTemplateBean}"
+												listElements="#{oneShotChargeTemplateBean.getOtherOneShotCharges()}"
+												componentWidth="20"/>
 
 							</p:tab>
 

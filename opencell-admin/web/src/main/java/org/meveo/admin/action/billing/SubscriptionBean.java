@@ -1108,9 +1108,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         SubscriptionRenewal subscriptionRenewal = entity.getOffer().getSubscriptionRenewal();
         entity.setSubscriptionRenewal(subscriptionRenewal);
         updateSubscribedTillDate();
-
-        entity.setMinimumAmountEl(entity.getOffer().getMinimumAmountEl());
-        entity.setMinimumLabelEl(entity.getOffer().getMinimumLabelEl());
+        /* Subscription should not inherit min Amount from OfferTemplate #4757*/
+        //entity.setMinimumAmountEl(entity.getOffer().getMinimumAmountEl());
+        //entity.setMinimumLabelEl(entity.getOffer().getMinimumLabelEl());
         entity.setMinimumAmountElSpark(entity.getOffer().getMinimumAmountElSpark());
         entity.setMinimumLabelElSpark(entity.getOffer().getMinimumLabelElSpark());
     }

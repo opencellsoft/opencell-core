@@ -69,7 +69,8 @@ import org.meveo.model.billing.SubscriptionRenewal;
 @NamedQueries({
         @NamedQuery(name = "serviceTemplate.getNbServiceWithNotOffer", query = "select count(*) from ServiceTemplate s where s.id not in (select serv.serviceTemplate.id from OfferTemplate o join o.offerServiceTemplates serv)"),
         @NamedQuery(name = "serviceTemplate.getServicesWithNotOffer", query = "from ServiceTemplate s where s.id not in (select serv.serviceTemplate.id from OfferTemplate o join o.offerServiceTemplates serv)"),
-        @NamedQuery(name = "serviceTemplate.getServicesWithRecurringsByChargeTemplate", query = "from ServiceTemplate s left join s.serviceRecurringCharges c where c.chargeTemplate=:chargeTemplate")
+        @NamedQuery(name = "serviceTemplate.getServicesWithRecurringsByChargeTemplate", query = "from ServiceTemplate s left join s.serviceRecurringCharges c where c.chargeTemplate=:chargeTemplate"),
+        @NamedQuery(name = "ServiceTemplate.getMimimumRTUsed", query = "select s.minimumAmountEl from ServiceTemplate s where s.minimumAmountEl is not null")
         // @NamedQuery(name = "serviceTemplate.getServicesWithSubscriptionsByChargeTemplate",
         // query = "from ServiceTemplate s left join s.serviceSubscriptionCharges c where c.chargeTemplate=:chargeTemplate"),
         // @NamedQuery(name = "serviceTemplate.getServicesWithTerminationsByChargeTemplate",
@@ -166,11 +167,20 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Column(name = "minimum_label_el_sp", length = 2000)
     @Size(max = 2000)
     private String minimumLabelElSpark;
-    
-    /** Corresponding invoice subcategory */
+
+    /**
+     * Corresponding invoice subcategory
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_invoice_sub_category_id")
     private InvoiceSubCategory minimumInvoiceSubCategory;
+
+    /**
+     * Corresponding to minimum one shot charge template
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_charge_template_id")
+    private OneShotChargeTemplate minimumChargeTemplate;
 
     /**
      * Service renewal configuration
@@ -429,6 +439,25 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     public void setMinimumInvoiceSubCategory(InvoiceSubCategory minimumInvoiceSubCategory) {
         this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
     }
+
+    /**
+     * Gets the charge template used in minimum amount.
+     *
+     * @return a one Shot Charge template
+     */
+    public OneShotChargeTemplate getMinimumChargeTemplate() {
+        return minimumChargeTemplate;
+    }
+
+    /**
+     * Sets the minimum amount charge template.
+     *
+     * @param minimumChargeTemplate a one Shot Charge template
+     */
+    public void setMinimumChargeTemplate(OneShotChargeTemplate minimumChargeTemplate) {
+        this.minimumChargeTemplate = minimumChargeTemplate;
+    }
+
 
     public SubscriptionRenewal getServiceRenewal() {
         return serviceRenewal;
