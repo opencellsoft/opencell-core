@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.meveo.apiv2.generic.GenericPaginatedResource;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
@@ -42,7 +42,7 @@ public class JsonGenericMapper extends ObjectMapper{
         addMixIn(OfferTemplate.class, InfiniteRecursionMixIn.class);
         addMixIn(WalletOperation.class, InfiniteRecursionMixIn.class);
         addMixIn(ChargeInstance.class, InfiniteRecursionMixIn.class);
-        addMixIn(BaseEntity.class, ForbiddenFieldsMixIn.class);
+        addMixIn(IEntity.class, ForbiddenFieldsMixIn.class);
         addMixIn(GenericPaginatedResource.class, GenericPaginatedResourceMixIn.class);
         addMixIn(CustomFieldValues.class, EntityCustomFieldValuesFilterMixIn.class);
         addMixIn(CustomFieldValue.class, EntityCustomFieldValueFilterMixIn.class);
@@ -58,7 +58,7 @@ public class JsonGenericMapper extends ObjectMapper{
         if(fields != null && !fields.isEmpty()){
             addMixIn(entityClass, EntityFieldsFilterMixIn.class);
             simpleFilterProvider.addFilter("EntityFieldsFilter", SimpleBeanPropertyFilter.filterOutAllExcept(fields));
-            addMixIn(BaseEntity.class, EntitySubObjectFieldFilterMixIn.class);
+            addMixIn(IEntity.class, EntitySubObjectFieldFilterMixIn.class);
             this.simpleFilterProvider.addFilter("EntitySubObjectFieldFilter", new GenericSimpleBeanPropertyFilter(getEntitySubFieldsToInclude(fields)));
         }
         setFilterProvider(this.simpleFilterProvider);
@@ -69,8 +69,8 @@ public class JsonGenericMapper extends ObjectMapper{
         }
     }
 
-    public BaseEntity parseFromJson(String jsonDto, Class entityClass) {
-        return  (BaseEntity) readValue(jsonDto, entityClass);
+    public IEntity parseFromJson(String jsonDto, Class entityClass) {
+        return  (IEntity) readValue(jsonDto, entityClass);
     }
 
     @Override
