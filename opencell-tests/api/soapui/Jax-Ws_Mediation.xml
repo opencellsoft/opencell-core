@@ -1947,12 +1947,12 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 	public void execute(Map<String, Object> initContext) throws BusinessException {
 		log.info("Execute...");
 		CDR cdr = new CDR();
-		cdr.setAccess_id((String)initContext.get("accessId"));
-		cdr.setParam1((String)initContext.get("param1"));
-		cdr.setParam2((String)initContext.get("param2"));
+		cdr.setAccessCode((String)initContext.get("accessId"));
+		cdr.setParameter1((String)initContext.get("param1"));
+		cdr.setParameter2((String)initContext.get("param2"));
 		cdr.setQuantity(new BigDecimal((String)initContext.get("quantity")));
 		try{
-		cdr.setTimestamp(sdf.parse((String)initContext.get("time")));
+		cdr.setEventDate(sdf.parse((String)initContext.get("time")));
 		} catch(Exception e){
 		  throw new BusinessException("date parsing error",e);
 		}
@@ -3208,12 +3208,12 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 			cdr = (CDR)initContext.get("record");
 		} else {
 			cdr = new CDR();
-			cdr.setAccess_id((String)initContext.get("accessId"));
-			cdr.setParam1((String)initContext.get("param1"));
-			cdr.setParam2((String)initContext.get("param2"));
+			cdr.setAccessCode((String)initContext.get("accessId"));
+			cdr.setParameter1((String)initContext.get("param1"));
+			cdr.setParameter2((String)initContext.get("param2"));
 			cdr.setQuantity(new BigDecimal((String)initContext.get("quantity")));
 			try{
-			cdr.setTimestamp(sdf.parse((String)initContext.get("time")));
+			cdr.setEventDate(sdf.parse((String)initContext.get("time")));
 			} catch(Exception e){
 			  throw new BusinessException("date parsing error",e);
 			}
@@ -4767,12 +4767,12 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 	public void execute(Map<String, Object> initContext)throws BusinessException {
 		log.info("Execute...");
 		CDR cdr = new CDR();
-		cdr.setAccess_id((String)initContext.get("accessId"));
-		cdr.setParam1((String)initContext.get("param1"));
-		cdr.setParam2((String)initContext.get("param2"));
+		cdr.setAccessCode((String)initContext.get("accessId"));
+		cdr.setParameter1((String)initContext.get("param1"));
+		cdr.setParameter2((String)initContext.get("param2"));
 		cdr.setQuantity(new BigDecimal((String)initContext.get("quantity")));
 		try{
-		cdr.setTimestamp(sdf.parse((String)initContext.get("time")));
+		cdr.setEventDate(sdf.parse((String)initContext.get("time")));
 		} catch(Exception e){
 		  throw new BusinessException("date parsing error",e);
 		}
@@ -6220,12 +6220,12 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 	public void execute(Map<String, Object> initContext)throws BusinessException {
 		log.info("Execute...");
 		CDR cdr = new CDR();
-		cdr.setAccess_id((String)initContext.get("accessId"));
-		cdr.setParam1((String)initContext.get("param1"));
-		cdr.setParam2((String)initContext.get("param2"));
+		cdr.setAccessCode((String)initContext.get("accessId"));
+		cdr.setParameter1((String)initContext.get("param1"));
+		cdr.setParameter2((String)initContext.get("param2"));
 		cdr.setQuantity(new BigDecimal((String)initContext.get("quantity")));
 		try{
-		cdr.setTimestamp(sdf.parse((String)initContext.get("time")));
+		cdr.setEventDate(sdf.parse((String)initContext.get("time")));
 		} catch(Exception e){
 		  throw new BusinessException("date parsing error",e);
 		}
