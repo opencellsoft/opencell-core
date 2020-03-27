@@ -18,7 +18,20 @@
 
 package org.meveo.service.dwh;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
@@ -30,12 +43,6 @@ import org.meveo.service.base.BaseService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.CustomerService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
 /**
  * General Data Protection Regulation (GDPR) service provides a feature that
  * anonymized the stored data.
@@ -46,6 +53,8 @@ import java.util.stream.Collectors;
  */
 @Stateless
 public class GdprService extends BaseService {
+
+	private static final Date DATE_1900_01_01 = DateUtils.parseDateWithPattern("01/01/1900", "dd/MM/yyyy");
 
 	@Inject
 	private CustomerService customerService;
@@ -123,7 +132,7 @@ public class GdprService extends BaseService {
 	 * @param cfTemplate cfTemplate
 	 * @param randomCode randomCode
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void anonymizeCFValue(CustomFieldValue cfValue, CustomFieldTemplate cfTemplate, String randomCode) {
 		if (cfValue.isValueEmpty()) {
 			return;
@@ -131,34 +140,73 @@ public class GdprService extends BaseService {
 		if (cfTemplate.getStorageType() == CustomFieldStorageTypeEnum.MATRIX
 				|| cfTemplate.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
 			Map mapValues = cfValue.getMapValue();
-			mapValues.replaceAll((k, v) -> anonymizeValue(cfTemplate.getFieldType(), randomCode));
+			mapValues.replaceAll((k, v) -> anonymizeMapValue(v, randomCode));
 		} else if (cfTemplate.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
 			List listValues = cfValue.getListValue();
-			listValues.replaceAll(v -> anonymizeValue(cfTemplate.getFieldType(), randomCode));
-		} else if (cfTemplate.getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
-			cfValue.setValue(anonymizeValue(cfTemplate.getFieldType(), randomCode));
+			listValues.replaceAll(v -> v != null ? anonymizeValue(((Object)v).getClass(), randomCode) : null);
+		} else if (cfTemplate.getStorageType() == CustomFieldStorageTypeEnum.SINGLE
+				&& cfValue.getValue() != null) {
+			cfValue.setValue(anonymizeValue(cfValue.getValue().getClass(), randomCode));
 		}
 	}
 	
 	/**
-	 * anonymize a lateral value depending of CF Type
+	 * anonymize a map value depending on that it's composed (containing |)
+	 * or single value
 	 * 
-	 * @param customFieldType CF Type
+	 * @param mapValue
+	 * @param randomCode
+	 * @return
+	 */
+	private Object anonymizeMapValue(Object mapValue, String randomCode) {
+		if (mapValue != null) {
+			if (mapValue instanceof String && ((String)mapValue).contains("|")) {
+				String[] splitedVals = ((String)mapValue).split("\\|");
+				String anonymizedValue = "";
+				for (int i = 0; i < splitedVals.length; i++) {
+					anonymizedValue += anonymizeValue(getObjectType(splitedVals[i]), randomCode) + "|";
+				}
+				return anonymizedValue.substring(0, anonymizedValue.length() - 1);
+			} else {
+				return anonymizeValue(((Object)mapValue).getClass(), randomCode);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * check the object type of a string value
+	 * 
+	 * @param value
+	 * @return
+	 */
+	private Class<?> getObjectType(String value) {
+		if (StringUtils.isMatch(value, "-?\\d+(\\.\\d+)")) {
+			return Double.class;
+		} else if (StringUtils.isMatch(value, "-?\\d+")) {
+			return Long.class;
+		} else {
+			return String.class;
+		}		
+	}
+
+	/**
+	 * anonymize a lateral value depending on its class Type
+	 * 
+	 * @param valueClass value class
 	 * @param randomCode used to anonymise String values
 	 * @return anonymized value
 	 */
-	private Object anonymizeValue(CustomFieldTypeEnum customFieldType, String randomCode) {
-		if (customFieldType == CustomFieldTypeEnum.STRING
-				|| customFieldType == CustomFieldTypeEnum.TEXT_AREA
-				|| customFieldType == CustomFieldTypeEnum.LIST) {
+	private Object anonymizeValue(Class<?> valueClass, String randomCode) {
+		if (valueClass == String.class) {
 			return randomCode;
-		} else if (customFieldType == CustomFieldTypeEnum.DATE) {
-			return DateUtils.parseDateWithPattern("01/01/1900", "dd/MM/yyyy");
-		} else if (customFieldType == CustomFieldTypeEnum.LONG) {
+		} else if (valueClass == Date.class) {
+			return DATE_1900_01_01;
+		} else if (valueClass == Long.class) {
 			return 0L;
-		} else if (customFieldType == CustomFieldTypeEnum.DOUBLE) {
+		} else if (valueClass == Double.class) {
 			return 0D;
 		}
-		return "";
+		return null;
 	}
 }
