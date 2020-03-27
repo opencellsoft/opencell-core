@@ -177,8 +177,8 @@ public class CDRParsingService extends PersistenceService<EDR> {
 			boolean foundMatchingAccess = false;
 
 			for (Access accessPoint : accessPoints) {
-				if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getTimestamp().getTime())
-						&& (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getTimestamp().getTime())) {
+				if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime())
+						&& (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
 					foundMatchingAccess = true;
 					EDR edr = cdrToEdr(cdr, accessPoint, null);
 					edrs.add(edr);
@@ -230,18 +230,18 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	private EDR cdrToEdr(CDR cdr, Access accessPoint, Subscription subscription) {
 		EDR edr = new EDR();
 		edr.setCreated(new Date());
-		edr.setEventDate(cdr.getTimestamp());
+		edr.setEventDate(cdr.getEventDate());
 		edr.setOriginBatch(cdr.getOriginBatch());
 		edr.setOriginRecord(cdr.getOriginRecord());
-		edr.setParameter1(cdr.getParam1());
-		edr.setParameter2(cdr.getParam2());
-		edr.setParameter3(cdr.getParam3());
-		edr.setParameter4(cdr.getParam4());
-		edr.setParameter5(cdr.getParam5());
-		edr.setParameter6(cdr.getParam6());
-		edr.setParameter7(cdr.getParam7());
-		edr.setParameter8(cdr.getParam8());
-		edr.setParameter9(cdr.getParam9());
+		edr.setParameter1(cdr.getParameter1());
+		edr.setParameter2(cdr.getParameter2());
+		edr.setParameter3(cdr.getParameter3());
+		edr.setParameter4(cdr.getParameter4());
+		edr.setParameter5(cdr.getParameter5());
+		edr.setParameter6(cdr.getParameter6());
+		edr.setParameter7(cdr.getParameter7());
+		edr.setParameter8(cdr.getParameter8());
+		edr.setParameter9(cdr.getParameter9());
 		edr.setDateParam1(cdr.getDateParam1());
 		edr.setDateParam2(cdr.getDateParam2());
 		edr.setDateParam3(cdr.getDateParam3());
@@ -286,7 +286,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	 */
 	private List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
 
-		List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccess_id());
+		List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode());
 		if (accesses == null || accesses.size() == 0) {
 			rejectededCdrEventProducer.fire(cdr);
 			throw new InvalidAccessException(cdr);
