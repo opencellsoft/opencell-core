@@ -24404,7 +24404,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 		if (duplicateFound != null && duplicateFound.booleanValue()) {
 			throw new BusinessException("DuplicateFound");
 		}
-		initContext.put("accessUserId", cdr.getAccess_id());
+		initContext.put("accessUserId", cdr.getAccessCode());
 		mediation_RoutingSub.execute(initContext, user);
 		
 
@@ -24924,7 +24924,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 		if (isDuplicated(cdr, originRecord, user)) {
 			throw new BusinessException("DuplicateFound");
 		}
-		executeContext.put("accessUserId", cdr.getAccess_id());
+		executeContext.put("accessUserId", cdr.getAccessCode());
 		List<Access> accesses = routingSUB(executeContext, user);
 
 		if (accesses == null || accesses.isEmpty()) {
@@ -25164,7 +25164,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 		if (isDuplicated(cdr, originRecord, user)) {
 			throw new BusinessException("DuplicateFound");
 		}
-		executeContext.put("accessUserId", cdr.getAccess_id());
+		executeContext.put("accessUserId", cdr.getAccessCode());
 		List<Access> accesses = routingSUB(executeContext, user);
 
 		if (accesses == null || accesses.isEmpty()) {
