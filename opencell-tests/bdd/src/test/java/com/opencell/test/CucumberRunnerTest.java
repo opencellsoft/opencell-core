@@ -7,7 +7,7 @@ import cucumber.api.junit.Cucumber;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(plugin = { "pretty", "json:target/cucumber-reports/Cucumber.json",
-        "junit:target/cucumber-reports/Cucumber.xml" }, tags = { "not @full and not @ignore" })
+        "junit:target/cucumber-reports/Cucumber.xml" }, tags = { "@full and not @ignore" })
 public class CucumberRunnerTest {
 
 }
