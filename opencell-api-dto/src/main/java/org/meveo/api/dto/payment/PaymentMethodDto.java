@@ -40,6 +40,7 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaypalPaymentMethod;
+import org.meveo.model.payments.StripePaymentMethod;
 import org.meveo.model.payments.WirePaymentMethod;
 import org.meveo.security.MeveoUser;
 
@@ -252,6 +253,12 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
         if (paymentMethod instanceof WirePaymentMethod) {
             this.setPaymentMethodType(PaymentMethodEnum.WIRETRANSFER);
         }
+        if (paymentMethod instanceof PaypalPaymentMethod) {
+            this.setPaymentMethodType(PaymentMethodEnum.PAYPAL);
+        }
+        if (paymentMethod instanceof StripePaymentMethod) {
+            this.setPaymentMethodType(PaymentMethodEnum.STRIPE);
+        }
     }
 
     /**
@@ -312,6 +319,9 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
         case PAYPAL:
             pmEntity = new PaypalPaymentMethod(disabledBool, alias, preferred, customerAccount,userId);
             break;
+        case STRIPE:
+            pmEntity = new StripePaymentMethod(disabledBool, alias, preferred, customerAccount,userId);
+            break;            
         default:
             break;
         }

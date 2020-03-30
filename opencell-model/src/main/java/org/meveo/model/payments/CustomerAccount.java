@@ -559,6 +559,18 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
         }
         return checkPaymentMethods;
     }
+    
+    public List<StripePaymentMethod> getStripePaymentMethods() {
+        List<StripePaymentMethod> stripePaymentMethods = new ArrayList<>();
+        if (getPaymentMethods() != null) {
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
+                if (paymentMethod instanceof StripePaymentMethod) {
+                    stripePaymentMethods.add((StripePaymentMethod) paymentMethod);
+                }
+            }
+        }
+        return stripePaymentMethods;
+    }
 
     /**
      * Mark currently valid card payment as preferred

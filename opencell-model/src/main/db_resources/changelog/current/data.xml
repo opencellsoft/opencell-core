@@ -1699,4 +1699,15 @@ public class ValidateBRScript extends Script {
         </insert>
     </changeSet>
     
+    <changeSet id="#4924_20200219" author="anasseh">        
+      <insert tableName="crm_provider_pay_methods">
+            <column name="provider_id" valueNumeric="1" />
+            <column name="payment_method" value="PAYPAL" />
+        </insert>
+      <insert tableName="crm_provider_pay_methods">
+            <column name="provider_id" valueNumeric="1" />
+            <column name="payment_method" value="STRIPE" />
+        </insert>        
+   </changeSet> 
+    
 </databaseChangeLog>

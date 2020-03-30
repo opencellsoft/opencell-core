@@ -23,37 +23,37 @@ import javax.persistence.Entity;
 import org.meveo.commons.utils.StringUtils;
 
 /**
- * Payment by Paypal payment method
+ * Payment by Stripe payment method
  * 
  * @author anasseh
  */
 @Entity
-@DiscriminatorValue(value = "PAYPAL")
-public class PaypalPaymentMethod extends PaymentMethod {
+@DiscriminatorValue(value = "STRIPE")
+public class StripePaymentMethod extends PaymentMethod {
 
     private static final long serialVersionUID = 8726571611074346199L;
     
-    public PaypalPaymentMethod() {
-        this.paymentType = PaymentMethodEnum.PAYPAL;
+    public StripePaymentMethod() {
+        this.paymentType = PaymentMethodEnum.STRIPE;
     }
 
-    public PaypalPaymentMethod(boolean isDisabled, String alias, boolean preferred, CustomerAccount customerAccount,String userId) {
+    public StripePaymentMethod(boolean isDisabled, String alias, boolean preferred, CustomerAccount customerAccount,String userId) {
         super();
         setDisabled(isDisabled);
-        this.paymentType = PaymentMethodEnum.PAYPAL;
+        this.paymentType = PaymentMethodEnum.STRIPE;
         this.alias = alias;
         this.preferred = preferred;
         this.customerAccount = customerAccount;
         if(StringUtils.isBlank(userId)) {
-        	userId = customerAccount.getContactInformationNullSafe().getEmail();
+        	this.userId = customerAccount.getContactInformationNullSafe().getEmail();
         }else {
-        this.userId = userId;
+        	this.userId = userId;
         }
     }
 
-    public PaypalPaymentMethod(String alias, boolean preferred) {
+    public StripePaymentMethod(String alias, boolean preferred) {
         super();
-        this.paymentType = PaymentMethodEnum.PAYPAL;
+        this.paymentType = PaymentMethodEnum.STRIPE;
         this.alias = alias;
         this.preferred = preferred;
     }
@@ -66,11 +66,11 @@ public class PaypalPaymentMethod extends PaymentMethod {
 			return true;
 		} else if (obj == null) {
 			return false;
-		} else if (!(obj instanceof PaypalPaymentMethod)) {
+		} else if (!(obj instanceof StripePaymentMethod)) {
 			return false;
 		}
 
-		PaypalPaymentMethod other = (PaypalPaymentMethod) obj;
+		StripePaymentMethod other = (StripePaymentMethod) obj;
 
 		if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
 			return true;
@@ -93,6 +93,6 @@ public class PaypalPaymentMethod extends PaymentMethod {
 
     @Override
     public String toString() {
-        return "PaypalPaymentMethod [alias= " + getAlias() + ", preferred=" + isPreferred() + "]";
+        return "STRIPEPaymentMethod [alias= " + getAlias() + ", preferred=" + isPreferred() + "]";
     }
 }
