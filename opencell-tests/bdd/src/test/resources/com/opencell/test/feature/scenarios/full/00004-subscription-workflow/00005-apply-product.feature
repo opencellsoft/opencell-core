@@ -1,5 +1,5 @@
 @full
-Feature: Apply Product
+Feature: Subscription workflow - Apply Product
 
   @admin
   Scenario Outline: <title>

@@ -1,4 +1,4 @@
-@full04-multiple-charges-trigger
+@full @ignore
 Feature: Rating - Discounts
 
   @admin

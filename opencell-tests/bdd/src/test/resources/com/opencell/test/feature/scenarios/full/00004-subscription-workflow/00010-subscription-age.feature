@@ -1,5 +1,5 @@
 @full
-Feature: Subscription age
+Feature: Subscription workflow - Subscription age
 
   @admin
   Scenario Outline: <title>

@@ -1,7 +1,7 @@
 @full
 Feature: Setup base data - Clean up data - Clean up data - user and ES
 
-  @admin @superadmin
+  @superadmin
   Scenario Outline: Restore User to default
     Given The entity has the following information "<jsonFile>" as "<dto>"
     When I call the "<action>" "<api>"

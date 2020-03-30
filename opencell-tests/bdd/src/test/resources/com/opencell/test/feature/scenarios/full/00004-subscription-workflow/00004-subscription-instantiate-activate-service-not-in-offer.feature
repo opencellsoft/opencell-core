@@ -1,5 +1,5 @@
 @full
-Feature: Subscription instantiate/activate service NOT in Offer and modify offer in subscription
+Feature: Subscription workflow - Subscription instantiate/activate service NOT in Offer and modify offer in subscription
 
   @admin
   Scenario Outline: <title>

@@ -1,4 +1,4 @@
-@full
+@full @ignore
 Feature: Rating - Recurring rating
 
   @admin

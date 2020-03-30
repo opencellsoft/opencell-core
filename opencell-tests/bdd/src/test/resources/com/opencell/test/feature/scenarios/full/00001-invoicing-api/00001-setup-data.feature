@@ -1,4 +1,4 @@
-@full
+@full @ignore
 Feature: Invoicing - Setup Data
 
   @admin @superadmin

@@ -1,4 +1,4 @@
-@full
+@full @ignore
 Feature: Invoicing - Draft Invoice
 
   @admin @superadmin

@@ -1,5 +1,5 @@
 @full
-Feature: Subscription status notification
+Feature: Subscription workflow - Subscription status notification
 
   @admin
   Scenario Outline: <title>

@@ -8,5 +8,6 @@
     "unitNbDecimal": "2",
     "oneShotChargeTemplateType": "SUBSCRIPTION",
     "immediateInvoicing": false,
-    "roundingModeDtoEnum": "NEAREST"
+    "roundingModeDtoEnum": "NEAREST",
+    "taxClassCode":"RS_BASE_taxClass"
 }

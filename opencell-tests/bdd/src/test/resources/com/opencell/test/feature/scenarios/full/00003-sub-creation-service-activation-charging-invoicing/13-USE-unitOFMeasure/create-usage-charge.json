@@ -11,6 +11,7 @@
     "unitMultiplicator": 1,
     "unitNbDecimal": 6,
     "roundingModeDtoEnum": "NEAREST",
+    "taxClassCode" : "RS_BASE_taxClass",
     "filterParam1": "UNIT",
     "priority": 10
 }

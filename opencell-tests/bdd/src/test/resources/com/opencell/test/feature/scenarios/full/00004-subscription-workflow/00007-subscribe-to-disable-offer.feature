@@ -1,5 +1,5 @@
 @full
-Feature: Subscribe to disable offer
+Feature: Subscription workflow - Subscribe to disable offer
 
   @admin
   Scenario Outline: <title>

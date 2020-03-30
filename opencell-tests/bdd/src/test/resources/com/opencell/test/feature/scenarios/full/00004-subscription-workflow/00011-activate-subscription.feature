@@ -1,5 +1,5 @@
 @full
-Feature: Activate Subscription
+Feature: Subscription workflow - Activate Subscription
 
   @admin
   Scenario Outline: <title>

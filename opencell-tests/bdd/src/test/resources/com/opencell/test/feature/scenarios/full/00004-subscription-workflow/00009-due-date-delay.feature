@@ -1,5 +1,5 @@
 @full
-Feature: Due date delay
+Feature: Subscription workflow - Due date delay
 
   @admin
   Scenario Outline: <title>

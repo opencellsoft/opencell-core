@@ -1,5 +1,5 @@
 @full
-Feature: Update service instance
+Feature: Subscription workflow - Update service instance
 
   @admin
   Scenario Outline: <title>

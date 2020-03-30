@@ -1,4 +1,4 @@
-@full
+@full @ignore
 Feature: Sub creation, Service Activation, Charging and invoicing - Subscription with pricePlan.ratedEL
 
   @admin

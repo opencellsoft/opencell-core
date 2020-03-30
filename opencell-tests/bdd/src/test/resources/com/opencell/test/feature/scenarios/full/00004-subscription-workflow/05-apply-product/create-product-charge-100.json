@@ -9,5 +9,6 @@
             "languageCode": "FRA",
             "description": "RS_BASE-Produit 100 Test"
         }
-    ]
+    ],
+    "taxClassCode":"RS_BASE_taxClass"
 }

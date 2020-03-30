@@ -1,4 +1,4 @@
-@full
+@full @ignore
 Feature: Sub creation, Service Activation, Charging and invoicing - Charge and rate triggered EDR
 
   @admin

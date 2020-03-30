@@ -1,4 +1,4 @@
-@full
+@full @ignore
 Feature: Sub creation, Service Activation, Charging and invoicing - Create BR and Invoicing with Reference Date
 
   @admin

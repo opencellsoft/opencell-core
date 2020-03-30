@@ -1,5 +1,5 @@
 @full
-Feature: Apply Oneshot chargeInstance
+Feature: Subscription workflow - Apply Oneshot chargeInstance
 
   @admin
   Scenario Outline: <title>

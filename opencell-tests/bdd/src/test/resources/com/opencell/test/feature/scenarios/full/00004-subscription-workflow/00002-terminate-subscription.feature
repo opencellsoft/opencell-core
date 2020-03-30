@@ -1,5 +1,5 @@
 @full @ignore
-Feature: Rating Group
+Feature: Subscription workflow - Terminate Subscription
 
   @admin
   Scenario Outline: <title>

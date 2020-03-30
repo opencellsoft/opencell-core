@@ -8,5 +8,6 @@
     "unitNbDecimal": "2",
     "filterParam1": "USAGE",
     "priority": "1",
-    "roundingModeDtoEnum": "NEAREST"
+    "roundingModeDtoEnum": "NEAREST",
+    "taxClassCode":"RS_BASE_taxClass"
 }

@@ -1,5 +1,5 @@
 @full
-Feature: Rating Group
+Feature: Subscription workflow - Rating Group
 
   @admin
   Scenario Outline: <title>

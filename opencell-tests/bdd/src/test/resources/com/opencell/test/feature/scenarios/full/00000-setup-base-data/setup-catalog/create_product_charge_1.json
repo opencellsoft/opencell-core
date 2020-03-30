@@ -10,6 +10,7 @@
             "description": "RS_BASE-Produit Test"
         }
     ],
+    "taxClassCode" : "RS_BASE_taxClass",
     "triggeredEdrs": {
         "triggeredEdr": [
             {

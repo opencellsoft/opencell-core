@@ -2,7 +2,7 @@
     "code": "TEST",
     "description": "Wallet operation test",
     "subscription": "ben.ohara",
-    "chargeInstance": "PR_CLASSIC_DEFAULT",
+    "chargeInstance": "CH_CLASSIC_REC_FLAT",
     "currency": "EUR",
     "taxCode": "TAX_CLASSIC_HIGH",
     "status": "TREATED"
