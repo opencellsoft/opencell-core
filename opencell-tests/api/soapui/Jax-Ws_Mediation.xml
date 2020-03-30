@@ -1423,22 +1423,22 @@ public class Mediation_${#Project#baseEntityPrefix}_CreateEdr extends org.meveo.
 		EdrService edrService = (EdrService) getServiceInterface("EdrService");
 
 		for (Access accessPoint : accesses) {
-			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getTimestamp().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getTimestamp().getTime())) {
+			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
 
 				EDR edr = new EDR();
 				edr.setCreated(new Date());
-				edr.setEventDate(cdr.getTimestamp());
+				edr.setEventDate(cdr.getEventDate());
 				edr.setOriginBatch(originBatch);
 				edr.setOriginRecord(originRecord);
-				edr.setParameter1(cdr.getParam1());
-				edr.setParameter2(cdr.getParam2());
-				edr.setParameter3(cdr.getParam3());
-				edr.setParameter4(cdr.getParam4());
-				edr.setParameter5(cdr.getParam5());
-				edr.setParameter6(cdr.getParam6());
-				edr.setParameter7(cdr.getParam7());
-				edr.setParameter8(cdr.getParam8());
-				edr.setParameter9(cdr.getParam9());
+				edr.setParameter1(cdr.getParameter1());
+				edr.setParameter2(cdr.getParameter2());
+				edr.setParameter3(cdr.getParameter3());
+				edr.setParameter4(cdr.getParameter4());
+				edr.setParameter5(cdr.getParameter5());
+				edr.setParameter6(cdr.getParameter6());
+				edr.setParameter7(cdr.getParameter7());
+				edr.setParameter8(cdr.getParameter8());
+				edr.setParameter9(cdr.getParameter9());
 				edr.setDateParam1(cdr.getDateParam1());
 				edr.setDateParam2(cdr.getDateParam2());
 				edr.setDateParam3(cdr.getDateParam3());
@@ -1733,7 +1733,7 @@ public class Mediation_${#Project#baseEntityPrefix}_Flow extends org.meveo.servi
 		if (duplicateFound != null && duplicateFound.booleanValue()) {
 			throw new BusinessException("DuplicateFound");
 		}
-		initContext.put("accessUserId", cdr.getAccess_id());
+		initContext.put("accessUserId", cdr.getAccessCode());
 		try {
 			mediation_RoutingSub.newInstance().execute(initContext);
 		} catch (InstantiationException | IllegalAccessException e) {
@@ -2102,21 +2102,21 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 		List<Access> accesses = (List<Access>) initContext.get("accesses");
 
 		for (Access accessPoint : accesses) {
-			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getTimestamp().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getTimestamp().getTime())) {
+			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
 				EDR edr = new EDR();
 				edr.setCreated(new Date());
-				edr.setEventDate(cdr.getTimestamp());
+				edr.setEventDate(cdr.getEventDate());
 				edr.setOriginBatch(originBatch);
 				edr.setOriginRecord(originRecord);
-				edr.setParameter1(cdr.getParam1());
-				edr.setParameter2(cdr.getParam2());
-				edr.setParameter3(cdr.getParam3());
-				edr.setParameter4(cdr.getParam4());
-				edr.setParameter5(cdr.getParam5());
-				edr.setParameter6(cdr.getParam6());
-				edr.setParameter7(cdr.getParam7());
-				edr.setParameter8(cdr.getParam8());
-				edr.setParameter9(cdr.getParam9());
+				edr.setParameter1(cdr.getParameter1());
+				edr.setParameter2(cdr.getParameter2());
+				edr.setParameter3(cdr.getParameter3());
+				edr.setParameter4(cdr.getParameter4());
+				edr.setParameter5(cdr.getParameter5());
+				edr.setParameter6(cdr.getParameter6());
+				edr.setParameter7(cdr.getParameter7());
+				edr.setParameter8(cdr.getParameter8());
+				edr.setParameter9(cdr.getParameter9());
 				edr.setDateParam1(cdr.getDateParam1());
 				edr.setDateParam2(cdr.getDateParam2());
 				edr.setDateParam3(cdr.getDateParam3());
@@ -2130,17 +2130,17 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 				edr.setAccessCode(accessPoint.getAccessUserId());
 				edr.setQuantity(cdr.getQuantity());
 				edr.setSubscription(accessPoint.getSubscription());
-				if("VOICE".equals(cdr.getParam1())){
+				if("VOICE".equals(cdr.getParameter1())){
 				     Subscription sub = subService.findById(accessPoint.getSubscription().getId());
-					List<Object> topTenNumbers = (List)cfService.getCFValue(sub, TOPTEN_CF, cdr.getTimestamp());
+					List<Object> topTenNumbers = (List)cfService.getCFValue(sub, TOPTEN_CF, cdr.getEventDate());
 					if(topTenNumbers==null){
 						topTenNumbers = new ArrayList<Object>();
 					}
-					if(topTenNumbers.size()<10 || topTenNumbers.contains(cdr.getParam2())){
+					if(topTenNumbers.size()<10 || topTenNumbers.contains(cdr.getParameter2())){
 						edr.setParameter3("TOPTEN");
-						if(topTenNumbers.size()<10  && !topTenNumbers.contains(cdr.getParam2())){
-							topTenNumbers.add(cdr.getParam2());
-							cfService.setCFValue(sub, TOPTEN_CF, topTenNumbers, cdr.getTimestamp());
+						if(topTenNumbers.size()<10  && !topTenNumbers.contains(cdr.getParameter2())){
+							topTenNumbers.add(cdr.getParameter2());
+							cfService.setCFValue(sub, TOPTEN_CF, topTenNumbers, cdr.getEventDate());
 						}
 					}
 				}
@@ -2237,12 +2237,12 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 	public void execute(Map<String, Object> initContext) throws BusinessException {
 		log.info("Execute...");
 		CDR cdr = new CDR();
-		cdr.setAccess_id((String)initContext.get("accessId"));
-		cdr.setParam1((String)initContext.get("param1"));
-		cdr.setParam2((String)initContext.get("param2"));
+		cdr.setAccessCode((String)initContext.get("accessId"));
+		cdr.setParameter1((String)initContext.get("param1"));
+		cdr.setParameter2((String)initContext.get("param2"));
 		cdr.setQuantity(new BigDecimal((String)initContext.get("quantity")));
 		try{
-		cdr.setTimestamp(sdf.parse((String)initContext.get("time")));
+		cdr.setEventDate(sdf.parse((String)initContext.get("time")));
 		} catch(Exception e){
 		  throw new BusinessException("date parsing error",e);
 		}
@@ -2255,7 +2255,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 			if(duplicateFound != null && duplicateFound.booleanValue()){
 				throw new BusinessException("DuplicateFound");
 			}
-			initContext.put("accessUserId",cdr.getAccess_id());
+			initContext.put("accessUserId",cdr.getAccessCode());
 			mediation_RoutingSub.newInstance().execute(initContext);
 
 			@SuppressWarnings("unchecked")
@@ -3501,12 +3501,12 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 			cdr = (CDR)initContext.get("record");
 		} else {
 			cdr = new CDR();
-			cdr.setAccess_id((String)initContext.get("accessId"));
-			cdr.setParam1((String)initContext.get("param1"));
-			cdr.setParam2((String)initContext.get("param2"));
+			cdr.setAccessCode((String)initContext.get("accessId"));
+			cdr.setParameter1((String)initContext.get("param1"));
+			cdr.setParameter2((String)initContext.get("param2"));
 			cdr.setQuantity(new BigDecimal((String)initContext.get("quantity")));
 			try{
-			cdr.setTimestamp(sdf.parse((String)initContext.get("time")));
+			cdr.setEventDate(sdf.parse((String)initContext.get("time")));
 			} catch(Exception e){
 			  throw new BusinessException("date parsing error",e);
 			}
@@ -3520,7 +3520,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 			if(duplicateFound != null && duplicateFound.booleanValue()){
 				throw new BusinessException("DuplicateFound");
 			}
-			initContext.put("accessUserId",cdr.getAccess_id());
+			initContext.put("accessUserId",cdr.getAccessCode());
 			mediation_RoutingSub.newInstance().execute(initContext);
 
 			@SuppressWarnings("unchecked")
@@ -3629,21 +3629,21 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 		List<Access> accesses = (List<Access>) initContext.get("accesses");
 
 		for (Access accessPoint : accesses) {
-			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getTimestamp().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getTimestamp().getTime())) {
+			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
 				EDR edr = new EDR();
 				edr.setCreated(new Date());
-				edr.setEventDate(cdr.getTimestamp());
+				edr.setEventDate(cdr.getEventDate());
 				edr.setOriginBatch(originBatch);
 				edr.setOriginRecord(originRecord);
-				edr.setParameter1(cdr.getParam1());
-				edr.setParameter2(cdr.getParam2());
-				edr.setParameter3(cdr.getParam3());
-				edr.setParameter4(cdr.getParam4());
-				edr.setParameter5(cdr.getParam5());
-				edr.setParameter6(cdr.getParam6());
-				edr.setParameter7(cdr.getParam7());
-				edr.setParameter8(cdr.getParam8());
-				edr.setParameter9(cdr.getParam9());
+				edr.setParameter1(cdr.getParameter1());
+				edr.setParameter2(cdr.getParameter2());
+				edr.setParameter3(cdr.getParameter3());
+				edr.setParameter4(cdr.getParameter4());
+				edr.setParameter5(cdr.getParameter5());
+				edr.setParameter6(cdr.getParameter6());
+				edr.setParameter7(cdr.getParameter7());
+				edr.setParameter8(cdr.getParameter8());
+				edr.setParameter9(cdr.getParameter9());
 				edr.setDateParam1(cdr.getDateParam1());
 				edr.setDateParam2(cdr.getDateParam2());
 				edr.setDateParam3(cdr.getDateParam3());
@@ -3657,17 +3657,17 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 				edr.setAccessCode(accessPoint.getAccessUserId());
 				edr.setQuantity(cdr.getQuantity());
 				edr.setSubscription(accessPoint.getSubscription());
-				if("VOICE".equals(cdr.getParam1())){
+				if("VOICE".equals(cdr.getParameter1())){
 				     Subscription sub = subService.findById(accessPoint.getSubscription().getId());
-					List<Object> topTenNumbers = (List)cfService.getCFValue(sub, TOPTEN_CF, cdr.getTimestamp());
+					List<Object> topTenNumbers = (List)cfService.getCFValue(sub, TOPTEN_CF, cdr.getEventDate());
 					if(topTenNumbers==null){
 						topTenNumbers = new ArrayList<Object>();
 					}
-					if(topTenNumbers.size()<10 || topTenNumbers.contains(cdr.getParam2())){
+					if(topTenNumbers.size()<10 || topTenNumbers.contains(cdr.getParameter2())){
 						edr.setParameter3("TOPTEN");
-						if(topTenNumbers.size()<10  && !topTenNumbers.contains(cdr.getParam2())){
-							topTenNumbers.add(cdr.getParam2());
-							cfService.setCFValue(sub, TOPTEN_CF, topTenNumbers, cdr.getTimestamp());
+						if(topTenNumbers.size()<10  && !topTenNumbers.contains(cdr.getParameter2())){
+							topTenNumbers.add(cdr.getParameter2());
+							cfService.setCFValue(sub, TOPTEN_CF, topTenNumbers, cdr.getEventDate());
 						}
 					}
 				}
@@ -4929,21 +4929,21 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 		List<Access> accesses = (List<Access>) initContext.get("accesses");
 
 		for (Access accessPoint : accesses) {
-			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getTimestamp().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getTimestamp().getTime())) {
+			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
 				EDR edr = new EDR();
 				edr.setCreated(new Date());
-				edr.setEventDate(cdr.getTimestamp());
+				edr.setEventDate(cdr.getEventDate());
 				edr.setOriginBatch(originBatch);
 				edr.setOriginRecord(originRecord);
-				edr.setParameter1(cdr.getParam1());
-				edr.setParameter2(cdr.getParam2());
-				edr.setParameter3(cdr.getParam3());
-				edr.setParameter4(cdr.getParam4());
-				edr.setParameter5(cdr.getParam5());
-				edr.setParameter6(cdr.getParam6());
-				edr.setParameter7(cdr.getParam7());
-				edr.setParameter8(cdr.getParam8());
-				edr.setParameter9(cdr.getParam9());
+				edr.setParameter1(cdr.getParameter1());
+				edr.setParameter2(cdr.getParameter2());
+				edr.setParameter3(cdr.getParameter3());
+				edr.setParameter4(cdr.getParameter4());
+				edr.setParameter5(cdr.getParameter5());
+				edr.setParameter6(cdr.getParameter6());
+				edr.setParameter7(cdr.getParameter7());
+				edr.setParameter8(cdr.getParameter8());
+				edr.setParameter9(cdr.getParameter9());
 				edr.setDateParam1(cdr.getDateParam1());
 				edr.setDateParam2(cdr.getDateParam2());
 				edr.setDateParam3(cdr.getDateParam3());
@@ -4957,15 +4957,15 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 				edr.setAccessCode(accessPoint.getAccessUserId());
 				edr.setQuantity(cdr.getQuantity());
 				edr.setSubscription(accessPoint.getSubscription());
-				if("VOICE".equals(cdr.getParam1())){
+				if("VOICE".equals(cdr.getParameter1())){
 				    Subscription sub = subService.findById(accessPoint.getSubscription().getId());
 				    Customer cust= sub.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
-					String zoningCode = (String)cfService.getCFValueByClosestMatch(cust, CF_NAME,cdr.getTimestamp(), accessPoint.getAccessUserId());
+					String zoningCode = (String)cfService.getCFValueByClosestMatch(cust, CF_NAME,cdr.getEventDate(), accessPoint.getAccessUserId());
 					if(zoningCode==null){
 					     zoningCode="NOT_FOUND";
 					}
 					edr.setParameter2(zoningCode);
-					zoningCode = (String)cfService.getCFValueByClosestMatch(cust, CF_NAME,cdr.getTimestamp(), cdr.getParam2());
+					zoningCode = (String)cfService.getCFValueByClosestMatch(cust, CF_NAME,cdr.getEventDate(), cdr.getParameter2());
 					if(zoningCode==null){
 					     zoningCode="NOT_FOUND";
 					}
@@ -5063,12 +5063,12 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 	public void execute(Map<String, Object> initContext)throws BusinessException {
 		log.info("Execute...");
 		CDR cdr = new CDR();
-		cdr.setAccess_id((String)initContext.get("accessId"));
-		cdr.setParam1((String)initContext.get("param1"));
-		cdr.setParam2((String)initContext.get("param2"));
+		cdr.setAccessCode((String)initContext.get("accessId"));
+		cdr.setParameter1((String)initContext.get("param1"));
+		cdr.setParameter2((String)initContext.get("param2"));
 		cdr.setQuantity(new BigDecimal((String)initContext.get("quantity")));
 		try{
-		cdr.setTimestamp(sdf.parse((String)initContext.get("time")));
+		cdr.setEventDate(sdf.parse((String)initContext.get("time")));
 		} catch(Exception e){
 		  throw new BusinessException("date parsing error",e);
 		}
@@ -5081,7 +5081,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 			if(duplicateFound != null && duplicateFound.booleanValue()){
 				throw new BusinessException("DuplicateFound");
 			}
-			initContext.put("accessUserId",cdr.getAccess_id());
+			initContext.put("accessUserId",cdr.getAccessCode());
 			mediation_RoutingSub.newInstance().execute(initContext);
 
 			@SuppressWarnings("unchecked")
@@ -6391,21 +6391,21 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 		List<Access> accesses = (List<Access>) initContext.get("accesses");
 
 		for (Access accessPoint : accesses) {
-			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getTimestamp().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getTimestamp().getTime())) {
+			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
 				EDR edr = new EDR();
 				edr.setCreated(new Date());
-				edr.setEventDate(cdr.getTimestamp());
+				edr.setEventDate(cdr.getEventDate());
 				edr.setOriginBatch(originBatch);
 				edr.setOriginRecord(originRecord);
-				edr.setParameter1(cdr.getParam1());
-				edr.setParameter2(cdr.getParam2());
-				edr.setParameter3(cdr.getParam3());
-				edr.setParameter4(cdr.getParam4());
-				edr.setParameter5(cdr.getParam5());
-				edr.setParameter6(cdr.getParam6());
-				edr.setParameter7(cdr.getParam7());
-				edr.setParameter8(cdr.getParam8());
-				edr.setParameter9(cdr.getParam9());
+				edr.setParameter1(cdr.getParameter1());
+				edr.setParameter2(cdr.getParameter2());
+				edr.setParameter3(cdr.getParameter3());
+				edr.setParameter4(cdr.getParameter4());
+				edr.setParameter5(cdr.getParameter5());
+				edr.setParameter6(cdr.getParameter6());
+				edr.setParameter7(cdr.getParameter7());
+				edr.setParameter8(cdr.getParameter8());
+				edr.setParameter9(cdr.getParameter9());
 				edr.setDateParam1(cdr.getDateParam1());
 				edr.setDateParam2(cdr.getDateParam2());
 				edr.setDateParam3(cdr.getDateParam3());
@@ -6420,7 +6420,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 				edr.setQuantity(cdr.getQuantity());
 				edr.setSubscription(accessPoint.getSubscription());
 				
-				if("VOICE".equals(cdr.getParam1())){
+				if("VOICE".equals(cdr.getParameter1())){
 				    Subscription sub = subService.findById(accessPoint.getSubscription().getId());
 				    Customer cust= sub.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer();
 				    //increment CF value
@@ -6519,12 +6519,12 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 	public void execute(Map<String, Object> initContext)throws BusinessException {
 		log.info("Execute...");
 		CDR cdr = new CDR();
-		cdr.setAccess_id((String)initContext.get("accessId"));
-		cdr.setParam1((String)initContext.get("param1"));
-		cdr.setParam2((String)initContext.get("param2"));
+		cdr.setAccessCode((String)initContext.get("accessId"));
+		cdr.setParameter1((String)initContext.get("param1"));
+		cdr.setParameter2((String)initContext.get("param2"));
 		cdr.setQuantity(new BigDecimal((String)initContext.get("quantity")));
 		try{
-		cdr.setTimestamp(sdf.parse((String)initContext.get("time")));
+		cdr.setEventDate(sdf.parse((String)initContext.get("time")));
 		} catch(Exception e){
 		  throw new BusinessException("date parsing error",e);
 		}
@@ -6537,7 +6537,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 			if(duplicateFound != null && duplicateFound.booleanValue()){
 				throw new BusinessException("DuplicateFound");
 			}
-			initContext.put("accessUserId",cdr.getAccess_id());
+			initContext.put("accessUserId",cdr.getAccessCode());
 			mediation_RoutingSub.newInstance().execute(initContext);
 
 			@SuppressWarnings("unchecked")
