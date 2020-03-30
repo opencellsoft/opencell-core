@@ -374,24 +374,6 @@
 			WHERE id=-3;]]>
         </sql>
         
-        <insert tableName="crm_custom_field_tmpl">
-        	<column name="id" valueNumeric="-1"></column>
-        	<column name="version" value="0"></column>
-        	<column name="disabled" value="0"></column>
-        	<column name="created" valueDate="now()"></column>
-        	<column name="creator" value="applicationInitializer"></column>
-        	<column name="code" value="SELFCARE_PASSWORD"></column>
-        	<column name="description" value="SelfCare password"></column>
-        	<column name="field_type" value="STRING"></column>
-        	<column name="versionable" value="0"></column>
-        	<column name="storage_type" value="SINGLE"></column>
-        	<column name="applies_to" value="Customer"></column>
-        	<column name="gui_position" value="tab:Custom fields:0;field:0"></column>
-        	<column name="allow_edit" value="1"></column>
-        	<column name="hide_on_new" value="1"></column>
-        	<column name="max_value" valueNumeric="50"></column>
-        	<column name="cf_protectable" valueNumeric="1"></column>
-        </insert>
 	</changeSet>
 	
 	<changeSet author="EdwardPLegaspi" id="#4150_20190424 - Bring back the timers">
