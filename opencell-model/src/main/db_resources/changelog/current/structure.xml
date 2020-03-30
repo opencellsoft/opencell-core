@@ -2829,7 +2829,7 @@ END $$;]]>
     <changeSet id="#5085_20200330 - triggeredNextCharge has an incorrect value" author="Mohammed_ELAZZOUZI">
 		<update tableName="cat_charge_template">
 			<column name="trigger_next_charge" valueNumeric="0"></column>
-			<where></where>
+			<where>trigger_next_charge is null</where>
 		</update>
 	</changeSet>
 	
