@@ -17,22 +17,9 @@
  */
 
 /**
- * 
+ *
  */
 package org.meveo.admin.async;
-
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Future;
-
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.FlatFileProcessingJob;
@@ -56,12 +43,20 @@ import org.meveo.service.script.ScriptInterface;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
+import javax.ejb.*;
+import javax.inject.Inject;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
+
 /**
  * FlatFile processing
- * 
+ *
  * @author Abdelhadi
  * @author Abdellatif BARI
- * @lastModifiedVersion 8.4.0
+ * @lastModifiedVersion 9.2.1
  */
 @Stateless
 public class FlatFileProcessing {
@@ -98,7 +93,7 @@ public class FlatFileProcessing {
     /**
      * Read/parse file and execute script for each line. NOTE: Executes in NO transaction - each line will be processed in a separate transaction, one line failure will not affect
      * processing of other lines
-     * 
+     *
      * @param fileParser FlatFile parser
      * @param result Job execution result
      * @param script Script to execute
@@ -116,7 +111,7 @@ public class FlatFileProcessing {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> processFileAsync(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName, String fileName,
-            String filenameVariableName, String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter, MeveoUser lastCurrentUser) throws BusinessException {
+                                           String filenameVariableName, String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter, MeveoUser lastCurrentUser) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -127,7 +122,7 @@ public class FlatFileProcessing {
     /**
      * Read/parse file and execute script for each line. NOTE: Process all file in ONE transaction. Failure in one line will rollback all changes. To use only with
      * errorAction=rollback
-     * 
+     *
      * @param fileParser FlatFile parser
      * @param result Job execution result
      * @param script Script to execute
@@ -146,7 +141,7 @@ public class FlatFileProcessing {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Future<String> processFileAsyncInOneTx(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName, String fileName,
-            String filenameVariableName, String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter, MeveoUser lastCurrentUser) throws BusinessException {
+                                                  String filenameVariableName, String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter, MeveoUser lastCurrentUser) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -156,7 +151,7 @@ public class FlatFileProcessing {
 
     /**
      * Read/parse file and execute script for each line.
-     * 
+     *
      * @param fileParser FlatFile parser
      * @param result Job execution result
      * @param script Script to execute
@@ -170,7 +165,7 @@ public class FlatFileProcessing {
      * @throws BusinessException General exception
      */
     private void processFile(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName, String fileName, String filenameVariableName,
-            String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter) throws BusinessException {
+                             String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter) throws BusinessException {
 
         int i = 0;
         Map<String, Object> executeParams = new HashMap<String, Object>();
@@ -215,7 +210,7 @@ public class FlatFileProcessing {
             } catch (Exception e) {
                 String errorReason = ((recordContext == null || recordContext.getRejectReason() == null) ? e.getMessage() : recordContext.getRejectReason().getMessage());
                 log.error("Failed to process a record line content:{} from file {} error {}", recordContext != null ? recordContext.getLineContent() : null, fileName, errorReason,
-                    e);
+                        e);
 
                 synchronized (rejectFileWriter) {
                     rejectFileWriter.println(recordContext.getLineContent() + "=>" + errorReason);
@@ -253,16 +248,12 @@ public class FlatFileProcessing {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void updateFlatFile(String fileOriginalName, String fileCurrentName, String rejectedfileName, String processedfileName, String rejectDir, String outputDir,
-            List<String> errors, long processSuccess, long processedError, String jobCode) {
+                               List<String> errors, long processSuccess, long processedError, String jobCode) {
         try {
             if (StringUtils.isBlank(fileCurrentName)) {
                 fileCurrentName = !errors.isEmpty() ? rejectedfileName : processedfileName;
             }
             String currentDirectory = !errors.isEmpty() ? rejectDir : outputDir;
-
-            String[] param = fileOriginalName.split("_");
-            String code = param.length > 0 ? param[0] : null;
-
             FileStatusEnum status = FileStatusEnum.VALID;
             String errorMessage = null;
             if (errors != null && !errors.isEmpty()) {
@@ -270,7 +261,8 @@ public class FlatFileProcessing {
                 int maxErrors = errors.size() > flatFileValidator.getBadLinesLimit() ? flatFileValidator.getBadLinesLimit() : errors.size();
                 errorMessage = String.join(",", errors.subList(0, maxErrors));
             }
-            FlatFile flatFile = flatFileService.findByCode(code);
+
+            FlatFile flatFile = flatFileService.getFlatFileByFileName(fileOriginalName);
             // case that mean the processed file wasn't uploaded with file Format
             if (flatFile == null) {
                 // we check if this file is already processed and that it is in error.
@@ -278,7 +270,7 @@ public class FlatFileProcessing {
             }
             if (flatFile == null) {
                 flatFileService.create(fileOriginalName, fileCurrentName, currentDirectory, null, errorMessage, status, jobCode, 1, new Long(processSuccess).intValue(),
-                    new Long(processedError).intValue());
+                        new Long(processedError).intValue());
             } else {
                 flatFile.setFileCurrentName(fileCurrentName);
                 flatFile.setCurrentDirectory(currentDirectory);
