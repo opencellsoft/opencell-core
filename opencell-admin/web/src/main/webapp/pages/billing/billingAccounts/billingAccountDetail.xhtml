@@ -149,12 +149,12 @@
 												
 													<hftl:formField id="billingCycleSelectId" required="true" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
                             							popupId="billingCyclePopup" />
-                            							
-												<hftl:formField
-														label="#{messages['billingAccount.invoicingThreshold']}"
+
+													<hftl:formField label="#{messages['account.checkThreshold']}" field="checkThreshold" noSelectionLabel="false" disabled="false" />
+													<hftl:formField
+														label="#{messages['account.invoicingThreshold']}"
 														field="invoicingThreshold" required="false" size="20" />
-													<hftl:formField label="#{messages['billingAccount.checkThreshold']}" field="checkThreshold" noSelectionLabel="false" disabled="false" />
-													<!-- 
+													<!--
 													<h:panelGroup id="invoicePrefixBoxPanel">
                                                         <hftl:decorateFormField fieldId="returnToAgency_select" label="#{messages['billingAccount.returnToAgency']}" >
     														<c:set var="fieldValueRA"

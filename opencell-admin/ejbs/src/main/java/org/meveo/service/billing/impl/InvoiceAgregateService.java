@@ -147,12 +147,18 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 		return getAmountsMap(resultSet);
 	}
 
+	/**
+	 * Group amounts by Billing account, Customer account and customer.
+	 *
+	 * @param resultSet the result fo the query
+	 * @return A map of grouped amounts by class
+	 */
 	private Map<Class, Map<Long, ThresholdAmounts>> getAmountsMap(List<Object[]> resultSet) {
 		Map<Long, ThresholdAmounts> baAmounts = new HashMap<>();
 		Map<Long, ThresholdAmounts> caAmounts = new HashMap<>();
 		Map<Long, ThresholdAmounts> custAmounts = new HashMap<>();
 		for (Object[] result : resultSet) {
-
+			Amounts amounts = new Amounts((BigDecimal) result[0], (BigDecimal) result[1]);
 			Long baId = (Long) result[3];
 			Long caId = (Long) result[4];
 			Long custId = (Long) result[5];
@@ -160,31 +166,31 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 			if (baAmounts.get(baId) == null) {
 				List<Long> invoiceIds = new ArrayList<>();
 				invoiceIds.add((Long) result[2]);
-				ThresholdAmounts thresholdAmounts = new ThresholdAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]), invoiceIds);
+				ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts, invoiceIds);
 				baAmounts.put(baId, thresholdAmounts);
 			} else {
 				ThresholdAmounts thresholdAmounts = baAmounts.get(baId);
-				thresholdAmounts.getAmount().addAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]));
+				thresholdAmounts.getAmount().addAmounts(amounts);
 				thresholdAmounts.getInvoices().add((Long) result[2]);
 			}
 			if (caAmounts.get(caId) == null) {
 				List<Long> invoiceIds = new ArrayList<>();
 				invoiceIds.add((Long) result[2]);
-				ThresholdAmounts thresholdAmounts = new ThresholdAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]), invoiceIds);
+				ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
 				caAmounts.put(caId, thresholdAmounts);
 			} else {
 				ThresholdAmounts thresholdAmounts = caAmounts.get(caId);
-				thresholdAmounts.getAmount().addAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]));
+				thresholdAmounts.getAmount().addAmounts(amounts.clone());
 				thresholdAmounts.getInvoices().add((Long) result[2]);
 			}
 			if (custAmounts.get(custId) == null) {
 				List<Long> invoiceIds = new ArrayList<>();
 				invoiceIds.add((Long) result[2]);
-				ThresholdAmounts thresholdAmounts = new ThresholdAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]), invoiceIds);
+				ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
 				custAmounts.put(custId, thresholdAmounts);
 			} else {
 				ThresholdAmounts thresholdAmounts = custAmounts.get(custId);
-				thresholdAmounts.getAmount().addAmounts(new Amounts((BigDecimal) result[0], (BigDecimal) result[1]));
+				thresholdAmounts.getAmount().addAmounts(amounts.clone());
 				thresholdAmounts.getInvoices().add((Long) result[2]);
 			}
 		}
@@ -195,6 +201,11 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 		return accountsAmounts;
 	}
 
+	/**
+	 * Delete invoice's agregate.
+	 *
+	 * @param invoicesIds invoices Id
+	 */
 	public void deleteInvoiceAgregates(Collection<Long> invoicesIds) {
 		getEntityManager().createNamedQuery("SubCategoryInvoiceAgregate.deleteByInvoiceIds").setParameter("invoicesIds", invoicesIds).executeUpdate();
 		getEntityManager().createNamedQuery("InvoiceAgregate.deleteByInvoiceIds").setParameter("invoicesIds", invoicesIds).executeUpdate();

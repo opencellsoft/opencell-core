@@ -1912,11 +1912,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      */
     public Map<Class, Map<Long, ThresholdAmounts>> getTotalPositiveRTAmountsByBR(BillingRun billingRun) {
 
-        List<Object[]> resultSet = getEntityManager().createNamedQuery("RatedTransaction.sumPositiveRTByBillingAccount").setParameter("billingRunId", billingRun.getId())
+        List<Object[]> resultSet = getEntityManager().createNamedQuery("RatedTransaction.sumPositiveRTByBillingRun").setParameter("billingRunId", billingRun.getId())
                 .getResultList();
         return getAmountsMap(resultSet);
     }
 
+    /**
+     * Group amounts by billing account, customer account and customer.
+     *
+     * @param resultSet the result set of the query
+     * @return A map of grouped amounts by account class.
+     */
     private Map<Class, Map<Long, ThresholdAmounts>> getAmountsMap(List<Object[]> resultSet) {
         Map<Long, ThresholdAmounts> baAmounts = new HashMap<>();
         Map<Long, ThresholdAmounts> caAmounts = new HashMap<>();

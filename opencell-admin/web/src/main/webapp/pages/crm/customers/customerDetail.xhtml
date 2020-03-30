@@ -120,11 +120,13 @@
 												valueLabelField="code" listBean="#{oneShotChargeTemplateBean}"
 												listElements="#{oneShotChargeTemplateBean.getOtherOneShotCharges()}"
 												componentWidth="20"/>
-												valueLabelField="descriptionOrCode" listBean="#{sellerBean}" listenerUpdate="@this"/>
-<!--                                         popup="true" popupId="sellerParentPopup" /> -->
+								valueLabelField="descriptionOrCode" listBean="#{sellerBean}" listenerUpdate="@this"/>
+								<!--                                         popup="true" popupId="sellerParentPopup" /> -->
+								<hftl:formField label="#{messages['account.checkThreshold']}" field="checkThreshold" noSelectionLabel="false" disabled="false"/>
 								<hftl:formField
-										label="#{messages['billingAccount.invoicingThreshold']}"
-										field="invoicingThreshold" required="false" size="20" />
+										label="#{messages['account.invoicingThreshold']}"
+										field="invoicingThreshold" required="false" size="20"/>
+
 
 							</p:tab>
 

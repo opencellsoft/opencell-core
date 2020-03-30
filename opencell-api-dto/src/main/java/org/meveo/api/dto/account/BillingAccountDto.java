@@ -213,7 +213,9 @@ public class BillingAccountDto extends AccountDto {
             setBillingCycle(bc.getCode());
             setInvoicingThreshold(bc.getInvoicingThreshold());
         }
-        setCheckThreshold(e.getCheckThreshold());
+        if (e.getCheckThreshold() != null) {
+            setCheckThreshold(e.getCheckThreshold());
+        }
         if (e.getTradingCountry() != null) {
             setCountry(e.getTradingCountry().getCountryCode());
         }

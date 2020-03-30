@@ -212,6 +212,9 @@ public class CustomerAccountDto extends AccountDto {
         if (e.getInvoicingThreshold() != null) {
             setInvoicingThreshold(e.getInvoicingThreshold());
         }
+        if (e.getCheckThreshold() != null) {
+            setCheckThreshold(e.getCheckThreshold());
+        }
     }
 
     /**

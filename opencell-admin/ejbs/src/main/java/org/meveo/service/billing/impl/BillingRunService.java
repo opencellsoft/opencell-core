@@ -1019,6 +1019,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void applyThreshold(BillingRun billingRun) {
+        log.info("Applying the invoicing threshold for the billing run {}", billingRun.getId());
         Set<Long> invoicesToRemove = new HashSet<>();
         Map<Class, Map<Long, ThresholdAmounts>> discountAmounts = invoiceAgregateService.getTotalDiscountAmountByBR(billingRun);
         Map<Class, Map<Long, ThresholdAmounts>> positiveRTAmounts = ratedTransactionService.getTotalPositiveRTAmountsByBR(billingRun);
@@ -1034,6 +1035,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         if (invoicesToRemove != null && !invoicesToRemove.isEmpty()) {
             // Exclude prepaid invoice from applying threshold rules.
             List<Long> excludedPrepaidInvoices = invoiceService.excludePrepaidInvoices(invoicesToRemove);
+            log.info("Remove all postpaid invoices that not reach to the invoicing threshold {}", excludedPrepaidInvoices);
             ratedTransactionService.deleteSupplementalRTs(excludedPrepaidInvoices);
             ratedTransactionService.uninvoiceRTs(excludedPrepaidInvoices);
             invoiceService.deleteInvoices(excludedPrepaidInvoices);
@@ -1041,6 +1043,16 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
     }
 
+    /**
+     * Get a list of invoices that not reach to the invoicing threshold.
+     *
+     * @param billableEntities            a list of billable entities
+     * @param discountThresholdAmounts    the discount amounts summed by the account: Billing account, Custmer account or Customer
+     * @param positiveRTThresholdAmounts  the positive amounts summed by the account: Billing account, Custmer account or Customer
+     * @param invoiceableThresholdAmounts the invoiceable amounts summed by the account: Billing account, Custmer account or Customer
+     * @param clazz                       the account's class
+     * @return a list of invoice that not reach the invoicing threshold and that must be removed.
+     */
     private List<Long> getInvoicesToRemoveByAccount(Collection<Long> billableEntities, Map<Long, ThresholdAmounts> discountThresholdAmounts,
             Map<Long, ThresholdAmounts> positiveRTThresholdAmounts, Map<Long, ThresholdAmounts> invoiceableThresholdAmounts, Class clazz) {
         List<Long> invoicesToRemove = new ArrayList<>();
@@ -1207,7 +1219,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         case PREINVOICED:
         case PREVALIDATED:
             createAgregatesAndInvoice(billingRun, 1, 0, null);
-            billingRunExtensionService.updateBillingRun(billingRun.getId(), 1, 0, BillingRunStatusEnum.POSTINVOICED, null);
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), 1, 0, BillingRunStatusEnum.INVOICES_GENERRATED, null);
+            break;
+
+        case INVOICES_GENERRATED:
+            billingRunService.applyThreshold(billingRun);
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
             break;
 
         case VALIDATED:
