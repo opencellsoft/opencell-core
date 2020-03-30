@@ -36,6 +36,8 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.CounterTypeEnum;
 
+import com.google.common.collect.Maps;
+
 /**
  * Counter values for a given period
  * 
@@ -175,7 +177,7 @@ public class CounterPeriod extends BusinessEntity {
     public Map<String, BigDecimal> getNotificationLevelsAsMap() {
 
         if (StringUtils.isBlank(notificationLevels)) {
-            return null;
+            return Maps.newHashMap();
 
         } else if (notificationLevelsAsMap != null) {
             return notificationLevelsAsMap;
@@ -199,7 +201,7 @@ public class CounterPeriod extends BusinessEntity {
         }
 
         if (bdLevelMap.isEmpty()) {
-            return null;
+            return Maps.newHashMap();
         }
 
         notificationLevelsAsMap = bdLevelMap;
