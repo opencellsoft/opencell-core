@@ -183,7 +183,6 @@ public class BillingAccountDto extends AccountDto {
     /**
      * The option on how to check the threshold.
      */
-    @XmlElement
     private ThresholdOptionsEnum checkThreshold;
 
 	

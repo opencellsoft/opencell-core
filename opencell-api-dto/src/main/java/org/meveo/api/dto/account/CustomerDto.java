@@ -77,7 +77,6 @@ public class CustomerDto extends AccountDto {
     /**
      * The option on how to check the threshold.
      */
-    @XmlElement
     private ThresholdOptionsEnum checkThreshold;
 
     /**
