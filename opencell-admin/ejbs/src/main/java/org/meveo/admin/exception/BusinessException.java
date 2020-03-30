@@ -36,7 +36,12 @@ public class BusinessException extends RuntimeException {
     private static final boolean sendException;
     
     static {
-        sendException = "true".equals(ParamBean.getInstance().getProperty("monitoring.sendException", "true"));
+        ParamBean paramBean = ParamBean.getInstance();
+        if (paramBean!=null) {
+            sendException = "true".equals(ParamBean.getInstance().getProperty("monitoring.sendException", "true"));
+        } else {
+            sendException = false;
+        }
     }
     
     public BusinessException() {
