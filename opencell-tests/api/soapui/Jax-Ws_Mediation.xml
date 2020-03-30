@@ -1523,7 +1523,7 @@ public class Mediation_${#Project#baseEntityPrefix}_Flow extends org.meveo.servi
 		if (duplicateFound != null && duplicateFound.booleanValue()) {
 			throw new BusinessException("DuplicateFound");
 		}
-		initContext.put("accessUserId", cdr.getAccess_id());
+		initContext.put("accessUserId", cdr.getAccessCode());
 		try {
 			mediation_RoutingSub.newInstance().execute(initContext);
 		} catch (InstantiationException | IllegalAccessException e) {
@@ -1965,7 +1965,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 			if(duplicateFound != null && duplicateFound.booleanValue()){
 				throw new BusinessException("DuplicateFound");
 			}
-			initContext.put("accessUserId",cdr.getAccess_id());
+			initContext.put("accessUserId",cdr.getAccessCode());
 			mediation_RoutingSub.newInstance().execute(initContext);
 
 			@SuppressWarnings("unchecked")
@@ -3227,7 +3227,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 			if(duplicateFound != null && duplicateFound.booleanValue()){
 				throw new BusinessException("DuplicateFound");
 			}
-			initContext.put("accessUserId",cdr.getAccess_id());
+			initContext.put("accessUserId",cdr.getAccessCode());
 			mediation_RoutingSub.newInstance().execute(initContext);
 
 			@SuppressWarnings("unchecked")
@@ -4785,7 +4785,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 			if(duplicateFound != null && duplicateFound.booleanValue()){
 				throw new BusinessException("DuplicateFound");
 			}
-			initContext.put("accessUserId",cdr.getAccess_id());
+			initContext.put("accessUserId",cdr.getAccessCode());
 			mediation_RoutingSub.newInstance().execute(initContext);
 
 			@SuppressWarnings("unchecked")
@@ -6238,7 +6238,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 			if(duplicateFound != null && duplicateFound.booleanValue()){
 				throw new BusinessException("DuplicateFound");
 			}
-			initContext.put("accessUserId",cdr.getAccess_id());
+			initContext.put("accessUserId",cdr.getAccessCode());
 			mediation_RoutingSub.newInstance().execute(initContext);
 
 			@SuppressWarnings("unchecked")
