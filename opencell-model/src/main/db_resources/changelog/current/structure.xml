@@ -2265,4 +2265,12 @@
         <modifyDataType columnName="bic" newDataType="VARCHAR(500)" tableName="ar_payment_token"/>
     </changeSet>
 
+    <changeSet id="#4903_GDPR_Anonymize_CF" author="Mounir_BOUKAYOUA">
+        <addColumn tableName="crm_custom_field_tmpl">
+            <column name="anonymize_gdpr" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
