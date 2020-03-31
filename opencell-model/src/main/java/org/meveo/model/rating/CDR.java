@@ -71,7 +71,7 @@ public class CDR extends BaseEntity {
 	 */
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "event_date")
-	private Date timestamp;
+	private Date eventDate;
 
 	/**
 	 * Quantity
@@ -84,60 +84,60 @@ public class CDR extends BaseEntity {
 	 */
 	@Column(name = "parameter_1", length = 255)
 	@Size(max = 255)
-	private String param1;
+	private String  parameter1;
 
 	/**
 	 * Parameter
 	 */
 	@Column(name = "parameter_2", length = 255)
 	@Size(max = 255)
-	private String param2;
+	private String parameter2;
 
 	/**
 	 * Parameter
 	 */
 	@Column(name = "parameter_3", length = 255)
 	@Size(max = 255)
-	private String param3;
+	private String parameter3;
 
 	/**
 	 * Parameter
 	 */
 	@Column(name = "parameter_4", length = 255)
 	@Size(max = 255)
-	private String param4;
+	private String parameter4;
 
 	/**
 	 * Parameter
 	 */
 	@Column(name = "parameter_5", length = 255)
 	@Size(max = 255)
-	private String param5;
+	private String parameter5;
 
 	/**
 	 * Parameter
 	 */
 	@Column(name = "parameter_6", length = 255)
 	@Size(max = 255)
-	private String param6;
+	private String parameter6;
 
 	/**
 	 * Parameter
 	 */
 	@Column(name = "parameter_7", length = 255)
 	@Size(max = 255)
-	private String param7;
+	private String parameter7;
 
 	@Column(name = "parameter_8", length = 255)
 	@Size(max = 255)
-	private String param8;
+	private String parameter8;
 
 	/**
 	 * Parameter
 	 */
 	@Column(name = "parameter_9", length = 255)
 	@Size(max = 255)
-	private String param9;
+	private String parameter9;
 
 	/**
 	 * Date type parameter
@@ -223,7 +223,7 @@ public class CDR extends BaseEntity {
 	 */
 	@Column(name = "access_code", length = 255)
 	@Size(max = 255)
-	private String access_id;
+	private String accessCode;
 
 	/**
 	 * the main Edr created by mediation from CDR
@@ -296,12 +296,12 @@ public class CDR extends BaseEntity {
 		this.originRecord = originRecord;
 	}
 
-	public Date getTimestamp() {
-		return timestamp;
+	public Date getEventDate() {
+		return eventDate;
 	}
 
-	public void setTimestamp(Date eventDate) {
-		this.timestamp = eventDate;
+	public void setEventDate(Date eventDate) {
+		this.eventDate = eventDate;
 	}
 
 	public BigDecimal getQuantity() {
@@ -312,76 +312,76 @@ public class CDR extends BaseEntity {
 		this.quantity = quantity;
 	}
 
-	public String getParam1() {
-		return param1;
+	public String getParameter1() {
+		return parameter1;
 	}
 
-	public void setParam1(String param1) {
-		this.param1 = param1;
+	public void setParameter1(String param1) {
+		this.parameter1 = param1;
 	}
 
-	public String getParam2() {
-		return param2;
+	public String getParameter2() {
+		return parameter2;
 	}
 
-	public void setParam2(String param2) {
-		this.param2 = param2;
+	public void setParameter2(String param2) {
+		this.parameter2 = param2;
 	}
 
-	public String getParam3() {
-		return param3;
+	public String getParameter3() {
+		return parameter3;
 	}
 
-	public void setParam3(String param3) {
-		this.param3 = param3;
+	public void setParameter3(String param3) {
+		this.parameter3 = param3;
 	}
 
-	public String getParam4() {
-		return param4;
+	public String getParameter4() {
+		return parameter4;
 	}
 
-	public void setParam4(String param4) {
-		this.param4 = param4;
+	public void setParameter4(String param4) {
+		this.parameter4 = param4;
 	}
 
-	public String getParam5() {
-		return param5;
+	public String getParameter5() {
+		return parameter5;
 	}
 
-	public void setParam5(String param5) {
-		this.param5 = param5;
+	public void setParameter5(String param5) {
+		this.parameter5 = param5;
 	}
 
-	public String getParam6() {
-		return param6;
+	public String getParameter6() {
+		return parameter6;
 	}
 
-	public void setParam6(String param6) {
-		this.param6 = param6;
+	public void setParameter6(String param6) {
+		this.parameter6 = param6;
 	}
 
-	public String getParam7() {
-		return param7;
+	public String getParameter7() {
+		return parameter7;
 	}
 
-	public void setParam7(String param7) {
-		this.param7 = param7;
+	public void setParameter7(String param7) {
+		this.parameter7 = param7;
 	}
 
-	public String getParam8() {
-		return param8;
+	public String getParameter8() {
+		return parameter8;
 	}
 
-	public void setParam8(String param8) {
-		this.param8 = param8;
+	public void setParameter8(String param8) {
+		this.parameter8 = param8;
 	}
 
-	public String getParam9() {
-		return param9;
+	public String getParameter9() {
+		return parameter9;
 	}
 
-	public void setParam9(String param9) {
-		this.param9 = param9;
+	public void setParameter9(String param9) {
+		this.parameter9 = param9;
 	}
 
 	public Date getStatusDate() {
@@ -494,12 +494,12 @@ public class CDR extends BaseEntity {
 		this.decimalParam5 = decimalParam5;
 	}
 
-	public String getAccess_id() {
-		return access_id;
+	public String getAccessCode() {
+		return accessCode;
 	}
 
-	public void setAccess_id(String accessCode) {
-		this.access_id = accessCode;
+	public void setAccessCode(String accessCode) {
+		this.accessCode = accessCode;
 	}
 
 	public EDR getHeaderEDR() {
@@ -520,9 +520,9 @@ public class CDR extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return "CDR [id=" + id + ", originBatch=" + originBatch + ", originRecord=" + originRecord + ", timestamp=" + timestamp + ", quantity=" + quantity + ", access="
-				+ access_id + ", parameter1=" + param1 + ", parameter2=" + param2 + ", parameter3=" + param3 + ", parameter4=" + param4 + ", parameter5=" + param5
-				+ ", parameter6=" + param6 + ", parameter7=" + param7 + ", parameter8=" + param8 + ", parameter9=" + param9 + ", dateParam1=" + dateParam1 + ", dateParam2="
+		return "CDR [id=" + id + ", originBatch=" + originBatch + ", originRecord=" + originRecord + ", timestamp=" + eventDate + ", quantity=" + quantity + ", access="
+				+ accessCode + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3 + ", parameter4=" + parameter4 + ", parameter5=" + parameter5
+				+ ", parameter6=" + parameter6 + ", parameter7=" + parameter7 + ", parameter8=" + parameter8 + ", parameter9=" + parameter9 + ", dateParam1=" + dateParam1 + ", dateParam2="
 				+ dateParam2 + ", dateParam3=" + dateParam3 + ", dateParam4=" + dateParam4 + ", dateParam5=" + dateParam5 + ", decimalParam1=" + decimalParam1 + ", dateParam2="
 				+ dateParam2 + ", decimalParam3=" + decimalParam3 + ", dateParam4=" + dateParam4 + ", decimalParam5=" + decimalParam5 + ", extraParam=" + extraParam
 				+ ", headerEDR=" + ((headerEDR == null) ? "null" : headerEDR.getId()) + ", created=" + created + ", lastUpdate=" + updated + "]";
@@ -583,9 +583,9 @@ public class CDR extends BaseEntity {
 	 * @return CSV-line line string
 	 */
 	public String toCsv() {
-		return getCsvValue(timestamp) + ";" + getCsvValue(quantity) + ";" + getCsvValue(access_id) + ";" + getCsvValue(param1) + ";" + getCsvValue(param2) + ";"
-				+ getCsvValue(param3) + ";" + getCsvValue(param4) + ";" + getCsvValue(param5) + ";" + getCsvValue(param6) + ";" + getCsvValue(param7) + ";" + getCsvValue(param8)
-				+ ";" + getCsvValue(param9) + ";" + getCsvValue(dateParam1) + ";" + getCsvValue(dateParam2) + ";" + getCsvValue(dateParam3) + ";" + getCsvValue(dateParam4) + ";"
+		return getCsvValue(eventDate) + ";" + getCsvValue(quantity) + ";" + getCsvValue(accessCode) + ";" + getCsvValue(parameter1) + ";" + getCsvValue(parameter2) + ";"
+				+ getCsvValue(parameter3) + ";" + getCsvValue(parameter4) + ";" + getCsvValue(parameter5) + ";" + getCsvValue(parameter6) + ";" + getCsvValue(parameter7) + ";" + getCsvValue(parameter8)
+				+ ";" + getCsvValue(parameter9) + ";" + getCsvValue(dateParam1) + ";" + getCsvValue(dateParam2) + ";" + getCsvValue(dateParam3) + ";" + getCsvValue(dateParam4) + ";"
 				+ getCsvValue(dateParam5) + ";" + getCsvValue(decimalParam1) + ";" + getCsvValue(decimalParam2) + ";" + getCsvValue(decimalParam3) + ";"
 				+ getCsvValue(decimalParam4) + ";" + getCsvValue(decimalParam5) + ";" + getCsvValue(extraParam);
 	}

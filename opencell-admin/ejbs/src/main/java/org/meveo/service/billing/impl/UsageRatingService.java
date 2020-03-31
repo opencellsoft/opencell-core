@@ -468,12 +468,12 @@ public class UsageRatingService implements Serializable {
 
                     CDR cdr = new CDR();
                     String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), edr, walletOperation);
-                    cdr.setAccess_id(subCode);
-                    cdr.setTimestamp(edr.getEventDate());
-                    cdr.setParam1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), edr, walletOperation));
-                    cdr.setParam2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), edr, walletOperation));
-                    cdr.setParam3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), edr, walletOperation));
-                    cdr.setParam4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), edr, walletOperation));
+                    cdr.setAccessCode(subCode);
+                    cdr.setEventDate(edr.getEventDate());
+                    cdr.setParameter1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), edr, walletOperation));
+                    cdr.setParameter2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), edr, walletOperation));
+                    cdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), edr, walletOperation));
+                    cdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), edr, walletOperation));
                     cdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), edr, walletOperation)));
 
                     String url = "api/rest/billing/mediation/chargeCdr";
