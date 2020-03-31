@@ -43221,7 +43221,7 @@ assert dateFoundStr == nextMonth</scriptText>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000012</invoiceNumber>
+         	<invoiceNumber>COM_000000003</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -43271,7 +43271,7 @@ assert dateFoundStr == nextMonth</scriptText>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000013</invoiceNumber>
+         	<invoiceNumber>COM_000000004</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -43328,7 +43328,7 @@ assert dateFoundStr == nextMonth</scriptText>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoiceWithType>
-         	<invoiceNumber>COM_000000014</invoiceNumber>
+         	<invoiceNumber>COM_000000005</invoiceNumber>
          	<invoiceType>COM</invoiceType>
       </ws:findXMLInvoiceWithType>
    </soapenv:Body>
@@ -44586,7 +44586,7 @@ assert dateFoundStr == nextMonth</scriptText>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>47</con:value>
+        <con:value>48</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
