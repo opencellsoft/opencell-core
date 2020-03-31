@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -142,7 +144,7 @@ public class GdprService extends BaseService {
 	 */
 	private Object anonymizeMapValue(Object mapValue, String randomCode) {
 		if (mapValue != null) {
-			if (mapValue instanceof String && ((String)mapValue).contains("|")) {
+			if (mapValue instanceof String) {
 				String[] splitedVals = ((String)mapValue).split("\\|");
 				String anonymizedValue = "";
 				for (int i = 0; i < splitedVals.length; i++) {
@@ -163,13 +165,19 @@ public class GdprService extends BaseService {
 	 * @return
 	 */
 	private Class<?> getObjectType(String value) {
-		if (StringUtils.isMatch(value, "-?\\d+(\\.\\d+)")) {
+		if (isMatch(value, "-?\\d+(\\.\\d+)")) {
 			return Double.class;
-		} else if (StringUtils.isMatch(value, "-?\\d+")) {
+		} else if (isMatch(value, "-?\\d+")) {
 			return Long.class;
 		} else {
 			return String.class;
 		}		
+	}
+	
+	private boolean isMatch(String value, String regEx) {
+        Pattern r = Pattern.compile(regEx);
+        Matcher m = r.matcher(value);
+        return m.matches();
 	}
 
 	/**
