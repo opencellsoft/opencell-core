@@ -1,6 +1,7 @@
 package org.meveo.apiv2.services.generic;
 
 import org.apache.commons.lang.reflect.FieldUtils;
+import org.hibernate.collection.internal.PersistentBag;
 import org.meveo.api.BaseApi;
 import org.meveo.api.TaxApi;
 import org.meveo.api.dto.CustomFieldDto;
@@ -9,6 +10,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EntityReferenceDto;
 import org.meveo.apiv2.services.generic.JsonGenericApiMapper.JsonGenericMapper;
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -31,14 +33,14 @@ public class GenericApiAlteringService extends GenericApiService {
     private static final Logger logger = LoggerFactory.getLogger(GenericApiAlteringService.class);
     private List<String> forbiddenFieldsToUpdate = Arrays.asList("id", "uuid", "auditable");
     private BaseApi baseApi = (BaseApi) EjbUtils.getServiceInterface(TaxApi.class.getSimpleName());
-    
+
     public Optional<String> update(String entityName, Long id, String jsonDto) {
         checkEntityName(entityName).checkId(id).checkDto(jsonDto);
         Class entityClass = getEntityClass(entityName.toLowerCase());
         checkEntityClass(entityClass);
         IEntity entityById = find(entityClass, id);
         JsonGenericMapper jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().build();
-        refreshEntityWithDotFields(JsonGenericMapper.Builder.getBuilder().build().readValue(jsonDto, Map.class), entityById, jsonGenericMapper.parseFromJson(jsonDto, entityClass));
+        refreshEntityWithDotFields(jsonGenericMapper.readValue(jsonDto, Map.class), entityById, jsonGenericMapper.parseFromJson(jsonDto, entityById.getClass()));
         PersistenceService service = getPersistenceService(entityClass);
         service.enable(entityById);
         service.update(entityById);
@@ -89,10 +91,7 @@ public class GenericApiAlteringService extends GenericApiService {
             try {
                 Object newValue = updatedField.get(parsedEntity);
                 if(updatedField.getType().isAssignableFrom(List.class)){
-                    newValue = ((List<? extends IEntity>) newValue)
-                            .stream()
-                            .map(o -> o.getId() == null ? o : entityManagerWrapper.getEntityManager().getReference(o.getClass(), o.getId()))
-                            .collect(Collectors.toCollection(ArrayList::new));
+                    newValue = getReadyToBeSavedListEntities(fetchedEntity, updatedField, (List<? extends IEntity>) newValue);
                 } else if(updatedField.getType().isAnnotationPresent(Entity.class)){
                     newValue = ((IEntity) newValue).getId() != null ? entityManagerWrapper.getEntityManager().getReference(newValue.getClass(), ((IEntity) newValue).getId()) : null;
                 }
@@ -105,6 +104,30 @@ public class GenericApiAlteringService extends GenericApiService {
             }
         }
 
+    }
+
+    private Object getReadyToBeSavedListEntities(Object fetchedEntity, Field updatedField, List<? extends IEntity> newValue) {
+        Object listOfEntities = newValue
+                .stream()
+                .map(o -> o.getId() == null ? o : entityManagerWrapper.getEntityManager().getReference(getGenericClassName(updatedField.getGenericType().getTypeName()), o.getId()))
+                .collect(Collectors.toCollection(ArrayList::new));
+        try {
+            // handels orphans-delete-all-error
+            if(updatedField.get(fetchedEntity) instanceof PersistentBag){
+                PersistentBag list = (PersistentBag) updatedField.get(fetchedEntity);
+                list.clear();
+                list.addAll((Collection) listOfEntities);
+                return list;
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return listOfEntities;
+    }
+
+    private Class getGenericClassName(String typeName) {
+        String className = typeName.substring(typeName.lastIndexOf(".") + 1, typeName.lastIndexOf(">"));
+        return getEntityClass(className);
     }
 
     private CustomFieldsDto getCustomFieldsDto(Map<String, Object> readValueMap, Map<String, CustomFieldTemplate> customFieldTemplates) {

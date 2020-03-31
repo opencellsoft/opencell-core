@@ -1,11 +1,9 @@
 package org.meveo.apiv2.services.generic.JsonGenericApiMapper;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonStreamContext;
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.core.json.ReaderBasedJsonParser;
 import com.fasterxml.jackson.core.util.VersionUtil;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
@@ -14,6 +12,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.apiv2.generic.GenericPaginatedResource;
 import org.meveo.model.IEntity;
+import org.meveo.model.payments.*;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -32,6 +31,7 @@ class GenericModule extends SimpleModule {
         this.nestedEntities = nestedEntities;
         addSerializer(HibernateProxy.class, new LazyProxySerializer());
         addSerializer(List.class, new ListCustomSerializer());
+        addDeserializer(PaymentMethod.class, new PaymentDeserializer());
     }
 
     private class LazyProxySerializer extends StdSerializer<HibernateProxy> {
@@ -99,6 +99,39 @@ class GenericModule extends SimpleModule {
             return (!list.isEmpty() && list.get(0) instanceof IEntity)
                     && !(currentValue instanceof GenericPaginatedResource)
                     && !(nestedEntities != null && nestedEntities.contains(currentName));
+        }
+    }
+
+    private class PaymentDeserializer extends JsonDeserializer<PaymentMethod> {
+
+        @Override
+        public PaymentMethod deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            ObjectCodec codec = jp.getCodec();
+            JsonNode node = codec.readTree(jp);
+            if(node.get("id") != null){
+                Long id = node.get("id").longValue();
+                PaymentMethod paymentMethod = new PaymentMethod() {
+                    @Override
+                    public void updateWith(PaymentMethod otherPaymentMethod) {
+                        return;
+                    }
+                };
+                paymentMethod.setId(id);
+                return PaymentMethod.class.cast(paymentMethod);
+            }else if(node.get("paymentType") != null){
+                JsonParser p = codec.treeAsTokens(node);
+                switch (node.get("paymentType").asText()){
+                    case "CHECK" :
+                        return codec.readValue(p, CheckPaymentMethod.class);
+                    case "CARD" :
+                        return codec.readValue(p, CardPaymentMethod.class);
+                    case "DIRECTDEBIT" :
+                        return codec.readValue(p, DDPaymentMethod.class);
+                    case "WIRETRANSFER" :
+                        return codec.readValue(p, WirePaymentMethod.class);
+                }
+            }
+            return null;
         }
     }
 
