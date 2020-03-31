@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -74,12 +75,33 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
     private String classpath = "";
 
     /**
-     * Compile all scriptInstances.
+     * Compile and initialize all scriptInstances.
      */
-    public void compileAll() {
+    public void compileAndInitializeAll() {
 
-        List<ScriptInstance> scriptInstances = findByType(ScriptSourceTypeEnum.JAVA);
+        List<ScriptInstance> scriptInstances = findByType(ScriptSourceTypeEnum.JAVA_CLASS);
+        for (ScriptInstance scriptInstance : scriptInstances) {
+            if (!scriptInstance.isReuse()) {
+                continue;
+            }
+            try {
+                // Obtain a deployed script
+                ScriptInterface script = (ScriptInterface) EjbUtils
+                    .getServiceInterface(scriptInstance.getCode().lastIndexOf('.') > 0 ? scriptInstance.getCode().substring(scriptInstance.getCode().lastIndexOf('.') + 1) : scriptInstance.getCode());
+                if (script == null) {
+                    log.error("Script " + scriptInstance.getCode() + " was not found as a deployed script");
+                } else {
+                    log.info("Initializing script " + scriptInstance.getCode());
+                    script.init(new HashMap<String, Object>());
+                }
+            } catch (Exception e) {
+                log.error("Failed to initialize a script " + scriptInstance.getCode(), e);
+            }
+        }
+
+        scriptInstances = findByType(ScriptSourceTypeEnum.JAVA);
         compile(scriptInstances);
+
     }
 
     /**
@@ -228,8 +250,7 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
      * 
      * @return A list of compilation errors if not compiled
      */
-    private List<ScriptInstanceError> compileScript(String scriptCode, ScriptSourceTypeEnum sourceType, String sourceCode, boolean isActive, boolean initialize,
-            boolean testCompile) {
+    private List<ScriptInstanceError> compileScript(String scriptCode, ScriptSourceTypeEnum sourceType, String sourceCode, boolean isActive, boolean initialize, boolean testCompile) {
 
         log.debug("Compile script {}", scriptCode);
 
@@ -278,8 +299,7 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
                     // scriptInstanceError.setScript(scriptInstance);
                     scriptErrors.add(scriptInstanceError);
                     // scriptInstanceErrorService.create(scriptInstanceError, scriptInstance.getAuditable().getCreator());
-                    log.warn("{} script {} location {}:{}: {}", diagnostic.getKind().name(), scriptCode, diagnostic.getLineNumber(), diagnostic.getColumnNumber(),
-                        diagnostic.getMessage(Locale.getDefault()));
+                    log.warn("{} script {} location {}:{}: {}", diagnostic.getKind().name(), scriptCode, diagnostic.getLineNumber(), diagnostic.getColumnNumber(), diagnostic.getMessage(Locale.getDefault()));
                 }
             }
             return scriptErrors;
