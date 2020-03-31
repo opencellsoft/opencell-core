@@ -502,6 +502,18 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 
         return null;
     }
+    
+    public List<PaypalPaymentMethod> getPaypalPaymentMethods() {
+        List<PaypalPaymentMethod> paypalPaymentMethods = new ArrayList<>();
+        if (getPaymentMethods() != null) {
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
+                if (paymentMethod instanceof PaypalPaymentMethod) {
+                	paypalPaymentMethods.add((PaypalPaymentMethod) paymentMethod);
+                }
+            }
+        }
+        return paypalPaymentMethods;
+    }
 
     /**
      * Get a list of card type payment methods
@@ -562,6 +574,18 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
             }
         }
         return checkPaymentMethods;
+    }
+    
+    public List<StripePaymentMethod> getStripePaymentMethods() {
+        List<StripePaymentMethod> stripePaymentMethods = new ArrayList<>();
+        if (getPaymentMethods() != null) {
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
+                if (paymentMethod instanceof StripePaymentMethod) {
+                    stripePaymentMethods.add((StripePaymentMethod) paymentMethod);
+                }
+            }
+        }
+        return stripePaymentMethods;
     }
 
     /**

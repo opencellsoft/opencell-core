@@ -568,7 +568,7 @@ public class AccountHierarchyApi extends BaseApi {
         try {
             customerDto = customerApi.find(customerCode);
         } catch (Exception e) {
-            throw new EntityDoesNotExistsException("Customer " + customerCode + " isn't found");
+            throw new EntityDoesNotExistsException("Customer with code='"+customerCode+"' does not exists. ");
         }
         customerDto.setSeller(postData.getSellerCode());
         customerDto.setVatNo(postData.getVatNo());

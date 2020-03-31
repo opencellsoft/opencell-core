@@ -199,6 +199,12 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
     }
 	@Override
 	public void getHostedCheckoutUrl(Map<String, Object> methodContext) throws BusinessException {		
+	}
+
+	@Override
+	public void createInvoice(Map<String, Object> methodContext) throws BusinessException {
+		// TODO Auto-generated method stub
+		
 	}   
 
 }

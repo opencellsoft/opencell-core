@@ -401,6 +401,15 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "prepaid", nullable = false)
     @NotNull
     protected boolean prepaid;
+    
+    /**
+     * External reference
+     */
+    @Column(name = "external_ref", length = 255)
+    @Size(max = 255)
+    private String externalRef;
+    
+    
 
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
@@ -1068,4 +1077,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void setPrepaid(boolean prepaid) {
         this.prepaid = prepaid;
     }
+
+	public String getExternalRef() {
+		return externalRef;
+	}
+
+	public void setExternalRef(String externalRef) {
+		this.externalRef = externalRef;
+	}
+    
+    
 }

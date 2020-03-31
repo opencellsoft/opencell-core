@@ -174,6 +174,7 @@
                                             <p:column headerText="#{messages['paymentMethod.cardNrOrAccountNr']}">
                                                 <h:outputText value="#{entity.hiddenCardNumber} #{entity.expirationMonthAndYear}" rendered="#{entity.paymentType == PaymentMethodEnum.CARD}" />
                                                 <h:outputText value="#{entity.bankCoordinates.bankName} " rendered="#{entity.paymentType == PaymentMethodEnum.DIRECTDEBIT}" />
+                                                <h:outputText value="#{entity.userId} " rendered="#{entity.paymentType == PaymentMethodEnum.PAYPAL or entity.paymentType == PaymentMethodEnum.STRIPE}" />
                                                 <h:outputText value="#{entity.bankCoordinates.iban}" rendered="#{entity.paymentType == PaymentMethodEnum.DIRECTDEBIT}" converter="ibanConverter" />
                                             </p:column>
                                             <hftl:column label="#{messages['paymentMethod.preferred']}" field="preferred" isMessage="true" />
@@ -215,6 +216,8 @@
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.CHECK.label]}" itemValue="#{PaymentMethodEnum.CHECK}" />
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.DIRECTDEBIT.label]}" itemValue="#{PaymentMethodEnum.DIRECTDEBIT}" />
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.WIRETRANSFER.label]}" itemValue="#{PaymentMethodEnum.WIRETRANSFER}" />
+                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.PAYPAL.label]}" itemValue="#{PaymentMethodEnum.PAYPAL}" />
+                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.STRIPE.label]}" itemValue="#{PaymentMethodEnum.STRIPE}" />
                                                     <f:converter converterId="enumConverter" />
                                                     <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.payments.PaymentMethodEnum" />
                                                 </p:selectOneMenu>
@@ -277,6 +280,13 @@
                                                             childField="bic" size="15"  />  
                                                             </h:panelGroup>                                                                                                   
                                                     </c:if>
+                                                    <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.PAYPAL or customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.STRIPE  }">
+                                                    	<hftl:decorateFormField
+															label="#{messages['paymentMethod.userId']}" fieldId="userId">
+															<p:inputText id="userId" value="#{customerAccountBean.selectedPaymentMethod.userId}" required="false" />
+														</hftl:decorateFormField>
+														                                                                                                 
+                                                    </c:if>                                                    
                                                 </p:outputPanel>
                                                 <h:panelGroup layout="block" styleClass="form-panel-actions">
                                                     <p:commandButton value="#{messages['paymentMethod.savePaymentMethod']}" action="#{customerAccountBean.savePaymentMethod()}"
