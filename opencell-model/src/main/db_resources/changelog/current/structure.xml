@@ -1419,8 +1419,8 @@
             <column name="flat_file_job_code" type="varchar(255)" />
         </addColumn>
     </changeSet>
-
-    <changeSet id="#4326_20190709" author="AndriusKarpavicius" failOnError="false">
+    
+    <changeSet id="#4326_20190709" author="AndriusKarpavicius" failOnError="false"> 
         <dropForeignKeyConstraint baseTableName="billing_wallet_operation" constraintName="fk_wallet_operation_rated_transaction"/>
         <dropForeignKeyConstraint baseTableName="billing_rated_transaction" constraintName="fk_billing_rated_transaction_rated_transaction"/>
     </changeSet>
@@ -1460,7 +1460,7 @@
             </column>
     	</addColumn>
     </changeSet>
-
+   
 
     <changeSet id="#4512_20190819" author="AbdellatifBARI">
         <dropColumn tableName="flat_file">
@@ -1472,7 +1472,7 @@
             <column name="file_current_name" type="varchar(255)" />
         </addColumn>
     </changeSet>
-
+    
  	<changeSet id="#4480_250919" author="MohammedElAzzouzi">
 		<sql>UPDATE ${db.schema.adapted}billing_invoice SET payment_method_id=null WHERE payment_method_id IS NOT NULL AND payment_method_id NOT IN (SELECT APT.id FROM ${db.schema.adapted}ar_payment_token APT)</sql>
     </changeSet>
@@ -1501,7 +1501,7 @@
             </column>
         </addColumn>
     </changeSet>
-
+    
     <changeSet id="#4313_17062019" author="mohamed.el.youssoufi">
 		<addColumn tableName="wf_generic_workflow">
 			<column name="cf_values_accum" type="${type.json}"></column>
@@ -1522,7 +1522,7 @@
 		</addColumn>
 	</changeSet>
 
-   	<changeSet id="#4606_260919" author="AbdelmounaimAkadid">
+   	<changeSet id="#4606_260919" author="AbdelmounaimAkadid"> 	
      	<addColumn tableName="billing_subscription">
             <column name="minimum_invoice_sub_category_id" type="bigint"></column>
         </addColumn>
@@ -2695,6 +2695,12 @@ END $$;]]>
             </column>
         </addColumn>
     </changeSet>
+    <changeSet id="#4071_20200227" author="khalidHORRI">
+        <addColumn tableName="cat_charge_template">
+            <column name="drop_zero_wo" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
 
     <changeSet author="abdelkader.bouazza"  id="#4894-Additional_fields_in_RT">
         <addColumn tableName="billing_rated_transaction">
@@ -2744,6 +2750,97 @@ END $$;]]>
             WHERE bci.charge_template_id = cct.id
         </sql>
     </changeSet>
+    <changeSet author="khalid.horri" id="#4757_20191118">
+        <addColumn tableName="account_entity">
+            <column name="minimum_amount_el" type="varchar(2000)" />
+            <column name="minimum_label_el" type="varchar(2000)" />
+            <column name="minimum_amount_el_sp" type="varchar(2000)" />
+            <column name="minimum_label_el_sp" type="varchar(2000)" />
+            <column name="minimum_charge_template_id" type="bigint" />
+        </addColumn>
+        <addColumn tableName="crm_customer">
+            <column name="minimum_target_account_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="ar_customer_account">
+            <column name="minimum_target_account_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_subscription">
+            <column name="minimum_charge_template_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="billing_service_instance">
+            <column name="minimum_charge_template_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="cat_offer_template">
+            <column name="minimum_charge_template_id" type="bigint"/>
+        </addColumn>
+        <addColumn tableName="cat_service_template">
+            <column name="minimum_charge_template_id" type="bigint"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="minimum_target_account_id" baseTableName="crm_customer"
+                                 constraintName="fk_customer_minimum_target_account_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="billing_billing_account"/>
+        <addForeignKeyConstraint baseColumnNames="minimum_target_account_id" baseTableName="ar_customer_account"
+                                 constraintName="fk_ca_minimum_target_account_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="billing_billing_account"/>
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="account_entity"
+                                 constraintName="fk_ca_minimum_charge_template_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cat_charge_template"/>
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="billing_subscription"
+                                 constraintName="fk_su_minimum_charge_template_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cat_charge_template"/>
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="billing_service_instance"
+                                 constraintName="fk_si_minimum_charge_template_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cat_charge_template"/>
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="cat_offer_template"
+                                 constraintName="fk_ot_minimum_charge_template_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cat_charge_template"/>
+        <addForeignKeyConstraint baseColumnNames="minimum_charge_template_id" baseTableName="cat_service_template"
+                                 constraintName="fk_st_minimum_charge_template_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="cat_charge_template"/>
+    </changeSet>
+    <changeSet id="#4924_20200219" author="anasseh">
+        <addColumn tableName="billing_invoice">
+            <column name="external_ref" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#5085_20200330 - triggeredNextCharge has an incorrect value" author="Mohammed_ELAZZOUZI">
+		<update tableName="cat_charge_template">
+			<column name="trigger_next_charge" valueNumeric="0"></column>
+			<where>trigger_next_charge is null</where>
+		</update>
+	</changeSet>
+
+    <changeSet id="#4903_GDPR_Anonymize_CF" author="Mounir_BOUKAYOUA">
+        <addColumn tableName="crm_custom_field_tmpl">
+            <column name="anonymize_gdpr" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+    
     <changeSet id="#4879_20190121" author="AmineBENAICHA">
        <addColumn tableName="cat_counter_template">
            <column name="calendar_code_el" type="varchar(2000)" />

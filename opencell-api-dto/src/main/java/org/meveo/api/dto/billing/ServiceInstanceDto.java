@@ -105,32 +105,51 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     /** The calendar PS code. */
     private String calendarPSCode;
 
-    /** The payment day in month PS. */
+    /**
+     * The payment day in month PS.
+     */
     private Integer paymentDayInMonthPS;
 
-    /** Expression to determine minimum amount value. */
+    /**
+     * Expression to determine minimum amount value.
+     */
     private String minimumAmountEl;
 
-    /** Expression to determine minimum amount value - for Spark. */
+    /**
+     * Expression to determine minimum amount value - for Spark.
+     */
     private String minimumAmountElSpark;
 
-    /** Expression to determine rated transaction description to reach minimum amount value. */
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value.
+     */
     private String minimumLabelEl;
 
-    /** Expression to determine rated transaction description to reach minimum amount value - for Spark. */
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark.
+     */
     private String minimumLabelElSpark;
 
-    /** The due date days PS. */
+    /**
+     * The due date days PS.
+     */
     private Integer dueDateDaysPS;
 
     private Boolean autoEndOfEngagement;
+
+    /**
+     * Corresponding to minimum one shot charge template code.
+     */
+    private String minimumChargeTemplate;
 
     /**
      * A date till which service is activate. After this date it will either be extended or terminated
      */
     private Date subscribedTillDate;
 
-    /** The renewal service. */
+    /**
+     * The renewal service.
+     */
     private SubscriptionRenewalDto serviceRenewal;
 
     /**
@@ -604,5 +623,13 @@ public class ServiceInstanceDto extends BusinessEntityDto {
      */
     public void setServiceRenewal(SubscriptionRenewalDto serviceRenewal) {
         this.serviceRenewal = serviceRenewal;
+    }
+
+    public String getMinimumChargeTemplate() {
+        return minimumChargeTemplate;
+    }
+
+    public void setMinimumChargeTemplate(String minimumChargeTemplate) {
+        this.minimumChargeTemplate = minimumChargeTemplate;
     }
 }

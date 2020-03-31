@@ -46,6 +46,8 @@ import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaypalPaymentMethod;
+import org.meveo.model.payments.StripePaymentMethod;
 import org.meveo.model.payments.WirePaymentMethod;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
@@ -383,7 +385,12 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             selectedPaymentMethod = new WirePaymentMethod();
         } else if (newPaymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
             selectedPaymentMethod = new DDPaymentMethod();
+        }else if (newPaymentMethodType == PaymentMethodEnum.PAYPAL) {
+            selectedPaymentMethod = new PaypalPaymentMethod();
+        }else if (newPaymentMethodType == PaymentMethodEnum.STRIPE) {
+            selectedPaymentMethod = new StripePaymentMethod();
         }
+        
     }
 
     public void editPaymentMethod(PaymentMethod paymentMethod) throws BusinessException {

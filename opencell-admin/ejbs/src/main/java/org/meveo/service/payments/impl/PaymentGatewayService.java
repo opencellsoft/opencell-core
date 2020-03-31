@@ -58,7 +58,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
      * @throws BusinessException the business exception
      */    
     public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType) throws BusinessException {
-       return getPaymentGateway(customerAccount, paymentMethod, cardType,null);
+       return getPaymentGateway(customerAccount, paymentMethod, cardType,customerAccount.getCustomer().getSeller());
     }
 
     /**
@@ -75,13 +75,14 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
     public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod, CreditCardTypeEnum cardType,Seller seller) throws BusinessException {
         PaymentGateway paymentGateway = null;
         try {
+        	 log.info("00000");
             CreditCardTypeEnum cardTypeToCheck = null;
             if (paymentMethod == null) {
                 cardTypeToCheck = cardType;
             } else if (paymentMethod instanceof CardPaymentMethod) {
                 cardTypeToCheck = ((CardPaymentMethod) paymentMethod).getCardType();
             }
-            
+            log.info("11111");
             String queryStr = "from " + PaymentGateway.class.getSimpleName()
                     + " where paymentMethodType =:paymenTypeValueIN and disabled=false and (country is null or country =:countryValueIN) and "
                     + " (tradingCurrency is null or tradingCurrency =:tradingCurrencyValueIN)  and  (cardType is null or cardType =:cardTypeValueIN) and "
@@ -91,14 +92,27 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
                 throw new BusinessException("CustomerAccount is null in getPaymentGateway");
             }
 
+            log.info("2222");
+           
+            
             Query query = getEntityManager()
                 .createQuery(queryStr)
                 .setParameter("paymenTypeValueIN", paymentMethod == null ? PaymentMethodEnum.CARD : paymentMethod.getPaymentType())
                 .setParameter("countryValueIN", customerAccount.getAddress() == null ? null : customerAccount.getAddress().getCountry())
-                .setParameter("tradingCurrencyValueIN", customerAccount.getTradingCurrency()).setParameter("cardTypeValueIN", cardTypeToCheck)
+                .setParameter("tradingCurrencyValueIN", customerAccount.getTradingCurrency())
+                .setParameter("cardTypeValueIN", cardTypeToCheck)
                 .setParameter("sellerIN", seller);
+            
+            log.info("paymenTypeValueIN:"+(paymentMethod == null ? PaymentMethodEnum.CARD : paymentMethod.getPaymentType()));
+            log.info("countryValueIN:"+(customerAccount.getAddress() == null ? null : customerAccount.getAddress().getCountry()));
+            log.info("tradingCurrencyValueIN:"+(customerAccount.getTradingCurrency()));
+            log.info("cardTypeValueIN:"+(cardTypeToCheck));
+            log.info("sellerIN:"+(seller == null ?  null : seller.getCode()));
+            
                  
             List<PaymentGateway> paymentGateways = (List<PaymentGateway>) query.getResultList();
+            log.info("paymentGateways:"+(paymentGateways == null ? null : paymentGateways.size()));
+            
             if (paymentGateways == null || paymentGateways.isEmpty()) {
                 return null;
             }
