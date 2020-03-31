@@ -2820,5 +2820,18 @@ END $$;]]>
                                  onUpdate="NO ACTION" referencedColumnNames="id"
                                  referencedTableName="cat_charge_template"/>
     </changeSet>
+    <changeSet id="#4924_20200219" author="anasseh">
+        <addColumn tableName="billing_invoice">
+            <column name="external_ref" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#5085_20200330 - triggeredNextCharge has an incorrect value" author="Mohammed_ELAZZOUZI">
+		<update tableName="cat_charge_template">
+			<column name="trigger_next_charge" valueNumeric="0"></column>
+			<where>trigger_next_charge is null</where>
+		</update>
+	</changeSet>
+	
 </databaseChangeLog>
 
