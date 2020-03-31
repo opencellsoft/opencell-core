@@ -26,6 +26,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -297,5 +298,18 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
     public void setPaymentGateway(PaymentGateway paymentGateway) {
         this.paymentGateway = paymentGateway;
     }
+
+	@Override
+	public String createInvoice(Invoice invoice) throws BusinessException {
+		 Map<String, Object> scriptContext = new HashMap<String, Object>();
+         scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
+         scriptContext.put("INVOICE", invoice);
+        
+         paymentScriptInterface.createInvoice(scriptContext);
+  
+         String hostedCheckoutUrl = (String) scriptContext.get(PaymentScript.RESULT_HOSTED_CO_URL);
+        
+         return hostedCheckoutUrl;
+	}
 
 }

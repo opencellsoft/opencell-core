@@ -17,15 +17,36 @@
  */
 package org.meveo.model.billing;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.apache.commons.lang3.BooleanUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.Email;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IBillableEntity;
+import org.meveo.model.ICounterEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IDiscountable;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.AuditTarget;
+import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
+import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.dunning.DunningDocument;
+import org.meveo.model.mediation.Access;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.rating.EDR;
+import org.meveo.model.shared.DateUtils;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -51,36 +72,15 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.apache.commons.lang3.BooleanUtils;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.hibernate.validator.constraints.Email;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.IBillableEntity;
-import org.meveo.model.ICounterEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IDiscountable;
-import org.meveo.model.IWFEntity;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.WorkflowedEntity;
-import org.meveo.model.admin.Seller;
-import org.meveo.model.audit.AuditChangeTypeEnum;
-import org.meveo.model.audit.AuditTarget;
-import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
-import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
-import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.model.communication.email.MailingTypeEnum;
-import org.meveo.model.dunning.DunningDocument;
-import org.meveo.model.mediation.Access;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.rating.EDR;
-import org.meveo.model.shared.DateUtils;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Subscription
@@ -106,9 +106,9 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate"),
         @NamedQuery(name = "Subscription.listByBillingRun", query = "select s from Subscription s where s.billingRun.id=:billingRunId order by s.id"),
         @NamedQuery(name = "Subscription.getMimimumRTUsed", query = "select s.minimumAmountEl from Subscription s where s.minimumAmountEl is not null"),
-        @NamedQuery(name = "Subscription.getSubscriptionsWithMinAmountBySubscription", query = "select s from Subscription s where s.minimumAmountEl is not null AND s.status = org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE AND s=:subscription"),
+        @NamedQuery(name = "Subscription.getSubscriptionsWithMinAmountBySubscription", query = "select s from Subscription s where s.minimumAmountEl is not null  AND s.status = org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE AND s=:subscription"),
         @NamedQuery(name = "Subscription.getSubscriptionsWithMinAmountByBA", query = "select s from Subscription s where s.minimumAmountEl is not null AND s.status = org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE AND s.userAccount.billingAccount=:billingAccount"),
-        @NamedQuery(name = "Subscription.getSellersByBA", query = "select distinct s.seller from Subscription s where s.userAccount.billingAccount=:billingAccount") 
+        @NamedQuery(name = "Subscription.getSellersByBA", query = "select distinct s.seller from Subscription s where s.userAccount.billingAccount=:billingAccount")
 
 })
 public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
@@ -285,6 +285,12 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_invoice_sub_category_id")
     private InvoiceSubCategory minimumInvoiceSubCategory;
+
+
+    /** Corresponding to minimum one shot charge template */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_charge_template_id")
+    private OneShotChargeTemplate minimumChargeTemplate;
 
     /**
      * Optional billing cycle for invoicing by subscription
@@ -657,6 +663,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
         this.minimumLabelElSpark = minimumLabelElSpark;
     }
 
+    @Override
     public BillingCycle getBillingCycle() {
         return billingCycle;
     }
@@ -781,42 +788,52 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
         }
     }
 
+    @Override
     public BillingRun getBillingRun() {
         return billingRun;
     }
 
+    @Override
     public void setBillingRun(BillingRun billingRun) {
         this.billingRun = billingRun;
     }
 
+    @Override
     public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
         minRatedTransactions = ratedTransactions;
     }
 
+    @Override
     public List<RatedTransaction> getMinRatedTransactions() {
         return minRatedTransactions;
     }
 
+    @Override
     public BigDecimal getTotalInvoicingAmountWithoutTax() {
         return totalInvoicingAmountWithoutTax;
     }
 
+    @Override
     public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
         this.totalInvoicingAmountWithoutTax = totalInvoicingAmountWithoutTax;
     }
 
+    @Override
     public BigDecimal getTotalInvoicingAmountWithTax() {
         return totalInvoicingAmountWithTax;
     }
 
+    @Override
     public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
         this.totalInvoicingAmountWithTax = totalInvoicingAmountWithTax;
     }
 
+    @Override
     public BigDecimal getTotalInvoicingAmountTax() {
         return totalInvoicingAmountTax;
     }
 
+    @Override
     public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
         this.totalInvoicingAmountTax = totalInvoicingAmountTax;
     }
@@ -1018,6 +1035,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      * 
      * @return a map of counters
      */
+    @Override
     public Map<String, CounterInstance> getCounters() {
         return counters;
     }
@@ -1043,5 +1061,21 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
      */
     public void setMinimumInvoiceSubCategory(InvoiceSubCategory minimumInvoiceSubCategory) {
         this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
+    }
+
+    /**
+     * Gets the charge template used in minimum amount.
+     * @return a one Shot Charge template
+     */
+    public OneShotChargeTemplate getMinimumChargeTemplate() {
+        return minimumChargeTemplate;
+    }
+
+    /**
+     * Sets the minimum amount charge template.
+     * @param minimumChargeTemplate a one Shot Charge template
+     */
+    public void setMinimumChargeTemplate(OneShotChargeTemplate minimumChargeTemplate) {
+        this.minimumChargeTemplate = minimumChargeTemplate;
     }
 }

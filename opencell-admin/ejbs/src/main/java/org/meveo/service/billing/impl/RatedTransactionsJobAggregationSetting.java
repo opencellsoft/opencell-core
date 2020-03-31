@@ -57,6 +57,11 @@ public class RatedTransactionsJobAggregationSetting implements Serializable {
 	 * Whether to aggregate by order number.
 	 */
 	private boolean aggregateByOrder = false;
+	
+	/**
+	 * Whether to aggregate by unit amount.
+	 */
+	private boolean aggregateByUnitAmount = false;
 
 	/**
 	 * Whether to aggregate by param 1.
@@ -99,7 +104,7 @@ public class RatedTransactionsJobAggregationSetting implements Serializable {
 	}
 
 	public RatedTransactionsJobAggregationSetting(boolean enable, boolean aggregateGlobally, boolean aggregateByDay,
-			AggregationLevelEnum aggregationLevel, boolean aggregateByOrder, boolean aggregateByParam1,
+			AggregationLevelEnum aggregationLevel, boolean aggregateByOrder, boolean aggregateByUnitAmount, boolean aggregateByParam1,
 			boolean aggregateByParam2, boolean aggregateByParam3, boolean aggregateByExtraParam) {
 		this.enable = enable;
 		this.aggregateGlobally = aggregateGlobally;
@@ -109,6 +114,7 @@ public class RatedTransactionsJobAggregationSetting implements Serializable {
 		this.aggregateByParam1 = aggregateByParam1;
 		this.aggregateByParam2 = aggregateByParam2;
 		this.aggregateByParam3 = aggregateByParam3;
+		this.aggregateByUnitAmount=aggregateByUnitAmount;
 		this.aggregateByExtraParam = aggregateByExtraParam;
 	}
 
@@ -251,8 +257,22 @@ public class RatedTransactionsJobAggregationSetting implements Serializable {
 	public String toString() {
 		return "RatedTransactionsJobAggregationSetting [enable=" + enable + ", aggregateGlobally=" + aggregateGlobally
 				+ ", aggregateByDay=" + aggregateByDay + ", aggregationLevel=" + aggregationLevel
-				+ ", aggregateByOrder=" + aggregateByOrder + ", aggregateByParam1=" + aggregateByParam1
-				+ ", aggregateByParam2=" + aggregateByParam2 + ", aggregateByParam3=" + aggregateByParam3
-				+ ", aggregateByExtraParam=" + aggregateByExtraParam + "]";
+				+ ", aggregateByOrder=" + aggregateByOrder + ", aggregateByUnitAmount=" + aggregateByUnitAmount
+				+ ", aggregateByParam1=" + aggregateByParam1 + ", aggregateByParam2=" + aggregateByParam2
+				+ ", aggregateByParam3=" + aggregateByParam3 + ", aggregateByExtraParam=" + aggregateByExtraParam + "]";
+	}
+
+	/**
+	 * @return the aggregateByUnitAmount
+	 */
+	public boolean isAggregateByUnitAmount() {
+		return aggregateByUnitAmount;
+	}
+
+	/**
+	 * @param aggregateByUnitAmount the aggregateByUnitAmount to set
+	 */
+	public void setAggregateByUnitAmount(boolean aggregateByUnitAmount) {
+		this.aggregateByUnitAmount = aggregateByUnitAmount;
 	}
 }

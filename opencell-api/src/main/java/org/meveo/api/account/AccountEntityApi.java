@@ -23,15 +23,22 @@ import javax.inject.Inject;
 
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.AccountDto;
+import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
+import org.meveo.service.base.IVersionedBusinessEntityService;
+import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.TitleService;
 
 /**
@@ -46,6 +53,9 @@ public class AccountEntityApi extends BaseApi {
 
     @Inject
     private CountryService countryService;
+
+    @Inject
+    private OneShotChargeTemplateService oneShotChargeTemplateService;
 
     public void populate(AccountDto postData, AccountEntity accountEntity) throws MeveoApiException {
         Address address = new Address();
@@ -93,6 +103,7 @@ public class AccountEntityApi extends BaseApi {
             accountEntity.getContactInformation().setMobile(postData.getContactInformation().getMobile());
             accountEntity.getContactInformation().setFax(postData.getContactInformation().getFax());
         }
+        setMinimumAmountElSubscription(postData, accountEntity);
     }
 
     public void updateAccount(AccountEntity accountEntity, AccountDto postData) throws MeveoApiException {
@@ -182,12 +193,36 @@ public class AccountEntityApi extends BaseApi {
             	accountEntity.getContactInformation().setPhone(postData.getContactInformation().getPhone());
             }
             if (!StringUtils.isBlank(postData.getContactInformation().getMobile())) {
-            	accountEntity.getContactInformation().setMobile(postData.getContactInformation().getMobile());
+                accountEntity.getContactInformation().setMobile(postData.getContactInformation().getMobile());
             }
             if (!StringUtils.isBlank(postData.getContactInformation().getFax())) {
-            	accountEntity.getContactInformation().setFax(postData.getContactInformation().getFax());
+                accountEntity.getContactInformation().setFax(postData.getContactInformation().getFax());
             }
         }
+        setMinimumAmountElSubscription(postData, accountEntity);
 
+    }
+
+    private void setMinimumAmountElSubscription(AccountDto postData, AccountEntity accountEntity) {
+        if (!StringUtils.isBlank(postData.getMinimumAmountEl())) {
+            accountEntity.setMinimumAmountEl(postData.getMinimumAmountEl());
+        }
+        if (!StringUtils.isBlank(postData.getMinimumLabelEl())) {
+            accountEntity.setMinimumLabelEl(postData.getMinimumLabelEl());
+        }
+        if (!StringUtils.isBlank(postData.getMinimumAmountElSpark())) {
+            accountEntity.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
+        }
+        if (!StringUtils.isBlank(postData.getMinimumLabelElSpark())) {
+            accountEntity.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
+        }
+        if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
+            OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
+            if (minimumChargeTemplate == null) {
+                throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getMinimumChargeTemplate());
+            } else {
+                accountEntity.setMinimumChargeTemplate(minimumChargeTemplate);
+            }
+        }
     }
 }

@@ -62,7 +62,8 @@ public class TaxMappingRsImpl extends BaseRs implements TaxMappingRs {
         TaxMappingResponseDto result = new TaxMappingResponseDto();
 
         try {
-            result.setDto(apiService.find(code));
+            Long id = Long.parseLong(code);
+			result.setDto(apiService.find(id));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -88,7 +89,8 @@ public class TaxMappingRsImpl extends BaseRs implements TaxMappingRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            apiService.remove(code);
+        	Long id = Long.parseLong(code);
+            apiService.remove(id);
         } catch (Exception e) {
             processException(e, result);
         }

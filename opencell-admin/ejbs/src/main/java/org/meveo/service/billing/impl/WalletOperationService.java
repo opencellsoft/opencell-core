@@ -663,7 +663,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             }).flatMap(List::stream).collect(Collectors.toList());
     }
 
-   private void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
+    private void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
 
         CounterInstance counterInstance = chargeInstance.getCounter();
         CounterPeriod counterPeriod = null;
@@ -859,7 +859,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @throws BusinessException Business exception
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate, Date endAgreementDate, OverrideProrataEnum overrideProrata) throws BusinessException, RatingException {
+    public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate, Date endAgreementDate, OverrideProrataEnum overrideProrata)
+            throws BusinessException, RatingException {
 
         // we apply the charge at its nextChargeDate if applied in advance, else at chargeDate
         Date applyChargeFromDate = chargeInstance.getNextChargeDate();

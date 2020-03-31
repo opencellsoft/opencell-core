@@ -116,55 +116,55 @@ public class MEVEOCdrParser implements CSVCDRParser {
 
                 try {
                     DateTime dt = formatter1.parseDateTime(fields[0]);
-                    cdr.setTimestamp(new Date(dt.getMillis()));
+                    cdr.setEventDate(new Date(dt.getMillis()));
                 } catch (Exception e1) {
                     DateTime dt = formatter2.parseDateTime(fields[0]);
-                    cdr.setTimestamp(new Date(dt.getMillis()));
+                    cdr.setEventDate(new Date(dt.getMillis()));
                 }
                 cdr.setQuantity(new BigDecimal(fields[1]));
 
-                cdr.setAccess_id(fields[2]);
+                cdr.setAccessCode(fields[2]);
 
-                cdr.setParam1(fields[3]);
+                cdr.setParameter1(fields[3]);
                 if (fields.length <= 4) {
-                    cdr.setParam2(null);
+                    cdr.setParameter2(null);
                 } else {
-                    cdr.setParam2(fields[4]);
+                    cdr.setParameter2(fields[4]);
                 }
                 if (fields.length <= 5) {
-                    cdr.setParam3(null);
+                    cdr.setParameter3(null);
                 } else {
-                    cdr.setParam3(fields[5]);
+                    cdr.setParameter3(fields[5]);
                 }
                 if (fields.length <= 6) {
-                    cdr.setParam4(null);
+                    cdr.setParameter4(null);
                 } else {
-                    cdr.setParam4(fields[6]);
+                    cdr.setParameter4(fields[6]);
                 }
                 if (fields.length <= 7) {
-                    cdr.setParam5(null);
+                    cdr.setParameter5(null);
                 } else {
-                    cdr.setParam5(fields[7]);
+                    cdr.setParameter5(fields[7]);
                 }
                 if (fields.length <= 8) {
-                    cdr.setParam6(null);
+                    cdr.setParameter6(null);
                 } else {
-                    cdr.setParam6(fields[8]);
+                    cdr.setParameter6(fields[8]);
                 }
                 if (fields.length <= 9) {
-                    cdr.setParam7(null);
+                    cdr.setParameter7(null);
                 } else {
-                    cdr.setParam7(fields[9]);
+                    cdr.setParameter7(fields[9]);
                 }
                 if (fields.length <= 10) {
-                    cdr.setParam8(null);
+                    cdr.setParameter8(null);
                 } else {
-                    cdr.setParam8(fields[10]);
+                    cdr.setParameter8(fields[10]);
                 }
                 if (fields.length <= 11) {
-                    cdr.setParam9(null);
+                    cdr.setParameter9(null);
                 } else {
-                    cdr.setParam9(fields[11]);
+                    cdr.setParameter9(fields[11]);
                 }
 
                 if (fields.length <= 12 || "".equals(fields[12])) {
@@ -258,7 +258,7 @@ public class MEVEOCdrParser implements CSVCDRParser {
             cdr.setOriginBatch(batchName);
             cdr.setOriginRecord(getOriginRecord(line));
 
-            if (cdr.getAccess_id() == null || cdr.getAccess_id().trim().length() == 0) {
+            if (cdr.getAccessCode() == null || cdr.getAccessCode().trim().length() == 0) {
                 cdr.setRejectReasonException(new InvalidAccessException(line, "userId is empty"));
             }
 

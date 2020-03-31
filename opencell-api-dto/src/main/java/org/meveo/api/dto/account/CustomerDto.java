@@ -98,14 +98,25 @@ public class CustomerDto extends AccountDto {
 			setSeller(e.getSeller().getCode());
 		}
 
-		if (e.getContactInformation() != null) {
-			setContactInformation(new ContactInformationDto(e.getContactInformation()));
-		}
-		
-		if (e.getAdditionalDetails() != null) {
-			setAdditionalDetails(new AdditionalDetailsDto(e.getAdditionalDetails()));
-		}
-	}
+        if (e.getContactInformation() != null) {
+            setContactInformation(new ContactInformationDto(e.getContactInformation()));
+        }
+
+        if (e.getAdditionalDetails() != null) {
+            setAdditionalDetails(new AdditionalDetailsDto(e.getAdditionalDetails()));
+        }
+
+        if (e.getMinimumAmountEl() != null) {
+            setMinimumAmountEl(e.getMinimumAmountEl());
+        }
+        if (e.getMinimumLabelEl() != null) {
+            setMinimumLabelEl(e.getMinimumLabelEl());
+        }
+        if (e.getMinimumTargetAccount() != null) {
+            setMinimumTargetAccount(e.getMinimumTargetAccount().getCode());
+        }
+
+    }
 
     /**
      * Gets the customer category.
