@@ -753,15 +753,18 @@ public class QueryBuilder {
      * @param ascending true/false
      */
     public void addOrderCriterion(String orderColumn, boolean ascending) {
+
+        q.append(q.indexOf("ORDER BY") > 0 ? ", " : " ORDER BY ");
+
         if (clazz != null) {
             Field field = ReflectionUtils.getField(clazz, orderColumn.substring(orderColumn.indexOf(".") + 1));
             if (field != null && field.getType().isAssignableFrom(String.class)) {
-                q.append(" ORDER BY UPPER(CAST(" + orderColumn + " AS string))");
+                q.append(" UPPER(CAST(" + orderColumn + " AS string))");
             } else {
-                q.append(" ORDER BY " + orderColumn);
+                q.append(orderColumn);
             }
         } else {
-            q.append(" ORDER BY " + orderColumn);
+            q.append(orderColumn);
         }
 
         if (ascending) {
