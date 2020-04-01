@@ -83,6 +83,7 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
             counterTemplate.setDisabled(postData.isDisabled());
         }
         counterTemplate.setCalendar(calendar);
+        counterTemplate.setCalendarCodeEl(postData.getCalendarCodeEl());
         if (postData.getCounterLevel() != null) {
             counterTemplate.setCounterLevel(postData.getCounterLevel());
         }
@@ -126,6 +127,7 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         }
         counterTemplate.setCeiling(postData.getCeiling());
         counterTemplate.setCalendar(calendar);
+        counterTemplate.setCalendarCodeEl(postData.getCalendarCodeEl());
         if (postData.getCounterLevel() != null) {
             counterTemplate.setCounterLevel(postData.getCounterLevel());
         }

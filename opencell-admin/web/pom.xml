@@ -137,6 +137,7 @@
 						<configuration>
 							<target>
 								<copy file="../lib/flatworm-3.0.2.jar" tofile="${project.build.directory}/opencell/WEB-INF/lib/flatworm-3.0.2.jar" />
+								<copy file="../lib/opencell-sms-twilioModule.jar" tofile="${project.build.directory}/opencell/WEB-INF/lib/opencell-sms-twilioModule.jar" />
 							</target>
 						</configuration>
 						<goals>

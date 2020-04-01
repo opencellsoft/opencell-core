@@ -17,25 +17,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -67,8 +48,27 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author Said Ramli
@@ -79,6 +79,9 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 @Stateless
 public class CounterInstanceService extends PersistenceService<CounterInstance> {
 
+    private static final String CHARGE = "charge";
+    private static final String SERVICE = "service";
+    private static final String SERVICE_INSTANCE = "serviceInstance";
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
@@ -91,6 +94,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
     @Inject
     private UserAccountService userAccountService;
+
+    @Inject
+    private CalendarService calendarService;
 
     @Inject
     private BillingAccountService billingAccountService;
@@ -391,6 +397,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
         CounterPeriod counterPeriod = new CounterPeriod();
         Calendar cal = counterTemplate.getCalendar();
+        if (!StringUtils.isBlank(counterTemplate.getCalendarCodeEl())) {
+            cal = getCalendarFromEl(counterTemplate.getCalendarCodeEl(), chargeInstance, serviceInstance, chargeInstance.getSubscription());
+        }
         cal.setInitDate(initDate);
         Date startDate = cal.previousCalendarDate(chargeDate);
         if (startDate == null) {
@@ -619,21 +628,70 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         return qb.find(getEntityManager());
     }
 
+    /**
+     * Gets the calendar from EL
+     *
+     * @param calendarCodeEl the calendar code EL
+     * @param chargeInstance
+     * @param serviceInstance
+     * @param subscription
+     * @return
+     * @throws BusinessException
+     */
+    public Calendar getCalendarFromEl(String calendarCodeEl, ChargeInstance chargeInstance, ServiceInstance serviceInstance, Subscription subscription) throws BusinessException {
+        String calendarCode = evaluateCalendarElExpression(calendarCodeEl, chargeInstance, serviceInstance, subscription);
+        Calendar calendar = calendarService.findByCode(calendarCode);
+        if (calendar == null) {
+            throw new BusinessException("Cant found calendar by code:" + calendarCode);
+        }
+        return calendar;
+    }
+
+    public String evaluateCalendarElExpression(String expression, ChargeInstance chargeInstance, ServiceInstance serviceInstance, Subscription subscription)
+            throws BusinessException {
+
+        String result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        if (expression.indexOf(CHARGE) >= 0 || expression.indexOf("ci") >= 0) {
+            userMap.put(CHARGE, chargeInstance);
+            userMap.put("ci", chargeInstance);
+        }
+        if (expression.indexOf(SERVICE) >= 0 || expression.indexOf(SERVICE_INSTANCE) >= 0) {
+            userMap.put(SERVICE, serviceInstance);
+            userMap.put(SERVICE_INSTANCE, serviceInstance);
+        }
+        if (expression.indexOf("sub") >= 0) {
+            userMap.put("sub", subscription);
+        }
+
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
+        try {
+            result = (String) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to String but " + res);
+        }
+        return result;
+    }
+
     public BigDecimal evaluateCeilingElExpression(String expression, ChargeInstance chargeInstance, ServiceInstance serviceInstance, Subscription subscription) throws BusinessException {
 
         if (StringUtils.isBlank(expression)) {
             return null;
         }
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
-        if (expression.indexOf("charge") >= 0 || expression.indexOf("ci") >= 0) {
-            userMap.put("charge", chargeInstance);
+        Map<Object, Object> userMap = new HashMap<>();
+        if (expression.contains(CHARGE) || expression.contains("ci")) {
+            userMap.put(CHARGE, chargeInstance);
             userMap.put("ci", chargeInstance);
         }
-        if (expression.indexOf("service") >= 0 || expression.indexOf("serviceInstance") >= 0) {
-            userMap.put("service", serviceInstance);
-            userMap.put("serviceInstance", serviceInstance);
+        if (expression.contains(SERVICE) || expression.contains(SERVICE_INSTANCE)) {
+            userMap.put(SERVICE, serviceInstance);
+            userMap.put(SERVICE_INSTANCE, serviceInstance);
         }
-        if (expression.indexOf("sub") >= 0) {
+        if (expression.contains("sub")) {
             userMap.put("sub", subscription);
         }
 
@@ -729,17 +787,13 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         BigDecimal value = BigDecimal.ZERO;
         BigDecimal previousValue = counterPeriod.getValue();
         if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator()) {
-            if (counterPeriod.getCounterType().equals(CounterTypeEnum.USAGE_AMOUNT)) {
-
-                if (appProvider.isEntreprise()) {
-                    value = walletOperation.getAmountWithoutTax();
-                } else {
-                    value = walletOperation.getAmountWithTax();
-                }
-            } else if (counterPeriod.getCounterType().equals(CounterTypeEnum.USAGE)) {
+            if (CounterTypeEnum.USAGE_AMOUNT.equals(counterPeriod.getCounterType())) {
+                value = appProvider.isEntreprise() ? walletOperation.getAmountWithoutTax() : walletOperation.getAmountWithTax();
+            } else if (CounterTypeEnum.USAGE.equals(counterPeriod.getCounterType())) {
                 value = walletOperation.getQuantity();
             }
 
+            counterPeriod.setValue(counterPeriod.getValue().add(value));
             if (reservation != null) {
                 previousValue = reservation.getCounterPeriodValues().get(counterPeriod.getId());
                 if (previousValue == null) {
@@ -747,8 +801,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
                 }
                 reservation.getCounterPeriodValues().put(counterPeriod.getId(), previousValue.add(value));
                 counterPeriod.setValue(reservation.getCounterPeriodValues().get(counterPeriod.getId()));
-            } else {
-                counterPeriod.setValue(counterPeriod.getValue().add(value));
             }
             if (!isVirtual) {
                 log.debug("Counter period {} was changed {}", counterPeriod.getId(), counterPeriod.getValue());
