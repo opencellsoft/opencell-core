@@ -2833,6 +2833,21 @@ END $$;]]>
 		</update>
 	</changeSet>
 
+    <changeSet id="#4903_GDPR_Anonymize_CF" author="Mounir_BOUKAYOUA">
+        <addColumn tableName="crm_custom_field_tmpl">
+            <column name="anonymize_gdpr" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#4879_20190121" author="AmineBENAICHA">
+       <addColumn tableName="cat_counter_template">
+           <column name="calendar_code_el" type="varchar(2000)" />
+       </addColumn>
+    </changeSet>
+
+
     <changeSet id="#5014_20200313" author="khalidHORRI">
         <addColumn tableName="crm_customer">
             <column name="invoicing_threshold" type="numeric(23, 12)"/>

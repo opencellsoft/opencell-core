@@ -655,11 +655,11 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
             try {
                 serviceInstanceService.serviceActivation(selectedServiceInstance, null, null);
-            
+
             } catch (Exception e) {
-                messages.error(new BundleKey("messages", "activation.activateUnsuccessful"), e.getMessage());
+                messages.error(new BundleKey("messages", "activation.activateUnsuccessful"), e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
                 return;
-                
+
             } finally {
 
                 entity = subscriptionService.refreshOrRetrieve(entity);
@@ -1113,9 +1113,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         SubscriptionRenewal subscriptionRenewal = entity.getOffer().getSubscriptionRenewal();
         entity.setSubscriptionRenewal(subscriptionRenewal);
         updateSubscribedTillDate();
-        /* Subscription should not inherit min Amount from OfferTemplate #4757*/
-        //entity.setMinimumAmountEl(entity.getOffer().getMinimumAmountEl());
-        //entity.setMinimumLabelEl(entity.getOffer().getMinimumLabelEl());
+        /* Subscription should not inherit min Amount from OfferTemplate #4757 */
+        // entity.setMinimumAmountEl(entity.getOffer().getMinimumAmountEl());
+        // entity.setMinimumLabelEl(entity.getOffer().getMinimumLabelEl());
         entity.setMinimumAmountElSpark(entity.getOffer().getMinimumAmountElSpark());
         entity.setMinimumLabelElSpark(entity.getOffer().getMinimumLabelElSpark());
     }

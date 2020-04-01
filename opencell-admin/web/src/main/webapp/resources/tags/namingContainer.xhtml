@@ -12,11 +12,12 @@
 
 
 <cc:interface>
+    <cc:attribute name="wrap" required="false" default="false" />
 
 </cc:interface>
 
 <cc:implementation>
-    <span id="#{cc.clientId}" style="white-space: nowrap"> <cc:insertChildren />
+    <span id="#{cc.clientId}" style="#{cc.attrs.wrap?'':'white-space: nowrap'}"> <cc:insertChildren />
     </span>
 </cc:implementation>
 </html>
