@@ -1,0 +1,25 @@
+{
+    "code": "RS_FULL_43_InvTypeElAO",
+    "description": "RS_FULL_43_Description_Created",
+    "occTemplateCode": "INV_REB",
+    "occTemplateNegativeCode": "PAY_TIP",
+    "sequenceDto": {
+        "prefixEL": "Fact_",
+        "sequenceSize": "2",
+        "currentInvoiceNb": "1"
+    },
+    "sellerSequence": {
+        "SELLER_FR": {
+            "prefixEL": "SellFact_",
+            "sequenceSize": "9",
+            "currentInvoiceNb": "9"
+        }
+    },
+    "appliesTo": [
+        "COM"
+    ],
+    "matchingAuto": false,
+    "billingTemplateName": "BTN",
+    "billingTemplateNameEL": "DEMO_#{invoice.id}",
+    "occTemplateCodeEl": "#{invoice.invoiceNumber.startsWith(\"Fact_\")?\"INV_STD\":\"INV_REB\"}"
+}
