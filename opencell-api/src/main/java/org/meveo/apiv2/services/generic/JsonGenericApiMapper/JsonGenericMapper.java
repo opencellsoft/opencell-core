@@ -148,7 +148,7 @@ public class JsonGenericMapper extends ObjectMapper{
     public static class Builder {
         private SimpleFilterProvider simpleFilterProvider;
         private Module module;
-        private HashSet<String> nestedEntities;
+        private Set<String> nestedEntities;
 
         public static Builder getBuilder(){
             return new Builder();
@@ -164,7 +164,7 @@ public class JsonGenericMapper extends ObjectMapper{
             return this;
         }
 
-        public Builder withNestedEntities(HashSet<String> nestedEntities){
+        public Builder withNestedEntities(Set<String> nestedEntities){
             this.nestedEntities = nestedEntities;
             return this;
         }
