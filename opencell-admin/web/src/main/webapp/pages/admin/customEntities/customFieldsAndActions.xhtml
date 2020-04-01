@@ -451,7 +451,7 @@
                     </h:panelGroup>
                 </p:fieldset>
                 <h:panelGroup id="listValuesField">
-                    <p:fieldset legend="#{messages['customFieldTemplate.listValues']}" styleClass="clearLeft" rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LIST}">
+                    <p:fieldset legend="#{messages['customFieldTemplate.listValues']}" styleClass="clearLeft" rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LIST or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CHECKBOX_LIST}">
                         <hftl:formField label="#{messages['customFieldTemplate.listValues']}" field="listValues" mapKeyLabel="#{messages['commons.value']}" mapValueLabel="#{messages['commons.label']}"
                             componentWidth="75" newLine="true" />
                     </p:fieldset>
