@@ -90,6 +90,9 @@ public class WalletOperationAggregatorQueryBuilder {
 		if (aggregationSettings.isAggregateByOrder()) {
 			groupBy += ", o.orderNumber";
 		}
+		if (aggregationSettings.isAggregateByUnitAmount()) {
+			groupBy += ", o.unitAmountWithoutTax";
+		}
 		if (aggregationSettings.isAggregateByParam1()) {
 			groupBy += ", o.parameter1";
 		}
@@ -102,44 +105,7 @@ public class WalletOperationAggregatorQueryBuilder {
 		if (aggregationSettings.isAggregateByExtraParam()) {
 			groupBy += ", o.parameterExtra";
 		}
-	}
-
-	/**
-	 * Returns the chargeInstance.id. Special case since chargeInstance.id is
-	 * concatenated with walletOperation's description.
-	 * 
-	 * @return the charge instance id
-	 */
-	private String getComputedId() {
-		return id.contains("|") ? "o.chargeInstance.id" : id;
-	}
-
-	public String listWoQuery(AggregatedWalletOperation aggregatedWalletOperation) {
-		String additionalAggregationConditions = " AND " + getComputedId() + "=" + aggregatedWalletOperation.getIdAsLong() 
-				+ " AND YEAR(operation_date)=" + aggregatedWalletOperation.getYear() 
-				+ " AND MONTH(operation_date)=" + aggregatedWalletOperation.getMonth();
-		if (aggregationSettings.isAggregateByDay()) {
-			additionalAggregationConditions += " AND DAY(operation_date)=" + aggregatedWalletOperation.getDay();
-		}
-		if (aggregationSettings.isAggregateByOrder()) {
-			additionalAggregationConditions += " AND o.orderNumber=" + aggregatedWalletOperation.getOrderNumber();
-		}
-		if (aggregationSettings.isAggregateByParam1()) {
-			additionalAggregationConditions += " AND o.parameter1=" + aggregatedWalletOperation.getParameter1();
-		}
-		if (aggregationSettings.isAggregateByParam2()) {
-			additionalAggregationConditions += " AND o.parameter2=" + aggregatedWalletOperation.getParameter2();
-		}
-		if (aggregationSettings.isAggregateByParam3()) {
-			additionalAggregationConditions += " AND o.parameter3=" + aggregatedWalletOperation.getParameter3();
-		}
-		if (aggregationSettings.isAggregateByExtraParam()) {
-			additionalAggregationConditions += " AND o.parameterExtra=" + aggregatedWalletOperation.getParameterExtra();
-		}
-		return "SELECT o FROM WalletOperation o" 
-				+ " WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate) AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" 
-				+ additionalAggregationConditions;
-
+		
 	}
 
 	public String getParameter1Field() {
@@ -161,6 +127,10 @@ public class WalletOperationAggregatorQueryBuilder {
 	public String getOrderNumberField() {
 		return aggregationSettings.isAggregateByOrder() ? "o.orderNumber" : "'NULL'";
 	}
+	
+	public String getUnitAmountField() {
+		return aggregationSettings.isAggregateByUnitAmount() ? "o.unitAmountWithoutTax" : "(CAST(AVG(o.unitAmountWithoutTax) as big_decimal))";
+	}
 
 	public String getGroupQuery() {
 		return "SELECT new org.meveo.service.billing.impl.AggregatedWalletOperation(" //
@@ -173,6 +143,7 @@ public class WalletOperationAggregatorQueryBuilder {
 				+ ", SUM(o.amountWithTax), SUM(o.amountWithoutTax), SUM(o.amountTax)" //
 				+ ", o.taxClass" //
 				+ ", SUM(o.quantity)" //
+				+ ", " + getUnitAmountField()//
 				+ ", " + getOrderNumberField() //
 				+ ", " + getParameter1Field() //
 				+ ", " + getParameter2Field() //

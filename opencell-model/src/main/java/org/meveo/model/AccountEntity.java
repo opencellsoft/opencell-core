@@ -35,6 +35,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.listeners.AccountCodeGenerationListener;
@@ -148,6 +149,40 @@ public abstract class AccountEntity extends BusinessCFEntity {
     @Column(name = "registration_no", length = 100)
     private String registrationNo;
 
+    /**
+     * Expression to determine minimum amount value
+     */
+    @Column(name = "minimum_amount_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountEl;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
+    @Column(name = "minimum_label_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelEl;
+
+    /**
+     * Expression to determine minimum amount value - for Spark
+     */
+    @Column(name = "minimum_amount_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountElSpark;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    @Column(name = "minimum_label_el_sp", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelElSpark;
+
+    /** Corresponding to minimum one shot charge template */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_charge_template_id")
+    private OneShotChargeTemplate minimumChargeTemplate;
+
+
     public String getExternalRef1() {
         return externalRef1;
     }
@@ -225,8 +260,12 @@ public abstract class AccountEntity extends BusinessCFEntity {
     }
 
     public void anonymize(String code) {
-        name.anonymize(code);
-        address.anonymize(code);
+        if (name != null ) {
+            name.anonymize(code);
+        }
+        if (address != null ) {
+            address.anonymize(code);
+        }
         getContactInformationNullSafe().anonymize(code);
     }
 
@@ -265,6 +304,85 @@ public abstract class AccountEntity extends BusinessCFEntity {
 
     public void setContactInformation(ContactInformation contactInformation) {
         this.contactInformation = contactInformation;
+    }
+
+
+
+
+    /**
+     * Expression to determine minimum amount value.
+     * @return an El expression
+     */
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    /**
+     * Sets the minimum amount El expression.
+     * @param minimumAmountEl an El expression
+     */
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    /**
+     * An EL expression to get the label used for the minimum RT.
+     * @return an EL expression
+     */
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    /**
+     * Sets the minimum amount label.
+     * @param minimumLabelEl the minimum amount label EL
+     */
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
+
+    /**
+     * @return Expression to determine minimum amount value - for Spark
+     */
+    public String getMinimumAmountElSpark() {
+        return minimumAmountElSpark;
+    }
+
+    /**
+     * @param minimumAmountElSpark Expression to determine minimum amount value - for Spark
+     */
+    public void setMinimumAmountElSpark(String minimumAmountElSpark) {
+        this.minimumAmountElSpark = minimumAmountElSpark;
+    }
+
+    /**
+     * @return Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public String getMinimumLabelElSpark() {
+        return minimumLabelElSpark;
+    }
+
+    /**
+     * @param minimumLabelElSpark Expression to determine rated transaction description to reach minimum amount value - for Spark
+     */
+    public void setMinimumLabelElSpark(String minimumLabelElSpark) {
+        this.minimumLabelElSpark = minimumLabelElSpark;
+    }
+
+    /**
+     * Gets the charge template used in minimum amount.
+     * @return a one Shot Charge template
+     */
+    public OneShotChargeTemplate getMinimumChargeTemplate() {
+        return minimumChargeTemplate;
+    }
+
+    /**
+     * Sets the minimum amount charge template.
+     * @param minimumChargeTemplate a one Shot Charge template
+     */
+    public void setMinimumChargeTemplate(OneShotChargeTemplate minimumChargeTemplate) {
+        this.minimumChargeTemplate = minimumChargeTemplate;
     }
 
 }

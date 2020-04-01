@@ -18,10 +18,11 @@
 
 package org.meveo.api.dto.account;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.crm.Customer;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,12 +30,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
-import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.catalog.DiscountPlanDto;
-import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.crm.Customer;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The Class AccountHierarchyDto.
@@ -173,12 +172,23 @@ public class AccountHierarchyDto implements Serializable {
      * VAT. CUST.
      */
     private String vatNo;
+    /**
+     * The mailing Type.
+     */
+    private String mailingType;
+    /**
+     * Email template.
+     */
+    private String emailTemplate;
+    /**
+     * CC Emails.
+     */
+    private String ccedEmails;
 
-	private String mailingType;
-
-	private String emailTemplate;
-
-	private String ccedEmails;
+    /**
+     * An object to store minimumAmount data for each account.
+     */
+    private MinimumAmountElDto minimumAmountEl;
 
     /**
      * Instantiates a new account hierarchy dto.
@@ -869,21 +879,38 @@ public class AccountHierarchyDto implements Serializable {
 	 * @param mailingType
 	 */
 	public void setMailingType(String mailingType) {
-		this.mailingType = mailingType;
-	}
+        this.mailingType = mailingType;
+    }
 
-	/**
-	 * @param emailTemplate
-	 */
-	public void setEmailTemplate(String emailTemplate) {
-		this.emailTemplate = emailTemplate;
-	}
+    /**
+     * @param emailTemplate
+     */
+    public void setEmailTemplate(String emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
 
-	/**
-	 * @param ccedEmails
-	 */
-	public void setCcedEmails(String ccedEmails) {
-		this.ccedEmails = ccedEmails;
-	}
-	
+    /**
+     * @param ccedEmails
+     */
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
+
+    /**
+     * Gets the minimum amounts EL expression.
+     *
+     * @return the minimum amounts EL expression
+     */
+    public MinimumAmountElDto getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    /**
+     * Sets the minimum amounts EL expression.
+     *
+     * @param minimumAmountEl the minimum amounts EL expression.
+     */
+    public void setMinimumAmountEl(MinimumAmountElDto minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
 }

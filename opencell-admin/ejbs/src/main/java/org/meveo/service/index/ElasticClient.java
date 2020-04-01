@@ -186,8 +186,7 @@ public class ElasticClient {
             return;
         }
 
-        ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.UPDATE, indexAndType.getIndexName(), indexAndType.getType(),
-            ElasticSearchIndexPopulationService.buildId(entity), fieldsToUpdate);
+        ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.UPDATE, indexAndType.getIndexName(), indexAndType.getType(), ElasticSearchIndexPopulationService.buildId(entity), fieldsToUpdate);
         queuedChanges.addChange(change);
 
         log.trace("Queueing Elastic Search document changes {}", change);
@@ -220,8 +219,7 @@ public class ElasticClient {
 
         Map<String, Object> jsonValueMap = esPopulationService.convertEntityToJson(entity, null, null, indexAndType.getType());
 
-        ElasticSearchChangeset change = new ElasticSearchChangeset(action, indexAndType.getIndexName(), indexAndType.getType(), ElasticSearchIndexPopulationService.buildId(entity),
-            jsonValueMap);
+        ElasticSearchChangeset change = new ElasticSearchChangeset(action, indexAndType.getIndexName(), indexAndType.getType(), ElasticSearchIndexPopulationService.buildId(entity), jsonValueMap);
         queuedChanges.addChange(change);
 
         log.trace("Queueing Elastic Search document changes {}", change);
@@ -239,8 +237,7 @@ public class ElasticClient {
      * @param immediate True if changes should be propagated immediately to Elastic search. False - changes will be queued until JPA flush event
      * @throws BusinessException Communication with ES/request execution exception
      */
-    public void createOrUpdate(Class<? extends ISearchable> entityClass, String cetCode, Object identifier, Map<String, Object> values, boolean partialUpdate, boolean immediate)
-            throws BusinessException {
+    public void createOrUpdate(Class<? extends ISearchable> entityClass, String cetCode, Object identifier, Map<String, Object> values, boolean partialUpdate, boolean immediate) throws BusinessException {
 
         if (!esConnection.isEnabled()) {
             return;
@@ -287,8 +284,7 @@ public class ElasticClient {
             return;
         }
 
-        ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.DELETE, indexAndType.getIndexName(), indexAndType.getType(),
-            ElasticSearchIndexPopulationService.buildId(entity));
+        ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.DELETE, indexAndType.getIndexName(), indexAndType.getType(), ElasticSearchIndexPopulationService.buildId(entity));
         queuedChanges.addChange(change);
 
         log.trace("Queueing Elastic Search document changes {}", change);
@@ -409,8 +405,7 @@ public class ElasticClient {
             log.error("Failed to process delete by query (search phase) in Elastic Search for {}/{}", failure.getIndex(), indexAndType.getType(), failure.getReason());
         }
         for (Failure failure : bulkResponse.getBulkFailures()) {
-            log.error("Failed to process delete by query (bulk phase) in Elastic Search for {}/{} reason: {}", failure.getIndex(), indexAndType.getType(), failure.getMessage(),
-                failure.getCause());
+            log.error("Failed to process delete by query (bulk phase) in Elastic Search for {}/{} reason: {}", failure.getIndex(), indexAndType.getType(), failure.getMessage(), failure.getCause());
         }
     }
 
@@ -459,15 +454,14 @@ public class ElasticClient {
         int maxTries = 3;
         // Execute bulk request
         BulkResponse bulkResponse = null;
-        while(true) {
+        while (true) {
             try {
                 bulkResponse = client.bulk(bulkRequest, RequestOptions.DEFAULT);
                 break;
             } catch (IOException e) {
-                if (++count == maxTries){
+                if (++count == maxTries) {
                     throw new BusinessException("Failed to process bulk request in Elastic Search. Pending changes " + queuedChanges.getQueuedChanges(), e);
-                }
-                else{
+                } else {
                     log.info("Retry to process bulk request in Elastic Search. Try #{}.", count);
                 }
             }
@@ -475,11 +469,11 @@ public class ElasticClient {
         if (bulkResponse.hasFailures() || log.isTraceEnabled()) {
             for (BulkItemResponse bulkItemResponse : bulkResponse.getItems()) {
                 if (bulkItemResponse.isFailed()) {
-                    log.error("Failed to process {} in Elastic Search for {}/{}/{} reason: {}", bulkItemResponse.getOpType(), bulkItemResponse.getIndex(),
-                        bulkItemResponse.getType(), bulkItemResponse.getId(), bulkItemResponse.getFailureMessage(), bulkItemResponse.getFailure().getCause());
+                    log.error("Failed to process {} in Elastic Search for {}/{}/{} reason: {}", bulkItemResponse.getOpType(), bulkItemResponse.getIndex(), bulkItemResponse.getType(), bulkItemResponse.getId(),
+                        bulkItemResponse.getFailureMessage(), bulkItemResponse.getFailure().getCause());
                 } else if (log.isTraceEnabled()) {
-                    log.trace("Processed {} in Elastic Search for {}/{}/{} version: {}", bulkItemResponse.getOpType(), bulkItemResponse.getIndex(), bulkItemResponse.getType(),
-                        bulkItemResponse.getId(), bulkItemResponse.getVersion());
+                    log.trace("Processed {} in Elastic Search for {}/{}/{} version: {}", bulkItemResponse.getOpType(), bulkItemResponse.getIndex(), bulkItemResponse.getType(), bulkItemResponse.getId(),
+                        bulkItemResponse.getVersion());
                 }
             }
         }
@@ -502,22 +496,27 @@ public class ElasticClient {
             return null;
         }
 
-        SortOrder sortOrder = (paginationConfig.getOrdering() == null || paginationConfig.getOrdering() == org.primefaces.model.SortOrder.UNSORTED) ? null
-                : paginationConfig.getOrdering() == org.primefaces.model.SortOrder.ASCENDING ? SortOrder.ASC : SortOrder.DESC;
+        String[] sortFields = null;
+        SortOrder[] sortOrders = null;
+        if (paginationConfig.getOrderings() != null) {
+            int size = paginationConfig.getOrderings().length / 2;
+            sortFields = new String[size];
+            sortOrders = new SortOrder[size];
+            for (int i = 0; i < size; i++) {
+                sortFields[i] = (String) paginationConfig.getOrderings()[i * 2];
+                sortOrders[i] = ((org.primefaces.model.SortOrder) paginationConfig.getOrderings()[i * 2 + 1]) == org.primefaces.model.SortOrder.DESCENDING ? SortOrder.DESC : SortOrder.ASC;
+            }
+        }
 
         String[] returnFields = paginationConfig.getFetchFields() == null ? null : (String[]) paginationConfig.getFetchFields().toArray();
 
         // Search either by a field
         if (StringUtils.isBlank(paginationConfig.getFullTextFilter()) && paginationConfig.getFilters() != null && !paginationConfig.getFilters().isEmpty()) {
-            return search(paginationConfig.getFilters(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(),
-                paginationConfig.getSortField() != null ? new String[] { paginationConfig.getSortField() } : null, sortOrder != null ? new SortOrder[] { sortOrder } : null,
-                returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
+            return search(paginationConfig.getFilters(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), sortFields, sortOrders, returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
 
             // Or by a full text value
         } else {
-            return search(paginationConfig.getFullTextFilter(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(),
-                paginationConfig.getSortField() != null ? new String[] { paginationConfig.getSortField() } : null, sortOrder != null ? new SortOrder[] { sortOrder } : null,
-                returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
+            return search(paginationConfig.getFullTextFilter(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), sortFields, sortOrders, returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
         }
     }
 
@@ -534,8 +533,7 @@ public class ElasticClient {
      * @return Search result
      * @throws BusinessException General business exception
      */
-    public SearchResponse search(String query, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields, String[] classnamesOrCetCodes)
-            throws BusinessException {
+    public SearchResponse search(String query, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields, String[] classnamesOrCetCodes) throws BusinessException {
 
         List<ElasticSearchClassInfo> classInfo = getSearchScopeInfo(classnamesOrCetCodes, false);
 
@@ -559,8 +557,7 @@ public class ElasticClient {
      * @return Search result
      * @throws BusinessException General business exception
      */
-    public SearchResponse search(String query, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields,
-            List<ElasticSearchClassInfo> classInfo) throws BusinessException {
+    public SearchResponse search(String query, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields, List<ElasticSearchClassInfo> classInfo) throws BusinessException {
 
         if (!esConnection.isEnabled()) {
             return null;
@@ -580,8 +577,7 @@ public class ElasticClient {
             size = DEFAULT_SEARCH_PAGE_SIZE;
         }
 
-        log.debug("Execute Elastic Search search for \"{}\" records {}-{} on {} sort by {} {}", query, from, from + size, StringUtils.concatenate(", ", indicesAndTypes),
-            sortFields, sortOrders);
+        log.debug("Execute Elastic Search search for \"{}\" records {}-{} on {} sort by {} {}", query, from, from + size, StringUtils.concatenate(", ", indicesAndTypes), sortFields, sortOrders);
 
         Set<String> indices = new HashSet<>();
         String type = null;
@@ -693,8 +689,7 @@ public class ElasticClient {
      * @return Search result
      * @throws BusinessException General business exception
      */
-    public SearchResponse search(Map<String, ?> queryValues, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields,
-            String[] classnamesOrCetCodes) throws BusinessException {
+    public SearchResponse search(Map<String, ?> queryValues, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields, String[] classnamesOrCetCodes) throws BusinessException {
 
         List<ElasticSearchClassInfo> classInfo = getSearchScopeInfo(classnamesOrCetCodes, false);
 
@@ -742,8 +737,8 @@ public class ElasticClient {
      * @return Search result
      * @throws BusinessException General business exception
      */
-    public SearchResponse search(Map<String, ?> queryValues, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields,
-            List<ElasticSearchClassInfo> classInfo) throws BusinessException {
+    public SearchResponse search(Map<String, ?> queryValues, Integer from, Integer size, String[] sortFields, SortOrder[] sortOrders, String[] returnFields, List<ElasticSearchClassInfo> classInfo)
+            throws BusinessException {
 
         if (!esConnection.isEnabled()) {
             return null;
@@ -763,8 +758,7 @@ public class ElasticClient {
             size = DEFAULT_SEARCH_PAGE_SIZE;
         }
 
-        log.debug("Execute Elastic Search field search for {} records {}-{} on {} sort by {} {}", queryValues, from, from + size, StringUtils.concatenate(", ", indicesAndTypes),
-            sortFields, sortOrders);
+        log.debug("Execute Elastic Search field search for {} records {}-{} on {} sort by {} {}", queryValues, from, from + size, StringUtils.concatenate(", ", indicesAndTypes), sortFields, sortOrders);
 
         Set<String> indices = new HashSet<>();
         String type = null;
@@ -1184,8 +1178,7 @@ public class ElasticClient {
                 int totalProcessed = 0;
                 while (recordsRemaining > 0) {
 
-                    Object[] processedInfo = esPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), fromId,
-                        recordsRemaining > INDEX_POPULATE_CT_PAGE_SIZE ? INDEX_POPULATE_CT_PAGE_SIZE : -1, statistics);
+                    Object[] processedInfo = esPopulationService.populateIndexFromNativeTable(cet.getDbTablename(), fromId, recordsRemaining > INDEX_POPULATE_CT_PAGE_SIZE ? INDEX_POPULATE_CT_PAGE_SIZE : -1, statistics);
 
                     totalProcessed = totalProcessed + (int) processedInfo[0];
                     fromId = processedInfo[1];

@@ -4,7 +4,7 @@
     <groupId>com.opencellsoft</groupId>
     <artifactId>opencell</artifactId>
     <packaging>pom</packaging>
-    <version>9.2.1-SNAPSHOT</version>
+    <version>9.3.1-SNAPSHOT</version>
     <name>Opencell Parent Project</name>
     
     <modules>
@@ -22,11 +22,13 @@
         <env>dev</env>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.ingenico-connect-sdk>5.25.0</version.ingenico-connect-sdk>
+        <version.paypal-sdk>LATEST</version.paypal-sdk>
         <version.keycloak>7.0.0</version.keycloak>
         <version.pdfbox>2.0.17</version.pdfbox>
         <version.barcode>2.1</version.barcode>
+        <version.stripe-sdk>18.4.0</version.stripe-sdk>
         
-        <jackson.version>2.10.1</jackson.version> <!-- wildfly 11 -->
+        <jackson.version>2.10.2</jackson.version> <!-- wildfly 11 -->
         <!-- <jackson.version>2.7.4</jackson.version> --> <!-- wildfly 10 -->
         <dbtype>generic</dbtype>
 
@@ -416,6 +418,16 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-cbor</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-parameter-names</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
             

@@ -18,17 +18,6 @@
 
 package org.meveo.api.dto.account;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.payments.CustomerAccount;
@@ -36,6 +25,16 @@ import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Customer Account DTO.
@@ -188,6 +187,15 @@ public class CustomerAccountDto extends AccountDto {
             // Start compatibility with pre-4.6 versions
             setPaymentMethod(e.getPaymentMethods().get(0).getPaymentType());
             // End compatibility with pre-4.6 versions
+        }
+        if (e.getMinimumAmountEl() != null) {
+            setMinimumAmountEl(e.getMinimumAmountEl());
+        }
+        if (e.getMinimumLabelEl() != null) {
+            setMinimumLabelEl(e.getMinimumLabelEl());
+        }
+        if (e.getMinimumTargetAccount() != null) {
+            setMinimumTargetAccount(e.getMinimumTargetAccount().getCode());
         }
     }
 

@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.ServiceTemplate;
 
 /**
@@ -85,6 +86,26 @@ public class ServiceToActivateDto implements Serializable {
     
     /** The payment day in month PS. */
     private Integer paymentDayInMonthPS;
+
+    /**
+     * Expression to determine minimum amount value
+     */
+    private String minimumAmountEl;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
+    private String minimumLabelEl;
+
+    /**
+     * Corresponding to minimum invoice subcategory
+     */
+    private String minimumInvoiceSubCategory;
+
+    /**
+     * Corresponding to minimum one shot charge template code.
+     */
+    private String minimumChargeTemplate;
 
     /**
      * Gets the code.
@@ -304,12 +325,69 @@ public class ServiceToActivateDto implements Serializable {
         this.paymentDayInMonthPS = paymentDayInMonthPS;
     }
 
+    /**
+     * Gets MinimumAmountEl expression
+     * @return MinimumAmountEl expression
+     */
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    /**
+     * Sets minimumAmountEl expression
+     * @param minimumAmountEl
+     */
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    /**
+     * Gets MinimumLabelEl expression
+     * @return MinimumLabelEl expression
+     */
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    /**
+     * Sets MinimumLabelEl expression
+     * @param minimumLabelEl
+     */
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
+
+    /**
+     * Gets the Minimum InvoiceSubCategory code
+     * @return the InvoiceSubCategory
+     */
+    public String getMinimumInvoiceSubCategory() {
+        return minimumInvoiceSubCategory;
+    }
+
+    /**
+     * Sets the Minimum InvoiceSubCategory
+     *
+     * @param minimumInvoiceSubCategory
+     */
+    public void setMinimumInvoiceSubCategory(String minimumInvoiceSubCategory) {
+        this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
+    }
+
+    public String getMinimumChargeTemplate() {
+        return minimumChargeTemplate;
+    }
+
+    public void setMinimumChargeTemplate(String minimumChargeTemplate) {
+        this.minimumChargeTemplate = minimumChargeTemplate;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
         return String.format("ServiceToActivateDto [code=%s, quantity=%s, subscriptionDate=%s, chargeInstanceOverrides=%s, customFields=%s]", code, quantity, subscriptionDate,
-            chargeInstanceOverrides, customFields);
+                chargeInstanceOverrides, customFields);
     }
 }

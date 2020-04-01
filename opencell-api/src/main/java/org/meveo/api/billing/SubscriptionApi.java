@@ -18,18 +18,6 @@
 
 package org.meveo.api.billing;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
@@ -149,6 +137,17 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Edward P. Legaspi
@@ -418,12 +417,13 @@ public class SubscriptionApi extends BaseApi {
 
         setSubscriptionFutureTermination(postData, subscription);
 
-        if (!StringUtils.isBlank(postData.getMinimumInvoiceSubCategory())) {
-            InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
-            if (minimumInvoiceSubCategory == null) {
-                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
+        if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
+            OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
+            if (minimumChargeTemplate == null) {
+                throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getMinimumChargeTemplate());
+            } else {
+                subscription.setMinimumChargeTemplate(minimumChargeTemplate);
             }
-            subscription.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
         }
 
         if (postData.getMinimumAmountEl() != null) {
@@ -547,7 +547,7 @@ public class SubscriptionApi extends BaseApi {
         if (StringUtils.isBlank(activateServicesDto.getSubscription())) {
             missingParameters.add("subscription");
         }
-        if (activateServicesDto.getServicesToActivateDto().getService() == null || activateServicesDto.getServicesToActivateDto().getService().size() == 0) {
+        if (activateServicesDto.getServicesToActivateDto()==null || activateServicesDto.getServicesToActivateDto().getService() == null || activateServicesDto.getServicesToActivateDto().getService().size() == 0) {
             missingParameters.add("services");
         }
 
@@ -622,6 +622,23 @@ public class SubscriptionApi extends BaseApi {
                 if (!StringUtils.isBlank(serviceToActivateDto.getDescription())) {
                     serviceInstance.setDescription(serviceToActivateDto.getDescription());
                 }
+
+                if (!StringUtils.isBlank(serviceToActivateDto.getMinimumAmountEl())) {
+                    serviceInstance.setMinimumAmountEl(serviceToActivateDto.getMinimumAmountEl());
+                }
+                if (!StringUtils.isBlank(serviceToActivateDto.getMinimumLabelEl())) {
+                    serviceInstance.setMinimumLabelEl(serviceToActivateDto.getMinimumLabelEl());
+                }
+                if (!StringUtils.isBlank(serviceToActivateDto.getMinimumInvoiceSubCategory())) {
+                    InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(serviceToActivateDto.getMinimumInvoiceSubCategory());
+                    if (minimumInvoiceSubCategory == null) {
+                        throw new EntityDoesNotExistsException(InvoiceSubCategory.class, serviceToActivateDto.getMinimumInvoiceSubCategory());
+                    } else {
+                        serviceInstance.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
+                    }
+                }
+
+
                 serviceInstances.add(serviceInstance);
 
                 // Instantiate if it was not instantiated earlier
@@ -672,6 +689,9 @@ public class SubscriptionApi extends BaseApi {
                 serviceInstance.setPaymentDayInMonthPS(serviceToActivateDto.getPaymentDayInMonthPS());
                 serviceInstance.setAmountPS(serviceToActivateDto.getAmountPS());
                 serviceInstance.setCalendarPS(calendarPS);
+
+                setMinimumAmountElServiceInstance(serviceToActivateDto, serviceInstance, serviceTemplate);
+
                 // populate customFields
                 try {
                     populateCustomFields(serviceToActivateDto.getCustomFields(), serviceInstance, true);
@@ -734,6 +754,27 @@ public class SubscriptionApi extends BaseApi {
             } catch (BusinessException e) {
                 log.error("Failed to activate a service {}/{} on subscription {}", serviceInstance.getId(), serviceInstance.getCode(), subscription.getCode(), e);
                 throw e;
+            }
+        }
+    }
+
+    private void setMinimumAmountElServiceInstance(ServiceToActivateDto serviceToActivateDto, ServiceInstance serviceInstance, ServiceTemplate serviceTemplate) {
+        serviceInstance.setMinimumAmountEl(serviceTemplate.getMinimumAmountEl());
+        serviceInstance.setMinimumLabelEl(serviceTemplate.getMinimumLabelEl());
+        serviceInstance.setMinimumInvoiceSubCategory(serviceTemplate.getMinimumInvoiceSubCategory());
+
+        if (!StringUtils.isBlank(serviceToActivateDto.getMinimumAmountEl())) {
+            serviceInstance.setMinimumAmountEl(serviceToActivateDto.getMinimumAmountEl());
+        }
+        if (!StringUtils.isBlank(serviceToActivateDto.getMinimumLabelEl())) {
+            serviceInstance.setMinimumLabelEl(serviceToActivateDto.getMinimumLabelEl());
+        }
+        if (!StringUtils.isBlank(serviceToActivateDto.getMinimumChargeTemplate())) {
+            OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(serviceToActivateDto.getMinimumChargeTemplate());
+            if (minimumChargeTemplate == null) {
+                throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, serviceToActivateDto.getMinimumChargeTemplate());
+            } else {
+                serviceInstance.setMinimumChargeTemplate(minimumChargeTemplate);
             }
         }
     }
@@ -1691,6 +1732,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("subscriptionCode");
         }
 
+
         handleMissingParametersAndValidate(postData);
 
         Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
@@ -2245,13 +2287,6 @@ public class SubscriptionApi extends BaseApi {
             subscription.setBillingCycle(billingCycle);
         }
 
-        if (!StringUtils.isBlank(postData.getMinimumInvoiceSubCategory())) {
-            InvoiceSubCategory minimumInvoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getMinimumInvoiceSubCategory());
-            if (minimumInvoiceSubCategory == null) {
-                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getMinimumInvoiceSubCategory());
-            }
-            subscription.setMinimumInvoiceSubCategory(minimumInvoiceSubCategory);
-        }
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
 
         // subscription.setTerminationDate(postData.getTerminationDate());
@@ -2279,10 +2314,7 @@ public class SubscriptionApi extends BaseApi {
             subscription.setEndAgreementDate(postData.getEndAgreementDate());
         }
 
-        subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
-        subscription.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
-        subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
-        subscription.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
+        setMinimumAmountElSubscription(postData, subscription, offerTemplate);
         subscription.setRatingGroup(postData.getRatingGroup());
 
         // populate Electronic Billing Fields
@@ -2338,5 +2370,34 @@ public class SubscriptionApi extends BaseApi {
             }
         }
         return subscription;
+    }
+
+    private void setMinimumAmountElSubscription(SubscriptionDto postData, Subscription subscription, OfferTemplate offerTemplate) {
+        subscription.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
+        subscription.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
+        subscription.setMinimumAmountElSpark(offerTemplate.getMinimumAmountElSpark());
+        subscription.setMinimumLabelElSpark(offerTemplate.getMinimumLabelElSpark());
+        subscription.setMinimumChargeTemplate(offerTemplate.getMinimumChargeTemplate());
+
+        if (!StringUtils.isBlank(postData.getMinimumAmountEl())) {
+            subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
+        }
+        if (!StringUtils.isBlank(postData.getMinimumLabelEl())) {
+            subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
+        }
+        if (!StringUtils.isBlank(postData.getMinimumAmountElSpark())) {
+            subscription.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
+        }
+        if (!StringUtils.isBlank(postData.getMinimumLabelElSpark())) {
+            subscription.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
+        }
+        if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
+            OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
+            if (minimumChargeTemplate == null) {
+                throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getMinimumChargeTemplate());
+            } else {
+                subscription.setMinimumChargeTemplate(minimumChargeTemplate);
+            }
+        }
     }
 }

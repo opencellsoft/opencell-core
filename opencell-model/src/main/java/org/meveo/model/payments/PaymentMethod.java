@@ -81,7 +81,7 @@ public abstract class PaymentMethod extends EnableEntity {
      * User identifier
      */
     @Column(name = "USER_ID")
-    private String userId;
+    protected String userId;
 
     /**
      * Additional information
