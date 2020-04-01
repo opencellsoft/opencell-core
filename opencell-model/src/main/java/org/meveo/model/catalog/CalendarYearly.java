@@ -17,8 +17,9 @@
  */
 package org.meveo.model.catalog;
 
-import java.util.Date;
-import java.util.List;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.meveo.model.shared.DateUtils;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -26,10 +27,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.meveo.model.shared.DateUtils;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @DiscriminatorValue("YEARLY")
@@ -38,7 +37,7 @@ public class CalendarYearly extends Calendar {
     private static final long serialVersionUID = 1L;
 
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "cat_calendar_days", joinColumns = @JoinColumn(name = "calendar_id"), inverseJoinColumns = @JoinColumn(name = "day_id"))
     private List<DayInYear> days;
 

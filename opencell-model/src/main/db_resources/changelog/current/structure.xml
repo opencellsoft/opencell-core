@@ -2841,6 +2841,12 @@ END $$;]]>
         </addColumn>
     </changeSet>
     
+    <changeSet id="#4879_20190121" author="AmineBENAICHA">
+       <addColumn tableName="cat_counter_template">
+           <column name="calendar_code_el" type="varchar(2000)" />
+       </addColumn>
+    </changeSet>
+    
     <changeSet id="#5052_20200323" author="MohammedELAZZOUZI">
         <addColumn tableName="billing_rated_transaction">
             <column name="input_unitofmeasure" type="bigint"/>

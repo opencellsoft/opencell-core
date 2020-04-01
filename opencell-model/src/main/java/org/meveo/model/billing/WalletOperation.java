@@ -970,6 +970,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         result.setWallet(wallet);
         result.setEdr(edr);
         result.setSubscription(subscription);
+        result.setServiceInstance(serviceInstance);
         result.setCreated(created);
         result.setUpdated(updated);
         result.setTaxClass(taxClass);
