@@ -622,4 +622,13 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IC
 		this.discountPlan = discountPlan;
 	}
 
+	public String getListInv() {
+		String invNumbers = "";
+		if(invoices != null) {
+			for(Invoice invoice : invoices) {
+				invNumbers += invoice.getInvoiceNumber() +" ";
+			}
+		}
+		return invNumbers;
+	}
 }
