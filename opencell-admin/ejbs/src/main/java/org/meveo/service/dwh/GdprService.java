@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -13,15 +15,19 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BaseService;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.CustomerService;
 
@@ -43,6 +49,9 @@ public class GdprService extends BaseService {
 
 	@Inject
 	private CustomFieldTemplateService customFieldTemplateService;
+	
+	@Inject
+	private SubscriptionService subscriptionService;
 
 	/**
 	 * Anonymize a Customer and its children entities (CA, BA and UA)
@@ -55,15 +64,21 @@ public class GdprService extends BaseService {
 		customerService.anonymizeGpdr(customer, randomCode);
 		
 		//anonymize cfValues of the customer
-		// and those of its CAs, BAs and UAs
+		// and those of its CAs, BAs, UAs and SUBs
 		anonymizeCustomFields(customer);
-		customer.getCustomerAccounts().forEach(ca -> {
+		for (CustomerAccount ca : customer.getCustomerAccounts()) {
 			anonymizeCustomFields(ca);
-			ca.getBillingAccounts().forEach(ba -> {
+			for (BillingAccount ba : ca.getBillingAccounts()) {
 				anonymizeCustomFields(ba);
-				ba.getUsersAccounts().forEach(this::anonymizeCustomFields);
-			});
-		});
+				for (UserAccount ua : ba.getUsersAccounts()) {
+					anonymizeCustomFields(ua);
+					for (Subscription sub : ua.getSubscriptions()) {
+						anonymizeCustomFields(sub);
+						subscriptionService.update(sub);
+					}
+				}
+			}
+		}
 	}
 	
 	/**
@@ -142,7 +157,7 @@ public class GdprService extends BaseService {
 	 */
 	private Object anonymizeMapValue(Object mapValue, String randomCode) {
 		if (mapValue != null) {
-			if (mapValue instanceof String && ((String)mapValue).contains("|")) {
+			if (mapValue instanceof String) {
 				String[] splitedVals = ((String)mapValue).split("\\|");
 				String anonymizedValue = "";
 				for (int i = 0; i < splitedVals.length; i++) {
@@ -163,13 +178,19 @@ public class GdprService extends BaseService {
 	 * @return
 	 */
 	private Class<?> getObjectType(String value) {
-		if (StringUtils.isMatch(value, "-?\\d+(\\.\\d+)")) {
+		if (isMatch(value, "-?\\d+(\\.\\d+)")) {
 			return Double.class;
-		} else if (StringUtils.isMatch(value, "-?\\d+")) {
+		} else if (isMatch(value, "-?\\d+")) {
 			return Long.class;
 		} else {
 			return String.class;
 		}		
+	}
+	
+	private boolean isMatch(String value, String regEx) {
+        Pattern r = Pattern.compile(regEx);
+        Matcher m = r.matcher(value);
+        return m.matches();
 	}
 
 	/**
