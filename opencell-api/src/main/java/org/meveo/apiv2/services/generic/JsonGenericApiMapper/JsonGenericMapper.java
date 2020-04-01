@@ -22,6 +22,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.CustomerAccount;
 
 import java.io.IOException;
@@ -37,6 +38,7 @@ public class JsonGenericMapper extends ObjectMapper{
         setUpConfig();
         registerModule(module);
         this.simpleFilterProvider = simpleFilterProvider;
+        addMixIn(Access.class, InfiniteRecursionMixIn.class);
         addMixIn(OfferTemplateCategory.class, InfiniteRecursionMixIn.class);
         addMixIn(CustomerAccount.class, InfiniteRecursionMixIn.class);
         addMixIn(OfferTemplate.class, InfiniteRecursionMixIn.class);
