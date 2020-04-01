@@ -15,15 +15,19 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BaseService;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.CustomerService;
 
@@ -45,6 +49,9 @@ public class GdprService extends BaseService {
 
 	@Inject
 	private CustomFieldTemplateService customFieldTemplateService;
+	
+	@Inject
+	private SubscriptionService subscriptionService;
 
 	/**
 	 * Anonymize a Customer and its children entities (CA, BA and UA)
@@ -57,18 +64,21 @@ public class GdprService extends BaseService {
 		customerService.anonymizeGpdr(customer, randomCode);
 		
 		//anonymize cfValues of the customer
-		// and those of its CAs, BAs and UAs
+		// and those of its CAs, BAs, UAs and SUBs
 		anonymizeCustomFields(customer);
-		customer.getCustomerAccounts().forEach(ca -> {
+		for (CustomerAccount ca : customer.getCustomerAccounts()) {
 			anonymizeCustomFields(ca);
-			ca.getBillingAccounts().forEach(ba -> {
+			for (BillingAccount ba : ca.getBillingAccounts()) {
 				anonymizeCustomFields(ba);
-				ba.getUsersAccounts().forEach(uc -> {
-					anonymizeCustomFields(uc);
-					uc.getSubscriptions().forEach(this::anonymizeCustomFields);
-				});
-			});
-		});
+				for (UserAccount ua : ba.getUsersAccounts()) {
+					anonymizeCustomFields(ua);
+					for (Subscription sub : ua.getSubscriptions()) {
+						anonymizeCustomFields(sub);
+						subscriptionService.update(sub);
+					}
+				}
+			}
+		}
 	}
 	
 	/**
