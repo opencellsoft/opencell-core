@@ -441,7 +441,7 @@ public class CustomFieldTemplateApi extends BaseApi {
             cft.setApplicableOnEl(dto.getApplicableOnEl());
         }
 
-        if (cft.getFieldType() == CustomFieldTypeEnum.LIST && dto.getListValues() != null) {
+        if ((cft.getFieldType() == CustomFieldTypeEnum.LIST || cft.getFieldType() == CustomFieldTypeEnum.CHECKBOX_LIST) && dto.getListValues() != null) {
             cft.setListValues(dto.getListValues());
         }
 

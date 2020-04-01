@@ -101,8 +101,9 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        if (!StringUtils.isBlank(entity.getDisplayFormat())) {
-            if (entity.getFieldType() == CustomFieldTypeEnum.LONG || entity.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+        CustomFieldTypeEnum fieldType = entity.getFieldType();
+		if (!StringUtils.isBlank(entity.getDisplayFormat())) {
+            if (fieldType == CustomFieldTypeEnum.LONG || fieldType == CustomFieldTypeEnum.DOUBLE) {
                 try {
                     new DecimalFormat(entity.getDisplayFormat());
                 } catch (IllegalArgumentException e) {
@@ -110,7 +111,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
                     return null;
                 }
             }
-            if (entity.getFieldType() == CustomFieldTypeEnum.DATE) {
+            if (fieldType == CustomFieldTypeEnum.DATE) {
                 try {
                     new SimpleDateFormat(entity.getDisplayFormat());
                 } catch (IllegalArgumentException e) {
@@ -120,7 +121,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
             }
         }
 
-        if (entity.getFieldType() == CustomFieldTypeEnum.LIST) {
+        if (fieldType == CustomFieldTypeEnum.LIST || fieldType ==CustomFieldTypeEnum.CHECKBOX_LIST) {
             entity.setListValues(new TreeMap<>());
             updateMapTypeFieldInEntity(entity.getListValues(), "listValues");
         }
@@ -245,6 +246,9 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         }
         if (entity.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
             entity.setStorageType(CustomFieldStorageTypeEnum.MATRIX);
+        }
+        if (entity.getFieldType() == CustomFieldTypeEnum.CHECKBOX_LIST) {
+        	 entity.setStorageType(CustomFieldStorageTypeEnum.LIST);
         }
     }
 
