@@ -63,7 +63,10 @@ public class GdprService extends BaseService {
 			anonymizeCustomFields(ca);
 			ca.getBillingAccounts().forEach(ba -> {
 				anonymizeCustomFields(ba);
-				ba.getUsersAccounts().forEach(this::anonymizeCustomFields);
+				ba.getUsersAccounts().forEach(uc -> {
+					anonymizeCustomFields(uc);
+					uc.getSubscriptions().forEach(this::anonymizeCustomFields);
+				});
 			});
 		});
 	}
