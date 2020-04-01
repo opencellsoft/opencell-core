@@ -660,7 +660,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
 
         if (cacheName == null || cacheName.equals(compiledScripts.getName()) || cacheName.contains(compiledScripts.getName())) {
             scriptCompilerService.clearCompiledScripts();
-            scriptCompilerService.compileAll();
+            scriptCompilerService.compileAndInitializeAll();
         }
     }
 
@@ -673,7 +673,7 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
     public void populateCache(String cacheName) {
 
         if (cacheName == null || cacheName.equals(compiledScripts.getName())) {
-            scriptCompilerService.compileAll();
+            scriptCompilerService.compileAndInitializeAll();
         }
     }
 }
