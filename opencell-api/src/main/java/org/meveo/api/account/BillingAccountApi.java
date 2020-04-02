@@ -57,6 +57,7 @@ import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
@@ -275,6 +276,12 @@ public class BillingAccountApi extends AccountEntityApi {
         // ONLY used to handle deprecated billingAccountDto.paymentMethod and billingAccountDto.bankCoordinates fields. Use
         createOrUpdatePaymentMethodInCA(postData, billingAccount);
 
+        if (postData.getCheckThreshold() == null) {
+            billingAccount.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
+        } else {
+            billingAccount.setCheckThreshold(postData.getCheckThreshold());
+        }
+
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), billingAccount, true, checkCustomFields);
@@ -436,6 +443,10 @@ public class BillingAccountApi extends AccountEntityApi {
                 }
                 billingAccount.setTaxCategory(taxCategory);
             }
+        }
+
+        if (postData.getCheckThreshold() != null) {
+            billingAccount.setCheckThreshold(postData.getCheckThreshold());
         }
 
         updateAccount(billingAccount, postData, checkCustomFields);

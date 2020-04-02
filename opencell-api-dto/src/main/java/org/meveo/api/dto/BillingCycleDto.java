@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.ReferenceDateEnum;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 
 /**
  * The Class BillingCycleDto.
@@ -114,6 +115,13 @@ public class BillingCycleDto extends BusinessEntityDto {
     private String scriptInstanceCode;
 
     /**
+     * The option on how to check the threshold.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum checkThreshold;
+
+
+    /**
      * Instantiates a new billing cycle dto.
      */
     public BillingCycleDto() {
@@ -155,6 +163,7 @@ public class BillingCycleDto extends BusinessEntityDto {
                 calendar = billingCycleEntity.getCalendar().getCode();
             }
             customFields = customFieldInstances;
+            checkThreshold = billingCycleEntity.getCheckThreshold();
         }
     }
 
@@ -466,5 +475,21 @@ public class BillingCycleDto extends BusinessEntityDto {
 	public void setScriptInstanceCode(String scriptInstanceCode) {
 		this.scriptInstanceCode = scriptInstanceCode;
 	}
+
+    /**
+     * Gets the threshold option.
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
+    }
 
 }

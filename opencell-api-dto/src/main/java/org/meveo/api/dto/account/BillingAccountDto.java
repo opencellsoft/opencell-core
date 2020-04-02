@@ -25,6 +25,7 @@ import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -179,7 +180,12 @@ public class BillingAccountDto extends AccountDto {
      **/
     private String taxCategoryCode;
 
+    /**
+     * The option on how to check the threshold.
+     */
+    private ThresholdOptionsEnum checkThreshold;
 
+	
     /**
      * Instantiates a new billing account dto.
      */
@@ -198,10 +204,16 @@ public class BillingAccountDto extends AccountDto {
         if (e.getCustomerAccount() != null) {
             setCustomerAccount(e.getCustomerAccount().getCode());
         }
+        if (e.getInvoicingThreshold() != null) {
+            setInvoicingThreshold(e.getInvoicingThreshold());
+        }
         BillingCycle bc = e.getBillingCycle();
-        if (bc != null) {
+        if (bc != null && bc.getInvoicingThreshold() != null) {
             setBillingCycle(bc.getCode());
             setInvoicingThreshold(bc.getInvoicingThreshold());
+        }
+        if (e.getCheckThreshold() != null) {
+            setCheckThreshold(e.getCheckThreshold());
         }
         if (e.getTradingCountry() != null) {
             setCountry(e.getTradingCountry().getCountryCode());
@@ -755,5 +767,21 @@ public class BillingAccountDto extends AccountDto {
      */
     public void setTaxCategoryCode(String taxCategoryCode) {
         this.taxCategoryCode = taxCategoryCode;
+    }
+
+    /**
+     * Gets the threshold option.
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
     }
 }
