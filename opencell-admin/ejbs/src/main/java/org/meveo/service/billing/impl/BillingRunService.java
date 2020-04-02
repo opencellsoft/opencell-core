@@ -17,6 +17,29 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.TypedQuery;
+
 import org.meveo.admin.async.AmountsToInvoice;
 import org.meveo.admin.async.InvoicingAsync;
 import org.meveo.admin.async.SubListCreator;
@@ -25,7 +48,9 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.AccountEntity;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
@@ -38,30 +63,20 @@ import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RejectedBillingAccount;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.ThresholdAmounts;
+import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
 
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.TypedQuery;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * The Class BillingRunService.
@@ -128,9 +143,20 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @Inject
     private OrderService orderService;
-    
+    /**
+     * The invoice agregate service.
+     */
     @Inject
     InvoiceAgregateService invoiceAgregateService;
+
+    /**
+     * The customer service.
+     */
+    @Inject
+    CustomerService customerService;
+
+    @EJB
+    BillingRunService billingRunService;
 
     /**
      * Generate pre invoicing reports.
@@ -864,6 +890,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated();
         }
         boolean includesFirstRun = false;
+
         if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 
             int totalEntityCount = 0;
@@ -936,11 +963,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             billingRunExtensionService.updateBillingRun(billingRun.getId(), totalEntityCount, billableEntities.size(), BillingRunStatusEnum.PREINVOICED, new Date());
         }
 
-        boolean proceedToPostInvoicing = BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus()) || (BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) && (
+        boolean proceedToInvoiceGenerating = BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus()) || (BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) && (
                 (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) || appProvider
                         .isAutomaticInvoicing()));
 
-        if (proceedToPostInvoicing) {
+        if (proceedToInvoiceGenerating) {
 
             if (!includesFirstRun) {
                 billableEntities = (List<IBillableEntity>) getEntitiesByBillingRun(billingRun);
@@ -955,10 +982,20 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                                     .isSubscriptionHasMinAmount() + ", billingAccount " + minAmountForAccounts.isBaHasMinAmount());
             MinAmountForAccounts minAmountForAccountsIncludesFirstRun = minAmountForAccounts.includesFirstRun(!includesFirstRun);
             createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billableEntities, minAmountForAccountsIncludesFirstRun);
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.INVOICES_GENERRATED, null);
+            if (billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
+                billingRun = billingRunExtensionService.findById(billingRun.getId());
+            }
+
+        }
+        if (BillingRunStatusEnum.INVOICES_GENERRATED.equals(billingRun.getStatus())) {
+            log.info("apply threshold rules for all invoices generated with {}", billingRun);
+            billingRunService.applyThreshold(billingRun);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
             if (billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
                 billingRun = billingRunExtensionService.findById(billingRun.getId());
             }
+
         }
 
         if (BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus()) && billingRun.getProcessType() == BillingProcessTypesEnum.FULL_AUTOMATIC) {
@@ -973,6 +1010,138 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbRuns, waitingMillis, jobInstanceId, result);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);
         }
+    }
+
+    /**
+     * Apply the threshold rules for the billing account, customer account and customer.
+     *
+     * @param billingRun The billing run
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void applyThreshold(BillingRun billingRun) {
+        log.info("Applying the invoicing threshold for the billing run {}", billingRun.getId());
+        Set<Long> invoicesToRemove = new HashSet<>();
+        Map<Class, Map<Long, ThresholdAmounts>> discountAmounts = invoiceAgregateService.getTotalDiscountAmountByBR(billingRun);
+        Map<Class, Map<Long, ThresholdAmounts>> positiveRTAmounts = ratedTransactionService.getTotalPositiveRTAmountsByBR(billingRun);
+        Map<Class, Map<Long, ThresholdAmounts>> invoiceableAmounts = invoiceService.getTotalInvoiceableAmountByBR(billingRun);
+
+        Set<Long> billableEntitieIds = invoiceableAmounts.get(BillingAccount.class).keySet();
+        invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(BillingAccount.class), positiveRTAmounts.get(BillingAccount.class),
+                invoiceableAmounts.get(BillingAccount.class), BillingAccount.class));
+        invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(CustomerAccount.class), positiveRTAmounts.get(CustomerAccount.class),
+                invoiceableAmounts.get(CustomerAccount.class), CustomerAccount.class));
+        invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(Customer.class), positiveRTAmounts.get(Customer.class),
+                invoiceableAmounts.get(Customer.class), Customer.class));
+        if (invoicesToRemove != null && !invoicesToRemove.isEmpty()) {
+            // Exclude prepaid invoice from applying threshold rules.
+            List<Long> excludedPrepaidInvoices = invoiceService.excludePrepaidInvoices(invoicesToRemove);
+            log.info("Remove all postpaid invoices that not reach to the invoicing threshold {}", excludedPrepaidInvoices);
+            ratedTransactionService.deleteSupplementalRTs(excludedPrepaidInvoices);
+            ratedTransactionService.uninvoiceRTs(excludedPrepaidInvoices);
+            invoiceService.deleteInvoices(excludedPrepaidInvoices);
+            invoiceAgregateService.deleteInvoiceAgregates(excludedPrepaidInvoices);
+        }
+    }
+
+    /**
+     * Get a list of invoices that not reach to the invoicing threshold.
+     *
+     * @param billableEntities            a list of billable entities
+     * @param discountThresholdAmounts    the discount amounts summed by the account: Billing account, Custmer account or Customer
+     * @param positiveRTThresholdAmounts  the positive amounts summed by the account: Billing account, Custmer account or Customer
+     * @param invoiceableThresholdAmounts the invoiceable amounts summed by the account: Billing account, Custmer account or Customer
+     * @param clazz                       the account's class
+     * @return a list of invoice that not reach the invoicing threshold and that must be removed.
+     */
+    private List<Long> getInvoicesToRemoveByAccount(Collection<Long> billableEntities, Map<Long, ThresholdAmounts> discountThresholdAmounts,
+            Map<Long, ThresholdAmounts> positiveRTThresholdAmounts, Map<Long, ThresholdAmounts> invoiceableThresholdAmounts, Class clazz) {
+        List<Long> invoicesToRemove = new ArrayList<>();
+        List<Long> alreadyProcessedEntities = new ArrayList<>();
+        billableEntities.forEach(billableEntityId -> {
+
+            BigDecimal threshold = null;
+            ThresholdOptionsEnum checkThreshold = null;
+            AccountEntity entity = getEntity(billableEntityId, clazz);
+            Long entityId = entity.getId();
+            if (alreadyProcessedEntities.contains(entityId)) {
+                return;
+            } else {
+                alreadyProcessedEntities.add(entityId);
+            }
+            if (entity instanceof BillingAccount) {
+                BillingAccount ba = (BillingAccount) entity;
+                threshold = ba.getInvoicingThreshold();
+                if (threshold == null && ba.getBillingCycle() != null) {
+                    threshold = ba.getBillingCycle().getInvoicingThreshold();
+                }
+                checkThreshold = ba.getCheckThreshold();
+                if (checkThreshold == null && ba.getBillingCycle() != null) {
+                    checkThreshold = ba.getBillingCycle().getCheckThreshold();
+                }
+            } else if (entity instanceof CustomerAccount) {
+                threshold = ((CustomerAccount) entity).getInvoicingThreshold();
+                checkThreshold = ((CustomerAccount) entity).getCheckThreshold();
+            } else if (entity instanceof Customer) {
+                threshold = ((Customer) entity).getInvoicingThreshold();
+                checkThreshold = ((Customer) entity).getCheckThreshold();
+            }
+            if (threshold == null || checkThreshold == null) {
+                return;
+            }
+
+            switch (checkThreshold) {
+            case POSITIVE_RT:
+                ThresholdAmounts thresholdAmounts = positiveRTThresholdAmounts.get(entityId);
+                if (thresholdAmounts != null) {
+                    Amounts baAmounts = positiveRTThresholdAmounts.get(entityId).getAmount();
+                    BigDecimal amount = (appProvider.isEntreprise()) ? baAmounts.getAmountWithoutTax() : baAmounts.getAmountWithTax();
+                    if (amount.compareTo(threshold) < 0) {
+                        invoicesToRemove.addAll(thresholdAmounts.getInvoices());
+                    }
+                }
+                break;
+            case AFTER_DISCOUNT:
+                thresholdAmounts = invoiceableThresholdAmounts.get(entityId);
+                if (thresholdAmounts != null) {
+                    Amounts baAmounts = invoiceableThresholdAmounts.get(entityId).getAmount();
+                    BigDecimal amount = (appProvider.isEntreprise()) ? baAmounts.getAmountWithoutTax() : baAmounts.getAmountWithTax();
+                    if (amount.compareTo(threshold) < 0) {
+                        invoicesToRemove.addAll(thresholdAmounts.getInvoices());
+                    }
+                }
+                break;
+            case BEFORE_DISCOUNT:
+                thresholdAmounts = invoiceableThresholdAmounts.get(entityId);
+                ThresholdAmounts discountAmounts = discountThresholdAmounts.get(entityId);
+                if (thresholdAmounts != null) {
+                    if (discountAmounts != null) {
+                        thresholdAmounts.getAmount().addAmounts(discountAmounts.getAmount().negate());
+                    }
+
+                    BigDecimal amount = (appProvider.isEntreprise()) ? thresholdAmounts.getAmount().getAmountWithoutTax() : thresholdAmounts.getAmount().getAmountWithTax();
+                    if (amount.compareTo(threshold) < 0) {
+                        invoicesToRemove.addAll(thresholdAmounts.getInvoices());
+                    }
+                }
+                break;
+            default:
+                break;
+            }
+        });
+        return invoicesToRemove;
+    }
+
+    private AccountEntity getEntity(Long billableEntityId, Class clazz) {
+        BillingAccount billingAccount = billingAccountService.findById(billableEntityId);
+        if (CustomerAccount.class.equals(clazz)) {
+            return billingAccount.getCustomerAccount();
+        } else if (Customer.class.equals(clazz)) {
+            Customer customer = billingAccount.getCustomerAccount().getCustomer();
+            return customerService.retrieveIfNotManaged(customer);
+        } else {
+            return billingAccount;
+        }
+
     }
 
     /**
@@ -1050,7 +1219,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         case PREINVOICED:
         case PREVALIDATED:
             createAgregatesAndInvoice(billingRun, 1, 0, null);
-            billingRunExtensionService.updateBillingRun(billingRun.getId(), 1, 0, BillingRunStatusEnum.POSTINVOICED, null);
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), 1, 0, BillingRunStatusEnum.INVOICES_GENERRATED, null);
+            break;
+
+        case INVOICES_GENERRATED:
+            billingRunService.applyThreshold(billingRun);
+            billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.POSTINVOICED, null);
             break;
 
         case VALIDATED:

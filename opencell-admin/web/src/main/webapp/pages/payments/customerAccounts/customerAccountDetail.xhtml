@@ -138,6 +138,12 @@
                                                         popup="true" popupId="billingAccountPopup" allowEdit="true"  componentWidth="20" />
                                         <hftl:formField label="#{messages['account.minimumChargeTemplate']}" id="chargeTemplateId" field="minimumChargeTemplate" valueLabelField="code"
                                                         listBean="#{oneShotChargeTemplateBean}" listElements="#{oneShotChargeTemplateBean.getOtherOneShotCharges()}" componentWidth="20"/>
+
+                                        <hftl:formField label="#{messages['account.checkThreshold']}" field="checkThreshold" noSelectionLabel="false" disabled="false" />
+                                        <hftl:formField
+                                                label="#{messages['account.invoicingThreshold']}"
+                                                field="invoicingThreshold" required="false" size="20" />
+
                                     </p:fieldset>
                                 </p:tab>
 

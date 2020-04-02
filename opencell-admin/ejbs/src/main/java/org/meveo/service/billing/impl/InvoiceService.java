@@ -96,6 +96,7 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
+import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
@@ -118,6 +119,7 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.ThresholdAmounts;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -3052,12 +3054,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         // If invoice is prepaid, skip threshold test
-        if (!invoice.isPrepaid()) {
+        /*if (!invoice.isPrepaid()) {
             BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold() : billingAccount.getInvoicingThreshold();
             if ((invoicingThreshold != null) && (invoicingThreshold.compareTo(isEnterprise ? invoice.getAmountWithoutTax() : invoice.getAmountWithTax()) > 0)) {
                 throw new BusinessException("Invoice amount below the threshold");
             }
-        }
+        }*/
 
         // Update net to pay amount
         invoice.setNetToPay(invoice.getAmountWithTax().add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
@@ -3661,11 +3663,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Delete invoices associated to a billing run
-     * 
+     *
      * @param billingRun Billing run
      */
     public void deleteInvoices(BillingRun billingRun) {
         getEntityManager().createNamedQuery("Invoice.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
+    }
+
+    public void deleteInvoices(Collection<Long> invoicesIds) {
+        getEntityManager().createNamedQuery("Invoice.deleteByIds").setParameter("invoicesIds", invoicesIds).executeUpdate();
+    }
+
+    public List<Long> excludePrepaidInvoices(Collection<Long> invoicesIds) {
+        return getEntityManager().createNamedQuery("Invoice.excludePrpaidInvoices").setParameter("invoicesIds", invoicesIds).getResultList();
+
     }
 
     /**
@@ -3792,5 +3803,71 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         return result;
+    }
+
+    /**
+     * Retrun the total of positive rated transaction grouped by billing account for a billing run.
+     *
+     * @param billingRun the billing run
+     * @return a map of positive rated transaction grouped by billing account.
+     */
+    public Map<Class, Map<Long, ThresholdAmounts>> getTotalInvoiceableAmountByBR(BillingRun billingRun) {
+
+        List<Object[]> resultSet = getEntityManager().createNamedQuery("Invoice.sumInvoiceableAmountByBR").setParameter("billingRunId", billingRun.getId()).getResultList();
+        return getAmountsMap(resultSet);
+    }
+
+    /**
+     * Group amounts by billing account, customer account and customer.
+     *
+     * @param resultSet the result set of the query
+     * @return A map of grouped amounts by account class.
+     */
+    private Map<Class, Map<Long, ThresholdAmounts>> getAmountsMap(List<Object[]> resultSet) {
+        Map<Long, ThresholdAmounts> baAmounts = new HashMap<>();
+        Map<Long, ThresholdAmounts> caAmounts = new HashMap<>();
+        Map<Long, ThresholdAmounts> custAmounts = new HashMap<>();
+        for (Object[] result : resultSet) {
+            Amounts amounts = new Amounts((BigDecimal) result[0], (BigDecimal) result[1]);
+            Long baId = (Long) result[3];
+            Long caId = (Long) result[4];
+            Long custId = (Long) result[5];
+
+            if (baAmounts.get(baId) == null) {
+                List<Long> invoiceIds = new ArrayList<>();
+                invoiceIds.add((Long) result[2]);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts, invoiceIds);
+                baAmounts.put(baId, thresholdAmounts);
+            } else {
+                ThresholdAmounts thresholdAmounts = baAmounts.get(baId);
+                thresholdAmounts.getAmount().addAmounts(amounts);
+                thresholdAmounts.getInvoices().add((Long) result[2]);
+            }
+            if (caAmounts.get(caId) == null) {
+                List<Long> invoiceIds = new ArrayList<>();
+                invoiceIds.add((Long) result[2]);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
+                caAmounts.put(caId, thresholdAmounts);
+            } else {
+                ThresholdAmounts thresholdAmounts = caAmounts.get(caId);
+                thresholdAmounts.getAmount().addAmounts(amounts.clone());
+                thresholdAmounts.getInvoices().add((Long) result[2]);
+            }
+            if (custAmounts.get(custId) == null) {
+                List<Long> invoiceIds = new ArrayList<>();
+                invoiceIds.add((Long) result[2]);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
+                custAmounts.put(custId, thresholdAmounts);
+            } else {
+                ThresholdAmounts thresholdAmounts = custAmounts.get(custId);
+                thresholdAmounts.getAmount().addAmounts(amounts.clone());
+                thresholdAmounts.getInvoices().add((Long) result[2]);
+            }
+        }
+        Map<Class, Map<Long, ThresholdAmounts>> accountsAmounts = new HashMap<>();
+        accountsAmounts.put(BillingAccount.class, baAmounts);
+        accountsAmounts.put(CustomerAccount.class, caAmounts);
+        accountsAmounts.put(Customer.class, custAmounts);
+        return accountsAmounts;
     }
 }

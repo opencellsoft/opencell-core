@@ -155,6 +155,16 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
      * Charge tax class code
      */
     private String taxClassCode;
+    
+    /**
+     * input_unit_unitOfMeasure
+     */
+    private String inputUnitOfMeasure;
+
+    /**
+     * rating_unit_unitOfMeasure
+     */
+    private String ratingUnitOfMeasure;
 
     /**
      * Instantiates a new rated transaction dto.
@@ -203,6 +213,8 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
         this.setRawAmountWithoutTax(ratedTransaction.getRawAmountWithoutTax());
         this.setRawAmountWithTax(ratedTransaction.getRawAmountWithTax());
         taxClassCode = ratedTransaction.getTaxClass() != null ? ratedTransaction.getTaxClass().getCode() : null;
+        this.inputUnitOfMeasure = ratedTransaction.getInputUnitOfMeasure()!=null?ratedTransaction.getInputUnitOfMeasure().getCode():null;
+        this.ratingUnitOfMeasure = ratedTransaction.getRatingUnitOfMeasure()!=null?ratedTransaction.getRatingUnitOfMeasure().getCode():null;
     }
 
     /**
@@ -729,4 +741,32 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
     public void setTaxClassCode(String taxClassCode) {
         this.taxClassCode = taxClassCode;
     }
+
+	/**
+	 * @return the ratingUnitOfMeasure
+	 */
+	public String getRatingUnitOfMeasure() {
+		return ratingUnitOfMeasure;
+	}
+
+	/**
+	 * @param ratingUnitOfMeasure the ratingUnitOfMeasure to set
+	 */
+	public void setRatingUnitOfMeasure(String ratingUnitOfMeasure) {
+		this.ratingUnitOfMeasure = ratingUnitOfMeasure;
+	}
+
+	/**
+	 * @return the inputUnitOfMeasure
+	 */
+	public String getInputUnitOfMeasure() {
+		return inputUnitOfMeasure;
+	}
+
+	/**
+	 * @param inputUnitOfMeasure the inputUnitOfMeasure to set
+	 */
+	public void setInputUnitOfMeasure(String inputUnitOfMeasure) {
+		this.inputUnitOfMeasure = inputUnitOfMeasure;
+	}
 }

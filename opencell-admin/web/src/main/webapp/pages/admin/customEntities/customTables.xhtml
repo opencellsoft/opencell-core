@@ -259,7 +259,7 @@
 
                             <p:messages id="ctNewFieldsMessage" globalOnly="false" redisplay="false" />
 
-                            <hf:namingContainer id="addNewFields" rendered="#{customTableBean.edit}">
+                            <hf:namingContainer id="addNewFields" rendered="#{customTableBean.edit}" wrap="true">
                                 <c:forEach items="#{customTableBean.fields}" var="field">
                                     <c:if test="#{field.fieldType eq CustomFieldTypeEnum.STRING}">
                                         <p:inputText id="#{field.dbFieldname}" value="#{customTableBean.newValues[field.dbFieldname]}"

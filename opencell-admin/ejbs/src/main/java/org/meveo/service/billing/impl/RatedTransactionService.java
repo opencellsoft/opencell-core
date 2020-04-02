@@ -24,11 +24,13 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -67,6 +69,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.ThresholdAmounts;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -489,29 +492,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         if (entity instanceof Order) {
             entity = orderService.findById((Long) entity.getId());
             if ((((Order) entity).getUserAccounts() != null) && !((Order) entity).getUserAccounts().isEmpty()) {
-                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ? (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() : null;
+                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ?
+                        (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() :
+                        null;
             }
         }
         // MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts(instantiateMinRtsForBA, false, instantiateMinRtsForSubscription, instantiateMinRtsForService);
         calculateAmountsAndCreateMinAmountTransactions(entity, null, billingRun.getLastTransactionDate(), true, minAmountForAccounts);
 
         BigDecimal invoiceAmount = entity.getTotalInvoicingAmountWithoutTax();
-        if (invoiceAmount != null) {
-            BigDecimal invoicingThreshold = null;
-            if (billingAccount != null) {
-                invoicingThreshold = billingAccount.getInvoicingThreshold();
-            }
-            if ((invoicingThreshold == null) && (billingRun.getBillingCycle() != null)) {
-                invoicingThreshold = billingRun.getBillingCycle().getInvoicingThreshold();
-            }
-
-            if (invoicingThreshold != null && invoicingThreshold.compareTo(invoiceAmount) > 0) {
-                log.debug("Invoicing threshold {}/{} was not met for {}. Entity will not be invoiced", invoiceAmount, invoicingThreshold, entity.getClass().getSimpleName(), entity.getCode());
-                return null;
-            }
-
-            log.debug("{}/{} will be updated with BR amount {}. Invoice threshold applied {}", entity.getClass().getSimpleName(), entity.getId(), invoiceAmount, invoicingThreshold);
-        }
 
         entity.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
 
@@ -559,7 +548,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         case ORDER:
             entity = orderService.findById(entityId);
             if ((((Order) entity).getUserAccounts() != null) && !((Order) entity).getUserAccounts().isEmpty()) {
-                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ? (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() : null;
+                billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ?
+                        (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() :
+                        null;
             }
             break;
         }
@@ -568,20 +559,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         entity.setTotalInvoicingAmountTax(totalAmounts.getAmountTax());
 
         BigDecimal invoiceAmount = totalAmounts.getAmountWithoutTax();
-        BigDecimal invoicingThreshold = null;
-        if (billingAccount != null) {
-            invoicingThreshold = billingAccount.getInvoicingThreshold();
-        }
-        if (invoicingThreshold == null) {
-            invoicingThreshold = billingRun.getBillingCycle().getInvoicingThreshold();
-        }
-
-        if (invoicingThreshold != null && invoicingThreshold.compareTo(invoiceAmount) > 0) {
-            log.debug("Invoicing threshold {}/{} was not met for {}. Entity will not be invoiced", invoiceAmount, invoicingThreshold, entity.getClass().getSimpleName(), entity.getCode());
-            return null;
-        }
-
-        log.debug("{}/{} will be updated with BR amount {}. Invoice threshold applied {}", entity.getClass().getSimpleName(), entity.getId(), invoiceAmount, invoicingThreshold);
 
         entity.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
 
@@ -1891,8 +1868,90 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     public long purge(Date firstTransactionDate, Date lastTransactionDate, List<RatedTransactionStatusEnum> targetStatusList) {
-        return getEntityManager().createNamedQuery("RatedTransaction.deleteBetweenTwoDatesByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
-            .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
+        return getEntityManager().createNamedQuery("RatedTransaction.deleteBetweenTwoDatesByStatus").setParameter("status", targetStatusList)
+                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
     }
 
+    /**
+     * Retrun the total of positive rated transaction grouped by billing account for a billing run.
+     *
+     * @param billingRun the billing run
+     * @return a map of positive rated transaction grouped by billing account.
+     */
+    public Map<Class, Map<Long, ThresholdAmounts>> getTotalPositiveRTAmountsByBR(BillingRun billingRun) {
+
+        List<Object[]> resultSet = getEntityManager().createNamedQuery("RatedTransaction.sumPositiveRTByBillingRun").setParameter("billingRunId", billingRun.getId())
+                .getResultList();
+        return getAmountsMap(resultSet);
+    }
+
+    /**
+     * Group amounts by billing account, customer account and customer.
+     *
+     * @param resultSet the result set of the query
+     * @return A map of grouped amounts by account class.
+     */
+    private Map<Class, Map<Long, ThresholdAmounts>> getAmountsMap(List<Object[]> resultSet) {
+        Map<Long, ThresholdAmounts> baAmounts = new HashMap<>();
+        Map<Long, ThresholdAmounts> caAmounts = new HashMap<>();
+        Map<Long, ThresholdAmounts> custAmounts = new HashMap<>();
+        for (Object[] result : resultSet) {
+            Amounts amounts = new Amounts((BigDecimal) result[0], (BigDecimal) result[1]);
+            Long baId = (Long) result[3];
+            Long caId = (Long) result[4];
+            Long custId = (Long) result[5];
+
+            if (baAmounts.get(baId) == null) {
+                List<Long> invoiceIds = new ArrayList<>();
+                invoiceIds.add((Long) result[2]);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts, invoiceIds);
+                baAmounts.put(baId, thresholdAmounts);
+            } else {
+                ThresholdAmounts thresholdAmounts = baAmounts.get(baId);
+                thresholdAmounts.getAmount().addAmounts(amounts);
+                thresholdAmounts.getInvoices().add((Long) result[2]);
+            }
+
+            if (caAmounts.get(caId) == null) {
+                List<Long> invoiceIds = new ArrayList<>();
+                invoiceIds.add((Long) result[2]);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
+                caAmounts.put(caId, thresholdAmounts);
+            } else {
+                ThresholdAmounts thresholdAmounts = caAmounts.get(caId);
+                thresholdAmounts.getAmount().addAmounts(amounts.clone());
+                thresholdAmounts.getInvoices().add((Long) result[2]);
+            }
+            if (custAmounts.get(custId) == null) {
+                List<Long> invoiceIds = new ArrayList<>();
+                invoiceIds.add((Long) result[2]);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
+                custAmounts.put(custId, thresholdAmounts);
+            } else {
+                ThresholdAmounts thresholdAmounts = custAmounts.get(custId);
+                thresholdAmounts.getAmount().addAmounts(amounts.clone());
+                thresholdAmounts.getInvoices().add((Long) result[2]);
+            }
+        }
+        Map<Class, Map<Long, ThresholdAmounts>> accountsAmounts = new HashMap<>();
+        accountsAmounts.put(BillingAccount.class, baAmounts);
+        accountsAmounts.put(CustomerAccount.class, caAmounts);
+        accountsAmounts.put(Customer.class, custAmounts);
+        return accountsAmounts;
+    }
+
+    /**
+     * Uninvoice RT by a list of invoices Ids.
+     *
+     * @param invoicesIds invoices Ids
+     */
+    public void uninvoiceRTs(Collection<Long> invoicesIds) {
+        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoiceIds").setParameter("invoiceIds", invoicesIds).executeUpdate();
+
+    }
+
+    public void deleteSupplementalRTs(Collection<Long> invoicesIds) {
+        getEntityManager().createNamedQuery("RatedTransaction.deleteSupplementalRTByInvoiceIds").setParameter("invoicesIds", invoicesIds).executeUpdate();
+
+    }
 }

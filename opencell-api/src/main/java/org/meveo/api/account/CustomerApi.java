@@ -215,6 +215,12 @@ public class CustomerApi extends AccountEntityApi {
         customer.setMinimumAmountEl(postData.getMinimumAmountEl());
         customer.setMinimumLabelEl(postData.getMinimumLabelEl());
 
+        if (postData.getInvoicingThreshold() != null) {
+            customer.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
+        if (postData.getCheckThreshold() != null) {
+            customer.setCheckThreshold(postData.getCheckThreshold());
+        }
 
         if (businessAccountModel != null) {
             customer.setBusinessAccountModel(businessAccountModel);
@@ -223,7 +229,12 @@ public class CustomerApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getCode())) {
             customer.setCode(customGenericEntityCodeService.getGenericEntityCode(customer));
         }
-
+        if (postData.getInvoicingThreshold() != null) {
+            customer.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
+        if (postData.getCheckThreshold() != null) {
+            customer.setCheckThreshold(postData.getCheckThreshold());
+        }
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), customer, true, checkCustomFields);
@@ -328,6 +339,18 @@ public class CustomerApi extends AccountEntityApi {
         }
 
 
+        if (postData.getInvoicingThreshold() != null) {
+            customer.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
+        if (postData.getCheckThreshold() != null) {
+            customer.setCheckThreshold(postData.getCheckThreshold());
+        }
+        if (postData.getInvoicingThreshold() != null) {
+            customer.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
+        if (postData.getCheckThreshold() != null) {
+            customer.setCheckThreshold(postData.getCheckThreshold());
+        }
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), customer, false, checkCustomFields);

@@ -32,6 +32,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
@@ -60,6 +61,7 @@ public class BillingCycleApi extends BaseApi {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
+    @SuppressWarnings("checkstyle:WhitespaceAround")
     public void create(BillingCycleDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -125,6 +127,12 @@ public class BillingCycleApi extends BaseApi {
             billingCycle.setType(BillingEntityTypeEnum.BILLINGACCOUNT);
         } else {
             billingCycle.setType(postData.getType());
+        }
+
+        if (postData.getCheckThreshold() == null) {
+            billingCycle.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
+        } else {
+            billingCycle.setCheckThreshold(postData.getCheckThreshold());
         }
         
         // populate customFields
@@ -222,6 +230,9 @@ public class BillingCycleApi extends BaseApi {
         }
         if (postData.getType() != null) {
             billingCycle.setType(postData.getType());
+        }
+        if (postData.getCheckThreshold() != null) {
+            billingCycle.setCheckThreshold(postData.getCheckThreshold());
         }
 
         // populate customFields
