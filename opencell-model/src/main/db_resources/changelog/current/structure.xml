@@ -2851,22 +2851,26 @@ END $$;]]>
     <changeSet id="#5014_20200313" author="khalidHORRI">
         <addColumn tableName="crm_customer">
             <column name="invoicing_threshold" type="numeric(23, 12)"/>
-            <column name="check_threshold" type="varchar(250)">
+            <column name="check_threshold" type="varchar(25)">
             </column>
         </addColumn>
         <addColumn tableName="ar_customer_account">
             <column name="invoicing_threshold" type="numeric(23, 12)"/>
-            <column name="check_threshold" type="varchar(250)" defaultValue="">
+            <column name="check_threshold" type="varchar(25)">
             </column>
         </addColumn>
         <addColumn tableName="billing_cycle">
-            <column name="check_threshold" type="varchar(250)">
+            <column name="check_threshold" type="varchar(25)">
             </column>
         </addColumn>
         <addColumn tableName="billing_billing_account">
-            <column name="check_threshold" type="varchar(250)">
+            <column name="check_threshold" type="varchar(25)">
             </column>
         </addColumn>
+    </changeSet>
+    <changeSet id="#5014_20200402" author="khalidHORRI">
+        <dropDefaultValue tableName="ar_customer_account" columnName="check_threshold"/>
+        <sql>update ${db.schema.adapted}ar_customer_account set check_threshold = null</sql>
     </changeSet>
 
 </databaseChangeLog>

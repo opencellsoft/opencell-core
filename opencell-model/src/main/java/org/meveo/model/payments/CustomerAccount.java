@@ -265,7 +265,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
      * The option on how to check the threshold.
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "check_threshold", nullable = false)
+    @Column(name = "check_threshold")
     private ThresholdOptionsEnum checkThreshold;
 
     /**
@@ -752,9 +752,6 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
      * @return the threshold option
      */
     public ThresholdOptionsEnum getCheckThreshold() {
-        if (checkThreshold == null) {
-            checkThreshold = ThresholdOptionsEnum.AFTER_DISCOUNT;
-        }
         return checkThreshold;
     }
 
