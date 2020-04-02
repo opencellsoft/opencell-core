@@ -2334,14 +2334,13 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     private String setCustomTableName(ICustomFieldEntity entity, CustomFieldTemplate cft) {
-        if (customTableName == null) {
-            String customTableCode = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getCustomTableCodeEL(), "entity", entity);
+
+        String customTableCode = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getCustomTableCodeEL(), "entity", entity);
             CustomEntityTemplate cet = customTableService.getCET(customTableCode);
             if (cet == null) {
                 throw new BusinessException("Custom Entity Template not found for the Custom Table:" + customTableCode);
             }
             customTableName = cet.getDbTablename();
-        }
         return customTableName;
     }
 
