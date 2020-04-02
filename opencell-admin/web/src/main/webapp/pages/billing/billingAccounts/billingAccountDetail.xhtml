@@ -150,10 +150,12 @@
 													<hftl:formField id="billingCycleSelectId" required="true" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" valueLabelField="code" popup="true" componentWidth="30"
                             							popupId="billingCyclePopup" />
 
-													<hftl:formField label="#{messages['account.checkThreshold']}" field="checkThreshold" noSelectionLabel="false" disabled="false" />
 													<hftl:formField
 														label="#{messages['account.invoicingThreshold']}"
-														field="invoicingThreshold" required="false" size="20" />
+														field="invoicingThreshold" required="false" size="20" listenerUpdate="checkThresholdId"/>
+													<hftl:formField label="#{messages['account.checkThreshold']}" field="checkThreshold" id="checkThresholdId"
+																	noSelectionLabel="false" disabled="false" required="#{not empty billingAccountBean.entity.invoicingThreshold}"/>
+
 													<!--
 													<h:panelGroup id="invoicePrefixBoxPanel">
                                                         <hftl:decorateFormField fieldId="returnToAgency_select" label="#{messages['billingAccount.returnToAgency']}" >

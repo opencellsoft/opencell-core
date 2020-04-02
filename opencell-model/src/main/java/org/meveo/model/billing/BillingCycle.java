@@ -178,7 +178,7 @@ public class BillingCycle extends BusinessCFEntity {
      * The option on how to check the threshold.
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "check_threshold", nullable = false)
+    @Column(name = "check_threshold")
     private ThresholdOptionsEnum checkThreshold;
 
     public String getBillingTemplateName() {
@@ -412,9 +412,6 @@ public class BillingCycle extends BusinessCFEntity {
      * @return the threshold option
      */
     public ThresholdOptionsEnum getCheckThreshold() {
-        if (checkThreshold == null) {
-            checkThreshold = ThresholdOptionsEnum.AFTER_DISCOUNT;
-        }
         return checkThreshold;
     }
 
