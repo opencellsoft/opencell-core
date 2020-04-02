@@ -257,11 +257,22 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     public ChargeInstance() {
     }
 
-    public ChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, ChargeTemplate chargeTemplate, ServiceInstance serviceInstance, InstanceStatusEnum status) {
+    public ChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, ChargeTemplate chargeTemplate, Subscription subscription, InstanceStatusEnum status) {
 
         this.code = chargeTemplate.getCode();
+
+        this.amountWithoutTax = amountWithoutTax;
+        this.amountWithTax = amountWithTax;
+        this.userAccount = subscription.getUserAccount();
+        this.subscription = subscription;
+        this.seller = subscription.getSeller();
+        this.country = userAccount.getBillingAccount().getTradingCountry();
+        this.currency = userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency();
+        this.chargeTemplate = chargeTemplate;
+        this.status = status != null ? status : InstanceStatusEnum.ACTIVE;
+
         if (chargeTemplate.getDescriptionI18n() != null) {
-            String languageCode = serviceInstance.getSubscription().getUserAccount().getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
+            String languageCode = userAccount.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
             if (!StringUtils.isBlank(chargeTemplate.getDescriptionI18n().get(languageCode))) {
                 this.description = chargeTemplate.getDescriptionI18n().get(languageCode);
             }
@@ -269,18 +280,16 @@ public abstract class ChargeInstance extends BusinessCFEntity {
         if (StringUtils.isBlank(this.description)) {
             this.description = chargeTemplate.getDescription();
         }
-        this.amountWithoutTax = amountWithoutTax;
-        this.amountWithTax = amountWithTax;
+    }
+
+    public ChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, ChargeTemplate chargeTemplate, ServiceInstance serviceInstance, InstanceStatusEnum status) {
+
+        this(amountWithoutTax, amountWithTax, chargeTemplate, serviceInstance.getSubscription(), status);
+
+        
         this.serviceInstance = serviceInstance;
-        this.userAccount = serviceInstance.getSubscription().getUserAccount();
-        this.subscription = serviceInstance.getSubscription();
-        this.seller = subscription.getSeller();
-        this.country = subscription.getUserAccount().getBillingAccount().getTradingCountry();
-        this.currency = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency();
-        this.chargeTemplate = chargeTemplate;
         this.orderNumber = serviceInstance.getOrderNumber();
         this.invoicingCalendar = serviceInstance.getInvoicingCalendar();
-        this.status = status != null ? status : InstanceStatusEnum.ACTIVE;
 
         if (this.status == InstanceStatusEnum.ACTIVE) {
             this.chargeDate = serviceInstance.getSubscriptionDate();
@@ -521,6 +530,7 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     public void setTaxClassResolved(TaxClass taxClass) {
         this.taxClassResolved = taxClass;
     }
+
     /**
      * Gets a counter instance.
      *

@@ -271,8 +271,8 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         OneShotChargeTemplate oneShot = createOneShotCharge(invoiceSubCat, paymentlabel);
 
         try {
-            oneShotChargeInstanceService.oneShotChargeApplication(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), oneShot, null, new Date(),
-                new BigDecimal((isPaymentRejected ? "" : "-") + amounts.getAmountWithoutTax()), null, new BigDecimal(1), null, null, null, paymentlabel + (isPaymentRejected ? " (Rejected)" : ""), null, true);
+            oneShotChargeInstanceService.oneShotChargeApplication(paymentScheduleInstanceItem.getPaymentScheduleInstance().getServiceInstance().getSubscription(), null, oneShot, null, new Date(),
+                new BigDecimal((isPaymentRejected ? "" : "-") + amounts.getAmountWithoutTax()), null, new BigDecimal(1), null, null, null, paymentlabel + (isPaymentRejected ? " (Rejected)" : ""), null, null, true);
 
         } catch (RatingException e) {
             log.trace("Failed to apply a one shot charge {}: {}", oneShot, e.getRejectionReason());

@@ -330,7 +330,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
                     if (chargeTemplate == null || chargeTemplate.getOneShotChargeTemplateType() == null || !chargeTemplate.getOneShotChargeTemplateType().equals(OneShotChargeTemplateTypeEnum.OTHER)) {
                         continue;
                     }
-                    oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity().negate(), orderNumber);
+                    oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity().negate(), orderNumber);
                     oneShotChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
                     oneShotChargeInstanceService.update(oneShotChargeInstance);
                 }
