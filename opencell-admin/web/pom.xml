@@ -4,7 +4,7 @@
 		<artifactId>opencell-admin</artifactId>
 		<groupId>com.opencellsoft</groupId>
 		<relativePath>../pom.xml</relativePath>
-		<version>9.2.1-SNAPSHOT</version>
+		<version>9.3.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>opencell-admin-web</artifactId>
 	<name>Opencell Admin Web Application - Web Module</name>
@@ -137,6 +137,7 @@
 						<configuration>
 							<target>
 								<copy file="../lib/flatworm-3.0.2.jar" tofile="${project.build.directory}/opencell/WEB-INF/lib/flatworm-3.0.2.jar" />
+								<copy file="../lib/opencell-sms-twilioModule.jar" tofile="${project.build.directory}/opencell/WEB-INF/lib/opencell-sms-twilioModule.jar" />
 							</target>
 						</configuration>
 						<goals>

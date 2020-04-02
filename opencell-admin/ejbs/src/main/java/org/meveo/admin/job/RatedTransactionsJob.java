@@ -195,6 +195,17 @@ public class RatedTransactionsJob extends Job {
         cfCriteriaExtra.setValueRequired(false);
         cfCriteriaExtra.setGuiPosition("tab:Custom fields:0;fieldGroup:Additional Criteria:2;field:4");
         result.put("criteriaExtra", cfCriteriaExtra);
+        
+        CustomFieldTemplate cfAggregateByUnitAmount = new CustomFieldTemplate();
+        cfAggregateByUnitAmount.setCode("aggregateByUnitAmount");
+        cfAggregateByUnitAmount.setAppliesTo("JobInstance_RatedTransactionsJob");
+        cfAggregateByUnitAmount.setActive(true);
+        cfAggregateByUnitAmount.setDescription(resourceMessages.getString("ratedTransactionsJob.aggregateByUnitAmount"));
+        cfAggregateByUnitAmount.setFieldType(CustomFieldTypeEnum.BOOLEAN);
+        cfAggregateByUnitAmount.setDefaultValue("true");
+        cfAggregateByUnitAmount.setValueRequired(false);
+        cfAggregateByUnitAmount.setGuiPosition("tab:Custom fields:0;fieldGroup:Aggregation Settings:1;field:5");
+        result.put("aggregateByUnitAmount", cfAggregateByUnitAmount);
 
         return result;
     }

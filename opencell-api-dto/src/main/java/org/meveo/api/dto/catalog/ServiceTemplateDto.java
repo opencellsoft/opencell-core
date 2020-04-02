@@ -105,7 +105,7 @@ public class ServiceTemplateDto extends EnableBusinessDto {
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
      */
     private String minimumLabelElSpark;
-    
+
     /**
      * Corresponding to minimum invoice subcategory
      */
@@ -113,7 +113,14 @@ public class ServiceTemplateDto extends EnableBusinessDto {
 
     private Boolean autoEndOfEngagement;
 
-    /** The renewal rule. */
+    /**
+     * Corresponding to minimum one shot charge template code.
+     */
+    private String minimumChargeTemplate;
+
+    /**
+     * The renewal rule.
+     */
     @JsonInclude(Include.NON_NULL)
     private SubscriptionRenewalDto renewalRule;
 
@@ -543,5 +550,13 @@ public class ServiceTemplateDto extends EnableBusinessDto {
      */
     public void setMinimumInvoiceSubCategory(String minimumInvoiceSubCategory) {
         this.minimumInvoiceSubCategory = minimumInvoiceSubCategory;
+    }
+
+    public String getMinimumChargeTemplate() {
+        return minimumChargeTemplate;
+    }
+
+    public void setMinimumChargeTemplate(String minimumChargeTemplate) {
+        this.minimumChargeTemplate = minimumChargeTemplate;
     }
 }

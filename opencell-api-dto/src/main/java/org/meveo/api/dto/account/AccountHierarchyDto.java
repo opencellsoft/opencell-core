@@ -18,10 +18,12 @@
 
 package org.meveo.api.dto.account;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,12 +31,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
-import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.catalog.DiscountPlanDto;
-import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.crm.Customer;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The Class AccountHierarchyDto.
@@ -170,15 +170,50 @@ public class AccountHierarchyDto implements Serializable {
     private String registrationNo;
 
     /**
+     * The option on how to check the threshold.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum checkThreshold;
+
+    /**
+     * The option on how to check the threshold for customer Account.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum customerAccountCheckThreshold;
+
+    /**
+     * The option on how to check the threshold for customer.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum customerCheckThreshold;
+
+    /**
      * VAT. CUST.
      */
     private String vatNo;
+    /**
+     * The mailing Type.
+     */
+    private String mailingType;
+    /**
+     * Email template.
+     */
+    private String emailTemplate;
+    /**
+     * CC Emails.
+     */
+    private String ccedEmails;
 
-	private String mailingType;
+    /**
+     * An object to store minimumAmount data for each account.
+     */
+    private MinimumAmountElDto minimumAmountEl;
 
-	private String emailTemplate;
+    /** The invoicing threshold for the customer . */
+    private BigDecimal customerInvoicingThreshold;
 
-	private String ccedEmails;
+    /** The invoicing threshold for the customer account. */
+    private BigDecimal customerAccountInvoicingThreshold;
 
     /**
      * Instantiates a new account hierarchy dto.
@@ -869,21 +904,118 @@ public class AccountHierarchyDto implements Serializable {
 	 * @param mailingType
 	 */
 	public void setMailingType(String mailingType) {
-		this.mailingType = mailingType;
-	}
+        this.mailingType = mailingType;
+    }
 
-	/**
-	 * @param emailTemplate
-	 */
-	public void setEmailTemplate(String emailTemplate) {
-		this.emailTemplate = emailTemplate;
-	}
+    /**
+     * @param emailTemplate
+     */
+    public void setEmailTemplate(String emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
 
-	/**
-	 * @param ccedEmails
-	 */
-	public void setCcedEmails(String ccedEmails) {
-		this.ccedEmails = ccedEmails;
-	}
-	
+    /**
+     * @param ccedEmails
+     */
+    public void setCcedEmails(String ccedEmails) {
+        this.ccedEmails = ccedEmails;
+    }
+
+    /**
+     * Gets the minimum amounts EL expression.
+     *
+     * @return the minimum amounts EL expression
+     */
+    public MinimumAmountElDto getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    /**
+     * Sets the minimum amounts EL expression.
+     *
+     * @param minimumAmountEl the minimum amounts EL expression.
+     */
+    public void setMinimumAmountEl(MinimumAmountElDto minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+    /**
+     * @return the customer's invoicingThreshold
+     */
+    public BigDecimal getCustomerInvoicingThreshold() {
+        return customerInvoicingThreshold;
+    }
+
+    /**
+     * @param customerInvoicingThreshold the customer's invoicingThreshold to set
+     */
+    public void setCustomerInvoicingThreshold(BigDecimal customerInvoicingThreshold) {
+        this.customerInvoicingThreshold = customerInvoicingThreshold;
+    }
+
+    /**
+     * @return the customer account's invoicingThreshold
+     */
+    public BigDecimal getCustomerAccountInvoicingThreshold() {
+        return customerAccountInvoicingThreshold;
+    }
+
+    /**
+     * @param customerAccountInvoicingThreshold the customer account's invoicingThreshold to set
+     */
+    public void setCustomerAccountInvoicingThreshold(BigDecimal customerAccountInvoicingThreshold) {
+        this.customerAccountInvoicingThreshold = customerAccountInvoicingThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCustomerAccountCheckThreshold() {
+        return customerAccountCheckThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param customerAccountCheckThreshold the threshold option
+     */
+    public void setCustomerAccountCheckThreshold(ThresholdOptionsEnum customerAccountCheckThreshold) {
+        this.customerAccountCheckThreshold = customerAccountCheckThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCustomerCheckThreshold() {
+        return customerCheckThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param customerCheckThreshold the threshold option
+     */
+    public void setCustomerCheckThreshold(ThresholdOptionsEnum customerCheckThreshold) {
+        this.customerCheckThreshold = customerCheckThreshold;
+    }
 }

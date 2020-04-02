@@ -30,6 +30,7 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -90,7 +91,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCardD
  *
  * @author anasseh
  * @author Mounir Bahije
- * @lastModifiedVersion 5.5.2
+ * @lastModifiedVersion 5.5.2 
  */
 @PaymentGatewayClass
 public class IngenicoGatewayPayment implements GatewayPaymentInterface {
@@ -629,4 +630,10 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     public void setPaymentGateway(PaymentGateway paymentGateway) {
         this.paymentGateway = paymentGateway;
     }
+
+	@Override
+	public String createInvoice(Invoice invoice) throws BusinessException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

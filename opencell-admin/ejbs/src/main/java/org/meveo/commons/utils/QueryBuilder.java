@@ -35,6 +35,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
+import org.primefaces.model.SortOrder;
 
 /**
  * Query builder class for building JPA queries.
@@ -752,15 +753,18 @@ public class QueryBuilder {
      * @param ascending true/false
      */
     public void addOrderCriterion(String orderColumn, boolean ascending) {
+
+        q.append(q.indexOf("ORDER BY") > 0 ? ", " : " ORDER BY ");
+
         if (clazz != null) {
             Field field = ReflectionUtils.getField(clazz, orderColumn.substring(orderColumn.indexOf(".") + 1));
             if (field != null && field.getType().isAssignableFrom(String.class)) {
-                q.append(" ORDER BY UPPER(CAST(" + orderColumn + " AS string))");
+                q.append(" UPPER(CAST(" + orderColumn + " AS string))");
             } else {
-                q.append(" ORDER BY " + orderColumn);
+                q.append(orderColumn);
             }
         } else {
-            q.append(" ORDER BY " + orderColumn);
+            q.append(orderColumn);
         }
 
         if (ascending) {
@@ -1020,7 +1024,10 @@ public class QueryBuilder {
         }
 
         if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1) {
-            addOrderCriterion(((alias != null) ? (alias + ".") : "") + paginationConfiguration.getSortField(), paginationConfiguration.isAscendingSorting());
+            Object[] orderings = paginationConfiguration.getOrderings();
+            for (int i = 0; i < orderings.length; i = i + 2) {
+                addOrderCriterion(((alias != null) ? (alias + ".") : "") + orderings[i], orderings[i + 1] == SortOrder.ASCENDING);
+            }
         }
     }
 

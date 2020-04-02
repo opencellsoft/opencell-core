@@ -309,7 +309,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     }
 
     public String getRatingUnitDescription() {
-        return ratingUnitDescription;
+        return ratingUnitOfMeasure!=null? ratingUnitOfMeasure.getDescription(): ratingUnitDescription;
     }
 
     public void setRatingUnitDescription(String ratingUnitDescription) {

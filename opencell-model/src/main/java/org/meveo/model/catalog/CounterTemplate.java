@@ -74,6 +74,13 @@ public class CounterTemplate extends EnableBusinessEntity {
     private CounterTypeEnum counterType = CounterTypeEnum.USAGE;
 
     /**
+     * Expression to determine calendar code
+     */
+    @Column(name = "calendar_code_el", length = 2000)
+    @Size(max = 2000)
+    private String calendarCodeEl;
+
+    /**
      * Calendar for counter period calculation
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -129,6 +136,14 @@ public class CounterTemplate extends EnableBusinessEntity {
 
     public void setCounterType(CounterTypeEnum counterType) {
         this.counterType = counterType;
+    }
+
+    public String getCalendarCodeEl() {
+        return calendarCodeEl;
+    }
+
+    public void setCalendarCodeEl(String calendarCodeEl) {
+        this.calendarCodeEl = calendarCodeEl;
     }
 
     public Calendar getCalendar() {

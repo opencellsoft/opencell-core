@@ -33,6 +33,16 @@
         		backingBean="#{customerListBean}" searchField1Label="#{messages['customer.code']}" searchField1="code"
             	column1Label="#{messages['customer.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
         </hftl:entityPopup>
+        <hftl:entityPopup id="billingAccountPopup"
+                          header="#{messages['billingAccount.popup.header']}"
+                          backingBean="#{billingAccountBean}"
+                          searchField1Label="#{messages['billingAccount.code']}"
+                          searchField1="code"
+                          column1Label="#{messages['billingAccount.code']}"
+                          column1="code"
+                          selection="#{customerAccountBean.entity.minimumTargetAccount}"
+                          updateField=":parentTab:formCustomerAccount:childTab:minimumTargetAccount :parentTab:formCustomerAccount:childTab:minimumTargetAccount_text">
+        </hftl:entityPopup>
 
         <p:importEnum type="org.meveo.model.payments.CustomerAccountStatusEnum" var="CustomerAccountStatusEnum" />
         <p:importEnum type="org.meveo.model.payments.PaymentMethodEnum" var="PaymentMethodEnum" />
@@ -45,6 +55,7 @@
                 <p:menuitem value="#{messages['menu.customerAccount']} - #{customerAccountBean.entity.code}" disabled="true" rendered="#{!customerAccountBean.entity.transient}" />
             </p:breadCrumb>
         </h:form>
+
 
         <h:panelGroup styleClass="col2-set">
             <h:panelGroup styleClass="col1">
@@ -109,10 +120,30 @@
                                         <hftl:formField label="#{messages['customerAccount.creditCategory']}" field="creditCategory" valueLabelField="code" listBean="#{creditCategoryBean}" />
                                         <hftl:formField label="#{messages['billingCycle.dueDateDelayEL']}" field="dueDateDelayEL" required="false" textArea="true" rows="1" maxlength="2000" componentWidth="50"/>                                       
                                         <hftl:formField label="#{messages['billingCycle.dueDateDelayELSpark']}" field="dueDateDelayELSpark" required="false"  textArea="true" rows="1" maxlength="2000" componentWidth="50"/>
+
                                         <hftl:formField label="#{messages['customer.vatNo']}" field="vatNo" />
 										<hftl:formField label="#{messages['customer.registrationNo']}" field="registrationNo" />
-								        <hftl:formField label="#{messages['customerAccount.status']}" field="status" disabled="true" />                                       
-                                        
+								        <hftl:formField label="#{messages['customerAccount.status']}" field="status" disabled="true" />
+                                        <hftl:formField label="#{messages['userAccount.minimumLabelEl']}" field="minimumLabelEl" id="minimumLabelEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true"/>
+                                        <hftl:formField label="#{messages[appProvider.entreprise?'userAccount.minimumAmountWithoutTaxEl':'userAccount.minimumAmountWithTaxEl']}" field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                                        <hftl:formField label="#{messages['account.minimumLabelElSpark']}"
+                                                        field="minimumLabelElSpark" id="minimumLabelElSpark" textArea="true"
+                                                        rows="1"
+                                                        maxlength="2000" componentWidth="50" newLine="true" rendered="#{paramBean.sparkEnabled}"/>
+                                        <hftl:formField
+                                                label="#{messages[appProvider.entreprise?'account.minimumAmountWithoutTaxElSpark':'account.minimumAmountWithTaxElSpark']}"
+                                                field="minimumAmountElSpark" id="minimumAmountElSpark" textArea="true"
+                                                rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.sparkEnabled}"/>
+                                        <hftl:formField id="minimumTargetAccount" label="#{messages['customerAccount.minimumTargetAccount']}" field="minimumTargetAccount" valueLabelField="code"
+                                                        popup="true" popupId="billingAccountPopup" allowEdit="true"  componentWidth="20" />
+                                        <hftl:formField label="#{messages['account.minimumChargeTemplate']}" id="chargeTemplateId" field="minimumChargeTemplate" valueLabelField="code"
+                                                        listBean="#{oneShotChargeTemplateBean}" listElements="#{oneShotChargeTemplateBean.getOtherOneShotCharges()}" componentWidth="20"/>
+
+                                        <hftl:formField label="#{messages['account.checkThreshold']}" field="checkThreshold" noSelectionLabel="false" disabled="false" />
+                                        <hftl:formField
+                                                label="#{messages['account.invoicingThreshold']}"
+                                                field="invoicingThreshold" required="false" size="20" />
+
                                     </p:fieldset>
                                 </p:tab>
 
@@ -143,6 +174,7 @@
                                             <p:column headerText="#{messages['paymentMethod.cardNrOrAccountNr']}">
                                                 <h:outputText value="#{entity.hiddenCardNumber} #{entity.expirationMonthAndYear}" rendered="#{entity.paymentType == PaymentMethodEnum.CARD}" />
                                                 <h:outputText value="#{entity.bankCoordinates.bankName} " rendered="#{entity.paymentType == PaymentMethodEnum.DIRECTDEBIT}" />
+                                                <h:outputText value="#{entity.userId} " rendered="#{entity.paymentType == PaymentMethodEnum.PAYPAL or entity.paymentType == PaymentMethodEnum.STRIPE}" />
                                                 <h:outputText value="#{entity.bankCoordinates.iban}" rendered="#{entity.paymentType == PaymentMethodEnum.DIRECTDEBIT}" converter="ibanConverter" />
                                             </p:column>
                                             <hftl:column label="#{messages['paymentMethod.preferred']}" field="preferred" isMessage="true" />
@@ -184,6 +216,8 @@
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.CHECK.label]}" itemValue="#{PaymentMethodEnum.CHECK}" />
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.DIRECTDEBIT.label]}" itemValue="#{PaymentMethodEnum.DIRECTDEBIT}" />
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.WIRETRANSFER.label]}" itemValue="#{PaymentMethodEnum.WIRETRANSFER}" />
+                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.PAYPAL.label]}" itemValue="#{PaymentMethodEnum.PAYPAL}" />
+                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.STRIPE.label]}" itemValue="#{PaymentMethodEnum.STRIPE}" />
                                                     <f:converter converterId="enumConverter" />
                                                     <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.payments.PaymentMethodEnum" />
                                                 </p:selectOneMenu>
@@ -246,6 +280,13 @@
                                                             childField="bic" size="15"  />  
                                                             </h:panelGroup>                                                                                                   
                                                     </c:if>
+                                                    <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.PAYPAL or customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.STRIPE  }">
+                                                    	<hftl:decorateFormField
+															label="#{messages['paymentMethod.userId']}" fieldId="userId">
+															<p:inputText id="userId" value="#{customerAccountBean.selectedPaymentMethod.userId}" required="false" />
+														</hftl:decorateFormField>
+														                                                                                                 
+                                                    </c:if>                                                    
                                                 </p:outputPanel>
                                                 <h:panelGroup layout="block" styleClass="form-panel-actions">
                                                     <p:commandButton value="#{messages['paymentMethod.savePaymentMethod']}" action="#{customerAccountBean.savePaymentMethod()}"

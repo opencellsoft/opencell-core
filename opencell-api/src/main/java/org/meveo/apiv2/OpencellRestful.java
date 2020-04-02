@@ -44,7 +44,6 @@ public class OpencellRestful extends Application {
             resources.add(ProductResourceImpl.class);
             resources.add(OrderItemResourceImpl.class);
             resources.add(OrderResourceImpl.class);
-            resources.add(GenericResourceImpl.class);
             resources.add(NotYetImplementedResource.class);
 
 
