@@ -442,6 +442,14 @@ public class PaymentService extends PersistenceService<Payment> {
         if (paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
             occTemplateCode = paramBean.getProperty("occ.payment.dd", "PAY_DDT");
         }
+        if (paymentMethodType == PaymentMethodEnum.STRIPE) {
+            occTemplateCode = paramBean.getProperty("occ.payment.stp", "PAY_STP");
+        }
+        if (paymentMethodType == PaymentMethodEnum.PAYPAL) {
+            occTemplateCode = paramBean.getProperty("occ.payment.pal", "PAY_PAL");
+        }
+        
+        
         OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         if (occTemplate == null) {
             throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
