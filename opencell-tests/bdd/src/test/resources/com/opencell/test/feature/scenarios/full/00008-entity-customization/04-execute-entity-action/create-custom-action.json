@@ -1,0 +1,8 @@
+{
+    "code": "ExecuteCustomAction_443",
+    "description": "ExecuteCustomAction_443",
+    "appliesTo": "OfferTemplate",
+    "script": {
+        "code": "org.meveo.service.script.ExecuteCustomAction_443_Script"
+    }
+}
