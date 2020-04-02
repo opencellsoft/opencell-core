@@ -20,6 +20,7 @@ package org.meveo.api.dto.account;
 
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
@@ -136,6 +137,16 @@ public class CustomerAccountDto extends AccountDto {
     private List<AccountOperationDto> accountOperations;
 
     /**
+     * Invoicing threshold - do not invoice for a lesser amount.
+     */
+    private BigDecimal invoicingThreshold;
+
+    /**
+     * The option on how to check the threshold.
+     */
+    private ThresholdOptionsEnum checkThreshold;
+
+    /**
      * Instantiates a new customer account dto.
      */
     public CustomerAccountDto() {
@@ -196,6 +207,12 @@ public class CustomerAccountDto extends AccountDto {
         }
         if (e.getMinimumTargetAccount() != null) {
             setMinimumTargetAccount(e.getMinimumTargetAccount().getCode());
+        }
+        if (e.getInvoicingThreshold() != null) {
+            setInvoicingThreshold(e.getInvoicingThreshold());
+        }
+        if (e.getCheckThreshold() != null) {
+            setCheckThreshold(e.getCheckThreshold());
         }
     }
 
@@ -585,5 +602,38 @@ public class CustomerAccountDto extends AccountDto {
 
     public void setAccountOperations(List<AccountOperationDto> accountOperations) {
         this.accountOperations = accountOperations;
+    }
+
+
+    /**
+     * @return the invoicingThreshold
+     */
+    public BigDecimal getInvoicingThreshold() {
+        return invoicingThreshold;
+    }
+
+    /**
+     * @param invoicingThreshold the invoicingThreshold to set
+     */
+    public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+        this.invoicingThreshold = invoicingThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
     }
 }

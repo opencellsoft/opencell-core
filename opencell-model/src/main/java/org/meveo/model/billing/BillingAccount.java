@@ -43,6 +43,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
@@ -337,6 +338,13 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tax_category_id")
     private TaxCategory taxCategory;
+
+    /**
+     * The option on how to check the threshold.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "check_threshold", nullable = false)
+    private ThresholdOptionsEnum checkThreshold;
 
     /**
      * A flag to indicate that account is exonerated from taxes
@@ -790,5 +798,24 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      */
     public void setTaxCategoryResolved(TaxCategory taxCategoryResolved) {
         this.taxCategoryResolved = taxCategoryResolved;
+    }
+
+    /**
+     * Gets the threshold option.
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        if (checkThreshold == null) {
+            checkThreshold = ThresholdOptionsEnum.AFTER_DISCOUNT;
+        }
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
     }
 }

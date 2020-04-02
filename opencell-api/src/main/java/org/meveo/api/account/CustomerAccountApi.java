@@ -212,6 +212,13 @@ public class CustomerAccountApi extends AccountEntityApi {
         customerAccount.setExcludedFromPayment(postData.isExcludedFromPayment());
         customerAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
         customerAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
+        if (postData.getInvoicingThreshold() != null) {
+            customerAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
+        if (postData.getCheckThreshold() != null) {
+            customerAccount.setCheckThreshold(postData.getCheckThreshold());
+        }
+
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), customerAccount, true, checkCustomFields);
@@ -321,6 +328,12 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         if (businessAccountModel != null) {
             customerAccount.setBusinessAccountModel(businessAccountModel);
+        }
+        if (postData.getInvoicingThreshold() != null) {
+            customerAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
+        if (postData.getCheckThreshold() != null) {
+            customerAccount.setCheckThreshold(postData.getCheckThreshold());
         }
 
         // Synchronize payment methods

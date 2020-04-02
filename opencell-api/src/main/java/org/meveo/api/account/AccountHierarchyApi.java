@@ -69,6 +69,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.AccountHierarchyTypeEnum;
@@ -295,6 +296,13 @@ public class AccountHierarchyApi extends BaseApi {
         customerDto.setJobTitle(postData.getJobTitle());
 
         customerDto.setSeller(postData.getSellerCode());
+        customerDto.setInvoicingThreshold(postData.getCustomerInvoicingThreshold());
+        if (postData.getCustomerCheckThreshold() == null) {
+            customerDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
+        } else {
+            customerDto.setCheckThreshold(postData.getCustomerCheckThreshold());
+        }
+
         String customerBrandCode = StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode());
         // CustomerBrand customerBrand = null;
         if (!StringUtils.isBlank(customerBrandCode)) {
@@ -376,6 +384,12 @@ public class AccountHierarchyApi extends BaseApi {
         customerAccountDto.setLanguage(postData.getLanguageCode());
         customerAccountDto.setDateDunningLevel(new Date());
         customerAccountDto.setJobTitle(postData.getJobTitle());
+        customerAccountDto.setInvoicingThreshold(postData.getCustomerAccountInvoicingThreshold());
+        if (postData.getCustomerAccountCheckThreshold() == null) {
+            customerAccountDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
+        } else {
+            customerAccountDto.setCheckThreshold(postData.getCustomerAccountCheckThreshold());
+        }
 
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
@@ -452,6 +466,11 @@ public class AccountHierarchyApi extends BaseApi {
                     billingAccountDto.setMinimumChargeTemplate(null);
                 }
             }
+        }
+        if (postData.getCheckThreshold() == null) {
+            billingAccountDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
+        } else {
+            billingAccountDto.setCheckThreshold(postData.getCheckThreshold());
         }
 
         AccountEntity accountEntity = billingAccountApi.create(billingAccountDto);
@@ -556,6 +575,10 @@ public class AccountHierarchyApi extends BaseApi {
         customerDto.setRegistrationNo(postData.getRegistrationNo());
         customerDto.setVatNo(postData.getVatNo());
         customerDto.setJobTitle(postData.getJobTitle());
+        customerDto.setInvoicingThreshold(postData.getCustomerInvoicingThreshold());
+        if (postData.getCustomerCheckThreshold() != null) {
+            customerDto.setCheckThreshold(postData.getCustomerCheckThreshold());
+        }
 
         String customerBrandCode = StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode());
         if (!StringUtils.isBlank(customerBrandCode)) {
@@ -619,6 +642,10 @@ public class AccountHierarchyApi extends BaseApi {
         customerAccountDto.setCurrency(postData.getCurrencyCode());
         customerAccountDto.setLanguage(postData.getLanguageCode());
         customerAccountDto.setJobTitle(postData.getJobTitle());
+        customerAccountDto.setInvoicingThreshold(postData.getCustomerAccountInvoicingThreshold());
+        if (postData.getCustomerAccountCheckThreshold() != null) {
+            customerAccountDto.setCheckThreshold(postData.getCustomerAccountCheckThreshold());
+        }
 
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
@@ -678,6 +705,10 @@ public class AccountHierarchyApi extends BaseApi {
             billingAccountDto.setCcedEmails(postData.getCcedEmails());
         }
 
+
+        if (postData.getCheckThreshold() != null) {
+            billingAccountDto.setCheckThreshold(postData.getCheckThreshold());
+        }
         billingAccountApi.createOrUpdate(billingAccountDto);
 
         String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
@@ -1245,6 +1276,11 @@ public class AccountHierarchyApi extends BaseApi {
 
             billingAccountDto.setCustomFields(cfsDto);
         }
+        if (postData.getCheckThreshold() == null) {
+            billingAccountDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
+        } else {
+            billingAccountDto.setCheckThreshold(postData.getCheckThreshold());
+        }
 
         if (postData.getMinimumAmountEl() != null) {
             if (postData.getMinimumAmountEl().getBillingAccountMinimumAmountEl() != null) {
@@ -1296,6 +1332,12 @@ public class AccountHierarchyApi extends BaseApi {
         customerAccountDto.setJobTitle(postData.getJobTitle());
         customerAccountDto.setRegistrationNo(postData.getRegistrationNo());
         customerAccountDto.setVatNo(postData.getVatNo());
+        customerAccountDto.setInvoicingThreshold(postData.getCustomerAccountInvoicingThreshold());
+        if (postData.getCustomerAccountCheckThreshold() == null) {
+            customerAccountDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
+        } else {
+            customerAccountDto.setCheckThreshold(postData.getCustomerAccountCheckThreshold());
+        }
 
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
@@ -1374,6 +1416,12 @@ public class AccountHierarchyApi extends BaseApi {
         customerDto.setRegistrationNo(postData.getRegistrationNo());
         customerDto.setVatNo(postData.getVatNo());
         customerDto.setJobTitle(postData.getJobTitle());
+        customerDto.setInvoicingThreshold(postData.getCustomerInvoicingThreshold());
+        if (postData.getCustomerCheckThreshold() == null) {
+            customerDto.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
+        } else {
+            customerDto.setCheckThreshold(postData.getCustomerCheckThreshold());
+        }
 
         CustomFieldsDto cfsDto = new CustomFieldsDto();
         if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {

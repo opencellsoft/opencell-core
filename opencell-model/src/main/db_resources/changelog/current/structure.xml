@@ -2840,7 +2840,7 @@ END $$;]]>
             </column>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#4879_20190121" author="AmineBENAICHA">
        <addColumn tableName="cat_counter_template">
            <column name="calendar_code_el" type="varchar(2000)" />
@@ -2856,6 +2856,28 @@ END $$;]]>
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
         <addForeignKeyConstraint baseColumnNames="rating_unitofmeasure" baseTableName="billing_rated_transaction" constraintName="fk_rating_billing_rated_transaction_cat_unit_of_measure" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_unit_of_measure" />
+    </changeSet>
+
+
+    <changeSet id="#5014_20200313" author="khalidHORRI">
+        <addColumn tableName="crm_customer">
+            <column name="invoicing_threshold" type="numeric(23, 12)"/>
+            <column name="check_threshold" type="varchar(250)">
+            </column>
+        </addColumn>
+        <addColumn tableName="ar_customer_account">
+            <column name="invoicing_threshold" type="numeric(23, 12)"/>
+            <column name="check_threshold" type="varchar(250)" defaultValue="">
+            </column>
+        </addColumn>
+        <addColumn tableName="billing_cycle">
+            <column name="check_threshold" type="varchar(250)">
+            </column>
+        </addColumn>
+        <addColumn tableName="billing_billing_account">
+            <column name="check_threshold" type="varchar(250)">
+            </column>
+        </addColumn>
     </changeSet>
 
 </databaseChangeLog>
