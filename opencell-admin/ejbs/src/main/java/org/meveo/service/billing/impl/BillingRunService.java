@@ -1085,8 +1085,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 threshold = ((Customer) entity).getInvoicingThreshold();
                 checkThreshold = ((Customer) entity).getCheckThreshold();
             }
+
             if (threshold != null && checkThreshold == null) {
                 checkThreshold = ThresholdOptionsEnum.AFTER_DISCOUNT;
+            }
+            if (threshold == null || checkThreshold == null) {
+                return;
             }
 
             switch (checkThreshold) {
