@@ -32,6 +32,7 @@
     <cc:attribute name="prefix" required="true"/>
     <cc:attribute name="disabled" default="#{!cc.attrs.entity.transient and !cc.attrs.cft.allowEdit}"/>
     <cc:attribute name="cfValueHolder" default="#{customFieldDataEntryBean.getFieldValueHolderByUUID(cc.attrs.entity.uuid)}"/>
+    <cc:attribute name="cftIndex" required="false" default="0"/>
 </cc:interface>
 
 <cc:implementation>
@@ -42,9 +43,9 @@
     <o:importFunctions type="org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean" var="cfde" />
 
 
-    <p:panel width="100" id="ctw">
+    <p:panel width="100" id="ctw" styleClass="cf-ctw_#{cc.attrs.cftIndex}">
 
-        <p:dataTable id="ctSearchResults" value="#{customFieldDataEntryBean.getCustomTableWrapperValues(cc.attrs.entity, cc.attrs.cft)}" var="cet"
+        <p:dataTable id="ctSearchResults_#{cc.attrs.cftIndex}" value="#{customFieldDataEntryBean.getCustomTableWrapperValues(cc.attrs.entity, cc.attrs.cft)}" var="cet"
                      lazy="true"
                      widgetVar="ctTable"
                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -157,7 +158,7 @@
                 <p:commandButton id="deletelink" icon="ui-icon-trash" action="#{customFieldDataEntryBean.delete(cet['id'],cc.attrs.entity, cc.attrs.cft)}"
                                  rendered="#{cc.attrs.edit and !cc.attrs.disabled}"
                                  process="@this" immediate="true"
-                                 update="#{cfde:getCFComponentIds(':offerForm:tabView:cf_panel_group_',null, customFieldDataEntryBean.getGroupedFieldTemplates(cc.attrs.entity).children.size())}">
+                                 update="@(.cf-ctw_#{cc.attrs.cftIndex})">
                     <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert"/>
                 </p:commandButton>
             </p:column>
@@ -245,7 +246,7 @@
                         </c:forEach>
 
                         <p:commandButton value="#{messages['commons.addNew']}" partialSubmit="true" process="@this addNewFields"
-                                         update="#{cfde:getCFComponentIds(':offerForm:tabView:cf_panel_group_',null, customFieldDataEntryBean.getGroupedFieldTemplates(cc.attrs.entity).children.size())}"
+                                         update="@(.cf-ctw_#{cc.attrs.cftIndex})"
                                          action="#{customFieldDataEntryBean.addNewValues(cc.attrs.entity)}" style="margin-left:20px">
                             <p:resetInput target="addNewFields"/>
                         </p:commandButton>
@@ -253,10 +254,10 @@
                     </hf:namingContainer>
                     <h:panelGroup styleClass="clearLeft" style="margin-top:20px" layout="block">
                         <p:commandButton id="deleteMany" value="#{messages['commons.deleteMultiple']}" action="#{customFieldDataEntryBean.deleteMany()}" icon="ui-icon-trash"
-                                         process="@this ctSearchResults"
+                                         process="@this ctSearchResults_#{cc.attrs.cftIndex}"
                                          partialSubmit="true"
                                          partialSubmitFilter=":not([name*='addNewFields'])"
-                                         update="#{cfde:getCFComponentIds(':offerForm:tabView:cf_panel_group_',null, customFieldDataEntryBean.getGroupedFieldTemplates(cc.attrs.entity).children.size())}">
+                                         update="@(.cf-ctw_#{cc.attrs.cftIndex})">
                             <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDeleteMultiple']}" icon="ui-icon-alert"/>
                         </p:commandButton>
                     </h:panelGroup>
