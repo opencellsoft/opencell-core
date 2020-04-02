@@ -325,7 +325,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if (terminationReason.isReimburseOneshots()) {
             List<OneShotChargeInstance> oneShotChargeInstances = oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(subscription.getId());
             for (OneShotChargeInstance oneShotChargeInstance : oneShotChargeInstances) {
-                if (terminationDate.compareTo(oneShotChargeInstance.getChargeDate()) <= 0) {
+                if (oneShotChargeInstance.getChargeDate() != null && terminationDate.compareTo(oneShotChargeInstance.getChargeDate()) <= 0) {
                     OneShotChargeTemplate chargeTemplate = (OneShotChargeTemplate) PersistenceUtils.initializeAndUnproxy(oneShotChargeInstance.getChargeTemplate());
                     if (chargeTemplate == null || chargeTemplate.getOneShotChargeTemplateType() == null || !chargeTemplate.getOneShotChargeTemplateType().equals(OneShotChargeTemplateTypeEnum.OTHER)) {
                         continue;
