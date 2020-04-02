@@ -232,6 +232,14 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @JoinColumn(name = "rating_script_id")
     private ScriptInstance ratingScript;
 
+    /**
+     * Enable/disable removing rated WO to 0.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "drop_zero_wo")
+    protected boolean dropZeroWo;
+
+
     // Calculated values
     @Transient
     private boolean roundingValuesComputed;
@@ -301,7 +309,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     }
 
     public String getRatingUnitDescription() {
-        return ratingUnitDescription;
+        return ratingUnitOfMeasure!=null? ratingUnitOfMeasure.getDescription(): ratingUnitDescription;
     }
 
     public void setRatingUnitDescription(String ratingUnitDescription) {
@@ -514,5 +522,22 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
      */
     public void setRatingScript(ScriptInstance ratingScript) {
         this.ratingScript = ratingScript;
+    }
+    /**
+     * Check if removing WO rated to 0 is enabled or not.
+     *
+     * @return true if is enabled false else.
+     */
+    public boolean isDropZeroWo() {
+        return dropZeroWo;
+    }
+
+    /**
+     * Enable/disable removing WO rated to 0.
+     *
+     * @param dropZeroWo
+     */
+    public void setDropZeroWo(boolean dropZeroWo) {
+        this.dropZeroWo = dropZeroWo;
     }
 }

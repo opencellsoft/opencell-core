@@ -127,6 +127,11 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     private TriggeredEdrTemplatesDto triggeredEdrs = new TriggeredEdrTemplatesDto();
 
     /**
+     * Enable/disable removing WO rated to 0.
+     */
+    private boolean dropZeroWo;
+
+    /**
      * Instantiates a new charge template dto.
      */
     public ChargeTemplateDto() {
@@ -176,6 +181,7 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
         if (chargeTemplate.getRatingScript() != null) {
             ratingScriptCode = chargeTemplate.getRatingScript().getCode();
         }
+        dropZeroWo = chargeTemplate.isDropZeroWo();
     }
 
     /**
@@ -522,5 +528,22 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
      */
     public void setRatingScriptCode(String ratingScriptCode) {
         this.ratingScriptCode = ratingScriptCode;
+    }
+    /**
+     * Check if removing WO rated to 0 is enabled or not.
+     *
+     * @return true if is enabled false else.
+     */
+    public boolean isDropZeroWo() {
+        return dropZeroWo;
+    }
+
+    /**
+     * Enable/disable removing WO rated to 0.
+     *
+     * @param dropZeroWo
+     */
+    public void setDropZeroWo(boolean dropZeroWo) {
+        this.dropZeroWo = dropZeroWo;
     }
 }

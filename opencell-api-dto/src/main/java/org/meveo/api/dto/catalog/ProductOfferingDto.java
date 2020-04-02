@@ -156,7 +156,7 @@ public class ProductOfferingDto extends EnableBusinessDto implements IVersionedD
         if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
             this.setOfferTemplateCategories(new ArrayList<OfferTemplateCategoryDto>());
             for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
-                this.getOfferTemplateCategories().add(new OfferTemplateCategoryDto(offerTemplateCategory));
+                this.getOfferTemplateCategories().add(new OfferTemplateCategoryDto(offerTemplateCategory, null));
             }
         }
         List<DigitalResource> digitalResources = productOffering.getAttachments();

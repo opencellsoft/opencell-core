@@ -28,6 +28,7 @@ import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
@@ -54,7 +55,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,7 +86,10 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
         @NamedQuery(name = "CustomerAccount.listCAIdsForRefund", query =
                 "Select ca.id  from CustomerAccount as ca, AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='CREDIT' and "
                         + "                   ao.type not in ('P','AP') and ao.matchingStatus ='O' and ca.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and ao.customerAccount.id = ca.id and "
-                        + "                   pm.paymentType =:paymentMethodIN  and ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN group by ca.id having sum(ao.unMatchingAmount) <> 0") })
+                        + "                   pm.paymentType =:paymentMethodIN  and ao.paymentMethod =:paymentMethodIN  and pm.preferred is true and ao.dueDate >=:fromDueDateIN and ao.dueDate <:toDueDateIN group by ca.id having sum(ao.unMatchingAmount) <> 0"),
+        @NamedQuery(name = "CustomerAccount.getMimimumRTUsed", query = "select ca.minimumAmountEl from CustomerAccount ca where ca.minimumAmountEl is not null"),
+        @NamedQuery(name = "CustomerAccount.getCustomerAccountsWithMinAmountELNotNullByBA", query = "select ca from CustomerAccount ca where ca.minimumAmountEl is not null AND ca.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND ca=:customerAccount")})
+
 public class CustomerAccount extends AccountEntity implements IWFEntity, ICounterEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) CustomerAccount.class.getAnnotation(DiscriminatorValue.class)).value();
@@ -226,6 +232,41 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
     @OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY)
     @MapKey(name = "code")
     private Map<String, CounterInstance> counters = new HashMap<>();
+
+
+    /**
+     * Expression to determine minimum amount value
+     */
+    @Column(name = "minimum_amount_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountEl;
+
+    /**
+     * The billable Entity
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_target_account_id")
+    private BillingAccount minimumTargetAccount;
+
+    /**
+     * Expression to determine rated transaction description to reach minimum amount value
+     */
+    @Column(name = "minimum_label_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelEl;
+
+    /**
+     * Invoicing threshold - do not invoice for a lesser amount.
+     */
+    @Column(name = "invoicing_threshold")
+    private BigDecimal invoicingThreshold;
+
+    /**
+     * The option on how to check the threshold.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "check_threshold", nullable = false)
+    private ThresholdOptionsEnum checkThreshold;
 
     /**
      * This method is called implicitly by hibernate, used to enable
@@ -461,6 +502,18 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 
         return null;
     }
+    
+    public List<PaypalPaymentMethod> getPaypalPaymentMethods() {
+        List<PaypalPaymentMethod> paypalPaymentMethods = new ArrayList<>();
+        if (getPaymentMethods() != null) {
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
+                if (paymentMethod instanceof PaypalPaymentMethod) {
+                	paypalPaymentMethods.add((PaypalPaymentMethod) paymentMethod);
+                }
+            }
+        }
+        return paypalPaymentMethods;
+    }
 
     /**
      * Get a list of card type payment methods
@@ -521,6 +574,18 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
             }
         }
         return checkPaymentMethods;
+    }
+    
+    public List<StripePaymentMethod> getStripePaymentMethods() {
+        List<StripePaymentMethod> stripePaymentMethods = new ArrayList<>();
+        if (getPaymentMethods() != null) {
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
+                if (paymentMethod instanceof StripePaymentMethod) {
+                    stripePaymentMethods.add((StripePaymentMethod) paymentMethod);
+                }
+            }
+        }
+        return stripePaymentMethods;
     }
 
     /**
@@ -668,11 +733,61 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
     }
 
     /**
-     * Sets counters
-     *
-     * @param counters
+     * @return the invoicingThreshold
      */
-    public void setCounters(Map<String, CounterInstance> counters) {
-        this.counters = counters;
+    public BigDecimal getInvoicingThreshold() {
+        return invoicingThreshold;
+    }
+
+    /**
+     * @param invoicingThreshold the invoicingThreshold to set
+     */
+    public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+        this.invoicingThreshold = invoicingThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        if (checkThreshold == null) {
+            checkThreshold = ThresholdOptionsEnum.AFTER_DISCOUNT;
+        }
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
+    }
+
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public BillingAccount getMinimumTargetAccount() {
+        return minimumTargetAccount;
+    }
+
+    public void setMinimumTargetAccount(BillingAccount minimumTargetAccount) {
+        this.minimumTargetAccount = minimumTargetAccount;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
     }
 }

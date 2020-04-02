@@ -320,11 +320,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         SubscriptionRenewal serviceRenewal = serviceTemplate.getServiceRenewal();
         serviceInstance.setServiceRenewal(serviceRenewal);
-        serviceInstance.setMinimumAmountEl(serviceTemplate.getMinimumAmountEl());
-        serviceInstance.setMinimumLabelEl(serviceTemplate.getMinimumLabelEl());
+        //serviceInstance.setMinimumAmountEl(serviceTemplate.getMinimumAmountEl());
+        //serviceInstance.setMinimumLabelEl(serviceTemplate.getMinimumLabelEl());
         serviceInstance.setMinimumAmountElSpark(serviceTemplate.getMinimumAmountElSpark());
         serviceInstance.setMinimumLabelElSpark(serviceTemplate.getMinimumLabelElSpark());
-        serviceInstance.setMinimumInvoiceSubCategory(serviceTemplate.getMinimumInvoiceSubCategory());
+        //serviceInstance.setMinimumInvoiceSubCategory(serviceTemplate.getMinimumInvoiceSubCategory());
 
         if (!isVirtual) {
             create(serviceInstance);
@@ -532,8 +532,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             Date nextChargeDate = recurringChargeInstance.getNextChargeDate();
             Date storedNextChargeDate = recurringChargeInstance.getNextChargeDate();
 
-            boolean isApplyInAdvance = (recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance() == null) ? false
-                    : recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance();
+            boolean isApplyInAdvance = (recurringChargeInstance.getApplyInAdvance() == null) ? false
+                    : recurringChargeInstance.getApplyInAdvance();
             if (!StringUtils.isBlank(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl())) {
                 isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl(), serviceInstance,
                     recurringChargeInstance.getRecurringChargeTemplate());

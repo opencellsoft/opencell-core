@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.account;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.crm.AdditionalDetailsDto;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.crm.Customer;
 
 /**
@@ -64,17 +66,26 @@ public class CustomerDto extends AccountDto {
      * Use for GET / LIST only.
      */
     private CustomerAccountsDto customerAccounts = new CustomerAccountsDto();
-    
+
     private AdditionalDetailsDto additionalDetails = new AdditionalDetailsDto();
-    
-    
+
+    /**
+     * Invoicing threshold - do not invoice for a lesser amount.
+     */
+    private BigDecimal invoicingThreshold;
+
+    /**
+     * The option on how to check the threshold.
+     */
+    private ThresholdOptionsEnum checkThreshold;
+
     /**
      * Instantiates a new customer dto.
      */
     public CustomerDto() {
         super();
     }
-    
+
     /**
      * Instantiates a new customer dto.
      * 
@@ -98,14 +109,31 @@ public class CustomerDto extends AccountDto {
 			setSeller(e.getSeller().getCode());
 		}
 
-		if (e.getContactInformation() != null) {
-			setContactInformation(new ContactInformationDto(e.getContactInformation()));
-		}
-		
-		if (e.getAdditionalDetails() != null) {
-			setAdditionalDetails(new AdditionalDetailsDto(e.getAdditionalDetails()));
-		}
-	}
+        if (e.getContactInformation() != null) {
+            setContactInformation(new ContactInformationDto(e.getContactInformation()));
+        }
+
+        if (e.getAdditionalDetails() != null) {
+            setAdditionalDetails(new AdditionalDetailsDto(e.getAdditionalDetails()));
+        }
+
+        if (e.getMinimumAmountEl() != null) {
+            setMinimumAmountEl(e.getMinimumAmountEl());
+        }
+        if (e.getMinimumLabelEl() != null) {
+            setMinimumLabelEl(e.getMinimumLabelEl());
+        }
+        if (e.getMinimumTargetAccount() != null) {
+            setMinimumTargetAccount(e.getMinimumTargetAccount().getCode());
+        }
+        if (e.getInvoicingThreshold() != null) {
+            setInvoicingThreshold(e.getInvoicingThreshold());
+        }
+        if (e.getCheckThreshold() != null) {
+            setCheckThreshold(e.getCheckThreshold());
+        }
+
+    }
 
     /**
      * Gets the customer category.
@@ -224,7 +252,39 @@ public class CustomerDto extends AccountDto {
 	}
 
 
-	@Override
+	/**
+     * @return the invoicingThreshold
+     */
+    public BigDecimal getInvoicingThreshold() {
+        return invoicingThreshold;
+    }
+
+    /**
+     * @param invoicingThreshold the invoicingThreshold to set
+     */
+    public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+        this.invoicingThreshold = invoicingThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
+    }
+
+    @Override
     public String toString() {
         return "CustomerDto [customerCategory=" + customerCategory + ", customerBrand=" + customerBrand + ", seller=" + seller + ", mandateIdentification=" + mandateIdentification
                 + ", mandateDate=" + mandateDate + ", contactInformation=" + getContactInformation() + ", customerAccounts=" + customerAccounts + "]";

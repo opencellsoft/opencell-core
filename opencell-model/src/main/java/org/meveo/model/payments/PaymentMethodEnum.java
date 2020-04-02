@@ -21,25 +21,26 @@ package org.meveo.model.payments;
  * Payment Method types.
  * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 9.2.0
  */
 public enum PaymentMethodEnum {
 
-    CHECK, DIRECTDEBIT, WIRETRANSFER, CARD;
+	CHECK, DIRECTDEBIT, WIRETRANSFER, CARD, PAYPAL, STRIPE;
 
-    /**
-     * @return label
-     */
-    public String getLabel() {
-        return this.getClass().getSimpleName() + "." + this.name();
-    }
+	/**
+	 * @return label
+	 */
+	public String getLabel() {
+		return this.getClass().getSimpleName() + "." + this.name();
+	}
 
-    /**
-     * Is it as simple payment method that does not required any additional information.
-     * 
-     * @return true/fale
-     */
-    public boolean isSimple() {
-        return this == CHECK || this == PaymentMethodEnum.WIRETRANSFER;
-    }
+	/**
+	 * Is it as simple payment method that does not required any additional
+	 * information.
+	 * 
+	 * @return true/fale
+	 */
+	public boolean isSimple() {
+		return this == CHECK || this == PaymentMethodEnum.WIRETRANSFER || this == PaymentMethodEnum.PAYPAL;
+	}
 }

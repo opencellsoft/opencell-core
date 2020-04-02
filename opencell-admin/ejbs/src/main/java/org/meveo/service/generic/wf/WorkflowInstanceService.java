@@ -35,7 +35,6 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.model.generic.wf.WorkflowInstance;
-import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.filter.FilterService;
 
@@ -43,9 +42,6 @@ import com.google.common.collect.Maps;
 
 @Stateless
 public class WorkflowInstanceService extends PersistenceService<WorkflowInstance> {
-
-    @Inject
-    private BusinessEntityService businessEntityService;
 
     @Inject
     private WFStatusService wfStatusService;
@@ -80,16 +76,18 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
         return (List<WorkflowInstance>) executeSelectQuery(query, params);
     }
 
-    public List<BusinessEntity> findEntitiesWithoutWFInstance(GenericWorkflow gwf) throws BusinessException {
+    public List<BusinessEntity> findEntitiesForWorkflow(GenericWorkflow gwf, boolean withoutWFInstance) throws BusinessException {
 
         Map<String, Object> params = Maps.newHashMap();
         if (gwf.getId() != null) {
             gwf = genericWorkflowService.findById(gwf.getId());
         }
+        String operator = withoutWFInstance ? "not ":"";
         if (gwf.getFilter() != null) {
 
-            String query = "From " + gwf.getTargetEntityClass()
-                    + " be where be.id not in (select wi.entityInstanceId from WorkflowInstance wi where wi.targetEntityClass=:entityClass)";
+            
+			String query = "From " + gwf.getTargetEntityClass()
+                    + " be where be.id " + operator  + "in (select wi.entityInstanceId from WorkflowInstance wi where wi.targetEntityClass=:entityClass)";
             params.put("entityClass", gwf.getTargetEntityClass());
 
             List<BusinessEntity> listAllEntitiesWithoutWFInstance = (List<BusinessEntity>) executeSelectQuery(query, params);
@@ -120,7 +118,7 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
             return listFilteredEntitiesWithoutWFInstance;
         } else {
             String query = "From " + gwf.getTargetEntityClass()
-                    + " be where be.id not in (select wi.entityInstanceId from WorkflowInstance wi where wi.targetEntityClass=:entityClass)";
+                    + " be where be.id " + operator  + "in (select wi.entityInstanceId from WorkflowInstance wi where wi.targetEntityClass=:entityClass)";
             params.put("entityClass", gwf.getTargetEntityClass());
 
             return (List<BusinessEntity>) executeSelectQuery(query, params);

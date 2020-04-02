@@ -17,16 +17,18 @@
  */
 package org.meveo.service.bi.impl;
 
-import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.FileFormat;
 import org.meveo.model.bi.FileStatusEnum;
 import org.meveo.model.bi.FlatFile;
 import org.meveo.service.base.BusinessService;
+
+import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Flat file service
@@ -38,8 +40,24 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class FlatFileService extends BusinessService<FlatFile> {
 
+    /**
+     * Create the flat file
+     *
+     * @param fileOriginalName   the file original name
+     * @param fileCurrentName    the file current name
+     * @param currentDirectory   the current directory
+     * @param fileFormat         the file format
+     * @param errorMessage       the error message
+     * @param status             the status
+     * @param flatFileJobCode    the flat file job code
+     * @param processingAttempts the processing attempts
+     * @param linesInSuccess     the lines in success
+     * @param linesInError       the lines in error
+     * @return the created flat file
+     * @throws BusinessException the business exception
+     */
     public FlatFile create(String fileOriginalName, String fileCurrentName, String currentDirectory, FileFormat fileFormat, String errorMessage, FileStatusEnum status,
-            String flatFileJobCode, Integer processingAttempts, Integer linesInSuccess, Integer linesInError) throws BusinessException {
+                           String flatFileJobCode, Integer processingAttempts, Integer linesInSuccess, Integer linesInError) throws BusinessException {
         FlatFile flatFile = new FlatFile();
         flatFile.setFileOriginalName(fileOriginalName);
         flatFile.setFileCurrentName(fileCurrentName);
@@ -57,6 +75,14 @@ public class FlatFileService extends BusinessService<FlatFile> {
         return flatFile;
     }
 
+    /**
+     * Update the flat file
+     *
+     * @param flatFile     the flat file
+     * @param errorMessage the error message
+     * @param status       the status
+     * @throws BusinessException the business exception
+     */
     public void update(FlatFile flatFile, String errorMessage, FileStatusEnum status) throws BusinessException {
         flatFile.setErrorMessage(errorMessage);
         flatFile.setStatus(status);
@@ -72,5 +98,27 @@ public class FlatFileService extends BusinessService<FlatFile> {
         } catch (NoResultException | NonUniqueResultException e) {
             return null;
         }
+    }
+
+    /**
+     * Get flat file by file name.
+     *
+     * @param fileName the file name
+     * @return the flat file
+     */
+    public FlatFile getFlatFileByFileName(String fileName) {
+        Pattern p = Pattern.compile("\\d+\\_");
+        Matcher m = p.matcher(fileName);
+        FlatFile flatFile = null;
+        while (m.find()) {
+            String fileFormatCode = fileName.substring(0, fileName.indexOf(m.group()));
+            Long flatFileId = Long.valueOf(m.group().split("_")[0]);
+            String flatFileCode = fileFormatCode + flatFileId;
+            flatFile = findById(flatFileId, true);
+            if (flatFile != null && flatFile.getCode().equalsIgnoreCase(flatFileCode)) {
+                return flatFile;
+            }
+        }
+        return null;
     }
 }

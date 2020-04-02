@@ -19,6 +19,8 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -119,16 +121,28 @@ public class AggregatedWalletOperation {
 	 * Tax class
 	 */
 	private TaxClass taxClass;
+	
+    /**
+     * Unit amount with tax
+     */
+    private BigDecimal unitAmountWithTax = BigDecimal.ZERO;
+    /**
+     * Unit amount without tax
+     */
+    private BigDecimal unitAmountWithoutTax = BigDecimal.ZERO;
+    /**
+     * Unit amount tax
+     */
+    private BigDecimal unitAmountTax = BigDecimal.ZERO;
 
 	/**
 	 * List of wallet operations.
 	 */
 	private List<Long> walletOperationsIds;
 
-	public AggregatedWalletOperation(String walletOpsIds, Long sellerId, Integer year, Integer month, Integer day, Tax tax,
-			InvoiceSubCategory invoiceSubCategory, Object id, BigDecimal amountWithTax, BigDecimal amountWithoutTax,
-			BigDecimal amountTax, TaxClass taxClass, BigDecimal quantity, String orderNumber, String parameter1, String parameter2, String parameter3,
-			String parameterExtra) {
+	public AggregatedWalletOperation(String walletOpsIds, Long sellerId, Integer year, Integer month, Integer day, Tax tax, 
+			InvoiceSubCategory invoiceSubCategory, Object id, BigDecimal amountWithTax, BigDecimal amountWithoutTax, BigDecimal amountTax,
+			TaxClass taxClass, BigDecimal quantity, BigDecimal unitAmountWithoutTax, String orderNumber, String parameter1, String parameter2, String parameter3, String parameterExtra) {
 		String[] stringIds = walletOpsIds.split(",");
 		List<Long> ids = Arrays.asList(stringIds).stream().map(x-> new Long(x)).collect(Collectors.toList());
 		this.walletOperationsIds=ids;
@@ -142,6 +156,10 @@ public class AggregatedWalletOperation {
 		this.amountWithTax = amountWithTax;
 		this.amountWithoutTax = amountWithoutTax;
 		this.amountTax = amountTax;
+		MathContext mc = new MathContext(12, RoundingMode.HALF_UP);
+		this.unitAmountWithoutTax = (amountWithoutTax.compareTo(BigDecimal.ZERO)!=0 && quantity.compareTo( BigDecimal.ZERO)!=0) ? (amountWithoutTax.divide(quantity, mc)) : BigDecimal.ZERO;
+		this.unitAmountWithTax = (amountWithTax.compareTo(BigDecimal.ZERO)!=0 && quantity.compareTo( BigDecimal.ZERO)!=0) ? (amountWithTax.divide(quantity, mc)) : BigDecimal.ZERO;
+        this.unitAmountTax = this.unitAmountWithTax.subtract(this.unitAmountWithoutTax);
 		this.quantity = quantity;
 		this.taxClass = taxClass;
 		this.orderNumber = orderNumber;
@@ -325,6 +343,48 @@ public class AggregatedWalletOperation {
 	 */
 	public void setTaxClass(TaxClass taxClass) {
 		this.taxClass = taxClass;
+	}
+
+	/**
+	 * @return the unitAmountWithTax
+	 */
+	public BigDecimal getUnitAmountWithTax() {
+		return unitAmountWithTax;
+	}
+
+	/**
+	 * @param unitAmountWithTax the unitAmountWithTax to set
+	 */
+	public void setUnitAmountWithTax(BigDecimal unitAmountWithTax) {
+		this.unitAmountWithTax = unitAmountWithTax;
+	}
+
+	/**
+	 * @return the unitAmountWithoutTax
+	 */
+	public BigDecimal getUnitAmountWithoutTax() {
+		return unitAmountWithoutTax;
+	}
+
+	/**
+	 * @param unitAmountWithoutTax the unitAmountWithoutTax to set
+	 */
+	public void setUnitAmountWithoutTax(BigDecimal unitAmountWithoutTax) {
+		this.unitAmountWithoutTax = unitAmountWithoutTax;
+	}
+
+	/**
+	 * @return the unitAmountTax
+	 */
+	public BigDecimal getUnitAmountTax() {
+		return unitAmountTax;
+	}
+
+	/**
+	 * @param unitAmountTax the unitAmountTax to set
+	 */
+	public void setUnitAmountTax(BigDecimal unitAmountTax) {
+		this.unitAmountTax = unitAmountTax;
 	}
 
 }

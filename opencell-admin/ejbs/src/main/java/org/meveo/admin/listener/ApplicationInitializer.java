@@ -161,7 +161,7 @@ public class ApplicationInitializer {
         jobInstanceService.registerJobs();
 
         // Initialize scripts
-        scriptCompilerService.compileAll();
+        scriptCompilerService.compileAndInitializeAll();
 
         // Initialize caches
         walletCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));

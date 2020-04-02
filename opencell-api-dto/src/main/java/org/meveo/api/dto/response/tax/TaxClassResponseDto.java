@@ -37,7 +37,7 @@ public class TaxClassResponseDto extends BaseResponse {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-    /** The title dto. */
+    /** The Tax class dto. */
     private TaxClassDto dto;
 
     /**

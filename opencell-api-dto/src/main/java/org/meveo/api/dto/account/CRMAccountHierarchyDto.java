@@ -18,17 +18,6 @@
 
 package org.meveo.api.dto.account;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
@@ -37,9 +26,20 @@ import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * The Class CRMAccountHierarchyDto.
@@ -195,6 +195,7 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
     /** The invoicing threshold. */
     private BigDecimal invoicingThreshold;
 
+
     /** The ua status. */
     // user account
     private AccountStatusEnum uaStatus;
@@ -232,6 +233,39 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
      * a list of emails separated by comma.
      */
     private String ccedEmails;
+
+    /**
+     * An object to store minimumAmount data for each account.
+     */
+    private MinimumAmountElDto minimumAmountEl;
+
+    /**
+     * The invoicing threshold for the customer .
+     */
+    private BigDecimal customerInvoicingThreshold;
+
+    /**
+     * The invoicing threshold for the customer account.
+     */
+    private BigDecimal customerAccountInvoicingThreshold;
+
+    /**
+     * The option on how to check the threshold for billingAccount.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum checkThreshold;
+
+    /**
+     * The option on how to check the threshold for customer Account.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum customerAccountCheckThreshold;
+
+    /**
+     * The option on how to check the threshold for customer.
+     */
+    @XmlElement
+    private ThresholdOptionsEnum customerCheckThreshold;
 
     /**
      * Gets the crm account type.
@@ -1073,5 +1107,104 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
      */
     public void setCcedEmails(String ccedEmails) {
         this.ccedEmails = ccedEmails;
+    }
+
+    /**
+     * Gets the MinimumAmountElDto
+     * @return the MinimumAmountElDto
+     */
+    public MinimumAmountElDto getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    /**
+     * Sets the MinimumAmountElDto
+     * @param minimumAmountEl the MinimumAmountElDto
+     */
+    public void setMinimumAmountEl(MinimumAmountElDto minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+
+
+    /**
+     * @return the customer's invoicingThreshold
+     */
+    public BigDecimal getCustomerInvoicingThreshold() {
+        return customerInvoicingThreshold;
+    }
+
+    /**
+     * @param customerInvoicingThreshold the customer's invoicingThreshold to set
+     */
+    public void setCustomerInvoicingThreshold(BigDecimal customerInvoicingThreshold) {
+        this.customerInvoicingThreshold = customerInvoicingThreshold;
+    }
+
+    /**
+     * @return the customer account's invoicingThreshold
+     */
+    public BigDecimal getCustomerAccountInvoicingThreshold() {
+        return customerAccountInvoicingThreshold;
+    }
+
+    /**
+     * @param customerAccountInvoicingThreshold the customer account's invoicingThreshold to set
+     */
+    public void setCustomerAccountInvoicingThreshold(BigDecimal customerAccountInvoicingThreshold) {
+        this.customerAccountInvoicingThreshold = customerAccountInvoicingThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCustomerAccountCheckThreshold() {
+        return customerAccountCheckThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param customerAccountCheckThreshold the threshold option
+     */
+    public void setCustomerAccountCheckThreshold(ThresholdOptionsEnum customerAccountCheckThreshold) {
+        this.customerAccountCheckThreshold = customerAccountCheckThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCustomerCheckThreshold() {
+        return customerCheckThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param customerCheckThreshold the threshold option
+     */
+    public void setCustomerCheckThreshold(ThresholdOptionsEnum customerCheckThreshold) {
+        this.customerCheckThreshold = customerCheckThreshold;
     }
 }

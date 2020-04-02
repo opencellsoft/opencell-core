@@ -61,7 +61,6 @@ import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.OverrideProrataEnum;
-import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -256,10 +255,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     // Be careful to use this method only for the first application of a recurring charge
     public Date initChargeDateAndGetNextChargeDate(RecurringChargeInstance chargeInstance) throws BusinessException {
 
-        Calendar cal = chargeInstance.getRecurringChargeTemplate().getCalendar();
-        if (!StringUtils.isBlank(chargeInstance.getRecurringChargeTemplate().getCalendarCodeEl())) {
-            cal = recurringChargeTemplateService.getCalendarFromEl(chargeInstance.getRecurringChargeTemplate().getCalendarCodeEl(), chargeInstance.getServiceInstance(), chargeInstance.getRecurringChargeTemplate());
-        }
+        Calendar cal = resolveCalendar(chargeInstance);
         cal.setInitDate(chargeInstance.getSubscriptionDate());
 
         Date chargeDate = cal.truncateDateTime(chargeInstance.getSubscriptionDate());
@@ -276,10 +272,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @see RecurringChargeInstance
      */
     public void updateChargeDate(RecurringChargeInstance chargeInstance) throws BusinessException {
-        Calendar cal = chargeInstance.getRecurringChargeTemplate().getCalendar();
-        if (!StringUtils.isBlank(chargeInstance.getRecurringChargeTemplate().getCalendarCodeEl())) {
-            cal = recurringChargeTemplateService.getCalendarFromEl(chargeInstance.getRecurringChargeTemplate().getCalendarCodeEl(), chargeInstance.getServiceInstance(), chargeInstance.getRecurringChargeTemplate());
-        }
+        Calendar cal = resolveCalendar(chargeInstance);
         cal.setInitDate(chargeInstance.getSubscriptionDate());
 
         Date chargeDate = cal.truncateDateTime(chargeInstance.getNextChargeDate());
@@ -287,6 +280,15 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         chargeInstance.setChargeDate(chargeDate);
         chargeInstance.setNextChargeDate(nextChargeDate);
+    }
+
+    private Calendar resolveCalendar(RecurringChargeInstance chargeInstance) {
+        RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
+        Calendar cal = chargeInstance.getCalendar();
+        if (!StringUtils.isBlank(recurringChargeTemplate.getCalendarCodeEl())) {
+            cal = recurringChargeTemplateService.getCalendarFromEl(recurringChargeTemplate.getCalendarCodeEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
+        }
+        return cal;
     }
 
     /**
@@ -310,10 +312,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         Date subscriptionDate = chargeInstance.getSubscriptionDate(); // AKK Need to be truncated?? cal.truncateDateTime(chargeInstance.getSubscriptionDate());
 
-        Calendar cal = recurringChargeTemplate.getCalendar();
-        if (!StringUtils.isBlank(recurringChargeTemplate.getCalendarCodeEl())) {
-            cal = recurringChargeTemplateService.getCalendarFromEl(recurringChargeTemplate.getCalendarCodeEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
-        }
+        Calendar cal = resolveCalendar(chargeInstance);
         cal.setInitDate(subscriptionDate);
 
         Date applyChargeOnDate = chargeInstance.getChargeDate(); // Charge date is already truncated based on calendar, so no need to truncate here again
@@ -345,10 +344,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             log.debug("Recuring charge id={} will be rated with prorata {}/{}={} -> quantity={}", chargeInstance.getId(), part1, part2, prorataRatio, inputQuantity);
         }
 
-        boolean isApplyInAdvance = recurringChargeTemplate.getApplyInAdvance() == null ? false : recurringChargeTemplate.getApplyInAdvance();
-        if (!StringUtils.isBlank(recurringChargeTemplate.getApplyInAdvanceEl())) {
-            isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getApplyInAdvanceEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
-        }
+        boolean isApplyInAdvance = resolveIsApplyInAdvance(chargeInstance, recurringChargeTemplate);
 
         Date chargeDateForWO = isApplyInAdvance ? applyChargeOnDate : nextChargeDate;
         ChargeTemplate chargeTemplate = recurringChargeTemplateService.findById(chargeInstance.getChargeTemplate().getId());
@@ -368,6 +364,15 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         } else {
             return Collections.singletonList(getRatedChargeWalletOperations(chargeInstance, nextChargeDate, preRateOnly, cal, applyChargeOnDate, inputQuantity, isApplyInAdvance, chargeDateForWO));
         }
+    }
+
+    private boolean resolveIsApplyInAdvance(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate) {
+        Boolean applyInAdvance = chargeInstance.getApplyInAdvance();
+        boolean isApplyInAdvance = applyInAdvance == null ? false : applyInAdvance;
+        if (!StringUtils.isBlank(recurringChargeTemplate.getApplyInAdvanceEl())) {
+            isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getApplyInAdvanceEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
+        }
+        return isApplyInAdvance;
     }
 
     private WalletOperation getRatedChargeWalletOperations(RecurringChargeInstance chargeInstance, Date nextChargeDate, boolean preRateOnly, Calendar cal, Date applyChargeOnDate, BigDecimal inputQuantity,
@@ -423,12 +428,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         chargeInstance.setNextChargeDate(nextChargeDate);
 
-        boolean useApplyInAdvance = recurringChargeTemplate.getApplyInAdvance() == null ? false : recurringChargeTemplate.getApplyInAdvance();
-        if (!StringUtils.isBlank(recurringChargeTemplate.getApplyInAdvanceEl())) {
-            useApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getApplyInAdvanceEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
-        }
+        boolean isApplyInAdvance = resolveIsApplyInAdvance(chargeInstance, recurringChargeTemplate);
 
-        if (useApplyInAdvance) {
+        if (isApplyInAdvance) {
             applyFirstRecurringCharge(chargeInstance, nextChargeDate, false);
         }
     }
@@ -456,7 +458,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         Date applyChargeOnDate = chargeInstance.getTerminationDate();
         // applyChargeOnDate = DateUtils.addDaysToDate(applyChargeOnDate, 1);
 
-        boolean isApplyInAdvance = chargeInstance.getRecurringChargeTemplate().getApplyInAdvance() == null ? false : chargeInstance.getRecurringChargeTemplate().getApplyInAdvance();
+        boolean isApplyInAdvance = chargeInstance.getApplyInAdvance() == null ? false : chargeInstance.getApplyInAdvance();
         if (StringUtils.isBlank(chargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl())) {
             isApplyInAdvance = recurringChargeTemplateService.matchExpression(chargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl(), chargeInstance.getServiceInstance(),
                 chargeInstance.getRecurringChargeTemplate());
@@ -467,10 +469,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
 
-        Calendar cal = chargeInstance.getRecurringChargeTemplate().getCalendar();
-        if (!StringUtils.isBlank(chargeInstance.getRecurringChargeTemplate().getCalendarCodeEl())) {
-            cal = recurringChargeTemplateService.getCalendarFromEl(chargeInstance.getRecurringChargeTemplate().getCalendarCodeEl(), chargeInstance.getServiceInstance(), chargeInstance.getRecurringChargeTemplate());
-        }
+        Calendar cal = resolveCalendar(chargeInstance);
         if (cal == null) {
             throw new IncorrectChargeTemplateException("Recurring charge template has no calendar: code=" + recurringChargeTemplate.getCode());
         }
@@ -565,10 +564,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
 
-        Calendar cal = recurringChargeTemplate.getCalendar();
-        if (!StringUtils.isBlank(recurringChargeTemplate.getCalendarCodeEl())) {
-            cal = recurringChargeTemplateService.getCalendarFromEl(recurringChargeTemplate.getCalendarCodeEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
-        }
+        Calendar cal = resolveCalendar(chargeInstance);
         cal.setInitDate(serviceInstance.getSubscriptionDate());
 
         Date applyChargeFromDate = null;
@@ -667,7 +663,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             }).flatMap(List::stream).collect(Collectors.toList());
     }
 
-   private void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
+    private void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
 
         CounterInstance counterInstance = chargeInstance.getCounter();
         CounterPeriod counterPeriod = null;
@@ -712,10 +708,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         }
 
         Date applyChargeFromDate = fromDate;
-        Calendar cal = chargeInstance.getRecurringChargeTemplate().getCalendar();
-        if (!StringUtils.isBlank(chargeInstance.getRecurringChargeTemplate().getCalendarCodeEl())) {
-            cal = recurringChargeTemplateService.getCalendarFromEl(chargeInstance.getRecurringChargeTemplate().getCalendarCodeEl(), chargeInstance.getServiceInstance(), chargeInstance.getRecurringChargeTemplate());
-        }
+        Calendar cal = resolveCalendar(chargeInstance);
         cal.setInitDate(chargeInstance.getSubscriptionDate());
         if (cal.getInitDate() == null) {
             ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
@@ -762,10 +755,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     public List<WalletOperation> applyNotAppliedinAdvanceReccuringCharge(RecurringChargeInstance chargeInstance, boolean reimbursement, RecurringChargeTemplate recurringChargeTemplate)
             throws BusinessException, RatingException {
 
-        Calendar cal = recurringChargeTemplate.getCalendar();
-        if (!StringUtils.isBlank(recurringChargeTemplate.getCalendarCodeEl())) {
-            cal = recurringChargeTemplateService.getCalendarFromEl(recurringChargeTemplate.getCalendarCodeEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
-        }
+        Calendar cal = resolveCalendar(chargeInstance);
         cal.setInitDate(chargeInstance.getSubscriptionDate());
 
         // For non-reimbursement it will cover only one calendar period cycle
@@ -869,15 +859,13 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @throws BusinessException Business exception
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate, Date endAgreementDate, OverrideProrataEnum overrideProrata) throws BusinessException, RatingException {
+    public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate, Date endAgreementDate, OverrideProrataEnum overrideProrata)
+            throws BusinessException, RatingException {
 
         // we apply the charge at its nextChargeDate if applied in advance, else at chargeDate
         Date applyChargeFromDate = chargeInstance.getNextChargeDate();
         RecurringChargeTemplate recChargeTemplate = chargeInstance.getRecurringChargeTemplate();
-        boolean isApplyInAdvance = recChargeTemplate.getApplyInAdvance() == null ? false : recChargeTemplate.getApplyInAdvance();
-        if (!StringUtils.isBlank(recChargeTemplate.getApplyInAdvanceEl())) {
-            isApplyInAdvance = recurringChargeTemplateService.matchExpression(recChargeTemplate.getApplyInAdvanceEl(), chargeInstance.getServiceInstance(), recChargeTemplate);
-        }
+        boolean isApplyInAdvance = resolveIsApplyInAdvance(chargeInstance, recurringChargeTemplate);
         if (!isApplyInAdvance) {
             applyChargeFromDate = chargeInstance.getChargeDate();
         }
@@ -890,10 +878,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             return;
         }
 
-        Calendar cal = recurringChargeTemplate.getCalendar();
-        if (!StringUtils.isBlank(recurringChargeTemplate.getCalendarCodeEl())) {
-            cal = recurringChargeTemplateService.getCalendarFromEl(recurringChargeTemplate.getCalendarCodeEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
-        }
+        Calendar cal = resolveCalendar(chargeInstance);
         cal.setInitDate(chargeInstance.getSubscriptionDate());
         log.debug("Will apply recurring charge {} for supplement charge agreement for {} - {}", chargeInstance.getId(), applyChargeFromDate, endAgreementDate);
 
@@ -1499,4 +1484,10 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
     }
 
+    /**
+     * Remove wallet operation rated 0 and chargeTemplate.dropZeroWo=true.
+     */
+    public void removeZeroWalletOperation() {
+        getEntityManager().createNamedQuery("WalletOperation.deleteZeroWO").executeUpdate();
+    }
 }

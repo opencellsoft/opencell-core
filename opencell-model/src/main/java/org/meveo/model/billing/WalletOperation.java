@@ -115,7 +115,8 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "WalletOperation.listNotOpenedWObetweenTwoDates", query = "SELECT o FROM WalletOperation o WHERE o.status != 'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate and o.id >:lastId order by o.id asc"),
         @NamedQuery(name = "WalletOperation.listWObetweenTwoDatesByStatus", query = "SELECT o FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate and o.id >:lastId order by o.id asc"),
         @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status<>'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate"),
-        @NamedQuery(name = "WalletOperation.deleteWObetweenTwoDatesByStatus", query = "delete FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate")})
+        @NamedQuery(name = "WalletOperation.deleteWObetweenTwoDatesByStatus", query = "delete FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate"),
+        @NamedQuery(name = "WalletOperation.deleteZeroWO", query = "delete FROM WalletOperation o WHERE o.quantity=0 AND o.chargeInstance.id in (select c.id FROM ChargeInstance c where c.chargeTemplate.dropZeroWo=true)")})
 public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -969,6 +970,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         result.setWallet(wallet);
         result.setEdr(edr);
         result.setSubscription(subscription);
+        result.setServiceInstance(serviceInstance);
         result.setCreated(created);
         result.setUpdated(updated);
         result.setTaxClass(taxClass);
@@ -1170,7 +1172,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         return inputUnitOfMeasure;
     }
 
-    public void setInput_unitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
+    public void setInputUnitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
         this.inputUnitOfMeasure = inputUnitOfMeasure;
     }
 

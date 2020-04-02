@@ -182,7 +182,7 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
         if (isNew && postData.isDisabled() != null) {
             chargeTemplate.setDisabled(postData.isDisabled());
         }
-
+        chargeTemplate.setDropZeroWo(postData.isDropZeroWo());
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, isNew);

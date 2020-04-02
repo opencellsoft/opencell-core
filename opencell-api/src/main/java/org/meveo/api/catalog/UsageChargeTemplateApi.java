@@ -95,7 +95,7 @@ public class UsageChargeTemplateApi extends ChargeTemplateApi<UsageChargeTemplat
 
     /**
      * Convert/update DTO object to an entity object
-     * 
+     *
      * @param postData DTO object
      * @param chargeTemplate Entity object to update
      * @return A new or updated entity object
@@ -133,6 +133,8 @@ public class UsageChargeTemplateApi extends ChargeTemplateApi<UsageChargeTemplat
         if (postData.getTriggerNextCharge() != null) {
             chargeTemplate.setTriggerNextCharge(postData.getTriggerNextCharge());
         }
+        chargeTemplate.setDropZeroWo(postData.isDropZeroWo());
+
         if (postData.getTriggerNextChargeEL() != null) {
             chargeTemplate.setTriggerNextChargeEL(StringUtils.getDefaultIfEmpty(postData.getTriggerNextChargeEL(), null));
         }

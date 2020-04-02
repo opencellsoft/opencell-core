@@ -18,24 +18,24 @@
 
 package org.meveo.api.dto.account;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import org.meveo.api.dto.payment.AccountOperationDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.CustomerAccountStatusEnum;
+import org.meveo.model.payments.DunningLevelEnum;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.payment.AccountOperationDto;
-import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.CustomerAccountStatusEnum;
-import org.meveo.model.payments.DunningLevelEnum;
-import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Customer Account DTO.
@@ -137,6 +137,16 @@ public class CustomerAccountDto extends AccountDto {
     private List<AccountOperationDto> accountOperations;
 
     /**
+     * Invoicing threshold - do not invoice for a lesser amount.
+     */
+    private BigDecimal invoicingThreshold;
+
+    /**
+     * The option on how to check the threshold.
+     */
+    private ThresholdOptionsEnum checkThreshold;
+
+    /**
      * Instantiates a new customer account dto.
      */
     public CustomerAccountDto() {
@@ -188,6 +198,21 @@ public class CustomerAccountDto extends AccountDto {
             // Start compatibility with pre-4.6 versions
             setPaymentMethod(e.getPaymentMethods().get(0).getPaymentType());
             // End compatibility with pre-4.6 versions
+        }
+        if (e.getMinimumAmountEl() != null) {
+            setMinimumAmountEl(e.getMinimumAmountEl());
+        }
+        if (e.getMinimumLabelEl() != null) {
+            setMinimumLabelEl(e.getMinimumLabelEl());
+        }
+        if (e.getMinimumTargetAccount() != null) {
+            setMinimumTargetAccount(e.getMinimumTargetAccount().getCode());
+        }
+        if (e.getInvoicingThreshold() != null) {
+            setInvoicingThreshold(e.getInvoicingThreshold());
+        }
+        if (e.getCheckThreshold() != null) {
+            setCheckThreshold(e.getCheckThreshold());
         }
     }
 
@@ -577,5 +602,38 @@ public class CustomerAccountDto extends AccountDto {
 
     public void setAccountOperations(List<AccountOperationDto> accountOperations) {
         this.accountOperations = accountOperations;
+    }
+
+
+    /**
+     * @return the invoicingThreshold
+     */
+    public BigDecimal getInvoicingThreshold() {
+        return invoicingThreshold;
+    }
+
+    /**
+     * @param invoicingThreshold the invoicingThreshold to set
+     */
+    public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+        this.invoicingThreshold = invoicingThreshold;
+    }
+
+    /**
+     * Gets the threshold option.
+     *
+     * @return the threshold option
+     */
+    public ThresholdOptionsEnum getCheckThreshold() {
+        return checkThreshold;
+    }
+
+    /**
+     * Sets the threshold option.
+     *
+     * @param checkThreshold the threshold option
+     */
+    public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
+        this.checkThreshold = checkThreshold;
     }
 }

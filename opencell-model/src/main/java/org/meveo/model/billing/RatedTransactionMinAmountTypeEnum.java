@@ -19,7 +19,12 @@ package org.meveo.model.billing;
 
 public enum RatedTransactionMinAmountTypeEnum {
 
-    RT_MIN_AMOUNT_BA("RT_MIN_AMOUNT_BA"), RT_MIN_AMOUNT_SU("RT_MIN_AMOUNT_SU"), RT_MIN_AMOUNT_SE("RT_MIN_AMOUNT_SE");
+    RT_MIN_AMOUNT_CUST("RT_MIN_AMOUNT_CUST"),
+    RT_MIN_AMOUNT_CA("RT_MIN_AMOUNT_CA"),
+    RT_MIN_AMOUNT_BA("RT_MIN_AMOUNT_BA"),
+    RT_MIN_AMOUNT_UA("RT_MIN_AMOUNT_UA"),
+    RT_MIN_AMOUNT_SU("RT_MIN_AMOUNT_SU"),
+    RT_MIN_AMOUNT_SE("RT_MIN_AMOUNT_SE");
 
     private String code;
 

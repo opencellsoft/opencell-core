@@ -95,6 +95,8 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.ApplyMinimumModeEnum;
+import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
@@ -108,6 +110,7 @@ import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionGroup;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
@@ -116,6 +119,7 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.ThresholdAmounts;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -645,11 +649,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public List<Invoice> createAgregatesAndInvoiceInNewTransaction(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate, Date firstTransactionDate,
-            Date lastTransactionDate, boolean instantiateMinRtsForService, boolean instantiateMinRtsForSubscription, boolean instantiateMinRtsForBA, boolean isDraft) throws BusinessException {
-
-        return createAgregatesAndInvoice(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate, instantiateMinRtsForService, instantiateMinRtsForSubscription,
-            instantiateMinRtsForBA, isDraft);
+    public List<Invoice> createAgregatesAndInvoiceInNewTransaction(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
+            Date firstTransactionDate, Date lastTransactionDate, MinAmountForAccounts minAmountForAccounts,
+            boolean isDraft) throws BusinessException {
+        //MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts(instantiateMinRtsForBA, false, instantiateMinRtsForSubscription, instantiateMinRtsForService);
+        return createAgregatesAndInvoice(entityToInvoice, billingRun, ratedTransactionFilter, invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts,
+                isDraft);
     }
 
     /**
@@ -668,8 +673,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
-    public List<Invoice> createAgregatesAndInvoice(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate,
-            boolean instantiateMinRtsForService, boolean instantiateMinRtsForSubscription, boolean instantiateMinRtsForBA, boolean isDraft) throws BusinessException {
+    public List<Invoice> createAgregatesAndInvoice(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate,
+            Date firstTransactionDate, Date lastTransactionDate, MinAmountForAccounts minAmountForAccounts, boolean isDraft) throws BusinessException {
 
         log.debug("Will create invoice and aggregates for {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
 
@@ -716,10 +721,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             // Instantiate additional RTs to reach minimum amount to invoice on service, subscription or BA level if needed
-            if (instantiateMinRtsForService || (instantiateMinRtsForSubscription && (entityToInvoice instanceof Subscription && !StringUtils.isBlank(((Subscription) entityToInvoice).getMinimumAmountEl())))
-                    || (instantiateMinRtsForBA && (entityToInvoice instanceof BillingAccount && !StringUtils.isBlank(((BillingAccount) entityToInvoice).getMinimumAmountEl())))) {
-                ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, false, instantiateMinRtsForService, instantiateMinRtsForSubscription,
-                    instantiateMinRtsForBA);
+            if ( minAmountForAccounts.isMinAmountCalculationActivated()) {
+                ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, false, minAmountForAccounts);
                 minAmountTransactions = entityToInvoice.getMinRatedTransactions();
             }
 
@@ -778,6 +781,30 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
         return null;
+    }
+
+    /**
+     * @param entityToInvoice
+     * @param minAmountForAccounts
+     * @return
+     */
+    private boolean isMinAmountApplies(IBillableEntity entityToInvoice, MinAmountForAccounts minAmountForAccounts) {
+        if (minAmountForAccounts.isServiceHasMinAmount()) {
+            return true;
+        }
+        if ((minAmountForAccounts.isSubscriptionHasMinAmount() && (entityToInvoice instanceof Subscription && !StringUtils
+                .isBlank(((Subscription) entityToInvoice).getMinimumAmountEl())))) {
+            return true;
+        }
+        if(minAmountForAccounts.isUaHasMinAmount()){
+            return true;
+        }
+
+        if ((minAmountForAccounts.isBaHasMinAmount() && (entityToInvoice instanceof BillingAccount && !StringUtils
+                .isBlank(((BillingAccount) entityToInvoice).getMinimumAmountEl())))) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -2011,6 +2038,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Date invoiceDate = generateInvoiceRequestDto.getInvoicingDate();
         Date firstTransactionDate = generateInvoiceRequestDto.getFirstTransactionDate();
         Date lastTransactionDate = generateInvoiceRequestDto.getLastTransactionDate();
+        ApplyMinimumModeEnum applyMinimumModeEnum = ApplyMinimumModeEnum.NO_PARENT;
+        if(generateInvoiceRequestDto.getApplyMinimum()!= null) {
+            applyMinimumModeEnum = ApplyMinimumModeEnum.valueOf(generateInvoiceRequestDto.getApplyMinimum());
+        }
 
         if (StringUtils.isBlank(entity)) {
             throw new BusinessException("entity is null");
@@ -2036,9 +2067,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Create missing rated transactions up to a last transaction date
         ratedTransactionService.createRatedTransaction(entity, lastTransactionDate);
 
-        boolean[] minRTsUsed = ratedTransactionService.isMinRTsUsed();
+        MinAmountForAccounts minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated(entity,applyMinimumModeEnum);
 
-        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, minRTsUsed[0], minRTsUsed[1], minRTsUsed[2], isDraft);
+        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft);
 
         return invoices;
     }
@@ -3023,12 +3054,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         // If invoice is prepaid, skip threshold test
-        if (!invoice.isPrepaid()) {
+        /*if (!invoice.isPrepaid()) {
             BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold() : billingAccount.getInvoicingThreshold();
             if ((invoicingThreshold != null) && (invoicingThreshold.compareTo(isEnterprise ? invoice.getAmountWithoutTax() : invoice.getAmountWithTax()) > 0)) {
                 throw new BusinessException("Invoice amount below the threshold");
             }
-        }
+        }*/
 
         // Update net to pay amount
         invoice.setNetToPay(invoice.getAmountWithTax().add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
@@ -3119,7 +3150,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Determine a discount amount or percent to apply
-     * 
+     *
      * @param invoice Invoice to apply discount on
      * @param scAggregate Subcategory aggregate to apply discount on
      * @param amount Amount to apply discount on
@@ -3213,7 +3244,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return amount
      * @throws BusinessException business exception
      */
-    private BigDecimal evaluateDiscountPercentExpression(String expression, UserAccount userAccount, WalletInstance wallet, Invoice invoice, BigDecimal subCatTotal) throws BusinessException {
+    private BigDecimal evaluateDiscountPercentExpression(String expression, UserAccount userAccount, WalletInstance wallet, Invoice invoice, BigDecimal subCatTotal)
+            throws BusinessException {
 
         if (StringUtils.isBlank(expression)) {
             return null;
@@ -3631,11 +3663,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Delete invoices associated to a billing run
-     * 
+     *
      * @param billingRun Billing run
      */
     public void deleteInvoices(BillingRun billingRun) {
         getEntityManager().createNamedQuery("Invoice.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
+    }
+
+    public void deleteInvoices(Collection<Long> invoicesIds) {
+        getEntityManager().createNamedQuery("Invoice.deleteByIds").setParameter("invoicesIds", invoicesIds).executeUpdate();
+    }
+
+    public List<Long> excludePrepaidInvoices(Collection<Long> invoicesIds) {
+        return getEntityManager().createNamedQuery("Invoice.excludePrpaidInvoices").setParameter("invoicesIds", invoicesIds).getResultList();
+
     }
 
     /**
@@ -3695,7 +3736,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Add two maps with BigDecimal values. In case number of keys don't match, a cumulative set of keys will be considered.
-     * 
+     *
      * @param <T> Map key
      * @param one One map of BigDecimal values
      * @param two Another map of BigDecimal values
@@ -3718,7 +3759,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Sum up BigDecimal values from a map
-     * 
+     *
      * @param <T> Map key
      * @param values A map of BigDecimal values
      * @return A sum of values
@@ -3736,7 +3777,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Retrieve first BigDecimal values until exhausting a limit of sum of values while preserving a key
-     * 
+     *
      * @param <T> Map key
      * @param values A map of BigDecimal values
      * @param limitToGet A limit of sum of values to get
@@ -3762,5 +3803,71 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         return result;
+    }
+
+    /**
+     * Retrun the total of positive rated transaction grouped by billing account for a billing run.
+     *
+     * @param billingRun the billing run
+     * @return a map of positive rated transaction grouped by billing account.
+     */
+    public Map<Class, Map<Long, ThresholdAmounts>> getTotalInvoiceableAmountByBR(BillingRun billingRun) {
+
+        List<Object[]> resultSet = getEntityManager().createNamedQuery("Invoice.sumInvoiceableAmountByBR").setParameter("billingRunId", billingRun.getId()).getResultList();
+        return getAmountsMap(resultSet);
+    }
+
+    /**
+     * Group amounts by billing account, customer account and customer.
+     *
+     * @param resultSet the result set of the query
+     * @return A map of grouped amounts by account class.
+     */
+    private Map<Class, Map<Long, ThresholdAmounts>> getAmountsMap(List<Object[]> resultSet) {
+        Map<Long, ThresholdAmounts> baAmounts = new HashMap<>();
+        Map<Long, ThresholdAmounts> caAmounts = new HashMap<>();
+        Map<Long, ThresholdAmounts> custAmounts = new HashMap<>();
+        for (Object[] result : resultSet) {
+            Amounts amounts = new Amounts((BigDecimal) result[0], (BigDecimal) result[1]);
+            Long baId = (Long) result[3];
+            Long caId = (Long) result[4];
+            Long custId = (Long) result[5];
+
+            if (baAmounts.get(baId) == null) {
+                List<Long> invoiceIds = new ArrayList<>();
+                invoiceIds.add((Long) result[2]);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts, invoiceIds);
+                baAmounts.put(baId, thresholdAmounts);
+            } else {
+                ThresholdAmounts thresholdAmounts = baAmounts.get(baId);
+                thresholdAmounts.getAmount().addAmounts(amounts);
+                thresholdAmounts.getInvoices().add((Long) result[2]);
+            }
+            if (caAmounts.get(caId) == null) {
+                List<Long> invoiceIds = new ArrayList<>();
+                invoiceIds.add((Long) result[2]);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
+                caAmounts.put(caId, thresholdAmounts);
+            } else {
+                ThresholdAmounts thresholdAmounts = caAmounts.get(caId);
+                thresholdAmounts.getAmount().addAmounts(amounts.clone());
+                thresholdAmounts.getInvoices().add((Long) result[2]);
+            }
+            if (custAmounts.get(custId) == null) {
+                List<Long> invoiceIds = new ArrayList<>();
+                invoiceIds.add((Long) result[2]);
+                ThresholdAmounts thresholdAmounts = new ThresholdAmounts(amounts.clone(), invoiceIds);
+                custAmounts.put(custId, thresholdAmounts);
+            } else {
+                ThresholdAmounts thresholdAmounts = custAmounts.get(custId);
+                thresholdAmounts.getAmount().addAmounts(amounts.clone());
+                thresholdAmounts.getInvoices().add((Long) result[2]);
+            }
+        }
+        Map<Class, Map<Long, ThresholdAmounts>> accountsAmounts = new HashMap<>();
+        accountsAmounts.put(BillingAccount.class, baAmounts);
+        accountsAmounts.put(CustomerAccount.class, caAmounts);
+        accountsAmounts.put(Customer.class, custAmounts);
+        return accountsAmounts;
     }
 }
