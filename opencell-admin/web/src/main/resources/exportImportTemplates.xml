@@ -279,6 +279,8 @@
             <template ref="CustomEntityTemplate" />
             <template ref="CustomFieldTemplate" />
             <template ref="Tax" />
+            <template ref="TaxClass" />
+            <template ref="TaxCategory" />
             <template ref="InvoiceCategory" />
             <template ref="BillingCycle" />
             <template ref="SubscriptionTerminationReason" />
