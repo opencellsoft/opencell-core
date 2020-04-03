@@ -510,6 +510,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         this.parameter1 = criteria1;
         this.parameter2 = criteria2;
         this.parameter3 = criteria3;
+        this.parameterExtra = criteriaExtra;
         this.inputQuantity = inputQuantity;
 
         // TODO AKK in what case prevails customized description of chargeInstance??
