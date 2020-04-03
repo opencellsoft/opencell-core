@@ -1,0 +1,10 @@
+         <user>
+            <username>RS_FULL_15_Username.Level3</username>
+            <email>RS_FULL_15@test.com</email>            
+            <userRoles>
+               <userRole>administrateur</userRole>
+            </userRoles>
+            <firstName>Level 3</firstName>
+            <lastName>User</lastName>            
+            <userLevel>RS_FULL_15_LEVEL_3</userLevel>            
+         </user>

@@ -1,0 +1,6 @@
+         <seller code="RS_FULL_15_SELLER_C" description="RS_FULL_15_SELLER_C">
+            <currencyCode>USD</currencyCode>
+            <countryCode>US</countryCode>
+            <languageCode>ENG</languageCode>
+            <parentSeller>RS_FULL_15_SELLER_B</parentSeller>
+         </seller>

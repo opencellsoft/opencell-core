@@ -1,0 +1,11 @@
+         <user>
+            <username>opencell.admin</username>
+            <password>opencell.admin</password>
+            <email>meveo.admin@opencellsoft.com</email>            
+            <userRoles>
+                  <userRole>administrateur</userRole>                  
+            </userRoles>
+            <accessibleEntities />         
+            <firstName>meveo</firstName>
+            <lastName>admin</lastName>
+         </user>

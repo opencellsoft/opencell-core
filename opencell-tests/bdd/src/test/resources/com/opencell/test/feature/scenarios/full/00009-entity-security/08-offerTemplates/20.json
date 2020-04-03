@@ -1,0 +1,12 @@
+         <pagingAndFiltering>
+            <filters>
+               <entry>
+                  <key>not-inList sellers</key>
+                  <value>RS_FULL_15_SELLER_A,RS_FULL_15_SELLER_C</value>
+               </entry>
+               <entry>
+                  <key>like code</key>
+                  <value>RS_FULL_15_*</value>
+               </entry>
+            </filters>
+         </pagingAndFiltering>

@@ -1,0 +1,13 @@
+         <user>
+            <username>opencell.admin</username>
+            <password>opencell.admin</password>
+            <email>meveo.admin@opencellsoft.com</email>            
+            <userRoles>
+                  <userRole>administrateur</userRole>                  
+            </userRoles>
+            <accessibleEntities>
+            	<accessibleEntity code="RS_FULL_15_CAB1" entityClass="org.meveo.model.payments.CustomerAccount" />
+            </accessibleEntities>          
+            <firstName>meveo</firstName>
+            <lastName>admin</lastName>
+         </user>

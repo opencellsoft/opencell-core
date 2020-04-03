@@ -1,0 +1,5 @@
+         <role name="RS_FULL_15_ROLE_SELF_USER" description="RS_FULL_15_ROLE_SELF_USER">
+            <permissions>
+               <permission permission="userSelfManagement" name="User Self Management"/>
+            </permissions>
+         </role>

@@ -1,0 +1,8 @@
+         <pagingAndFiltering>
+            <filters>
+               <entry>
+                  <key>inList sellers</key>
+                  <value>RS_FULL_15_SELLER_A,RS_FULL_15_SELLER_C</value>
+               </entry>
+            </filters>
+         </pagingAndFiltering>
