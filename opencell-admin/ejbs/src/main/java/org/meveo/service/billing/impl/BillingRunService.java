@@ -1048,8 +1048,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             invoiceService.deleteInvoices(excludedPrepaidInvoices);
             invoiceAgregateService.deleteInvoiceAgregates(excludedPrepaidInvoices);
             rejectedBillingAccounts.forEach(rejectedBillingAccountId -> {
-                BillingAccount ba = billingAccountService.findById(rejectedBillingAccountId);
-                rejectedBillingAccountService.create(ba, getEntityManager().getReference(BillingRun.class, billingRun.getId()), "Billing account not reach to invoicing threshold");
+                BillingAccount ba = getEntityManager().getReference(BillingAccount.class, rejectedBillingAccountId);
+                rejectedBillingAccountService
+                        .create(ba, getEntityManager().getReference(BillingRun.class, billingRun.getId()), "Billing account did not reach invoicing threshold");
             });
         }
     }
