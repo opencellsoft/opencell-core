@@ -290,7 +290,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     /**
      * Instance of discount plans. Once instantiated effectivity date is not affected when template is updated.
      */
-    @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<DiscountPlanInstance> discountPlanInstances;
 
     /**
