@@ -1691,5 +1691,30 @@ public class ValidateBRScript extends Script {
             <column name="payment_method" value="STRIPE" />
         </insert>        
    </changeSet> 
+   
+    <changeSet id="#4924_20200219_2" author="anasseh">  
+       <insert tableName="ar_occ_template">
+            <column name="id" valueNumeric="-46" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="created" valueDate="now()" />
+            <column name="accounting_code_id" valueNumeric="-3" />
+            <column name="account_code_client_side" value="411000000" />
+            <column name="code" value="PAY_PAL" />
+            <column name="description" value="Payment Paypal" />
+            <column name="occ_category" value="CREDIT" />
+        </insert>
+       <insert tableName="ar_occ_template">
+            <column name="id" valueNumeric="-47" />
+            <column name="version" valueNumeric="0" />
+
+            <column name="created" valueDate="now()" />
+            <column name="accounting_code_id" valueNumeric="-3" />
+            <column name="account_code_client_side" value="411000000" />
+            <column name="code" value="PAY_STP" />
+            <column name="description" value="Payment Stripe" />
+            <column name="occ_category" value="CREDIT" />
+        </insert>        
+      </changeSet>
     
 </databaseChangeLog>

@@ -129,7 +129,7 @@ public class BillingCycleApi extends BaseApi {
             billingCycle.setType(postData.getType());
         }
 
-        if (postData.getCheckThreshold() == null) {
+        if (postData.getCheckThreshold() == null && postData.getInvoicingThreshold() != null) {
             billingCycle.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
         } else {
             billingCycle.setCheckThreshold(postData.getCheckThreshold());

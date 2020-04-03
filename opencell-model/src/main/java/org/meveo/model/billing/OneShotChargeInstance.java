@@ -17,8 +17,8 @@
  */
 package org.meveo.model.billing;
 
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.OneShotChargeTemplate;
+import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -27,8 +27,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.Date;
+
+import org.meveo.model.catalog.OneShotChargeTemplate;
 
 /**
  * One shot charge as part of subscribed service
@@ -65,8 +65,7 @@ public class OneShotChargeInstance extends ChargeInstance {
      * @param serviceInstance Service instance to associate with
      * @param status Status
      */
-    protected OneShotChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, OneShotChargeTemplate chargeTemplate, ServiceInstance serviceInstance,
-            InstanceStatusEnum status) {
+    protected OneShotChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, OneShotChargeTemplate chargeTemplate, ServiceInstance serviceInstance, InstanceStatusEnum status) {
 
         super(amountWithoutTax, amountWithTax, chargeTemplate, serviceInstance, status);
 
@@ -76,7 +75,7 @@ public class OneShotChargeInstance extends ChargeInstance {
     /**
      * Constructor
      * 
-     * @param description Charge description (to override a value from a charge template)
+     * @param description Charge description (to override a value from a charge template). Optional
      * @param chargeDate Charge date
      * @param amountWithoutTax Amount without tax
      * @param amountWithTax Amount with tax
@@ -85,36 +84,41 @@ public class OneShotChargeInstance extends ChargeInstance {
      * @param subscription Subscription
      * @param chargeTemplate Charge template
      */
-    public OneShotChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumber,
-            Subscription subscription, OneShotChargeTemplate chargeTemplate) {
+    public OneShotChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumber, Subscription subscription,
+            OneShotChargeTemplate chargeTemplate) {
 
-        this.code = chargeTemplate.getCode();
-        if (StringUtils.isBlank(description)) {
-            if (chargeTemplate.getDescriptionI18n() != null) {
-                String languageCode = subscription.getUserAccount().getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-                if (!StringUtils.isBlank(chargeTemplate.getDescriptionI18n().get(languageCode))) {
-                    this.description = chargeTemplate.getDescriptionI18n().get(languageCode);
-                }
-            }
-            if (StringUtils.isBlank(this.description)) {
-                this.description = chargeTemplate.getDescription();
-            }
-        } else {
-            this.description = description;
-        }
+        super(amountWithoutTax, amountWithTax, chargeTemplate, subscription, InstanceStatusEnum.ACTIVE);
+
         this.chargeDate = chargeDate;
-        this.amountWithoutTax = amountWithoutTax;
-        this.amountWithTax = amountWithTax;
-        this.userAccount = subscription.getUserAccount();
-        this.subscription = subscription;
-        this.country = subscription.getUserAccount().getBillingAccount().getTradingCountry();
-        this.currency = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency();
-        this.chargeTemplate = chargeTemplate;
         this.quantity = quantity == null ? BigDecimal.ONE : quantity;
         this.orderNumber = orderNumber;
-        this.status = InstanceStatusEnum.ACTIVE;
-        if (subscription.getSeller() != null) {
-            this.seller = subscription.getSeller();
+        if (description != null) {
+            this.description = description;
+        }
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param description Charge description (to override a value from a charge template). Optional
+     * @param chargeDate Charge date
+     * @param amountWithoutTax Amount without tax
+     * @param amountWithTax Amount with tax
+     * @param quantity Quantity
+     * @param orderNumber Order number
+     * @param serviceInstance Service instance
+     * @param chargeTemplate Charge template
+     */
+    public OneShotChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumber, ServiceInstance serviceInstance,
+            OneShotChargeTemplate chargeTemplate) {
+
+        super(amountWithoutTax, amountWithTax, chargeTemplate, serviceInstance, InstanceStatusEnum.ACTIVE);
+
+        this.chargeDate = chargeDate;
+        this.quantity = quantity == null ? BigDecimal.ONE : quantity;
+        this.orderNumber = orderNumber;
+        if (description != null) {
+            this.description = description;
         }
     }
 

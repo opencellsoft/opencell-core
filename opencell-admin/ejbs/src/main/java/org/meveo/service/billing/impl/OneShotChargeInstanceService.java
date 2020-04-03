@@ -48,6 +48,7 @@ import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 
@@ -112,9 +113,12 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @return Subscription or termination charge instance
      * @throws BusinessException General exception
      */
+    @SuppressWarnings("rawtypes")
     public OneShotChargeInstance oneShotChargeInstanciation(ServiceInstance serviceInstance, ServiceChargeTemplate serviceChargeTemplate, BigDecimal amoutWithoutTax, BigDecimal amoutWithTax, boolean isSubscriptionCharge,
             boolean isVirtual) throws BusinessException {
+
         OneShotChargeTemplate chargeTemplate = (OneShotChargeTemplate) serviceChargeTemplate.getChargeTemplate();
+
         log.debug("Instanciate a oneshot for code {} on subscription {}", chargeTemplate.getCode(), serviceInstance.getSubscription().getCode());
 
         OneShotChargeInstance oneShotChargeInstance = null;
@@ -171,15 +175,53 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         return oneShotChargeInstance;
     }
 
-    // apply a oneShotCharge on the postpaid wallet
-    public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargetemplate, String walletCode, Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
-            BigDecimal quantity, String criteria1, String criteria2, String criteria3, String orderNumber, boolean applyCharge) throws BusinessException, RatingException {
+    /**
+     * Instantiate and apply a one shot charge
+     * 
+     * @param subscription Subscription, to instantiate a charge against
+     * @param chargetemplate Charge to instantiate
+     * @param walletCode Wallet code for charge against a specific wallet. Optional. A primary User account wallet will be used if not provided.
+     * @param chargeDate Charge date
+     * @param amoutWithoutTax Amount without tax to override
+     * @param amoutWithTax Amount with tax to override
+     * @param quantity Quantity to charge
+     * @param orderNumber Order number
+     * @param applyCharge True if wallet operation should be created
+     * @return One shot charge instance
+     * @throws BusinessException General business exception
+     * @throws RatingException Rating related exception
+     */
+    public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargetemplate, String walletCode, Date chargeDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithTax,
+            BigDecimal quantity, String orderNumber, boolean applyCharge) throws BusinessException, RatingException {
 
-        return oneShotChargeApplication(subscription, chargetemplate, walletCode, effetDate, amoutWithoutTax, amoutWithoutTx2, quantity, criteria1, criteria2, criteria3, null, orderNumber, true);
+        return oneShotChargeApplication(subscription, null, chargetemplate, walletCode, chargeDate, amoutWithoutTax, amoutWithTax, quantity, null, null, null, null, orderNumber, null, applyCharge);
     }
 
-    public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargeTemplate, String walletCode, Date effetDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithTax,
-            BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description, String orderNumber, boolean applyCharge) throws BusinessException, RatingException {
+    /**
+     * Instantiate and apply a one shot charge
+     * 
+     * @param subscription Subscription, to instantiate a charge against
+     * @param serviceInstance Service instance to instantiate a charge against. Optional.
+     * @param chargeTemplate Charge to instantiate
+     * @param walletCode Wallet code for charge against a specific wallet. Optional. A primary User account wallet will be used if not provided.
+     * @param chargeDate Charge date
+     * @param amoutWithoutTax Amount without tax to override
+     * @param amoutWithTax Amount with tax to override
+     * @param quantity Quantity to charge
+     * @param criteria1 Criteria parameter value
+     * @param criteria2 Criteria parameter value
+     * @param criteria3 Criteria parameter value
+     * @param description Description to override. Optional
+     * @param orderNumber Order number
+     * @param cfValues Custom field values
+     * @param applyCharge True if wallet operation should be created
+     * @return One shot charge instance
+     * @throws BusinessException General business exception
+     * @throws RatingException Rating related exception
+     */
+    public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, ServiceInstance serviceInstance, OneShotChargeTemplate chargeTemplate, String walletCode, Date chargeDate, BigDecimal amoutWithoutTax,
+            BigDecimal amoutWithTax, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description, String orderNumber, CustomFieldValues cfValues, boolean applyCharge)
+            throws BusinessException, RatingException {
 
         if (quantity == null) {
             quantity = BigDecimal.ONE;
@@ -190,11 +232,21 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             amoutWithTax = null;
         }
 
-        OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(description, effetDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, subscription, chargeTemplate);
+        OneShotChargeInstance oneShotChargeInstance = null;
+
+        if (serviceInstance != null) {
+            oneShotChargeInstance = new OneShotChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, serviceInstance, chargeTemplate);
+        } else {
+            oneShotChargeInstance = new OneShotChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, subscription, chargeTemplate);
+        }
+
         oneShotChargeInstance.setCriteria1(criteria1);
         oneShotChargeInstance.setCriteria2(criteria2);
         oneShotChargeInstance.setCriteria3(criteria3);
-        oneShotChargeInstance.setSeller(subscription.getSeller());
+
+        if (cfValues != null) {
+            oneShotChargeInstance.setCfValues(cfValues);
+        }
 
         if (walletCode == null) {
             oneShotChargeInstance.setPrepaid(false);
@@ -219,19 +271,29 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         }
 
         if (applyCharge) {
-            walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effetDate, false, subscription.getOrderNumber());
+            walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, chargeDate, false, subscription.getOrderNumber());
         }
         return oneShotChargeInstance;
     }
 
-    public void oneShotChargeApplication(Subscription subscription, OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity, String orderNumberOverride)
-            throws BusinessException, RatingException {
+    /**
+     * Apply a charge that was instantiated before
+     * 
+     * @param oneShotChargeInstance A charge to apply
+     * @param chargeDate Charge date
+     * @param quantity Quantity to apply
+     * @param orderNumberOverride Order number to override
+     * @throws BusinessException General business exception
+     * @throws RatingException Rating related exception
+     */
+    public void oneShotChargeApplication(OneShotChargeInstance oneShotChargeInstance, Date chargeDate, BigDecimal quantity, String orderNumberOverride) throws BusinessException, RatingException {
+
         if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeInstance.getChargeTemplate().getFilterExpression())) {
             log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", oneShotChargeInstance.getCode());
             return;
         }
 
-        walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effectiveDate, false, orderNumberOverride);
+        walletOperationService.applyOneShotWalletOperation(oneShotChargeInstance.getSubscription(), oneShotChargeInstance, quantity, null, chargeDate, false, orderNumberOverride);
     }
 
     /**
@@ -321,12 +383,12 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
         log.debug("Create matching and compensating charge {} instances with amountWithoutTax {}, amountWithTax {}", matchingChargeCode, balanceNoTax, balanceWithTax);
         OneShotChargeInstance matchingCharge = oneShotChargeApplication(firstActiveSubscription, (OneShotChargeTemplate) oneShotChargeTemplate, wallet.getCode(), new Date(), balanceNoTax, balanceWithTax, BigDecimal.ONE,
-            null, null, null, null, false);
+            null, true);
         if (matchingCharge == null) {
             throw new BusinessException("Cannot find or create matching charge instance for code " + matchingChargeCode);
         }
         OneShotChargeInstance compensationCharge = oneShotChargeApplication(firstActiveSubscription, (OneShotChargeTemplate) oneShotChargeTemplate, wallet.getCode(), new Date(), balanceNoTax.negate(),
-            balanceWithTax.negate(), BigDecimal.ONE, null, null, null, null, false);
+            balanceWithTax.negate(), BigDecimal.ONE, null, true);
         if (compensationCharge == null) {
             throw new BusinessException("Cannot find or create compensating charge instance for code " + matchingChargeCode);
         }

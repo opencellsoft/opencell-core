@@ -443,8 +443,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());
                 oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
                 try {
-                    oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, serviceInstance.getSubscriptionDate(),
-                        oneShotChargeInstance.getQuantity(), serviceInstance.getOrderNumber());
+                    oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, serviceInstance.getSubscriptionDate(), oneShotChargeInstance.getQuantity(), serviceInstance.getOrderNumber());
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply subscription charge {}: {}", oneShotChargeInstance, e.getRejectionReason());
@@ -617,8 +616,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                     oneShotChargeInstance.getServiceInstance().setSubscriptionTerminationReason(terminationReason);
 
                     try {
-                        oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity(),
-                            orderNumber);
+                        oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity(), orderNumber);
 
                     } catch (RatingException e) {
                         log.trace("Failed to apply termination charge {}: {}", oneShotChargeInstance, e.getRejectionReason());
@@ -643,8 +641,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         //Apply oneshots refunding
         if (terminationReason.isReimburseOneshots()) {
             for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
-                oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity().negate(),
-                        orderNumber);
+                oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, terminationDate, oneShotChargeInstance.getQuantity().negate(), orderNumber);
                 oneShotChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
                 oneShotChargeInstanceService.update(oneShotChargeInstance);
             }

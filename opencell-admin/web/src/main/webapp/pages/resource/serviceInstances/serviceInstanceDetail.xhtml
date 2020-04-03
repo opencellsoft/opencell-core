@@ -133,56 +133,57 @@
 	                    </h:panelGroup>
 	                </p:fieldset>
                 </p:tab>
-                <p:tab title="#{messages['order.history']}">
-                	<p:dataTable id="selectedEntitiesDatatable" var="ohEntity" value="#{serviceInstanceBean.orderHistoryModel}" paginator="true" rows="10"
-						paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" lazy="false"
-						styleClass="custom-grid" rowsPerPageTemplate="10, 20, 50" reflow="true">
-						<p:column headerText="#{messages['order.number']}">   
-							<h:outputText value="#{ohEntity.orderNumber}" styleClass="field-value" />
-						</p:column>
-						<p:column headerText="#{messages['order.action']}">
-							<h:outputText value="#{ohEntity.action}" styleClass="field-value" />
-						</p:column>
-						<p:column headerText="#{messages['orderHistory.eventDate']}">
-							<h:outputText value="#{ohEntity.eventDate}" styleClass="field-value">
-								<f:convertDateTime pattern="#{paramBean.dateTimeFormat}" />
-							</h:outputText>
-						</p:column>
-					</p:dataTable>
-                </p:tab>
-                <p:tab title="#{messages['paymentScheduleInstance.title']}" id="psInstances">
-					<c:if test="#{not empty serviceInstanceBean.entity.id}">
-						<hftl:dataList backingBean="#{paymentScheduleInstanceBean}" dataModel="#{paymentScheduleInstanceBean.getInstancesForService(serviceInstanceBean.entity)}"
-						label="#{messages['paymentScheduleInstance.title']}" sortBy="startDate" exportButton="false" checkMany="false">
-								<hftl:column label="#{messages['businessEntity.code']}" field="code" noLinkToView="true" />
-								<hftl:column label="#{messages['paymentScheduleTemplate.amount']}" field="amount" />
-								<hftl:column label="#{messages['paymentScheduleTemplate.status']}" field="status" />
-								<hftl:column label="#{messages['paymentScheduleTemplate.calendar']}" field="calendar.code" />
-								<hftl:column label="#{messages['paymentScheduleInstance.startDate']}" field="startDate"  isDate="true"/>
-								<hftl:column label="#{messages['paymentScheduleInstance.endDate']}" field="endDate"  isDate="true"/>
+<!--                 <p:tab title="#{messages['order.history']}"> -->
+<!--                 	<p:dataTable id="selectedEntitiesDatatable" var="ohEntity" value="#{serviceInstanceBean.orderHistoryModel}" paginator="true" rows="10" -->
+<!-- 						paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" lazy="false" -->
+<!-- 						styleClass="custom-grid" rowsPerPageTemplate="10, 20, 50" reflow="true"> -->
+<!-- 						<p:column headerText="#{messages['order.number']}">    -->
+<!-- 							<h:outputText value="#{ohEntity.orderNumber}" styleClass="field-value" /> -->
+<!-- 						</p:column> -->
+<!-- 						<p:column headerText="#{messages['order.action']}"> -->
+<!-- 							<h:outputText value="#{ohEntity.action}" styleClass="field-value" /> -->
+<!-- 						</p:column> -->
+<!-- 						<p:column headerText="#{messages['orderHistory.eventDate']}"> -->
+<!-- 							<h:outputText value="#{ohEntity.eventDate}" styleClass="field-value"> -->
+<!-- 								<f:convertDateTime pattern="#{paramBean.dateTimeFormat}" /> -->
+<!-- 							</h:outputText> -->
+<!-- 						</p:column> -->
+<!-- 					</p:dataTable> -->
+<!--                 </p:tab> -->
+<!--                 <p:tab title="#{messages['paymentScheduleInstance.title']}" id="psInstances"> -->
+<!-- 					<c:if test="#{not empty serviceInstanceBean.entity.id}"> -->
+<!-- 						<hftl:dataList backingBean="#{paymentScheduleInstanceBean}" dataModel="#{paymentScheduleInstanceBean.getInstancesForService(serviceInstanceBean.entity)}" -->
+<!-- 						label="#{messages['paymentScheduleInstance.title']}" sortBy="startDate" exportButton="false" checkMany="false"> -->
+<!-- 								<hftl:column label="#{messages['businessEntity.code']}" field="code" noLinkToView="true" /> -->
+<!-- 								<hftl:column label="#{messages['paymentScheduleTemplate.amount']}" field="amount" /> -->
+<!-- 								<hftl:column label="#{messages['paymentScheduleTemplate.status']}" field="status" /> -->
+<!-- 								<hftl:column label="#{messages['paymentScheduleTemplate.calendar']}" field="calendar.code" /> -->
+<!-- 								<hftl:column label="#{messages['paymentScheduleInstance.startDate']}" field="startDate"  isDate="true"/> -->
+<!-- 								<hftl:column label="#{messages['paymentScheduleInstance.endDate']}" field="endDate"  isDate="true"/> -->
 
-								<hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" backingBean="#{paymentScheduleInstanceBean}" objectIdParamName="objectId"
-								 renderDeleteLink="false" renderEditLink="true" backTab="psInstances" backView="serviceInstanceDetail" backEntityId="#{serviceInstanceBean.entity.id}"/>
-						</hftl:dataList>
-					</c:if>
-                </p:tab>
-				<c:if test="#{serviceInstanceBean.entity.id != null}">
-					<ui:include src="../../audit/auditableField.xhtml">
-						<ui:param name="auditableEntity" value="#{serviceInstanceBean.entity}" />
-						<ui:param name="auditableFieldName" value="#{'STATUS'}" />
-					</ui:include>
-				</c:if>
+<!-- 								<hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" backingBean="#{paymentScheduleInstanceBean}" objectIdParamName="objectId" -->
+<!-- 								 renderDeleteLink="false" renderEditLink="true" backTab="psInstances" backView="serviceInstanceDetail" backEntityId="#{serviceInstanceBean.entity.id}"/> -->
+<!-- 						</hftl:dataList> -->
+<!-- 					</c:if> -->
+<!--                 </p:tab> -->
+                
+<!-- 				<c:if test="#{serviceInstanceBean.entity.id != null}"> -->
+<!-- 					<ui:include src="../../audit/auditableField.xhtml"> -->
+<!-- 						<ui:param name="auditableEntity" value="#{serviceInstanceBean.entity}" /> -->
+<!-- 						<ui:param name="auditableFieldName" value="#{'STATUS'}" /> -->
+<!-- 					</ui:include> -->
+<!-- 				</c:if> -->
 
-				<p:tab id="counterPeriodTab"
-					   title="#{messages['counterPeriod.title']}"
-					   rendered="#{not empty subscriptionBean.entity.id}">
-					<p:outputPanel id="counterPeriodTabPanel">
-						<ui:include src="counterPeriodTab.xhtml" />
-					</p:outputPanel>
-				</p:tab>
+<!-- 				<p:tab id="counterPeriodTab" -->
+<!-- 					   title="#{messages['counterPeriod.title']}" -->
+<!-- 					   rendered="#{not empty subscriptionBean.entity.id}"> -->
+<!-- 					<p:outputPanel id="counterPeriodTabPanel"> -->
+<!-- 						<ui:include src="counterPeriodTab.xhtml" /> -->
+<!-- 					</p:outputPanel> -->
+<!-- 				</p:tab> -->
 
                 <hftl:customFields backingBean="#{serviceInstanceBean}" messagesId=":formId:messages" />
-                <hftl:displayGenericWFsHistory backingBean="#{serviceInstanceBean}" />
+<!--                 <hftl:displayGenericWFsHistory backingBean="#{serviceInstanceBean}" /> -->
             </p:tabView>
 
 			<ui:param name="buttons" value="true" />
