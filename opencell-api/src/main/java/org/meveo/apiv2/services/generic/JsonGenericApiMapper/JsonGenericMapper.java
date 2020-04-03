@@ -17,6 +17,8 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.meveo.apiv2.generic.GenericPaginatedResource;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
@@ -38,6 +40,8 @@ public class JsonGenericMapper extends ObjectMapper{
         setUpConfig();
         registerModule(module);
         this.simpleFilterProvider = simpleFilterProvider;
+        addMixIn(Subscription.class, InfiniteRecursionMixIn.class);
+        addMixIn(DiscountPlanInstance.class, InfiniteRecursionMixIn.class);
         addMixIn(Access.class, InfiniteRecursionMixIn.class);
         addMixIn(OfferTemplateCategory.class, InfiniteRecursionMixIn.class);
         addMixIn(CustomerAccount.class, InfiniteRecursionMixIn.class);
