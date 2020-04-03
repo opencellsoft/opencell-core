@@ -256,13 +256,7 @@ public class AccountHierarchyApi extends BaseApi {
             customerCodeOrId = postData.getCustomerId();
         }
 
-        SellerDto sellerDto = null;
-        try {
-            sellerDto = sellerApi.find(postData.getSellerCode());
-        } catch (Exception e) {
-            sellerDto = new SellerDto();
-            sellerDto.setCode(postData.getSellerCode());
-        }
+        SellerDto sellerDto = sellerApi.find(postData.getSellerCode());
         countryApi.findOrCreate(postData.getCountryCode());
         currencyApi.findOrCreate(postData.getCurrencyCode());
         languageApi.findOrCreate(postData.getLanguageCode());
