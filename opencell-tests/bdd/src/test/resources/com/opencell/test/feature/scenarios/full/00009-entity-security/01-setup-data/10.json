@@ -1,10 +1,10 @@
-         <user>
-            <username>RS_FULL_15_Username.Level2</username>
-            <email>RS_FULL_15@test.com</email>            
-            <userRoles>
-               <userRole>administrateur</userRole>
-            </userRoles>
-            <firstName>Level 2</firstName>
-            <lastName>User</lastName>            
-            <userLevel>RS_FULL_15_LEVEL_2</userLevel>            
-         </user>
+{
+    "username": "RS_FULL_15_Username.Level2",
+    "email": "RS_FULL_15@test.com",
+    "userRole": [
+        "administrateur"
+    ],
+    "firstName": "Level 2",
+    "lastName": "User",
+    "userLevel": "RS_FULL_15_LEVEL_2"
+}

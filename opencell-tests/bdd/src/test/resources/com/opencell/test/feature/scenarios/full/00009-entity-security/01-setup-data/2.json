@@ -1,6 +1,8 @@
-         <seller code="RS_FULL_15_SELLER_A" description="RS_FULL_15_SELLER_A">           
-            <currencyCode>EUR</currencyCode>
-            <countryCode>FR</countryCode>
-            <languageCode>FRA</languageCode>
-            <parentSeller>MAIN_SELLER</parentSeller>
-         </seller>
+{
+    "code": "RS_FULL_15_SELLER_A",
+    "description": "RS_FULL_15_SELLER_A",
+    "currencyCode": "EUR",
+    "countryCode": "FR",
+    "languageCode": "FRA",
+    "parentSeller": "MAIN_SELLER"
+}

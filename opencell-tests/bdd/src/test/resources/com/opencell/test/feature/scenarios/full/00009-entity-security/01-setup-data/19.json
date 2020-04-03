@@ -1,7 +1,8 @@
-         <offerTemplate code="RS_FULL_15_OFFER_SELLER_D">
-            <sellers>
-               <seller>RS_FULL_15_SELLER_A</seller>
-               <seller>RS_FULL_15_SELLER_B</seller>
-               <seller>RS_FULL_15_SELLER_C</seller>
-            </sellers>
-         </offerTemplate>
+{
+    "code": "RS_FULL_15_OFFER_SELLER_D",
+    "seller": [
+        "RS_FULL_15_SELLER_A",
+        "RS_FULL_15_SELLER_B",
+        "RS_FULL_15_SELLER_C"
+    ]
+}

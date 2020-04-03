@@ -1,48 +1,48 @@
-         <crmAccountHierarchy>
-            <crmAccountType>C_UA</crmAccountType>
-            <crmParentCode>RS_FULL_15_SELLER_B</crmParentCode>
-            <code>RS_FULL_15_CRM-CUST</code>
-            <description>RS_FULL_15_CRM-AccountHierarchy</description>
-            <externalRef1>Ref1</externalRef1>
-            <externalRef2>Ref2</externalRef2>
-            <name>
-               <title>M</title>
-               <firstName>Saidani</firstName>
-               <lastName>Hatem</lastName>
-            </name>
-            <address>
-               <address1>Address1</address1>
-               <address2>Address2</address2>
-               <zipCode>20250</zipCode>
-               <city>Dijon</city>
-               <country>FR</country>
-               <state>Paris</state>
-            </address>
-            <contactInformation>
-               <email>RS_FULL_15@yahoo.fr</email>
-               <phone>+0122674100</phone>
-               <mobile>+0139154716</mobile>
-            </contactInformation>
-            <language>FRA</language>
-            <terminationReason>TERM_REASON_1</terminationReason>
-            <subscriptionDate>2016-02-01</subscriptionDate>
-            <terminationDate>2016-05-01</terminationDate>
-            <customerCategory>CLIENT</customerCategory>
-            <customerBrand>DEFAULT</customerBrand>
-            <mandateIdentification>M1</mandateIdentification>
-            <mandateDate>2016-04-01</mandateDate>
-            <currency>EUR</currency>
-            <caStatus>ACTIVE</caStatus>
-            <creditCategory>VIP</creditCategory>
-            <dateStatus>2016-04-01</dateStatus>
-            <dateDunningLevel>2016-04-04</dateDunningLevel>
-            <dunningLevel>R0</dunningLevel>
-            <billingCycle>CYC_INV_MT_1</billingCycle>
-            <seller>RS_FULL_15_SELLER_B</seller>
-            <country>FR</country>
-            <nextInvoiceDate>2016-05-01</nextInvoiceDate>
-            <electronicBilling>true</electronicBilling>
-            <baStatus>ACTIVE</baStatus>
-            <email>RS_FULL_15@yahoo.fr</email>
-            <uaStatus>ACTIVE</uaStatus>
-         </crmAccountHierarchy>
+{
+    "crmAccountType": "C_UA",
+    "crmParentCode": "RS_FULL_15_SELLER_B",
+    "code": "RS_FULL_15_CRM-CUST",
+    "description": "RS_FULL_15_CRM-AccountHierarchy",
+    "externalRef1": "Ref1",
+    "externalRef2": "Ref2",
+    "name": {
+        "title": "M",
+        "firstName": "Saidani",
+        "lastName": "Hatem"
+    },
+    "address": {
+        "address1": "Address1",
+        "address2": "Address2",
+        "zipCode": "20250",
+        "city": "Dijon",
+        "country": "FR",
+        "state": "Paris"
+    },
+    "contactInformation": {
+        "email": "RS_FULL_15@yahoo.fr",
+        "phone": "+0122674100",
+        "mobile": "+0139154716"
+    },
+    "language": "FRA",
+    "terminationReason": "TERM_REASON_1",
+    "subscriptionDate": "2016-02-01",
+    "terminationDate": "2016-05-01",
+    "customerCategory": "CLIENT",
+    "customerBrand": "DEFAULT",
+    "mandateIdentification": "M1",
+    "mandateDate": "2016-04-01",
+    "currency": "EUR",
+    "caStatus": "ACTIVE",
+    "creditCategory": "VIP",
+    "dateStatus": "2016-04-01",
+    "dateDunningLevel": "2016-04-04",
+    "dunningLevel": "R0",
+    "billingCycle": "CYC_INV_MT_1",
+    "seller": "RS_FULL_15_SELLER_B",
+    "country": "FR",
+    "nextInvoiceDate": "2016-05-01",
+    "electronicBilling": "true",
+    "baStatus": "ACTIVE",
+    "email": "RS_FULL_15@yahoo.fr",
+    "uaStatus": "ACTIVE"
+}

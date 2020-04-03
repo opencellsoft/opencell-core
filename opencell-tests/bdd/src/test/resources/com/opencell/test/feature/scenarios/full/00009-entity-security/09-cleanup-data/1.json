@@ -1,2 +1,4 @@
-      	<property>secured.entities.enabled</property>
-      	<value>false</value>
+{
+    "property": "secured.entities.enabled",
+    "value": "false"
+}

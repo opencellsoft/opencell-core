@@ -1,5 +1,6 @@
-         <offerTemplate code="RS_FULL_15_OFFER_SELLER_A">
-            <sellers>
-               <seller>RS_FULL_15_SELLER_A</seller>
-            </sellers>
-         </offerTemplate>
+{
+    "code": "RS_FULL_15_OFFER_SELLER_A",
+    "sellers": {
+        "seller": "RS_FULL_15_SELLER_A"
+    }
+}
