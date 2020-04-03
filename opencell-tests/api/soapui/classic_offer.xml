@@ -23847,22 +23847,22 @@ public class Mediation_CreateEdr extends org.meveo.service.script.Script {
 		EdrService edrService = (EdrService) getServiceInterface("EdrService");
 
 		for (Access accessPoint : accesses) {
-			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getTimestamp().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getTimestamp().getTime())) {
+			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
 
 				EDR edr = new EDR();
 				edr.setCreated(new Date());
-				edr.setEventDate(cdr.getTimestamp());
+				edr.setEventDate(cdr.getEventDate());
 				edr.setOriginBatch(originBatch);
 				edr.setOriginRecord(originRecord);
-				edr.setParameter1(cdr.getParam1());
-				edr.setParameter2(cdr.getParam2());
-				edr.setParameter3(cdr.getParam3());
-				edr.setParameter4(cdr.getParam4());
-				edr.setParameter5(cdr.getParam5());
-				edr.setParameter6(cdr.getParam6());
-				edr.setParameter7(cdr.getParam7());
-				edr.setParameter8(cdr.getParam8());
-				edr.setParameter9(cdr.getParam9());
+				edr.setParameter1(cdr.getParameter1());
+				edr.setParameter2(cdr.getParameter2());
+				edr.setParameter3(cdr.getParameter3());
+				edr.setParameter4(cdr.getParameter4());
+				edr.setParameter5(cdr.getParameter5());
+				edr.setParameter6(cdr.getParameter6());
+				edr.setParameter7(cdr.getParameter7());
+				edr.setParameter8(cdr.getParameter8());
+				edr.setParameter9(cdr.getParameter9());
 				edr.setDecimalParam1(cdr.getDecimalParam1() != null ? cdr.getDecimalParam1().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam2(cdr.getDecimalParam2() != null ? cdr.getDecimalParam2().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam3(cdr.getDecimalParam3() != null ? cdr.getDecimalParam3().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
@@ -24147,7 +24147,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 		if (duplicateFound != null && duplicateFound.booleanValue()) {
 			throw new BusinessException("DuplicateFound");
 		}
-		initContext.put("accessUserId", cdr.getAccess_id());
+		initContext.put("accessUserId", cdr.getAccessCode());
 		mediation_RoutingSub.execute(initContext, user);
 		
 
@@ -24667,7 +24667,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 		if (isDuplicated(cdr, originRecord, user)) {
 			throw new BusinessException("DuplicateFound");
 		}
-		executeContext.put("accessUserId", cdr.getAccess_id());
+		executeContext.put("accessUserId", cdr.getAccessCode());
 		List<Access> accesses = routingSUB(executeContext, user);
 
 		if (accesses == null || accesses.isEmpty()) {
@@ -24679,10 +24679,10 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 		String codeCurrentIndex = null;
 		String codePreviousIndex = null;
 
-		if ("GAS".equals(cdr.getParam1())) {
+		if ("GAS".equals(cdr.getParameter1())) {
 			codeCurrentIndex = "CF_GAS_INDEX_CURRENT";
 			codePreviousIndex = "CF_GAS_INDEX_PREVIOUS";
-		} else if ("ELEC".equals(cdr.getParam1())) {
+		} else if ("ELEC".equals(cdr.getParameter1())) {
 			codeCurrentIndex = "CF_ELEC_INDEX_CURRENT";
 			codePreviousIndex = "CF_ELEC_INDEX_PREVIOUS";
 		}
@@ -24696,7 +24696,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 		  customFieldInstanceService.setCFValue(ua, codeCurrentIndex, newIndexCurrent.doubleValue(), user);
 		  cdr.setQuantity(new BigDecimal(newIndexCurrent.doubleValue() - oldIdxCurrent.doubleValue()));
           
-            log.debug("ua="+ua.getCode()+"; index="+cdr.getParam1()+"; old="+oldIdxCurrent+"; new="+newIndexCurrent);
+            log.debug("ua="+ua.getCode()+"; index="+cdr.getParameter1()+"; old="+oldIdxCurrent+"; new="+newIndexCurrent);
 		}
 
 		createEDR(cdr, "CustomMediation_" + (String) executeContext.get("originBatch"), originRecord, accesses, user);
@@ -24758,22 +24758,22 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 	 */
 	private void createEDR(CDR cdr, String originBatch, String originRecord, List<Access> accesses, User user) throws BusinessException {
 		for (Access accessPoint : accesses) {
-			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getTimestamp().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getTimestamp().getTime())) {
+			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
 
 				EDR edr = new EDR();
 				edr.setCreated(new Date());
-				edr.setEventDate(cdr.getTimestamp());
+				edr.setEventDate(cdr.getEventDate());
 				edr.setOriginBatch(originBatch);
 				edr.setOriginRecord(originRecord);
-				edr.setParameter1(cdr.getParam1());
-				edr.setParameter2(cdr.getParam2());
-				edr.setParameter3(cdr.getParam3());
-				edr.setParameter4(cdr.getParam4());
-				edr.setParameter5(cdr.getParam5());
-				edr.setParameter6(cdr.getParam6());
-				edr.setParameter7(cdr.getParam7());
-				edr.setParameter8(cdr.getParam8());
-				edr.setParameter9(cdr.getParam9());
+				edr.setParameter1(cdr.getParameter1());
+				edr.setParameter2(cdr.getParameter2());
+				edr.setParameter3(cdr.getParameter3());
+				edr.setParameter4(cdr.getParameter4());
+				edr.setParameter5(cdr.getParameter5());
+				edr.setParameter6(cdr.getParameter6());
+				edr.setParameter7(cdr.getParameter7());
+				edr.setParameter8(cdr.getParameter8());
+				edr.setParameter9(cdr.getParameter9());
 				edr.setAccessCode(accessPoint.getAccessUserId());
 				edr.setProvider(accessPoint.getProvider());
 				edr.setQuantity(cdr.getQuantity());
@@ -24907,7 +24907,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 		if (isDuplicated(cdr, originRecord, user)) {
 			throw new BusinessException("DuplicateFound");
 		}
-		executeContext.put("accessUserId", cdr.getAccess_id());
+		executeContext.put("accessUserId", cdr.getAccessCode());
 		List<Access> accesses = routingSUB(executeContext, user);
 
 		if (accesses == null || accesses.isEmpty()) {
@@ -24918,9 +24918,9 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 		subscription = subscriptionService.refreshOrRetrieve(subscription);
 		String codeService = null;
 
-		if ("GAS".equals(cdr.getParam1())) {
+		if ("GAS".equals(cdr.getParameter1())) {
 			codeService = subscription.getOffer().getId() + "_" + "Gas contract";
-		} else if ("ELEC".equals(cdr.getParam1())) {
+		} else if ("ELEC".equals(cdr.getParameter1())) {
 			codeService = subscription.getOffer().getId() + "_" + "Electricity contract";
 		}
 		if (codeService != null) {
@@ -24990,22 +24990,22 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 	 */
 	private void createEDR(CDR cdr, String originBatch, String originRecord, List<Access> accesses, User user) throws BusinessException {
 		for (Access accessPoint : accesses) {
-			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getTimestamp().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getTimestamp().getTime())) {
+			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
 
 				EDR edr = new EDR();
 				edr.setCreated(new Date());
-				edr.setEventDate(cdr.getTimestamp());
+				edr.setEventDate(cdr.getEventDate());
 				edr.setOriginBatch(originBatch);
 				edr.setOriginRecord(originRecord);
-				edr.setParameter1(cdr.getParam1());
-				edr.setParameter2(cdr.getParam2());
-				edr.setParameter3(cdr.getParam3());
-				edr.setParameter4(cdr.getParam4());
-				edr.setParameter5(cdr.getParam5());
-				edr.setParameter6(cdr.getParam6());
-				edr.setParameter7(cdr.getParam7());
-				edr.setParameter8(cdr.getParam8());
-				edr.setParameter9(cdr.getParam9());
+				edr.setParameter1(cdr.getParameter1());
+				edr.setParameter2(cdr.getParameter2());
+				edr.setParameter3(cdr.getParameter3());
+				edr.setParameter4(cdr.getParameter4());
+				edr.setParameter5(cdr.getParameter5());
+				edr.setParameter6(cdr.getParameter6());
+				edr.setParameter7(cdr.getParameter7());
+				edr.setParameter8(cdr.getParameter8());
+				edr.setParameter9(cdr.getParameter9());
 				edr.setAccessCode(accessPoint.getAccessUserId());
 				edr.setProvider(accessPoint.getProvider());
 				edr.setQuantity(cdr.getQuantity());

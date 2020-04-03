@@ -73,16 +73,16 @@ public class BankCoordinates implements Serializable, Cloneable {
      * IBAN number
      */
     @Convert(converter=BankDataEncryptor.class)
-    @Column(name = "iban", length = 100)
-    @Size(max = 100)
+    @Column(name = "iban", length = 500)
+    @Size(max = 500)
     private String iban;
 
     /**
      * BIC number
      */
     @Convert(converter=BankDataEncryptor.class)
-    @Column(name = "bic", length = 100)
-    @Size(max = 100)
+    @Column(name = "bic", length = 500)
+    @Size(max = 500)
     private String bic;
 
     /**

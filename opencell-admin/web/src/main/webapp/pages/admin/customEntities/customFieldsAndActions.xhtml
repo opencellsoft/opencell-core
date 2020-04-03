@@ -404,6 +404,8 @@
                         <hftl:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="10"/>
                         <hftl:formField label="#{messages['customFieldTemplate.hideOnNew']}" field="hideOnNew" isMessage="true" componentWidth="8" rendered="#{!customEntityTemplateBean.customTable}" />
                         <hftl:formField label="#{messages['customFieldTemplate.allowEdit']}" field="allowEdit" isMessage="true" componentWidth="7" rendered="#{!customEntityTemplateBean.customTable}" />
+                        <hftl:formField label="#{messages['customFieldTemplate.anonymizeGdpr']}" field="anonymizeGdpr" isMessage="true" componentWidth="7" 
+                        	rendered="#{!customEntityTemplateBean.customTable and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.ENTITY and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY}" />
                         <hftl:formField label="#{messages['customFieldTemplate.applicableOnEl']}" field="applicableOnEl" textArea="true" maxlength="2000" rows="1"
                             rendered="#{!customEntityTemplateBean.customTable}" />
                         <hftl:formField label="#{messages['customFieldTemplate.minValue']}" field="minValue" negativeValue="true" componentWidth="15"
@@ -441,7 +443,7 @@
                     </h:panelGroup>
                 </p:fieldset>
                 <h:panelGroup id="listValuesField">
-                    <p:fieldset legend="#{messages['customFieldTemplate.listValues']}" styleClass="clearLeft" rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LIST}">
+                    <p:fieldset legend="#{messages['customFieldTemplate.listValues']}" styleClass="clearLeft" rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LIST or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CHECKBOX_LIST}">
                         <hftl:formField label="#{messages['customFieldTemplate.listValues']}" field="listValues" mapKeyLabel="#{messages['commons.value']}" mapValueLabel="#{messages['commons.label']}"
                             componentWidth="75" newLine="true" />
                     </p:fieldset>

@@ -104,9 +104,9 @@ public interface InvoiceRs extends IBaseRs {
      * @param invoiceNumber Invoice number
      * @return xml invoice
      */
-    @POST
+    @GET
     @Path("/getXMLInvoice")
-    GetXmlInvoiceResponseDto findXMLInvoice(Long invoiceId, String invoiceNumber);
+    GetXmlInvoiceResponseDto findXMLInvoice(@QueryParam("invoiceId") Long invoiceId, @QueryParam("invoiceNumber") String invoiceNumber);
 
     /**
      * Finds an invoice based on its invoice number and optionally an invoice type and return it as xml string.
@@ -125,9 +125,9 @@ public interface InvoiceRs extends IBaseRs {
      * @param invoiceType Invoice type
      * @return xml invoice
      */
-    @POST
+    @GET
     @Path("/getXMLInvoiceWithType")
-    GetXmlInvoiceResponseDto findXMLInvoiceWithType(Long invoiceId, String invoiceNumber, String invoiceType);
+    GetXmlInvoiceResponseDto findXMLInvoiceWithType(@QueryParam("invoiceId") Long invoiceId, @QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("invoiceType") String invoiceType);
 
     /**
      * Finds an invoice based on invoice number and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database is returned.
@@ -136,9 +136,9 @@ public interface InvoiceRs extends IBaseRs {
      * @param invoiceNumber Invoice number
      * @return pdf invoice
      */
-    @POST
+    @GET
     @Path("/getPdfInvoice")
-    GetPdfInvoiceResponseDto findPdfInvoice(Long invoiceId, String invoiceNumber);
+    GetPdfInvoiceResponseDto findPdfInvoice(@QueryParam("invoiceId") Long invoiceId, @QueryParam("invoiceNumber") String invoiceNumber);
 
     /**
      * Finds an invoice based on invoice number and optionally an invoice type and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database
@@ -158,9 +158,9 @@ public interface InvoiceRs extends IBaseRs {
      * @param invoiceType Invoice type
      * @return pdf invoice
      */
-    @POST
+    @GET
     @Path("/getPdfInvoiceWithType")
-    GetPdfInvoiceResponseDto findPdfInvoiceWithType(Long invoiceId, String invoiceNumber, String invoiceType);
+    GetPdfInvoiceResponseDto findPdfInvoiceWithType(@QueryParam("invoiceId") Long invoiceId, @QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("invoiceType") String invoiceType);
 
     /**
      * Cancel an invoice based on invoice id.
