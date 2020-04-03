@@ -18,6 +18,16 @@
 
 package org.meveo.admin.util;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.apache.commons.io.FilenameUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.JobCacheContainerProvider;
@@ -41,11 +51,6 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.io.File;
-import java.util.*;
 
 /**
  * Flat file validator
@@ -80,7 +85,6 @@ public class FlatFileValidator {
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
-
     /**
      * The Constant DATETIME_FORMAT.
      */
@@ -89,7 +93,7 @@ public class FlatFileValidator {
     /**
      * Get property value. Return a default value if value was not set previously.
      *
-     * @param key          Property key
+     * @param key Property key
      * @param defaultValue Default value
      * @return Value of property, or a default value if it is not set yet
      */
@@ -143,8 +147,8 @@ public class FlatFileValidator {
     /**
      * Move file.
      *
-     * @param file        the file
-     * @param flatFile    the flat file
+     * @param file the file
+     * @param flatFile the flat file
      * @param destination the destination
      * @return the file current name.
      */
@@ -178,7 +182,7 @@ public class FlatFileValidator {
      * Get input directory
      *
      * @param fileFormat the file format
-     * @param filePath   the file path
+     * @param filePath the file path
      * @return the new input directory if it is provided else the return the fileFormat input directory
      * @throws BusinessException the business exception
      */
@@ -197,7 +201,7 @@ public class FlatFileValidator {
      * Get reject directory
      *
      * @param fileFormat the file format
-     * @param filePath   the file path
+     * @param filePath the file path
      * @return the reject directory
      */
     private String getRejectDirectory(FileFormat fileFormat, String filePath) {
@@ -218,9 +222,9 @@ public class FlatFileValidator {
     /**
      * Move the file in input directory or reject directory
      *
-     * @param file            the file
-     * @param flatFile        the flat file
-     * @param inputDirectory  the input directory
+     * @param file the file
+     * @param flatFile the flat file
+     * @param inputDirectory the input directory
      * @param rejectDirectory the reject directory
      * @return the file current name
      */
@@ -285,9 +289,9 @@ public class FlatFileValidator {
     /**
      * Validate the file by its format
      *
-     * @param file           the file
-     * @param fileName       the file name
-     * @param fileFormat     the file format
+     * @param file the file
+     * @param fileName the file name
+     * @param fileFormat the file format
      * @param inputDirectory the input directory
      * @return errors if the file is not valid
      * @throws BusinessException
@@ -363,12 +367,12 @@ public class FlatFileValidator {
     /**
      * Validate and log the file by its format
      *
-     * @param file            the file
-     * @param fileFormat      the faile format
-     * @param fileName        the file name
-     * @param inputDirectory  the input directory
+     * @param file the file
+     * @param fileFormat the faile format
+     * @param fileName the file name
+     * @param inputDirectory the input directory
      * @param rejectDirectory the reject directory
-     * @return the flat file
+     * @return The created flat file record
      * @throws BusinessException the business exception
      */
     private FlatFile validateAndLogFile(File file, FileFormat fileFormat, String fileName, String inputDirectory, String rejectDirectory) throws BusinessException {
@@ -386,12 +390,12 @@ public class FlatFileValidator {
     /**
      * Create flat file
      *
-     * @param file            the file
-     * @param fileFormat      the faile format
-     * @param fileName        the file name
-     * @param inputDirectory  the input directory
+     * @param file the file
+     * @param fileFormat the faile format
+     * @param fileName the file name
+     * @param inputDirectory the input directory
      * @param rejectDirectory the reject directory
-     * @param errors          the errors
+     * @param errors the errors
      * @return the flat file
      */
     public FlatFile createFlatFile(File file, FileFormat fileFormat, String fileName, String inputDirectory, String rejectDirectory, StringBuilder errors) {
@@ -417,30 +421,31 @@ public class FlatFileValidator {
     /**
      * Validate and log the file by its format
      *
-     * @param file           the file
-     * @param fileName       the file name
-     * @param fileFormatCode the faile format code
-     * @return the flat file
-     * @throws BusinessException the business exception
+     * @param file File to validate and log
+     * @param fileName File name
+     * @param fileFormatCode Flat file format code
+     * @return The created flat file record
+     * @throws BusinessException General business exception
      */
-    public void validateAndLogFile(File file, String fileName, String fileFormatCode) throws BusinessException {
+    public FlatFile validateAndLogFile(File file, String fileName, String fileFormatCode) throws BusinessException {
 
-        if (!StringUtils.isBlank(fileFormatCode)) {
-            FileFormat fileFormat = fileFormatService.findByCode(fileFormatCode);
-            if (fileFormat == null) {
-                log.error("The file format " + fileFormatCode + " is not found");
-                throw new BusinessException("The file format " + fileFormatCode + " is not found");
-            }
-            String inputDirectory = getInputDirectory(fileFormat, null);
-            String rejectDirectory = getRejectDirectory(fileFormat, null);
-            validateAndLogFile(file, fileFormat, fileName, inputDirectory, rejectDirectory);
+        if (StringUtils.isBlank(fileFormatCode)) {
+            return null;
         }
+        FileFormat fileFormat = fileFormatService.findByCode(fileFormatCode);
+        if (fileFormat == null) {
+            log.error("The file format " + fileFormatCode + " is not found");
+            throw new BusinessException("The file format " + fileFormatCode + " is not found");
+        }
+        String inputDirectory = getInputDirectory(fileFormat, null);
+        String rejectDirectory = getRejectDirectory(fileFormat, null);
+        return validateAndLogFile(file, fileFormat, fileName, inputDirectory, rejectDirectory);
     }
 
     /**
-     * @param files          the files list
+     * @param files the files list
      * @param fileFormatCode the file format code
-     * @param filePath       the file path
+     * @param filePath the file path
      * @return the messages
      * @throws BusinessException the business exception
      */
