@@ -18,6 +18,20 @@
 
 package org.meveo.api.admin;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.zip.ZipOutputStream;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -29,19 +43,7 @@ import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.zip.ZipOutputStream;
+import org.meveo.model.bi.FlatFile;
 
 /**
  * @author Edward P. Legaspi
@@ -129,9 +131,10 @@ public class FilesApi extends BaseApi {
      * @param data array of bytes as data uploaded
      * @param filename file name
      * @param fileFormat file format
+     * @return The created flat file record
      * @throws BusinessApiException business api exeption.
      */
-    public void uploadFile(byte[] data, String filename, String fileFormat) throws BusinessApiException {
+    public FlatFile uploadFile(byte[] data, String filename, String fileFormat) throws BusinessApiException {
         FileOutputStream fop = null;
         try {
 //            if (!file.exists()) {
@@ -153,8 +156,9 @@ public class FilesApi extends BaseApi {
             }
 
             if (!StringUtils.isBlank(fileFormat)) {
-                flatFileValidator.validateAndLogFile(file, filename, fileFormat);
+                return flatFileValidator.validateAndLogFile(file, filename, fileFormat);
             }
+            return null;
 
         } catch (Exception e) {
             throw new BusinessApiException("Error uploading file: " + filename + ". " + e.getMessage());
