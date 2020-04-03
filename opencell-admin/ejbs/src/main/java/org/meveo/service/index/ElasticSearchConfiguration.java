@@ -170,8 +170,9 @@ public class ElasticSearchConfiguration implements Serializable {
 
                     for (Class<?> classToIndex : clazzes) {
 
-                        if (!ISearchable.class.isAssignableFrom(classToIndex) || Modifier.isAbstract(classToIndex.getModifiers())
-                                || classToIndex.getEnclosingClass() != null) { //Ignoring inner classes
+                        if (!ISearchable.class.isAssignableFrom(classToIndex) || Modifier.isAbstract(classToIndex.getModifiers()) || classToIndex.getEnclosingClass() != null) { // Ignoring
+                                                                                                                                                                                 // inner
+                                                                                                                                                                                 // classes
                             continue;
                         }
 
@@ -181,8 +182,14 @@ public class ElasticSearchConfiguration implements Serializable {
                         indexMap.put(classnameToIndex, entityMapping.get("index").textValue());
                         if (entityMapping.has("type")) {
                             typeMap.put(classnameToIndex, entityMapping.get("type").textValue());
+
+                            // It is important the order of class mapping definition is ES config file. Specific class should be defined later.
                         } else if (entityMapping.has("useType")) {
-                            typeMap.put(classnameToIndex, classToIndex.getSimpleName());
+                            if (entityMapping.get("useType").booleanValue()) {
+                                typeMap.put(classnameToIndex, classToIndex.getSimpleName());
+                            } else {
+                                typeMap.remove(classnameToIndex);
+                            }
                         }
                         if (entityMapping.has("upsert") && entityMapping.get("upsert").asBoolean()) {
                             upsertMap.add(classnameToIndex);
