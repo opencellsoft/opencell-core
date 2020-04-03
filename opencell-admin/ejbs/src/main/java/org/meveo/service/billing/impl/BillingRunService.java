@@ -159,6 +159,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     BillingRunService billingRunService;
 
     /**
+     * The rejected billing acoount service.
+     */
+    @Inject
+    RejectedBillingAccountService rejectedBillingAccountService;
+
+    /**
      * Generate pre invoicing reports.
      *
      * @param billingRun the billing run
@@ -1026,12 +1032,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Map<Class, Map<Long, ThresholdAmounts>> invoiceableAmounts = invoiceService.getTotalInvoiceableAmountByBR(billingRun);
 
         Set<Long> billableEntitieIds = invoiceableAmounts.get(BillingAccount.class).keySet();
+        Set<Long> rejectedBillingAccounts = new HashSet<>();
         invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(BillingAccount.class), positiveRTAmounts.get(BillingAccount.class),
-                invoiceableAmounts.get(BillingAccount.class), BillingAccount.class));
+                invoiceableAmounts.get(BillingAccount.class), BillingAccount.class, rejectedBillingAccounts));
         invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(CustomerAccount.class), positiveRTAmounts.get(CustomerAccount.class),
-                invoiceableAmounts.get(CustomerAccount.class), CustomerAccount.class));
+                invoiceableAmounts.get(CustomerAccount.class), CustomerAccount.class, rejectedBillingAccounts));
         invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(Customer.class), positiveRTAmounts.get(Customer.class),
-                invoiceableAmounts.get(Customer.class), Customer.class));
+                invoiceableAmounts.get(Customer.class), Customer.class, rejectedBillingAccounts));
         if (invoicesToRemove != null && !invoicesToRemove.isEmpty()) {
             // Exclude prepaid invoice from applying threshold rules.
             List<Long> excludedPrepaidInvoices = invoiceService.excludePrepaidInvoices(invoicesToRemove);
@@ -1040,6 +1047,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             ratedTransactionService.uninvoiceRTs(excludedPrepaidInvoices);
             invoiceService.deleteInvoices(excludedPrepaidInvoices);
             invoiceAgregateService.deleteInvoiceAgregates(excludedPrepaidInvoices);
+            rejectedBillingAccounts.forEach(rejectedBillingAccountId -> {
+                BillingAccount ba = billingAccountService.findById(rejectedBillingAccountId);
+                rejectedBillingAccountService.create(ba, getEntityManager().getReference(BillingRun.class, billingRun.getId()), "Billing account not reach to invoicing threshold");
+            });
         }
     }
 
@@ -1054,7 +1065,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @return a list of invoice that not reach the invoicing threshold and that must be removed.
      */
     private List<Long> getInvoicesToRemoveByAccount(Collection<Long> billableEntities, Map<Long, ThresholdAmounts> discountThresholdAmounts,
-            Map<Long, ThresholdAmounts> positiveRTThresholdAmounts, Map<Long, ThresholdAmounts> invoiceableThresholdAmounts, Class clazz) {
+            Map<Long, ThresholdAmounts> positiveRTThresholdAmounts, Map<Long, ThresholdAmounts> invoiceableThresholdAmounts, Class clazz, Set<Long> rejectedBillingAccounts) {
         List<Long> invoicesToRemove = new ArrayList<>();
         List<Long> alreadyProcessedEntities = new ArrayList<>();
         billableEntities.forEach(billableEntityId -> {
@@ -1101,6 +1112,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     BigDecimal amount = (appProvider.isEntreprise()) ? baAmounts.getAmountWithoutTax() : baAmounts.getAmountWithTax();
                     if (amount.compareTo(threshold) < 0) {
                         invoicesToRemove.addAll(thresholdAmounts.getInvoices());
+                        rejectedBillingAccounts.add(billableEntityId);
                     }
                 }
                 break;
@@ -1111,6 +1123,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     BigDecimal amount = (appProvider.isEntreprise()) ? baAmounts.getAmountWithoutTax() : baAmounts.getAmountWithTax();
                     if (amount.compareTo(threshold) < 0) {
                         invoicesToRemove.addAll(thresholdAmounts.getInvoices());
+                        rejectedBillingAccounts.add(billableEntityId);
                     }
                 }
                 break;
@@ -1125,6 +1138,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     BigDecimal amount = (appProvider.isEntreprise()) ? thresholdAmounts.getAmount().getAmountWithoutTax() : thresholdAmounts.getAmount().getAmountWithTax();
                     if (amount.compareTo(threshold) < 0) {
                         invoicesToRemove.addAll(thresholdAmounts.getInvoices());
+                        rejectedBillingAccounts.add(billableEntityId);
                     }
                 }
                 break;
