@@ -16,7 +16,7 @@ public class DateMapper extends FilterMapper {
             try {
                 return new SimpleDateFormat("dd/MM/yyyy").parse(String.valueOf(value));
             } catch (ParseException e) {
-                throw new IllegalArgumentException(property + " has not a valid filter value");
+                throw new IllegalArgumentException(property + " has not a valid filter value, hint : dd/MM/yyyy");
             }
         }
         return new Date((Long) value);
