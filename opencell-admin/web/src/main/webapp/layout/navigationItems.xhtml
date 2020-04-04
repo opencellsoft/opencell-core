@@ -331,9 +331,9 @@
 
     <p:submenu id="customEntites"
 		label="#{messages['menu.customEntities']}"
-		rendered="#{!empty(customEntityTemplateBean.listAll()) and currentUser.hasRole('administrationVisualization')}">
+		rendered="#{!empty(customEntityTemplateBean.listSortedByName()) and currentUser.hasRole('administrationVisualization')}">
 		<c:set var="cetIndex" value="0" />
-		<c:forEach items="#{customEntityTemplateBean.listAll()}" var="cet">
+		<c:forEach items="#{customEntityTemplateBean.listSortedByName()}" var="cet">
 			<c:if
 				test="#{currentUser.hasRole(cet.readPermission) || currentUser.hasRole('ReadAllCE')}">
 				<p:menuitem id="cet_#{cetIndex}" outcome="#{cet.storeAsTable?'customTables':'customEntities'}" value="#{cet.name}">

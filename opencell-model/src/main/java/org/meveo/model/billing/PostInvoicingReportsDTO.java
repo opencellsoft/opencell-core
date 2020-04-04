@@ -17,13 +17,16 @@
  */
 package org.meveo.model.billing;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
-public class PostInvoicingReportsDTO {
+public class PostInvoicingReportsDTO implements Serializable {
+
+    private static final long serialVersionUID = -5837078664368622411L;
 
     private Integer invoicesNumber = 0;
     private Integer positiveInvoicesNumber = 0;
