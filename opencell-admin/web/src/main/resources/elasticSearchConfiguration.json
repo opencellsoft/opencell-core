@@ -172,7 +172,7 @@
 		}
 	},
 	"customFieldTemplates": {
-		"#{cft.fieldType == 'ENTITY' and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
+		"#{cft.fieldType == 'ENTITY' and not isOwnerACustomTable and  (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
 			"properties": {
 				"<fieldName>": {
 					"properties": {
@@ -189,6 +189,14 @@
 							"index": "<indexValue>"
 						}
 					}
+				}
+			}
+		},
+		"#{cft.fieldType == 'ENTITY' and isOwnerACustomTable and (cft.storageType == 'SINGLE' or cft.storageType == 'LIST')}": {
+			"properties": {
+				"<fieldName>": {
+					"type": "long",
+					"index": "<indexValue>"
 				}
 			}
 		},
