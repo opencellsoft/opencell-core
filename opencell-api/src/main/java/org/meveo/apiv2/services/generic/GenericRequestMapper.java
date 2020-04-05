@@ -42,7 +42,6 @@ public class GenericRequestMapper {
                 .map(key -> {
                     String keyObject = (String) key;
                     if(!"SQL".equalsIgnoreCase(keyObject) && !"$FILTER".equalsIgnoreCase(keyObject)){
-
                         String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
                         return Collections.singletonMap(keyObject, new FactoryFilterMapper().create(fieldName, filters.get(key), entity, serviceFunction).map());
                     }

@@ -2,6 +2,7 @@ package org.meveo.apiv2.services.generic.filter;
 
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.meveo.apiv2.services.generic.filter.filtermapper.*;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.PersistenceService;
@@ -18,18 +19,23 @@ public interface FactoryMapper {
         if(simpleField.contains(property) || clazz != null && clazz.getSimpleName().equalsIgnoreCase(property)){
             return resolveFilterMapperType(property, value, clazz, entityManagerResolver);
         }
-        Field field = FieldUtils.getField(clazz, property, true);
-        if(field != null){
-            if(List.class.isAssignableFrom(field.getType())){
-                Type type = field.getGenericType();
-                if (type instanceof ParameterizedType) {
-                    Type[] pt = ((ParameterizedType) type).getActualTypeArguments();
-                    return resolveFilterMapperType(property, value, (Class) pt[0], entityManagerResolver);
+        try {
+            Field field = ReflectionUtils.getFieldThrowException(clazz, property);
+            if(field != null){
+                if(List.class.isAssignableFrom(field.getType())){
+                    Type type = field.getGenericType();
+                    if (type instanceof ParameterizedType) {
+                        Type[] pt = ((ParameterizedType) type).getActualTypeArguments();
+                        return resolveFilterMapperType(property, value, (Class) pt[0], entityManagerResolver);
+                    }
                 }
+                return resolveFilterMapperType(property.substring(property.lastIndexOf(".")+1), value, field.getType(), entityManagerResolver);
             }
-            return resolveFilterMapperType(property, value, field.getType(), entityManagerResolver);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("Invalid argument : " + property);
         }
-        throw new IllegalArgumentException("Invalid argument : " + property);
+        return null;
     }
 
     default FilterMapper resolveFilterMapperType(String property, Object value, Class clazz, Function<Class, PersistenceService> entityManagerResolver){
@@ -49,7 +55,7 @@ public interface FactoryMapper {
         if(clazz.isEnum()){
             return new EnumMapper(property, value, clazz);
         }
-        if(Auditable.class.isAssignableFrom(clazz)){
+        if(Auditable.class.isAssignableFrom(clazz)){ // todo : use clazz.isAnnotationPresent(Embeddable.class) instead
             return new AuditableMapper(property, value, clazz);
         }
         if("type_class".equalsIgnoreCase(property)){
