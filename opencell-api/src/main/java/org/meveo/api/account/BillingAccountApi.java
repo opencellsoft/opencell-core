@@ -276,7 +276,7 @@ public class BillingAccountApi extends AccountEntityApi {
         // ONLY used to handle deprecated billingAccountDto.paymentMethod and billingAccountDto.bankCoordinates fields. Use
         createOrUpdatePaymentMethodInCA(postData, billingAccount);
 
-        if (postData.getCheckThreshold() == null) {
+        if (postData.getCheckThreshold() == null && postData.getInvoicingThreshold() != null) {
             billingAccount.setCheckThreshold(ThresholdOptionsEnum.AFTER_DISCOUNT);
         } else {
             billingAccount.setCheckThreshold(postData.getCheckThreshold());
