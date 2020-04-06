@@ -2,8 +2,7 @@
     "username": "RS_FULL_15_Username.Level1",
     "email": "RS_FULL_15@test.com",
     "userRole": [
-        "administrateur",
-        "deletethis"
+        "administrateur"
     ],
     "firstName": "Level 1",
     "lastName": "User",
