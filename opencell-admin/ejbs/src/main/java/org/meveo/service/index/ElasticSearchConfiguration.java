@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -107,7 +108,7 @@ public class ElasticSearchConfiguration implements Serializable {
     /**
      * Contains mapping rules for custom fields. Map key is an EL expression.
      */
-    private Map<String, String> customFieldTemplates = new HashMap<>();
+    private Map<String, String> customFieldTemplates = new LinkedHashMap<>();
 
     /**
      * Contains index definition template for custom entity instances and custom tables
@@ -170,8 +171,9 @@ public class ElasticSearchConfiguration implements Serializable {
 
                     for (Class<?> classToIndex : clazzes) {
 
-                        if (!ISearchable.class.isAssignableFrom(classToIndex) || Modifier.isAbstract(classToIndex.getModifiers())
-                                || classToIndex.getEnclosingClass() != null) { //Ignoring inner classes
+                        if (!ISearchable.class.isAssignableFrom(classToIndex) || Modifier.isAbstract(classToIndex.getModifiers()) || classToIndex.getEnclosingClass() != null) { // Ignoring
+                                                                                                                                                                                 // inner
+                                                                                                                                                                                 // classes
                             continue;
                         }
 
@@ -181,8 +183,14 @@ public class ElasticSearchConfiguration implements Serializable {
                         indexMap.put(classnameToIndex, entityMapping.get("index").textValue());
                         if (entityMapping.has("type")) {
                             typeMap.put(classnameToIndex, entityMapping.get("type").textValue());
+
+                            // It is important the order of class mapping definition is ES config file. Specific class should be defined later.
                         } else if (entityMapping.has("useType")) {
-                            typeMap.put(classnameToIndex, classToIndex.getSimpleName());
+                            if (entityMapping.get("useType").booleanValue()) {
+                                typeMap.put(classnameToIndex, classToIndex.getSimpleName());
+                            } else {
+                                typeMap.remove(classnameToIndex);
+                            }
                         }
                         if (entityMapping.has("upsert") && entityMapping.get("upsert").asBoolean()) {
                             upsertMap.add(classnameToIndex);
@@ -368,12 +376,13 @@ public class ElasticSearchConfiguration implements Serializable {
      * 
      * @param cft Custom field template
      * @param cleanupFieldname Should field name (customFieldTemplate.code) be cleanedup - lowercased and spaces replaced by '_'
+     * @param isOwnerACustomTable Is entity, that CFT is for, is a custom table
      * @return Field mapping JSON string
      */
-    public String getCustomFieldMapping(CustomFieldTemplate cft, boolean cleanupFieldname) {
+    public String getCustomFieldMapping(CustomFieldTemplate cft, boolean cleanupFieldname, boolean isOwnerACustomTable) {
 
         for (Entry<String, String> fieldTemplate : customFieldTemplates.entrySet()) {
-            if (ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(fieldTemplate.getKey(), "cft", cft)) {
+            if (ValueExpressionWrapper.evaluateToBooleanMultiVariable(fieldTemplate.getKey(), "cft", cft, "isOwnerACustomTable", isOwnerACustomTable)) {
 
                 String fieldname = cft.getCode();
                 if (cleanupFieldname) {

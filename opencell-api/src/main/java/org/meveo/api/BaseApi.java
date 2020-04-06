@@ -194,8 +194,6 @@ public abstract class BaseApi {
         handleMissingParameters(dto);
     }
 
-
-
     protected void handleMissingParameters(BaseEntityDto dto, String... fields) throws MeveoApiException {
 
         for (String fieldName : fields) {
@@ -267,8 +265,8 @@ public abstract class BaseApi {
      * @throws MeveoApiException
      */
     @SuppressWarnings("unchecked")
-    private ICustomFieldEntity populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, boolean isNewEntity,
-            boolean checkCustomFields) throws MeveoApiException {
+    private ICustomFieldEntity populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, boolean isNewEntity, boolean checkCustomFields)
+            throws MeveoApiException {
 
         // check if any templates are applicable
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
@@ -302,8 +300,7 @@ public abstract class BaseApi {
                 // Ignore the value when creating entity and CFT.hideOnNew=true
                 // or editing entity and CFT.allowEdit=false or when
                 // CFT.applicableOnEL expression evaluates to false
-                if (cft != null && ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
-                        || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity))) {
+                if (cft != null && ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit()) || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity))) {
                     // log.debug("Custom field value not applicable for this
                     // state of entity lifecycle: code={} for entity {}
                     // transient{}. Value will be ignored.", cfDto.getCode(),
@@ -336,8 +333,7 @@ public abstract class BaseApi {
                                 customFieldInstanceService.setCFValue(entity, cfDto.getCode(), valueConverted, cfDto.getValueDate());
 
                             } else {
-                                customFieldInstanceService.setCFValue(entity, cfDto.getCode(), valueConverted, cfDto.getValuePeriodStartDate(), cfDto.getValuePeriodEndDate(),
-                                    cfDto.getValuePeriodPriority());
+                                customFieldInstanceService.setCFValue(entity, cfDto.getCode(), valueConverted, cfDto.getValuePeriodStartDate(), cfDto.getValuePeriodEndDate(), cfDto.getValuePeriodPriority());
                             }
 
                         } else {
@@ -362,16 +358,15 @@ public abstract class BaseApi {
         if (customFieldTemplates != null) {
 
             for (CustomFieldTemplate cft : customFieldTemplates.values()) {
-            	
+
                 boolean cftValueRequired = cft.isValueRequired();
-                
-				if (cft.isDisabled() || (!cftValueRequired && cft.getDefaultValue() == null && !cft.isUseInheritedAsDefaultValue())) {
+
+                if (cft.isDisabled() || (!cftValueRequired && cft.getDefaultValue() == null && !cft.isUseInheritedAsDefaultValue())) {
                     continue;
                 }
 
                 // Does not apply at this moment
-                if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
-                        || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
+                if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit()) || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
                     continue;
                 }
 
@@ -395,8 +390,9 @@ public abstract class BaseApi {
                             Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
                             hasValue = value != null;
                         }
-                        
-                        if (!hasValue && cft.getDefaultValue() != null && (isNewEntity || cftValueRequired)) { // No need to check for !cft.isInheritedAsDefaultValue() as it was checked above
+
+                        if (!hasValue && cft.getDefaultValue() != null && (isNewEntity || cftValueRequired)) { // No need to check for !cft.isInheritedAsDefaultValue() as it was
+                                                                                                               // checked above
                             Object value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode());
                             hasValue = value != null;
                         }
@@ -436,8 +432,8 @@ public abstract class BaseApi {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected void validateAndConvertCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, boolean checkCustomFields,
-            boolean isNewEntity, ICustomFieldEntity entity) throws MeveoApiException {
+    protected void validateAndConvertCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, boolean checkCustomFields, boolean isNewEntity, ICustomFieldEntity entity)
+            throws MeveoApiException {
 
         if (customFieldDtos == null) {
             return;
@@ -454,10 +450,8 @@ public abstract class BaseApi {
             // Ignore the value when creating entity and CFT.hideOnNew=true or
             // editing entity and CFT.allowEdit=false or when CFT.applicableOnEL
             // expression evaluates to false
-            if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit())
-                    || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
-                log.debug("Custom field value not applicable for this state of entity lifecycle: code={} for entity {} transient{}. Value will be ignored.", cfDto.getCode(),
-                    entity.getClass(), isNewEntity);
+            if ((isNewEntity && cft.isHideOnNew()) || (!isNewEntity && !cft.isAllowEdit()) || !ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity)) {
+                log.debug("Custom field value not applicable for this state of entity lifecycle: code={} for entity {} transient{}. Value will be ignored.", cfDto.getCode(), entity.getClass(), isNewEntity);
                 continue;
             }
 
@@ -472,8 +466,8 @@ public abstract class BaseApi {
 
             // Validate that value is valid (min/max, regexp). When
             // value is a list or a map, check separately each value
-            if (!isEmpty && (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN || cft.getFieldType() == CustomFieldTypeEnum.LONG
-                    || cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY)) {
+            if (!isEmpty && (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN
+                    || cft.getFieldType() == CustomFieldTypeEnum.LONG || cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY)) {
 
                 List valuesToCheck = new ArrayList<>();
 
@@ -510,8 +504,7 @@ public abstract class BaseApi {
                         }
                         // Validate String length
                         if (stringValue.length() > cft.getMaxValue()) {
-                            throw new InvalidParameterException(
-                                "Custom field " + cft.getCode() + " value " + stringValue + " length is longer then " + cft.getMaxValue() + " symbols");
+                            throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + stringValue + " length is longer then " + cft.getMaxValue() + " symbols");
 
                             // Validate String regExp
                         } else if (cft.getRegExp() != null) {
@@ -519,8 +512,7 @@ public abstract class BaseApi {
                                 Pattern pattern = Pattern.compile(cft.getRegExp());
                                 Matcher matcher = pattern.matcher(stringValue);
                                 if (!matcher.matches()) {
-                                    throw new InvalidParameterException(
-                                        "Custom field " + cft.getCode() + " value " + stringValue + " does not match regular expression " + cft.getRegExp());
+                                    throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + stringValue + " does not match regular expression " + cft.getRegExp());
                                 }
                             } catch (PatternSyntaxException pse) {
                                 throw new InvalidParameterException("Custom field " + cft.getCode() + " definition specifies an invalid regular expression " + cft.getRegExp());
@@ -538,14 +530,12 @@ public abstract class BaseApi {
                         }
 
                         if (cft.getMaxValue() != null && longValue.compareTo(cft.getMaxValue()) > 0) {
-                            throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + longValue + " is bigger then " + cft.getMaxValue()
-                                    + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
-                                    + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
+                            throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + longValue + " is bigger then " + cft.getMaxValue() + ". Allowed value range is from "
+                                    + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to " + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
 
                         } else if (cft.getMinValue() != null && longValue.compareTo(cft.getMinValue()) < 0) {
-                            throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + longValue + " is smaller then " + cft.getMinValue()
-                                    + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
-                                    + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
+                            throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + longValue + " is smaller then " + cft.getMinValue() + ". Allowed value range is from "
+                                    + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to " + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
                         }
                     } else if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
                         Double doubleValue = null;
@@ -558,17 +548,15 @@ public abstract class BaseApi {
                         }
 
                         if (cft.getMaxValue() != null && doubleValue.compareTo(cft.getMaxValue().doubleValue()) > 0) {
-                            throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + doubleValue + " is bigger then " + cft.getMaxValue()
-                                    + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
-                                    + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
+                            throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + doubleValue + " is bigger then " + cft.getMaxValue() + ". Allowed value range is from "
+                                    + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to " + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
 
                         } else if (cft.getMinValue() != null && doubleValue.compareTo(cft.getMinValue().doubleValue()) < 0) {
-                            throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + doubleValue + " is smaller then " + cft.getMinValue()
-                                    + ". Allowed value range is from " + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to "
-                                    + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
+                            throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + doubleValue + " is smaller then " + cft.getMinValue() + ". Allowed value range is from "
+                                    + (cft.getMinValue() == null ? "unspecified" : cft.getMinValue()) + " to " + (cft.getMaxValue() == null ? "unspecified" : cft.getMaxValue()) + ".");
                         }
                     } else if (cft.getFieldType() == CustomFieldTypeEnum.BOOLEAN) {
-                    	Boolean booleanValue = Boolean.valueOf(valueToCheck.toString());
+                        Boolean booleanValue = Boolean.valueOf(valueToCheck.toString());
 
                     } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
                         // Just in case, set CET code to whatever CFT definition
@@ -1090,8 +1078,7 @@ public abstract class BaseApi {
      * @return Map of values with language code as a key
      * @throws InvalidParameterException invalid parameter exception.
      */
-    protected Map<String, String> convertMultiLanguageToMapOfValues(List<LanguageDescriptionDto> translationInfos, Map<String, String> currentValues)
-            throws InvalidParameterException {
+    protected Map<String, String> convertMultiLanguageToMapOfValues(List<LanguageDescriptionDto> translationInfos, Map<String, String> currentValues) throws InvalidParameterException {
         if (translationInfos == null || translationInfos.isEmpty()) {
             return null;
         }
@@ -1135,19 +1122,21 @@ public abstract class BaseApi {
      * @throws InvalidParameterException invalid parameter exception.
      */
     @SuppressWarnings("rawtypes")
-    protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering,
-            Class targetClass) throws InvalidParameterException {
+    protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering, Class targetClass)
+            throws InvalidParameterException {
 
         if (pagingAndFiltering != null && targetClass != null) {
-        	Map<String, CustomFieldTemplate> cfts = null;
-        	if(ICustomFieldEntity.class.isAssignableFrom(targetClass)) {
-        		cfts = customFieldTemplateService.findByAppliesTo(targetClass.getSimpleName());
-        	}
-			pagingAndFiltering.setFilters(convertFilters(targetClass, pagingAndFiltering.getFilters(), cfts ));
+            Map<String, CustomFieldTemplate> cfts = null;
+            if (ICustomFieldEntity.class.isAssignableFrom(targetClass)) {
+                cfts = customFieldTemplateService.findByAppliesTo(targetClass.getSimpleName());
+            }
+            pagingAndFiltering.setFilters(convertFilters(targetClass, pagingAndFiltering.getFilters(), cfts));
         }
         PaginationConfiguration paginationConfig = initPaginationConfiguration(defaultSortBy, defaultSortOrder, fetchFields, pagingAndFiltering);
         return paginationConfig;
-    }    /**
+    }
+
+    /**
      * Convert pagination and filtering DTO to a pagination configuration used in services.
      * 
      * @param defaultSortBy A default value to sortBy
@@ -1158,31 +1147,29 @@ public abstract class BaseApi {
      * @return Pagination configuration
      * @throws InvalidParameterException invalid parameter exception.
      */
-    protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering,
-    		Map<String, CustomFieldTemplate> cfts) throws InvalidParameterException {
+    protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering, Map<String, CustomFieldTemplate> cfts)
+            throws InvalidParameterException {
 
         if (pagingAndFiltering != null && cfts != null) {
-            pagingAndFiltering.setFilters(convertFilters(null, pagingAndFiltering.getFilters(),cfts));
+            pagingAndFiltering.setFilters(convertFilters(null, pagingAndFiltering.getFilters(), cfts));
         }
         PaginationConfiguration paginationConfig = initPaginationConfiguration(defaultSortBy, defaultSortOrder, fetchFields, pagingAndFiltering);
         return paginationConfig;
     }
 
-	private PaginationConfiguration initPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder,
-			List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
-		return new PaginationConfiguration(pagingAndFiltering != null ? pagingAndFiltering.getOffset() : null,
-            pagingAndFiltering != null ? pagingAndFiltering.getLimit() : null, pagingAndFiltering != null ? pagingAndFiltering.getFilters() : null,
-            pagingAndFiltering != null ? pagingAndFiltering.getFullTextFilter() : null, fetchFields,
+    private PaginationConfiguration initPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
+        return new PaginationConfiguration(pagingAndFiltering != null ? pagingAndFiltering.getOffset() : null, pagingAndFiltering != null ? pagingAndFiltering.getLimit() : null,
+            pagingAndFiltering != null ? pagingAndFiltering.getFilters() : null, pagingAndFiltering != null ? pagingAndFiltering.getFullTextFilter() : null, fetchFields,
             pagingAndFiltering != null && pagingAndFiltering.getSortBy() != null ? pagingAndFiltering.getSortBy() : defaultSortBy,
             pagingAndFiltering != null && pagingAndFiltering.getSortOrder() != null ? SortOrder.valueOf(pagingAndFiltering.getSortOrder().name()) : defaultSortOrder);
-	}
+    }
 
-	/**
+    /**
      * Convert string type filter criteria to a data type corresponding to a particular field
      * 
      * @param targetClass Principal class that filter criteria is targeting
      * @param filtersToConvert Filtering criteria
-	 * @param cfts 
+     * @param cfts
      * @return A converted filter
      * @throws InvalidParameterException
      */
@@ -1223,9 +1210,9 @@ public abstract class BaseApi {
                 // Determine what the target field type is and convert to that data type
             } else {
 
-            	Class<?> fieldClassType = extractFieldType(targetClass, fieldName, cfts);
-                Object valueConverted =castFilterValue(value, fieldClassType, (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition), cfts);
-    			if (valueConverted != null) {
+                Class<?> fieldClassType = extractFieldType(targetClass, fieldName, cfts);
+                Object valueConverted = castFilterValue(value, fieldClassType, (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition), cfts);
+                if (valueConverted != null) {
                     filters.put(key, valueConverted);
                 } else {
                     throw new InvalidParameterException("Filter " + key + " value " + value + " does not match " + fieldClassType.getSimpleName());
@@ -1236,48 +1223,46 @@ public abstract class BaseApi {
         return filters;
     }
 
-	private Class<?> extractFieldType(Class<?> targetClass, String fieldName, Map<String, CustomFieldTemplate> cfts) {
-		Class<?> fieldClassType = null;
-		if (targetClass != null) {
-			Field field;
-			try {
-				field = ReflectionUtils.getFieldThrowException(targetClass, fieldName);
-			} catch (NoSuchFieldException e) {
-				throw new InvalidParameterException(e.getMessage());
-			}
-			fieldClassType = field.getType();
-			if (fieldClassType == List.class || fieldClassType == Set.class) {
-				fieldClassType = ReflectionUtils.getFieldGenericsType(field);
-			}
-		} else if (cfts != null) {
-			Optional<String> field = cfts.keySet().stream().filter(x -> x.equalsIgnoreCase(fieldName)).findFirst();
-			if (field.isPresent()) {
-				String cftName = field.get();
-				CustomFieldTemplate cft = cfts.get(cftName);
-				fieldClassType = cft.getFieldType().getDataClass();
-			} else if (NativePersistenceService.FIELD_ID.equals(fieldName)) {
-				fieldClassType = Long.class;
-			}
-		}
-		return fieldClassType;
-	}
+    private Class<?> extractFieldType(Class<?> targetClass, String fieldName, Map<String, CustomFieldTemplate> cfts) {
+        Class<?> fieldClassType = null;
+        if (targetClass != null) {
+            Field field;
+            try {
+                field = ReflectionUtils.getFieldThrowException(targetClass, fieldName);
+            } catch (NoSuchFieldException e) {
+                throw new InvalidParameterException(e.getMessage());
+            }
+            fieldClassType = field.getType();
+            if (fieldClassType == List.class || fieldClassType == Set.class) {
+                fieldClassType = ReflectionUtils.getFieldGenericsType(field);
+            }
+        } else if (cfts != null) {
+            Optional<CustomFieldTemplate> field = cfts.values().stream().filter(x -> x.getCode().equalsIgnoreCase(fieldName) || x.getDbFieldname().equalsIgnoreCase(fieldName)).findFirst();
+            if (field.isPresent()) {
+                CustomFieldTemplate cft = field.get();
+                fieldClassType = cft.getFieldType().getDataClass();
+            } else if (NativePersistenceService.FIELD_ID.equals(fieldName)) {
+                fieldClassType = Long.class;
+            }
+        }
+        return fieldClassType;
+    }
 
-	/**
+    /**
      * Convert value of unknown data type to a target data type. A value of type list is considered as already converted value, as would come only from WS.
      * 
      * @param value Value to convert
      * @param targetClass Target data type class to convert to
      * @param expectedList Is return value expected to be a list. If value is not a list and is a string a value will be parsed as comma separated string and each value will be
      *        converted accordingly. If a single value is passed, it will be added to a list.
-	 * @param cfts 
+     * @param cfts
      * @return A converted data type
      * @throws InvalidParameterException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Object castFilterValue(Object value, Class targetClass, boolean expectedList, Map<String, CustomFieldTemplate> cfts) throws InvalidParameterException {
 
-        log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
-            value != null ? value.getClass().isArray() : null);
+        log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList, value != null ? value.getClass().isArray() : null);
         // Nothing to cast - same data type
         if (targetClass.isAssignableFrom(value.getClass()) && !expectedList) {
             return value;
@@ -1293,20 +1278,20 @@ public abstract class BaseApi {
                 String[] valueItems = ((String) value).split(",");
                 boolean invalidReference = false;
                 for (String valueItem : valueItems) {
-                	try {
-                		Object valueConverted = castFilterValue(valueItem, targetClass, false, cfts);
-                		if (valueConverted != null) {
+                    try {
+                        Object valueConverted = castFilterValue(valueItem, targetClass, false, cfts);
+                        if (valueConverted != null) {
                             valuesConverted.add(valueConverted);
                         } else {
                             throw new InvalidParameterException("Filter value " + value + " does not match " + targetClass.getSimpleName());
                         }
-                	}catch (InvalidReferenceException e) {
-                		invalidReference=true;
-                		continue;
-					}
+                    } catch (InvalidReferenceException e) {
+                        invalidReference = true;
+                        continue;
+                    }
                 }
-                if(invalidReference && valuesConverted.isEmpty()) {
-                	throw new InvalidReferenceException(targetClass.getSimpleName(), valueItems);
+                if (invalidReference && valuesConverted.isEmpty()) {
+                    throw new InvalidReferenceException(targetClass.getSimpleName(), valueItems);
                 }
                 return valuesConverted;
 
@@ -1327,7 +1312,7 @@ public abstract class BaseApi {
         Boolean booleanVal = null;
         Date dateVal = null;
         List listVal = null;
-        Map<String,Object> mapVal=null;
+        Map<String, Object> mapVal = null;
 
         if (value instanceof Number) {
             numberVal = (Number) value;
@@ -1342,7 +1327,7 @@ public abstract class BaseApi {
         } else if (value instanceof List) {
             listVal = (List) value;
         } else if (value instanceof Map) {
-        	mapVal = (Map) value;
+            mapVal = (Map) value;
         } else {
             throw new InvalidParameterException("Unrecognized data type for filter criteria value " + value);
         }
@@ -1470,44 +1455,44 @@ public abstract class BaseApi {
                     }
                     return role;
                 }
-			} else if (CustomFieldValues.class.isAssignableFrom(targetClass)) {
-				if(mapVal!=null) {
-					Map<String, List<CustomFieldValue>> cfvMap = new TreeMap<String, List<CustomFieldValue>>();
-					for(String key : mapVal.keySet()) {
-						Object cfValue = mapVal.get(key);
-						String[] fieldInfo = key.split(" ");
-	                    String[] fields = fieldInfo.length == 1 ? fieldInfo : Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
-	                    Class dataClass = null;
-	                    CustomFieldStorageTypeEnum storageType = null;
-						for (String f : fields) {
-							CustomFieldTemplate customFieldTemplate = cfts.get(f);
-							if (customFieldTemplate == null) {
-								throw new BusinessException("No custom field found with name :" + f);
-							}
-							storageType = customFieldTemplate.getStorageType();
-							Class tempDataClass = customFieldTemplate.getFieldType().getDataClass();
-							if (dataClass == null) {
-								dataClass = tempDataClass;
-							} else {
-								if (!dataClass.equals(tempDataClass)) {
-									throw new BusinessException("Different data type used in the same filter : " + key);
-								}
-							}
-						}
-	                    Object valueConverted =castFilterValue(cfValue, dataClass, expectedList, cfts);
-						if(valueConverted==null) {
-							if(!CustomFieldStorageTypeEnum.SINGLE .equals( storageType)) {
-								throw new BusinessException("Only CustomFields with SINGLE storageType are accepted on filters. Cannot use filter '"+key+"'");
-							}else {
-								throw new BusinessException("Not able to cast filter value '"+cfValue+"' of custom field '"+key+"' to "+dataClass);
-							}
-						}
-						cfvMap.put(key, Arrays.asList(new CustomFieldValue(valueConverted)));
-					}
-					CustomFieldValues customFieldsValues = new CustomFieldValues(cfvMap);
-					return customFieldsValues;
-				}
-			}
+            } else if (CustomFieldValues.class.isAssignableFrom(targetClass)) {
+                if (mapVal != null) {
+                    Map<String, List<CustomFieldValue>> cfvMap = new TreeMap<String, List<CustomFieldValue>>();
+                    for (String key : mapVal.keySet()) {
+                        Object cfValue = mapVal.get(key);
+                        String[] fieldInfo = key.split(" ");
+                        String[] fields = fieldInfo.length == 1 ? fieldInfo : Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
+                        Class dataClass = null;
+                        CustomFieldStorageTypeEnum storageType = null;
+                        for (String f : fields) {
+                            CustomFieldTemplate customFieldTemplate = cfts.get(f);
+                            if (customFieldTemplate == null) {
+                                throw new BusinessException("No custom field found with name :" + f);
+                            }
+                            storageType = customFieldTemplate.getStorageType();
+                            Class tempDataClass = customFieldTemplate.getFieldType().getDataClass();
+                            if (dataClass == null) {
+                                dataClass = tempDataClass;
+                            } else {
+                                if (!dataClass.equals(tempDataClass)) {
+                                    throw new BusinessException("Different data type used in the same filter : " + key);
+                                }
+                            }
+                        }
+                        Object valueConverted = castFilterValue(cfValue, dataClass, expectedList, cfts);
+                        if (valueConverted == null) {
+                            if (!CustomFieldStorageTypeEnum.SINGLE.equals(storageType)) {
+                                throw new BusinessException("Only CustomFields with SINGLE storageType are accepted on filters. Cannot use filter '" + key + "'");
+                            } else {
+                                throw new BusinessException("Not able to cast filter value '" + cfValue + "' of custom field '" + key + "' to " + dataClass);
+                            }
+                        }
+                        cfvMap.put(key, Arrays.asList(new CustomFieldValue(valueConverted)));
+                    }
+                    CustomFieldValues customFieldsValues = new CustomFieldValues(cfvMap);
+                    return customFieldsValues;
+                }
+            }
         } catch (NumberFormatException e) {
             // Swallow - validation will take care of it later
         }
@@ -1516,14 +1501,15 @@ public abstract class BaseApi {
 
     /**
      * Rounding the double values.
+     * 
      * @param cfDto the customFieldDto
      * @param cft The customFieldTemplate
      * @return A rounded bigDecimal number.
      */
     public Object getDoubleValue(CustomFieldDto cfDto, CustomFieldTemplate cft) {
         BigDecimal value = new BigDecimal(cfDto.getDoubleValue());
-        RoundingModeEnum roundingMode = cft.getRoundingMode() != null? cft.getRoundingMode():RoundingModeEnum.NEAREST;
-        Integer nbDecimal = (cft.getNbDecimal() != null && cft.getNbDecimal()!=0)?cft.getNbDecimal(): NumberUtils.DEFAULT_NUMBER_DIGITS_DECIMAL;
+        RoundingModeEnum roundingMode = cft.getRoundingMode() != null ? cft.getRoundingMode() : RoundingModeEnum.NEAREST;
+        Integer nbDecimal = (cft.getNbDecimal() != null && cft.getNbDecimal() != 0) ? cft.getNbDecimal() : NumberUtils.DEFAULT_NUMBER_DIGITS_DECIMAL;
         value = NumberUtils.round(value, nbDecimal, roundingMode.getRoundingMode());
         return value.doubleValue();
     }
@@ -1568,41 +1554,41 @@ public abstract class BaseApi {
      * Sets the auditable fields in to dto.
      *
      * @param entity entity instance
-     * @param dto    dto instance
+     * @param dto dto instance
      */
     public void setAuditableFieldsDto(BaseEntity entity, AuditableEntityDto dto) {
         List<AuditableField> auditableFields = auditableFieldService.list(entity);
         List<AuditableFieldDto> auditableFieldsDto = auditableFieldsToDto(auditableFields);
         dto.setAuditableFields(auditableFieldsDto);
     }
-    
-	public boolean isRootCause(Throwable e, Class<?> clazz) {
-		while (e != null) {
-			if (e.getClass().equals(clazz)) {
-				return true;
-			}
-			e = e.getCause();
-		}
-		return false;
-	}
-    
-    public MeveoApiException getMeveoApiException(Throwable e) {
-    	if(isRootCause(e, ConstraintViolationException.class)) {
-    		return new ConstraintViolationApiException(e.getMessage());
-    	}
-    	return new MeveoApiException(e);
+
+    public boolean isRootCause(Throwable e, Class<?> clazz) {
+        while (e != null) {
+            if (e.getClass().equals(clazz)) {
+                return true;
+            }
+            e = e.getCause();
+        }
+        return false;
     }
-    
-	public String getCustomFieldDataType(Class clazz) {
-		if (clazz == Double.class || clazz == Date.class || clazz == Long.class) {
-			for (CustomFieldTypeEnum cft : CustomFieldTypeEnum.values()) {
-				if (cft.getDataClass().equals(clazz)) {
-					return cft.getDataType();
-				}
-			}
-		}
-		return "varchar";
-	}
+
+    public MeveoApiException getMeveoApiException(Throwable e) {
+        if (isRootCause(e, ConstraintViolationException.class)) {
+            return new ConstraintViolationApiException(e.getMessage());
+        }
+        return new MeveoApiException(e);
+    }
+
+    public String getCustomFieldDataType(Class clazz) {
+        if (clazz == Double.class || clazz == Date.class || clazz == Long.class) {
+            for (CustomFieldTypeEnum cft : CustomFieldTypeEnum.values()) {
+                if (cft.getDataClass().equals(clazz)) {
+                    return cft.getDataType();
+                }
+            }
+        }
+        return "varchar";
+    }
 
     public ICustomFieldEntity populateCustomFieldsForGenericApi(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
         return populateCustomFields(customFieldsDto, entity, isNewEntity, true);

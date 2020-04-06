@@ -416,7 +416,7 @@
     <con:endpoints>
       <con:endpoint>${#Project#opencell.url}</con:endpoint>
     </con:endpoints>
-    <con:resource name="" path="/api/rest/taxClass" id="aa111c31-bc25-48e5-9d17-7b39ff794313">
+    <con:resource name="" path="/api/rest/taxClass/createOrUpdate" id="aa111c31-bc25-48e5-9d17-7b39ff794313">
       <con:settings/>
       <con:parameters>
         <con:parameter>
@@ -16980,7 +16980,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <con:settings/>
       <con:testStep type="restrequest" name="Create tax class" id="1f709579-a198-4d52-a0ca-38135a8d27e3">
         <con:settings/>
-        <con:config service="http://${#Project#opencell.url}" methodName="POST" resourcePath="/api/rest/taxClass" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:config service="http://${#Project#opencell.url}" methodName="POST" resourcePath="/api/rest/taxClass/createOrUpdate" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:restRequest name="Create tax class" id="99e74d2f-34b8-4577-86dc-d658d41499a2" mediaType="application/json" postQueryString="false">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
@@ -19616,16 +19616,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateAccess>
-         
-         <access code="${#Project#baseEntityPrefix}_ACCP">
-            <subscription>${#Project#baseEntityPrefix}_SUB</subscription>
-         </access>
-      </ws:createOrUpdateAccess>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateAccess>\r
+         <access code="${#Project#baseEntityPrefix}_ACCP">\r
+            <subscription>${#Project#baseEntityPrefix}_SUB</subscription>\r
+         </access>\r
+      </ws:createOrUpdateAccess>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="Simple Contains" id="b802285c-643c-4d0c-a3bc-ad320885c0c1" name="SOAP Response">
               <con:configuration>
@@ -20050,14 +20049,14 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="6a4aa6e5-7848-4811-9567-9d39987bf2ea" name="Contains 10">
               <con:configuration>
-                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_ENTITY":{"type":"text"}</token>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_ENTITY":{"properties":{"classname":{"type":"keyword"},"classnameCode":{"type":"keyword"},"code":{"type":"keyword"}}}</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="6d1520aa-0773-4874-b315-8b02437e3e10" name="Contains 11">
               <con:configuration>
-                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_ENTITY-NI":{"type":"keyword","index":false}</token>
+                <token>"${#Project#entityPrefix}_${#TestSuite#index}_ESM_ENTITY-NI":{"properties":{"classname":{"type":"keyword","index":false},"classnameCode":{"type":"keyword","index":false},"code":{"type":"keyword","index":false}}}</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -23828,7 +23827,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>234</con:value>
+        <con:value>238</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -23874,7 +23873,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="d2cce52b-35d2-4e97-a45e-4048e0eb9639" name="Contains 1">
               <con:configuration>
-                <token>&lt;message>Custom table supports only unversioned and simple Date, Double, Long, String and Select from list type fields&lt;/message></token>
+                <token>Custom table supports only unversioned and simple Date, Double, Long, Boolean, String and Select from list type fields</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -23892,7 +23891,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create custom table - wrong field type" id="dc355fdf-9106-4291-b182-ece201326ffc">
+      <con:testStep type="request" name="Create custom table - wrong field type" id="dc355fdf-9106-4291-b182-ece201326ffc" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>EntityCustomizationWsSoapBinding</con:interface>
@@ -23981,7 +23980,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="8becdf67-48c3-4b86-bebe-f6ef80296be6" name="Contains 1">
               <con:configuration>
-                <token>&lt;message>Custom table supports only unversioned and simple Date, Double, Long, String and Select from list type fields&lt;/message></token>
+                <token>Custom table supports only unversioned and simple Date, Double, Long, Boolean, String and Select from list type fields</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -24518,11 +24517,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <key>fromRange valid_from</key>\r
                   <value xsi:type="xs:string">2016-03-01</value>\r
                </entry>\r
-               <entry>
-                  <key>toRange valid_from</key>
-                  <value xsi:type="xs:string">2016-09-01</value>
-               </entry>
-
+               <entry>\r
+                  <key>toRange valid_from</key>\r
+                  <value xsi:type="xs:string">2016-09-01</value>\r
+               </entry>\r
             </filters>\r
          </pagingAndFiltering>\r
       </ws:listTableData>\r
@@ -25368,7 +25366,7 @@ public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript 
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>4</con:value>
+        <con:value>12</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -25641,7 +25639,7 @@ public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript 
             </con:assertion>
             <con:assertion type="Simple Contains" id="f11fffc2-ab97-4fc7-9ccb-9b4df292eba8" name="Contains 1">
               <con:configuration>
-                <token>&lt;pricePlan code="${#Project#baseEntityPrefix}_REC1"</token>
+                <token>code="${#Project#baseEntityPrefix}_REC1"</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -25687,7 +25685,7 @@ public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript 
             </con:assertion>
             <con:assertion type="Simple Contains" id="1728681d-1e97-4739-a9b2-45fd89461e69" name="Contains 1">
               <con:configuration>
-                <token>&lt;pricePlan code="${#Project#baseEntityPrefix}_OS1"</token>
+                <token>code="${#Project#baseEntityPrefix}_OS1"</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -25733,7 +25731,7 @@ public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript 
             </con:assertion>
             <con:assertion type="Simple Contains" id="bce182fb-434e-4773-903a-4a7ce0a380fc" name="Contains 1">
               <con:configuration>
-                <token>&lt;pricePlan code="${#Project#baseEntityPrefix}_USAGE1"</token>
+                <token>code="${#Project#baseEntityPrefix}_USAGE1"</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>

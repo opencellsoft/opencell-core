@@ -100,7 +100,7 @@ public interface CurrencyIsoRs extends IBaseRs {
      * @return list of all currency iso/
      */
     @GET
-    @Path("/")
+    @Path("/list")
     GetCurrenciesIsoResponse list();
     
 }

@@ -17,11 +17,13 @@
  */
 package org.meveo.model.billing;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class PreInvoicingReportsDTO {
+public class PreInvoicingReportsDTO implements Serializable {
 
+    private static final long serialVersionUID = 1043179691827388660L;
     private String billingCycleCode;
     private Integer billingAccountNumber;
     private Integer billableBillingAccountNumber;

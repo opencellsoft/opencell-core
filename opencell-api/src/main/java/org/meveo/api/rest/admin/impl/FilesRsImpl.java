@@ -29,6 +29,7 @@ import org.meveo.api.dto.response.admin.GetFilesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.admin.FilesRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.bi.FlatFile;
 
 /**
  * @author Edward P. Legaspi
@@ -139,7 +140,11 @@ public class FilesRsImpl extends BaseRs implements FilesRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            filesApi.uploadFile(form.getData(), form.getFilename(), form.getFileFormat());
+            FlatFile flatFile = filesApi.uploadFile(form.getData(), form.getFilename(), form.getFileFormat());
+
+            if (flatFile != null) {
+                result.setEntityId(flatFile.getId());
+            }
         } catch (Exception e) {
             processException(e, result);
         }

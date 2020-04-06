@@ -750,7 +750,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             }
         }
 
-        String fieldMappingJson = esConfiguration.getCustomFieldMapping(cft, cleanupCFTFieldname);
+        String fieldMappingJson = esConfiguration.getCustomFieldMapping(cft, cleanupCFTFieldname, cleanupCFTFieldname);
         if (fieldMappingJson == null) {
             log.warn("No matching field mapping found for CFT {}", cft);
             return;

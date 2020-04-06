@@ -129,6 +129,7 @@ public class NativePersistenceService extends BaseService {
      * @param id Identifier
      * @return A map of values with field name as a map key and field value as a map value
      */
+    @SuppressWarnings("rawtypes")
     public Map<String, Object> findById(String tableName, Long id) {
 
         try {
@@ -166,7 +167,7 @@ public class NativePersistenceService extends BaseService {
      */
     public Long create(String tableName, Map<String, Object> values) throws BusinessException {
 
-        Long id = create(tableName, values, true, false);
+        Long id = create(tableName, values, true, true);
 
         return id;
     }
@@ -178,10 +179,11 @@ public class NativePersistenceService extends BaseService {
      * value has the maximum number of fields
      * 
      * @param tableName Table name to insert values to
+     * @param customEntityTemplateCode Custom entity template, corresponding to a custom table, code
      * @param values A list of values to insert
      * @throws BusinessException General exception
      */
-    public void create(String tableName, String code, List<Map<String, Object>> values) throws BusinessException {
+    public void create(String tableName, String customEntityTemplateCode, List<Map<String, Object>> values) throws BusinessException {
 
         if (values == null || values.isEmpty()) {
             return;
@@ -194,7 +196,7 @@ public class NativePersistenceService extends BaseService {
         StringBuffer fields = new StringBuffer();
         StringBuffer fieldValues = new StringBuffer();
         List<String> fieldNames = new LinkedList<>();
-        Map<String, Object> customTableFields = getFields(code);
+        Map<String, Object> customTableFields = getFields(customEntityTemplateCode);
         boolean first = true;
         for (String fieldName : customTableFields.keySet()) {
 
@@ -273,11 +275,12 @@ public class NativePersistenceService extends BaseService {
     }
 
     /**
-     * List all fields with thier default values of tableName
+     * List all fields with their default values of tableName
      * 
      * @param tableName the table name
      * @return
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private Map<String, Object> getFields(String tableName) {
         Map<String, Object> fields = new HashedMap();
         Map<String, CustomFieldTemplate> customFieldTemplateMap = customFieldTemplateService.findByAppliesTo(CustomEntityTemplate.CFT_PREFIX + "_" + tableName);
@@ -292,19 +295,19 @@ public class NativePersistenceService extends BaseService {
             Object defaultValue = defaultValueString;
 
             if (Long.class.equals(clazz)) {
-                defaultValue = new Long(defaultValueString);
+                defaultValue = Long.valueOf(defaultValueString);
             } else if (Double.class.equals(clazz)) {
-                defaultValue = new Double(defaultValueString);
+                defaultValue = Double.valueOf(defaultValueString);
             } else if (BigInteger.class.equals(clazz)) {
                 defaultValue = new BigInteger(defaultValueString);
             } else if (Integer.class.equals(clazz)) {
-                defaultValue = new Integer(defaultValueString);
+                defaultValue = Integer.valueOf(defaultValueString);
             } else if (BigDecimal.class.equals(clazz)) {
                 defaultValue = new BigDecimal(defaultValueString);
             } else if (Date.class.equals(clazz)) {
                 defaultValue = DateUtils.parseDateWithPattern(defaultValueString, DateUtils.DATE_TIME_PATTERN);
             } else if (Boolean.class.equals(clazz)) {
-                defaultValue = new Boolean(defaultValueString);
+                defaultValue = Boolean.valueOf(defaultValueString);
             }
             fields.put(cft.getDbFieldname(), defaultValue);
         }
@@ -317,6 +320,7 @@ public class NativePersistenceService extends BaseService {
      * @param tableName Table name to update
      * @param values Values
      * @param returnId Should identifier be returned - does a lookup in DB by matching same values. If True values will be updated with 'id' field value.
+     * @param fireNotifications Should notifications be fired upon record creation
      * @throws BusinessException General exception
      */
     protected Long create(String tableName, Map<String, Object> values, boolean returnId, boolean fireNotifications) throws BusinessException {
@@ -428,7 +432,7 @@ public class NativePersistenceService extends BaseService {
      * 
      * @param tableName Table name to update
      * @param value Values. Values must contain an "id" (FIELD_ID) field.
-     * @param b
+     * @param fireNotifications Should notifications be fired upon record update
      * @throws BusinessException General exception
      */
     public void update(String tableName, Map<String, Object> value, boolean fireNotifications) throws BusinessException {
@@ -971,11 +975,11 @@ public class NativePersistenceService extends BaseService {
 
             // New record
             if (value.get(FIELD_ID) == null) {
-                create(tableName, value, false, false);
+                create(tableName, value, false, true);
 
                 // Existing record
             } else {
-                update(tableName, value, false);
+                update(tableName, value, true);
             }
         }
     }
@@ -1196,6 +1200,7 @@ public class NativePersistenceService extends BaseService {
         return value;
     }
 
+    @SuppressWarnings("rawtypes")
     public Map<String, Object> findByClassAndId(String className, Long id) {
         try {
             Class clazz = Class.forName(className);

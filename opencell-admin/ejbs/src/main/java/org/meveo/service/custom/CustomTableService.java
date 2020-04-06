@@ -140,12 +140,13 @@ public class CustomTableService extends NativePersistenceService {
      *
      * @param tableName Table name to insert values to
      * @param values A list of values to insert
+     * @param fireNotifications Should notifications be fired upon record creation
      * @throws BusinessException General exception
      */
-    public void create(String tableName, List<Map<String, Object>> values) throws BusinessException {
+    public void create(String tableName, List<Map<String, Object>> values, boolean fireNotifications) throws BusinessException {
 
         for (Map<String, Object> value : values) {
-            Long id = super.create(tableName, value, true, false); // Force to return ID as we need it to retrieve data for Elastic Search population
+            Long id = super.create(tableName, value, true, fireNotifications); // Force to return ID as we need it to retrieve data for Elastic Search population
             elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, value, false, false);
         }
 
@@ -153,24 +154,26 @@ public class CustomTableService extends NativePersistenceService {
     }
 
     /**
-     * Insert multiple values into table with optionally not updating ES. Will execute in a new transaction
+     * Insert multiple values into table with optionally not updating ES nor triggering notifications. Will execute in a new transaction
      *
      * @param tableName Table name to insert values to
+     * @param customEntityTemplateCode Custom entity template, corresponding to a custom table, code
      * @param values Values to insert
-     * @param updateES Should Elastic search be updated during record creation. If false, ES population must be done outside this call.
+     * @param updateESAndTriggerNotifications Should Elastic search be updated during record creation and notifications be fired for each record. If false, ES population must be
+     *        done outside this call and Notifications have to be handled by some other means
      * @throws BusinessException General exception
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void createInNewTx(String tableName, String code, List<Map<String, Object>> values, boolean updateES) throws BusinessException {
+    public void createInNewTx(String tableName, String customEntityTemplateCode, List<Map<String, Object>> values, boolean updateESAndTriggerNotifications) throws BusinessException {
 
         // Insert record to db, with ID returned, but flush to ES after the values are processed
-        if (updateES) {
+        if (updateESAndTriggerNotifications) {
 
-            create(tableName, values);
+            create(tableName, values, true);
 
         } else {
-            super.create(tableName, code, values);
+            super.create(tableName, customEntityTemplateCode, values);
         }
     }
 
@@ -189,7 +192,7 @@ public class CustomTableService extends NativePersistenceService {
     public void update(String tableName, List<Map<String, Object>> values) throws BusinessException {
 
         for (Map<String, Object> value : values) {
-            super.update(tableName, value, false);
+            super.update(tableName, value, true);
             elasticClient.createOrUpdate(CustomTableRecord.class, tableName, value.get(NativePersistenceService.FIELD_ID), value, false, false);
         }
         elasticClient.flushChanges();
@@ -378,7 +381,7 @@ public class CustomTableService extends NativePersistenceService {
     }
 
     /**
-     * Import data into custom table
+     * Import data into custom table from a file
      *
      * @param customEntityTemplate Custom table definition
      * @param inputStream Data stream
@@ -477,7 +480,7 @@ public class CustomTableService extends NativePersistenceService {
     }
 
     /**
-     * Import data into custom table
+     * Import data into custom table from a list of values (API). Note that notifications are fired only when submitting a small amount of records at once - upto 1K of records
      *
      * @param customEntityTemplate Custom table definition
      * @param values A list of records to import. Each record is a map of values with field name as a map key and field value as a value.
@@ -522,9 +525,9 @@ public class CustomTableService extends NativePersistenceService {
             customTableService.remove(tableName);
         }
 
-        // By default will update ES immediately. If more than 100 records are being updated, ES will be updated in batch way - reconstructed from a table
+        // By default will update ES immediately. If more than 1000 records are being updated, ES will be updated in batch way - reconstructed from a table
         boolean updateESImediately = append;
-        if (values.size() > 100) {
+        if (values.size() > 1000) {
             updateESImediately = false;
         }
 
