@@ -29,7 +29,7 @@ public class GenericResourceImpl implements GenericResource {
         }
         Class entityClass = loadService.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, loadService.getPersistenceService());
-        return Response.ok().entity(loadService.findPaginatedRecords(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields))
+        return Response.ok().entity(loadService.findPaginatedRecords(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, searchConfig.getNestedEntities()))
                 .links(buildPaginatedResourceLink(entityName)).build();
     }
     
