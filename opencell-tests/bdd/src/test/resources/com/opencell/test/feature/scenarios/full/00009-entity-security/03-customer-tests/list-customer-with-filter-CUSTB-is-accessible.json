@@ -1,0 +1,21 @@
+{
+    "customer": [
+        {
+            "code": "RS_FULL_15_CUSTB",
+            "description": "RS_FULL_15_CUSTB",
+            "customerAccounts": {
+                "customerAccount": [
+                    {
+                        "code": "RS_FULL_15_CAB1"
+                    },
+                    {
+                        "code": "RS_FULL_15_CAB2"
+                    },
+                    {
+                        "code": "RS_FULL_15_CAB3"
+                    }
+                ]
+            }
+        }
+    ]
+}
