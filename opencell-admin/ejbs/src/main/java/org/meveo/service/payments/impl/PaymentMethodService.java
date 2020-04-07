@@ -36,7 +36,6 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
 
@@ -45,7 +44,7 @@ import org.meveo.service.crm.impl.CustomerService;
  * 
  * @author anasseh
  * @author Mounir Bahije
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 9.3.0
  */
 @Stateless
 public class PaymentMethodService extends PersistenceService<PaymentMethod> {
@@ -231,7 +230,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     }
 
     /**
-     * Gets the hosted checkout url.
+     * Gets only the hosted checkout url, so to create the PaymentMethod on the customerAccount, you need to intercept the  asynchrone  gateway response.
      *
      * @param hostedCheckoutInput the hosted checkout input
      * @return the hosted checkout url
@@ -250,24 +249,11 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             hostedCheckoutInput.setCountryCode(customerAccount.getAddress().getCountry().getCountryCode().toLowerCase());
         }
         
-        boolean hasCardPaymentMethod = false;
-        for(PaymentMethod paymentMethod : customerAccount.getPaymentMethods()) {
-            if(paymentMethod.getPaymentType() == PaymentMethodEnum.CARD) {
-                hasCardPaymentMethod = true;
-            }
-        }
-        
-        if(!hasCardPaymentMethod) {
-            CardPaymentMethod paymentMethod = new CardPaymentMethod();
-            paymentMethod.setCustomerAccount(customerAccount);
-            super.create(paymentMethod);
-        }
-        
         GatewayPaymentInterface gatewayPaymentInterface = null;
         gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount);
         hostedCheckoutInput.setCustomerAccountId(customerAccount.getId());
         String hostedCheckoutUrl = gatewayPaymentInterface.getHostedCheckoutUrl(hostedCheckoutInput);
-
+        log.info("hostedCheckoutUrl:{}",hostedCheckoutUrl);
         return hostedCheckoutUrl;
     }
 
