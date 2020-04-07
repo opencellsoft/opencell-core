@@ -33,13 +33,13 @@ public class GenericApiLoadService extends GenericApiService {
         return persistenceService.count(searchConfig);
     }
 
-    public Optional<String> findByClassNameAndId(String entityName, Long id, PaginationConfiguration searchConfig, Set<String> genericFields) {
+    public Optional<String> findByClassNameAndId(String entityName, Long id, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
         checkId(id);
         Class entityClass = getEntityClass(entityName);
         PersistenceService persistenceService = getPersistenceService(entityClass);
         return Optional
                 .ofNullable(JsonGenericMapper.Builder.getBuilder()
-                        .withNestedEntities(new HashSet(searchConfig.getFetchFields())).build()
+                        .withNestedEntities(nestedEntities).build()
                         .toJson(genericFields, entityClass, Collections.singletonMap("data",persistenceService.findById(id, searchConfig.getFetchFields()))));
     }
 

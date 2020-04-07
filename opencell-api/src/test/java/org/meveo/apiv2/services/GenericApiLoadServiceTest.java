@@ -1,12 +1,6 @@
 package org.meveo.apiv2.services;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -69,7 +63,7 @@ public class GenericApiLoadServiceTest {
     public void given_null_id_when_load_model_then_should_throw_wrong_requested_model_id_exception() {
         try {
             //When
-            sut.findByClassNameAndId("Tax", null, null, null);
+            sut.findByClassNameAndId("Tax", null, null, null, null);
             //Then
         } catch (Exception ex) {
             //Expected
@@ -102,9 +96,9 @@ public class GenericApiLoadServiceTest {
         PaginationConfiguration searchConfig = mock(PaginationConfiguration.class);
         when(searchConfig.getFetchFields()).thenReturn(Collections.emptyList());
 
-        Optional<String> filteredFields = sut.findByClassNameAndId("Customer",1L, searchConfig, fields);
+        Optional<String> filteredFields = sut.findByClassNameAndId("Customer",1L, searchConfig, fields, new HashSet<>(searchConfig.getFetchFields()));
         //Then
-        assertThat(filteredFields.get()).isEqualTo("{\"data\":{\"id\":1,\"name\":{\"title\":{\"code\":\"title\",\"isCompany\":false,\"descriptionNotNull\":\"title\"},\"firstName\":\"customerFirstName\",\"lastName\":\"customerLastName\",\"fullName\":\"title customerFirstName customerLastName\"},\"defaultLevel\":true,\"accountType\":\"ACCT_CUST\",\"parentEntityType\":\"org.meveo.model.admin.Seller\",\"contactInformationNullSafe\":{}}}");
+        assertThat(filteredFields.get()).isEqualTo("{\"data\":{\"id\":1,\"name\":{\"title\":{\"code\":\"title\",\"isCompany\":false},\"firstName\":\"customerFirstName\",\"lastName\":\"customerLastName\"},\"defaultLevel\":true,\"accountType\":\"ACCT_CUST\"}}");
     }
 
     @Test
@@ -119,7 +113,7 @@ public class GenericApiLoadServiceTest {
         PaginationConfiguration searchConfig = mock(PaginationConfiguration.class);
         when(searchConfig.getFetchFields()).thenReturn(Collections.emptyList());
 
-        Optional<String> filteredFields = sut.findByClassNameAndId("Customer",1L, searchConfig, fields);
+        Optional<String> filteredFields = sut.findByClassNameAndId("Customer",1L, searchConfig, fields, new HashSet<>(searchConfig.getFetchFields()));
         //Then
         assertThat(filteredFields.get()).isEqualTo("{\"data\":{}}");
     }
@@ -138,7 +132,7 @@ public class GenericApiLoadServiceTest {
         PaginationConfiguration searchConfig = mock(PaginationConfiguration.class);
         when(searchConfig.getFetchFields()).thenReturn(Collections.emptyList());
 
-        Optional<String> filteredFields = sut.findByClassNameAndId("Customer",1L, searchConfig, fields);
+        Optional<String> filteredFields = sut.findByClassNameAndId("Customer",1L, searchConfig, fields, new HashSet<>(searchConfig.getFetchFields()));
         //Then
         assertThat(filteredFields.get()).isNotEmpty();
         assertThat(filteredFields.get()).isNotEqualTo("{\"data\":{}}");
@@ -157,7 +151,7 @@ public class GenericApiLoadServiceTest {
         PaginationConfiguration searchConfig = mock(PaginationConfiguration.class);
         when(searchConfig.getFetchFields()).thenReturn(Collections.emptyList());
 
-        Optional<String> filteredFields = sut.findByClassNameAndId("Customer",1L, searchConfig, fields);
+        Optional<String> filteredFields = sut.findByClassNameAndId("Customer",1L, searchConfig, fields, new HashSet<>(searchConfig.getFetchFields()));
         //Then
         assertThat(filteredFields.get()).doesNotContain("serialVersionUID");
         assertThat(filteredFields.get()).doesNotContain("ACCOUNT_TYPE");
@@ -178,7 +172,7 @@ public class GenericApiLoadServiceTest {
         PaginationConfiguration searchConfig = mock(PaginationConfiguration.class);
         when(searchConfig.getFetchFields()).thenReturn(Collections.emptyList());
 
-        Optional<String> filteredFieldsAndValues = sut.findByClassNameAndId("Customer",1L, searchConfig, fields);
+        Optional<String> filteredFieldsAndValues = sut.findByClassNameAndId("Customer",1L, searchConfig, fields, new HashSet<>(searchConfig.getFetchFields()));
         //Then
         assertThat(filteredFieldsAndValues.get()).contains("addressbook");
         assertThat(filteredFieldsAndValues.get()).contains("\"addressbook\":{\"id\":5,");
@@ -194,22 +188,6 @@ public class GenericApiLoadServiceTest {
             assertThat(ex.getMessage()).isEqualTo("Customer with code=24 does not exists.");
         }
 
-    }
-
-    @Test
-    public void given_null_entity_name_when_find_paginate_recprds_then_should_throw_meveo_exception() {
-        //Given
-        String entityName = null;
-        PaginationConfiguration searchConfig = new PaginationConfiguration(Collections.emptyMap());
-        assertFindPaginateRecords(null, searchConfig, null, EntityDoesNotExistsException.class, "The entityName should not be null or empty");
-    }
-
-    @Test
-    public void given_empty_entity_name_when_find_paginate_records_then_should_throw_meveo_exception() {
-        //Given
-        String entityName = "";
-        PaginationConfiguration searchConfig = new PaginationConfiguration(Collections.emptyMap());
-        assertFindPaginateRecords(null, searchConfig, null, EntityDoesNotExistsException.class, "The entityName should not be null or empty");
     }
 
     @Test
@@ -243,7 +221,7 @@ public class GenericApiLoadServiceTest {
         //When
         String response = sut.findPaginatedRecords(Customer.class, paginationConfiguration, new HashSet<>(paginationConfiguration.getFetchFields()), Collections.emptySet());
         //Then
-        assertThat(response).contains("{\"id\":0,\"defaultLevel\":true,\"accountType\":\"ACCT_CUST\",\"addressbook\":{\"id\":0},\"parentEntityType\":\"org.meveo.model.admin.Seller\",\"contactInformationNullSafe\":{}},{\"id\":1,\"defaultLevel\":true,\"accountType\":\"ACCT_CUST\",\"addressbook\":{\"id\":1},\"parentEntityType\":\"org.meveo.model.admin.Seller\",\"contactInformationNullSafe\":{}}");
+        assertThat(response).contains("{\"total\":0,\"limit\":3,\"offset\":0,\"data\":[{\"addressbook\":{\"id\":0,\"historized\":false,\"notified\":false,\"appendGeneratedCode\":false}},{\"addressbook\":{\"id\":1,\"historized\":false,\"notified\":false,\"appendGeneratedCode\":false}}]}");
     }
 
     private void assertFindPaginateRecords(Class entityClass, PaginationConfiguration searchConfig, Set<String> genericFields, Class exception, String message) {
@@ -272,7 +250,7 @@ public class GenericApiLoadServiceTest {
     private void assertExpectingModelException(String requestedModelName, String expected) {
         try {
             //When
-            sut.findByClassNameAndId(requestedModelName, 54l, null, null);
+            sut.findByClassNameAndId(requestedModelName, 54l, null, null, null);
         } catch (Exception ex) {
             //Expected
             assertThat(ex).isInstanceOf(MeveoApiException.class);
