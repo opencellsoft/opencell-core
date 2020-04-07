@@ -41,7 +41,7 @@ public class GenericResourceImpl implements GenericResource {
         }
         Class entityClass = loadService.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, loadService.getPersistenceService());
-        return loadService.findByClassNameAndId(entityName, id, genericRequestMapper.mapTo(searchConfig), genericFields)
+        return loadService.findByClassNameAndId(entityName, id, genericRequestMapper.mapTo(searchConfig), genericFields, searchConfig.getNestedEntities())
                 .map(deletedEntity -> Response.ok().entity(deletedEntity).links(buildSingleResourceLink(entityName, id)).build())
                 .orElseThrow(NotFoundException::new);
     }
