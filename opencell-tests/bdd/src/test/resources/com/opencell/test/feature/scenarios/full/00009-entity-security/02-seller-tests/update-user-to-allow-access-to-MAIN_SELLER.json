@@ -1,0 +1,24 @@
+{
+    "username": "opencell.admin",
+    "password": "opencell.admin",
+    "email": "meveo.admin@opencellsoft.com",
+    "userRole": [
+        "administrateur"
+    ],
+    "accessibleEntity": [
+        {
+            "code": "MAIN_SELLER",
+            "entityClass": "org.meveo.model.admin.Seller"
+        },
+        {
+            "code": "RS_FULL_15_SELLER_A",
+            "entityClass": "org.meveo.model.admin.Seller"
+        },
+        {
+            "code": "RS_FULL_15_SELLER_B",
+            "entityClass": "org.meveo.model.admin.Seller"
+        }
+    ],
+    "firstName": "meveo",
+    "lastName": "admin"
+}

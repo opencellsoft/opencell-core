@@ -3,15 +3,14 @@
     "password": "opencell.admin",
     "email": "meveo.admin@opencellsoft.com",
     "userRole": [
-        "administrateur",
-        "deletethis"
+        "administrateur"
     ],
-    "accessibleEntities": {
-        "accessibleEntity": {
-            "code": "RS_FULL_15_SELLER_B",
+    "accessibleEntity": [
+        {
+            "code": "RS_FULL_15_SELLER_A",
             "entityClass": "org.meveo.model.admin.Seller"
         }
-    },
+    ],
     "firstName": "meveo",
     "lastName": "admin"
 }
