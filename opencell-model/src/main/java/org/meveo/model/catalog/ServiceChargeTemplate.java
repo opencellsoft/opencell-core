@@ -22,8 +22,11 @@ import java.util.List;
 
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OrderColumn;
 import javax.persistence.Transient;
 
 import org.meveo.model.BaseEntity;
@@ -89,4 +92,18 @@ public abstract class ServiceChargeTemplate<T extends ChargeTemplate> extends Ba
     public abstract List<WalletTemplate> getWalletTemplates();
 
     public abstract void setWalletTemplates(List<WalletTemplate> walletTemplates);
+
+    /**
+     * Gets Counters template for a charge template.
+     *
+     * @return list of counters template
+     */
+    public abstract List<CounterTemplate> getCounterTemplates();
+
+    /**
+     * Sets counters template.
+     *
+     * @param counterTemplates counters template
+     */
+    public abstract void setCounterTemplates(List<CounterTemplate> counterTemplates);
 }

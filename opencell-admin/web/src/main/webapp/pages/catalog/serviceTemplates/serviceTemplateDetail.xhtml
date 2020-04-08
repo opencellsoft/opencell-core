@@ -313,7 +313,7 @@
 								<hftl:column label="#{messages['menu.wallets']}"
 									field="walletTemplates" valueLabelField="code" isList="true" />
 								<hftl:column label="#{messages['counterTemplate.title']}"
-									field="counterTemplate.code" />
+											 field="counterTemplates" valueLabelField="code" isList="true"/>
 								<p:column styleClass="actions-column"
 									rendered="#{serviceTemplateBean.edit}">
 									<f:facet name="header">
@@ -332,37 +332,36 @@
 					<p:panel id="serviceRecurringChargediv"
 						rendered="#{serviceTemplateBean.edit}">
 						<hftl:formPanel formId="formRecurringCharge"
-							edit="#{serviceTemplateBean.edit}"
-							backingBean="#{serviceTemplateBean}"
-							entity="#{serviceTemplateBean.serviceChargeTemplateRecurring}"
-							showFormButtons="false" ajaxSubmit="true">
+										edit="#{serviceTemplateBean.edit}"
+										backingBean="#{serviceTemplateBean}"
+										entity="#{serviceTemplateBean.serviceChargeTemplateRecurring}"
+										showFormButtons="false" ajaxSubmit="true">
 							<hftl:formField id="recurringChargeTemplateSelectedId"
-								label="#{messages['pricePlanMatrix.eventCode']}"
-								field="chargeTemplate" valueLabelField="code" popup="true"
-								popupId="searchRecurringChargeTemplatePopup"
-								required="true"
-								disabled="#{!serviceTemplateBean.serviceChargeTemplateRecurring.transient}" />
+											label="#{messages['pricePlanMatrix.eventCode']}"
+											field="chargeTemplate" valueLabelField="code" popup="true"
+											popupId="searchRecurringChargeTemplatePopup"
+											required="true"
+											disabled="#{!serviceTemplateBean.serviceChargeTemplateRecurring.transient}"/>
 							<hftl:formField label="#{messages['menu.wallets']}"
-								listType="pickUpList" field="walletTemplates"
-								valueLabelField="code"
-								dualListModel="#{serviceTemplateBean.recurringDualListModel}" />
-							<hftl:formField id="recurringCounterTemplateSelectedId"
-											label="#{messages['counterTemplate.title']}"
-											field="counterTemplate" valueLabelField="code" popup="true"
-											popupId="searchRecurringCounterTemplatePopup" showResetButton="true"
-											required="false" />
-							<ui:param name="buttons" value="true" />
+											listType="pickUpList" field="walletTemplates"
+											valueLabelField="code"
+											dualListModel="#{serviceTemplateBean.recurringDualListModel}"/>
+							<hftl:formField label="#{messages['counterTemplate.title']}"
+											listType="pickUpList" field="counterTemplates"
+											valueLabelField="code"
+											dualListModel="#{serviceTemplateBean.recurringCounterTemplates}"/>
+							<ui:param name="buttons" value="true"/>
 							<ui:define name="buttons">
 								<p:commandButton
-									rendered="#{serviceRecurringChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
-									action="#{serviceTemplateBean.saveServiceChargeTemplateRecurring}"
-									value="#{messages['action.addSave']}"
-									update=":tabView:serviceRecurringChargediv" />
+										rendered="#{serviceRecurringChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
+										action="#{serviceTemplateBean.saveServiceChargeTemplateRecurring}"
+										value="#{messages['action.addSave']}"
+										update=":tabView:serviceRecurringChargediv"/>
 								<p:commandButton
-									rendered="#{serviceRecurringChargeTemplate.id!=null}"
-									action="#{serviceTemplateBean.saveServiceChargeTemplateRecurring}"
-									value="#{messages['serviceRecurringChargeTemplate.modifyServiceRecurringCharge']}"
-									update=":tabView:serviceRecurringChargediv" />
+										rendered="#{serviceRecurringChargeTemplate.id!=null}"
+										action="#{serviceTemplateBean.saveServiceChargeTemplateRecurring}"
+										value="#{messages['serviceRecurringChargeTemplate.modifyServiceRecurringCharge']}"
+										update=":tabView:serviceRecurringChargediv"/>
 								<p:commandButton value="#{messages['action.cancel']}"
 									action="#{serviceTemplateBean.newServiceChargeTemplateRecurring}"
 									update=":tabView:serviceRecurringChargediv" />
@@ -418,7 +417,7 @@
 								<hftl:column label="#{messages['menu.wallets']}"
 											 field="walletTemplates" valueLabelField="code" isList="true"/>
 								<hftl:column label="#{messages['counterTemplate.title']}"
-											 field="counterTemplate.code"/>
+											 field="counterTemplates" valueLabelField="code" isList="true"/>
 								<p:column styleClass="actions-column"
 										  rendered="#{serviceTemplateBean.edit}">
 									<f:facet name="header">
@@ -451,11 +450,10 @@
 											listType="pickUpList" field="walletTemplates"
 											valueLabelField="code"
 											dualListModel="#{serviceTemplateBean.subscriptionDualListModel}"/>
-							<hftl:formField id="subscriptionCounterTemplateSelectedId"
-											label="#{messages['counterTemplate.title']}"
-											field="counterTemplate" valueLabelField="code" popup="true"
-											popupId="searchSubscriptionCounterTemplatePopup" showResetButton="true"
-											required="false"/>
+							<hftl:formField label="#{messages['counterTemplate.title']}"
+											listType="pickUpList" field="counterTemplates"
+											valueLabelField="code"
+											dualListModel="#{serviceTemplateBean.subscriptionCounterTemplates}"/>
 							<ui:param name="buttons" value="true"/>
 							<ui:define name="buttons">
 								<p:commandButton
@@ -521,7 +519,7 @@
 								<hftl:column label="#{messages['menu.wallets']}"
 											 field="walletTemplates" valueLabelField="code" isList="true"/>
 								<hftl:column label="#{messages['counterTemplate.title']}"
-											 field="counterTemplate.code"/>
+											 field="counterTemplates" valueLabelField="code" isList="true"/>
 								<p:column styleClass="actions-column"
 										  rendered="#{serviceTemplateBean.edit}">
 									<f:facet name="header">
@@ -554,11 +552,10 @@
 											listType="pickUpList" field="walletTemplates"
 											valueLabelField="code"
 											dualListModel="#{serviceTemplateBean.terminationDualListModel}"/>
-							<hftl:formField id="terminationCounterTemplateSelectedId"
-											label="#{messages['counterTemplate.title']}"
-											field="counterTemplate" valueLabelField="code" popup="true"
-											popupId="searchTerminationCounterTemplatePopup" showResetButton="true"
-											required="false"/>
+							<hftl:formField label="#{messages['counterTemplate.title']}"
+											listType="pickUpList" field="counterTemplates"
+											valueLabelField="code"
+											dualListModel="#{serviceTemplateBean.terminationCounterTemplates}"/>
 							<ui:param name="buttons" value="true"/>
 							<ui:define name="buttons">
 								<p:commandButton
@@ -623,7 +620,7 @@
 								<hftl:column label="#{messages['menu.wallets']}"
 									field="walletTemplates" valueLabelField="code" isList="true" />
 								<hftl:column label="#{messages['counterTemplate.title']}"
-									field="counterTemplate.code" />
+											 field="counterTemplates" valueLabelField="code" isList="true"/>
 								<p:column styleClass="actions-column"
 									rendered="#{serviceTemplateBean.edit}">
 									<f:facet name="header">
@@ -643,37 +640,36 @@
 					<p:panel id="serviceUsageChargediv"
 						rendered="#{serviceTemplateBean.edit}">
 						<hftl:formPanel formId="formUsageCharge"
-							edit="#{serviceTemplateBean.edit}"
-							backingBean="#{serviceTemplateBean}"
-							entity="#{serviceTemplateBean.serviceChargeTemplateUsage}"
-							showFormButtons="false" ajaxSubmit="true">
+										edit="#{serviceTemplateBean.edit}"
+										backingBean="#{serviceTemplateBean}"
+										entity="#{serviceTemplateBean.serviceChargeTemplateUsage}"
+										showFormButtons="false" ajaxSubmit="true">
 							<hftl:formField id="usageChargeTemplateSelectedId"
-								label="#{messages['pricePlanMatrix.eventCode']}"
-								field="chargeTemplate" valueLabelField="code" popup="true"
-								popupId="searchUsageChargeTemplatePopup"
-								required="true"
-								disabled="#{!serviceTemplateBean.serviceChargeTemplateUsage.transient}" />
+											label="#{messages['pricePlanMatrix.eventCode']}"
+											field="chargeTemplate" valueLabelField="code" popup="true"
+											popupId="searchUsageChargeTemplatePopup"
+											required="true"
+											disabled="#{!serviceTemplateBean.serviceChargeTemplateUsage.transient}"/>
 							<hftl:formField label="#{messages['menu.wallets']}"
-								listType="pickUpList" field="walletTemplates"
-								valueLabelField="code"
-								dualListModel="#{serviceTemplateBean.usageDualListModel}" />
-							<hftl:formField id="counterTemplateSelectedId"
-								label="#{messages['counterTemplate.title']}"
-								field="counterTemplate" valueLabelField="code" popup="true"
-								popupId="searchCounterTemplatePopup" showResetButton="true"
-								required="false" />
-							<ui:param name="buttons" value="true" />
+											listType="pickUpList" field="walletTemplates"
+											valueLabelField="code"
+											dualListModel="#{serviceTemplateBean.usageDualListModel}"/>
+							<hftl:formField label="#{messages['counterTemplate.title']}"
+											listType="pickUpList" field="counterTemplates"
+											valueLabelField="code"
+											dualListModel="#{serviceTemplateBean.usageCounterTemplates}"/>
+							<ui:param name="buttons" value="true"/>
 							<ui:define name="buttons">
 								<p:commandButton
-									rendered="#{serviceUsageChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
-									action="#{serviceTemplateBean.saveServiceChargeTemplateUsage}"
-									value="#{messages['action.addSave']}"
-									update=":tabView:serviceUsageChargediv" />
+										rendered="#{serviceUsageChargeTemplate.id==null and serviceTemplateBean.canUserUpdateEntity()}"
+										action="#{serviceTemplateBean.saveServiceChargeTemplateUsage}"
+										value="#{messages['action.addSave']}"
+										update=":tabView:serviceUsageChargediv"/>
 								<p:commandButton
-									rendered="#{serviceUsageChargeTemplate.id!=null}"
-									action="#{serviceTemplateBean.saveServiceChargeTemplateUsage}"
-									value="#{messages['serviceUsageChargeTemplate.modifyServiceUsageCharge']}"
-									update=":tabView:serviceUsageChargediv" />
+										rendered="#{serviceUsageChargeTemplate.id!=null}"
+										action="#{serviceTemplateBean.saveServiceChargeTemplateUsage}"
+										value="#{messages['serviceUsageChargeTemplate.modifyServiceUsageCharge']}"
+										update=":tabView:serviceUsageChargediv"/>
 								<p:commandButton value="#{messages['action.cancel']}"
 									action="#{serviceTemplateBean.newServiceChargeTemplateUsage}"
 									update=":tabView:serviceUsageChargediv" />
