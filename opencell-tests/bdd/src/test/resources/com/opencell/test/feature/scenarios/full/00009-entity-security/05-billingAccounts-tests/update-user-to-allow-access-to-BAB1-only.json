@@ -5,12 +5,12 @@
     "userRole": [
         "administrateur"
     ],
-    "accessibleEntities": {
-        "accessibleEntity": {
-            "code": "RS_FULL_15_CUSTA",
-            "entityClass": "org.meveo.model.crm.Customer"
+    "accessibleEntity": [
+        {
+            "code": "RS_FULL_15_BAB1",
+            "entityClass": "org.meveo.model.billing.BillingAccount"
         }
-    },
+    ],
     "firstName": "meveo",
     "lastName": "admin"
 }

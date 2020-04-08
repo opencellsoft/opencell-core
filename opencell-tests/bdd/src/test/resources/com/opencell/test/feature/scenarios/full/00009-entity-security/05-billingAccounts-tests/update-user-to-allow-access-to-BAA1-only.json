@@ -5,6 +5,12 @@
     "userRole": [
         "administrateur"
     ],
+    "accessibleEntity": [
+        {
+            "code": "RS_FULL_15_BAA1",
+            "entityClass": "org.meveo.model.billing.BillingAccount"
+        }
+    ],
     "firstName": "meveo",
     "lastName": "admin"
 }

@@ -1,0 +1,15 @@
+{
+    "code": "RS_FULL_15_BAB1",
+    "description": "RS_FULL_15_BAB1",
+    "userAccount": [
+        {
+            "code": "RS_FULL_15_UAB1"
+        },
+        {
+            "code": "RS_FULL_15_UAB2"
+        },
+        {
+            "code": "RS_FULL_15_UAB3"
+        }
+    ]
+}
