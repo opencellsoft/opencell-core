@@ -27,7 +27,7 @@ import org.slf4j.Logger;
  * The Class SepaRejectedTransactionsJobBean consume sepa/paynum or any custom rejected files (ddRequest file callBacks).
  * 
  * @author anasseh
- * @lastModifiedVersion 5.2
+ * @lastModifiedVersion 9.3
  * 
  */
 @Stateless
@@ -104,6 +104,9 @@ public class SepaRejectedTransactionsJobBean {
             FileUtils.moveFile(archiveDir, currentFile, fileName);
             log.info("Processing " + file.getName() + " done");
             result.registerSucces();
+            result.setNbItemsCorrectlyProcessed(ddRejectFileInfos.getNbItemsOk());
+            result.setNbItemsProcessedWithError(ddRejectFileInfos.getNbItemsKo());
+            result.addReport(ddRejectFileInfos.formatErrorsReport());
 
         } catch (Exception e) {
             result.registerError(e.getMessage());
