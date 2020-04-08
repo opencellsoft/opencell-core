@@ -31,6 +31,8 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -40,6 +42,7 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
@@ -84,10 +87,18 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
 
+    @Inject
+    private CounterTemplateService counterTemplateService;
+
     private DualListModel<WalletTemplate> usageWallets;
     private DualListModel<WalletTemplate> recurringWallets;
     private DualListModel<WalletTemplate> subscriptionWallets;
     private DualListModel<WalletTemplate> terminationWallets;
+
+    private DualListModel<CounterTemplate> usageCounterTemplates;
+    private DualListModel<CounterTemplate> recurringCounterTemplates;
+    private DualListModel<CounterTemplate> subscriptionCounterTemplates;
+    private DualListModel<CounterTemplate> terminationCounterTemplates;
 
     @Produces
     @Named
@@ -104,6 +115,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     public void newServiceChargeTemplateRecurring() {
         this.serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
         this.recurringWallets = null;
+        this.recurringCounterTemplates = null;
     }
 
     @Produces
@@ -147,6 +159,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     public void newServiceChargeTemplateUsage() {
         this.serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
         this.usageWallets = null;
+        this.usageCounterTemplates = null;
     }
 
     /**
@@ -154,6 +167,17 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
      */
     public ServiceTemplateBean() {
         super(ServiceTemplate.class);
+
+    }
+
+    public ServiceTemplate initEntity() {
+        super.initEntity();
+        for (ServiceChargeTemplateUsage serviceChargeTemplate : entity.getServiceUsageCharges()) {
+            if (!serviceChargeTemplate.getCounterTemplates().contains(serviceChargeTemplate.getCounterTemplate())) {
+                serviceChargeTemplate.getCounterTemplates().add(serviceChargeTemplate.getCounterTemplate());
+            }
+        }
+        return entity;
     }
 
     public DualListModel<WalletTemplate> getUsageDualListModel() {
@@ -272,10 +296,13 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
                 return;
             }
             for (ServiceChargeTemplateSubscription inc : entity.getServiceSubscriptionCharges()) {
-                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateSubscription.getChargeTemplate().getCode()) && !inc.getId().equals(serviceChargeTemplateSubscription.getId())) {
+                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateSubscription.getChargeTemplate().getCode()) && !inc.getId()
+                        .equals(serviceChargeTemplateSubscription.getId())) {
                     throw new Exception();
                 }
             }
+
+            serviceChargeTemplateSubscription.getCounterTemplates().addAll(counterTemplateService.refreshOrRetrieve(usageCounterTemplates.getTarget()));
 
             if (serviceChargeTemplateSubscription.getWalletTemplates() == null) {
                 serviceChargeTemplateSubscription.setWalletTemplates(new ArrayList<WalletTemplate>());
@@ -382,14 +409,20 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             if (serviceChargeTemplateRecurring == null) {
                 return;
             }
-
-            for (ServiceChargeTemplateRecurring inc : entity.getServiceRecurringCharges()) {
+            // TODO to be removed
+            /*for (ServiceChargeTemplateRecurring inc : entity.getServiceRecurringCharges()) {
                 if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateRecurring.getChargeTemplate().getCode()) && !inc.getId().equals(serviceChargeTemplateRecurring.getId())
                         && ((inc.getCounterTemplate() == null && serviceChargeTemplateRecurring.getCounterTemplate() == null)
                                 || inc.getCounterTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateRecurring.getCounterTemplate().getCode()))) {
                     throw new Exception();
                 }
+            }*/
+            if (serviceChargeTemplateRecurring.getCounterTemplates() == null) {
+                serviceChargeTemplateRecurring.setCounterTemplates(new ArrayList<CounterTemplate>());
+            } else {
+                serviceChargeTemplateRecurring.getCounterTemplates().clear();
             }
+            serviceChargeTemplateRecurring.getCounterTemplates().addAll(counterTemplateService.refreshOrRetrieve(usageCounterTemplates.getTarget()));
 
             if (serviceChargeTemplateRecurring.getWalletTemplates() == null) {
                 serviceChargeTemplateRecurring.setWalletTemplates(new ArrayList<WalletTemplate>());
@@ -440,15 +473,22 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             if (serviceChargeTemplateUsage == null) {
                 return;
             }
-            for (ServiceChargeTemplateUsage inc : entity.getServiceUsageCharges()) {
-                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateUsage.getChargeTemplate().getCode()) && !inc.getId().equals(serviceChargeTemplateUsage.getId())
-                        && ((inc.getCounterTemplate() == null && serviceChargeTemplateUsage.getCounterTemplate() == null)
-                                || inc.getCounterTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateUsage.getCounterTemplate().getCode()))) {
+            // TODO to be removed
+            /*for (ServiceChargeTemplateUsage inc : entity.getServiceUsageCharges()) {
+                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateUsage.getChargeTemplate().getCode()) && !inc.getId()
+                        .equals(serviceChargeTemplateUsage.getId()) && ((inc.getCounterTemplate() == null && serviceChargeTemplateUsage.getCounterTemplate() == null) || inc
+                        .getCounterTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateUsage.getCounterTemplate().getCode()))) {
                     log.error("exception when applying one serviceUsageChargeTemplate !");
                     messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
                     return;
                 }
+            }*/
+            if (serviceChargeTemplateUsage.getCounterTemplates() == null) {
+                serviceChargeTemplateUsage.setCounterTemplates(new ArrayList<CounterTemplate>());
+            } else {
+                serviceChargeTemplateUsage.getCounterTemplates().clear();
             }
+            serviceChargeTemplateUsage.getCounterTemplates().addAll(counterTemplateService.refreshOrRetrieve(usageCounterTemplates.getTarget()));
 
             if (serviceChargeTemplateUsage.getWalletTemplates() == null) {
                 serviceChargeTemplateUsage.setWalletTemplates(new ArrayList<WalletTemplate>());
@@ -497,6 +537,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     public void editServiceUsageChargeTemplate(ServiceChargeTemplateUsage serviceUsageChargeTemplate) {
         this.serviceChargeTemplateUsage = serviceUsageChargeTemplate;
         this.usageWallets = null;
+        this.usageCounterTemplates = null;
     }
 
     public ServiceChargeTemplateUsage getServiceChargeTemplateUsage() {
@@ -542,4 +583,85 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
         return serviceInstanceService.hasInstances(entity, null);
     }
 
+    public DualListModel<CounterTemplate> getUsageCounterTemplates() {
+
+        if (usageCounterTemplates == null) {
+            usageCounterTemplates = getCounterTemplatesDualListModel(serviceChargeTemplateUsage);
+        }
+        return usageCounterTemplates;
+    }
+
+    public void setUsageCounterTemplates(DualListModel<CounterTemplate> counterTemplates) {
+        this.usageCounterTemplates = counterTemplates;
+    }
+
+    public DualListModel<CounterTemplate> getRecurringCounterTemplates() {
+        if (recurringCounterTemplates == null) {
+            recurringCounterTemplates = getCounterTemplatesDualListModel(serviceChargeTemplateRecurring);
+        }
+        return recurringCounterTemplates;
+    }
+
+    public void setRecurringCounterTemplates(DualListModel<CounterTemplate> recurringCounterTemplates) {
+        this.recurringCounterTemplates = recurringCounterTemplates;
+    }
+
+    public DualListModel<CounterTemplate> getSubscriptionCounterTemplates() {
+        if (subscriptionCounterTemplates == null) {
+            subscriptionCounterTemplates = getCounterTemplatesDualListModel(serviceChargeTemplateSubscription);
+        }
+        return subscriptionCounterTemplates;
+    }
+
+    public void setSubscriptionCounterTemplates(DualListModel<CounterTemplate> subscriptionCounterTemplates) {
+
+        this.subscriptionCounterTemplates = subscriptionCounterTemplates;
+    }
+
+    public DualListModel<CounterTemplate> getTerminationCounterTemplates() {
+        if (terminationCounterTemplates == null) {
+            terminationCounterTemplates = getCounterTemplatesDualListModel(serviceChargeTemplateTermination);
+        }
+        return terminationCounterTemplates;
+    }
+
+    public void setTerminationCounterTemplates(DualListModel<CounterTemplate> terminationCounterTemplates) {
+
+        this.terminationCounterTemplates = terminationCounterTemplates;
+    }
+
+    private DualListModel<CounterTemplate> getCounterTemplatesDualListModel(ServiceChargeTemplate serviceChargeTemplate) {
+
+        List<CounterTemplate> source = counterTemplateService.list();
+        List<CounterTemplate> target = new ArrayList<CounterTemplate>();
+
+        // For compatibility, the old counterTemplate must be added to counterTemplates
+        /*if (serviceChargeTemplate instanceof ServiceChargeTemplateUsage) {
+            for (ServiceChargeTemplateUsage chargeTemplate : entity.getServiceUsageCharges()) {
+                target.add(chargeTemplate.getCounterTemplate());
+            }
+        }
+        if (serviceChargeTemplate instanceof ServiceChargeTemplateRecurring) {
+            for (ServiceChargeTemplateRecurring chargeTemplate : entity.getServiceRecurringCharges()) {
+                target.add(chargeTemplate.getCounterTemplate());
+            }
+        }
+        if (serviceChargeTemplate instanceof ServiceChargeTemplateSubscription) {
+            for (ServiceChargeTemplateSubscription chargeTemplate : entity.getServiceSubscriptionCharges()) {
+                target.add(chargeTemplate.getCounterTemplate());
+            }
+        }
+        if (serviceChargeTemplate instanceof ServiceChargeTemplateTermination) {
+            for (ServiceChargeTemplateTermination chargeTemplate : entity.getServiceTerminationCharges()) {
+                target.add(chargeTemplate.getCounterTemplate());
+            }
+        }*/
+
+        List<CounterTemplate> counterTemplates = serviceChargeTemplate.getCounterTemplates();
+        if (counterTemplates != null) {
+            target.addAll(counterTemplates);
+        }
+        source.removeAll(target);
+        return new DualListModel<CounterTemplate>(source, target);
+    }
 }
