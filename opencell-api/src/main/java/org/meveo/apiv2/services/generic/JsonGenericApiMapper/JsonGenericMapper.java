@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.meveo.apiv2.generic.GenericPaginatedResource;
 import org.meveo.model.IEntity;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletOperation;
@@ -25,6 +24,7 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.module.MeveoModule;
 import org.meveo.model.payments.CustomerAccount;
 
 import java.io.IOException;
@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class JsonGenericMapper extends ObjectMapper{
     private SimpleFilterProvider simpleFilterProvider;
@@ -40,19 +41,18 @@ public class JsonGenericMapper extends ObjectMapper{
         setUpConfig();
         registerModule(module);
         this.simpleFilterProvider = simpleFilterProvider;
-        addMixIn(Subscription.class, InfiniteRecursionMixIn.class);
-        addMixIn(DiscountPlanInstance.class, InfiniteRecursionMixIn.class);
-        addMixIn(Access.class, InfiniteRecursionMixIn.class);
-        addMixIn(OfferTemplateCategory.class, InfiniteRecursionMixIn.class);
-        addMixIn(CustomerAccount.class, InfiniteRecursionMixIn.class);
-        addMixIn(OfferTemplate.class, InfiniteRecursionMixIn.class);
-        addMixIn(WalletOperation.class, InfiniteRecursionMixIn.class);
-        addMixIn(ChargeInstance.class, InfiniteRecursionMixIn.class);
+        applyRecursionMixIn(MeveoModule.class, Subscription.class, DiscountPlanInstance.class, Access.class,
+                OfferTemplateCategory.class, CustomerAccount.class, OfferTemplate.class, WalletOperation.class);
         addMixIn(IEntity.class, ForbiddenFieldsMixIn.class);
         addMixIn(GenericPaginatedResource.class, GenericPaginatedResourceMixIn.class);
         addMixIn(CustomFieldValues.class, EntityCustomFieldValuesFilterMixIn.class);
         addMixIn(CustomFieldValue.class, EntityCustomFieldValueFilterMixIn.class);
-       }
+    }
+
+    private void applyRecursionMixIn(Class... classes) {
+        Stream.of(classes)
+                .forEach(aClass -> addMixIn(aClass, InfiniteRecursionMixIn.class));
+    }
 
     private void setUpConfig() {
         setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
