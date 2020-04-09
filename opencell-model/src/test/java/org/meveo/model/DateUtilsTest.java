@@ -18,7 +18,9 @@
 
 package org.meveo.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,8 +41,7 @@ public class DateUtilsTest {
             Integer from = days[i];
             Integer to = days[i + 1];
             boolean shouldMatch = days[i + 2] == 1;
-            boolean matched = DateUtils.isPeriodsOverlap(startDate, endDate, DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, from, 0, 0, 0),
-                DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, to, 0, 0, 0));
+            boolean matched = DateUtils.isPeriodsOverlap(startDate, endDate, DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, from, 0, 0, 0), DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, to, 0, 0, 0));
 
             Assert.assertTrue("Days " + from + "-" + to + " are incorrect", matched == shouldMatch);
         }
@@ -52,8 +53,7 @@ public class DateUtilsTest {
             Integer from = days[i];
             Integer to = days[i + 1];
             boolean shouldMatch = days[i + 2] == 1;
-            boolean matched = DateUtils.isPeriodsOverlap(null, endDate, DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, from, 0, 0, 0),
-                DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, to, 0, 0, 0));
+            boolean matched = DateUtils.isPeriodsOverlap(null, endDate, DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, from, 0, 0, 0), DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, to, 0, 0, 0));
 
             Assert.assertTrue("Days " + from + "-" + to + " are incorrect", matched == shouldMatch);
         }
@@ -65,8 +65,7 @@ public class DateUtilsTest {
             Integer from = days[i];
             Integer to = days[i + 1];
             boolean shouldMatch = days[i + 2] == 1;
-            boolean matched = DateUtils.isPeriodsOverlap(startDate, null, DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, from, 0, 0, 0),
-                DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, to, 0, 0, 0));
+            boolean matched = DateUtils.isPeriodsOverlap(startDate, null, DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, from, 0, 0, 0), DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, to, 0, 0, 0));
 
             Assert.assertTrue("Days " + from + "-" + to + " are incorrect", matched == shouldMatch);
         }
@@ -157,4 +156,49 @@ public class DateUtilsTest {
         }
 
     }
+
+    @SuppressWarnings("deprecation")
+    @Test()
+    public void getGetPeriodOverlap() {
+
+        Date startDate = DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 15, 0, 0, 0);
+        Date endDate = DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 25, 0, 0, 0);
+
+        List<Integer[]> days = new ArrayList<>();
+
+        // Check with both period dates
+        days.add(new Integer[] { 10, 11, -1, -1, 10, 15, -1, -1, 10, 17, 15, 17, 15, 25, 15, 25, 17, 20, 17, 20, 20, 27, 20, 25, 25, 28, -1, -1, 26, 28, -1, -1 });
+
+        // Check with no end date
+        days.add(new Integer[] { 10, null, 15, 25, 15, null, 15, 25, 17, null, 17, 25, 25, null, -1, -1, 26, null, -1, -1 });
+
+        // Check with no start date
+        days.add(new Integer[] { null, 11, -1, -1, null, 15, -1, -1, null, 17, 15, 17, null, 25, 15, 25, null, 27, 15, 25 });
+
+        // Check with no dates
+        days.add(new Integer[] { null, null, 15, 25 });
+
+        for (Integer[] day : days) {
+
+            for (int i = 0; i < day.length; i = i + 4) {
+                Integer from = day[i];
+                Integer to = day[i + 1];
+                Integer matchStart = day[i + 2];
+                Integer matchEnd = day[i + 3];
+
+                DatePeriod matched = DateUtils.getPeriodOverlap(startDate, endDate, from == null ? null : DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, from, 0, 0, 0),
+                    to == null ? null : DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, to, 0, 0, 0));
+
+                if (matchStart == -1) {
+
+                    Assert.assertNull("Days " + from + "-" + to + " should not match", matched);
+                } else {
+                    Assert.assertEquals("Days " + from + "-" + to + " should match start ", matchStart, (Integer) matched.getFrom().getDate());
+                    Assert.assertEquals("Days " + from + "-" + to + " should match end ", matchEnd, (Integer) matched.getTo().getDate());
+                }
+            }
+
+        }
+    }
+
 }
