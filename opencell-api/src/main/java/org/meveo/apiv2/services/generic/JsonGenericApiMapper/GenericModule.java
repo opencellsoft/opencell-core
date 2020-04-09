@@ -1,7 +1,6 @@
 package org.meveo.apiv2.services.generic.JsonGenericApiMapper;
 
 import com.fasterxml.jackson.core.*;
-import com.fasterxml.jackson.core.json.ReaderBasedJsonParser;
 import com.fasterxml.jackson.core.util.VersionUtil;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -18,6 +17,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 class GenericModule extends SimpleModule {
     private static final String NAME = "GenericModule";
@@ -25,10 +25,18 @@ class GenericModule extends SimpleModule {
     // to passe as constructor param from JsonGenericMapper
     private static final String DATA_ROOT_ELEMENT = "data";
     private final Set<String> nestedEntities;
+    private final Set<String> dotSeparatedNestedEntities;
 
     GenericModule(Set<String> nestedEntities) {
         super(NAME, VERSION_UTIL.version());
-        this.nestedEntities = nestedEntities;
+        this.nestedEntities = nestedEntities
+                .parallelStream()
+                .map(s -> s.contains(".") ? s.substring(0, s.indexOf(".")) : s)
+                .collect(Collectors.toSet());
+        dotSeparatedNestedEntities = nestedEntities
+                .parallelStream()
+                .filter(s -> s.contains("."))
+                .collect(Collectors.toSet());
         addSerializer(HibernateProxy.class, new LazyProxySerializer());
         addSerializer(List.class, new ListCustomSerializer());
         addDeserializer(PaymentMethod.class, new PaymentDeserializer());
@@ -47,7 +55,7 @@ class GenericModule extends SimpleModule {
          @Override
          public void serialize(HibernateProxy value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
              JsonStreamContext outputContext = gen.getOutputContext();
-             if(DATA_ROOT_ELEMENT.equals(outputContext.getParent().getCurrentName()) || nestedEntities.contains(outputContext.getCurrentName())){
+             if(isCandidateToInitialisation(outputContext.getCurrentName(), outputContext.getParent().getCurrentName())){
                  Hibernate.initialize(value);
                  Object implementation = value.getHibernateLazyInitializer().getImplementation();
                  gen.writeObject(implementation);
@@ -55,7 +63,15 @@ class GenericModule extends SimpleModule {
                  gen.writeObject(value.getHibernateLazyInitializer().getIdentifier());
              }
          }
-     }
+
+        private boolean isCandidateToInitialisation(String current, String parent) {
+            return DATA_ROOT_ELEMENT.equals(parent) || nestedEntities.contains(current) || dotSeparatedNestedEntities
+                    .parallelStream().filter(s -> s.contains("."))
+                    .filter(s -> s.contains(parent+"."+current))
+                    .findFirst()
+                    .isPresent();
+        }
+    }
 
     private class ListCustomSerializer extends StdSerializer<List> {
 
