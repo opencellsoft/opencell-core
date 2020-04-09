@@ -33,31 +33,26 @@ import org.meveo.service.base.PersistenceService;
  */
 @Named
 @Stateless
-public class SubscriptionTerminationReasonService extends
-		PersistenceService<SubscriptionTerminationReason> {
+public class SubscriptionTerminationReasonService extends PersistenceService<SubscriptionTerminationReason> {
 
-	public SubscriptionTerminationReason findByCodeReason(String codeReason) throws Exception {
-	
-		QueryBuilder qb = new QueryBuilder(SubscriptionTerminationReason.class,
-				"r");
+    public SubscriptionTerminationReason findByCodeReason(String codeReason) {
 
-		qb.addCriterion("code", "=", codeReason, true);
-		
+        QueryBuilder qb = new QueryBuilder(SubscriptionTerminationReason.class, "r");
 
-		try {
-			return (SubscriptionTerminationReason) qb.getQuery(getEntityManager())
-					.getSingleResult();
-		} catch (NoResultException e) {
-			log.warn("failed to subscription termination reason service",e);
-			return null;
-		}
-	}
+        qb.addCriterion("code", "=", codeReason, true);
 
-	@SuppressWarnings("unchecked")
-	public List<SubscriptionTerminationReason> listReasons() {
+        try {
+            return (SubscriptionTerminationReason) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to subscription termination reason service", e);
+            return null;
+        }
+    }
 
-		Query query = new QueryBuilder(SubscriptionTerminationReason.class,
-				"c", null).getQuery(getEntityManager());
-		return query.getResultList();
-	}
+    @SuppressWarnings("unchecked")
+    public List<SubscriptionTerminationReason> listReasons() {
+
+        Query query = new QueryBuilder(SubscriptionTerminationReason.class, "c", null).getQuery(getEntityManager());
+        return query.getResultList();
+    }
 }
