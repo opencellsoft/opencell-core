@@ -1379,7 +1379,11 @@ public abstract class BaseApi {
                 }
 
             } else if (targetClass == Long.class || (targetClass.isPrimitive() && targetClass.getName().equals("long"))) {
-                if (numberVal != null || bdVal != null || listVal != null) {
+                if (numberVal != null) {
+                    return numberVal.longValue();
+                } else if (bdVal != null) {
+                    return bdVal.longValue();
+                } else if (listVal != null) {
                     return value;
                 } else if (stringVal != null) {
                     return Long.parseLong(stringVal);
