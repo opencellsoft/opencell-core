@@ -22,7 +22,6 @@ import java.math.RoundingMode;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.persistence.PrePersist;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -39,6 +38,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -116,7 +116,7 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "WalletOperation.listWObetweenTwoDatesByStatus", query = "SELECT o FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate and o.id >:lastId order by o.id asc"),
         @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status<>'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate"),
         @NamedQuery(name = "WalletOperation.deleteWObetweenTwoDatesByStatus", query = "delete FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate"),
-        @NamedQuery(name = "WalletOperation.deleteZeroWO", query = "delete FROM WalletOperation o WHERE o.quantity=0 AND o.chargeInstance.id in (select c.id FROM ChargeInstance c where c.chargeTemplate.dropZeroWo=true)")})
+        @NamedQuery(name = "WalletOperation.deleteZeroWO", query = "delete FROM WalletOperation o WHERE o.quantity=0 AND o.chargeInstance.id in (select c.id FROM ChargeInstance c where c.chargeTemplate.dropZeroWo=true)") })
 public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -385,7 +385,6 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Raw rating amount without tax from Price plan. Might differ from amountWitouttax when minimumAmount is set on a price plan.
      */
-    @Deprecated
     @Column(name = "raw_amount_without_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal rawAmountWithoutTax;
@@ -393,7 +392,6 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Raw rating amount with tax from Price plan. Might differ from amountWitouttax when minimumAmount is set on a price plan.
      */
-    @Deprecated
     @Column(name = "raw_amount_with_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal rawAmountWithTax;
@@ -469,6 +467,13 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     private String uuid;
 
     /**
+     * Accounting code
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
+
+    /**
      * Constructor
      */
     public WalletOperation() {
@@ -489,10 +494,10 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      * @param tax Tax to apply
      * @param startDate Operation date range - start date
      * @param endDate Operation date range - end date
+     * @param accountingCode Accounting code
      */
-    @SuppressWarnings("deprecation")
     public WalletOperation(ChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, Date operationDate, String orderNumber, String criteria1, String criteria2, String criteria3,
-            String criteriaExtra, Tax tax, Date startDate, Date endDate) {
+            String criteriaExtra, Tax tax, Date startDate, Date endDate, AccountingCode accountingCode) {
 
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 
@@ -579,6 +584,12 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         }
         this.invoiceSubCategory = chargeTemplate.getInvoiceSubCategory();
 
+        if (accountingCode == null && this.invoiceSubCategory != null) {
+            this.accountingCode = invoiceSubCategory.getAccountingCode();
+        } else {
+            this.accountingCode = accountingCode;
+        }
+
         // TODO:check that setting the principal wallet at this stage is correct
         this.wallet = userAccount.getWallet();
         this.subscription = chargeInstance.getSubscription();
@@ -621,12 +632,13 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      * @param inputQuantity Input quantity
      * @param orderNumber Order number
      * @param invoiceSubCategory Invoice sub category
+     * @param accountingCode Accounting code
      * @param status Status
      */
     public WalletOperation(String code, String description, WalletInstance wallet, Date operationDate, Date invoicingDate, OperationTypeEnum type, Currency currency, Tax tax, BigDecimal unitAmountWithoutTax,
             BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, String parameter1, String parameter2,
             String parameter3, String parameterExtra, Date startDate, Date endDate, Date subscriptionDate, OfferTemplate offerTemplate, Seller seller, String inputUnitDescription, String ratingUnitDescription,
-            BigDecimal inputQuantity, String orderNumber, InvoiceSubCategory invoiceSubCategory, WalletOperationStatusEnum status) {
+            BigDecimal inputQuantity, String orderNumber, InvoiceSubCategory invoiceSubCategory, AccountingCode accountingCode, WalletOperationStatusEnum status) {
         super();
         this.code = code;
         this.description = description;
@@ -657,6 +669,11 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         this.inputQuantity = inputQuantity;
         this.orderNumber = orderNumber;
         this.invoiceSubCategory = invoiceSubCategory;
+        if (accountingCode == null && this.invoiceSubCategory != null) {
+            this.accountingCode = invoiceSubCategory.getAccountingCode();
+        } else {
+            this.accountingCode = accountingCode;
+        }
 
         if (chargeInstance != null) {
             this.serviceInstance = chargeInstance.getServiceInstance();
@@ -1249,5 +1266,19 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         String oldUuid = uuid;
         uuid = UUID.randomUUID().toString();
         return oldUuid;
+    }
+
+    /**
+     * @return Accounting code
+     */
+    public AccountingCode getAccountingCode() {
+        return accountingCode;
+    }
+
+    /**
+     * @param accountingCode Accounting code
+     */
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
     }
 }

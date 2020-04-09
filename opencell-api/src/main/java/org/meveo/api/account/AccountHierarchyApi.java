@@ -600,7 +600,7 @@ public class AccountHierarchyApi extends BaseApi {
         contactInformation.setEmail(postData.getEmail());
         contactInformation.setPhone(postData.getPhoneNumber());
 
-        NameDto name = customerDto.getName();
+        NameDto name = customerDto.getName()!=null ? customerDto.getName() : new NameDto();
         if (!StringUtils.isBlank(postData.getTitleCode()) && !StringUtils.isBlank(titleService.findByCode(postData.getTitleCode()))) {
             name.setTitle(StringUtils.normalizeHierarchyCode(postData.getTitleCode()));
         }

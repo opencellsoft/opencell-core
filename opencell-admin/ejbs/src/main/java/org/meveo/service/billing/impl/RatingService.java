@@ -146,7 +146,6 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param recChargeInstance recurring charge instance
      * @return shared quantity
      */
-    @SuppressWarnings("deprecation")
     public int getSharedQuantity(LevelEnum level, String chargeCode, Date chargeDate, RecurringChargeInstance recChargeInstance) {
         int result = 0;
         try {
@@ -254,12 +253,12 @@ public class RatingService extends PersistenceService<WalletOperation> {
             walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
                 orderNumberOverride != null ? (orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride) : chargeInstance.getOrderNumber(),
                 edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                edr != null ? edr.getParameter4() : null, null, startdate, endDate);
+                edr != null ? edr.getParameter4() : null, null, startdate, endDate, null);
         } else {
             walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
                 orderNumberOverride != null ? (orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride) : chargeInstance.getOrderNumber(),
                 edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                edr != null ? edr.getParameter4() : null, null, startdate, endDate);
+                edr != null ? edr.getParameter4() : null, null, startdate, endDate, null);
 
         }
 
