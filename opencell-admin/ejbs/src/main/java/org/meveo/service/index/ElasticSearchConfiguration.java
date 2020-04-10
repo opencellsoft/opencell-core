@@ -301,7 +301,7 @@ public class ElasticSearchConfiguration implements Serializable {
     public boolean isDoUpsert(ISearchable entity) {
 
         if (upsertMap == null) {
-            return false;
+            return true;
         }
 
         return isDoUpsert(entity.getClass());
