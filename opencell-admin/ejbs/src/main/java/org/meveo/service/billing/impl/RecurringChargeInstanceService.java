@@ -202,15 +202,19 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             create(chargeInstance);
         }
 
-        if (serviceChargeTemplateRecurring.getAccumulatorCounterTemplates() != null && !serviceChargeTemplateRecurring.getAccumulatorCounterTemplates().isEmpty()) {
-            log.debug("Recurring charge has {} counter templates", serviceChargeTemplateRecurring.getAccumulatorCounterTemplates().size());
+        if ((serviceChargeTemplateRecurring.getAccumulatorCounterTemplates() != null && !serviceChargeTemplateRecurring.getAccumulatorCounterTemplates().isEmpty())
+                || serviceChargeTemplateRecurring.getCounterTemplate() != null) {
+            log.debug("Usage charge has {} accumulator counter templates", serviceChargeTemplateRecurring.getAccumulatorCounterTemplates().size());
             for (CounterTemplate counterTemplate : serviceChargeTemplateRecurring.getAccumulatorCounterTemplates()) {
-                log.debug("Counter template {}", counterTemplate);
+                log.debug("Accumulator counter template {}", counterTemplate);
                 CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, counterTemplate, isVirtual);
-                log.debug("Counter instance {} will be add to charge instance {}", counterInstance, chargeInstance);
+                log.debug("Accumulator counter instance {} will be add to charge instance {}", counterInstance, chargeInstance);
                 chargeInstance.addCounterInstance(counterInstance);
             }
-
+            log.debug("Counter template {}", serviceChargeTemplateRecurring.getCounterTemplate());
+            CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, serviceChargeTemplateRecurring.getCounterTemplate(), isVirtual);
+            log.debug("Counter instance {} will be add to charge instance {}", counterInstance, chargeInstance);
+            chargeInstance.setCounter(counterInstance);
             if (!isVirtual) {
                 update(chargeInstance);
             }
