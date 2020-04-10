@@ -98,12 +98,12 @@ public abstract class ServiceChargeTemplate<T extends ChargeTemplate> extends Ba
      *
      * @return list of counters template
      */
-    public abstract List<CounterTemplate> getCounterTemplates();
+    public abstract List<CounterTemplate> getAccumulatorCounterTemplates();
 
     /**
      * Sets counters template.
      *
      * @param counterTemplates counters template
      */
-    public abstract void setCounterTemplates(List<CounterTemplate> counterTemplates);
+    public abstract void setAccumulatorCounterTemplates(List<CounterTemplate> counterTemplates);
 }

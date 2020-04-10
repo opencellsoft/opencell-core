@@ -663,22 +663,27 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             }).flatMap(List::stream).collect(Collectors.toList());
     }
 
-    private void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
+    public void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
 
-        CounterInstance counterInstance = chargeInstance.getCounter();
-        CounterPeriod counterPeriod = null;
-        if (counterInstance != null) {
-            // get the counter period of charge instance
-            counterPeriod = counterInstanceService.getCounterPeriod(counterInstance, chargeInstance.getChargeDate());
-            if (counterPeriod == null || counterPeriod.getValue() == null || !counterPeriod.getValue().equals(BigDecimal.ZERO)) {
-                // The counter will be incremented by charge quantity
-                if (counterPeriod == null) {
-                    counterPeriod = counterInstanceService.getOrCreateCounterPeriod(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(), chargeInstance,
-                        chargeInstance.getServiceInstance());
+        for (CounterInstance counterInstance : chargeInstance.getCounterInstances()) {
+            CounterPeriod counterPeriod = null;
+            if (counterInstance != null) {
+                // get the counter period of charge instance
+                log.debug("Get accumulator counter period for counter instance {}", counterInstance);
+                counterPeriod = counterInstanceService.getCounterPeriod(counterInstance, chargeInstance.getChargeDate());
+                if (counterPeriod == null || counterPeriod.getValue() == null || !counterPeriod.getValue().equals(BigDecimal.ZERO)) {
+                    // The counter will be incremented by charge quantity
+                    if (counterPeriod == null) {
+                        counterPeriod = counterInstanceService
+                                .getOrCreateCounterPeriod(counterInstance, chargeInstance.getChargeDate(), chargeInstance.getServiceInstance().getSubscriptionDate(),
+                                        chargeInstance, chargeInstance.getServiceInstance());
+                    }
                 }
-            }
-            for (WalletOperation wo : walletOperations) {
-                counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
+
+                for (WalletOperation wo : walletOperations) {
+                    log.debug("Increment accumulator counter period value {} by the WO's amount {} or quantity {} ", counterPeriod, wo.getAmountWithoutTax(), wo.getQuantity());
+                    counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, isVirtual);
+                }
             }
         }
     }

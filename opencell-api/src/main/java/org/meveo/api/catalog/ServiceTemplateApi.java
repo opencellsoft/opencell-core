@@ -39,7 +39,6 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -156,7 +155,22 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceChargeTemplate.setChargeTemplate(chargeTemplate);
         serviceChargeTemplate.setWalletTemplates(wallets);
         serviceChargeTemplate.setServiceTemplate(serviceTemplate);
-        serviceChargeTemplate.setCounterTemplate(getCounterTemplate(serviceChargeTemplate, serviceChargeTemplateDto.getCounterTemplate()));
+        CounterTemplate counterTemplate = getCounterTemplate(serviceChargeTemplate, serviceChargeTemplateDto.getCounterTemplate());
+        if (counterTemplate == null || !counterTemplate.getAccumulator()) {
+            serviceChargeTemplate.setCounterTemplate(counterTemplate);
+        } else {
+            throw new InvalidParameterException("The counterTemplate parameter: " + counterTemplate.getCode() + " should not be an accumulator counter");
+        }
+        List<CounterTemplate> counterTemplates = new ArrayList<>();
+        if (serviceChargeTemplateDto.getAccumulatorCounterTemplates() != null) {
+            for (String counterCode : serviceChargeTemplateDto.getAccumulatorCounterTemplates().getCounterTemplate()) {
+                CounterTemplate accumulatorCounter = getCounterTemplate(serviceChargeTemplate, counterCode);
+                if (accumulatorCounter.getAccumulator() != null && accumulatorCounter.getAccumulator()) {
+                    counterTemplates.add(accumulatorCounter);
+                }
+            }
+        }
+        serviceChargeTemplate.setAccumulatorCounterTemplates(counterTemplates);
     }
 
     private CounterTemplate getCounterTemplate(ServiceChargeTemplate serviceChargeTemplate, String counterTemplateCode) {
