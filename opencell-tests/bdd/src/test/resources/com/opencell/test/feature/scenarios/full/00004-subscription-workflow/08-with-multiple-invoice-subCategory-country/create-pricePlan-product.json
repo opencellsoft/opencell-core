@@ -1,0 +1,8 @@
+{
+    "code": "PP_RS_FULL_MULTI_TAX",
+    "description": "price plan product",
+    "eventCode": "RS_FULL_MULTI_TAX",
+    "amountWithoutTax": "100",
+    "amountWithTax": "12",
+    "priority": "1"
+}

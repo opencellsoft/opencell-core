@@ -1,8 +1,0 @@
-{ 
-	"code": "userAccount", 
-	"billingAccount":"ben.ohara",
-	"terminationReason":"TR",
-	"terminationDate":"2018-09-14",
-	"status" : "Active" 
-	
-}

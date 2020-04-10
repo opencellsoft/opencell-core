@@ -1,0 +1,8 @@
+{
+    "code": "RS_FULL_171_CALENDAR_PERIOD_120_HOURS",
+    "description": "5 day period calendar",
+    "calendarType": "PERIOD",
+    "periodLength": "120",
+    "periodUnit": "HOUR_OF_DAY",
+    "nbPeriods": "0"
+}

@@ -1,0 +1,17 @@
+{
+    "subscription": "RS_FULL_164_SUB_ACTIVATION2",
+    "servicesToInstantiate": {
+        "service": [
+            {
+                "code": "RS_BASE_SERVICE1",
+                "quantity": "1",
+                "subscriptionDate": "2018-10-13"
+            },
+            {
+                "code": "RS_BASE_SERVICE2",
+                "quantity": "1",
+                "subscriptionDate": "2018-10-13"
+            }
+        ]
+    }
+}

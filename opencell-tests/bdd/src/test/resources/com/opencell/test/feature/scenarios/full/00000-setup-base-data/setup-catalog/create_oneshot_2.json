@@ -17,6 +17,7 @@
     "oneShotChargeTemplateType": "SUBSCRIPTION",
     "immediateInvoicing": "false",
     "roundingModeDtoEnum": "NEAREST",
+    "taxClassCode" : "RS_BASE_taxClass",
     "triggeredEdrs": {
         "triggeredEdr": [
             {

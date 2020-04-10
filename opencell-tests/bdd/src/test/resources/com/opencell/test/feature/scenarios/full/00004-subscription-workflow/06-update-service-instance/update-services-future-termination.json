@@ -1,0 +1,10 @@
+{
+    "subscriptionCode": "RS_FULL_164_SUB_UPD_SERV_100",
+    "serviceToUpdate": [
+        {
+            "code": "RS_BASE_SERVICE1",
+            "terminationDate": "${#TestCase#terminationDate}",
+            "terminationReason": "TERM_REASON_1"
+        }
+    ]
+}

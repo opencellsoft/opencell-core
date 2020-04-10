@@ -1,0 +1,12 @@
+{
+    "filters": {
+        "entry": {
+            "key": "wallet.userAccount.code",
+            "value": "RS_FULL_200_UA_INVOICE"
+        }
+    },
+    "offset": "10",
+    "limit": "5",
+    "sortBy": "operationDate",
+    "sortOrder": "DESCENDING"
+}

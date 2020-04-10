@@ -1,0 +1,10 @@
+{
+    "code": "RS_BASE_CFT_EL_SCRIPT",
+    "description": "Field visible on entities with code starting 'EL_'",
+    "fieldType": "STRING",
+    "appliesTo": "ChargeTemplate",
+    "defaultValue": "KUKU",
+    "storageType": "SINGLE",
+    "valueRequired": true,
+    "applicableOnEl": "#{mv:executeScript(entity,'org.meveo.service.script.TheRS_BASE_ScriptEL', null, entity.auditable.creator)}"
+}

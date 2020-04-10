@@ -1,0 +1,14 @@
+{
+    "subscription": "subscription.code.uom",
+    "servicesToActivate": {
+        "service": [
+            {
+                "code": "SE_USG_UNIT_UOM",
+                "quantity": 1,
+                "subscriptionDate": "2019-01-01",
+                "rateUntilDate": null,
+                "customFields": null
+            }
+        ]
+    }
+}

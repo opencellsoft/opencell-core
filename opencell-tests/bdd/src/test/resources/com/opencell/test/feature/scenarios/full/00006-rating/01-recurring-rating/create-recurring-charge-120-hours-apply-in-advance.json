@@ -1,0 +1,15 @@
+{
+    "code": "RS_FULL_171_REC_120_HOURS_IN_ADVANCE",
+    "description": "Apply in advance 120 hours",
+    "invoiceSubCategory": "SUB_DATA",
+    "calendar": "RS_FULL_171_CALENDAR_PERIOD_120_HOURS",
+    "subscriptionProrata": true,
+    "terminationProrata": true,
+    "applyInAdvance": true,
+    "inputUnitDescription": "1",
+    "ratingUnitDescription": "1",
+    "unitMultiplicator": "1",
+    "unitNbDecimal": "2",
+    "durationTermInMonth": "4",
+    "roundingModeDtoEnum": "NEAREST"
+}

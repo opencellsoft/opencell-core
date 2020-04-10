@@ -1,0 +1,7 @@
+{
+    "code": "RS_FULL_200_SUB_CAT_PC1",
+    "description": "Product charge",
+    "invoiceSubCategory": "RS_FULL_200_SUB_CAT_3",
+    "disabled": false,
+    "amountEditable": false
+}

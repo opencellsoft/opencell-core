@@ -1,0 +1,12 @@
+{
+    "code": "RS_FULL_200_SUB_CAT_USAGE1",
+    "description": "Usage charge",
+    "invoiceSubCategory": "RS_FULL_200_SUB_CAT_2",
+    "disabled": false,
+    "amountEditable": false,
+    "unitMultiplicator": "1",
+    "unitNbDecimal": "2",
+    "filterParam1": "USAGE",
+    "priority": "1",
+    "roundingModeDtoEnum": "NEAREST"
+}

@@ -1,0 +1,8 @@
+{
+    "code": "RS_FULL_200_SUB_INVOICE",
+    "description": "RS_FULL_200_SUB_Invoice",
+    "userAccount": "RS_FULL_200_UA_INVOICE",
+    "offerTemplate": "RS_BASE_OFFER1",
+    "subscriptionDate": "2015-02-01",
+    "endAgreementDate": "2015-05-01"
+}

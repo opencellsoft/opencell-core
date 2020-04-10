@@ -1,0 +1,30 @@
+{
+    "code": "RS_FULL_200_SERVICE_INVOICE_4",
+    "description": "RS_FULL_200_SERVICE_Invoice_4",
+    "invoicingCalendar": "MONTHLY",
+    "serviceChargeTemplateRecurrings": {
+        "serviceChargeTemplateRecurring": [
+            {
+                "code": "RS_BASE_REC3"
+            }
+        ]
+    },
+    "serviceChargeTemplateSubscriptions": {
+        "serviceChargeTemplateSubscription": [
+            {
+                "code": "RS_BASE_OS3"
+            }
+        ]
+    },
+    "serviceChargeTemplateUsages": {
+        "serviceChargeTemplateUsage": [
+            {
+                "code": "RS_BASE_USAGE1",
+                "counterTemplate": "RS_FULL_200_CT_USAGE_INVOICE_4"
+            },
+            {
+                "code": "RS_BASE_USAGE3"
+            }
+        ]
+    }
+}

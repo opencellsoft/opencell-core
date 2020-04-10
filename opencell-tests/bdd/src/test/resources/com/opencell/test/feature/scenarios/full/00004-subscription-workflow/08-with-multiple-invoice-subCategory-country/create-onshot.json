@@ -1,0 +1,13 @@
+{
+    "code": "RS_FULL_TAX_VALIDITY_OS1",
+    "description": "RS_FULL_TAX_VALIDITY_OS1",
+    "invoiceSubCategory": "INVOICE_SUB_CAT_COUNTRY_TAX_VALIDITY_164",
+    "disabled": false,
+    "amountEditable": false,
+    "unitMultiplicator": "1",
+    "unitNbDecimal": "2",
+    "oneShotChargeTemplateType": "SUBSCRIPTION",
+    "immediateInvoicing": false,
+    "roundingModeDtoEnum": "NEAREST",
+    "taxClassCode":"RS_BASE_taxClass"
+}

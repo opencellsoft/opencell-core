@@ -1,0 +1,8 @@
+{
+    "code": "RS_FULL_200_PP_RATED_EL_Enterprise",
+    "description": "Subscription with rating el",
+    "userAccount": "UA_RS_FULL_200_PP_RATED_EL",
+    "offerTemplate": "RS_FULL_200_PP_RATED_EL_Enterprise",
+    "subscriptionDate": "2016-02-01",
+    "endAgreementDate": "2016-07-01"
+}

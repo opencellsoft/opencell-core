@@ -1,0 +1,8 @@
+{
+    "code": "RS_FULL_171_DPI_FIXED_20",
+    "discountPlanCode": "RS_FULL_171_DP_MULTIPLE_2",
+    "invoiceCategoryCode": "CONSUMPTION",
+    "discountValue": "20",
+    "accountingCode": "accountingCode",
+    "discountPlanItemType": "FIXED"
+}

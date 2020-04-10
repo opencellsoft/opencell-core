@@ -86,10 +86,12 @@ public class CommonStepDefinition implements En {
                 break;
             case "delete":
             case "Delete":
+                response = RestApiUtils.delete(api + base.getCode().get(), bodyRequest);
+                break;
             case "Del":
             case "del":
             case "DEL":
-                response = RestApiUtils.delete(api + base.getCode().get(), bodyRequest);
+                response = RestApiUtils.delete(api, bodyRequest);
                 break;
             }
             ActionStatus actionStatus = null;
@@ -216,11 +218,22 @@ public class CommonStepDefinition implements En {
 
         });
         Then("^The entity \"([^\"]*)\" matches$", (String identifier) -> {
-            Object responseObj = base.getJsonresponse().extract().jsonPath().get(identifier);
-            String responseStr = JsonParser.writeValueAsString(responseObj);
-            String expectedStr = getBodyRequest();
+            if (!identifier.isEmpty()) {
+                Object responseObj = base.getJsonresponse().extract().jsonPath().get(identifier);
+                String responseStr = JsonParser.writeValueAsString(responseObj);
+                String expectedStr = getBodyRequest();
 
-            JSONAssert.assertEquals(expectedStr, responseStr, JSONCompareMode.STRICT_ORDER);
+                JSONAssert.assertEquals(expectedStr, responseStr, JSONCompareMode.STRICT_ORDER);
+            }
+        });
+        Then("^The entity \"([^\"]*)\" matches \"([^\"]*)\"$", (String identifier, String file) -> {
+            if (!identifier.isEmpty() && !file.isEmpty()) {
+                Object responseObj = base.getJsonresponse().extract().jsonPath().get(identifier);
+                String responseStr = JsonParser.writeValueAsString(responseObj);
+                String expectedStr = getFileContent(file);
+
+                JSONAssert.assertEquals(expectedStr, responseStr, JSONCompareMode.STRICT_ORDER);
+            }
         });
         And("^Validate that the statusCode is \"([^\"]*)\"$", (String statusCode) -> {
             assertNotNull(base.getResponse());
@@ -233,7 +246,7 @@ public class CommonStepDefinition implements En {
             assertNotNull(base.getResponse());
             assertNotNull(base.getResponse().getActionStatus());
             assertEquals(base.getResponse().getActionStatus().getStatus().toString(),
-                    base.getResponse().getActionStatus().getStatus().name(), actionStatus);
+                    actionStatus, base.getResponse().getActionStatus().getStatus().name());
         });
         And("^The message  is \"([^\"]*)\"$", (String message) -> {
             assertNotNull(base.getResponse());

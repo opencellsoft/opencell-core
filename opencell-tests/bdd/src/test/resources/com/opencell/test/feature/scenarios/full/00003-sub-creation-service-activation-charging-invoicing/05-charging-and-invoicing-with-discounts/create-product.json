@@ -1,0 +1,10 @@
+{
+    "code": "RS_FULL_200_SUB_CAT_PRODUCT",
+    "description": "Product",
+    "name": "RS_FULL_200_SUB_CAT_PRODUCT",
+    "productChargeTemplate": [
+        {
+            "code": "RS_FULL_200_SUB_CAT_PC1"
+        }
+    ]
+}

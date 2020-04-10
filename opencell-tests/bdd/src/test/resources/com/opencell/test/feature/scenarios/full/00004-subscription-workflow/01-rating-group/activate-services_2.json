@@ -1,0 +1,12 @@
+{
+    "subscription": "RS_BASE_164_RATING_GROUP_SUB2",
+    "servicesToActivate": {
+        "service": [
+            {
+                "code": "RS_FULL_RATING_GROUP_SERVICE",
+                "quantity": "1",
+                "subscriptionDate": "2018-10-13"
+            }
+        ]
+    }
+}

@@ -1,14 +1,15 @@
 {
-  "code": "TEST",
-  "description": "Test Recurring charge updated",
-  "invoiceSubCategory": "CLASSIC_USAGE",
-  "disabled": false,
-  "unitNbDecimal": 4,
-  "roundingModeDtoEnum": "NEAREST",
-  "calendar": "MONTHLY",
-  "durationTermInMonth": null,
-  "subscriptionProrata": true,
-  "terminationProrata": true,
-  "applyInAdvance": true,
-  "triggeredEdrs": null
+    "code": "TEST",
+    "description": "Test Recurring charge updated",
+    "invoiceSubCategory": "CLASSIC_USAGE",
+    "disabled": false,
+    "unitNbDecimal": 4,
+    "roundingModeDtoEnum": "NEAREST",
+    "taxClassCode": "TEST",
+    "calendar": "MONTHLY",
+    "durationTermInMonth": null,
+    "subscriptionProrata": true,
+    "terminationProrata": true,
+    "applyInAdvance": true,
+    "triggeredEdrs": null
 }

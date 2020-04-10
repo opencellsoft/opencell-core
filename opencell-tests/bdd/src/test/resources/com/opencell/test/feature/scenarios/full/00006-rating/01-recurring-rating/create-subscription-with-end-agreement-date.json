@@ -1,0 +1,8 @@
+{
+    "code": "RS_FULL_171_SUB_RECURRING_END",
+    "description": "RS_FULL_171 Recurring subscription with end agreement",
+    "userAccount": "RS_FULL_171_RECURRING",
+    "offerTemplate": "RS_FULL_171_RECURRING_OFFER",
+    "subscriptionDate": "2018-01-04T16:00:00Z",
+    "endAgreementDate": "2018-02-10T17:00:00Z"
+}

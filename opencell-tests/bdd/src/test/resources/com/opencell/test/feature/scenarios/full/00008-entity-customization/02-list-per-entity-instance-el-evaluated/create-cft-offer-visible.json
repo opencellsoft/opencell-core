@@ -1,0 +1,9 @@
+{
+    "code": "RS_FULL_443_CF_VISIBLE_100",
+    "description": "RS_FULL_443_CF_VISIBLE_100",
+    "fieldType": "STRING",
+    "appliesTo": "OfferTemplate",
+    "storageType": "SINGLE",
+    "defaultValue": "VISIBLE",
+    "applicableOnEl": "#{entity.code.equals('RS_BASE_OFFER1')}"
+}

@@ -1,0 +1,10 @@
+{
+    "product": "RS_BASE_PRODUCT2",
+    "userAccount": "RS_FULL_200_UA_INVOICE",
+    "operationDate": "2016-09-30",
+    "quantity": "7",
+    "description": "Product application on UA",
+    "criteria1": "C1",
+    "criteria2": "C2",
+    "criteria3": "C3"
+}

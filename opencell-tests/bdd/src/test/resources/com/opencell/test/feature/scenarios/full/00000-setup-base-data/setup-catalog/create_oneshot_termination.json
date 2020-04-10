@@ -16,5 +16,6 @@
 	"unitNbDecimal": "2",
 	"oneShotChargeTemplateType": "TERMINATION",
 	"immediateInvoicing": "false",
-	"roundingModeDtoEnum": "NEAREST"
+	"roundingModeDtoEnum": "NEAREST",
+    "taxClassCode" : "RS_BASE_taxClass"
 }

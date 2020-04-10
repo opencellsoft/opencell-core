@@ -1,0 +1,9 @@
+{
+    "code": "ExecuteCustomAction_443_VISIBLE",
+    "description": "ExecuteCustomAction_443_VISIBLE",
+    "appliesTo": "OfferTemplate",
+    "script": {
+        "code": "org.meveo.service.script.ExecuteCustomAction_443_Script"
+    },
+    "applicableOnEl": "#{entity.code.equals('RS_BASE_OFFER1')}"
+}

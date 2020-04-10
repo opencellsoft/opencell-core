@@ -1,0 +1,10 @@
+{
+    "code": "RS_FULL_171_3842_C100",
+    "description": "RS_FULL_171_3842_C100",
+    "calendar": "MONTHLY",
+    "unity": "Quantity",
+    "type": "USAGE",
+    "ceiling": "100",
+    "disabled": false,
+    "counterLevel": "UA"
+}

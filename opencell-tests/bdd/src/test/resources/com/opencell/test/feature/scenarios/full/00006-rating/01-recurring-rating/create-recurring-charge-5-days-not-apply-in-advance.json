@@ -1,0 +1,15 @@
+{
+    "code": "RS_FULL_171_REC_5_DAYS_NOT_ADVANCE",
+    "description": "Apply end of period 5 days",
+    "invoiceSubCategory": "SUB_DATA",
+    "calendar": "RS_FULL_171_CALENDAR_PERIOD_5_DAYS",
+    "subscriptionProrata": true,
+    "terminationProrata": true,
+    "applyInAdvance": false,
+    "inputUnitDescription": "1",
+    "ratingUnitDescription": "1",
+    "unitMultiplicator": "1",
+    "unitNbDecimal": "2",
+    "durationTermInMonth": "4",
+    "roundingModeDtoEnum": "NEAREST"
+}

@@ -1,0 +1,37 @@
+{
+    "code": "RS_FULL_432_CUST1",
+    "description": "RS_FULL_432_UA",
+    "billingAccount": "RS_FULL_432_CUST1",
+    "externalRef1": "EXTREF1",
+    "externalRef2": "EXTREF2",
+    "name": {
+        "title": "MR",
+        "firstName": "firstname",
+        "lastName": "lastname"
+    },
+    "address": {
+        "address1": "address1",
+        "address2": "address2",
+        "address3": "address3",
+        "zipCode": "21000",
+        "city": "Dijon",
+        "country": "France"
+    },
+    "subscriptionDate": "2016-03-10",
+    "status": "ACTIVE",
+    "customFields": {
+        "customField": [
+            {
+                "code": "RS_FULL_ACCOUNT_CF_INHERITED",
+                "mapValue": {
+                    "MAT_1": {
+                        "value": "ValueUA1"
+                    },
+                    "MAT_2": {
+                        "value": "ValueUA2"
+                    }
+                }
+            }
+        ]
+    }
+}

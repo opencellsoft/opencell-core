@@ -1,0 +1,12 @@
+{
+    "subscription": "RS_FULL_171_3842_SUB1",
+    "servicesToActivate": {
+        "service": [
+            {
+                "code": "RS_FULL_171_3842_SERVICE1",
+                "quantity": "1",
+                "subscriptionDate": "2018-10-13"
+            }
+        ]
+    }
+}

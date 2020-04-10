@@ -1,0 +1,10 @@
+{
+    "code": "RS_FULL_164_RATING_GROUP",
+    "description": "RS_FULL_164_RATING_GROUP",
+    "invoiceDateDelay": "0",
+    "dueDateDelay": "2",
+    "invoiceDateProductionDelay": "0",
+    "transactionDateDelay": "0",
+    "calendar": "MONTHLY",
+    "type": "BILLINGACCOUNT"
+}

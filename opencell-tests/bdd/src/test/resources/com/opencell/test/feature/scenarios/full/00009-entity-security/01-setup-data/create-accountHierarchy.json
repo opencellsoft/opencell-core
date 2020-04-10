@@ -1,0 +1,1884 @@
+{
+    "sellers": {
+        "seller": [
+            {
+                "code": "RS_FULL_18_SELLER_A",
+                "description": "RS_FULL_18_SELLER_A",
+                "currencyCode": "EUR",
+                "countryCode": "FR",
+                "languageCode": "FRA",
+                "parentSeller": "MAIN_SELLER",
+                "customers": {
+                    "customer": [
+                        {
+                            "code": "RS_FULL_18_CUSTA",
+                            "description": "RS_FULL_18_CUSTA",
+                            "externalRef1": "1",
+                            "externalRef2": "1",
+                            "name": {
+                                "title": "MR",
+                                "firstName": "firstName",
+                                "lastName": "lastName"
+                            },
+                            "address": {
+                                "address1": "address1",
+                                "address2": "address2",
+                                "address3": "address3",
+                                "zipCode": "75001",
+                                "city": "Tunis",
+                                "country": "TN"
+                            },
+                            "customerCategory": "CLIENT",
+                            "customerBrand": "DEFAULT",
+                            "mandateIdentification": "M1",
+                            "mandateDate": "2016-02-28",
+                            "contactInformation": {
+                                "email": "RS_FULL@manaty.net",
+                                "phone": "1234",
+                                "mobile": "092152154716",
+                                "fax": "1234"
+                            },
+                            "customerAccounts": {
+                                "customerAccount": [
+                                    {
+                                        "code": "RS_FULL_18_CAA1",
+                                        "description": "RS_FULL_18_CAA1",
+                                        "externalRef1": "1",
+                                        "externalRef2": "1",
+                                        "name": {
+                                            "title": "MR",
+                                            "firstName": "firstName",
+                                            "lastName": "lastName"
+                                        },
+                                        "address": {
+                                            "address1": "address1",
+                                            "address2": "address2",
+                                            "address3": "address3",
+                                            "zipCode": "75001",
+                                            "city": "Tunis",
+                                            "country": "TN"
+                                        },
+                                        "currency": "USD",
+                                        "language": "ENG",
+                                        "creditCategory": "NEWCUSTOMER",
+                                        "dateStatus": "2016-02-28",
+                                        "dateDunningLevel": "2016-02-28",
+                                        "contactInformation": {
+                                            "email": "RS_FULL@manaty.net",
+                                            "phone": "1234",
+                                            "mobile": "092152154716",
+                                            "fax": "1234"
+                                        },
+                                        "dunningLevel": "R0",
+                                        "mandateIdentification": "1234",
+                                        "mandateDate": "2016-02-28",
+                                        "billingAccounts": {
+                                            "billingAccount": [
+                                                {
+                                                    "code": "RS_FULL_18_BAA1",
+                                                    "description": "RS_FULL_18_BAA1",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAA1",
+                                                                "description": "RS_FULL_18_UAA1",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA2",
+                                                                "description": "RS_FULL_18_UAA2",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA3",
+                                                                "description": "RS_FULL_18_UAA3",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    "code": "RS_FULL_18_BAA2",
+                                                    "description": "RS_FULL_18_BAA2",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAA4",
+                                                                "description": "RS_FULL_18_UAA4",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA5",
+                                                                "description": "RS_FULL_18_UAA5",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA6",
+                                                                "description": "RS_FULL_18_UAA6",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    "code": "RS_FULL_18_BAA3",
+                                                    "description": "RS_FULL_18_BAA3",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAA7",
+                                                                "description": "RS_FULL_18_UAA7",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA8",
+                                                                "description": "RS_FULL_18_UAA8",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA9",
+                                                                "description": "RS_FULL_18_UAA9",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": "RS_FULL_18_CAA2",
+                                        "description": "RS_FULL_18_CAA2",
+                                        "externalRef1": "1",
+                                        "externalRef2": "1",
+                                        "name": {
+                                            "title": "MR",
+                                            "firstName": "firstName",
+                                            "lastName": "lastName"
+                                        },
+                                        "address": {
+                                            "address1": "address1",
+                                            "address2": "address2",
+                                            "address3": "address3",
+                                            "zipCode": "75001",
+                                            "city": "Tunis",
+                                            "country": "TN"
+                                        },
+                                        "currency": "USD",
+                                        "language": "ENG",
+                                        "creditCategory": "NEWCUSTOMER",
+                                        "dateStatus": "2016-02-28",
+                                        "dateDunningLevel": "2016-02-28",
+                                        "contactInformation": {
+                                            "email": "RS_FULL@manaty.net",
+                                            "phone": "1234",
+                                            "mobile": "092152154716",
+                                            "fax": "1234"
+                                        },
+                                        "dunningLevel": "R0",
+                                        "mandateIdentification": "1234",
+                                        "mandateDate": "2016-02-28",
+                                        "billingAccounts": {
+                                            "billingAccount": [
+                                                {
+                                                    "code": "RS_FULL_18_BAA4",
+                                                    "description": "RS_FULL_18_BAA4",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAA11",
+                                                                "description": "RS_FULL_18_UAA11",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA12",
+                                                                "description": "RS_FULL_18_UAA12",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA13",
+                                                                "description": "RS_FULL_18_UAA13",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    "code": "RS_FULL_18_BAA5",
+                                                    "description": "RS_FULL_18_BAA5",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAA14",
+                                                                "description": "RS_FULL_18_UAA14",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA15",
+                                                                "description": "RS_FULL_18_UAA15",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA16",
+                                                                "description": "RS_FULL_18_UAA16",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    "code": "RS_FULL_18_BAA6",
+                                                    "description": "RS_FULL_18_BAA6",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAA17",
+                                                                "description": "RS_FULL_18_UAA17",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA18",
+                                                                "description": "RS_FULL_18_UAA18",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA19",
+                                                                "description": "RS_FULL_18_UAA19",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": "RS_FULL_18_CAA3",
+                                        "description": "RS_FULL_18_CAA3",
+                                        "externalRef1": "1",
+                                        "externalRef2": "1",
+                                        "name": {
+                                            "title": "MR",
+                                            "firstName": "firstName",
+                                            "lastName": "lastName"
+                                        },
+                                        "address": {
+                                            "address1": "address1",
+                                            "address2": "address2",
+                                            "address3": "address3",
+                                            "zipCode": "75001",
+                                            "city": "Tunis",
+                                            "country": "TN"
+                                        },
+                                        "currency": "USD",
+                                        "language": "ENG",
+                                        "creditCategory": "NEWCUSTOMER",
+                                        "dateStatus": "2016-02-28",
+                                        "dateDunningLevel": "2016-02-28",
+                                        "contactInformation": {
+                                            "email": "RS_FULL@manaty.net",
+                                            "phone": "1234",
+                                            "mobile": "092152154716",
+                                            "fax": "1234"
+                                        },
+                                        "dunningLevel": "R0",
+                                        "mandateIdentification": "1234",
+                                        "mandateDate": "2016-02-28",
+                                        "billingAccounts": {
+                                            "billingAccount": [
+                                                {
+                                                    "code": "RS_FULL_18_BAA7",
+                                                    "description": "RS_FULL_18_BAA7",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAA21",
+                                                                "description": "RS_FULL_18_UAA21",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA22",
+                                                                "description": "RS_FULL_18_UAA22",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA23",
+                                                                "description": "RS_FULL_18_UAA23",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    "code": "RS_FULL_18_BAA8",
+                                                    "description": "RS_FULL_18_BAA8",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAA24",
+                                                                "description": "RS_FULL_18_UAA24",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA25",
+                                                                "description": "RS_FULL_18_UAA25",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA26",
+                                                                "description": "RS_FULL_18_UAA26",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    "code": "RS_FULL_18_BAA9",
+                                                    "description": "RS_FULL_18_BAA9",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAA27",
+                                                                "description": "RS_FULL_18_UAA27",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA28",
+                                                                "description": "RS_FULL_18_UAA28",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAA29",
+                                                                "description": "RS_FULL_18_UAA29",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "code": "RS_FULL_18_SELLER_B",
+                "description": "RS_FULL_18_SELLER_B",
+                "currencyCode": "USD",
+                "countryCode": "US",
+                "languageCode": "ENG",
+                "parentSeller": "MAIN_SELLER",
+                "customers": {
+                    "customer": [
+                        {
+                            "code": "RS_FULL_18_CUSTB",
+                            "description": "RS_FULL_18_CUSTB",
+                            "externalRef1": "1",
+                            "externalRef2": "1",
+                            "name": {
+                                "title": "MR",
+                                "firstName": "firstName",
+                                "lastName": "lastName"
+                            },
+                            "address": {
+                                "address1": "address1",
+                                "address2": "address2",
+                                "address3": "address3",
+                                "zipCode": "75001",
+                                "city": "Tunis",
+                                "country": "TN"
+                            },
+                            "customerCategory": "CLIENT",
+                            "customerBrand": "DEFAULT",
+                            "mandateIdentification": "M1",
+                            "mandateDate": "2016-02-28",
+                            "contactInformation": {
+                                "email": "RS_FULL@manaty.net",
+                                "phone": "1234",
+                                "mobile": "092152154716",
+                                "fax": "1234"
+                            },
+                            "customerAccounts": {
+                                "customerAccount": [
+                                    {
+                                        "code": "RS_FULL_18_CAB1",
+                                        "description": "RS_FULL_18_CAB1",
+                                        "externalRef1": "1",
+                                        "externalRef2": "1",
+                                        "name": {
+                                            "title": "MR",
+                                            "firstName": "firstName",
+                                            "lastName": "lastName"
+                                        },
+                                        "address": {
+                                            "address1": "address1",
+                                            "address2": "address2",
+                                            "address3": "address3",
+                                            "zipCode": "75001",
+                                            "city": "Tunis",
+                                            "country": "TN"
+                                        },
+                                        "currency": "USD",
+                                        "language": "ENG",
+                                        "creditCategory": "NEWCUSTOMER",
+                                        "dateStatus": "2016-02-28",
+                                        "dateDunningLevel": "2016-02-28",
+                                        "contactInformation": {
+                                            "email": "RS_FULL@manaty.net",
+                                            "phone": "1234",
+                                            "mobile": "092152154716",
+                                            "fax": "1234"
+                                        },
+                                        "dunningLevel": "R0",
+                                        "mandateIdentification": "1234",
+                                        "mandateDate": "2016-02-28",
+                                        "billingAccounts": {
+                                            "billingAccount": [
+                                                {
+                                                    "code": "RS_FULL_18_BAB1",
+                                                    "description": "RS_FULL_18_BAB1",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAB1",
+                                                                "description": "RS_FULL_18_UAB1",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB2",
+                                                                "description": "RS_FULL_18_UAB2",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB3",
+                                                                "description": "RS_FULL_18_UAB3",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    "code": "RS_FULL_18_BAB2",
+                                                    "description": "RS_FULL_18_BAB2",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAB4",
+                                                                "description": "RS_FULL_18_UAB4",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB5",
+                                                                "description": "RS_FULL_18_UAB5",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB6",
+                                                                "description": "RS_FULL_18_UAB6",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    "code": "RS_FULL_18_BAB3",
+                                                    "description": "RS_FULL_18_BAB3",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAB7",
+                                                                "description": "RS_FULL_18_UAB7",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB8",
+                                                                "description": "RS_FULL_18_UAB8",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB9",
+                                                                "description": "RS_FULL_18_UAB9",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": "RS_FULL_18_CAB2",
+                                        "description": "RS_FULL_18_CAB2",
+                                        "externalRef1": "1",
+                                        "externalRef2": "1",
+                                        "name": {
+                                            "title": "MR",
+                                            "firstName": "firstName",
+                                            "lastName": "lastName"
+                                        },
+                                        "address": {
+                                            "address1": "address1",
+                                            "address2": "address2",
+                                            "address3": "address3",
+                                            "zipCode": "75001",
+                                            "city": "Tunis",
+                                            "country": "TN"
+                                        },
+                                        "currency": "USD",
+                                        "language": "ENG",
+                                        "creditCategory": "NEWCUSTOMER",
+                                        "dateStatus": "2016-02-28",
+                                        "dateDunningLevel": "2016-02-28",
+                                        "contactInformation": {
+                                            "email": "RS_FULL@manaty.net",
+                                            "phone": "1234",
+                                            "mobile": "092152154716",
+                                            "fax": "1234"
+                                        },
+                                        "dunningLevel": "R0",
+                                        "mandateIdentification": "1234",
+                                        "mandateDate": "2016-02-28",
+                                        "billingAccounts": {
+                                            "billingAccount": [
+                                                {
+                                                    "code": "RS_FULL_18_BAB4",
+                                                    "description": "RS_FULL_18_BAB4",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAB11",
+                                                                "description": "RS_FULL_18_UAB11",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB12",
+                                                                "description": "RS_FULL_18_UAB12",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB13",
+                                                                "description": "RS_FULL_18_UAB13",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    "code": "RS_FULL_18_BAB5",
+                                                    "description": "RS_FULL_18_BAB5",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAB14",
+                                                                "description": "RS_FULL_18_UAB14",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB15",
+                                                                "description": "RS_FULL_18_UAB15",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB16",
+                                                                "description": "RS_FULL_18_UAB16",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    "code": "RS_FULL_18_BAB6",
+                                                    "description": "RS_FULL_18_BAB6",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAB17",
+                                                                "description": "RS_FULL_18_UAB17",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB18",
+                                                                "description": "RS_FULL_18_UAB18",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB19",
+                                                                "description": "RS_FULL_18_UAB19",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": "RS_FULL_18_CAB3",
+                                        "description": "RS_FULL_18_CAB3",
+                                        "externalRef1": "1",
+                                        "externalRef2": "1",
+                                        "name": {
+                                            "title": "MR",
+                                            "firstName": "firstName",
+                                            "lastName": "lastName"
+                                        },
+                                        "address": {
+                                            "address1": "address1",
+                                            "address2": "address2",
+                                            "address3": "address3",
+                                            "zipCode": "75001",
+                                            "city": "Tunis",
+                                            "country": "TN"
+                                        },
+                                        "currency": "USD",
+                                        "language": "ENG",
+                                        "creditCategory": "NEWCUSTOMER",
+                                        "dateStatus": "2016-02-28",
+                                        "dateDunningLevel": "2016-02-28",
+                                        "contactInformation": {
+                                            "email": "RS_FULL@manaty.net",
+                                            "phone": "1234",
+                                            "mobile": "092152154716",
+                                            "fax": "1234"
+                                        },
+                                        "dunningLevel": "R0",
+                                        "mandateIdentification": "1234",
+                                        "mandateDate": "2016-02-28",
+                                        "billingAccounts": {
+                                            "billingAccount": [
+                                                {
+                                                    "code": "RS_FULL_18_BAB7",
+                                                    "description": "RS_FULL_18_BAB7",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAB21",
+                                                                "description": "RS_FULL_18_UAB21",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB22",
+                                                                "description": "RS_FULL_18_UAB22",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB23",
+                                                                "description": "RS_FULL_18_UAB23",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    "code": "RS_FULL_18_BAB8",
+                                                    "description": "RS_FULL_18_BAB8",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAB24",
+                                                                "description": "RS_FULL_18_UAB24",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB25",
+                                                                "description": "RS_FULL_18_UAB25",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB26",
+                                                                "description": "RS_FULL_18_UAB26",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    "code": "RS_FULL_18_BAB9",
+                                                    "description": "RS_FULL_18_BAB9",
+                                                    "externalRef1": "1",
+                                                    "externalRef2": "1",
+                                                    "name": {
+                                                        "title": "MR",
+                                                        "firstName": "firstName",
+                                                        "lastName": "lastName"
+                                                    },
+                                                    "address": {
+                                                        "address1": "address1",
+                                                        "address2": "address2",
+                                                        "address3": "address3",
+                                                        "zipCode": "75001",
+                                                        "city": "Tunis",
+                                                        "country": "TN"
+                                                    },
+                                                    "billingCycle": "CYC_INV_MT_1",
+                                                    "country": "US",
+                                                    "language": "ENG",
+                                                    "nextInvoiceDate": "2016-02-28",
+                                                    "subscriptionDate": "2016-02-28",
+                                                    "electronicBilling": "true",
+                                                    "email": "RS_FULL@manaty.net",
+                                                    "userAccounts": {
+                                                        "userAccount": [
+                                                            {
+                                                                "code": "RS_FULL_18_UAB27",
+                                                                "description": "RS_FULL_18_UAB27",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB28",
+                                                                "description": "RS_FULL_18_UAB28",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            },
+                                                            {
+                                                                "code": "RS_FULL_18_UAB29",
+                                                                "description": "RS_FULL_18_UAB29",
+                                                                "externalRef1": "1",
+                                                                "externalRef2": "1",
+                                                                "name": {
+                                                                    "title": "MR",
+                                                                    "firstName": "firstName",
+                                                                    "lastName": "lastName"
+                                                                },
+                                                                "address": {
+                                                                    "address1": "address1",
+                                                                    "address2": "address2",
+                                                                    "address3": "address3",
+                                                                    "zipCode": "75001",
+                                                                    "city": "Tunis",
+                                                                    "country": "TN"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

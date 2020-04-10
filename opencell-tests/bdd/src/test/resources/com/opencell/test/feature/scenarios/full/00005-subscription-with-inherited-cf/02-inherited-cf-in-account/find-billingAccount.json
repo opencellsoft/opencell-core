@@ -1,0 +1,42 @@
+{
+    "code": "RS_FULL_432_CUST1",
+    "description": "RS_FULL_432_BA",
+    "customFields": {
+        "customField": [
+            {
+                "code": "RS_FULL_ACCOUNT_CF_INHERITED",
+                "description": "RS_FULL_SUB_UA_CF_INHERITED",
+                "fieldType": "STRING",
+                "mapValue": {
+                    "MAT_1": {
+                        "value": "ValueBA1"
+                    },
+                    "MAT_2": {
+                        "value": "ValueBA2"
+                    },
+                    "key": {
+                        "value": "MAT_1/MAT_2"
+                    }
+                }
+            }
+        ],
+        "inheritedCustomField": [
+            {
+                "code": "RS_FULL_ACCOUNT_CF_INHERITED",
+                "description": "RS_FULL_SUB_UA_CF_INHERITED",
+                "fieldType": "STRING",
+                "mapValue": {
+                    "MAT_1": {
+                        "value": "ValueCA1"
+                    },
+                    "MAT_2": {
+                        "value": "ValueCA2"
+                    },
+                    "key": {
+                        "value": "MAT_1/MAT_2"
+                    }
+                }
+            }
+        ]
+    }
+}

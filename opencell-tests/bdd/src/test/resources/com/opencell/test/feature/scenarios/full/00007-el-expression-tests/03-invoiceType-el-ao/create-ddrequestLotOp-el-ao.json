@@ -1,0 +1,7 @@
+{
+    "fromDueDate": "2050-01-01T00:00:00Z",
+    "toDueDate": "2051-01-01T00:00:00Z",
+    "ddrequestOp": "CREATE",
+    "status": "WAIT",
+    "ddRequestBuilderCode": "SEPA_STD"
+}
