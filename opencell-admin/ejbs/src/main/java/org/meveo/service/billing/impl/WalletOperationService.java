@@ -431,7 +431,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         boolean isApplyInAdvance = resolveIsApplyInAdvance(chargeInstance, recurringChargeTemplate);
 
         if (isApplyInAdvance) {
-            applyFirstRecurringCharge(chargeInstance, nextChargeDate, false);
+            List<WalletOperation> walletOperations = applyFirstRecurringCharge(chargeInstance, nextChargeDate, false);
+            applyAccumulatorCounter(chargeInstance, walletOperations, false);
         }
     }
 
@@ -1313,11 +1314,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 }
                 if (counterPeriod != null) {
                     CounterValueChangeInfo counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterPeriod, recurringChargeInstance.getQuantity(), false);
-                    if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator()) {
-                        for (WalletOperation wo : resultingWalletOperations) {
-                            counterInstanceService.accumulatorCounterPeriodValue(counterPeriod, wo, null, false);
-                        }
-                    }
                     counterInstanceService.triggerCounterPeriodEvent(counterValueChangeInfo, counterPeriod);
                 }
 
