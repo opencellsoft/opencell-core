@@ -499,7 +499,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      */
     public void dropIndexes() throws BusinessException {
 
-        String indexPrefix = currentUser.getProviderCode() == null ? "main" : BaseEntity.cleanUpAndLowercaseCodeOrId(currentUser.getProviderCode());
+        String indexPrefix = currentUser.getProviderCode() == null ? "null" : BaseEntity.cleanUpAndLowercaseCodeOrId(currentUser.getProviderCode());
 
         log.debug("Dropping all Elastic Search indexes with prefix {}", indexPrefix);
 
@@ -534,7 +534,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createIndexes() throws BusinessException {
 
-        String indexPrefix = currentUser.getProviderCode() == null ? "main" : BaseEntity.cleanUpAndLowercaseCodeOrId(currentUser.getProviderCode());
+        String indexPrefix = currentUser.getProviderCode() == null ? "null" : BaseEntity.cleanUpAndLowercaseCodeOrId(currentUser.getProviderCode());
 
         log.debug("Creating Elastic Search indexes with prefix {}", indexPrefix);
 
@@ -955,7 +955,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
         List<String> indexNames = new ArrayList<>();
 
-        String indexPrefix = currentUser.getProviderCode() == null ? "root" : BaseEntity.cleanUpAndLowercaseCodeOrId(currentUser.getProviderCode());
+        String indexPrefix = currentUser.getProviderCode() == null ? "null" : BaseEntity.cleanUpAndLowercaseCodeOrId(currentUser.getProviderCode());
 
         Response response = target.request().get();
         if (response.getStatus() == HttpURLConnection.HTTP_OK) {
