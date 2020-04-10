@@ -7,7 +7,7 @@
     ],
     "accessibleEntity": [
         {
-            "code": "RS_FULL_15_SELLER_C",
+            "code": "RS_FULL_18_SELLER_C",
             "entityClass": "org.meveo.model.admin.Seller"
         }
     ],

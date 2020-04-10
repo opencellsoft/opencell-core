@@ -1,16 +1,16 @@
 {
-    "code": "RS_FULL_15_BAA1",
-    "description": "RS_FULL_15_BAA1",
+    "code": "RS_FULL_18_BAA1",
+    "description": "RS_FULL_18_BAA1",
     "userAccounts": {
         "userAccount": [
             {
-                "code": "RS_FULL_15_UAA1"
+                "code": "RS_FULL_18_UAA1"
             },
             {
-                "code": "RS_FULL_15_UAA2"
+                "code": "RS_FULL_18_UAA2"
             },
             {
-                "code": "RS_FULL_15_UAA3"
+                "code": "RS_FULL_18_UAA3"
             }
         ]
     }

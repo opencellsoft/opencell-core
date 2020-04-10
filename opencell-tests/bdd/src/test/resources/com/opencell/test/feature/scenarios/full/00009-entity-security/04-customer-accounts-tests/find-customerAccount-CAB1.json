@@ -1,16 +1,16 @@
 {
-    "code": "RS_FULL_15_CAB1",
-    "description": "RS_FULL_15_CAB1",
+    "code": "RS_FULL_18_CAB1",
+    "description": "RS_FULL_18_CAB1",
     "billingAccounts": {
         "billingAccount": [
             {
-                "code": "RS_FULL_15_BAB1"
+                "code": "RS_FULL_18_BAB1"
             },
             {
-                "code": "RS_FULL_15_BAB2"
+                "code": "RS_FULL_18_BAB2"
             },
             {
-                "code": "RS_FULL_15_BAB3"
+                "code": "RS_FULL_18_BAB3"
             }
         ]
     }

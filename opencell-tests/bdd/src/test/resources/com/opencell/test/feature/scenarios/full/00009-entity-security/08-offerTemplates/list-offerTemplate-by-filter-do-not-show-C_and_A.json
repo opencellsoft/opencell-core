@@ -1,6 +1,6 @@
 {
     "filters": {
-        "not-inList sellers": "RS_FULL_15_SELLER_A,RS_FULL_15_SELLER_C",
-        "like code": "RS_FULL_15_*"
+        "not-inList sellers": "RS_FULL_18_SELLER_A,RS_FULL_18_SELLER_C",
+        "like code": "RS_FULL_18_*"
     }
 }

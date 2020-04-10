@@ -1,8 +1,8 @@
 {
     "crmAccountType": "C_UA",
-    "crmParentCode": "RS_FULL_15_SELLER_B",
-    "code": "RS_FULL_15_CRM-CUST",
-    "description": "RS_FULL_15_CRM-AccountHierarchy-Updated",
+    "crmParentCode": "RS_FULL_18_SELLER_B",
+    "code": "RS_FULL_18_CRM-CUST",
+    "description": "RS_FULL_18_CRM-AccountHierarchy-Updated",
     "externalRef1": "EXTRef1",
     "externalRef2": "EXTRef2",
     "name": {
@@ -19,7 +19,7 @@
         "state": "Tunisie"
     },
     "contactInformation": {
-        "email": "RS_FULL_15@manaty.com",
+        "email": "RS_FULL_18@manaty.com",
         "phone": "+0135215579",
         "mobile": "+0141487410"
     },
@@ -38,11 +38,11 @@
     "dateDunningLevel": "2016-04-04",
     "dunningLevel": "R1",
     "billingCycle": "CYC_INV_MT_2",
-    "seller": "RS_FULL_15_SELLER_B",
+    "seller": "RS_FULL_18_SELLER_B",
     "country": "US",
     "nextInvoiceDate": "2016-05-01",
     "electronicBilling": "true",
     "baStatus": "ACTIVE",
-    "email": "RS_FULL_15@manaty.com",
+    "email": "RS_FULL_18@manaty.com",
     "uaStatus": "ACTIVE"
 }

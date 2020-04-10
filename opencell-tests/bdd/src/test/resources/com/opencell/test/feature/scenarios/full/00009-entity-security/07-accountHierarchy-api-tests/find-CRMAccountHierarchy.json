@@ -1,16 +1,16 @@
 {
-    "code": "RS_FULL_15_CRM-CUST",
+    "code": "RS_FULL_18_CRM-CUST",
     "customerAccounts": {
         "customerAccount": [
             {
-                "code": "RS_FULL_15_CRM-CUST",
+                "code": "RS_FULL_18_CRM-CUST",
                 "billingAccounts": {
                     "billingAccount": [
                         {
                             "userAccounts": {
                                 "userAccount": [
                                     {
-                                        "code": "RS_FULL_15_CRM-CUST"
+                                        "code": "RS_FULL_18_CRM-CUST"
                                     }
                                 ]
                             }

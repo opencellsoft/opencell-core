@@ -7,7 +7,7 @@
     ],
     "accessibleEntity": [
         {
-            "code": "RS_FULL_15_CUSTA",
+            "code": "RS_FULL_18_CUSTA",
             "entityClass": "org.meveo.model.crm.Customer"
         
         }

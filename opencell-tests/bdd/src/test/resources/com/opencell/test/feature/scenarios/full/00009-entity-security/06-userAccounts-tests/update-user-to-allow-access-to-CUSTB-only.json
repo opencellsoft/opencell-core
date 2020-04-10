@@ -7,7 +7,7 @@
     ],
     "accessibleEntity": [
         {
-            "code": "RS_FULL_15_CUSTB",
+            "code": "RS_FULL_18_CUSTB",
             "entityClass": "org.meveo.model.crm.Customer"
         }
     ],

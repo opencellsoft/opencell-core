@@ -1,28 +1,28 @@
 {
-    "code": "RS_FULL_15_LEVEL_1",
-    "description": "RS_FULL_15_Description1",
+    "code": "RS_FULL_18_LEVEL_1",
+    "description": "RS_FULL_18_Description1",
     "orderLevel": "1",
     "userHierarchyLevel": [
         {
-            "code": "RS_FULL_15_LEVEL_2",
-            "description": "RS_FULL_15_Description 2",
+            "code": "RS_FULL_18_LEVEL_2",
+            "description": "RS_FULL_18_Description 2",
             "orderLevel": "1",
             "userHierarchyLevel": [
                 {
-                    "code": "RS_FULL_15_LEVEL_2_1",
-                    "description": "RS_FULL_15_Description 21",
+                    "code": "RS_FULL_18_LEVEL_2_1",
+                    "description": "RS_FULL_18_Description 21",
                     "orderLevel": "1"
                 },
                 {
-                    "code": "RS_FULL_15_LEVEL_2_2",
-                    "description": "RS_FULL_15_Description 22",
+                    "code": "RS_FULL_18_LEVEL_2_2",
+                    "description": "RS_FULL_18_Description 22",
                     "orderLevel": "2"
                 }
             ]
         },
         {
-            "code": "RS_FULL_15_LEVEL_3",
-            "description": "RS_FULL_15_Description 3",
+            "code": "RS_FULL_18_LEVEL_3",
+            "description": "RS_FULL_18_Description 3",
             "orderLevel": "2"
         }
     ]

@@ -7,11 +7,11 @@
     ],
     "accessibleEntity": [
         {
-            "code": "RS_FULL_15_CUSTA",
+            "code": "RS_FULL_18_CUSTA",
             "entityClass": "org.meveo.model.crm.Customer"
         },
         {
-            "code": "RS_FULL_15_CAA1",
+            "code": "RS_FULL_18_CAA1",
             "entityClass": "org.meveo.model.payments.CustomerAccount"
         }
     ],
