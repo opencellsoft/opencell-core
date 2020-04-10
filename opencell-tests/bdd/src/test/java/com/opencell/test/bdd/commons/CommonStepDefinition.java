@@ -246,7 +246,7 @@ public class CommonStepDefinition implements En {
             assertNotNull(base.getResponse());
             assertNotNull(base.getResponse().getActionStatus());
             assertEquals(base.getResponse().getActionStatus().getStatus().toString(),
-                    base.getResponse().getActionStatus().getStatus().name(), actionStatus);
+                    actionStatus, base.getResponse().getActionStatus().getStatus().name());
         });
         And("^The message  is \"([^\"]*)\"$", (String message) -> {
             assertNotNull(base.getResponse());
