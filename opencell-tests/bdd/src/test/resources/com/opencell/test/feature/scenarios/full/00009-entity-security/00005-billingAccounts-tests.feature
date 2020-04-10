@@ -1,5 +1,5 @@
 @full @test
-Feature: Entity Security - Customer Account Tests
+Feature: Entity Security - Billing Account Tests
 
   @admin
   Scenario Outline: <title>
