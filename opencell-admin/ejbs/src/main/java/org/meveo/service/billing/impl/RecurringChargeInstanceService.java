@@ -43,6 +43,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.WalletTemplate;
@@ -201,9 +202,14 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             create(chargeInstance);
         }
 
-        if (serviceChargeTemplateRecurring.getCounterTemplate() != null) {
-            CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, serviceChargeTemplateRecurring.getCounterTemplate(), isVirtual);
-            chargeInstance.setCounter(counterInstance);
+        if (serviceChargeTemplateRecurring.getAccumulatorCounterTemplates() != null && !serviceChargeTemplateRecurring.getAccumulatorCounterTemplates().isEmpty()) {
+            log.debug("Recurring charge has {} counter templates", serviceChargeTemplateRecurring.getAccumulatorCounterTemplates().size());
+            for (CounterTemplate counterTemplate : serviceChargeTemplateRecurring.getAccumulatorCounterTemplates()) {
+                log.debug("Counter template {}", counterTemplate);
+                CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, counterTemplate, isVirtual);
+                log.debug("Counter instance {} will be add to charge instance {}", counterInstance, chargeInstance);
+                chargeInstance.addCounterInstance(counterInstance);
+            }
 
             if (!isVirtual) {
                 update(chargeInstance);

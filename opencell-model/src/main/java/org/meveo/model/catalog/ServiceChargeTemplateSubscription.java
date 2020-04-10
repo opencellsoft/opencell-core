@@ -68,24 +68,12 @@ public class ServiceChargeTemplateSubscription extends ServiceChargeTemplate<One
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_serv_sub_counter_template", joinColumns = @JoinColumn(name = "service_sub_templt_id"), inverseJoinColumns = @JoinColumn(name = "counter_template_id"))
     @OrderColumn(name = "INDX")
-    private List<CounterTemplate> counterTemplates;
+    private List<CounterTemplate> accumulatorCounterTemplates;
 
-    /**
-     * Use instead getCounterTemplates().
-     *
-     * @return
-     */
-    @Deprecated
     public CounterTemplate getCounterTemplate() {
         return counterTemplate;
     }
 
-    /**
-     * Use instead setCounterTemplates
-     *
-     * @param counterTemplate
-     */
-    @Deprecated
     public void setCounterTemplate(CounterTemplate counterTemplate) {
         this.counterTemplate = counterTemplate;
     }
@@ -105,9 +93,8 @@ public class ServiceChargeTemplateSubscription extends ServiceChargeTemplate<One
      *
      * @return list of counters template
      */
-    @Override
-    public List<CounterTemplate> getCounterTemplates() {
-        return counterTemplates;
+    public List<CounterTemplate> getAccumulatorCounterTemplates() {
+        return accumulatorCounterTemplates;
     }
 
     /**
@@ -115,9 +102,8 @@ public class ServiceChargeTemplateSubscription extends ServiceChargeTemplate<One
      *
      * @param counterTemplates counters template
      */
-    @Override
-    public void setCounterTemplates(List<CounterTemplate> counterTemplates) {
-        this.counterTemplates = counterTemplates;
+    public void setAccumulatorCounterTemplates(List<CounterTemplate> counterTemplates) {
+        this.accumulatorCounterTemplates = counterTemplates;
     }
 
     @Override

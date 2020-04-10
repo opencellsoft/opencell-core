@@ -70,14 +70,12 @@ public class ServiceChargeTemplateUsage extends ServiceChargeTemplate<UsageCharg
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_serv_usage_counter_template", joinColumns = @JoinColumn(name = "service_usage_templt_id"), inverseJoinColumns = @JoinColumn(name = "counter_template_id"))
     @OrderColumn(name = "INDX")
-    private List<CounterTemplate> counterTemplates;
+    private List<CounterTemplate> accumulatorCounterTemplates;
 
-    @Deprecated
     public CounterTemplate getCounterTemplate() {
         return counterTemplate;
     }
 
-    @Deprecated
     public void setCounterTemplate(CounterTemplate counterTemplate) {
         this.counterTemplate = counterTemplate;
     }
@@ -90,12 +88,12 @@ public class ServiceChargeTemplateUsage extends ServiceChargeTemplate<UsageCharg
         this.walletTemplates = walletTemplates;
     }
 
-    public List<CounterTemplate> getCounterTemplates() {
-        return counterTemplates;
+    public List<CounterTemplate> getAccumulatorCounterTemplates() {
+        return accumulatorCounterTemplates;
     }
 
-    public void setCounterTemplates(List<CounterTemplate> counterTemplates) {
-        this.counterTemplates = counterTemplates;
+    public void setAccumulatorCounterTemplates(List<CounterTemplate> counterTemplates) {
+        this.accumulatorCounterTemplates = counterTemplates;
     }
 
     @Override

@@ -89,8 +89,9 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         }
         counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
         counterTemplate.setNotificationLevels(postData.getNotificationLevels());
-        counterTemplate.setAccumulator(postData.getAccumulator());
-        if (counterTemplate.getAccumulator() != null && counterTemplate.getAccumulator()) {
+        Boolean isAccumulator = postData.getAccumulator() != null && postData.getAccumulator();
+        counterTemplate.setAccumulator(isAccumulator);
+        if (isAccumulator) {
             counterTemplate.setCeilingExpressionEl(null);
             counterTemplate.setCeiling(BigDecimal.ZERO);
         }
