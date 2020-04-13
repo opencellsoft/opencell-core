@@ -1,0 +1,17 @@
+{
+    "code": "RS_FULL_18_CUSTA",
+    "description": "RS_FULL_18_CUSTA",
+    "customerAccounts": {
+        "customerAccount": [
+            {
+                "code": "RS_FULL_18_CAA1"
+            },
+            {
+                "code": "RS_FULL_18_CAA2"
+            },
+            {
+                "code": "RS_FULL_18_CAA3"
+            }
+        ]
+    }
+}

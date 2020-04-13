@@ -1,0 +1,15 @@
+{
+    "code": "RS_FULL_200_Global",
+    "description": "RS_FULL_200_global_Description_Created",
+    "occTemplateCode": "INV_STD",
+    "occTemplateNegativeCode": "PAY_TIP",
+    "sequenceDto": {
+        "prefixEL": "Fact_",
+        "sequenceSize": "9",
+        "currentInvoiceNb": "2005000"
+    },
+    "appliesTo": [
+        "COM"
+    ],
+    "useSelfSequence": true
+}

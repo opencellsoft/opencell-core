@@ -1,0 +1,8 @@
+{
+    "code": "RS_FULL_43_BC_ElAO",
+    "description": "RS_FULL_43_BC_ElAO",
+    "dueDateDelay": "1",
+    "calendar": "MONTHLY",
+    "invoiceDateDelay": "1",
+    "invoiceTypeCode": "RS_FULL_43_InvTypeElAO"
+}

@@ -1,0 +1,9 @@
+{
+    "code": "CA_DELAY_164",
+    "description": "CA_DELAY_164",
+    "customer": "RS_BASE_CUST_3",
+    "currency": "USD",
+    "language": "ENG",
+    "creditCategory": "PRO",
+    "dueDateDelayEL": "#{ba.customerAccount.auditable.created.date}"
+}

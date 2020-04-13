@@ -1,0 +1,10 @@
+{
+    "name": "RS_FULL_18_ROLE_SELF_USER",
+    "description": "RS_FULL_18_ROLE_SELF_USER",
+    "permission": [
+      {
+        "permission": "userSelfManagement",
+        "name": "User Self Management"
+      }
+    ]
+  }

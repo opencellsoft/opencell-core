@@ -1,0 +1,9 @@
+{
+    "product": "RS_BASE_PRODUCT1",
+    "userAccount": "toto",
+    "subscription": "RS_FULL_200_SUB_INVOICE",
+    "operationDate": "2016-09-30",
+    "quantity": "2",
+    "description": "Product application of subscription",
+    "criteria1": "CR1"
+}

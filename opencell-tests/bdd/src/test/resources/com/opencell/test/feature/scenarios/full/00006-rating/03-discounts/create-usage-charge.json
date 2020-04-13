@@ -1,0 +1,7 @@
+{
+    "code": "RS_BASE_DP_MULTIPLE_USAGE_CHARGE",
+    "description": "RS_BASE_DP_MULTIPLE_USAGE_CHARGE",
+    "invoiceSubCategory": "CMP_DATA",
+    "unitMultiplicator": "1",
+    "filterParam1": "DISCOUNTED"
+}s

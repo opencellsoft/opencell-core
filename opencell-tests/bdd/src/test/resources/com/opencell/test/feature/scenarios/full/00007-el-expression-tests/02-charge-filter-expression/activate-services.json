@@ -1,0 +1,12 @@
+{
+    "subscription": "RS_FULL_43_CHARGE_FILTER",
+    "servicesToActivate": {
+        "service": [
+            {
+                "code": "RS_BASE_SERVICE3",
+                "quantity": "2",
+                "subscriptionDate": "2018-01-01"
+            }
+        ]
+    }
+}

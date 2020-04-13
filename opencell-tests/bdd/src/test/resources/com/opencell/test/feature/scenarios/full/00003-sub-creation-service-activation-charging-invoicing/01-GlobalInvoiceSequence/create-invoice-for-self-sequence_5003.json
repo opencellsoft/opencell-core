@@ -1,0 +1,20 @@
+{
+    "invoiceType": "RS_FULL_200_Global",
+    "billingAccountCode": "RS_FULL_200_CustomerGlobal",
+    "dueDate": "2017-05-01",
+    "invoiceDate": "2017-04-01",
+    "invoiceMode": "AGGREGATED",
+    "categoryInvoiceAgregate": [
+        {
+            "categoryInvoiceCode": "SUBSCRIPTION",
+            "description": "SUBSCRIPTION",
+            "subCategoryInvoiceAgregateDto": [
+                {
+                    "description": "SUB_DATA",
+                    "invoiceSubCategoryCode": "SUB_DATA",
+                    "amountWithoutTax": "100"
+                }
+            ]
+        }
+    ]
+}

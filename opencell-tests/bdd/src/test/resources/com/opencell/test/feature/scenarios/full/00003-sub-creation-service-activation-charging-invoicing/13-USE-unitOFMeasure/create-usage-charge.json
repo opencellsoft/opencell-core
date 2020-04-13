@@ -1,0 +1,17 @@
+{
+    "code": "CH_USG_UNIT_UOM",
+    "description": "Unit usage",
+    "invoiceSubCategory": "CMP_DATA",
+    "disabled": false,
+    "amountEditable": true,
+    "inputUnitDescription": "unit",
+    "inputUnitOfMeasureCode":"Minute",
+    "ratingUnitDescription": "unit",
+    "ratingUnitOfMeasureCode":"Second",
+    "unitMultiplicator": 1,
+    "unitNbDecimal": 6,
+    "roundingModeDtoEnum": "NEAREST",
+    "taxClassCode" : "RS_BASE_taxClass",
+    "filterParam1": "UNIT",
+    "priority": 10
+}

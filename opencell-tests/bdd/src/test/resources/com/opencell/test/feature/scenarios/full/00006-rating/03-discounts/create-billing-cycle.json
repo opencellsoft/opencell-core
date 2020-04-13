@@ -1,0 +1,10 @@
+{
+    "code": "RS_FULL_171_DP_MULTIPLE_BC",
+    "description": "RS_FULL_171_DP_MULTIPLE_BC",
+    "invoiceDateDelay": "0",
+    "dueDateDelay": "2",
+    "invoiceDateProductionDelay": "0",
+    "transactionDateDelay": "0",
+    "calendar": "MONTHLY",
+    "type": "BILLINGACCOUNT"
+}

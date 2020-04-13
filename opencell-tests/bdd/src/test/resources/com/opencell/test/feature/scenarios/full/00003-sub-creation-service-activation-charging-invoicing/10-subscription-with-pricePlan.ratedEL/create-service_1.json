@@ -1,0 +1,12 @@
+{
+    "code": "RS_FULL_200_PP_RATED_EL_Enterprise",
+    "description": "Service",
+    "invoicingCalendar": "MONTHLY",
+    "serviceChargeTemplateSubscriptions": {
+        "serviceChargeTemplateSubscription": [
+            {
+                "code": "RS_FULL_200_PP_RATED_EL_Enterprise"
+            }
+        ]
+    }
+}

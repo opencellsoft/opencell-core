@@ -1,0 +1,9 @@
+{
+    "code": "RS_BASE_REC_SUB_AGE2",
+    "description": "RS_BASE_REC_SUB_AGE",
+    "eventCode": "RS_BASE_REC_SUB_AGE",
+    "amountWithoutTax": "5",
+    "amountWithTax": "10",
+    "priority": "1",
+    "minSubscriptionAgeInMonth": "5"
+}

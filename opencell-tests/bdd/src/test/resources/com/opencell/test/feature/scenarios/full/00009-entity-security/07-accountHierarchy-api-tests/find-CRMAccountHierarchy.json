@@ -1,0 +1,23 @@
+{
+    "code": "RS_FULL_18_CRM-CUST",
+    "customerAccounts": {
+        "customerAccount": [
+            {
+                "code": "RS_FULL_18_CRM-CUST",
+                "billingAccounts": {
+                    "billingAccount": [
+                        {
+                            "userAccounts": {
+                                "userAccount": [
+                                    {
+                                        "code": "RS_FULL_18_CRM-CUST"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

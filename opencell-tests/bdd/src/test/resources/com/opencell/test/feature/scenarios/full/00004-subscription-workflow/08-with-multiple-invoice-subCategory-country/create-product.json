@@ -1,0 +1,10 @@
+{
+    "code": "RS_FULL_MULTI_TAX",
+    "description": "RS_FULL_MULTI_TAX_PRODUCT DESC",
+    "name": "RS_FULL_MULTI_TAX_PRODUCT NAME",
+    "productChargeTemplate": [
+        {
+            "code": "RS_FULL_MULTI_TAX"
+        }
+    ]
+}

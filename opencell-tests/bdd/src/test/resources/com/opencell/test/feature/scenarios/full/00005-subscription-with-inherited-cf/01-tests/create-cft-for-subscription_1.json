@@ -1,0 +1,8 @@
+{
+    "code": "RS_FULL_SUB_CF_INHERITED",
+    "description": "RS_FULL_SUB_CF_INHERITED",
+    "fieldType": "STRING",
+    "appliesTo": "Subscription",
+    "storageType": "SINGLE",
+    "defaultValue": "subscriptionCF"
+}

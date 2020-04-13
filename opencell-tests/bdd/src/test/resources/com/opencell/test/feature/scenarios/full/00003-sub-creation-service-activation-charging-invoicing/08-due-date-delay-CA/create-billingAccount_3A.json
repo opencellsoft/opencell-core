@@ -1,0 +1,27 @@
+{
+    "code": "RS_BASE_BA_3A",
+    "description": "RS_BASE_BA_3A",
+    "externalRef1": "EXTREF1",
+    "externalRef2": "EXTREF2",
+    "name": {
+        "title": "MR",
+        "firstName": "firstname",
+        "lastName": "lastname"
+    },
+    "address": {
+        "address1": "adress1",
+        "address2": "address2",
+        "address3": "adress3",
+        "zipCode": "21000",
+        "city": "Dijon",
+        "country": "France"
+    },
+    "customerAccount": "RS_BASE_CA_3A",
+    "billingCycle": "CYC_INV_MT_DELAY_100",
+    "country": "FR",
+    "language": "FRA",
+    "nextInvoiceDate": "2015-04-01",
+    "subscriptionDate": "2015-01-01",
+    "electronicBilling": true,
+    "email": "RS_BASE@manaty.net"
+}

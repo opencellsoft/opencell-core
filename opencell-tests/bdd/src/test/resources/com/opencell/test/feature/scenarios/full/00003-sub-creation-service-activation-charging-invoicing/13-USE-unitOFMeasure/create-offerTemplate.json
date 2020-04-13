@@ -1,0 +1,14 @@
+{
+    "code": "OF_LP_COLLECTE_REMISE",
+    "description": "Offre collecte et remise",
+    "lifeCycleStatus": "ACTIVE",
+    "bomCode": null,
+    "offerTemplateCategoryCode": null,
+    "offerServiceTemplate": [
+        {
+            "serviceTemplate": {
+                "code": "SE_USG_UNIT_UOM"
+            }
+        }
+    ]
+}

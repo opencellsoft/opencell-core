@@ -16,9 +16,6 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-/**
- * 
- */
 package org.meveo.admin.async;
 
 import static org.meveo.service.script.payment.AccountOperationFilterScript.LIST_AO_TO_PAY;

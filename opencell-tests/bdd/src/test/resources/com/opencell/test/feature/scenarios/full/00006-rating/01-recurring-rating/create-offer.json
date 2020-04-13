@@ -1,0 +1,13 @@
+{
+    "code": "RS_FULL_171_RECURRING_OFFER",
+    "description": "RS_FULL_171_OFFER1",
+    "name": "RS_FULL_171_RECURRING_OFFER",
+    "offerServiceTemplate": [
+        {
+            "mandatory": true,
+            "serviceTemplate": {
+                "code": "RS_FULL_171_RECURRING_SERVICE"
+            }
+        }
+    ]
+}

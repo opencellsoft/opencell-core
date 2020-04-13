@@ -1,0 +1,48 @@
+{
+    "crmAccountType": "C_UA",
+    "crmParentCode": "RS_FULL_18_SELLER_B",
+    "code": "RS_FULL_18_CRM-CUST",
+    "description": "RS_FULL_18_CRM-AccountHierarchy-Updated",
+    "externalRef1": "EXTRef1",
+    "externalRef2": "EXTRef2",
+    "name": {
+        "title": "MR",
+        "firstName": "Saidani",
+        "lastName": "Hatem"
+    },
+    "address": {
+        "address1": "Address1",
+        "address2": "Address2",
+        "zipCode": "01020",
+        "city": "Charguia2",
+        "country": "TN",
+        "state": "Tunisie"
+    },
+    "contactInformation": {
+        "email": "RS_FULL_18@manaty.com",
+        "phone": "+0135215579",
+        "mobile": "+0141487410"
+    },
+    "language": "ENG",
+    "terminationReason": "TERM_REASON_2",
+    "subscriptionDate": "2016-03-16",
+    "terminationDate": "2016-06-15",
+    "customerCategory": "PROSPECT",
+    "customerBrand": "DEFAULT",
+    "mandateIdentification": "M10221",
+    "mandateDate": "2016-04-01",
+    "currency": "USD",
+    "caStatus": "ACTIVE",
+    "creditCategory": "PART_C",
+    "dateStatus": "2016-04-01",
+    "dateDunningLevel": "2016-04-04",
+    "dunningLevel": "R1",
+    "billingCycle": "CYC_INV_MT_2",
+    "seller": "RS_FULL_18_SELLER_B",
+    "country": "US",
+    "nextInvoiceDate": "2016-05-01",
+    "electronicBilling": "true",
+    "baStatus": "ACTIVE",
+    "email": "RS_FULL_18@manaty.com",
+    "uaStatus": "ACTIVE"
+}

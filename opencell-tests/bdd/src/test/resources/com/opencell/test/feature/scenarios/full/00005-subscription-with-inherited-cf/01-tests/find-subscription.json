@@ -1,0 +1,30 @@
+{
+    "code": "RS_FULL_432_SUB_InheritedCF",
+    "description": "RS_FULL_432_SUB_InheritedCF",
+    "userAccount": "RS_FULL_432_UA_3_InheritedCF",
+    "offerTemplate": "RS_BASE_OFFER1",
+    "customFields": {
+        "customField": [
+            {
+                "code": "RS_FULL_SUB_CF_NOT_INHERITED",
+                "description": "RS_FULL_SUB_CF_NOT_INHERITED",
+                "fieldType": "STRING",
+                "stringValue": "subscriptionCFNotInherited"
+            },
+            {
+                "code": "RS_FULL_SUB_CF_INHERITED",
+                "description": "RS_FULL_SUB_CF_INHERITED",
+                "fieldType": "STRING",
+                "stringValue": "SUB_INHERITED"
+            }
+        ],
+        "inheritedCustomField": [
+            {
+                "code": "RS_FULL_UA_CF_INHERITED",
+                "description": "RS_FULL_UA_CF_INHERITED",
+                "fieldType": "STRING",
+                "stringValue": "UA_INHERITED"
+            }
+        ]
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "subscription": "RS_FULL_164_SUB_SUB_AOCI",
+    "servicesToActivate": {
+        "service": [
+            {
+                "code": "RS_BASE_SERVICE1",
+                "quantity": "1",
+                "subscriptionDate": "2015-02-02"
+            },
+            {
+                "code": "RS_BASE_SERVICE2",
+                "quantity": "2",
+                "subscriptionDate": "2015-04-01"
+            }
+        ]
+    }
+}

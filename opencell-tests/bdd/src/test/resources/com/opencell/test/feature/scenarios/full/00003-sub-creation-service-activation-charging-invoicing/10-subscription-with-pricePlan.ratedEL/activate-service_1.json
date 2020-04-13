@@ -1,0 +1,12 @@
+{
+    "subscription": "RS_FULL_200_PP_RATED_EL_Enterprise",
+    "servicesToActivate": {
+        "service": [
+            {
+                "code": "RS_FULL_200_PP_RATED_EL_Enterprise",
+                "quantity": "1",
+                "subscriptionDate": "2017-10-13"
+            }
+        ]
+    }
+}

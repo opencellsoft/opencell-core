@@ -1,0 +1,8 @@
+{
+    "code": "RS_BASE_164_RATING_GROUP_SUB",
+    "description": "RS_BASE_164_RATING_GROUP_SUB",
+    "userAccount": "UA_RS_FULL_164_RATING_GROUP",
+    "offerTemplate": "RS_FULL_RATING_GROUP_OFFER",
+    "subscriptionDate": "2018-10-13",
+    "ratingGroup": "ELECTRICITY"
+}

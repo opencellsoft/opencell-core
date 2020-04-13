@@ -1,0 +1,13 @@
+{
+    "subscription": "RS_FULL_171_SUB_RECURRING_END",
+    "servicesToActivate": {
+        "service": [
+            {
+                "code": "RS_FULL_171_RECURRING_SERVICE",
+                "quantity": "1",
+                "subscriptionDate": "2018-01-05T13:00:00Z",
+                "rateUntilDate": "2018-01-31"
+            }
+        ]
+    }
+}

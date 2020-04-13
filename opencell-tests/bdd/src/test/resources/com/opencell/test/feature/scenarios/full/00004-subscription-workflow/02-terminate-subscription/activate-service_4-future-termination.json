@@ -1,0 +1,10 @@
+{
+    "subscription": "RS_FULL_164_SUB_FUTURE_TERMINATION_4",
+    "servicesToActivate": {
+        "service": {
+            "code": "RS_BASE_SERVICE1",
+            "quantity": "1",
+            "subscriptionDate": "${#TestCase#today}"
+        }
+    }
+}

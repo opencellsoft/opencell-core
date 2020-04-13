@@ -1,0 +1,9 @@
+{
+    "code": "RS_FULL_171_3842_CH6",
+    "description": "RS_FULL_171_3842_CH6",
+    "invoiceSubCategory": "SUB_DATA",
+    "filterParam1": "3842",
+    "triggerNextChargeEL": true,
+    "priority": "6",
+    "unitMultiplicator": "1"
+}

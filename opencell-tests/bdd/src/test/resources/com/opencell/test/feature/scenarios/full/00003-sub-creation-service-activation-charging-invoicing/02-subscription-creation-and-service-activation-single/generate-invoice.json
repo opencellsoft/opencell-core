@@ -1,0 +1,8 @@
+{
+    "targetCode": "RS_FULL_200_BA_INVOICE",
+    "targetType": "BILLINGACCOUNT",
+    "invoicingDate": "2016-11-30",
+    "lastTransactionDate": "2016-11-20",
+    "generateXML": true,
+    "generatePDF": false
+}

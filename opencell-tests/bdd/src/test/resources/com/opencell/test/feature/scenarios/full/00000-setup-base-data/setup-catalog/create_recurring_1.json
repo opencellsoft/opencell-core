@@ -20,6 +20,7 @@
 	"unitNbDecimal": "2",
 	"durationTermInMonth": "4",
 	"roundingModeDtoEnum": "NEAREST",
+	"taxClassCode" : "RS_BASE_taxClass",
 	"triggeredEdrs": {
 		"triggeredEdr": [
 			{

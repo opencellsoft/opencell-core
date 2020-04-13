@@ -1,0 +1,13 @@
+{
+    "code": "RS_FULL_MULTIPLE_DP_OFFER",
+    "description": "RS_FULL_171_MULTIPLE_DP_OFFER",
+    "name": "RS_FULL_171_MULTIPLE_DP_OFFER",
+    "offerServiceTemplate": [
+        {
+            "mandatory": true,
+            "serviceTemplate": {
+                "code": "RS_FULL_MULTIPLE_DP_SERVICE"
+            }
+        }
+    ]
+}

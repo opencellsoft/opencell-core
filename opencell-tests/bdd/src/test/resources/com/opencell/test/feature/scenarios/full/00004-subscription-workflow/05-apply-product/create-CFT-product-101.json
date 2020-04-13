@@ -1,0 +1,8 @@
+{
+    "code": "RS_FULL_164_CF_PROD_PRICE101",
+    "description": "RS_FULL_164_CF_PROD_PRICE101",
+    "fieldType": "DOUBLE",
+    "appliesTo": "ProductInstance",
+    "storageType": "SINGLE",
+    "defaultValue": "101"
+}

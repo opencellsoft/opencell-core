@@ -1,0 +1,29 @@
+{
+    "code": "RS_FULL_171_3842_SERVICE1",
+    "description": "RS_FULL_171_3842_SERVICE1",
+    "invoicingCalendar": "MONTHLY",
+    "serviceChargeTemplateUsages": {
+        "serviceChargeTemplateUsage": [
+            {
+                "code": "RS_FULL_171_3842_CH1N"
+            },
+            {
+                "code": "RS_FULL_171_3842_CH2C100",
+                "counterTemplate": "RS_FULL_171_3842_C100"
+            },
+            {
+                "code": "RS_FULL_171_3842_CH3C50",
+                "counterTemplate": "RS_FULL_171_3842_C50"
+            },
+            {
+                "code": "RS_FULL_171_3842_CH4N"
+            },
+            {
+                "code": "RS_FULL_171_3842_CH5"
+            },
+            {
+                "code": "RS_FULL_171_3842_CH6"
+            }
+        ]
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "code": "RS_FULL_200_SUB_CAT_OS1",
+    "description": "Subscription charge",
+    "invoiceSubCategory": "RS_FULL_200_SUB_CAT_1",
+    "disabled": false,
+    "amountEditable": false,
+    "unitMultiplicator": "1",
+    "unitNbDecimal": "2",
+    "oneShotChargeTemplateType": "SUBSCRIPTION",
+    "immediateInvoicing": false,
+    "roundingModeDtoEnum": "NEAREST"
+}
