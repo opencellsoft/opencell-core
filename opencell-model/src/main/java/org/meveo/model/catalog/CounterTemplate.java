@@ -130,6 +130,32 @@ public class CounterTemplate extends EnableBusinessEntity {
     @Column(name = "is_accumulator")
     private Boolean accumulator = Boolean.FALSE;
 
+    /**
+     * The type field can be "Multi-value" if the accumulator is true
+     */
+    @Column(name = "type")
+    private AccumulatorCounterTypeEnum type;
+
+    /**
+     * An EL expression that returns a boolean that tells us if we accumulate or not.
+     */
+    @Column(name = "filter_el", length = 2000)
+    @Size(max = 2000)
+    private String filterEl;
+    /**
+     * An EL expression that Returns a string that is an identifier for what we count
+     */
+    @Column(name = "key_el", length = 2000)
+    @Size(max = 2000)
+    private String keyEl;
+
+    /**
+     * An EL expression that returns a number (BigDecimal) that contains the quantity we count
+     */
+    @Column(name = "value_el", length = 2000)
+    @Size(max = 2000)
+    private String valueEl;
+
     public CounterTypeEnum getCounterType() {
         return counterType;
     }
@@ -200,5 +226,37 @@ public class CounterTemplate extends EnableBusinessEntity {
 
     public void setAccumulator(Boolean accumulator) {
         this.accumulator = accumulator;
+    }
+
+    public AccumulatorCounterTypeEnum getType() {
+        return type;
+    }
+
+    public void setType(AccumulatorCounterTypeEnum type) {
+        this.type = type;
+    }
+
+    public String getFilterEl() {
+        return filterEl;
+    }
+
+    public void setFilterEl(String filterEl) {
+        this.filterEl = filterEl;
+    }
+
+    public String getKeyEl() {
+        return keyEl;
+    }
+
+    public void setKeyEl(String keyEl) {
+        this.keyEl = keyEl;
+    }
+
+    public String getValueEl() {
+        return valueEl;
+    }
+
+    public void setValueEl(String valueEl) {
+        this.valueEl = valueEl;
     }
 }
