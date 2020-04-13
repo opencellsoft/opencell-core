@@ -409,11 +409,18 @@
 
                 <h:panelGroup id="validations">
                     <p:fieldset legend="#{messages['customFieldTemplate.validations']}" styleClass="validations clearfix">
+	                    <p:fieldset rendered="#{!customEntityTemplateBean.customTable}">
+	                        <h:outputLabel style="margin-left:5px" value="#{messages['customFieldTemplate.hideOnNew']}"/>
+	                        <p:selectBooleanButton style="margin-left:10px" value="#{customFieldTemplateBean.entity.hideOnNew}" 
+		                    onLabel="#{messages['commons.yes']}" offLabel="#{messages['commons.no']}" />
+		                    <h:outputLabel style="margin-left:50px" value="#{messages['customFieldTemplate.allowEdit']}"/>
+		                    <p:selectBooleanButton style="margin-left:10px" value="#{customFieldTemplateBean.entity.allowEdit}"
+		                    onLabel="#{messages['commons.yes']}" offLabel="#{messages['commons.no']}"/>
+		                    <h:outputLabel style="margin-left:50px" value="#{messages['customFieldTemplate.anonymizeGdpr']}" rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.ENTITY and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY}"/>
+		                    <p:selectBooleanButton style="margin-left:10px" value="#{customFieldTemplateBean.entity.anonymizeGdpr}" 
+		                    onLabel="#{messages['commons.yes']}" offLabel="#{messages['commons.no']}" rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.ENTITY and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY}"/>
+                        </p:fieldset>
                         <hftl:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="10"/>
-                        <hftl:formField label="#{messages['customFieldTemplate.hideOnNew']}" field="hideOnNew" isMessage="true" componentWidth="8" rendered="#{!customEntityTemplateBean.customTable}" />
-                        <hftl:formField label="#{messages['customFieldTemplate.allowEdit']}" field="allowEdit" isMessage="true" componentWidth="7" rendered="#{!customEntityTemplateBean.customTable}" />
-                        <hftl:formField label="#{messages['customFieldTemplate.anonymizeGdpr']}" field="anonymizeGdpr" isMessage="true" componentWidth="7" 
-                        	rendered="#{!customEntityTemplateBean.customTable and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.ENTITY and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY}" />
                         <hftl:formField label="#{messages['customFieldTemplate.applicableOnEl']}" field="applicableOnEl" textArea="true" maxlength="2000" rows="1"
                             rendered="#{!customEntityTemplateBean.customTable}" />
                         <hftl:formField label="#{messages['customFieldTemplate.minValue']}" field="minValue" negativeValue="true" componentWidth="15"
