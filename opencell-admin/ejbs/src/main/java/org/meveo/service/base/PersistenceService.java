@@ -473,9 +473,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         // Update entity in Elastic Search. ICustomFieldEntity is updated
         // partially, as entity itself does not have Custom field values
-        if (entity instanceof BusinessCFEntity) {
-            elasticClient.partialUpdate((BusinessEntity) entity);
-        } else if (entity instanceof ISearchable) {
+        if (entity instanceof BusinessCFEntity || entity instanceof ISearchable) {
             elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
