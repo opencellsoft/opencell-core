@@ -425,7 +425,7 @@ public class ElasticClient {
                 bulkRequest.add(new UpdateRequest(change.getIndex(), ElasticSearchConfiguration.MAPPING_DOC_TYPE, change.getIdForES()).doc(change.getSource()));
 
             } else if (change.getAction() == ElasticSearchAction.UPSERT) {
-                bulkRequest.add(new UpdateRequest(change.getIndex(), ElasticSearchConfiguration.MAPPING_DOC_TYPE, change.getIdForES()).upsert(change.getSource()));
+                bulkRequest.add(new UpdateRequest(change.getIndex(), ElasticSearchConfiguration.MAPPING_DOC_TYPE, change.getIdForES()).upsert(change.getSource()).doc(change.getSource()));
 
             } else if (change.getAction() == ElasticSearchAction.DELETE) {
 
