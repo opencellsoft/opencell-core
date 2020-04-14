@@ -289,10 +289,6 @@ public class UsageRatingService implements Serializable {
                 .rateChargeAndTriggerEDRs(usageChargeInstance, null, edr.getEventDate(), quantityToCharge, null, null, null, null, null, edr, false, isVirtual);
         ratingResult.setFullyRated(fullyRated);
 
-        // Set the accumulator counter value
-        //if (deducedCounter != null && deducedCounter.getCounterPeriod() != null) {
-        //    counterInstanceService.accumulatorCounterPeriodValue(deducedCounter.getCounterPeriod(), ratingResult.getWalletOperation(), null, isVirtual);
-        //}
         if (!isVirtual) {
             walletOperationService.chargeWalletOperation(ratingResult.getWalletOperation());
         }

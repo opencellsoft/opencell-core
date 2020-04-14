@@ -173,30 +173,6 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 
     }
 
-    public ServiceTemplate initEntity() {
-        super.initEntity();
-        /*for (ServiceChargeTemplateUsage serviceChargeTemplate : entity.getServiceUsageCharges()) {
-            if (!serviceChargeTemplate.getAccumulatorCounterTemplates().contains(serviceChargeTemplate.getCounterTemplate())) {
-                serviceChargeTemplate.getAccumulatorCounterTemplates().add(serviceChargeTemplate.getCounterTemplate());
-            }
-        }
-        for (ServiceChargeTemplateRecurring serviceChargeTemplate : entity.getServiceRecurringCharges()) {
-            if (!serviceChargeTemplate.getAccumulatorCounterTemplates().contains(serviceChargeTemplate.getCounterTemplate())) {
-                serviceChargeTemplate.getAccumulatorCounterTemplates().add(serviceChargeTemplate.getCounterTemplate());
-            }
-        }
-        for (ServiceChargeTemplateSubscription serviceChargeTemplate : entity.getServiceSubscriptionCharges()) {
-            if (!serviceChargeTemplate.getAccumulatorCounterTemplates().contains(serviceChargeTemplate.getCounterTemplate())) {
-                serviceChargeTemplate.getAccumulatorCounterTemplates().add(serviceChargeTemplate.getCounterTemplate());
-            }
-        }
-        for (ServiceChargeTemplateTermination serviceChargeTemplate : entity.getServiceTerminationCharges()) {
-            if (!serviceChargeTemplate.getAccumulatorCounterTemplates().contains(serviceChargeTemplate.getCounterTemplate())) {
-                serviceChargeTemplate.getAccumulatorCounterTemplates().add(serviceChargeTemplate.getCounterTemplate());
-            }
-        }*/
-        return entity;
-    }
 
     public DualListModel<WalletTemplate> getUsageDualListModel() {
         if (usageWallets == null) {
@@ -443,14 +419,13 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             if (serviceChargeTemplateRecurring == null) {
                 return;
             }
-            // TODO to be removed
-            /*for (ServiceChargeTemplateRecurring inc : entity.getServiceRecurringCharges()) {
+            for (ServiceChargeTemplateRecurring inc : entity.getServiceRecurringCharges()) {
                 if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateRecurring.getChargeTemplate().getCode()) && !inc.getId().equals(serviceChargeTemplateRecurring.getId())
                         && ((inc.getCounterTemplate() == null && serviceChargeTemplateRecurring.getCounterTemplate() == null)
                                 || inc.getCounterTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateRecurring.getCounterTemplate().getCode()))) {
                     throw new Exception();
                 }
-            }*/
+            }
             if (serviceChargeTemplateRecurring.getAccumulatorCounterTemplates() == null) {
                 serviceChargeTemplateRecurring.setAccumulatorCounterTemplates(new ArrayList<CounterTemplate>());
             } else {
@@ -508,8 +483,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             if (serviceChargeTemplateUsage == null) {
                 return;
             }
-            // TODO to be removed
-            /*for (ServiceChargeTemplateUsage inc : entity.getServiceUsageCharges()) {
+            for (ServiceChargeTemplateUsage inc : entity.getServiceUsageCharges()) {
                 if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateUsage.getChargeTemplate().getCode()) && !inc.getId()
                         .equals(serviceChargeTemplateUsage.getId()) && ((inc.getCounterTemplate() == null && serviceChargeTemplateUsage.getCounterTemplate() == null) || inc
                         .getCounterTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateUsage.getCounterTemplate().getCode()))) {
@@ -517,7 +491,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
                     messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
                     return;
                 }
-            }*/
+            }
             if (serviceChargeTemplateUsage.getAccumulatorCounterTemplates() == null) {
                 serviceChargeTemplateUsage.setAccumulatorCounterTemplates(new ArrayList<CounterTemplate>());
             } else {
