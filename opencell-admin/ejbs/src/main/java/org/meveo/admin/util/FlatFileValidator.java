@@ -162,6 +162,7 @@ public class FlatFileValidator {
 
             if (successMessage.length() > 0) {
                 messages.put("success", "the files " + successMessage.toString() + " are uploaded to " + inputDirectory);
+                executeJob(fileFormat.getJobCode());
             }
             if (errorMessage.length() > 0) {
                 messages.put("error", "the files " + successMessage.toString() + " are uploaded to " + rejectDirectory);
@@ -494,6 +495,24 @@ public class FlatFileValidator {
     }
 
     /**
+     * Execute job
+     *
+     * @param jobCode the job code
+     * @throws BusinessException the business exception
+     */
+    private void executeJob(String jobCode) throws BusinessException {
+        JobInstance jobInstance = jobInstanceService.findByCode(jobCode);
+        if (jobInstance != null && isAllowedToExecute(jobInstance)) {
+            try {
+                jobExecutionService.manualExecute(jobInstance);
+            } catch (Exception e) {
+                log.error("execute flat file job fail", e);
+                throw new BusinessException(e.getMessage(), e);
+            }
+        }
+    }
+
+    /**
      * Process file
      *
      * @param flatFile the flat file
@@ -502,15 +521,7 @@ public class FlatFileValidator {
     private void processFile(FlatFile flatFile) throws BusinessException {
         FileFormat fileFormat = flatFile != null ? flatFile.getFileFormat() : null;
         if (flatFile != null && flatFile.getStatus() == FileStatusEnum.WELL_FORMED && fileFormat != null && !StringUtils.isBlank(fileFormat.getJobCode())) {
-            JobInstance jobInstance = jobInstanceService.findByCode(fileFormat.getJobCode());
-            if (jobInstance != null && isAllowedToExecute(jobInstance)) {
-                try {
-                    jobExecutionService.manualExecute(jobInstance);
-                } catch (Exception e) {
-                    log.error("execute flat file job fail", e);
-                    throw new BusinessException(e.getMessage(), e);
-                }
-            }
+            executeJob(fileFormat.getJobCode());
         }
     }
 
