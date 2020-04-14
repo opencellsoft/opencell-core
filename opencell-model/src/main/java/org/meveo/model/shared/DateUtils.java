@@ -34,6 +34,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.meveo.model.DatePeriod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -498,8 +499,7 @@ public class DateUtils {
         }
         GregorianCalendar cal = new GregorianCalendar();
         cal.setTime(date);
-        return DatatypeFactory.newInstance().newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH),
-            DatatypeConstants.FIELD_UNDEFINED);
+        return DatatypeFactory.newInstance().newXMLGregorianCalendarDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
     }
 
     final static Pattern fourDigitsPattern = Pattern.compile("(?<!\\d)\\d{4}(?!\\d)");
@@ -638,6 +638,34 @@ public class DateUtils {
     }
 
     /**
+     * Determine overlap between two date period. Null date values in both input and calculated date period mean open dates.
+     * 
+     * @param oneStart First period - start date
+     * @param oneEnd First period - end date
+     * @param twoStart Second period - start date
+     * @param twoEnd Second period - end date
+     * @return A date period with an overlaping dates between the two date periods OR NULL if no overlapping period found.
+     */
+    public static DatePeriod getPeriodOverlap(Date oneStart, Date oneEnd, Date twoStart, Date twoEnd) {
+
+        Date maxStart = oneStart;
+        if (twoStart != null && maxStart != null && twoStart.after(maxStart)) {
+            maxStart = twoStart;
+        }
+        Date minEnd = oneEnd;
+        if (twoEnd != null && twoEnd != null && twoEnd.before(minEnd)) {
+            minEnd = twoEnd;
+        }
+
+        if (maxStart == null || minEnd == null || maxStart.before(minEnd)) {
+            return new DatePeriod(maxStart, minEnd);
+        } else {
+            return null;
+        }
+
+    }
+
+    /**
      * Format DDMMY : <br>
      * SimpleDateFormat way is not working for this format. e.g : with sfd, 2009 will return '9' but 2018 will return 18<br>
      * BUT the need here is to return always the last digit of the year !
@@ -678,10 +706,10 @@ public class DateUtils {
             if (StringUtils.isEmpty(dateValue) || StringUtils.isEmpty(fromFormat) || StringUtils.isEmpty(toFormat)) {
                 return dateValue;
             }
-            
+
             Date date = parseDateWithPattern(dateValue, fromFormat);
             return formatDateWithPattern(date, toFormat);
-            
+
         } catch (Exception e) {
             LOG.error(" error on changeFormat : [{}] ", e.getMessage());
             return dateValue;

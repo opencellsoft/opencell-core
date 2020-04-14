@@ -17011,10 +17011,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:restRequest>
         </con:config>
       </con:testStep>
-      <con:testStep type="restrequest" name="Create tax mapping" id="3cc2ec16-1dc7-4257-9287-812b9167d3cb">
+      <con:testStep type="restrequest" name="Create tax mapping - disabled, because say it exists already from other tests" id="3cc2ec16-1dc7-4257-9287-812b9167d3cb" disabled="true">
         <con:settings/>
         <con:config service="http://${#Project#opencell.url}" methodName="POST" resourcePath="/api/rest/taxMapping" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="Create tax mapping" id="99e74d2f-34b8-4577-86dc-d658d41499a2" mediaType="application/json" postQueryString="false">
+          <con:restRequest name="Create tax mapping - disabled, because say it exists already from other tests" id="99e74d2f-34b8-4577-86dc-d658d41499a2" mediaType="application/json" postQueryString="false">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -19658,6 +19658,61 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="3bd8086e-8fcb-404d-94d6-526ae0fb9493" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Data model" searchProperties="true">
       <con:settings/>
+      <con:testStep type="request" name="Create cet1" id="ca7c81ae-4c1c-48a5-9346-5661c777529c">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="Create cet1" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createEntityTemplate>\r
+         <customEntityTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_CET_One" name="Custom Entity one" description="Custom entity template one">\r
+            <fields>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1" description="Entity field1">\r
+                  <fieldType>STRING</fieldType>\r
+                  <defaultValue>Hello</defaultValue>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>INDEX</indexType>
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2" description="Entity field2">\r
+                  <fieldType>LONG</fieldType>\r
+                  <defaultValue>15</defaultValue>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>STORE_ONLY</indexType>
+               </field>\r
+            </fields>\r
+         </customEntityTemplate>\r
+      </ws:createEntityTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Customize Customer" id="44f29fbc-6ac6-41f0-80cc-6779d38bf368">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -19704,6 +19759,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                   <fieldType>ENTITY</fieldType>\r
                   <storageType>SINGLE</storageType>\r
                   <indexType>INDEX</indexType>\r
+                  <entityClazz>org.meveo.model.customEntities.CustomEntityTemplate - ${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1</entityClazz>
                </field>\r
                <field code="${#Project#entityPrefix}_${#TestSuite#index}_ESM_TEXT_AREA" description="Entity field2">\r
                   <fieldType>TEXT_AREA</fieldType>\r
@@ -20214,12 +20270,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:restRequest>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create cet1" id="ca7c81ae-4c1c-48a5-9346-5661c777529c">
+      <con:testStep type="request" name="Create cet4 - custom table" id="15927e6f-3e03-49c1-b60c-c63fd3170311">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>EntityCustomizationWsSoapBinding</con:interface>
           <con:operation>createEntityTemplate</con:operation>
-          <con:request name="Create cet1" id="37325412-edef-4e28-91b0-6c66c999581c">
+          <con:request name="Create cet4 - custom table" id="37325412-edef-4e28-91b0-6c66c999581c">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -20229,19 +20285,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createEntityTemplate>\r
-         <customEntityTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_CET_One" name="Custom Entity one" description="Custom entity template one">\r
+         <customEntityTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_CET_Four" storeAsTable="true" name="Custom Entity four" description="Custom entity template four">\r
             <fields>\r
-               <field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1" description="Entity field1">\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT41" description="CT field1">\r
                   <fieldType>STRING</fieldType>\r
                   <defaultValue>Hello</defaultValue>\r
                   <storageType>SINGLE</storageType>\r
-                  <indexType>INDEX</indexType>
-               </field>\r
-               <field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2" description="Entity field2">\r
-                  <fieldType>LONG</fieldType>\r
-                  <defaultValue>15</defaultValue>\r
-                  <storageType>SINGLE</storageType>\r
-                  <indexType>STORE_ONLY</indexType>
+                  <indexType>INDEX</indexType>\r
                </field>\r
             </fields>\r
          </customEntityTemplate>\r
@@ -20284,20 +20334,99 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createEntityTemplate>\r
-         <customEntityTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_CET_Two" name="Custom Entity one" description="Custom entity template one">\r
+         <customEntityTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_CET_Two" name="Custom Entity two" description="Custom entity template twp">\r
             <fields>\r
                <field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT21" description="Entity field1">\r
                   <fieldType>STRING</fieldType>\r
                   <defaultValue>Hello</defaultValue>\r
                   <storageType>SINGLE</storageType>\r
-                  <indexType>INDEX</indexType>
+                  <indexType>INDEX</indexType>\r
                </field>\r
                <field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT22" description="Entity field2">\r
                   <fieldType>LONG</fieldType>\r
                   <defaultValue>15</defaultValue>\r
                   <storageType>SINGLE</storageType>\r
-                  <indexType>STORE_ONLY</indexType>
+                  <indexType>STORE_ONLY</indexType>\r
                </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2_Entity" description="Entity field3">\r
+                  <fieldType>ENTITY</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>INDEX</indexType>\r
+                  <entityClazz>org.meveo.model.customEntities.CustomEntityTemplate - ${#Project#entityPrefix}_${#TestSuite#index}_CET_One</entityClazz>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2_CT" description="Entity field4">\r
+                  <fieldType>ENTITY</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>INDEX</indexType>\r
+                  <entityClazz>org.meveo.model.customEntities.CustomEntityTemplate - ${#Project#entityPrefix}_${#TestSuite#index}_CET_Four</entityClazz>\r
+               </field>\r
+            </fields>\r
+         </customEntityTemplate>\r
+      </ws:createEntityTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create cet3 - custom table" id="32149695-e63b-4c4c-98e6-059d99fe0ba0">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="Create cet3 - custom table" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createEntityTemplate>\r
+         <customEntityTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_CET_Three" storeAsTable="true" name="Custom Entity three" description="Custom entity template three">\r
+            <fields>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT31" description="CT field1">\r
+                  <fieldType>STRING</fieldType>\r
+                  <defaultValue>Hello</defaultValue>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>INDEX</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT32" description="CT field2">\r
+                  <fieldType>LONG</fieldType>\r
+                  <defaultValue>15</defaultValue>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>STORE_ONLY</indexType>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT3_Entity" description="CT field3">\r
+                  <fieldType>ENTITY</fieldType>\r
+                  <storageType>SINGLE</storageType>\r
+                  <indexType>INDEX</indexType>\r
+                  <entityClazz>org.meveo.model.customEntities.CustomEntityTemplate - ${#Project#entityPrefix}_${#TestSuite#index}_CET_One</entityClazz>\r
+               </field>\r               
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT3_CT" description="CT field4">
+                  <fieldType>ENTITY</fieldType>
+                  <storageType>SINGLE</storageType>
+                  <indexType>INDEX</indexType>
+                  <entityClazz>org.meveo.model.customEntities.CustomEntityTemplate - ${#Project#entityPrefix}_${#TestSuite#index}_CET_Four</entityClazz>
+               </field>
             </fields>\r
          </customEntityTemplate>\r
       </ws:createEntityTemplate>\r
@@ -20415,6 +20544,24 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="JsonPath Match" id="7b7488d1-c184-49c8-ba45-1aad7f4891b3" name="JsonPath Match 3">
+              <con:configuration>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CET_Two_v1".toLowerCase()}.mappings._doc.properties.${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2_Entity</path>
+                <content>{"properties":{"classname":{"type":"keyword"},"classnameCode":{"type":"keyword"},"code":{"type":"keyword"}}}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="7b7488d1-c184-49c8-ba45-1aad7f4891b3" name="JsonPath Match 4">
+              <con:configuration>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CET_Two_v1".toLowerCase()}.mappings._doc.properties.${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2_CT</path>
+                <content>{"properties":{"classname":{"type":"keyword"},"classnameCode":{"type":"keyword"},"code":{"type":"keyword"}}}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -20423,6 +20570,77 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsPropertyConfig/>
             <con:parameters>
               <entry key="indexName" value="${=&quot;${#Project#entityPrefix}_${#TestSuite#index}_CET_Two&quot;.toLowerCase()}" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>indexName</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Check CET3 mapping" id="1c91b722-916b-47b2-a29a-c58f4014a3ca">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_{indexName}/_mapping/" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Check CET3 mapping" id="12241024-c879-45f7-9776-a0965570e40b" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/_mapping/account</con:originalUri>
+            <con:assertion type="JsonPath Match" id="dc9f19d9-c708-401e-94d3-1deca1da4965" name="JsonPath Match 1">
+              <con:configuration>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_cet_three_v1".toLowerCase()}.mappings._doc.properties.${="${#Project#entityPrefix}_${#TestSuite#index}_cet_cft31".toLowerCase()}</path>
+                <content>{"type":"text"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="3d6f545f-c4f2-4dcd-b66f-e4c5af1f79a8" name="JsonPath Match 2">
+              <con:configuration>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_cet_three_v1".toLowerCase()}.mappings._doc.properties.${="${#Project#entityPrefix}_${#TestSuite#index}_cet_cft32".toLowerCase()}</path>
+                <content>{"type":"long","index":false}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="7b7488d1-c184-49c8-ba45-1aad7f4891b3" name="JsonPath Match 3">
+              <con:configuration>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_cet_three_v1".toLowerCase()}.mappings._doc.properties.${="${#Project#entityPrefix}_${#TestSuite#index}_cet_cft3_entity".toLowerCase()}</path>
+                <content>{"type":"long"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="570380e1-2581-4815-b914-0cab6cd4f5ef" name="JsonPath Match">
+              <con:configuration>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_cet_three_v1".toLowerCase()}.mappings._doc.properties.id</path>
+                <content>{"type":"long"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="7b7488d1-c184-49c8-ba45-1aad7f4891b3" name="JsonPath Match 4">
+              <con:configuration>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_cet_three_v1".toLowerCase()}.mappings._doc.properties.${="${#Project#entityPrefix}_${#TestSuite#index}_cet_cft3_ct".toLowerCase()}</path>
+                <content>{"type":"long"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="indexName" value="${=&quot;${#Project#entityPrefix}_${#TestSuite#index}_CET_Three&quot;.toLowerCase()}" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
             <con:parameterOrder>
               <con:entry>indexName</con:entry>
@@ -22383,6 +22601,120 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Append data to CET 4" id="cc2850e8-a0e8-4bed-8a04-d45dd7c934f0">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="Append data to CET 4" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:appendTableData>\r
+         <tableData customTableCode="${#Project#entityPrefix}_${#TestSuite#index}_CET_Four">\r
+            <records>\r
+               <record>\r
+                  <values>\r
+                     <entry>\r
+                        <key>id</key>\r
+                        <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">-1</value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT41</key>\r
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">One</value>\r
+                     </entry>\r
+                  </values>\r
+               </record>\r
+            </records>\r
+         </tableData>\r
+      </ws:appendTableData>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get CT 4 data  - CT 4 document in Elastic Search" id="37566ccd-a22e-42e8-8c9c-2bab671ce71b">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_{cetCode}/_doc/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get CT 4 data  - CT 4 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="38becf3c-6d11-46bf-b653-05f84d9c9a57" name="JsonPath Match">
+              <con:configuration>
+                <path>_version</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="f81d6b92-55f0-4a9a-838c-6f04aed73752" name="JsonPath Match 1">
+              <con:configuration>
+                <path>_source.${="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT41".toLowerCase()}</path>
+                <content>One</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="f09a08d8-46a9-4080-b8aa-c27964f507a0" name="JsonPath Match 3">
+              <con:configuration>
+                <path>_source.id</path>
+                <content>-1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="cetCode" value="${=&quot;${#Project#entityPrefix}_${#TestSuite#index}_CET_Four&quot;.toLowerCase()}"/>
+              <con:entry key="id" value="-1"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
       <con:testStep type="restrequest" name="Get Cei1 - Cet one document in Elastic Search" id="4a3ccbc6-288d-4ed8-8cb8-fc77fd8ecae9">
         <con:settings/>
         <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_{cetCode}/_doc/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -22575,6 +22907,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <customField code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT22" description="CFT field 2">\r
                   <longValue>36</longValue>\r
                </customField>\r
+               <customField code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2_Entity" description="CFT field 3">
+                  <entityReferenceValue classname="org.meveo.model.customEntities.CustomEntityInstance" classnameCode="${#Project#entityPrefix}_${#TestSuite#index}_CET_One" code="MONTHLY"/>
+               </customField>
+               <customField code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2_CT" description="CFT field 4">
+                  <entityReferenceValue classname="org.meveo.model.customEntities.CustomEntityInstance" classnameCode="${#Project#entityPrefix}_${#TestSuite#index}_CET_Four" code="-1"/>
+               </customField>
             </customFields>\r
          </customEntityInstance>\r
       </ws:createCustomEntityInstance>\r
@@ -22660,6 +22998,24 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="JsonPath Match" id="7703cc3c-386b-42a8-97d8-1da5a90202a8" name="JsonPath Match 5">
+              <con:configuration>
+                <path>_source.${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2_Entity</path>
+                <content>{"code":"MONTHLY","classname":"org.meveo.model.customEntities.CustomEntityInstance","classnameCode":"${#Project#entityPrefix}_${#TestSuite#index}_CET_One"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="7703cc3c-386b-42a8-97d8-1da5a90202a8" name="JsonPath Match 6">
+              <con:configuration>
+                <path>_source.${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT2_CT</path>
+                <content>{"code":"-1","classname":"org.meveo.model.customEntities.CustomEntityInstance","classnameCode":"${#Project#entityPrefix}_${#TestSuite#index}_CET_Four"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -22669,6 +23025,155 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:parameters>
               <con:entry key="id" value="${#Project#entityPrefix}_${#TestSuite#index}_CEI_2_ES"/>
               <con:entry key="cetCode" value="${=&quot;${#Project#entityPrefix}_${#TestSuite#index}_CET_Two&quot;.toLowerCase()}"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Append data to CET 3" id="e03ebbe9-278c-47d3-838a-481e4a2ac4b7">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="Append data to CET 3" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:appendTableData>\r
+         <tableData customTableCode="${#Project#entityPrefix}_${#TestSuite#index}_CET_Three">\r
+            <records>\r
+               <record>\r
+                  <values>\r
+                     <entry>\r
+                        <key>id</key>\r
+                        <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">-1</value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT31</key>\r
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">One</value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT32</key>\r
+                        <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">5</value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>${="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT3_CT".toLowerCase()}</key>\r
+                        <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">-1</value>\r
+                     </entry>\r
+                  </values>\r
+               </record>\r
+            </records>\r
+         </tableData>\r
+      </ws:appendTableData>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get CT 3 data  - CT 3 document in Elastic Search" id="7e03fa75-56e8-4c26-bed6-a420015978e9">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_{cetCode}/_doc/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get CT 3 data  - CT 3 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="38becf3c-6d11-46bf-b653-05f84d9c9a57" name="JsonPath Match">
+              <con:configuration>
+                <path>_version</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="f81d6b92-55f0-4a9a-838c-6f04aed73752" name="JsonPath Match 1">
+              <con:configuration>
+                <path>_source.${="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT31".toLowerCase()}</path>
+                <content>One</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="afa7a235-e3b8-49ab-8d50-9af9c1682aa1" name="JsonPath Match 2">
+              <con:configuration>
+                <path>_source.${="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT32".toLowerCase()}</path>
+                <content>5</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="f09a08d8-46a9-4080-b8aa-c27964f507a0" name="JsonPath Match 3">
+              <con:configuration>
+                <path>_source.id</path>
+                <content>-1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="58c12b13-a4d3-4700-99f3-653ea25deffe" name="JsonPath Match 4">
+              <con:configuration>
+                <path>_index</path>
+                <content>${#Project#esIndexPrefix}_${="${#Project#entityPrefix}_${#TestSuite#index}_CET_Three".toLowerCase()}_v1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="7703cc3c-386b-42a8-97d8-1da5a90202a8" name="JsonPath Match 5">
+              <con:configuration>
+                <path>_source.${="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT3_CT".toLowerCase()}</path>
+                <content>-1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="cetCode" value="${=&quot;${#Project#entityPrefix}_${#TestSuite#index}_CET_Three&quot;.toLowerCase()}"/>
+              <con:entry key="id" value="-1"/>
             </con:parameters>
             <con:parameterOrder>
               <con:entry>pretty</con:entry>
@@ -23822,12 +24327,192 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Delete CT 3 data" id="c219f75f-ae7a-4860-bf6f-c0372d7119ee">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="Delete CT 3 data" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeTableData>\r
+         <tableData customTableCode="${#Project#entityPrefix}_${#TestSuite#index}_CET_Three"></tableData>\r
+      </ws:removeTableData>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get CT 3 data  - CT 3 document in Elastic Search" id="175a985e-8623-47e7-b63f-ab1446eceb33">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_{cetCode}/_doc/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Gf Get CT 3 data  - CT 3 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>404</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="58c12b13-a4d3-4700-99f3-653ea25deffe" name="JsonPath Match 4">
+              <con:configuration>
+                <path>_index</path>
+                <content>${#Project#esIndexPrefix}_${="${#Project#entityPrefix}_${#TestSuite#index}_CET_Three".toLowerCase()}_v1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="7703cc3c-386b-42a8-97d8-1da5a90202a8" name="JsonPath Match 5">
+              <con:configuration>
+                <path>found</path>
+                <content>false</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="cetCode" value="${=&quot;${#Project#entityPrefix}_${#TestSuite#index}_CET_Three&quot;.toLowerCase()}"/>
+              <con:entry key="id" value="-1"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete CT 4 data" id="3274bfa7-477b-4c36-ba7a-5057599098a5">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="Delete CT 4 data" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeTableData>\r
+         <tableData customTableCode="${#Project#entityPrefix}_${#TestSuite#index}_CET_Four"></tableData>\r
+      </ws:removeTableData>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get CT 4 data  - CT 4 document in Elastic Search" id="e236e50f-c900-4063-b5cd-d7c70e64a7c6">
+        <con:settings/>
+        <con:config service="Elastic search" methodName="" resourcePath="/${#Project#esIndexPrefix}_{cetCode}/_doc/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get CT 4 data  - CT 4 document in Elastic Search" id="a863cf1a-6942-4b4e-884f-053e4737f9ad" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#elasticSearchUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/demo_accounts/account/WS_FULL_4_CA_ES</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="1f7c717e-b626-4d54-bc08-b379255dad66" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>404</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="58c12b13-a4d3-4700-99f3-653ea25deffe" name="JsonPath Match 4">
+              <con:configuration>
+                <path>_index</path>
+                <content>${#Project#esIndexPrefix}_${="${#Project#entityPrefix}_${#TestSuite#index}_CET_Four".toLowerCase()}_v1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="7703cc3c-386b-42a8-97d8-1da5a90202a8" name="JsonPath Match 5">
+              <con:configuration>
+                <path>found</path>
+                <content>false</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="cetCode" value="${=&quot;${#Project#entityPrefix}_${#TestSuite#index}_CET_Four&quot;.toLowerCase()}"/>
+              <con:entry key="id" value="-1"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>pretty</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>238</con:value>
+        <con:value>14</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -25366,7 +26051,7 @@ public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript 
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>12</con:value>
+        <con:value>15</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -26726,11 +27411,11 @@ public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript 
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://localhost:8080/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>opencell.url2</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://localhost:8080/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>elasticSearchUrl</con:name>
@@ -26782,11 +27467,11 @@ public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript 
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>Z</con:value>
+      <con:value>-03:00</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>Z</con:value>
+      <con:value>-03:00</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>

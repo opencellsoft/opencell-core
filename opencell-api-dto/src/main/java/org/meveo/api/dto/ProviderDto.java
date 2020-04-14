@@ -111,7 +111,7 @@ public class ProviderDto extends AuditableEntityDto {
     /**
      * The invoice amount rounding.
      */
-    private int invoiceRounding;
+    private Integer invoiceRounding;
 
     /**
      * The invoice amount rounding mode.
