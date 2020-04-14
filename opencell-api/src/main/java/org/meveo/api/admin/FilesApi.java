@@ -18,20 +18,6 @@
 
 package org.meveo.api.admin;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.zip.ZipOutputStream;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -44,6 +30,19 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.bi.FlatFile;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author Edward P. Legaspi
@@ -128,8 +127,8 @@ public class FilesApi extends BaseApi {
     }
 
     /**
-     * @param data array of bytes as data uploaded
-     * @param filename file name
+     * @param data       array of bytes as data uploaded
+     * @param filename   file name
      * @param fileFormat file format
      * @return The created flat file record
      * @throws BusinessApiException business api exeption.
@@ -156,7 +155,7 @@ public class FilesApi extends BaseApi {
             }
 
             if (!StringUtils.isBlank(fileFormat)) {
-                return flatFileValidator.validateAndLogFile(file, filename, fileFormat);
+                return flatFileValidator.validateProcessFile(file, filename, fileFormat);
             }
             return null;
 
@@ -171,7 +170,7 @@ public class FilesApi extends BaseApi {
 
     /**
      * Allows to upload a base64 file
-     * 
+     *
      * @param postData contains filename and the base64 data to upload
      * @throws MeveoApiException
      */
@@ -210,7 +209,7 @@ public class FilesApi extends BaseApi {
 
     /**
      * Allows to unzip a file
-     * 
+     *
      * @param filePath
      * @param deleteOnError
      * @throws MeveoApiException
