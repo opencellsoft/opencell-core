@@ -18,7 +18,6 @@
 
 package org.meveo.api.security.filter;
 
-import java.lang.reflect.Method;
 import java.util.*;
 
 import javax.inject.Inject;
@@ -28,6 +27,8 @@ import org.meveo.api.dto.account.FilterResults;
 import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.security.config.FilterPropertyConfig;
+import org.meveo.api.security.config.FilterResultsConfig;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
@@ -41,17 +42,15 @@ public class ObjectFilter extends SecureMethodResultFilter {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public Object filterResult(Method methodContext, Object result, MeveoUser currentUser, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap) throws MeveoApiException {
+    public Object filterResult(FilterResultsConfig filterResultsConfig, Object result, MeveoUser currentUser, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap) throws MeveoApiException {
         if (result == null) {
             // result is empty. no need to filter.
             log.warn("Result is empty. Skipping filter...");
             return result;
         }
 
-        FilterResults filterResults = methodContext.getAnnotation(FilterResults.class);
-
         // Result is not annotated for filtering,
-        if (filterResults == null) {
+        if (filterResultsConfig == null) {
             return result;
         }
 
@@ -59,17 +58,17 @@ public class ObjectFilter extends SecureMethodResultFilter {
         Object itemToFilter = result;
 
         // Various property filters are connected by OR - any filter match will consider item as a valid one
-        filterLoop: for (FilterProperty filterProperty : filterResults.itemPropertiesToFilter()) {
+        filterLoop: for (FilterPropertyConfig propertyConfig : filterResultsConfig.getItemPropertiesToFilter()) {
             try {
 
                 Collection resolvedValues = new ArrayList<>();
-                Object resolvedValue = ReflectionUtils.getPropertyValue(itemToFilter, filterProperty.property());
+                Object resolvedValue = ReflectionUtils.getPropertyValue(itemToFilter, propertyConfig.getProperty());
                 if (resolvedValue == null) {
-                    if (filterProperty.allowAccessIfNull()) {
+                    if (propertyConfig.isAllowAccessIfNull()) {
                         log.debug("Adding item {} to filtered list.", itemToFilter);
                         allowAccess = true;
                     } else {
-                        log.debug("Property " + filterProperty.property() + " on item to filter " + itemToFilter + " was resolved to null. Entity will be filtered out");
+                        log.debug("Property " + propertyConfig.getProperty() + " on item to filter " + itemToFilter + " was resolved to null. Entity will be filtered out");
                     }
                     continue;
 
@@ -87,7 +86,7 @@ public class ObjectFilter extends SecureMethodResultFilter {
                         continue;
                     }
 
-                    BusinessEntity entity = filterProperty.entityClass().newInstance();
+                    BusinessEntity entity = propertyConfig.getEntityClass().newInstance();
                     entity.setCode((String) value);// FilterProperty could be expanded to include a target property to set instead of using "code"
 
                     if (securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
@@ -97,7 +96,7 @@ public class ObjectFilter extends SecureMethodResultFilter {
                     }
                 }
             } catch (InstantiationException | IllegalAccessException e) {
-                throw new InvalidParameterException("Failed to create new instance of: " + filterProperty.entityClass());
+                throw new InvalidParameterException("Failed to create new instance of: " + propertyConfig.getEntityClass());
             }
         }
 

@@ -27,7 +27,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.config.SecureMethodParameterConfig;
 import org.slf4j.Logger;
 
 /**
@@ -58,27 +60,27 @@ public class SecureMethodParameterHandler {
 	 * then returns it.
 	 * 
 	 * @param <T> The result class.
-	 * @param parameter the {@link SecureMethodParameter} describing which parameter is going to be evaluated and what parser to use to extract the data.
+	 * @param parameterConfig the {@link SecureMethodParameter} describing which parameter is going to be evaluated and what parser to use to extract the data.
 	 * @param values The array of parameters that was passed into the method.
 	 * @param resultClass The class of the value that will be extracted from the parameter.
 	 * @return The parameter value
 	 * @throws MeveoApiException Meveo api exception
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T getParameterValue(SecureMethodParameter parameter, Object[] values ,Class<T> resultClass) throws MeveoApiException {
-		SecureMethodParameterParser<?> parser = getParser(parameter);
+	public <T> T getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values , Class<T> resultClass) throws MeveoApiException {
+		SecureMethodParameterParser<?> parser = getParser(parameterConfig);
 		if (parser == null) {
 		    return null;
 		}
-		Object parameterValue = parser.getParameterValue(parameter, values);
+		Object parameterValue = parser.getParameterValue(parameterConfig, values);
 		return (T) parameterValue;
 	}
 
-	private SecureMethodParameterParser<?> getParser(SecureMethodParameter parameter) {
+	private SecureMethodParameterParser<?> getParser(SecureMethodParameterConfig parameterConfig) {
 		initialize();
-		SecureMethodParameterParser<?> parser = parserMap.get(parameter.parser());
+		SecureMethodParameterParser<?> parser = parserMap.get(parameterConfig.getParser());
 		if (parser == null) {
-			log.warn("No SecureMethodParameterParser instance of type {} found.", parameter.parser().getName());
+			log.warn("No SecureMethodParameterParser instance of type {} found.", parameterConfig.getParser().getName());
 		}
 		return parser;
 	}

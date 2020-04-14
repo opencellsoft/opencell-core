@@ -22,7 +22,9 @@ import javax.inject.Inject;
 
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.config.SecureMethodParameterConfig;
 import org.slf4j.Logger;
 
 /**
@@ -48,6 +50,6 @@ public abstract class SecureMethodParameterParser<T> {
      * @throws InvalidParameterException Parameter value was not resolved because of wrong path, or other parsing errors
      * @throws MissingParameterException Parameter value was null
      */
-    public abstract T getParameterValue(SecureMethodParameter parameter, Object[] values) throws InvalidParameterException, MissingParameterException;
+    public abstract T getParameterValue(SecureMethodParameterConfig parameter, Object[] values) throws InvalidParameterException, MissingParameterException;
 
 }

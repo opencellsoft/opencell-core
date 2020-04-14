@@ -41,10 +41,10 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.filter.ListFilter;
-import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Country;
@@ -54,7 +54,6 @@ import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.Address;
@@ -314,7 +313,7 @@ public class SellerApi extends AccountEntityApi {
             if (mobile != null) {
                 contactInformation.setMobile(mobile);
             }
-            
+
             final String fax = contactInformationDto.getFax();
             if (fax != null) {
                 contactInformation.setFax(fax);

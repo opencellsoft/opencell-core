@@ -18,25 +18,16 @@
 
 package org.meveo.api.security.Interceptor;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
-
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.AccessDeniedException;
+import org.meveo.api.security.config.SecureMethodParameterConfig;
+import org.meveo.api.security.config.SecuredBusinessEntityConfig;
+import org.meveo.api.security.config.SecuredBusinessEntityConfigFactory;
+import org.meveo.api.security.config.SecuredMethodConfig;
+import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.SecureMethodResultFilter;
 import org.meveo.api.security.filter.SecureMethodResultFilterFactory;
-import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.api.security.parameter.SecureMethodParameterHandler;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
@@ -52,9 +43,16 @@ import org.meveo.service.security.SecuredBusinessEntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
+
 /**
  * This will handle the processing of {@link SecuredBusinessEntityMethod} annotated methods.
- * 
+ *
  * @author Tony Alejandro
  * @author Wassim Drira
  * @author mohamed stitane
@@ -86,26 +84,32 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
     private RoleService roleService;
 
     /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
-    @Inject
     private ParamBeanFactory paramBeanFactory;
+
+    protected SecuredBusinessEntityConfigFactory securedBusinessEntityConfigFactory;
+
+    @Inject
+    public void setSecuredBusinessEntityConfigFactory(SecuredBusinessEntityConfigFactory securedBusinessEntityConfigFactory) {
+        this.securedBusinessEntityConfigFactory = securedBusinessEntityConfigFactory;
+    }
 
     /**
      * This is called before a method that makes use of the {@link SecuredBusinessEntityMethodInterceptor} is called. It contains logic on retrieving the attributes of the
      * {@link SecuredBusinessEntityMethod} annotation placed on the method and then validate the parameters described in the {@link SecureMethodParameter} validation attributes and
      * then filters the result using the {@link SecureMethodResultFilter} filter attribute.
-     * 
+     *
      * @param context  The invocation context
      * @return  The filtered result object
      * @throws Exception exception
      */
     @AroundInvoke
     public Object checkForSecuredEntities(InvocationContext context) throws Exception {
+        SecuredBusinessEntityConfig sbeConfig = securedBusinessEntityConfigFactory.get(context);
 
-        SecuredBusinessEntityMethod annotation = context.getMethod().getAnnotation(SecuredBusinessEntityMethod.class);
-        if (annotation == null) {
+        SecuredMethodConfig securedMethodConfig = sbeConfig.getSecuredMethodConfig();
+        if (securedMethodConfig == null) {
             return context.proceed();
         }
-
         // log.error("AKK checking secured entities currentUser is {}", currentUser);
 
         // check if secured entities should be checked.
@@ -120,9 +124,9 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap = getAllSecuredEntities(currentUser);
         boolean hasRestrictions = !allSecuredEntitiesMap.isEmpty();
 
-		if (!hasRestrictions) {
-			return context.proceed();
-		}
+        if (!hasRestrictions) {
+            return context.proceed();
+        }
 
         Class<?> objectClass = context.getMethod().getDeclaringClass();
         String objectName = objectClass.getSimpleName();
@@ -135,11 +139,11 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         List<SecuredEntity> securedEntities = allSecuredEntitiesMap.values().stream().flatMap(Set::stream).collect(Collectors.toList());
         addSecuredEntitiesToFilters(securedEntities, values);
 
-        SecureMethodParameter[] parametersForValidation = annotation.validate();
-        for (SecureMethodParameter parameter : parametersForValidation) {
-            BusinessEntity entity = parameterHandler.getParameterValue(parameter, values, BusinessEntity.class);
+        SecureMethodParameterConfig[] parametersForValidation = securedMethodConfig.getValidate();
+        for (SecureMethodParameterConfig parameterConfig : parametersForValidation) {
+            BusinessEntity entity = parameterHandler.getParameterValue(parameterConfig, values, BusinessEntity.class);
             if (entity == null) {
-                // TODO what to do if entity was not resolved because parameter value was null e.g. doing a search by a restricted field and dont provide any field value - that
+                // TODO what to do if entity was not resolved because parameterConfig value was null e.g. doing a search by a restricted field and dont provide any field value - that
                 // means that instead of filtering search criteria, results should be filtered instead
 
             } else {
@@ -152,9 +156,9 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         log.debug("Allowing method {}.{} to be invoked.", objectName, methodName);
         Object result = context.proceed();
 
-        SecureMethodResultFilter filter = filterFactory.getFilter(annotation.resultFilter());
+        SecureMethodResultFilter filter = filterFactory.getFilter(securedMethodConfig.getResultFilter());
         log.debug("Method {}.{} results will be filtered using {} filter.", objectName, methodName, filter);
-        result = filter.filterResult(context.getMethod(), result, currentUser, allSecuredEntitiesMap);
+        result = filter.filterResult(sbeConfig.getFilterResultsConfig(), result, currentUser, allSecuredEntitiesMap);
         return result;
 
     }
@@ -173,8 +177,8 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         allSecuredEntities.addAll(user.getSecuredEntities());
 
         List<Role> rolesWithSecuredEntities = roleService.getEntityManager().createNamedQuery("Role.getRolesWithSecuredEntities", Role.class)
-        		.setParameter("currentUserRoles", currentUser.getRoles())
-        		.getResultList();
+                .setParameter("currentUserRoles", currentUser.getRoles())
+                .getResultList();
         allSecuredEntities.addAll(rolesWithSecuredEntities.stream().map(Role::getSecuredEntities).flatMap(List::stream).collect(Collectors.toList()));
 
 

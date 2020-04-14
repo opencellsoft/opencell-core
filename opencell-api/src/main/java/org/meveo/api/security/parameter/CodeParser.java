@@ -20,7 +20,9 @@ package org.meveo.api.security.parameter;
 
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.config.SecureMethodParameterConfig;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 
@@ -34,21 +36,21 @@ import org.meveo.model.BusinessEntity;
 public class CodeParser extends SecureMethodParameterParser<BusinessEntity> {
 
     @Override
-    public BusinessEntity getParameterValue(SecureMethodParameter parameter, Object[] values) throws InvalidParameterException, MissingParameterException {
-        if (parameter == null) {
+    public BusinessEntity getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
+        if (parameterConfig == null) {
             return null;
         }
 
-        // retrieve the code from the parameter
-        String code = (String) values[parameter.index()];
+        // retrieve the code from the parameterConfig
+        String code = (String) values[parameterConfig.getIndex()];
         if (StringUtils.isBlank(code)) {
             // TODO how to handle when entity to filter can not be resolved because it is null - is it an error?
             return null;
-            // throw new MissingParameterException("code parameter is an empty value");
+            // throw new MissingParameterException("code parameterConfig is an empty value");
         }
 
         // instantiate a new entity.
-        Class<? extends BusinessEntity> entityClass = parameter.entityClass();
+        Class<? extends BusinessEntity> entityClass = parameterConfig.getEntityClass();
 
         BusinessEntity entity = null;
         try {
