@@ -344,36 +344,6 @@
 			WHERE id=-2;]]>
         </sql>
         
-        <insert tableName="meveo_module">
-        	<column name="id" valueNumeric="-3"></column>
-        	<column name="version" value="0"></column>
-        	<column name="disabled" value="0"></column>
-        	<column name="created" valueDate="now()"></column>
-        	<column name="creator" value="applicationInitializer"></column>
-        	<column name="code" value="aBOM2"></column>
-        	<column name="description" value="aBOM"></column>
-        	<column name="module_license" value="GPL"></column>
-        	<column name="installed" value="0"></column>
-        	<column name="script_instance_id" valueNumeric="-20"></column>
-        </insert>
-        
-        <insert tableName="cat_business_offer_model">
-        	<column name="id" valueNumeric="-3"></column>
-        </insert>
-        
-        <sql>
-        	<![CDATA[UPDATE ${db.schema.adapted}meveo_module 
-        		SET module_source='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-				<BusinessOfferModel license="GPL" code="aBOM2" description="description aBOM">
-				    <script code="org.meveo.service.script.selfcare.CreateAccess" description="add access"></script>
-				    <offerTemplate code="OF_DUMMY">
-				        <lifeCycleStatus>IN_DESIGN</lifeCycleStatus>
-				    </offerTemplate>
-				</BusinessOfferModel>
-	        	'
-			WHERE id=-3;]]>
-        </sql>
-        
         <insert tableName="crm_custom_field_tmpl">
         	<column name="id" valueNumeric="-1"></column>
         	<column name="version" value="0"></column>
