@@ -133,8 +133,9 @@ public class CounterTemplate extends EnableBusinessEntity {
     /**
      * The type field can be "Multi-value" if the accumulator is true
      */
-    @Column(name = "type")
-    private AccumulatorCounterTypeEnum type;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "accumulator_type")
+    private AccumulatorCounterTypeEnum accumulatorType;
 
     /**
      * An EL expression that returns a boolean that tells us if we accumulate or not.
@@ -228,34 +229,66 @@ public class CounterTemplate extends EnableBusinessEntity {
         this.accumulator = accumulator;
     }
 
-    public AccumulatorCounterTypeEnum getType() {
-        return type;
+    /**
+     * Gets the accumulator type multiple or single
+     * @return an accumulator counter type enum.
+     */
+    public AccumulatorCounterTypeEnum getAccumulatorType() {
+        return accumulatorType;
     }
 
-    public void setType(AccumulatorCounterTypeEnum type) {
-        this.type = type;
+    /**
+     * Sets the accumulator counter type.
+     * @param accumulatorType AccumulatorCounterTypeEnum
+     */
+    public void setAccumulatorType(AccumulatorCounterTypeEnum accumulatorType) {
+        this.accumulatorType = accumulatorType;
     }
 
+    /**
+     * Gets the EL filter
+     * @return the EL Filter
+     */
     public String getFilterEl() {
         return filterEl;
     }
 
+    /**
+     * Sets the EL filter
+     * @param filterEl
+     */
     public void setFilterEl(String filterEl) {
         this.filterEl = filterEl;
     }
 
+    /**
+     * Gets the EL key expression
+     * @return the EL key expression
+     */
     public String getKeyEl() {
         return keyEl;
     }
 
+    /**
+     * Sets EL key expression
+     * @param keyEl El key expression
+     */
     public void setKeyEl(String keyEl) {
         this.keyEl = keyEl;
     }
 
+    /**
+     * Gets the EL value expression
+     * @return EL value expression
+     */
     public String getValueEl() {
         return valueEl;
     }
 
+    /**
+     * Sets EL value expression
+     * @param valueEl EL value expression
+     */
     public void setValueEl(String valueEl) {
         this.valueEl = valueEl;
     }
