@@ -20,7 +20,9 @@ package org.meveo.api.security.parameter;
 
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.config.SecureMethodParameterConfig;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
@@ -35,15 +37,15 @@ import org.meveo.model.BusinessEntity;
 public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEntity> {
 
     @Override
-    public BusinessEntity getParameterValue(SecureMethodParameter parameter, Object[] values) throws InvalidParameterException, MissingParameterException {
-        if (parameter == null) {
+    public BusinessEntity getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
+        if (parameterConfig == null) {
             return null;
         }
         // get the code
         try {
-            String code = extractPropertyValue(parameter, values);
+            String code = extractPropertyValue(parameterConfig, values);
             // retrieve the entity
-            BusinessEntity entity = extractBusinessEntity(parameter, code);
+            BusinessEntity entity = extractBusinessEntity(parameterConfig, code);
             return entity;
         } catch (MissingParameterException e) {
             // TODO how to handle when entity to filter can not be resolved because it is null - is it an error?
@@ -53,19 +55,19 @@ public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEn
     }
 
     /**
-     * The value is determined by getting the parameter object and returning the value of the property.
+     * The value is determined by getting the parameterConfig object and returning the value of the property.
      * 
-     * @param parameter {@link SecureMethodParameter} instance that has the entity, index, and property attributes set.
+     * @param parameterConfig {@link SecureMethodParameter} instance that has the entity, index, and property attributes set.
      * @param values The method parameters.
      * @return The value retrieved from the object.
      * @throws InvalidParameterException Parameter value was not resolved because of wrong path, or other parsing errors
      * @throws MissingParameterException Parameter value was null
      */
-    private String extractPropertyValue(SecureMethodParameter parameter, Object[] values) throws InvalidParameterException, MissingParameterException {
+    private String extractPropertyValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
 
-        // retrieve the dto and property based on the parameter annotation
-        Object dto = values[parameter.index()];
-        String property = parameter.property();
+        // retrieve the dto and property based on the parameterConfig annotation
+        Object dto = values[parameterConfig.getIndex()];
+        String property = parameterConfig.getProperty();
         String propertyValue = null;
         try {
             propertyValue = (String) ReflectionUtils.getPropertyValue(dto, property);
@@ -81,8 +83,8 @@ public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEn
         return propertyValue;
     }
 
-    private BusinessEntity extractBusinessEntity(SecureMethodParameter parameter, String code) throws InvalidParameterException {
-        Class<? extends BusinessEntity> entityClass = parameter.entityClass();
+    private BusinessEntity extractBusinessEntity(SecureMethodParameterConfig parameterConfig, String code) throws InvalidParameterException {
+        Class<? extends BusinessEntity> entityClass = parameterConfig.getEntityClass();
         BusinessEntity entity = null;
         try {
             entity = entityClass.newInstance();

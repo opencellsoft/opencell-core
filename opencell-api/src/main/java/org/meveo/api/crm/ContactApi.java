@@ -20,11 +20,7 @@ package org.meveo.api.crm;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -42,7 +38,7 @@ import org.meveo.api.dto.response.crm.ContactsResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;

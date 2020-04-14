@@ -20,6 +20,7 @@ package org.meveo.api.security.parameter;
 
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.security.config.SecureMethodParameterConfig;
 import org.meveo.model.admin.User;
 
 /**
@@ -31,14 +32,14 @@ import org.meveo.model.admin.User;
 public class UserParser extends SecureMethodParameterParser<User> {
 
     @Override
-    public User getParameterValue(SecureMethodParameter parameter, Object[] values) throws InvalidParameterException, MissingParameterException {
-        if (parameter == null) {
+    public User getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
+        if (parameterConfig == null) {
             return null;
         }
 
-        Object parameterValue = values[parameter.index()];
+        Object parameterValue = values[parameterConfig.getIndex()];
         if (!(parameterValue instanceof User)) {
-            throw new InvalidParameterException("Parameter received at index: " + parameter.index() + " is not a User instance.");
+            throw new InvalidParameterException("Parameter received at index: " + parameterConfig.getIndex() + " is not a User instance.");
         }
 
         return (User) parameterValue;
