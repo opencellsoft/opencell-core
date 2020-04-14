@@ -1,0 +1,7 @@
+{
+    "code": "RS_FULL_171_SUB_RECURRING",
+    "description": "RS_FULL_171 Recurring subscription",
+    "userAccount": "RS_FULL_171_RECURRING",
+    "offerTemplate": "RS_FULL_171_RECURRING_OFFER",
+    "subscriptionDate": "2018-01-04T16:00:00Z"
+}

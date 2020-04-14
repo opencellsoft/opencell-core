@@ -15,12 +15,12 @@
             <h:panelGroup id="#{id}_entity">
                 <c:if test="#{edit}">
                     <c:if test="#{empty fieldItem}">
-                        <p:inputText id="#{id}_text" value="#{fieldItem}" disabled="true" label="#{label}"/>
-                        <p:inputText id="#{id}" type="hidden" value="#{fieldItem}" required="#{required}" label="#{label}"/>
+                        <p:inputText id="#{id}_text" value="#{fieldItem}" disabled="true" label="#{label}" />
+                        <p:inputText id="#{id}" type="hidden" value="#{fieldItem}" required="#{required}" label="#{label}" />
                     </c:if>
                     <c:if test="#{! empty fieldItem}">
-                        <p:inputText id="#{id}_text" value="#{fieldItem[valueLabelField]}" size="#{size}" disabled="true" label="#{label}"/>
-                        <p:inputText id="#{id}" type="hidden" value="#{fieldItem[valueLabelField]}" required="#{required}" label="#{label}"/>
+                        <p:inputText id="#{id}_text" value="#{fieldItem[valueLabelField]}" size="#{size}" disabled="true" label="#{label}" />
+                        <p:inputText id="#{id}" type="hidden" value="#{fieldItem[valueLabelField]}" required="#{required}" label="#{label}" />
                     </c:if>
                     <p:commandButton immediate="true" rendered="#{((!showPopupOnlyOnNew) or (showPopupOnlyOnNew and newEntity)) and !disabled}" id="#{id}_selectLink"
                         onclick="PF('dlg_#{popupId}').show()" icon="ui-icon-search" type="button" />
@@ -34,7 +34,7 @@
                             update="#{createEditPopupListenerUpdate}" />
                     </c:if>
                     <p:commandButton immediate="true" rendered="#{showResetButton}" id="#{id}_resetLink" update="#{id}_entity" icon="ui-icon-close">
-                        <f:setPropertyActionListener target="#{fieldItem}" value="#{null}"/>    
+                        <f:setPropertyActionListener target="#{fieldItem}" value="#{null}" />
                     </p:commandButton>
 
                 </c:if>
@@ -50,7 +50,8 @@
 
                         <c:if test="#{createEditPopup}">
                             <p:commandLink id="#{id}" value="#{fieldItem[valueLabelField]}" immediate="true" oncomplete="PF('#{createEditPopupId}').show()"
-                                actionListener="#{createEditPopupListenerBean[createEditPopupListenerViewMethod]}" update="#{createEditPopupListenerUpdate}" styleClass="field-value" />
+                                actionListener="#{createEditPopupListenerBean[createEditPopupListenerViewMethod]}" update="#{createEditPopupListenerUpdate}"
+                                styleClass="field-value" />
                         </c:if>
                     </c:if>
                 </c:if>
@@ -88,11 +89,16 @@
                 </p:selectOneMenu>
             </c:if>
             <c:if test="#{! edit}">
-                <c:if test="#{! fkToEntity}">
-                    <h:outputText id="#{id}" value="#{listBean.getTranslation(fieldItem[valueLabelField], fieldItem[valueLabelField2])}" styleClass="field-value" />
+                <c:if test="#{empty(listBean)}">
+                    <h:outputText id="#{id}" value="#{fieldItem[valueLabelField]}" styleClass="field-value" />
                 </c:if>
-                <c:if test="#{fkToEntity}">
-                    <h:outputText id="#{id}" value="#{listBean.persistenceService.findByCode(fieldItem)[valueLabelField]}" styleClass="field-value" />
+                <c:if test="#{!empty(listBean)}">
+                    <c:if test="#{! fkToEntity}">
+                        <h:outputText id="#{id}" value="#{listBean.getTranslation(fieldItem[valueLabelField], fieldItem[valueLabelField2])}" styleClass="field-value" />
+                    </c:if>
+                    <c:if test="#{fkToEntity}">
+                        <h:outputText id="#{id}" value="#{listBean.persistenceService.findByCode(fieldItem)[valueLabelField]}" styleClass="field-value" />
+                    </c:if>
                 </c:if>
             </c:if>
         </c:if>

@@ -1,0 +1,8 @@
+{
+    "oneShotCharge": "RS_BASE_OS1",
+    "subscription": "RS_FULL_200_SUB_INVOICE",
+    "operationDate": "2017-10-11",
+    "quantity": "4",
+    "description": "ApplyOneChargeEnterprise",
+    "amountWithoutTax": "100"
+}

@@ -1,0 +1,16 @@
+{
+    "username": "opencell.admin",
+    "password": "opencell.admin",
+    "email": "meveo.admin@opencellsoft.com",
+    "userRole": [
+        "administrateur"
+    ],
+    "accessibleEntity": [
+        {
+            "code": "RS_FULL_18_UAA1",
+            "entityClass": "org.meveo.model.billing.UserAccount"
+        }
+    ],
+    "firstName": "meveo",
+    "lastName": "admin"
+}

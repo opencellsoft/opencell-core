@@ -1,0 +1,12 @@
+{
+    "subscription": "RS_FULL_164_MULTI_TAX_SUB",
+    "servicesToActivate": {
+        "service": [
+            {
+                "code": "RS_FULL_TAX_VALIDITY_SERVICE1",
+                "quantity": "1",
+                "subscriptionDate": "2017-04-04"
+            }
+        ]
+    }
+}

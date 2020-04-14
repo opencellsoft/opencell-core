@@ -1,0 +1,8 @@
+{
+    "code": "RS_FULL_UA_CF_INHERITED",
+    "description": "RS_FULL_UA_CF_INHERITED",
+    "fieldType": "STRING",
+    "appliesTo": "UserAccount",
+    "storageType": "SINGLE",
+    "defaultValue": "userAccountCF"
+}

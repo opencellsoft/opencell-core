@@ -94,9 +94,8 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableBySubscriptionInBatch", query = "SELECT new org.meveo.admin.async.AmountsToInvoice(r.subscription.id, sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate  AND r.subscription.billingCycle=:billingCycle group by r.subscription.id"),
 
         @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByBA", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and r.billingAccount=:billingAccount"),
-        @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByBAExcludePrepaidWO", query =
-                "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate "
-                        + " and r.billingAccount=:billingAccount AND r.wallet.id NOT IN (:walletsIds)"),
+        @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByBAExcludePrepaidWO", query = "SELECT new org.meveo.model.billing.Amounts(sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate "
+                + " and r.billingAccount=:billingAccount AND r.wallet.id NOT IN (:walletsIds)"),
         @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByBAInBatch", query = "SELECT new org.meveo.admin.async.AmountsToInvoice(r.billingAccount.id, sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate  AND r.billingAccount.billingCycle=:billingCycle group by r.billingAccount.id"),
         @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByBAInBatchLimitByNextInvoiceDate", query = "SELECT new org.meveo.admin.async.AmountsToInvoice(r.billingAccount.id, sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate AND r.billingAccount.billingCycle=:billingCycle and :startDate<=r.billingAccount.nextInvoiceDate AND r.billingAccount.nextInvoiceDate<:endDate group by r.billingAccount.id"),
 
@@ -148,9 +147,8 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.listByInvoiceNotFree", query = "SELECT r FROM RatedTransaction r where r.invoice=:invoice and r.amountWithoutTax<>0 and r.status='BILLED' order by r.usageDate"),
         @NamedQuery(name = "RatedTransaction.listByInvoiceSubCategoryAggr", query = "SELECT r FROM RatedTransaction r where r.invoice=:invoice and r.invoiceAgregateF=:invoiceAgregateF and r.status='BILLED' order by r.usageDate"),
 
-        @NamedQuery(name = "RatedTransaction.sumPositiveRTByBillingRun", query =
-                "select sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id "
-                        + "FROM RatedTransaction r where r.billingRun.id=:billingRunId and r.amountWithoutTax > 0 and r.status='BILLED' group by r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id"),
+        @NamedQuery(name = "RatedTransaction.sumPositiveRTByBillingRun", query = "select sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id "
+                + "FROM RatedTransaction r where r.billingRun.id=:billingRunId and r.amountWithoutTax > 0 and r.status='BILLED' group by r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id"),
         @NamedQuery(name = "RatedTransaction.unInvoiceByInvoiceIds", query = "update RatedTransaction r set r.status='OPEN', r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice.id IN (:invoiceIds)"),
         @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByInvoiceIds", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.invoice.id IN (:invoicesIds)") })
 public class RatedTransaction extends BaseEntity implements ISearchable {
@@ -459,7 +457,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
      */
     @Transient
     private boolean taxRecalculated;
-    
+
     /**
      * input_unit_unitOfMeasure
      */
@@ -467,21 +465,67 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @JoinColumn(name = "input_unitofmeasure")
     private UnitOfMeasure inputUnitOfMeasure;
 
-	/**
+    /**
      * rating_unit_unitOfMeasure
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rating_unitofmeasure")
     private UnitOfMeasure ratingUnitOfMeasure;
 
+    /**
+     * Accounting code
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
+
     public RatedTransaction() {
         super();
     }
 
+    /**
+     * Constructor
+     * 
+     * @param usageDate Operation date
+     * @param unitAmountWithoutTax Unit amount without tax
+     * @param unitAmountWithTax Unit amount with tax
+     * @param unitAmountTax Unit amount tax
+     * @param quantity Rating quantity
+     * @param amountWithoutTax Amount without tax
+     * @param amountWithTax Amount with tax
+     * @param amountTax Amount tax
+     * @param status Status
+     * @param wallet Wallet on which operation is performed
+     * @param billingAccount Billing account
+     * @param userAccount User account
+     * @param invoiceSubCategory Invoice subcategory
+     * @param parameter1 Parameter 1
+     * @param parameter2 Parameter 2
+     * @param parameter3 Parameter 3
+     * @param parameterExtra Extra parameter
+     * @param orderNumber Order number
+     * @param subscription Subscription
+     * @param inputUnitDescription Input unit description
+     * @param ratingUnitDescription Rating unit description
+     * @param priceplan Price plan applied
+     * @param offerTemplate Offer template
+     * @param edr Related EDR
+     * @param code Charge/Operation code
+     * @param description Charge/Operation description
+     * @param startDate Date period that transaction covers - start date
+     * @param endDate Date period that transaction covers - end date
+     * @param seller Seller
+     * @param tax Tax
+     * @param taxPercent Tax percent
+     * @param serviceInstance Service instance associated
+     * @param taxClass Tax class
+     * @param accountingCode Accounting code
+     */
     public RatedTransaction(Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax,
             BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet, BillingAccount billingAccount, UserAccount userAccount, InvoiceSubCategory invoiceSubCategory, String parameter1,
             String parameter2, String parameter3, String parameterExtra, String orderNumber, Subscription subscription, String inputUnitDescription, String ratingUnitDescription, PricePlanMatrix priceplan,
-            OfferTemplate offerTemplate, EDR edr, String code, String description, Date startDate, Date endDate, Seller seller, Tax tax, BigDecimal taxPercent, ServiceInstance serviceInstance, TaxClass taxClass) {
+            OfferTemplate offerTemplate, EDR edr, String code, String description, Date startDate, Date endDate, Seller seller, Tax tax, BigDecimal taxPercent, ServiceInstance serviceInstance, TaxClass taxClass,
+            AccountingCode accountingCode) {
 
         super();
 
@@ -519,6 +563,11 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.serviceInstance = serviceInstance;
         this.updated = new Date();
         this.taxClass = taxClass;
+        if (accountingCode == null && this.invoiceSubCategory != null) {
+            this.accountingCode = invoiceSubCategory.getAccountingCode();
+        } else {
+            this.accountingCode = accountingCode;
+        }
     }
 
     /**
@@ -567,6 +616,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         this.taxClass = walletOperation.getTaxClass();
         this.inputUnitOfMeasure = walletOperation.getInputUnitOfMeasure();
         this.ratingUnitOfMeasure = walletOperation.getRatingUnitOfMeasure();
+        this.accountingCode = walletOperation.getAccountingCode();
 
         this.unityDescription = walletOperation.getInputUnitDescription();
         if (this.unityDescription == null) {
@@ -1124,20 +1174,34 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     public void setTaxClass(TaxClass taxClass) {
         this.taxClass = taxClass;
     }
-    
+
     public UnitOfMeasure getInputUnitOfMeasure() {
-		return inputUnitOfMeasure;
-	}
+        return inputUnitOfMeasure;
+    }
 
-	public void setInputUnitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
-		this.inputUnitOfMeasure = inputUnitOfMeasure;
-	}
+    public void setInputUnitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
+        this.inputUnitOfMeasure = inputUnitOfMeasure;
+    }
 
-	public UnitOfMeasure getRatingUnitOfMeasure() {
-		return ratingUnitOfMeasure;
-	}
+    public UnitOfMeasure getRatingUnitOfMeasure() {
+        return ratingUnitOfMeasure;
+    }
 
-	public void setRatingUnitOfMeasure(UnitOfMeasure ratingUnitOfMeasure) {
-		this.ratingUnitOfMeasure = ratingUnitOfMeasure;
-	}
+    public void setRatingUnitOfMeasure(UnitOfMeasure ratingUnitOfMeasure) {
+        this.ratingUnitOfMeasure = ratingUnitOfMeasure;
+    }
+
+    /**
+     * @return Accounting code
+     */
+    public AccountingCode getAccountingCode() {
+        return accountingCode;
+    }
+
+    /**
+     * @param accountingCode Accounting code
+     */
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
+    }
 }

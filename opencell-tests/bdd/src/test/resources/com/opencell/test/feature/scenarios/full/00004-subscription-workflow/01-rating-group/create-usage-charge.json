@@ -1,0 +1,8 @@
+{
+    "code": "RS_BASE_RATING_GROUP_USAGE",
+    "description": "RS_BASE_RATING_GROUP_USAGE",
+    "invoiceSubCategory": "CMP_DATA",
+    "unitMultiplicator": "1",
+    "filterParam1": "RATING_GROUP",
+    "taxClassCode" : "RS_BASE_taxClass"
+}

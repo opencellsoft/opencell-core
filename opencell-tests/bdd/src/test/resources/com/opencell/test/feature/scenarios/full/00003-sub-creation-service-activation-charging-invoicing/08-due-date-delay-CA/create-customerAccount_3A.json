@@ -1,0 +1,31 @@
+{
+    "code": "RS_BASE_CA_3A",
+    "description": "RS_BASE_CA_3A",
+    "externalRef1": "EXTREF1",
+    "externalRef2": "EXTREF2",
+    "name": {
+        "title": "MR",
+        "firstName": "firstname",
+        "lastName": "lastname"
+    },
+    "address": {
+        "address1": "adress1",
+        "address2": "address2",
+        "address3": "adress3",
+        "zipCode": "21000",
+        "city": "Dijon",
+        "country": "France"
+    },
+    "contactInformation": {
+        "email": "RS_BASE@manaty.net",
+        "phone": "1234",
+        "mobile": "092152154716"
+    },
+    "mandateIdentification": "1234",
+    "mandateDate": "2016-03-10",
+    "customer": "RS_BASE_CUST_3",
+    "currency": "EUR",
+    "language": "FRA",
+    "creditCategory": "Pro",
+    "dueDateDelayEL": "#{ba.id + 7}"
+}

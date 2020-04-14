@@ -1,0 +1,13 @@
+{
+    "code": "RS_FULL_200_PP_RATED_EL_Enterprise",
+    "description": "Offer_PP_RATED_EL",
+    "name": "RS_FULL_200_PP_RATED_EL",
+    "disabled": "false",
+    "offerServiceTemplate": [
+        {
+            "serviceTemplate": {
+                "code": "RS_FULL_200_PP_RATED_EL_Enterprise"
+            }
+        }
+    ]
+}

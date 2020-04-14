@@ -1,0 +1,17 @@
+{
+    "code": "RS_FULL_18_CAA1",
+    "description": "RS_FULL_18_CAA1",
+    "billingAccounts": {
+        "billingAccount": [
+            {
+                "code": "RS_FULL_18_BAA1"
+            },
+            {
+                "code": "RS_FULL_18_BAA2"
+            },
+            {
+                "code": "RS_FULL_18_BAA3"
+            }
+        ]
+    }
+}

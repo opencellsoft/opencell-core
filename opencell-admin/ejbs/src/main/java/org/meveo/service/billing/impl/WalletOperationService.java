@@ -1422,7 +1422,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             WalletOperation wo = null;
             if (chargeInstance != null) {
                 wo = new WalletOperation(chargeInstance, dto.getQuantity(), null, dto.getOperationDate(), dto.getOrderNumber(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(), dto.getParameterExtra(), tax,
-                    dto.getStartDate(), dto.getEndDate());
+                    dto.getStartDate(), dto.getEndDate(), null);
 
             } else {
                 Seller seller = null;
@@ -1445,7 +1445,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 }
                 wo = new WalletOperation(dto.getCode(), "description", wallet, dto.getOperationDate(), null, dto.getType(), currency, tax, dto.getUnitAmountWithoutTax(), dto.getUnitAmountWithTax(),
                     dto.getUnitAmountTax(), dto.getQuantity(), dto.getAmountWithoutTax(), dto.getAmountWithTax(), dto.getAmountTax(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(),
-                    dto.getParameterExtra(), dto.getStartDate(), dto.getEndDate(), dto.getSubscriptionDate(), offer, seller, null, dto.getRatingUnitDescription(), null, null, null, dto.getStatus());
+                    dto.getParameterExtra(), dto.getStartDate(), dto.getEndDate(), dto.getSubscriptionDate(), offer, seller, null, dto.getRatingUnitDescription(), null, null, null, null, dto.getStatus());
             }
 
             create(wo);

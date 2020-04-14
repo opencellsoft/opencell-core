@@ -1,0 +1,6 @@
+{
+    "code": "RS_FULL_164_SUB_INBETWEEN_TERMINATION",
+    "userAccount": "RS_BASE_UA_3",
+    "offerTemplate": "RS_BASE_OFFER1",
+    "subscriptionDate": "${#TestCase#10daysBefore}"
+}

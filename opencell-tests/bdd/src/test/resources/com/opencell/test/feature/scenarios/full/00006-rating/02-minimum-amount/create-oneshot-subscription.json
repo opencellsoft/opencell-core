@@ -1,0 +1,20 @@
+{
+    "code": "RS_BASE_MA_OS1",
+    "description": "RS_BASE_MA_OS1",
+    "invoiceSubCategory": "SUB_DATA",
+    "disabled": false,
+    "amountEditable": true,
+    "languageDescriptions": [
+        {
+            "languageCode": "FRA",
+            "description": "RS_BASE-MA Forfait Test"
+        }
+    ],
+    "inputUnitDescription": "1",
+    "ratingUnitDescription": "1",
+    "unitMultiplicator": "1",
+    "unitNbDecimal": "2",
+    "oneShotChargeTemplateType": "SUBSCRIPTION",
+    "immediateInvoicing": false,
+    "roundingModeDtoEnum": "NEAREST"
+}

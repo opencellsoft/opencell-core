@@ -1,0 +1,5 @@
+{
+    "description": "executeAction",
+    "type": "JAVA",
+    "script": "package org.meveo.service.script;\n    \n    import java.util.Map;\n    import java.math.BigDecimal;\n    import org.meveo.admin.exception.BusinessException;\n    import org.meveo.model.admin.User;\n    import org.meveo.model.crm.Provider;\n    import org.slf4j.Logger;\n    import org.slf4j.LoggerFactory;\n    import org.meveo.service.catalog.impl.OfferTemplateService;\n    import org.meveo.model.catalog.OfferTemplate;\n    \n    public class ExecuteCustomAction_443_Script extends Script {\n      \n        private static final Logger log = LoggerFactory.getLogger(ExecuteCustomAction_443_Script.class);\n        private OfferTemplateService offerTemplateService = (OfferTemplateService)getServiceInterface(\"OfferTemplateService\");\n    \n        public void execute(Map<String,Object> context) throws BusinessException{\n            OfferTemplate offerTemplate = (OfferTemplate) context.get(Script.CONTEXT_ENTITY);\n            offerTemplate.setDescription(\"action executed\");\n        }\n    }"
+}

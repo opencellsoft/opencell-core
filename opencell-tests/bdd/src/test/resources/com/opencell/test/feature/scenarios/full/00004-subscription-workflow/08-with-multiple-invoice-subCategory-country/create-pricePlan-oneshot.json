@@ -1,0 +1,8 @@
+{
+    "code": "RS_FULL_TAX_VALIDITY_OS1",
+    "description": "RS_FULL_TAX_VALIDITY_OS1",
+    "eventCode": "RS_FULL_TAX_VALIDITY_OS1",
+    "amountWithoutTax": "11",
+    "amountWithTax": "15",
+    "priority": "1"
+}

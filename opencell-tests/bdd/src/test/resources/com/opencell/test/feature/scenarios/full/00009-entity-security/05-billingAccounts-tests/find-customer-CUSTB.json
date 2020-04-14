@@ -1,0 +1,17 @@
+{
+    "code": "RS_FULL_18_CUSTB",
+    "description": "RS_FULL_18_CUSTB",
+    "customerAccounts": {
+        "customerAccount": [
+            {
+                "code": "RS_FULL_18_CAB1"
+            },
+            {
+                "code": "RS_FULL_18_CAB2"
+            },
+            {
+                "code": "RS_FULL_18_CAB3"
+            }
+        ]
+    }
+}

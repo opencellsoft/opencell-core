@@ -1,0 +1,13 @@
+{
+    "code": "RS_FULL_TAX_VALIDITY_USAGE1",
+    "description": "RS_FULL_TAX_VALIDITY_USAGE1",
+    "invoiceSubCategory": "INVOICE_SUB_CAT_COUNTRY_TAX_VALIDITY_164",
+    "disabled": false,
+    "amountEditable": false,
+    "unitMultiplicator": "1",
+    "unitNbDecimal": "2",
+    "filterParam1": "USAGE",
+    "priority": "1",
+    "roundingModeDtoEnum": "NEAREST",
+    "taxClassCode":"RS_BASE_taxClass"
+}

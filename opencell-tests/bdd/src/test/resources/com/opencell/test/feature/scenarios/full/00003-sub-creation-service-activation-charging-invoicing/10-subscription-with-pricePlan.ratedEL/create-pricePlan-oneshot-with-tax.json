@@ -1,0 +1,9 @@
+{
+    "code": "RS_FULL_200_PP_RATED_EL_NotEnterprise",
+    "description": "Price plan subscription",
+    "eventCode": "RS_FULL_200_PP_RATED_EL_NotEnterprise",
+    "amountWithoutTax": "10",
+    "amountWithTax": "15",
+    "priority": "1",
+    "ratingWithTaxEL": "#{op.quantity.multiply(4).multiply(op.priceplan.amountWithTax)}"
+}

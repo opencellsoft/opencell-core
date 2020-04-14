@@ -1,0 +1,8 @@
+{
+    "code": "RS_FULL_200_SUB_Reference_Date",
+    "description": "RS_FULL_200_SUB_Reference_Date",
+    "userAccount": "RS_FULL_200_UA_Reference_Date",
+    "offerTemplate": "RS_BASE_OFFER1",
+    "subscriptionDate": "2015-02-01",
+    "endAgreementDate": "2015-05-01"
+}

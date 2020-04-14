@@ -1,0 +1,9 @@
+{
+    "code": "RS_BASE_PC100_PP",
+    "description": "price plan product 100",
+    "eventCode": "RS_BASE_PC100",
+    "amountWithoutTax": "5",
+    "amountWithTax": "6",
+    "priority": "1",
+    "amountWithoutTaxEL": "#{mv:getInheritedCFValue(productInstance,'RS_FULL_164_CF_PROD_PRICE100')}"
+}

@@ -1,0 +1,13 @@
+{
+    "code": "RS_BASE_OFFER_SUB_AGE",
+    "description": "RS_BASE_OFFER_SUB_AGE",
+    "name": "RS_BASE_OFFER2",
+    "disabled": false,
+    "offerServiceTemplate": [
+        {
+            "serviceTemplate": {
+                "code": "RS_BASE_SERVICE_SUB_AGE"
+            }
+        }
+    ]
+}

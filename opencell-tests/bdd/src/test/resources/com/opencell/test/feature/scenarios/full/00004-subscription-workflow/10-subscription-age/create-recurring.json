@@ -1,0 +1,24 @@
+{
+    "code": "RS_BASE_REC_SUB_AGE",
+    "description": "RS_BASE_REC1",
+    "invoiceSubCategory": "SUB_DATA",
+    "disabled": false,
+    "amountEditable": true,
+    "languageDescriptions": [
+        {
+            "languageCode": "FRA",
+            "description": "RS_BASE-Subscription Age"
+        }
+    ],
+    "calendar": "MONTHLY",
+    "subscriptionProrata": true,
+    "terminationProrata": true,
+    "applyInAdvance": true,
+    "inputUnitDescription": "1",
+    "ratingUnitDescription": "1",
+    "unitMultiplicator": "1",
+    "unitNbDecimal": "2",
+    "durationTermInMonth": "4",
+    "roundingModeDtoEnum": "NEAREST",
+    "taxClassCode":"RS_BASE_taxClass"
+}

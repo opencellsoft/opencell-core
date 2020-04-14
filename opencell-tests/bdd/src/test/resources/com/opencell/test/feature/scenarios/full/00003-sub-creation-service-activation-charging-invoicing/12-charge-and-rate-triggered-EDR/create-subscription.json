@@ -1,0 +1,8 @@
+{
+    "code": "RS_FULL_200_SUB_CDR",
+    "description": "RS_FULL_200_SUB_CDR",
+    "userAccount": "RS_BASE_UA",
+    "offerTemplate": "RS_BASE_OFFER1",
+    "subscriptionDate": "2019-02-01",
+    "endAgreementDate": "2019-05-01"
+}

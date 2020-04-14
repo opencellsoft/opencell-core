@@ -1,0 +1,12 @@
+{
+    "code": "RS_BASE_MA_SERVICE1",
+    "description": "RS_BASE_MA_SERVICE1",
+    "invoicingCalendar": "MONTHLY",
+    "serviceChargeTemplateSubscriptions": {
+        "serviceChargeTemplateSubscription": [
+            {
+                "code": "RS_BASE_MA_OS1"
+            }
+        ]
+    }
+}

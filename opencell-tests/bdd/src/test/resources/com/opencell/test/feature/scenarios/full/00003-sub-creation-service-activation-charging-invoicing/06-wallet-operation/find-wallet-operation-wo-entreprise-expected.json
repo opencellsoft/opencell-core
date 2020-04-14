@@ -1,0 +1,8 @@
+{
+    "unitAmountWithoutTax": 100,
+    "unitAmountWithTax": 105,
+    "unitAmountTax": 5,
+    "amountWithoutTax": 400,
+    "amountWithTax": 420,
+    "amountTax": 20
+}

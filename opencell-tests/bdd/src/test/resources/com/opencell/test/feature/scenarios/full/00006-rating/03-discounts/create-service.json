@@ -1,0 +1,12 @@
+{
+    "code": "RS_FULL_MULTIPLE_DP_SERVICE",
+    "description": "RS_FULL_171_MULTIPLE_DP_SERVICE",
+    "invoicingCalendar": "MONTHLY",
+    "serviceChargeTemplateUsages": {
+        "serviceChargeTemplateUsage": [
+            {
+                "code": "RS_BASE_DP_MULTIPLE_USAGE_CHARGE"
+            }
+        ]
+    }
+}

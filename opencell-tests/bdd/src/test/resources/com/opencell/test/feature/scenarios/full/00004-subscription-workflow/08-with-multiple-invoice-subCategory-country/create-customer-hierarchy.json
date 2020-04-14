@@ -1,0 +1,44 @@
+{
+    "crmAccountType": "C_UA",
+    "crmParentCode": "SELLER_US",
+    "code": "RS_FULL_164_MULTI_TAX",
+    "description": "RS_FULL_164_MULTI_TAX_Hierarchy",
+    "externalRef1": "Ref1",
+    "externalRef2": "Ref2",
+    "name": {
+        "title": "MR",
+        "firstName": "Edward",
+        "lastName": "Legaspi"
+    },
+    "address": {
+        "address1": "Address1",
+        "address2": "Address2",
+        "zipCode": "20250",
+        "city": "Dijon",
+        "country": "France",
+        "state": "Paris"
+    },
+    "contactInformation": {
+        "email": "edward.legaspi@opencellsoft.com",
+        "phone": "+123456789",
+        "mobile": "+123456789"
+    },
+    "language": "ENG",
+    "terminationReason": "TERM_REASON_1",
+    "subscriptionDate": "2017-04-04",
+    "customerCategory": "CLIENT",
+    "customerBrand": "DEFAULT",
+    "mandateIdentification": "M1",
+    "currency": "USD",
+    "caStatus": "ACTIVE",
+    "creditCategory": "VIP",
+    "dunningLevel": "R0",
+    "billingCycle": "CYC_INV_MT_3",
+    "seller": "SELLER_US",
+    "country": "US",
+    "nextInvoiceDate": "2017-04-01",
+    "electronicBilling": true,
+    "baStatus": "ACTIVE",
+    "email": "edward.legaspi@opencellsoft.com",
+    "uaStatus": "ACTIVE"
+}

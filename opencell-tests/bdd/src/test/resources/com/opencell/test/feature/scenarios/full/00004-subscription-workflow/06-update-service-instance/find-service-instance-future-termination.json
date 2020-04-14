@@ -1,0 +1,122 @@
+{
+    "actionStatus": {
+        "status": "SUCCESS"
+    },
+    "serviceInstances": [
+        {
+            "auditable": {
+                "created": 1584428457522,
+                "updated": 1584429628288,
+                "creator": "opencell.admin",
+                "updater": "opencell.admin"
+            },
+            "id": 30,
+            "code": "RS_BASE_SERVICE1",
+            "description": "RS_BASE_SERVICE1",
+            "status": "ACTIVE",
+            "statusDate": 1584428457647,
+            "subscriptionDate": 1489536000000,
+            "quantity": 5,
+            "endAgreementDate": 1490745600000,
+            "serviceRenewal": {
+                "initialTermType": "RECURRING",
+                "renewalTermType": null,
+                "initialyActiveFor": null,
+                "initialyActiveForUnit": null,
+                "calendarInitialyActiveFor": null,
+                "autoRenew": false,
+                "daysNotifyRenewal": null,
+                "endOfTermAction": null,
+                "terminationReasonCode": null,
+                "renewFor": null,
+                "calendarRenewFor": null,
+                "renewForUnit": null,
+                "extendAgreementPeriodToSubscribedTillDate": false
+            },
+            "auditableField": [
+                {
+                    "entityClass": "org.meveo.model.billing.ServiceInstance",
+                    "fieldName": "status",
+                    "changeOrigin": "API",
+                    "originName": "/billing/subscription/activateServices",
+                    "previousState": "",
+                    "currentState": "INACTIVE",
+                    "created": "2020-03-17T07:00:57Z",
+                    "actor": "opencell.admin"
+                },
+                {
+                    "entityClass": "org.meveo.model.billing.ServiceInstance",
+                    "fieldName": "status",
+                    "changeOrigin": "API",
+                    "originName": "/billing/subscription/activateServices",
+                    "previousState": "INACTIVE",
+                    "currentState": "ACTIVE",
+                    "created": "2020-03-17T07:00:57Z",
+                    "actor": "opencell.admin"
+                }
+            ],
+            "recurringChargeInstance": [
+                {
+                    "auditable": {
+                        "created": 1584428457534,
+                        "updated": 1584428457647,
+                        "creator": "opencell.admin",
+                        "updater": "opencell.admin"
+                    },
+                    "id": 104,
+                    "code": "RS_BASE_REC1",
+                    "description": "RS_BASE-Forfait Test",
+                    "status": "ACTIVE",
+                    "sellerCode": "SELLER_FR",
+                    "userAccountCode": "RS_BASE_UA_3"
+                }
+            ],
+            "subscriptionChargeInstance": [
+                {
+                    "auditable": {
+                        "created": 1584428457537,
+                        "updated": 1584428457568,
+                        "creator": "opencell.admin",
+                        "updater": "opencell.admin"
+                    },
+                    "id": 105,
+                    "code": "RS_BASE_OS1",
+                    "description": "RS_BASE-Forfait Test",
+                    "status": "CLOSED",
+                    "sellerCode": "SELLER_FR",
+                    "userAccountCode": "RS_BASE_UA_3"
+                }
+            ],
+            "terminationChargeInstance": [
+                {
+                    "auditable": {
+                        "created": 1584428457540,
+                        "creator": "opencell.admin"
+                    },
+                    "id": 106,
+                    "code": "RS_BASE_OST1",
+                    "description": "RS_BASE-Termination Test",
+                    "status": "INACTIVE",
+                    "sellerCode": "SELLER_FR",
+                    "userAccountCode": "RS_BASE_UA_3"
+                }
+            ],
+            "usageChargeInstance": [
+                {
+                    "auditable": {
+                        "created": 1584428457542,
+                        "updated": 1584428457647,
+                        "creator": "opencell.admin",
+                        "updater": "opencell.admin"
+                    },
+                    "id": 107,
+                    "code": "RS_BASE_USAGE1",
+                    "description": "RS_BASE-Forfait Test",
+                    "status": "ACTIVE",
+                    "sellerCode": "SELLER_FR",
+                    "userAccountCode": "RS_BASE_UA_3"
+                }
+            ]
+        }
+    ]
+}

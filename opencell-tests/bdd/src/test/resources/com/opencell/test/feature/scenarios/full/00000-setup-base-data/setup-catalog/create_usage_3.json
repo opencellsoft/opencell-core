@@ -17,6 +17,7 @@
 	"filterParam1": "USAGE3",
 	"priority": "2",
 	"roundingModeDtoEnum": "NEAREST",
+    "taxClassCode" : "RS_BASE_taxClass",
 	"triggeredEdrs": {
 		"triggeredEdr": [
 			{

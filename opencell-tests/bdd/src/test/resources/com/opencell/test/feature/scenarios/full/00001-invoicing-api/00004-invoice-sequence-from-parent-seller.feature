@@ -1,4 +1,4 @@
-@full
+@full @ignore
 Feature: Invoicing - Invoice Sequence from Parent Seller
 
   @admin @superadmin

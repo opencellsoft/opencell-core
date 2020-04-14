@@ -1,0 +1,18 @@
+{
+    "filters": {
+        "entry": [
+            {
+                "key": "wallet.userAccount.code",
+                "value": "RS_FULL_200_UA_INVOICE"
+            },
+            {
+                "key": "fromRange operationDate",
+                "value": "2015-02-01"
+            },
+            {
+                "key": "toRange operationDate",
+                "value": "2015-02-01"
+            }
+        ]
+    }
+}

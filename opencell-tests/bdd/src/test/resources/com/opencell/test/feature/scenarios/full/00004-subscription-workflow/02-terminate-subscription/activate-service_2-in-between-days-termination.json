@@ -1,0 +1,13 @@
+<activateServices>
+            <subscription>RS_FULL_164_SUB_INBETWEEN_2_TERMINATION</subscription>
+            <servicesToActivate>
+               <service code="RS_BASE_SERVICE1">
+                  <quantity>1</quantity>
+                  <subscriptionDate>${#TestCase#5daysBefore}</subscriptionDate>
+               </service>
+               <service code="RS_BASE_SERVICE2">
+                  <quantity>1</quantity>
+                  <subscriptionDate>${#TestCase#2daysBefore}</subscriptionDate>
+               </service>
+            </servicesToActivate>
+         </activateServices>

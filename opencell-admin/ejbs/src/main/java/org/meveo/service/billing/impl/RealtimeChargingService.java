@@ -132,7 +132,7 @@ public class RealtimeChargingService {
         ci.setCurrency(currency);
         ci.setChargeTemplate(chargeTemplate);
 
-        WalletOperation op = new WalletOperation(ci, inputQuantity, null, subscriptionDate, null, param1, param2, param3, null, null, null, null);
+        WalletOperation op = new WalletOperation(ci, inputQuantity, null, subscriptionDate, null, param1, param2, param3, null, null, null, null, null);
 
         op.setOfferTemplate(offerTemplate);
         op.setSeller(seller);

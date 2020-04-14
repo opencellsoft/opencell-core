@@ -1,14 +1,14 @@
-{
-	"code": "SELLER_FR",
-	"description": "France Seller",
-	"currencyCode": "EUR",
-	"languageCode": "FRA",
-	"parentSeller": "MAIN_SELLER",
-	"invoiceTypeSequences": {
-		"RS_BASE_TEST-Type": {
-			"prefixEL": "SellFact_",
-			"sequenceSize": 9,
-			"currentInvoiceNb": 9
-		}
-	}
-}
+    {
+    	"code": "SELLER_FR",
+    	"description": "France Seller",
+    	"currencyCode": "EUR",
+    	"languageCode": "FRA",
+    	"parentSeller": "MAIN_SELLER",
+    	"invoiceTypeSequences": {
+    		"RS_BASE_TEST-Type": {
+    			"prefixEL": "SellFact_",
+    			"sequenceSize": 9,
+    			"currentInvoiceNb": 9
+    		}
+    	}
+    }

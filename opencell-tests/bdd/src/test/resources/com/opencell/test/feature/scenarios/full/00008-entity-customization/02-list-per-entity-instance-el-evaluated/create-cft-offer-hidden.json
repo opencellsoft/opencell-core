@@ -1,0 +1,9 @@
+{
+    "code": "RS_FULL_443_CF_HIDDEN_100",
+    "description": "RS_FULL_443_CF_HIDDEN_100",
+    "fieldType": "STRING",
+    "appliesTo": "OfferTemplate",
+    "storageType": "SINGLE",
+    "defaultValue": "HIDDEN",
+    "applicableOnEl": "#{!entity.code.equals('RS_BASE_OFFER1')}"
+}

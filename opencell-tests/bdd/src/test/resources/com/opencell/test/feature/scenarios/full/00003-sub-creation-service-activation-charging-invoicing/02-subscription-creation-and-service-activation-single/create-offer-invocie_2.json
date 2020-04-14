@@ -1,0 +1,18 @@
+{
+    "code": "RS_FULL_200_OFFER_INVOICE_2",
+    "description": "RS_FULL_200_OFFER_INVOICE_2",
+    "name": "RS_FULL_200_OFFER_INVOICE_2",
+    "disabled": false,
+    "offerServiceTemplate": [
+        {
+            "serviceTemplate": {
+                "code": "RS_FULL_200_SERVICE_INVOICE_3"
+            }
+        },
+        {
+            "serviceTemplate": {
+                "code": "RS_FULL_200_SERVICE_INVOICE_4"
+            }
+        }
+    ]
+}

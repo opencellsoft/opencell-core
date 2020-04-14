@@ -1,0 +1,15 @@
+{
+    "code": "RS_FULL_200_SUB_CAT_REC1",
+    "description": "Recurring charge",
+    "invoiceSubCategory": "RS_FULL_200_SUB_CAT_2",
+    "disabled": false,
+    "amountEditable": true,
+    "calendar": "MONTHLY",
+    "subscriptionProrata": true,
+    "terminationProrata": true,
+    "applyInAdvance": true,
+    "unitMultiplicator": "1",
+    "unitNbDecimal": "2",
+    "durationTermInMonth": "4",
+    "roundingModeDtoEnum": "NEAREST"
+}

@@ -1,0 +1,8 @@
+{
+    "code": "RS_FULL_443_RCF100",
+    "description": "RS_FULL_443_RCF100",
+    "fieldType": "ENTITY",
+    "appliesTo": "OfferTemplate",
+    "entityClazz": "org.meveo.model.crm.Customer",
+    "storageType": "SINGLE"
+}
