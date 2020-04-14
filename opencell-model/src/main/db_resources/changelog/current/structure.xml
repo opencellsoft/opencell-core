@@ -2954,6 +2954,14 @@ END $$;]]>
             <column name="parameter3_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
+    <changeSet id="#5130_20200414" author="khalidHORRI">
+    <addColumn tableName="cat_counter_template">
+        <column name="accumulator_type" type="varchar(35)"/>
+        <column name="filter_el" type="varchar(2000)"/>
+        <column name="key_el" type="varchar(2000)"/>
+        <column name="value_el" type="varchar(2000)"/>
+    </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
 
