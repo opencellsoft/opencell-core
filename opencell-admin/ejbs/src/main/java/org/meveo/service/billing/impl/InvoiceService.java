@@ -2953,8 +2953,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             cAggregate.addSubCategoryInvoiceAggregate(scAggregate);
+        }
+        
+        for (CategoryInvoiceAgregate cAggregate : categoryAggregates.values()) {
+            invoice.addAmountWithoutTax(cAggregate.getAmountWithoutTax());
+            invoice.addAmountWithTax(cAggregate.getAmountWithTax());
+            invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : cAggregate.getAmountTax());
+        }
+        
+        
+        for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates) {
 
             Map<Tax, BigDecimal> amountCumulativeForTax = scAggregate.getAmountsByTax();
+            
+            InvoiceSubCategory invoiceSubCategory = scAggregate.getInvoiceSubCategory();
+            String caKey = (scAggregate.getUserAccount() != null ? scAggregate.getUserAccount().getId() : "") + "_" + invoiceSubCategory.getInvoiceCategory().getId();
+            CategoryInvoiceAgregate cAggregate = categoryAggregates.get(caKey);
 
             if ((amountCumulativeForTax != null) && !BigDecimal.ZERO.equals(sumMapValues(amountCumulativeForTax))) {
 
@@ -3054,20 +3068,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Calculate invoice total amounts by the sum of tax aggregates or category aggregates minus discount aggregates
         // Left here in case tax script modifies something
         if (!isExonerated && (taxAggregates != null) && !taxAggregates.isEmpty()) {
+            invoice.setAmountWithoutTax(BigDecimal.ZERO);
+            invoice.setAmountWithTax(BigDecimal.ZERO);
+            invoice.setAmountTax(BigDecimal.ZERO);
             for (TaxInvoiceAgregate taxAggregate : taxAggregates.values()) {
                 invoice.addAmountWithoutTax(taxAggregate.getAmountWithoutTax());
                 invoice.addAmountWithTax(taxAggregate.getAmountWithTax());
                 invoice.addAmountTax(taxAggregate.getAmountTax());
             }
-
         } else {
-
-            for (CategoryInvoiceAgregate cAggregate : categoryAggregates.values()) {
-                invoice.addAmountWithoutTax(cAggregate.getAmountWithoutTax());
-                invoice.addAmountWithTax(cAggregate.getAmountWithTax());
-                invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : cAggregate.getAmountTax());
-            }
-
             for (SubCategoryInvoiceAgregate discountAggregate : discountAggregates) {
                 invoice.addAmountWithoutTax(discountAggregate.getAmountWithoutTax());
                 invoice.addAmountWithTax(discountAggregate.getAmountWithTax());
@@ -3241,6 +3250,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         if (expression.indexOf("iv") >= 0) {
             userMap.put("iv", invoice);
+        }
+        if (expression.indexOf("invoice") >= 0) {
+            userMap.put("invoice", invoice);
         }
         if (expression.indexOf("dpi") >= 0) {
             userMap.put("dpi", dpi);
