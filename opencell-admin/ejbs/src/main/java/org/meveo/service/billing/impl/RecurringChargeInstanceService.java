@@ -43,6 +43,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.WalletTemplate;
@@ -201,10 +202,19 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             create(chargeInstance);
         }
 
-        if (serviceChargeTemplateRecurring.getCounterTemplate() != null) {
+        if ((serviceChargeTemplateRecurring.getAccumulatorCounterTemplates() != null && !serviceChargeTemplateRecurring.getAccumulatorCounterTemplates().isEmpty())
+                || serviceChargeTemplateRecurring.getCounterTemplate() != null) {
+            log.debug("Usage charge has {} accumulator counter templates", serviceChargeTemplateRecurring.getAccumulatorCounterTemplates().size());
+            for (CounterTemplate counterTemplate : serviceChargeTemplateRecurring.getAccumulatorCounterTemplates()) {
+                log.debug("Accumulator counter template {}", counterTemplate);
+                CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, counterTemplate, isVirtual);
+                log.debug("Accumulator counter instance {} will be add to charge instance {}", counterInstance, chargeInstance);
+                chargeInstance.addCounterInstance(counterInstance);
+            }
+            log.debug("Counter template {}", serviceChargeTemplateRecurring.getCounterTemplate());
             CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, serviceChargeTemplateRecurring.getCounterTemplate(), isVirtual);
+            log.debug("Counter instance {} will be add to charge instance {}", counterInstance, chargeInstance);
             chargeInstance.setCounter(counterInstance);
-
             if (!isVirtual) {
                 update(chargeInstance);
             }
