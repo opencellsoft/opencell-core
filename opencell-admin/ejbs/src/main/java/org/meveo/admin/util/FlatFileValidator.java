@@ -520,7 +520,7 @@ public class FlatFileValidator {
      */
     private void processFile(FlatFile flatFile) throws BusinessException {
         FileFormat fileFormat = flatFile != null ? flatFile.getFileFormat() : null;
-        if (flatFile != null && flatFile.getStatus() == FileStatusEnum.WELL_FORMED && fileFormat != null)){
+        if (flatFile != null && flatFile.getStatus() == FileStatusEnum.WELL_FORMED && fileFormat != null) {
             executeJob(fileFormat.getJobCode());
         }
     }
