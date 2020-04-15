@@ -62,11 +62,30 @@ public class ServiceChargeTemplateRecurring extends ServiceChargeTemplate<Recurr
     @JoinTable(name = "cat_serv_rec_wallet_template", joinColumns = @JoinColumn(name = "service_rec_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
     @OrderColumn(name = "INDX")
     private List<WalletTemplate> walletTemplates;
-    
+
+    /**
+     * Counters associated to a charge template.
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_serv_rec_counter_template", joinColumns = @JoinColumn(name = "service_rec_templt_id"), inverseJoinColumns = @JoinColumn(name = "counter_template_id"))
+    @OrderColumn(name = "INDX")
+    private List<CounterTemplate> accumulatorCounterTemplates;
+
+    /**
+     * Get the counter template.
+     *
+     * @return a counter template.
+     */
+
     public CounterTemplate getCounterTemplate() {
         return counterTemplate;
     }
 
+    /**
+     * Set counter template.
+     *
+     * @param counterTemplate
+     */
     public void setCounterTemplate(CounterTemplate counterTemplate) {
         this.counterTemplate = counterTemplate;
     }
@@ -77,6 +96,24 @@ public class ServiceChargeTemplateRecurring extends ServiceChargeTemplate<Recurr
 
     public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
         this.walletTemplates = walletTemplates;
+    }
+
+    /**
+     * Gets Counters template for a charge template.
+     *
+     * @return list of counters template
+     */
+    public List<CounterTemplate> getAccumulatorCounterTemplates() {
+        return accumulatorCounterTemplates;
+    }
+
+    /**
+     * Sets counters template.
+     *
+     * @param counterTemplates counters template
+     */
+    public void setAccumulatorCounterTemplates(List<CounterTemplate> counterTemplates) {
+        this.accumulatorCounterTemplates = counterTemplates;
     }
 
     @Override

@@ -249,6 +249,14 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     protected String orderNumber;
 
     /**
+     * Wallet instances
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "billing_chrg_inst_counter", joinColumns = @JoinColumn(name = "chrg_instance_id"), inverseJoinColumns = @JoinColumn(name = "counter_instance_id"))
+    @OrderColumn(name = "INDX")
+    protected List<CounterInstance> counterInstances = new ArrayList<>();
+
+    /**
      * Resolved taxClass
      */
     @Transient
@@ -540,4 +548,33 @@ public abstract class ChargeInstance extends BusinessCFEntity {
         return null;
     }
 
+    /**
+     * Gets counter instances.
+     *
+     * @return counter instances
+     */
+    public List<CounterInstance> getCounterInstances() {
+        return counterInstances;
+    }
+
+    /**
+     * Sets counter instances.
+     *
+     * @param counterInstances counter instances
+     */
+    public void setCounterInstances(List<CounterInstance> counterInstances) {
+        this.counterInstances = counterInstances;
+    }
+
+    /**
+     * Add a counter instance.
+     *
+     * @param counterInstance the counter instance
+     */
+    public void addCounterInstance(CounterInstance counterInstance) {
+        if (this.counterInstances == null) {
+            this.counterInstances = new ArrayList<>();
+        }
+        this.counterInstances.add(counterInstance);
+    }
 }

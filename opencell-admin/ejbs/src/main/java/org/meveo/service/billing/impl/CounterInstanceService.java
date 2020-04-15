@@ -789,8 +789,10 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator()) {
             if (CounterTypeEnum.USAGE_AMOUNT.equals(counterPeriod.getCounterType())) {
                 value = appProvider.isEntreprise() ? walletOperation.getAmountWithoutTax() : walletOperation.getAmountWithTax();
+                log.debug("Increment counter period value {} by amount {}", counterPeriod, value);
             } else if (CounterTypeEnum.USAGE.equals(counterPeriod.getCounterType())) {
                 value = walletOperation.getQuantity();
+                log.debug("Increment counter period value {} by quantity {}", counterPeriod, value);
             }
 
             counterPeriod.setValue(counterPeriod.getValue().add(value));
