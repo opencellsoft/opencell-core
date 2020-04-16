@@ -83,8 +83,8 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
      *
      * @return LazyDataModel implementation.
      */
-    public LazyDataModel<CounterTemplate> getAccumulatorLazyDataModel() {
-        filters.put("accumulator", true);
+    public LazyDataModel<CounterTemplate> getDecrimentalLazyDataModel() {
+        filters.put("accumulator", false);
         return getLazyDataModel(filters, false);
     }
 

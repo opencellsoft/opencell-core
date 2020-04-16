@@ -21,6 +21,7 @@ package org.meveo.service.billing.impl;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -284,13 +285,10 @@ public class UsageRatingService implements Serializable {
             quantityToCharge = deducedQuantity;
         }
 
-        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(usageChargeInstance, null, edr.getEventDate(), quantityToCharge, null, null, null, null, null, edr, false, isVirtual);
+        RatingResult ratingResult = ratingService
+                .rateChargeAndTriggerEDRs(usageChargeInstance, null, edr.getEventDate(), quantityToCharge, null, null, null, null, null, edr, false, isVirtual);
         ratingResult.setFullyRated(fullyRated);
 
-        // Set the accumulator counter value
-        if (deducedCounter != null && deducedCounter.getCounterPeriod() != null) {
-            counterInstanceService.accumulatorCounterPeriodValue(deducedCounter.getCounterPeriod(), ratingResult.getWalletOperation(), null, isVirtual);
-        }
         if (!isVirtual) {
             walletOperationService.chargeWalletOperation(ratingResult.getWalletOperation());
         }
@@ -488,6 +486,7 @@ public class UsageRatingService implements Serializable {
                 ratedEDRResult = rateEDRonChargeAndCounters(edr, usageChargeInstance, isVirtual);
                 if (ratedEDRResult.getWalletOperation() != null) {
                     walletOperations.add(ratedEDRResult.getWalletOperation());
+                    walletOperationService.applyAccumulatorCounter(usageChargeInstance, Collections.singletonList(ratedEDRResult.getWalletOperation()), isVirtual);
                 }
 
                 if (rateTriggeredEdr && ratedEDRResult.getTriggeredEDRs() != null && !ratedEDRResult.getTriggeredEDRs().isEmpty()) {

@@ -2883,7 +2883,71 @@ END $$;]]>
         <dropDefaultValue tableName="ar_customer_account" columnName="check_threshold"/>
         <sql>update ${db.schema.adapted}ar_customer_account set check_threshold = null</sql>
     </changeSet>
-    
+    <changeSet id="#5125_20200407" author="khalidHORRI">
+        <sql>update ${db.schema.adapted}cat_counter_template set is_accumulator = 0 where is_accumulator = null</sql>
+        <createTable tableName="cat_serv_usage_counter_template">
+            <column name="service_usage_templt_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="counter_template_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="indx" type="int4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="service_usage_templt_id, indx" constraintName="cat_serv_usage_counter_template_pkey" tableName="cat_serv_usage_counter_template"/>
+        <createTable tableName="cat_serv_rec_counter_template">
+            <column name="service_rec_templt_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="counter_template_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="indx" type="int4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="service_rec_templt_id, indx" constraintName="cat_serv_rec_counter_template_pkey" tableName="cat_serv_rec_counter_template"/>
+        <createTable tableName="cat_serv_sub_counter_template">
+            <column name="service_sub_templt_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="counter_template_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="indx" type="int4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="service_sub_templt_id, indx" constraintName="cat_serv_sub_counter_template_pkey" tableName="cat_serv_sub_counter_template"/>
+        <createTable tableName="cat_serv_trm_counter_template">
+            <column name="service_trm_templt_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="counter_template_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="indx" type="int4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="service_trm_templt_id, indx" constraintName="cat_serv_trm_counter_template_pkey" tableName="cat_serv_trm_counter_template"/>
+        <createTable tableName="billing_chrg_inst_counter">
+            <column name="chrg_instance_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="counter_instance_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="indx" type="int4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="chrg_instance_id, indx" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter"/>
+
+    </changeSet>
+
     <changeSet id="#40167_20200407" author="AndriusKarpavicius">
         <addColumn tableName="billing_rated_transaction">
             <column name="accounting_code_id" type="bigint"/>
@@ -2895,7 +2959,7 @@ END $$;]]>
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
         <addForeignKeyConstraint baseColumnNames="accounting_code_id" baseTableName="billing_wallet_operation" constraintName="fk_wo_accounting_code" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
-                                 
+
         <sql>update ${db.schema.adapted}billing_wallet_operation  set accounting_code_id = iv.accounting_code_id from billing_invoice_sub_cat iv where invoice_sub_category_id = iv.id and invoice_sub_category_id is not null </sql>
         <sql>update ${db.schema.adapted}billing_rated_transaction  set accounting_code_id = iv.accounting_code_id from billing_invoice_sub_cat iv where invoice_sub_category_id = iv.id and invoice_sub_category_id is not null </sql>
     </changeSet>
