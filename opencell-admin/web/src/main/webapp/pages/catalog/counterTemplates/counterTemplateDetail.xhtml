@@ -33,7 +33,7 @@
             <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description"/>
             <hftl:formField label="#{messages['usageChargeTemplate.unityDescription']}" field="unityDescription"/>
             <hftl:formField label="#{messages['counterTemplate.isAccumulator']}" field="accumulator"
-                            listenerUpdate="counterTemplatId:counterType counterTemplatId:counterLevel counterTemplatId:ceiling counterTemplatId:ceilingExpressionEl"
+                            listenerUpdate="counterTemplatId:counterType counterTemplatId:counterLevel counterTemplatId:ceiling counterTemplatId:ceilingExpressionEl counterTemplatId:accumulatorType"
                             actionListenerBean="#{counterTemplateBean}"
                             actionListenerMethod="updateCounterTypeAndCounterLevel"/>
             <hftl:formField label="#{messages['counterTemplate.counterType']}" id="counterType" field="counterType" required="true"/>
@@ -49,6 +49,10 @@
             <hftl:formField label="#{messages['counterTemplate.notificationLevels']}" field="notificationLevels"/>
             <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true"/>
 
+            <hftl:formField label="#{messages['counterTemplate.accumulatorType']}" field="accumulatorType" id="accumulatorType" listenerUpdate="counterTemplatId:filterElId counterTemplatId:keyElId counterTemplatId:valueElId" disabled="#{!counterTemplateBean.entity.accumulator}"/>
+            <hftl:formField label="#{messages['counterTemplate.filterEl']}" field="filterEl" id="filterElId" disabled="#{!counterTemplateBean.getAccumulatorType()}"/>
+            <hftl:formField label="#{messages['counterTemplate.keyEl']}" field="keyEl" id="keyElId" disabled="#{!counterTemplateBean.getAccumulatorType()}"/>
+            <hftl:formField label="#{messages['counterTemplate.valueEl']}" field="valueEl" id="valueElId" disabled="#{!counterTemplateBean.getAccumulatorType()}"/>
         </hftl:formPanel>
 
     </ui:define>
