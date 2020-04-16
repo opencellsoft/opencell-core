@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.catalog.AccumulatorCounterTypeEnum;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTemplateLevel;
 import org.meveo.model.catalog.CounterTypeEnum;
@@ -184,6 +185,11 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
         }
 
         return counterLevels.toArray();
+    }
+
+
+    public boolean getAccumulatorType(){
+        return entity.getAccumulatorType() != null && entity.getAccumulatorType().equals(AccumulatorCounterTypeEnum.MULTI_VALUE);
     }
 
 }

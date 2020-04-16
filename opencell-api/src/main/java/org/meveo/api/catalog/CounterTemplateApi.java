@@ -28,6 +28,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.AccumulatorCounterTypeEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTemplateLevel;
@@ -62,17 +63,50 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         }
 
         handleMissingParametersAndValidate(postData);
-
         if (counterTemplateService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(CounterTemplate.class, postData.getCode());
         }
+        CounterTemplate counterTemplate = new CounterTemplate();
+         counterTemplate = fromDto(counterTemplate, postData);
+        counterTemplateService.create(counterTemplate);
+
+        return counterTemplate;
+    }
+
+
+
+    @Override
+    public CounterTemplate update(CounterTemplateDto postData) throws MeveoApiException, BusinessException {
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getCalendar())) {
+            missingParameters.add("calendar");
+        }
+
+        handleMissingParametersAndValidate(postData);
+
+        CounterTemplate counterTemplate = counterTemplateService.findByCode(postData.getCode());
+        if (counterTemplate == null) {
+            throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCode());
+        }
+
+        counterTemplate = fromDto(counterTemplate, postData);
+        counterTemplate = counterTemplateService.update(counterTemplate);
+
+        return counterTemplate;
+    }
+
+    private CounterTemplate fromDto(CounterTemplate counterTemplate, CounterTemplateDto postData) {
+
         Calendar calendar = calendarService.findByCode(postData.getCalendar());
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
         }
 
-        CounterTemplate counterTemplate = new CounterTemplate();
-        counterTemplate.setCode(postData.getCode());
+
+        counterTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         counterTemplate.setDescription(postData.getDescription());
         counterTemplate.setUnityDescription(postData.getUnity());
         if (postData.getType() != null) {
@@ -94,52 +128,13 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         if (isAccumulator) {
             counterTemplate.setCeilingExpressionEl(null);
             counterTemplate.setCeiling(BigDecimal.ZERO);
+            counterTemplate.setAccumulatorType(postData.getAccumulatorType());
+            if(postData.getAccumulatorType() != null && postData.getAccumulatorType().equals(AccumulatorCounterTypeEnum.MULTI_VALUE)) {
+                counterTemplate.setFilterEl(postData.getFilterEl());
+                counterTemplate.setKeyEl(postData.getKeyEl());
+                counterTemplate.setValueEl(postData.getValueEl());
+            }
         }
-        counterTemplateService.create(counterTemplate);
-
-        return counterTemplate;
-    }
-
-    @Override
-    public CounterTemplate update(CounterTemplateDto postData) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
-        if (StringUtils.isBlank(postData.getCalendar())) {
-            missingParameters.add("calendar");
-        }
-
-        handleMissingParametersAndValidate(postData);
-
-        CounterTemplate counterTemplate = counterTemplateService.findByCode(postData.getCode());
-        if (counterTemplate == null) {
-            throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCode());
-        }
-        Calendar calendar = calendarService.findByCode(postData.getCalendar());
-        if (calendar == null) {
-            throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
-        }
-        counterTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        counterTemplate.setDescription(postData.getDescription());
-        counterTemplate.setUnityDescription(postData.getUnity());
-        if (postData.getType() != null) {
-            counterTemplate.setCounterType(postData.getType());
-        }
-        counterTemplate.setCeiling(postData.getCeiling());
-        counterTemplate.setCalendar(calendar);
-        counterTemplate.setCalendarCodeEl(postData.getCalendarCodeEl());
-        if (postData.getCounterLevel() != null) {
-            counterTemplate.setCounterLevel(postData.getCounterLevel());
-        }
-        counterTemplate.setCeilingExpressionEl(postData.getCeilingExpressionEl());
-        counterTemplate.setNotificationLevels(postData.getNotificationLevels());
-        counterTemplate.setAccumulator(postData.getAccumulator());
-        if (counterTemplate.getAccumulator() != null && counterTemplate.getAccumulator()) {
-            counterTemplate.setCeilingExpressionEl(null);
-            counterTemplate.setCeiling(BigDecimal.ZERO);
-        }
-        counterTemplate = counterTemplateService.update(counterTemplate);
 
         return counterTemplate;
     }
