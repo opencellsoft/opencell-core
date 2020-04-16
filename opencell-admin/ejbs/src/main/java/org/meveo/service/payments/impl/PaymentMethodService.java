@@ -260,7 +260,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 		hostedCheckoutInput.setCustomerAccountId(customerAccount.getId());
 		String hostedCheckoutUrl = gatewayPaymentInterface.getHostedCheckoutUrl(hostedCheckoutInput);
 		log.info("hostedCheckoutUrl:{}", hostedCheckoutUrl);
-		return hostedCheckoutUrl;
+		return hostedCheckoutUrl; 
 	}
 
 	/**
