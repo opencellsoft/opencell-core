@@ -1073,8 +1073,10 @@ public class NativePersistenceService extends BaseService {
                     return value;
                 }
             } else if (targetClass == Date.class) {
-                if (dateVal != null || listVal != null) {
-                    return value;
+                if (dateVal != null) {
+                    return dateVal;
+                } else if (listVal != null) {
+                    return listVal;
                 } else if (numberVal != null) {
                     return new Date(numberVal.longValue());
                 } else if (stringVal != null && !stringVal.isEmpty()) {
