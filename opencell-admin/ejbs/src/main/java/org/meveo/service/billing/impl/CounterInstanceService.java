@@ -37,6 +37,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.AccumulatorCounterTypeEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTemplateLevel;
@@ -82,6 +83,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     private static final String CHARGE = "charge";
     private static final String SERVICE = "service";
     private static final String SERVICE_INSTANCE = "serviceInstance";
+    private static final String WALLET_OPERATION = "op";
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
@@ -424,8 +426,11 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         counterPeriod.setCounterType(counterTemplate.getCounterType());
         counterPeriod.setNotificationLevels(counterTemplate.getNotificationLevels(), initialValue);
         counterPeriod.setAccumulator(counterTemplate.getAccumulator());
-
         counterPeriod.isCorrespondsToPeriod(chargeDate);
+        counterPeriod.setAccumulatorType(counterTemplate.getAccumulatorType());
+        counterPeriod.setFilterEl(counterPeriod.getFilterEl());
+        counterPeriod.setKeyEl(counterTemplate.getKeyEl());
+        counterPeriod.setValueEl(counterTemplate.getValueEl());
 
         return counterPeriod;
     }
@@ -786,6 +791,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     public void accumulatorCounterPeriodValue(CounterPeriod counterPeriod, WalletOperation walletOperation, Reservation reservation, boolean isVirtual) {
         BigDecimal value = BigDecimal.ZERO;
         BigDecimal previousValue = counterPeriod.getValue();
+        boolean isMultiValuesAccumulator = counterPeriod.getAccumulatorType() != null && counterPeriod.getAccumulatorType().equals(AccumulatorCounterTypeEnum.MULTI_VALUE);
+        boolean isMultiValuesApplied = isMultiValuesAccumulator && evaluateFilterElExpression(counterPeriod.getFilterEl(),walletOperation);
         if (counterPeriod.getAccumulator() != null && counterPeriod.getAccumulator()) {
             if (CounterTypeEnum.USAGE_AMOUNT.equals(counterPeriod.getCounterType())) {
                 value = appProvider.isEntreprise() ? walletOperation.getAmountWithoutTax() : walletOperation.getAmountWithTax();
@@ -794,8 +801,12 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
                 value = walletOperation.getQuantity();
                 log.debug("Increment counter period value {} by quantity {}", counterPeriod, value);
             }
+            if (isMultiValuesApplied) {
+                value = applyMultiAccumulatedValues(counterPeriod, walletOperation);
+            } else{
+                counterPeriod.setValue(counterPeriod.getValue().add(value));
+            }
 
-            counterPeriod.setValue(counterPeriod.getValue().add(value));
             if (reservation != null) {
                 previousValue = reservation.getCounterPeriodValues().get(counterPeriod.getId());
                 if (previousValue == null) {
@@ -812,6 +823,61 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             triggerCounterPeriodEvent(counterValueChangeInfo, counterPeriod);
         }
 
+    }
+
+    /**
+     * Accumulate counter multi values, Each value is stored in map with a key evaluated for an EL expression
+     * @param counterPeriod the counter period
+     * @param walletOperation the wallet operation
+     * @return
+     */
+    private BigDecimal applyMultiAccumulatedValues(CounterPeriod counterPeriod, WalletOperation walletOperation) {
+        BigDecimal value;
+        value = evaluateValueElExpression(counterPeriod.getValueEl(), walletOperation);
+        log.debug("Extract the multi accumulator counter period value {}", value);
+        String key = evaluateKeyElExpression(counterPeriod.getKeyEl(), walletOperation);
+        log.debug("Extract the multi accumulator counter period key {}", key);
+        if(counterPeriod.getAccumulatedValues() == null){
+            Map<String, BigDecimal> accumulatedValues = new HashMap<>();
+            accumulatedValues.put(key, value);
+            counterPeriod.setAccumulatedValues(accumulatedValues);
+        }else{
+            BigDecimal accumulatedValue = counterPeriod.getAccumulatedValues().get(key);
+            if(accumulatedValue == null){
+                counterPeriod.getAccumulatedValues().put(key, value);
+            }else{
+                counterPeriod.getAccumulatedValues().put(key, accumulatedValue.add(value));
+            }
+        }
+        log.debug("Icrement the multi accumulator counter period values {}", counterPeriod.getAccumulatedValues());
+        return value;
+    }
+
+    private String evaluateKeyElExpression(String keyEl, WalletOperation walletOperation) {
+        if(keyEl == null){
+            throw new BusinessException("The key EL for the counter should not be null");
+        }
+        Map<Object, Object> context = new HashMap<>();
+        context.put(WALLET_OPERATION, walletOperation);
+        return ValueExpressionWrapper.evaluateExpression(keyEl, context, String.class);
+    }
+
+    private BigDecimal evaluateValueElExpression(String valueEl, WalletOperation walletOperation) {
+        if(valueEl == null){
+            throw new BusinessException("The value EL for the counter should not be null");
+        }
+        Map<Object, Object> context = new HashMap<>();
+        context.put(WALLET_OPERATION, walletOperation);
+        return ValueExpressionWrapper.evaluateExpression(valueEl, context, BigDecimal.class);
+    }
+
+    private boolean evaluateFilterElExpression(String filterEl, WalletOperation walletOperation) {
+        if(filterEl == null){
+            return true;
+        }
+        Map<Object, Object> context = new HashMap<>();
+        context.put(WALLET_OPERATION, walletOperation);
+        return ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(filterEl, context);
     }
 
 }
