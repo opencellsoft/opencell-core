@@ -21,32 +21,42 @@ package org.meveo.api.dto.catalog;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
-@XmlType(name = "baseServiceChargeTemplateDto", propOrder = {
-        "code",
-        "wallets",
-        "counterTemplate"
-})
+@XmlType(name = "baseServiceChargeTemplateDto", propOrder = { "code", "wallets", "accumulatorCounterTemplates", "counterTemplate" })
 
 /**
  * The Class BaseServiceChargeTemplateDto.
  *
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
- * @lastModifiedVersion 5.3
- */
-public abstract class BaseServiceChargeTemplateDto implements Serializable {
+ * @author Khalid HORRI
+ * @lastModifiedVersion 10.0
+ */ public abstract class BaseServiceChargeTemplateDto implements Serializable {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
     private static final long serialVersionUID = 3771281513359110575L;
 
-    /** The code. */
+    /**
+     * The code.
+     */
     private String code;
 
-    /** The wallets. */
+    /**
+     * The wallets.
+     */
     private WalletsDto wallets;
-    
-    /** The counter template. */
+
+    /**
+     * The counter template.
+     */
+    @Deprecated
     private String counterTemplate;
+
+    /**
+     * The counters templates.
+     */
+    private CounterTemplatesDto accumulatorCounterTemplates;
 
     /**
      * Gets the code.
@@ -85,28 +95,48 @@ public abstract class BaseServiceChargeTemplateDto implements Serializable {
     public void setWallets(WalletsDto wallets) {
         this.wallets = wallets;
     }
-    
+
     /**
      * Gets the counter template.
      *
      * @return the counter template
      */
+
     public String getCounterTemplate() {
         return counterTemplate;
     }
 
     /**
+     *
      * Sets the counter template.
      *
      * @param counterTemplate the new counter template
      */
+
     public void setCounterTemplate(String counterTemplate) {
         this.counterTemplate = counterTemplate;
     }
 
-    
+    /**
+     * Gets the counters template.
+     *
+     * @return the counter template
+     */
+    public CounterTemplatesDto getAccumulatorCounterTemplates() {
+        return accumulatorCounterTemplates;
+    }
+
+    /**
+     * Sets the counters template.
+     *
+     * @param accumulatorCounterTemplates the new counter template
+     */
+    public void setAccumulatorCounterTemplates(CounterTemplatesDto accumulatorCounterTemplates) {
+        this.accumulatorCounterTemplates = accumulatorCounterTemplates;
+    }
+
     @Override
     public String toString() {
-        return "BaseServiceChargeTemplateDto [code=" + code + ", wallets=" + wallets + ", counterTemplate=" + counterTemplate + "]";
-    }   
+        return "BaseServiceChargeTemplateDto [code=" + code + ", wallets=" + wallets + ", counterTemplates=" + accumulatorCounterTemplates + "]";
+    }
 }

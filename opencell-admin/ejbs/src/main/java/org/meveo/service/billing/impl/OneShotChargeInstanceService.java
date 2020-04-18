@@ -43,6 +43,7 @@ import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -163,9 +164,15 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         if (!isVirtual) {
             create(oneShotChargeInstance);
         }
-        if (serviceChargeTemplate.getCounterTemplate() != null) {
-            CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, serviceChargeTemplate.getCounterTemplate(), isVirtual);
-            oneShotChargeInstance.setCounter(counterInstance);
+
+        if (serviceChargeTemplate.getAccumulatorCounterTemplates() != null && !serviceChargeTemplate.getAccumulatorCounterTemplates().isEmpty()) {
+            log.debug("OS charge has {} counter templates", serviceChargeTemplate.getAccumulatorCounterTemplates().size());
+            for (Object counterTemplate : serviceChargeTemplate.getAccumulatorCounterTemplates()) {
+                log.debug("Counter template {}", counterTemplate);
+                CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, (CounterTemplate) counterTemplate, isVirtual);
+                log.debug("Counter instance {} will be add to charge instance {}", counterInstance, oneShotChargeInstance);
+                oneShotChargeInstance.addCounterInstance(counterInstance);
+            }
 
             if (!isVirtual) {
                 update(oneShotChargeInstance);

@@ -28,6 +28,7 @@ import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -36,6 +37,7 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
 
@@ -64,10 +66,11 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     /** The customer service. */
     @Inject
     private CustomerService customerService;
+    
+	@Inject
+	private SellerService sellerService;
 
-    /* (non-Javadoc)
-     * @see org.meveo.service.base.PersistenceService#create(org.meveo.model.IEntity)
-     */
+
     @Override
     public void create(PaymentMethod paymentMethod) throws BusinessException {
 
@@ -114,9 +117,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see org.meveo.service.base.PersistenceService#update(org.meveo.model.IEntity)
-     */
+
     @Override
     public PaymentMethod update(PaymentMethod entity) throws BusinessException {
         if (entity.isPreferred()) {
@@ -137,9 +138,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         return paymentMethod;
     }
 
-    /* (non-Javadoc)
-     * @see org.meveo.service.base.PersistenceService#remove(org.meveo.model.IEntity)
-     */
+
     @Override
     public void remove(PaymentMethod paymentMethod) throws BusinessException {
 
@@ -241,6 +240,14 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if (customerAccount == null) {
             throw new BusinessException("Can't found CustomerAccount with code:" + hostedCheckoutInput.getCustomerAccountCode());
         }
+        
+        Seller seller = null;
+		if (!StringUtils.isBlank(hostedCheckoutInput.getSellerCode())) {
+			seller = sellerService.findByCode(hostedCheckoutInput.getSellerCode());
+			if (seller == null) {
+				throw new BusinessException("Can't found Seller with code:" + hostedCheckoutInput.getSellerCode());
+			}
+		}
 
         if ( ( customerAccount.getTradingCurrency() != null ) && (!StringUtils.isBlank(customerAccount.getTradingCurrency().getCurrencyCode()))) {
             hostedCheckoutInput.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
@@ -250,7 +257,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }
         
         GatewayPaymentInterface gatewayPaymentInterface = null;
-        gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount);
+        gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount,seller);
         hostedCheckoutInput.setCustomerAccountId(customerAccount.getId());
         String hostedCheckoutUrl = gatewayPaymentInterface.getHostedCheckoutUrl(hostedCheckoutInput);
         log.info("hostedCheckoutUrl:{}",hostedCheckoutUrl);
@@ -269,7 +276,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             throw new BusinessException("Can't found CustomerAccount with Id:" + customerAccountId);
         }
         GatewayPaymentInterface gatewayPaymentInterface = null;
-        gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount);
+        gatewayPaymentInterface = getGatewayPaymentInterface(customerAccount,null);
         return gatewayPaymentInterface.getClientObject();
     }
 
@@ -279,9 +286,9 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
      * @return
      * @throws BusinessException
      */
-    public GatewayPaymentInterface getGatewayPaymentInterface(CustomerAccount customerAccount) throws BusinessException {
+    public GatewayPaymentInterface getGatewayPaymentInterface(CustomerAccount customerAccount, Seller seller) throws BusinessException {
         GatewayPaymentInterface gatewayPaymentInterface = null;
-        PaymentGateway matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, null, null);
+        PaymentGateway matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, null, null,seller);
         if (matchedPaymentGatewayForTheCA == null) {
             throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
         }

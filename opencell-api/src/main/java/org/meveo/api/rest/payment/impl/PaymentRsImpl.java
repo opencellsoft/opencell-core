@@ -70,7 +70,7 @@ import org.meveo.api.rest.payment.PaymentRs;
  * @author anasseh
  * @author Said Ramli
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.3
+ * @lastModifiedVersion 9.3
  */
 @SuppressWarnings("deprecation")
 @RequestScoped
@@ -597,7 +597,7 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     @Override
     public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(String customerAccountCode, String returnUrl,
             String locale, String amount, String currencyCode, String authorizationMode, String countryCode,
-            Boolean skipAuthentication, String gatewayPaymentName, String variant) {
+            Boolean skipAuthentication, String gatewayPaymentName, String variant, String sellerCode) {
 
         String paymentUrl = "";
 
@@ -612,6 +612,7 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         hostedCheckoutInput.setSkipAuthentication(skipAuthentication);
         hostedCheckoutInput.setGatewayPaymentName(GatewayPaymentNamesEnum.valueOf(gatewayPaymentName));
         hostedCheckoutInput.setVariant(variant);
+        hostedCheckoutInput.setSellerCode(sellerCode);
 
         try {
             paymentUrl = paymentMethodApi.getHostedCheckoutUrl(hostedCheckoutInput);
