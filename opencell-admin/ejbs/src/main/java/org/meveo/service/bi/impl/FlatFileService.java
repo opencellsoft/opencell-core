@@ -114,7 +114,7 @@ public class FlatFileService extends BusinessService<FlatFile> {
             String fileFormatCode = fileName.substring(0, fileName.indexOf(m.group()));
             Long flatFileId = Long.valueOf(m.group().split("_")[0]);
             String flatFileCode = fileFormatCode + flatFileId;
-            flatFile = findById(flatFileId, true);
+            flatFile = findById(flatFileId);
             if (flatFile != null && flatFile.getCode().equalsIgnoreCase(flatFileCode)) {
                 return flatFile;
             }
