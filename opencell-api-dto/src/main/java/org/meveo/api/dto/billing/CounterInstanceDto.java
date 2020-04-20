@@ -73,6 +73,12 @@ public class CounterInstanceDto extends BusinessEntityDto {
             dto.setPeriodEndDate(DateUtils.formatDateWithPattern(cp.getPeriodEndDate(), "yyyy-MM-dd"));
             dto.setPeriodStartDate(DateUtils.formatDateWithPattern(cp.getPeriodStartDate(), "yyyy-MM-dd"));
             dto.setValue(cp.getValue());
+            dto.setAccumulatedValues(cp.getAccumulatedValues());
+            dto.setAccumulator(cp.getAccumulator());
+            dto.setAccumulatorType(cp.getAccumulatorType());
+            dto.setFilterEl(cp.getFilterEl());
+            dto.setKeyEl(cp.getKeyEl());
+            dto.setValueEl(cp.getValueEl());
             return dto;
         }).collect(Collectors.toList());
         this.counterPeriods = new CountersPeriodsDto(counterPeriodDtos);
