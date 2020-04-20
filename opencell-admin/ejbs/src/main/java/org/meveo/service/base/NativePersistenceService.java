@@ -17,31 +17,6 @@
  */
 package org.meveo.service.base;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
@@ -73,12 +48,24 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
 
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.*;
+import java.util.Date;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
- * 
+ *
  * @author Andrius Karpavicius
- * @lastModifiedVersion 7.0
- * 
+ * @author Abdellatif BARI
+ * @lastModifiedVersion 9.3.1
  */
 public class NativePersistenceService extends BaseService {
 
@@ -124,9 +111,9 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Find record by its identifier
-     * 
+     *
      * @param tableName Table name
-     * @param id Identifier
+     * @param id        Identifier
      * @return A map of values with field name as a map key and field value as a map value
      */
     @SuppressWarnings("rawtypes")
@@ -160,9 +147,9 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Insert values into table
-     * 
+     *
      * @param tableName Table name to insert values to
-     * @param values Values to insert
+     * @param values    Values to insert
      * @throws BusinessException General exception
      */
     public Long create(String tableName, Map<String, Object> values) throws BusinessException {
@@ -174,13 +161,13 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Insert multiple values into table. Uses a prepared statement.
-     * 
+     * <p>
      * NOTE: The sql statement is determined by the fields passed in the first value, so its important that either all values have the same fields (order does not matter), or first
      * value has the maximum number of fields
-     * 
-     * @param tableName Table name to insert values to
+     *
+     * @param tableName                Table name to insert values to
      * @param customEntityTemplateCode Custom entity template, corresponding to a custom table, code
-     * @param values A list of values to insert
+     * @param values                   A list of values to insert
      * @throws BusinessException General exception
      */
     public void create(String tableName, String customEntityTemplateCode, List<Map<String, Object>> values) throws BusinessException {
@@ -276,11 +263,11 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * List all fields with their default values of tableName
-     * 
+     *
      * @param tableName the table name
      * @return
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private Map<String, Object> getFields(String tableName) {
         Map<String, Object> fields = new HashedMap();
         Map<String, CustomFieldTemplate> customFieldTemplateMap = customFieldTemplateService.findByAppliesTo(CustomEntityTemplate.CFT_PREFIX + "_" + tableName);
@@ -316,10 +303,10 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Insert a new record into a table. If returnId=True values parameter will be updated with 'id' field value.
-     * 
-     * @param tableName Table name to update
-     * @param values Values
-     * @param returnId Should identifier be returned - does a lookup in DB by matching same values. If True values will be updated with 'id' field value.
+     *
+     * @param tableName         Table name to update
+     * @param values            Values
+     * @param returnId          Should identifier be returned - does a lookup in DB by matching same values. If True values will be updated with 'id' field value.
      * @param fireNotifications Should notifications be fired upon record creation
      * @throws BusinessException General exception
      */
@@ -429,9 +416,9 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Update a record in a table. Record is identified by an "id" field value.
-     * 
-     * @param tableName Table name to update
-     * @param value Values. Values must contain an "id" (FIELD_ID) field.
+     *
+     * @param tableName         Table name to update
+     * @param value             Values. Values must contain an "id" (FIELD_ID) field.
      * @param fireNotifications Should notifications be fired upon record update
      * @throws BusinessException General exception
      */
@@ -483,11 +470,11 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Update field value in a table
-     * 
+     *
      * @param tableName Table name to update
-     * @param id Record identifier
+     * @param id        Record identifier
      * @param fieldName Field to update
-     * @param value New value
+     * @param value     New value
      * @throws BusinessException General exception
      */
     public void updateValue(String tableName, Long id, String fieldName, Object value) throws BusinessException {
@@ -508,9 +495,9 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Disable a record
-     * 
+     *
      * @param tableName Table name to update
-     * @param id Record identifier
+     * @param id        Record identifier
      * @throws BusinessException General exception
      */
     public void disable(String tableName, Long id) throws BusinessException {
@@ -520,9 +507,9 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Disable multiple records
-     * 
+     *
      * @param tableName Table name to update
-     * @param ids A list of record identifiers
+     * @param ids       A list of record identifiers
      * @throws BusinessException General exception
      */
     public void disable(String tableName, Set<Long> ids) throws BusinessException {
@@ -531,9 +518,9 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Enable a record
-     * 
+     *
      * @param tableName Table name to update
-     * @param id Record identifier
+     * @param id        Record identifier
      * @throws BusinessException General exception
      */
     public void enable(String tableName, Long id) throws BusinessException {
@@ -543,9 +530,9 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Enable multiple records
-     * 
+     *
      * @param tableName Table name to update
-     * @param ids A list of record identifiers
+     * @param ids       A list of record identifiers
      * @throws BusinessException General exception
      */
     public void enable(String tableName, Set<Long> ids) throws BusinessException {
@@ -556,9 +543,9 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Delete a record
-     * 
+     *
      * @param tableName Table name to update
-     * @param id Record identifier
+     * @param id        Record identifier
      * @throws BusinessException General exception
      */
     public void remove(String tableName, Long id) throws BusinessException {
@@ -569,9 +556,9 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Delete multiple records
-     * 
+     *
      * @param tableName Table name to update
-     * @param ids A set of record identifiers
+     * @param ids       A set of record identifiers
      * @throws BusinessException General exception
      */
     public void remove(String tableName, Set<Long> ids) throws BusinessException {
@@ -581,7 +568,7 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Delete all records
-     * 
+     *
      * @param tableName Table name to update
      * @throws BusinessException General exception
      */
@@ -593,7 +580,7 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Retrieve values from a table
-     * 
+     *
      * @param tableName Table name to query
      * @return A list of map of values with field name as map's key and field value as map's value
      */
@@ -604,7 +591,7 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Retrieve ONLY enabled values from a table
-     * 
+     *
      * @param tableName Table name to query
      * @return A list of map of values with field name as map's key and field value as map's value
      */
@@ -617,21 +604,21 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Creates NATIVE query to filter entities according data provided in pagination configuration.
-     * 
+     * <p>
      * Search filters (key = Filter key, value = search pattern or value).
-     * 
+     * <p>
      * Filter key can be:
      * <ul>
      * <li>SQL. Additional sql to apply. Value is either a sql query or an array consisting of sql query and one or more parameters to apply</li>
      * <li>&lt;condition&gt; &lt;fieldname1&gt; &lt;fieldname2&gt; ... &lt;fieldnameN&gt;. Value is a value to apply in condition</li>
      * </ul>
-     * 
+     * <p>
      * A union between different filter items is AND.
-     * 
-     * 
+     * <p>
+     * <p>
      * Condition is optional. Number of fieldnames depend on condition used. If no condition is specified an "equals ignoring case" operation is considered.
-     * 
-     * 
+     * <p>
+     * <p>
      * Following conditions are supported:
      * <ul>
      * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=field.value. Applies to date and number type fields.</li>
@@ -655,27 +642,27 @@ public class NativePersistenceService extends BaseService {
      * <li>ne. Not equal.
      * <li>neOptional. Not equal. Field value is optional
      * </ul>
-     * 
-     * 
+     * <p>
+     * <p>
      * "eq" is a default condition when no condition is not specified
-     * 
+     * <p>
      * Following special meaning values are supported:
      * <ul>
      * <li>IS_NULL. Field value is null</li>
      * <li>IS_NOT_NULL. Field value is not null</li>
      * </ul>
-     * 
-     * 
-     * 
+     * <p>
+     * <p>
+     * <p>
      * To filter by a related entity's field you can either filter by related entity's field or by related entity itself specifying code as value. These two example will do the
      * same in case when quering a customer account: customer.code=aaa OR customer=aaa
-     * 
+     * <p>
      * To filter a list of related entities by a list of entity codes use "inList" on related entity field. e.g. for quering offer template by sellers: inList sellers=code1,code2
-     * 
-     * 
+     *
+     *
      * <b>Note:</b> Quering by related entity field directly will result in exception when entity with a specified code does not exists
-     * 
-     * 
+     * <p>
+     * <p>
      * Examples:
      * <ul>
      * <li>invoice number equals "1578AU": Filter key: invoiceNumber. Filter value: 1578AU</li>
@@ -690,13 +677,12 @@ public class NativePersistenceService extends BaseService {
      * <li>any of param1, param2 or param3 fields start with "energy": Filter key: likeCriterias param1 param2 param3. Filter value: *energy</li>
      * <li>any of param1, param2 or param3 fields is "energy": Filter key: likeCriterias param1 param2 param3. Filter value: energy</li>
      * </ul>
-     * 
-     * 
+     *
      * @param tableName A name of a table to query
-     * @param config Data filtering, sorting and pagination criteria
+     * @param config    Data filtering, sorting and pagination criteria
      * @return Query builder to filter entities according to pagination configuration data.
      */
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings({"rawtypes"})
     public QueryBuilder getQuery(String tableName, PaginationConfiguration config) {
         String fileds = (config != null && config.getFetchFields() != null) ? config.getFetchFields().stream().map(x -> " a." + x).collect(Collectors.joining(",")) : "*";
         QueryBuilder queryBuilder = new QueryBuilder("select " + fileds + " from " + tableName + " a ", "a");
@@ -912,9 +898,9 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Load and return the list of the records IN A MAP format from database according to sorting and paging information in {@link PaginationConfiguration} object.
-     * 
+     *
      * @param tableName A name of a table to query
-     * @param config Data filtering, sorting and pagination criteria
+     * @param config    Data filtering, sorting and pagination criteria
      * @return A list of map of values for each record
      */
     @SuppressWarnings("unchecked")
@@ -927,9 +913,9 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Load and return the list of the records IN A Object[] format from database according to sorting and paging information in {@link PaginationConfiguration} object.
-     * 
+     *
      * @param tableName A name of a table to query
-     * @param config Data filtering, sorting and pagination criteria
+     * @param config    Data filtering, sorting and pagination criteria
      * @return A list of Object[] values for each record
      */
     @SuppressWarnings("unchecked")
@@ -942,9 +928,9 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Count number of records in a database table
-     * 
+     *
      * @param tableName A name of a table to query
-     * @param config Data filtering, sorting and pagination criteria
+     * @param config    Data filtering, sorting and pagination criteria
      * @return Number of entities.
      */
     public long count(String tableName, PaginationConfiguration config) {
@@ -964,9 +950,9 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Create new or update existing custom table record value
-     * 
+     *
      * @param tableName A name of a table to query
-     * @param values Values to save
+     * @param values    Values to save
      * @throws BusinessException General exception
      */
     public void createOrUpdate(String tableName, List<Map<String, Object>> values) throws BusinessException {
@@ -986,7 +972,7 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Return an entity manager for a current provider
-     * 
+     *
      * @return Entity manager
      */
     public EntityManager getEntityManager() {
@@ -995,19 +981,19 @@ public class NativePersistenceService extends BaseService {
 
     /**
      * Convert value of unknown data type to a target data type. A value of type list is considered as already converted value, as would come only from WS.
-     * 
-     * @param value Value to convert
-     * @param targetClass Target data type class to convert to
+     *
+     * @param value        Value to convert
+     * @param targetClass  Target data type class to convert to
      * @param expectedList Is return value expected to be a list. If value is not a list and is a string a value will be parsed as comma separated string and each value will be
-     *        converted accordingly. If a single value is passed, it will be added to a list.
+     *                     converted accordingly. If a single value is passed, it will be added to a list.
      * @param datePatterns Optional. Date patterns to apply to a date type field. Conversion is attempted in that order until a valid date is matched.If no values are provided, a
-     *        standard date and time and then date only patterns will be applied.
+     *                     standard date and time and then date only patterns will be applied.
      * @param cft
      * @param regExp
      * @return A converted data type
      * @throws ValidationException Value can not be cast to a target class
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected Object castValue(Object value, Class targetClass, boolean expectedList, String[] datePatterns, CustomFieldTemplate cft) throws ValidationException {
 
         // log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
@@ -1059,6 +1045,8 @@ public class NativePersistenceService extends BaseService {
             bdVal = (BigDecimal) value;
         } else if (value instanceof Boolean) {
             booleanVal = (Boolean) value;
+        } else if (value instanceof java.sql.Timestamp) {
+            dateVal = new Date(((java.sql.Timestamp) value).getTime());
         } else if (value instanceof Date) {
             dateVal = (Date) value;
         } else if (value instanceof String) {
@@ -1085,8 +1073,10 @@ public class NativePersistenceService extends BaseService {
                     return value;
                 }
             } else if (targetClass == Date.class) {
-                if (dateVal != null || listVal != null) {
-                    return value;
+                if (dateVal != null) {
+                    return dateVal;
+                } else if (listVal != null) {
+                    return listVal;
                 } else if (numberVal != null) {
                     return new Date(numberVal.longValue());
                 } else if (stringVal != null && !stringVal.isEmpty()) {
@@ -1196,6 +1186,8 @@ public class NativePersistenceService extends BaseService {
                     throw new ValidationException("value " + value + " is not accepted as value for enum " + cft.getCode());
                 }
             }
+        } else if (value instanceof java.sql.Timestamp) {
+            value = new Date(((java.sql.Timestamp) value).getTime());
         }
         return value;
     }
