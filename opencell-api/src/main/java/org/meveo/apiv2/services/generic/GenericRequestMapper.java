@@ -31,7 +31,7 @@ public class GenericRequestMapper {
     }
 
     private PaginationConfiguration getPaginationConfiguration(GenericPagingAndFiltering genericPagingAndFiltering) {
-        return new PaginationConfiguration(genericPagingAndFiltering.getOffset().intValue(), genericPagingAndFiltering.getLimit().intValue(),
+        return new PaginationConfiguration(genericPagingAndFiltering.getOffset().intValue(), genericPagingAndFiltering.getLimitOrDefault(GenericHelper.getDefaultLimit()).intValue(),
                 evaluateFilters(genericPagingAndFiltering.getFilters(), entityClass), genericPagingAndFiltering.getFullTextFilter(),
                 Collections.emptyList(), genericPagingAndFiltering.getSortBy(),
                 org.primefaces.model.SortOrder.valueOf(genericPagingAndFiltering.getSortOrder()));
