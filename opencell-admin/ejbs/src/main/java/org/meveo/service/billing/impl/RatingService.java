@@ -288,7 +288,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
     }
 
     /**
-     * Rate a charges and triggerEDR. Same as rateCharge but in addition triggers EDRs, unless its a virtual operation. NOTE: Does not persist WO.
+     * Rate a charge and triggerEDR. Same as rateCharge but in addition triggers EDRs, unless its a virtual operation. NOTE: Does not persist WO.
      * 
      * 
      * 

@@ -172,10 +172,10 @@ public class RealtimeChargingService {
         RecurringChargeInstance chargeInstance = new RecurringChargeInstance(null, null, quantity, subscriptionDate, null, ba.getCustomerAccount().getCustomer().getSeller(), ba.getTradingCountry(),
             ba.getCustomerAccount().getTradingCurrency(), chargeTemplate);
 
-        Date nextApplicationDate = walletOperationService.initChargeDateAndGetNextChargeDate(chargeInstance);
+        Date nextApplicationDate = walletOperationService.getPeriodEndDate(chargeInstance, chargeInstance.getSubscriptionDate());
         List<WalletOperation> ops;
         try {
-            ops = walletOperationService.applyFirstRecurringCharge(chargeInstance, nextApplicationDate, true);
+            ops = walletOperationService.applyReccuringChargeVirtual(chargeInstance, chargeInstance.getSubscriptionDate(), nextApplicationDate);
 
         } catch (RatingException e) {
             log.trace("Failed to rate a recurring charge {}: {}", chargeInstance, e.getRejectionReason());
