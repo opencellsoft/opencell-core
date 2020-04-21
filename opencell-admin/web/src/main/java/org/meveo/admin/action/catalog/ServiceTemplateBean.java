@@ -18,7 +18,9 @@
 package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Produces;
 import javax.faces.view.ViewScoped;
@@ -29,8 +31,11 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -40,6 +45,7 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
@@ -84,10 +90,18 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
 
+    @Inject
+    private CounterTemplateService counterTemplateService;
+
     private DualListModel<WalletTemplate> usageWallets;
     private DualListModel<WalletTemplate> recurringWallets;
     private DualListModel<WalletTemplate> subscriptionWallets;
     private DualListModel<WalletTemplate> terminationWallets;
+
+    private DualListModel<CounterTemplate> usageCounterTemplates;
+    private DualListModel<CounterTemplate> recurringCounterTemplates;
+    private DualListModel<CounterTemplate> subscriptionCounterTemplates;
+    private DualListModel<CounterTemplate> terminationCounterTemplates;
 
     @Produces
     @Named
@@ -104,6 +118,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     public void newServiceChargeTemplateRecurring() {
         this.serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
         this.recurringWallets = null;
+        this.recurringCounterTemplates = null;
     }
 
     @Produces
@@ -147,6 +162,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     public void newServiceChargeTemplateUsage() {
         this.serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
         this.usageWallets = null;
+        this.usageCounterTemplates = null;
     }
 
     /**
@@ -154,7 +170,9 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
      */
     public ServiceTemplateBean() {
         super(ServiceTemplate.class);
+
     }
+
 
     public DualListModel<WalletTemplate> getUsageDualListModel() {
         if (usageWallets == null) {
@@ -238,7 +256,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
      */
     @Override
@@ -272,10 +290,19 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
                 return;
             }
             for (ServiceChargeTemplateSubscription inc : entity.getServiceSubscriptionCharges()) {
-                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateSubscription.getChargeTemplate().getCode()) && !inc.getId().equals(serviceChargeTemplateSubscription.getId())) {
+                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateSubscription.getChargeTemplate().getCode()) && !inc.getId()
+                        .equals(serviceChargeTemplateSubscription.getId())) {
                     throw new Exception();
                 }
             }
+            if (serviceChargeTemplateSubscription.getAccumulatorCounterTemplates() == null) {
+                serviceChargeTemplateSubscription.setAccumulatorCounterTemplates(new ArrayList<CounterTemplate>());
+            } else {
+                serviceChargeTemplateSubscription.getAccumulatorCounterTemplates().clear();
+            }
+            serviceChargeTemplateSubscription.getAccumulatorCounterTemplates().addAll(counterTemplateService.refreshOrRetrieve(subscriptionCounterTemplates.getTarget()));
+
+            serviceChargeTemplateSubscription.getAccumulatorCounterTemplates().addAll(counterTemplateService.refreshOrRetrieve(usageCounterTemplates.getTarget()));
 
             if (serviceChargeTemplateSubscription.getWalletTemplates() == null) {
                 serviceChargeTemplateSubscription.setWalletTemplates(new ArrayList<WalletTemplate>());
@@ -318,6 +345,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     public void editServiceSubscriptionChargeTemplate(ServiceChargeTemplateSubscription serviceSubscriptionChargeTemplate) {
         this.serviceChargeTemplateSubscription = serviceSubscriptionChargeTemplate;
         this.subscriptionWallets = null;
+        this.subscriptionCounterTemplates = null;
     }
 
     public void saveServiceChargeTemplateTermination() {
@@ -328,10 +356,18 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
                 return;
             }
             for (ServiceChargeTemplateTermination inc : entity.getServiceTerminationCharges()) {
-                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateTermination.getChargeTemplate().getCode()) && !inc.getId().equals(serviceChargeTemplateTermination.getId())) {
+                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateTermination.getChargeTemplate().getCode()) && !inc.getId()
+                        .equals(serviceChargeTemplateTermination.getId())) {
                     throw new Exception();
                 }
             }
+
+            if (serviceChargeTemplateTermination.getAccumulatorCounterTemplates() == null) {
+                serviceChargeTemplateTermination.setAccumulatorCounterTemplates(new ArrayList<CounterTemplate>());
+            } else {
+                serviceChargeTemplateTermination.getAccumulatorCounterTemplates().clear();
+            }
+            serviceChargeTemplateTermination.getAccumulatorCounterTemplates().addAll(counterTemplateService.refreshOrRetrieve(terminationCounterTemplates.getTarget()));
 
             if (serviceChargeTemplateTermination.getWalletTemplates() == null) {
                 serviceChargeTemplateTermination.setWalletTemplates(new ArrayList<WalletTemplate>());
@@ -373,6 +409,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     public void editServiceTerminationChargeTemplate(ServiceChargeTemplateTermination serviceTerminationChargeTemplate) {
         this.serviceChargeTemplateTermination = serviceTerminationChargeTemplate;
         this.terminationWallets = null;
+        this.terminationCounterTemplates = null;
     }
 
     public void saveServiceChargeTemplateRecurring() {
@@ -382,7 +419,6 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             if (serviceChargeTemplateRecurring == null) {
                 return;
             }
-
             for (ServiceChargeTemplateRecurring inc : entity.getServiceRecurringCharges()) {
                 if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateRecurring.getChargeTemplate().getCode()) && !inc.getId().equals(serviceChargeTemplateRecurring.getId())
                         && ((inc.getCounterTemplate() == null && serviceChargeTemplateRecurring.getCounterTemplate() == null)
@@ -390,6 +426,12 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
                     throw new Exception();
                 }
             }
+            if (serviceChargeTemplateRecurring.getAccumulatorCounterTemplates() == null) {
+                serviceChargeTemplateRecurring.setAccumulatorCounterTemplates(new ArrayList<CounterTemplate>());
+            } else {
+                serviceChargeTemplateRecurring.getAccumulatorCounterTemplates().clear();
+            }
+            serviceChargeTemplateRecurring.getAccumulatorCounterTemplates().addAll(counterTemplateService.refreshOrRetrieve(recurringCounterTemplates.getTarget()));
 
             if (serviceChargeTemplateRecurring.getWalletTemplates() == null) {
                 serviceChargeTemplateRecurring.setWalletTemplates(new ArrayList<WalletTemplate>());
@@ -431,6 +473,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     public void editServiceRecurringChargeTemplate(ServiceChargeTemplateRecurring serviceRecurringChargeTemplate) {
         this.serviceChargeTemplateRecurring = serviceRecurringChargeTemplate;
         this.recurringWallets = null;
+        this.recurringCounterTemplates = null;
     }
 
     public void saveServiceChargeTemplateUsage() {
@@ -441,14 +484,20 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
                 return;
             }
             for (ServiceChargeTemplateUsage inc : entity.getServiceUsageCharges()) {
-                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateUsage.getChargeTemplate().getCode()) && !inc.getId().equals(serviceChargeTemplateUsage.getId())
-                        && ((inc.getCounterTemplate() == null && serviceChargeTemplateUsage.getCounterTemplate() == null)
-                                || inc.getCounterTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateUsage.getCounterTemplate().getCode()))) {
+                if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateUsage.getChargeTemplate().getCode()) && !inc.getId()
+                        .equals(serviceChargeTemplateUsage.getId()) && ((inc.getCounterTemplate() == null && serviceChargeTemplateUsage.getCounterTemplate() == null) || inc
+                        .getCounterTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateUsage.getCounterTemplate().getCode()))) {
                     log.error("exception when applying one serviceUsageChargeTemplate !");
                     messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
                     return;
                 }
             }
+            if (serviceChargeTemplateUsage.getAccumulatorCounterTemplates() == null) {
+                serviceChargeTemplateUsage.setAccumulatorCounterTemplates(new ArrayList<CounterTemplate>());
+            } else {
+                serviceChargeTemplateUsage.getAccumulatorCounterTemplates().clear();
+            }
+            serviceChargeTemplateUsage.getAccumulatorCounterTemplates().addAll(counterTemplateService.refreshOrRetrieve(usageCounterTemplates.getTarget()));
 
             if (serviceChargeTemplateUsage.getWalletTemplates() == null) {
                 serviceChargeTemplateUsage.setWalletTemplates(new ArrayList<WalletTemplate>());
@@ -480,7 +529,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     * 
+     *
      * @param id usage charge identifier
      * @throws BusinessException General business exception
      */
@@ -497,6 +546,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     public void editServiceUsageChargeTemplate(ServiceChargeTemplateUsage serviceUsageChargeTemplate) {
         this.serviceChargeTemplateUsage = serviceUsageChargeTemplate;
         this.usageWallets = null;
+        this.usageCounterTemplates = null;
     }
 
     public ServiceChargeTemplateUsage getServiceChargeTemplateUsage() {
@@ -542,4 +592,66 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
         return serviceInstanceService.hasInstances(entity, null);
     }
 
+    public DualListModel<CounterTemplate> getUsageCounterTemplates() {
+
+        if (usageCounterTemplates == null) {
+            usageCounterTemplates = getCounterTemplatesDualListModel(serviceChargeTemplateUsage, false);
+        }
+        return usageCounterTemplates;
+    }
+
+    public void setUsageCounterTemplates(DualListModel<CounterTemplate> counterTemplates) {
+        this.usageCounterTemplates = counterTemplates;
+    }
+
+    public DualListModel<CounterTemplate> getRecurringCounterTemplates() {
+        if (recurringCounterTemplates == null) {
+            recurringCounterTemplates = getCounterTemplatesDualListModel(serviceChargeTemplateRecurring, false);
+        }
+        return recurringCounterTemplates;
+    }
+
+    public void setRecurringCounterTemplates(DualListModel<CounterTemplate> recurringCounterTemplates) {
+        this.recurringCounterTemplates = recurringCounterTemplates;
+    }
+
+    public DualListModel<CounterTemplate> getSubscriptionCounterTemplates() {
+        if (subscriptionCounterTemplates == null) {
+            subscriptionCounterTemplates = getCounterTemplatesDualListModel(serviceChargeTemplateSubscription, true);
+        }
+        return subscriptionCounterTemplates;
+    }
+
+    public void setSubscriptionCounterTemplates(DualListModel<CounterTemplate> subscriptionCounterTemplates) {
+
+        this.subscriptionCounterTemplates = subscriptionCounterTemplates;
+    }
+
+    public DualListModel<CounterTemplate> getTerminationCounterTemplates() {
+        if (terminationCounterTemplates == null) {
+            terminationCounterTemplates = getCounterTemplatesDualListModel(serviceChargeTemplateTermination, true);
+        }
+        return terminationCounterTemplates;
+    }
+
+    public void setTerminationCounterTemplates(DualListModel<CounterTemplate> terminationCounterTemplates) {
+
+        this.terminationCounterTemplates = terminationCounterTemplates;
+    }
+
+    private DualListModel<CounterTemplate> getCounterTemplatesDualListModel(ServiceChargeTemplate serviceChargeTemplate, boolean onlyAccumulators) {
+
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("accumulator", Boolean.TRUE);
+        PaginationConfiguration paginationConfig = new PaginationConfiguration(filters);
+        List<CounterTemplate> source = counterTemplateService.list(paginationConfig);
+        List<CounterTemplate> target = new ArrayList<CounterTemplate>();
+
+        List<CounterTemplate> counterTemplates = serviceChargeTemplate.getAccumulatorCounterTemplates();
+        if (counterTemplates != null) {
+            target.addAll(counterTemplates);
+        }
+        source.removeAll(target);
+        return new DualListModel<CounterTemplate>(source, target);
+    }
 }

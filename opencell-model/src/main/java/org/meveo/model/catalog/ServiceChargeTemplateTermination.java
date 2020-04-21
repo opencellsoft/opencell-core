@@ -66,21 +66,17 @@ public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneS
     private List<WalletTemplate> walletTemplates;
 
     /**
-     * Gets counter template.
-     *
-     * @return a counter template
+     * Counters associated to a charge template.
      */
-    @Override
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_serv_trm_counter_template", joinColumns = @JoinColumn(name = "service_trm_templt_id"), inverseJoinColumns = @JoinColumn(name = "counter_template_id"))
+    @OrderColumn(name = "INDX")
+    private List<CounterTemplate> accumulatorCounterTemplates;
+
     public CounterTemplate getCounterTemplate() {
         return counterTemplate;
     }
 
-    /**
-     * Sets counter template.
-     *
-     * @param counterTemplate a counter template.
-     */
-    @Override
     public void setCounterTemplate(CounterTemplate counterTemplate) {
         this.counterTemplate = counterTemplate;
     }
@@ -93,6 +89,24 @@ public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneS
     @Override
     public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
         this.walletTemplates = walletTemplates;
+    }
+
+    /**
+     * Gets Counters template for a charge template.
+     *
+     * @return list of counters template
+     */
+    public List<CounterTemplate> getAccumulatorCounterTemplates() {
+        return accumulatorCounterTemplates;
+    }
+
+    /**
+     * Sets counters template.
+     *
+     * @param counterTemplates counters template
+     */
+    public void setAccumulatorCounterTemplates(List<CounterTemplate> counterTemplates) {
+        this.accumulatorCounterTemplates = counterTemplates;
     }
 
     @Override
