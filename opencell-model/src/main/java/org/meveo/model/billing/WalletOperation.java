@@ -481,6 +481,12 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     private DatePeriod fullRatingPeriod;
 
     /**
+     * Charge mode
+     */
+    @Transient
+    private ChargeApplicationModeEnum chargeMode;
+
+    /**
      * Constructor
      */
     public WalletOperation() {
@@ -1000,6 +1006,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         result.setUpdated(updated);
         result.setTaxClass(taxClass);
         result.setFullRatingPeriod(fullRatingPeriod);
+        result.setChargeMode(chargeMode);
 
         return result;
     }
@@ -1302,5 +1309,19 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      */
     public void setFullRatingPeriod(DatePeriod fullRatingPeriod) {
         this.fullRatingPeriod = fullRatingPeriod;
+    }
+
+    /**
+     * @return Charge mode
+     */
+    public ChargeApplicationModeEnum getChargeMode() {
+        return chargeMode;
+    }
+
+    /**
+     * @param chargeMode
+     */
+    public void setChargeMode(ChargeApplicationModeEnum chargeMode) {
+        this.chargeMode = chargeMode;
     }
 }

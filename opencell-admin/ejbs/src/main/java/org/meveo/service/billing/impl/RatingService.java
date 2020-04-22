@@ -50,7 +50,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
@@ -216,7 +215,6 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * Rate a charge. Note: DOES NOT persist walletOperation to DB.
      * 
      * @param chargeInstance Charge instance to rate
-     * @param applicationType Application type
      * @param applicationDate Date of application
      * @param inputQuantity Input quantity
      * @param quantityInChargeUnits Input quantity converted to charge units. If null, will be calculated automatically
@@ -231,7 +229,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @throws BusinessException General business exception
      * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RatingResult rateCharge(ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, String orderNumberOverride,
+    public RatingResult rateCharge(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, String orderNumberOverride,
             Date startdate, Date endDate, ChargeApplicationModeEnum chargeMode, EDR edr, boolean isReservation, boolean isVirtual) throws BusinessException, RatingException {
 
         // For virtual operation, lookup charge in the subscription
@@ -259,8 +257,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 orderNumberOverride != null ? (orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride) : chargeInstance.getOrderNumber(),
                 edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
                 edr != null ? edr.getParameter4() : null, null, startdate, endDate, null);
-
         }
+        walletOperation.setChargeMode(chargeMode);
 
 //        String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
 //
@@ -293,7 +291,6 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * 
      * 
      * @param chargeInstance Charge instance to rate
-     * @param applicationType Application type
      * @param applicationDate Date of application
      * @param inputQuantity Input quantity
      * @param quantityInChargeUnits Input quantity converted to charge units. If null, will be calculated automatically
@@ -309,10 +306,10 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @throws BusinessException business exception
      * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RatingResult rateChargeAndTriggerEDRs(ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits,
+    public RatingResult rateChargeAndTriggerEDRs(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits,
             String orderNumberOverride, Date startdate, Date endDate, ChargeApplicationModeEnum chargeMode, EDR edr, boolean forSchedule, boolean isVirtual) throws BusinessException, RatingException {
 
-        RatingResult ratedEDRResult = rateCharge(chargeInstance, applicationType, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, startdate, endDate, chargeMode, edr, false, isVirtual);
+        RatingResult ratedEDRResult = rateCharge(chargeInstance,  applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, startdate, endDate, chargeMode, edr, false, isVirtual);
 
         // Do not trigger EDRs for virtual or Scheduled operations
         if (forSchedule || isVirtual) {

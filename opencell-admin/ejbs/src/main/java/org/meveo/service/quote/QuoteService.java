@@ -106,7 +106,7 @@ public class QuoteService extends BusinessService<Quote> {
      * Create a simulated invoice for quote.
      *
      * @param quoteInvoiceInfos map of quote invoice info
-     * @param generatePdf       generate a PDF file or not.
+     * @param generatePdf generate a PDF file or not.
      * @return list of invoice
      * @throws BusinessException business exception
      */
@@ -160,8 +160,7 @@ public class QuoteService extends BusinessService<Quote> {
                         // Add subscription charges
                         for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
                             try {
-                                WalletOperation wo = oneShotChargeInstanceService
-                                        .oneShotChargeApplicationVirtual(subscription, subscriptionCharge, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
+                                WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, subscriptionCharge, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity());
                                 if (wo != null) {
                                     walletOperations.add(wo);
                                 }
@@ -180,8 +179,7 @@ public class QuoteService extends BusinessService<Quote> {
                         if (serviceInstance.getTerminationDate() != null && serviceInstance.getSubscriptionTerminationReason().isApplyTerminationCharges()) {
                             for (OneShotChargeInstance terminationCharge : serviceInstance.getTerminationChargeInstances()) {
                                 try {
-                                    WalletOperation wo = oneShotChargeInstanceService
-                                            .oneShotChargeApplicationVirtual(subscription, terminationCharge, serviceInstance.getTerminationDate(), serviceInstance.getQuantity());
+                                    WalletOperation wo = oneShotChargeInstanceService.oneShotChargeApplicationVirtual(subscription, terminationCharge, serviceInstance.getTerminationDate(), serviceInstance.getQuantity());
                                     if (wo != null) {
                                         walletOperations.add(wo);
                                     }
@@ -200,9 +198,8 @@ public class QuoteService extends BusinessService<Quote> {
                         // Add recurring charges
                         for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
                             try {
-                                List<WalletOperation> walletOps = recurringChargeInstanceService
-                                        .applyRecurringChargeVirtual(recurringCharge, quoteInvoiceInfo.getFromDate(), quoteInvoiceInfo.getToDate());
-                                if (walletOperations != null && walletOps != null) {
+                                List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringCharge(recurringCharge, quoteInvoiceInfo.getToDate(), false, true);
+                                if (walletOps != null && !walletOps.isEmpty()) {
                                     walletOperations.addAll(walletOps);
                                 }
 
