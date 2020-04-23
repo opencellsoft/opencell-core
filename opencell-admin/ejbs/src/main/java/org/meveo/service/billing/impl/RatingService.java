@@ -542,6 +542,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
                     log.info("charge is shared " + sharedQuantity + " times, so unit price is " + unitPriceWithoutTaxOverridden);
                 }
             }
+            // Override wallet operation parameters using PP EL parameters
+            bareWalletOperation = overrideWalletOperationParameters(bareWalletOperation, pricePlan);
 
             calculateAmounts(bareWalletOperation, unitPriceWithoutTaxOverridden, unitPriceWithTaxOverriden);
 
@@ -579,6 +581,36 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
     }
 
+    /**
+     * Override wallet operation parameters using EL paramaters in the price plan.
+     *
+     * @param bareWalletOperation the wallet operation
+     * @param pricePlan           the Price plan
+     * @return a wallet operation
+     */
+    private WalletOperation overrideWalletOperationParameters(WalletOperation bareWalletOperation, PricePlanMatrix pricePlan) {
+        if (pricePlan != null && StringUtils.isNotBlank(pricePlan.getParameter1El())) {
+            String parameter1 = evaluateStringExpression(pricePlan.getParameter1El(), bareWalletOperation, null, pricePlan, null);
+            if (parameter1 != null) {
+                bareWalletOperation.setParameter1(parameter1);
+            }
+        }
+        if (pricePlan != null && StringUtils.isNotBlank(pricePlan.getParameter2El())) {
+            String parameter2 = evaluateStringExpression(pricePlan.getParameter2El(), bareWalletOperation, null, pricePlan, null);
+            if (parameter2 != null) {
+                bareWalletOperation.setParameter2(parameter2);
+            }
+        }
+        if (pricePlan != null && StringUtils.isNotBlank(pricePlan.getParameter3El())) {
+            String parameter3 = evaluateStringExpression(pricePlan.getParameter3El(), bareWalletOperation, null, pricePlan, null);
+            if (parameter3 != null) {
+                bareWalletOperation.setParameter3(parameter3);
+            }
+        }
+
+        return bareWalletOperation;
+    }
+
     public List<PricePlanMatrix> getActivePricePlansByChargeCode(String code) {
         return pricePlanMatrixService.getActivePricePlansByChargeCode(code);
     }
@@ -586,7 +618,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
     /**
      * Calculate, round (if needed) and set total amounts and taxes: [B2C] amountWithoutTax = round(amountWithTax) - round(amountTax) [B2B] amountWithTax = round(amountWithoutTax)
      * + round(amountTax)
-     * 
+     *
      * Unit prices and taxes are not rounded
      * 
      * @param walletOperation Wallet operation
