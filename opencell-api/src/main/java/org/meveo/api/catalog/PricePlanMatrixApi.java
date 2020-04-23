@@ -217,27 +217,25 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 		}
 		if (!StringUtils.isBlank(postData.getRatingWithoutTaxELSpark())
 				|| !StringUtils.isBlank(postData.getRatingWithTaxELSpark())) {
-			postData.setTotalAmountELSpark(
-					!StringUtils.isBlank(postData.getRatingWithoutTaxELSpark()) ? postData.getRatingWithoutTaxELSpark()
-							: postData.getRatingWithTaxELSpark());
-		}
-		if (!StringUtils.isBlank(postData.getMinimumAmountWithoutTaxEl())
-				|| !StringUtils.isBlank(postData.getMinimumAmountWithTaxEl())) {
-			postData.setMinimumAmountEL(!StringUtils.isBlank(postData.getMinimumAmountWithoutTaxEl())
-					? postData.getMinimumAmountWithoutTaxEl()
-					: postData.getMinimumAmountWithTaxEl());
-		}
-		if (!StringUtils.isBlank(postData.getMinimumAmountWithoutTaxELSpark())
-				|| !StringUtils.isBlank(postData.getMinimumAmountWithTaxELSpark())) {
-			postData.setMinimumAmountEL(!StringUtils.isBlank(postData.getMinimumAmountWithoutTaxELSpark())
-					? postData.getMinimumAmountWithoutTaxELSpark()
-					: postData.getMinimumAmountWithTaxELSpark());
-		}
-        
+            postData.setTotalAmountELSpark(
+                    !StringUtils.isBlank(postData.getRatingWithoutTaxELSpark()) ? postData.getRatingWithoutTaxELSpark() : postData.getRatingWithTaxELSpark());
+        }
+        if (!StringUtils.isBlank(postData.getMinimumAmountWithoutTaxEl()) || !StringUtils.isBlank(postData.getMinimumAmountWithTaxEl())) {
+            postData.setMinimumAmountEL(
+                    !StringUtils.isBlank(postData.getMinimumAmountWithoutTaxEl()) ? postData.getMinimumAmountWithoutTaxEl() : postData.getMinimumAmountWithTaxEl());
+        }
+        if (!StringUtils.isBlank(postData.getMinimumAmountWithoutTaxELSpark()) || !StringUtils.isBlank(postData.getMinimumAmountWithTaxELSpark())) {
+            postData.setMinimumAmountEL(
+                    !StringUtils.isBlank(postData.getMinimumAmountWithoutTaxELSpark()) ? postData.getMinimumAmountWithoutTaxELSpark() : postData.getMinimumAmountWithTaxELSpark());
+        }
+
         pricePlanMatrix.setTotalAmountEL(postData.getTotalAmountEL());
         pricePlanMatrix.setTotalAmountELSpark(postData.getTotalAmountELSpark());
         pricePlanMatrix.setMinimumAmountEL(postData.getMinimumAmountEL());
         pricePlanMatrix.setMinimumAmountELSpark(postData.getMinimumAmountELSpark());
+        pricePlanMatrix.setParameter1El(postData.getParameter1El());
+        pricePlanMatrix.setParameter2El(postData.getParameter2El());
+        pricePlanMatrix.setParameter3El(postData.getParameter3El());
 
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, true);
@@ -444,26 +442,33 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 			postData.setMinimumAmountEL(!StringUtils.isBlank(postData.getMinimumAmountWithoutTaxEl())
 					? postData.getMinimumAmountWithoutTaxEl()
 					: postData.getMinimumAmountWithTaxEl());
-		}
-		if (!StringUtils.isBlank(postData.getMinimumAmountWithoutTaxELSpark())
-				|| !StringUtils.isBlank(postData.getMinimumAmountWithTaxELSpark())) {
-			postData.setMinimumAmountEL(!StringUtils.isBlank(postData.getMinimumAmountWithoutTaxELSpark())
-					? postData.getMinimumAmountWithoutTaxELSpark()
-					: postData.getMinimumAmountWithTaxELSpark());
-		}
-        
-		if (postData.getTotalAmountEL() != null) {
-			pricePlanMatrix.setTotalAmountEL(postData.getTotalAmountEL());
-		}
-		if (postData.getTotalAmountELSpark() != null) {
-			pricePlanMatrix.setTotalAmountELSpark(postData.getTotalAmountELSpark());
-		}
-		if (postData.getMinimumAmountEL() != null) {
-			pricePlanMatrix.setMinimumAmountEL(postData.getMinimumAmountEL());
-		}
-		if (postData.getMinimumAmountELSpark() != null) {
-			pricePlanMatrix.setMinimumAmountELSpark(postData.getMinimumAmountELSpark());
-		}
+        }
+        if (!StringUtils.isBlank(postData.getMinimumAmountWithoutTaxELSpark()) || !StringUtils.isBlank(postData.getMinimumAmountWithTaxELSpark())) {
+            postData.setMinimumAmountEL(
+                    !StringUtils.isBlank(postData.getMinimumAmountWithoutTaxELSpark()) ? postData.getMinimumAmountWithoutTaxELSpark() : postData.getMinimumAmountWithTaxELSpark());
+        }
+
+        if (postData.getTotalAmountEL() != null) {
+            pricePlanMatrix.setTotalAmountEL(postData.getTotalAmountEL());
+        }
+        if (postData.getTotalAmountELSpark() != null) {
+            pricePlanMatrix.setTotalAmountELSpark(postData.getTotalAmountELSpark());
+        }
+        if (postData.getMinimumAmountEL() != null) {
+            pricePlanMatrix.setMinimumAmountEL(postData.getMinimumAmountEL());
+        }
+        if (postData.getMinimumAmountELSpark() != null) {
+            pricePlanMatrix.setMinimumAmountELSpark(postData.getMinimumAmountELSpark());
+        }
+        if (postData.getParameter1El() != null) {
+            pricePlanMatrix.setParameter1El(postData.getParameter1El());
+        }
+        if (postData.getParameter2El() != null) {
+            pricePlanMatrix.setParameter2El(postData.getParameter2El());
+        }
+        if (postData.getParameter3El() != null) {
+            pricePlanMatrix.setParameter3El(postData.getParameter3El());
+        }
 
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, false);

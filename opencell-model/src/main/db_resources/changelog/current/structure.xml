@@ -2947,6 +2947,13 @@ END $$;]]>
         <addPrimaryKey columnNames="chrg_instance_id, indx" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter"/>
 
     </changeSet>
+    <changeSet id="#2447_20200421" author="khalidHORRI">
+        <addColumn tableName="cat_price_plan_matrix">
+            <column name="parameter1_el" type="varchar(2000)"/>
+            <column name="parameter2_el" type="varchar(2000)"/>
+            <column name="parameter3_el" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
 
