@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -97,7 +98,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
     public List<GenericWorkflow> findByTargetEntityClass(String targetEntityClass) {
         List<GenericWorkflow> genericWorkflows = (List<GenericWorkflow>) getEntityManager().createNamedQuery("GenericWorkflow.findByTargetEntityClass", GenericWorkflow.class)
-            .setParameter("targetEntityClass", targetEntityClass).getResultList();
+                .setParameter("targetEntityClass", targetEntityClass).getResultList();
         return genericWorkflows;
     }
 
@@ -135,7 +136,10 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
             WFStatus currentWFStatus = workflowInstance.getCurrentStatus();
             String currentStatus = currentWFStatus != null ? currentWFStatus.getCode() : null;
             log.trace("Actual status: {}", currentStatus);
-            List<GWFTransition> listByFromStatus = gWFTransitionService.listByFromStatus(currentStatus, genericWorkflow);
+
+            int endIndex = genericWorkflow.getTransitions().size();
+            int startIndex = IntStream.range(0, endIndex).filter(idx -> genericWorkflow.getTransitions().get(idx).getFromStatus().equals(currentStatus)).findFirst().getAsInt();
+            List<GWFTransition> listByFromStatus = genericWorkflow.getTransitions().stream().collect(Collectors.toList()).subList(startIndex, endIndex) ;
 
             for (GWFTransition gWFTransition : listByFromStatus) {
 
@@ -175,9 +179,11 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
                     log.trace("Entity status will be updated to {}. Entity {}", workflowInstance, gWFTransition.getToStatus());
                     workflowInstance = workflowInstanceService.update(workflowInstance);
+                } else {
                     return workflowInstance;
                 }
             }
+
         } catch (Exception e) {
             log.error("Failed to execute generic workflow {} on {}", genericWorkflow.getCode(), workflowInstance, e);
             throw new BusinessException(e);
