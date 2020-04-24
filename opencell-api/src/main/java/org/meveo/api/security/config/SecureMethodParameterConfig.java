@@ -6,13 +6,13 @@ import org.meveo.model.BusinessEntity;
 
 public class SecureMethodParameterConfig {
 
-    private int index = 0;
+    private int index = -1;
 
     private String property = "";
 
     private Class<? extends BusinessEntity> entityClass;
 
-    private Class<? extends SecureMethodParameterParser<?>> parser = CodeParser.class;
+    private Class<? extends SecureMethodParameterParser<?>> parser;
 
     public int getIndex() {
         return index;

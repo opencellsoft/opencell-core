@@ -18,6 +18,7 @@
 
 package org.meveo.api.security.Interceptor;
 
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.api.security.config.SecureMethodParameterConfig;
@@ -84,14 +85,11 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
     private RoleService roleService;
 
     /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
+    @Inject
     private ParamBeanFactory paramBeanFactory;
 
-    protected SecuredBusinessEntityConfigFactory securedBusinessEntityConfigFactory;
-
     @Inject
-    public void setSecuredBusinessEntityConfigFactory(SecuredBusinessEntityConfigFactory securedBusinessEntityConfigFactory) {
-        this.securedBusinessEntityConfigFactory = securedBusinessEntityConfigFactory;
-    }
+    protected SecuredBusinessEntityConfigFactory securedBusinessEntityConfigFactory;
 
     /**
      * This is called before a method that makes use of the {@link SecuredBusinessEntityMethodInterceptor} is called. It contains logic on retrieving the attributes of the
@@ -103,19 +101,18 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
      * @throws Exception exception
      */
     @AroundInvoke
-    public Object checkForSecuredEntities(InvocationContext context) throws Exception {
-        SecuredBusinessEntityConfig sbeConfig = securedBusinessEntityConfigFactory.get(context);
+    public Object aroundInvoke(InvocationContext context) throws Exception {
+        SecuredBusinessEntityConfig sbeConfig = this.securedBusinessEntityConfigFactory.get(context);
+        return checkForSecuredEntities(context, sbeConfig);
+    }
 
-        SecuredMethodConfig securedMethodConfig = sbeConfig.getSecuredMethodConfig();
-        if (securedMethodConfig == null) {
+    protected Object checkForSecuredEntities(InvocationContext context, SecuredBusinessEntityConfig sbeConfig) throws Exception {
+
+        if (sbeConfig == null || sbeConfig.getSecuredMethodConfig() == null ) {
             return context.proceed();
         }
-        // log.error("AKK checking secured entities currentUser is {}", currentUser);
-
-        // check if secured entities should be checked.
         String secureSetting = paramBeanFactory.getInstance().getProperty("secured.entities.enabled", "false");
         boolean secureEntitesEnabled = Boolean.parseBoolean(secureSetting);
-
         // if not, immediately return.
         if (!secureEntitesEnabled) {
             return context.proceed();
@@ -123,7 +120,6 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
         Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap = getAllSecuredEntities(currentUser);
         boolean hasRestrictions = !allSecuredEntitiesMap.isEmpty();
-
         if (!hasRestrictions) {
             return context.proceed();
         }
@@ -135,20 +131,23 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         log.debug("Checking method {}.{} for secured BusinessEntities", objectName, methodName);
 
         Object[] values = context.getParameters();
-
         List<SecuredEntity> securedEntities = allSecuredEntitiesMap.values().stream().flatMap(Set::stream).collect(Collectors.toList());
         addSecuredEntitiesToFilters(securedEntities, values);
 
-        SecureMethodParameterConfig[] parametersForValidation = securedMethodConfig.getValidate();
-        for (SecureMethodParameterConfig parameterConfig : parametersForValidation) {
-            BusinessEntity entity = parameterHandler.getParameterValue(parameterConfig, values, BusinessEntity.class);
-            if (entity == null) {
-                // TODO what to do if entity was not resolved because parameterConfig value was null e.g. doing a search by a restricted field and dont provide any field value - that
-                // means that instead of filtering search criteria, results should be filtered instead
+        SecuredMethodConfig securedMethodConfig = sbeConfig.getSecuredMethodConfig();
 
-            } else {
-                if (!securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
-                    throw new AccessDeniedException("Access to entity details is not allowed.");
+        // check validation
+        SecureMethodParameterConfig[] parametersForValidation = securedMethodConfig.getValidate();
+        if (parametersForValidation != null) {
+            for (SecureMethodParameterConfig parameterConfig : parametersForValidation) {
+                BusinessEntity entity = parameterHandler.getParameterValue(parameterConfig, values, BusinessEntity.class);
+                if (entity == null) {
+                    // TODO what to do if entity was not resolved because parameterConfig value was null e.g. doing a search by a restricted field and dont provide any field value - that
+                    // means that instead of filtering search criteria, results should be filtered instead
+                } else {
+                    if (!securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
+                        throw new AccessDeniedException("Access to entity details is not allowed.");
+                    }
                 }
             }
         }
@@ -156,11 +155,11 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         log.debug("Allowing method {}.{} to be invoked.", objectName, methodName);
         Object result = context.proceed();
 
+        // perform filtering
         SecureMethodResultFilter filter = filterFactory.getFilter(securedMethodConfig.getResultFilter());
         log.debug("Method {}.{} results will be filtered using {} filter.", objectName, methodName, filter);
         result = filter.filterResult(sbeConfig.getFilterResultsConfig(), result, currentUser, allSecuredEntitiesMap);
         return result;
-
     }
 
     /**
@@ -208,9 +207,25 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
     private void addSecuredEntitiesToFilters(List<SecuredEntity> securedEntities, Object[] values) {
         log.debug("Adding a secured entities code to the filters for paging");
         for (Object obj : values) {
+            // Search filters are in PagingAndFiltering
             if (obj instanceof PagingAndFiltering) {
                 PagingAndFiltering pagingAndFiltering = (PagingAndFiltering) obj;
-                updateFilters(securedEntities, pagingAndFiltering);
+                if (pagingAndFiltering.getLimit() != null && pagingAndFiltering.getOffset() != null) {
+                    Map<String, Object> filters = Optional.ofNullable(pagingAndFiltering.getFilters()).orElse(new HashMap<>());
+                    updateFilters(securedEntities, filters);
+                    pagingAndFiltering.setFilters(filters);
+
+                }
+                break;
+            }
+            // Search filters are in PagingAndFiltering
+            if (obj instanceof PaginationConfiguration) {
+                PaginationConfiguration paginationConfiguration = (PaginationConfiguration) obj;
+                if (paginationConfiguration.getNumberOfRows() != null && paginationConfiguration.getFirstRow() != null) {
+                    Map<String, Object> filters = Optional.ofNullable(paginationConfiguration.getFilters()).orElse(new HashMap<>());
+                    updateFilters(securedEntities, filters);
+                    paginationConfiguration.setFilters(filters);
+                }
                 break;
             }
         }
@@ -220,39 +235,26 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
      * Adding a secured entities code to the filters
      *
      * @param securedEntities    a secured entities
-     * @param pagingAndFiltering a paging and filtering object
+     * @param filters filters to update
      */
-    private void updateFilters(List<SecuredEntity> securedEntities, PagingAndFiltering pagingAndFiltering) {
-        if (isNotNull(pagingAndFiltering)) {
-            Map<String, Object> filters = Optional.ofNullable(pagingAndFiltering.getFilters()).orElse(new HashMap<>());
-            for (SecuredEntity securedEntity : securedEntities) {
-                final String entityClass = securedEntity.getEntityClass();
-                //extract the field name from entity class, I supposed that the field name is the same as the Class name.
-                final String fieldName = entityClass.substring(entityClass.lastIndexOf('.') + 1).toLowerCase();
-                log.debug("Code = {} for entity = {}", securedEntity.getCode(), fieldName);
-                final String keyInList = "inList " + fieldName + ".code";
-                if (filters.containsKey(fieldName)) {
-                    final Object initialValue = filters.get(fieldName);
-                    filters.put(keyInList, StringUtils.concat(initialValue, ",", securedEntity.getCode()));
-                    filters.remove(fieldName);
-                } else if (filters.containsKey(keyInList)) {
-                    final Object initialList = filters.get(keyInList);
-                    filters.replace(keyInList, StringUtils.concat(initialList, ",", securedEntity.getCode()));
-                } else {
-                    filters.put(fieldName, securedEntity.getCode());
-                }
+    private Map<String, Object> updateFilters(List<SecuredEntity> securedEntities, Map<String, Object> filters) {
+        for (SecuredEntity securedEntity : securedEntities) {
+            final String entityClass = securedEntity.getEntityClass();
+            //extract the field name from entity class, I supposed that the field name is the same as the Class name.
+            final String fieldName = entityClass.substring(entityClass.lastIndexOf('.') + 1).toLowerCase();
+            log.debug("Code = {} for entity = {}", securedEntity.getCode(), fieldName);
+            final String keyInList = "inList " + fieldName + ".code";
+            if (filters.containsKey(fieldName)) {
+                final Object initialValue = filters.get(fieldName);
+                filters.put(keyInList, StringUtils.concat(initialValue, ",", securedEntity.getCode()));
+                filters.remove(fieldName);
+            } else if (filters.containsKey(keyInList)) {
+                final Object initialList = filters.get(keyInList);
+                filters.replace(keyInList, StringUtils.concat(initialList, ",", securedEntity.getCode()));
+            } else {
+                filters.put(fieldName + ".code", securedEntity.getCode());
             }
-            pagingAndFiltering.setFilters(filters);
         }
-    }
-
-    /**
-     * check if the object is null
-     *
-     * @param pagingAndFiltering a paging and filtering object
-     * @return true or false
-     */
-    private boolean isNotNull(PagingAndFiltering pagingAndFiltering) {
-        return pagingAndFiltering != null && pagingAndFiltering.getLimit() != null && pagingAndFiltering.getOffset() != null;
+        return filters;
     }
 }

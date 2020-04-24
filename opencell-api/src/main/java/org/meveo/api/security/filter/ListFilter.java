@@ -99,7 +99,11 @@ public class ListFilter extends SecureMethodResultFilter {
                         }
 
                         BusinessEntity entity = filterPropertyConfig.getEntityClass().newInstance();
-                        entity.setCode((String) value);// FilterProperty could be expanded to include a target property to set instead of using "code"
+                        if(value instanceof String) {
+                            entity.setCode((String) value);
+                        } else if(ReflectionUtils.hasField(value, "code")) {
+                            entity.setCode((String) ReflectionUtils.getPropertyValue(value, "code"));
+                        }
 
                         if (securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
                             log.debug("Adding item {} to filtered list.", entity);
