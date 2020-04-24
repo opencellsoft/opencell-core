@@ -22,7 +22,6 @@ import org.infinispan.util.function.SerializableBiFunction;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.commons.utils.ThreadUtils;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
@@ -184,12 +183,16 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"), 3);
 
         List<String> runningInNodes = runningJobsCache.get(cacheKey);
-        log.error("AKK currently running job {} on {}", jobInstanceId, runningInNodes == null ? "nieko" : StringUtils.concatenate(",", runningInNodes));
+        log.error("AKK currently running job {} on {}", jobInstanceId, runningInNodes == null || runningInNodes.isEmpty() ? "no nodes" : runningInNodes);
 
         List<String> nodes = this.computeCacheWithRetry(cacheKey, remappingFunction, delay, times);
 
-        log.error("Job {} of provider {} marked as running in job cache on node {}. Job is currently running on {} nodes. Previous job running status is {}", jobInstanceId, currentProvider, nodes, isRunning[0]);
-        return isRunning[0];
+        JobRunningStatusEnum previousStatus = isRunning[0];
+
+        log.error("Job {} of provider {} attempted to be marked as running in job cache for node {}. Job is currently running on {} nodes. Previous job running status is {}", jobInstanceId, currentProvider, currentNode,
+            nodes == null || nodes.isEmpty() ? "no nodes" : nodes.toString(), previousStatus);
+
+        return previousStatus;
 
     }
 
@@ -281,7 +284,8 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         List<String> nodes = this.computeCacheWithRetry(new CacheKeyLong(currentProvider, jobInstanceId), remappingFunction, delay, times);
 
-        log.trace("Job {}  of Provider {} marked as NOT running in job cache. Job is currently running on {} nodes.", jobInstanceId, currentProvider, nodes);
+        log.trace("Job {} of Provider {} marked as NOT running in job cache for node {}. Job is currently running on {} nodes.", jobInstanceId, currentProvider, currentNode,
+            nodes == null || nodes.isEmpty() ? "no nodes" : nodes);
     }
 
     /**
