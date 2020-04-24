@@ -21167,6 +21167,135 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         </con:property>
       </con:properties>
     </con:testCase>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Setup TerminationReason" searchProperties="true" id="791dc9c6-6a7f-4f3c-9a60-06913ba35cf0">
+      <con:settings/>
+      <con:testStep type="request" name="update TERM_REASON_1" id="6517db99-9bdf-4438-b4da-7a18f1b75caa">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>updateTerminationReason</con:operation>
+          <con:request name="update TERM_REASON_1" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="54b299db-de74-47da-a41f-3e5c8b16df8d">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateTerminationReason>
+         <terminationReason code="TERM_REASON_1" description="Agreement Reimbursement Charge">
+            <applyAgreement>true</applyAgreement>
+            <applyReimbursment>true</applyReimbursment>
+            <applyTerminationCharges>true</applyTerminationCharges>
+            <overrideProrata>NO_OVERRIDE</overrideProrata>
+            <reimburseOneshots>false</reimburseOneshots>
+         </terminationReason>
+      </ws:updateTerminationReason>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="8e70b95d-8aae-4766-b241-8235e58a650b" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateBillingCycle"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="update TERM_REASON_2" id="7464ab14-3985-4129-9e53-fbb905be31c7">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>updateTerminationReason</con:operation>
+          <con:request name="update TERM_REASON_2" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="54b299db-de74-47da-a41f-3e5c8b16df8d">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateTerminationReason>
+         <terminationReason code="TERM_REASON_2" description="Reimbursement">
+            <applyAgreement>true</applyAgreement>
+            <applyReimbursment>false</applyReimbursment>
+            <applyTerminationCharges>false</applyTerminationCharges>
+         </terminationReason>
+      </ws:updateTerminationReason>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="8e70b95d-8aae-4766-b241-8235e58a650b" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateBillingCycle"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="update TERM_REASON_3" id="4b42287b-1c37-4ea5-961f-069b819cedde">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>updateTerminationReason</con:operation>
+          <con:request name="update TERM_REASON_3" outgoingWss="" incomingWss="" timeout="" sslKeystore="" useWsAddressing="false" useWsReliableMessaging="false" wssPasswordType="" id="54b299db-de74-47da-a41f-3e5c8b16df8d">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateTerminationReason>
+         <terminationReason code="TERM_REASON_3" description="Charge">
+            <applyAgreement>false</applyAgreement>
+            <applyReimbursment>true</applyReimbursment>
+            <applyTerminationCharges>true</applyTerminationCharges>
+         </terminationReason>
+      </ws:updateTerminationReason>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="8e70b95d-8aae-4766-b241-8235e58a650b" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SettingsWs/updateBillingCycle"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:properties/>
   </con:testSuite>
   <con:testSuite id="ded1cd92-1ca9-4aae-bb62-6c8c6abeae22" name="Product Catalog">
@@ -28984,11 +29113,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>\r
       <ws:execute>\r
          <jobInstanceInfo code="Sub_Status_Job">\r
-         		<customFields>
-         <customField code="untilDate" description="untilDate">
-         		<dateValue>2016-08-10</dateValue>
-         </customField>
-         </customFields>
+            <customFields>\r
+               <customField code="untilDate" description="untilDate">\r
+                  <dateValue>2016-08-10</dateValue>\r
+               </customField>\r
+            </customFields>\r
          </jobInstanceInfo>\r
       </ws:execute>\r
    </soapenv:Body>\r
@@ -29010,6 +29139,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:wsaConfig mustUnderstand="NONE" version="200508"/>
             <con:wsrmConfig version="1.2"/>
           </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="delay" name="1000" id="342443bf-997f-4b40-8ae7-1af585cc867d">
+        <con:settings/>
+        <con:config>
+          <delay>1000</delay>
         </con:config>
       </con:testStep>
       <con:testStep type="request" name="Find Subscription is the same" id="a3110395-2e9e-4599-93dd-f473768a4300">
@@ -29217,11 +29352,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>\r
       <ws:execute>\r
          <jobInstanceInfo code="Sub_Status_Job">\r
-         		<customFields>
-         <customField code="untilDate" description="untilDate">
-         		<dateValue>2016-09-01</dateValue>
-         </customField>
-         </customFields>
+            <customFields>\r
+               <customField code="untilDate" description="untilDate">\r
+                  <dateValue>2016-09-01</dateValue>\r
+               </customField>\r
+            </customFields>\r
          </jobInstanceInfo>\r
       </ws:execute>\r
    </soapenv:Body>\r
