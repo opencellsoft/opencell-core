@@ -1,12 +1,14 @@
 package org.meveo.api.security.config;
 
+import org.meveo.api.security.filter.NullFilter;
 import org.meveo.api.security.filter.SecureMethodResultFilter;
+import org.meveo.api.security.parameter.CodeParser;
 
 public class SecuredMethodConfig {
 
     private SecureMethodParameterConfig[]  validate;
 
-    private Class<? extends SecureMethodResultFilter> resultFilter;
+    private Class<? extends SecureMethodResultFilter> resultFilter = NullFilter.class;
 
     public SecureMethodParameterConfig[] getValidate() {
         return validate;

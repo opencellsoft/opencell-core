@@ -22,8 +22,6 @@ import java.util.*;
 
 import javax.inject.Inject;
 
-import org.meveo.api.dto.account.FilterProperty;
-import org.meveo.api.dto.account.FilterResults;
 import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -87,7 +85,11 @@ public class ObjectFilter extends SecureMethodResultFilter {
                     }
 
                     BusinessEntity entity = propertyConfig.getEntityClass().newInstance();
-                    entity.setCode((String) value);// FilterProperty could be expanded to include a target property to set instead of using "code"
+                    if(value instanceof String) {
+                        entity.setCode((String) value);
+                    } else if(ReflectionUtils.hasField(value, "code")) {
+                        entity.setCode((String) ReflectionUtils.getPropertyValue(value, "code"));
+                    }
 
                     if (securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
                         log.debug("Adding item {} to filtered list.", entity);

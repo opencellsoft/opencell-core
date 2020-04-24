@@ -1,10 +1,6 @@
 package org.meveo.api.security.config.annotation;
 
-import org.meveo.api.dto.account.FilterProperty;
-import org.meveo.api.dto.account.FilterResults;
 import org.meveo.api.security.config.*;
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
-import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.slf4j.Logger;
 
 import javax.enterprise.inject.Default;
