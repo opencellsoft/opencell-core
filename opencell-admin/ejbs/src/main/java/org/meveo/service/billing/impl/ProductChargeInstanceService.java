@@ -29,7 +29,6 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
@@ -103,8 +102,8 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
         log.debug("Apply product charge. User account {}, subscription {}, charge {}, quantity {}, date {}", userAccount != null ? userAccount.getCode() : null, subscription != null ? subscription.getCode() : null,
             chargeTemplate.getCode(), productChargeInstance.getQuantity(), productChargeInstance.getChargeDate());
 
-        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(productChargeInstance, ApplicationTypeEnum.PUNCTUAL, productChargeInstance.getChargeDate(), productChargeInstance.getQuantity(), null, null,
-            null, null, null, null, false, isVirtual);
+        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(productChargeInstance, productChargeInstance.getChargeDate(), productChargeInstance.getQuantity(), null, null, null, null, null, null, false,
+            isVirtual);
 
         WalletOperation walletOperation = ratingResult.getWalletOperation();
         if (!isVirtual) {

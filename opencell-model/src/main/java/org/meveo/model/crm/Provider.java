@@ -316,7 +316,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
      */
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "invoice_config_id")
-    private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
+    private InvoiceConfiguration invoiceConfiguration;
 
     /**
      * Should revenue be recognized

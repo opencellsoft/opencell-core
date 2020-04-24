@@ -501,12 +501,11 @@ public class ProviderApi extends BaseApi {
 
         InvoiceConfigurationDto invoiceConfigurationDto = postData.getInvoiceConfiguration();
         if (invoiceConfigurationDto != null) {
-            InvoiceConfiguration providerInvoiceConfiguration = provider.getInvoiceConfiguration();
-            if (providerInvoiceConfiguration == null) {
-                InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
+            InvoiceConfiguration invoiceConfiguration = provider.getInvoiceConfiguration();
+            if (invoiceConfiguration == null) {
+                invoiceConfiguration = new InvoiceConfiguration();
                 provider.setInvoiceConfiguration(invoiceConfiguration);
             }
-            InvoiceConfiguration invoiceConfiguration = providerInvoiceConfiguration;
             if (invoiceConfigurationDto.getDisplaySubscriptions() != null) {
                 invoiceConfiguration.setDisplaySubscriptions(invoiceConfigurationDto.getDisplaySubscriptions());
             }
@@ -531,23 +530,20 @@ public class ProviderApi extends BaseApi {
             if (invoiceConfigurationDto.getDisplayDetail() != null) {
                 invoiceConfiguration.setDisplayDetail(invoiceConfigurationDto.getDisplayDetail());
             }
-            if (providerInvoiceConfiguration == null || providerInvoiceConfiguration.isTransient()) {
-                provider.setInvoiceConfiguration(invoiceConfiguration);
-            }
             if (invoiceConfigurationDto.getDisplayFreeTransacInInvoice() != null) {
                 provider.setDisplayFreeTransacInInvoice(invoiceConfigurationDto.getDisplayFreeTransacInInvoice());
             }
             if (invoiceConfigurationDto.getDisplayBillingCycle() != null) {
-                providerInvoiceConfiguration.setDisplayBillingCycle(invoiceConfigurationDto.getDisplayBillingCycle());
+                invoiceConfiguration.setDisplayBillingCycle(invoiceConfigurationDto.getDisplayBillingCycle());
             }
             if (invoiceConfigurationDto.getDisplayOrders() != null) {
-                providerInvoiceConfiguration.setDisplayOrders(invoiceConfigurationDto.getDisplayOrders());
+                invoiceConfiguration.setDisplayOrders(invoiceConfigurationDto.getDisplayOrders());
             }
             if (invoiceConfigurationDto.getCurrentInvoiceNb() != null) {
-                providerInvoiceConfiguration.setCurrentInvoiceNb(invoiceConfigurationDto.getCurrentInvoiceNb());
+                invoiceConfiguration.setCurrentInvoiceNb(invoiceConfigurationDto.getCurrentInvoiceNb());
             }
             if (invoiceConfigurationDto.getDisplayWalletOperations() != null) {
-                providerInvoiceConfiguration.setDisplayWalletOperations(invoiceConfigurationDto.getDisplayWalletOperations());
+                invoiceConfiguration.setDisplayWalletOperations(invoiceConfigurationDto.getDisplayWalletOperations());
             }
         }
         return provider;

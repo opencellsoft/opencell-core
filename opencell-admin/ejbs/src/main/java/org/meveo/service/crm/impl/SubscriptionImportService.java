@@ -247,7 +247,8 @@ public class SubscriptionImportService extends ImportService {
 
                 subscription.updateAudit(currentUser);
 
-                serviceInstanceService.serviceActivation(serviceInstance, null, null);
+                serviceInstanceService.serviceActivation(serviceInstance);
+                
             } catch (Exception e) {
                 log.error("failed to importSubscription", e);
                 throw new SubscriptionServiceException(jaxbSubscription, serviceInst, e.getMessage());
@@ -308,7 +309,7 @@ public class SubscriptionImportService extends ImportService {
         if (checkSubscription.subscription != null && checkSubscription.subscription.getServiceInstances().size() > 0) {
             for (ServiceInstance serviceInstance : checkSubscription.subscription.getServiceInstances()) {
                 try {
-                    serviceInstanceService.serviceActivation(serviceInstance, null, null);
+                    serviceInstanceService.serviceActivation(serviceInstance);
                 } catch (Exception e) {
                     log.error("failed to activate service", e);
                     throw new SubscriptionServiceException(subscrip, null, e.getMessage());
