@@ -546,39 +546,44 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Get rated transactions for entity grouped by billing account, seller and invoice type
+     * Get rated transactions for entity grouped by billing account, seller and invoice type and payment method
      *
-     * @param entityToInvoice entity to be billed
-     * @param billingAccount Payment method. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will
-     *        be determined for each rated transaction.
-     * @param billingRun billing run
-     * @param defaultBillingCycle Billing cycle applicable to billable entity or to billing run
-     * @param defaultInvoiceType Invoice type. A default invoice type for postpaid rated transactions. In case of prepaid RTs, a prepaid invoice type is used. Provided in case of
-     *        Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will be determined for each billing account occurrence.
+     * @param entityToInvoice        entity to be billed
+     * @param billingAccount         Payment method. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will
+     *                               be determined for each rated transaction.
+     * @param billingRun             billing run
+     * @param defaultBillingCycle    Billing cycle applicable to billable entity or to billing run
+     * @param defaultInvoiceType     Invoice type. A default invoice type for postpaid rated transactions. In case of prepaid RTs, a prepaid invoice type is used. Provided in case of
+     *                               Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will be determined for each billing account occurrence.
      * @param ratedTransactionFilter rated transaction filter
-     * @param firstTransactionDate date of first transaction
-     * @param lastTransactionDate date of last transaction
-     * @param isDraft Is it a draft invoice
+     * @param firstTransactionDate   date of first transaction
+     * @param lastTransactionDate    date of last transaction
+     * @param isDraft                Is it a draft invoice
+     * @param defaultPaymentMethod   The default payment method
      * @return List of rated transaction groups for entity and a flag indicating if there are more Rated transactions to retrieve
+     * @throws BusinessException BusinessException
      */
-    private RatedTransactionsToInvoice getRatedTransactionGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun, BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType,
-            Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) throws BusinessException {
+    private RatedTransactionsToInvoice getRatedTransactionGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun,
+            BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType, Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft,
+            PaymentMethod defaultPaymentMethod) throws BusinessException {
 
-        List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter, rtPaginationSize);
+        List<RatedTransaction> ratedTransactions = ratedTransactionService
+                .listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter, rtPaginationSize);
 
         // If retrieved RT and pagination size does not match, it means no more RTs are pending to be processed and invoice can be closed
         boolean moreRts = ratedTransactions.size() == rtPaginationSize;
 
         // Split RTs billing account groups to billing account/seller groups
         if (log.isDebugEnabled()) {
-            log.debug("Split {} RTs for {}/{} in to billing account/seller/invoice type groups. {} RTs to retrieve.", ratedTransactions.size(), entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(),
-                moreRts ? "More" : "No more");
+            log.debug("Split {} RTs for {}/{} in to billing account/seller/invoice type groups. {} RTs to retrieve.", ratedTransactions.size(),
+                    entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), moreRts ? "More" : "No more");
         }
         // Instantiated invoices. Key ba.id_seller.id_invoiceType.id
         Map<String, RatedTransactionGroup> rtGroups = new HashMap<>();
 
         BillingCycle billingCycle = defaultBillingCycle;
         InvoiceType postPaidInvoiceType = defaultInvoiceType;
+        PaymentMethod paymentMethod = defaultPaymentMethod;
 
         EntityManager em = getEntityManager();
 
@@ -589,6 +594,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 // Retrieve BA and determine postpaid invoice type only if it has not changed from the last iteration
                 if (billingAccount == null || !billingAccount.getId().equals(rt.getBillingAccount().getId())) {
                     billingAccount = rt.getBillingAccount();
+                    if (defaultPaymentMethod == null) {
+                        paymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
+                    }
                     if (defaultBillingCycle == null) {
                         billingCycle = billingAccount.getBillingCycle();
                     }
@@ -603,11 +611,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceType = determineInvoiceType(true, isDraft, null, null, null);
             }
 
-            String invoiceKey = billingAccount.getId() + "_" + rt.getSeller().getId() + "_" + invoiceType.getId() + "_" + isPrepaid;
+            String invoiceKey = billingAccount.getId() + "_" + rt.getSeller().getId() + "_" + invoiceType.getId() + "_" + isPrepaid + "_" + paymentMethod.getId();
             RatedTransactionGroup rtGroup = rtGroups.get(invoiceKey);
 
             if (rtGroup == null) {
-                rtGroup = new RatedTransactionGroup(billingAccount, rt.getSeller(), billingCycle != null ? billingCycle : billingAccount.getBillingCycle(), invoiceType, isPrepaid);
+                rtGroup = new RatedTransactionGroup(billingAccount, rt.getSeller(), billingCycle != null ? billingCycle : billingAccount.getBillingCycle(), invoiceType, isPrepaid,
+                        invoiceKey, paymentMethod);
                 rtGroups.put(invoiceKey, rtGroup);
             }
             rtGroup.getRatedTransactions().add(rt);
@@ -640,9 +649,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoiceDate date of invoice
      * @param firstTransactionDate date of first transaction
      * @param lastTransactionDate date of last transaction
-     * @param instantiateMinRtsForService Should rated transactions to reach minimum invoicing amount be checked and instantiated on service level.
-     * @param instantiateMinRtsForSubscription Should rated transactions to reach minimum invoicing amount be checked and instantiated on subscription level.
-     * @param instantiateMinRtsForBA Should rated transactions to reach minimum invoicing amount be checked and instantiated on Billing account level.
      * @param isDraft Is this a draft invoice
      * @return A list of created invoices
      * @throws BusinessException business exception
@@ -660,16 +666,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Creates invoices and their aggregates
      *
-     * @param entityToInvoice entity to be billed
-     * @param billingRun billing run
+     * @param entityToInvoice        entity to be billed
+     * @param billingRun             billing run
      * @param ratedTransactionFilter rated transaction filter
-     * @param invoiceDate date of invoice
-     * @param firstTransactionDate date of first transaction
-     * @param lastTransactionDate date of last transaction
-     * @param instantiateMinRtsForService Should rated transactions to reach minimum invoicing amount be checked and instantiated on service level.
-     * @param instantiateMinRtsForSubscription Should rated transactions to reach minimum invoicing amount be checked and instantiated on subscription level.
-     * @param instantiateMinRtsForBA Should rated transactions to reach minimum invoicing amount be checked and instantiated on Billing account level.
-     * @param isDraft Is this a draft invoice
+     * @param invoiceDate            date of invoice
+     * @param firstTransactionDate   date of first transaction
+     * @param lastTransactionDate    date of last transaction
+     * @param minAmountForAccounts   Should rated transactions to reach minimum invoicing amount be checked and instantiated on accounts level.
+     * @param isDraft                Is this a draft invoice
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
@@ -855,8 +859,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             // Retrieve Rated transactions and split them into BA/seller combinations
-            RatedTransactionsToInvoice rtsToInvoice = getRatedTransactionGroups(entityToInvoice, billingAccount, billingRun, defaultBillingCycle, defaultInvoiceType, ratedTransactionFilter, firstTransactionDate,
-                lastTransactionDate, isDraft);
+            RatedTransactionsToInvoice rtsToInvoice = getRatedTransactionGroups(entityToInvoice, billingAccount, billingRun, defaultBillingCycle, defaultInvoiceType,
+                    ratedTransactionFilter, firstTransactionDate, lastTransactionDate, isDraft, defaultPaymentMethod);
 
             List<RatedTransactionGroup> ratedTransactionGroupsPaged = rtsToInvoice.ratedTransactionGroups;
             moreRatedTransactionsExpected = rtsToInvoice.moreRatedTransactions;
