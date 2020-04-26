@@ -19,6 +19,7 @@ import org.infinispan.Cache;
 import org.infinispan.commons.CacheException;
 import org.infinispan.context.Flag;
 import org.infinispan.util.function.SerializableBiFunction;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -116,6 +117,18 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             return JobRunningStatusEnum.NOT_RUNNING;
         }
         List<String> runningInNodes = runningJobsCache.get(new CacheKeyLong(currentProvider, jobInstanceId));
+
+        return getJobRunningStatus(runningInNodes);
+    }
+
+    /**
+     * Convert a list of nodes that job is running on to a job running status Enum
+     * 
+     * @param runningInNodes A list of nodes that job is running on
+     * @return Job running status
+     */
+    private JobRunningStatusEnum getJobRunningStatus(List<String> runningInNodes) {
+
         if (runningInNodes == null || runningInNodes.isEmpty()) {
             return JobRunningStatusEnum.NOT_RUNNING;
 
@@ -144,27 +157,16 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     // @Lock(LockType.WRITE)
     public JobRunningStatusEnum markJobAsRunning(Long jobInstanceId, boolean limitToSingleNode) {
-        JobRunningStatusEnum[] isRunning = new JobRunningStatusEnum[1];
+
         String currentNode = EjbUtils.getCurrentClusterNode();
         String currentProvider = currentUser.getProviderCode();
 
         SerializableBiFunction<? super CacheKeyLong, ? super List<String>, ? extends List<String>> remappingFunction = (jobInstIdFullKey, nodesOld) -> {
 
-            if (nodesOld == null || nodesOld.isEmpty()) {
-                isRunning[0] = JobRunningStatusEnum.NOT_RUNNING;
-
-                // If already running, don't modify nodes
-            } else if (nodesOld.contains(currentNode)) {
-                isRunning[0] = JobRunningStatusEnum.RUNNING_THIS;
+            // If already running, don't modify nodes
+            // If limited to run on a single node, don't modify nodes
+            if ((nodesOld != null && !nodesOld.isEmpty()) && (nodesOld.contains(currentNode) || limitToSingleNode)) {
                 return nodesOld;
-
-            } else {
-                isRunning[0] = JobRunningStatusEnum.RUNNING_OTHER;
-
-                // If limited to run on a single node, don't modify nodes
-                if (limitToSingleNode) {
-                    return nodesOld;
-                }
             }
 
             List<String> nodes = new ArrayList<>();
@@ -176,24 +178,33 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             return nodes;
         };
 
+        JobRunningStatusEnum previousStatus = isJobRunning(jobInstanceId);
+        if (previousStatus == JobRunningStatusEnum.RUNNING_THIS) {
+            return previousStatus;
+        }
+
         CacheKeyLong cacheKey = new CacheKeyLong(currentProvider, jobInstanceId);
 
         // if the param is not found in properties file then a default value will be set , and if it's not a valid number then also default value will be returned
         long delay = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_DELAY, "5"), 5);
         long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"), 3);
 
-        List<String> runningInNodes = runningJobsCache.get(cacheKey);
-        log.error("AKK currently running job {} on {}", jobInstanceId, runningInNodes == null || runningInNodes.isEmpty() ? "no nodes" : runningInNodes);
-
         List<String> nodes = this.computeCacheWithRetry(cacheKey, remappingFunction, delay, times);
-
-        JobRunningStatusEnum previousStatus = isRunning[0];
 
         log.error("Job {} of provider {} attempted to be marked as running in job cache for node {}. Job is currently running on {} nodes. Previous job running status is {}", jobInstanceId, currentProvider, currentNode,
             nodes == null || nodes.isEmpty() ? "no nodes" : nodes.toString(), previousStatus);
 
-        return previousStatus;
+        JobRunningStatusEnum currentStatus = getJobRunningStatus(nodes);
+        if (currentStatus == JobRunningStatusEnum.RUNNING_THIS) {
+            return previousStatus;
 
+        } else if (currentStatus == JobRunningStatusEnum.RUNNING_OTHER) {
+            return JobRunningStatusEnum.RUNNING_OTHER;
+
+            // This case should not happen - currentStatus == JobRunningStatusEnum.NOT_RUNNING
+        } else {
+            throw new BusinessException("Failed to mark job as running");
+        }
     }
 
     /**
