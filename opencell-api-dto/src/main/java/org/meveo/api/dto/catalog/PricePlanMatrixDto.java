@@ -195,16 +195,31 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
     private String totalAmountELSpark;
     
     /**
-	 * Minimum allowed amount for a walletOperation. If this amount is less than the
-	 * walletOperation this amount is save and the old value is save in rawAmount.
-	 */
+     * Minimum allowed amount for a walletOperation. If this amount is less than the
+     * walletOperation this amount is save and the old value is save in rawAmount.
+     */
     private String minimumAmountEL;
-    
+
     /**
-	 * Minimum allowed amount for a walletOperation. If this amount is less than the
-	 * walletOperation this amount is save and the old value is save in rawAmount - for Spark.
-	 */
+     * Minimum allowed amount for a walletOperation. If this amount is less than the
+     * walletOperation this amount is save and the old value is save in rawAmount - for Spark.
+     */
     private String minimumAmountELSpark;
+
+    /**
+     * An El expression used to override wallet operation's parameter1El.
+     */
+    private String parameter1El;
+
+    /**
+     * An El expression used to override wallet operation's parameter2El.
+     */
+    private String parameter2El;
+
+    /**
+     * An El expression used to override wallet operation's parameter3El.
+     */
+    private String parameter3El;
 
     /**
      * Instantiates a new price plan matrix dto.
@@ -274,6 +289,9 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
         totalAmountELSpark = pricePlan.getTotalAmountELSpark();
         minimumAmountEL = pricePlan.getMinimumAmountEL();
         minimumAmountELSpark = pricePlan.getMinimumAmountELSpark();
+        parameter1El = pricePlan.getParameter1El();
+        parameter2El = pricePlan.getParameter2El();
+        parameter3El = pricePlan.getParameter3El();
     }
 
     /**
@@ -977,14 +995,68 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
 	}
 
 	public void setMinimumAmountEL(String minimumAmountEL) {
-		this.minimumAmountEL = minimumAmountEL;
-	}
+        this.minimumAmountEL = minimumAmountEL;
+    }
 
-	public String getMinimumAmountELSpark() {
-		return minimumAmountELSpark;
-	}
+    public String getMinimumAmountELSpark() {
+        return minimumAmountELSpark;
+    }
 
-	public void setMinimumAmountELSpark(String minimumAmountELSpark) {
-		this.minimumAmountELSpark = minimumAmountELSpark;
-	}
+    public void setMinimumAmountELSpark(String minimumAmountELSpark) {
+        this.minimumAmountELSpark = minimumAmountELSpark;
+    }
+
+    /**
+     * Gets the parameter1El EL expression.
+     *
+     * @return an El expression
+     */
+    public String getParameter1El() {
+        return parameter1El;
+    }
+
+    /**
+     * Sets the parameter1El EL expression.
+     *
+     * @param parameter1El an El expression
+     */
+    public void setParameter1El(String parameter1El) {
+        this.parameter1El = parameter1El;
+    }
+
+    /**
+     * Gets the parameter2El EL expression.
+     *
+     * @return an El expression
+     */
+    public String getParameter2El() {
+        return parameter2El;
+    }
+
+    /**
+     * Sets the parameter2El EL expression.
+     *
+     * @param parameter2El an El expression
+     */
+    public void setParameter2El(String parameter2El) {
+        this.parameter2El = parameter2El;
+    }
+
+    /**
+     * Gets the parameter3El EL expression.
+     *
+     * @return an El expression
+     */
+    public String getParameter3El() {
+        return parameter3El;
+    }
+
+    /**
+     * Sets the parameter3El EL expression.
+     *
+     * @param parameter3El an El expression
+     */
+    public void setParameter3El(String parameter3El) {
+        this.parameter3El = parameter3El;
+    }
 }
