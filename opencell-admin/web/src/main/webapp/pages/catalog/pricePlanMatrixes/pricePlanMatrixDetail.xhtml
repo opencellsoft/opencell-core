@@ -202,17 +202,21 @@
 						<hftl:formField label="#{messages['pricePlanMatrix.minimumAmountEL']}" field="minimumAmountEL" />
 						<hftl:formField label="#{messages['pricePlanMatrix.minimumAmountELSpark']}" field="minimumAmountELSpark" />
 						<hftl:formField label="#{messages['pricePlanMatrix.totalAmountEL']}" field="totalAmountEL" />
-                    
-                    <hftl:formField id="scriptSelectId"
-    							label="#{messages['pricePlanMatrix.scriptCode']}"
-    							field="scriptInstance" valueLabelField="code" required="false"
-    							popup="true" popupId="pricePlanMatScriptPopup" showResetButton="true" /> 
-					
-                     <hftl:formField label="#{messages['pricePlanMatrix.invoiceSubCategoryEL']}" field="invoiceSubCategoryEL" textArea="true" rows="1" maxlength="2000" />
-                    
-                     <hftl:formField label="#{messages['pricePlanMatrix.woDescriptionEL']}" field="woDescriptionEL" textArea="true" rows="1" maxlength="2000" newLine="true"/>
-                     <hftl:formField label="#{messages['pricePlanMatrix.woDescriptionELSpark']}" field="woDescriptionELSpark" textArea="true" rows="1" maxlength="2000" />
-                     
+
+						<hftl:formField id="scriptSelectId"
+										label="#{messages['pricePlanMatrix.scriptCode']}"
+										field="scriptInstance" valueLabelField="code" required="false"
+										popup="true" popupId="pricePlanMatScriptPopup" showResetButton="true"/>
+
+						<hftl:formField label="#{messages['pricePlanMatrix.invoiceSubCategoryEL']}" field="invoiceSubCategoryEL" textArea="true" rows="1" maxlength="2000"/>
+
+						<hftl:formField label="#{messages['pricePlanMatrix.woDescriptionEL']}" field="woDescriptionEL" textArea="true" rows="1" maxlength="2000" newLine="true"/>
+						<hftl:formField label="#{messages['pricePlanMatrix.woDescriptionELSpark']}" field="woDescriptionELSpark" textArea="true" rows="1" maxlength="2000"/>
+
+						<hftl:formField label="#{messages['pricePlanMatrix.parameter1El']}" field="parameter1El" textArea="true" rows="1" maxlength="2000"/>
+						<hftl:formField label="#{messages['pricePlanMatrix.parameter2El']}" field="parameter2El" textArea="true" rows="1" maxlength="2000"/>
+						<hftl:formField label="#{messages['pricePlanMatrix.parameter3El']}" field="parameter3El" textArea="true" rows="1" maxlength="2000"/>
+
 					</p:tab>
 					
 					<hftl:customFields backingBean="#{pricePlanMatrixBean}"
