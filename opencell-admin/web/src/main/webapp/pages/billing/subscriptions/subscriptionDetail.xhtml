@@ -1111,10 +1111,6 @@
                 </hftl:formPanel>
 				<p:outputPanel id="recurringWalletOperationsPanel">
 					<span style="height: 1px" />
-<!-- 					<h:outputText value="#{messages['commons.noItems']}" -->
-<!-- 						rendered="#{empty subscriptionBean.recurringWalletOperations}" /> -->
-<!-- 					<h:panelGroup rendered="#{not empty subscriptionBean.recurringWalletOperations}"> -->
-                       
 						<h:outputText
 							value="#{subscriptionBean.recurringWalletOperations.size()} #{messages['commons.itemsFound']}" />
 						<h:form id="recurringWalletForm">
@@ -1124,7 +1120,7 @@
 							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 							rowsPerPageTemplate="5,10,20,30" styleClass="custom-grid" >
 
-                            <p:column headerText="date" filterBy="#{shotApplication.operationDate}" filterFunction="#{subscriptionBean.filterByDate}" sortBy="#{shotApplication.operationDate}" sortOrder="descending">
+                            <p:column width="15%" headerText="date" filterBy="#{shotApplication.operationDate}" filterFunction="#{subscriptionBean.filterByDate}" sortBy="#{shotApplication.operationDate}" sortOrder="descending">
                                 <f:facet name="filter">
                                     <h:inputHidden id="filter" />
                                 </f:facet>
@@ -1150,9 +1146,8 @@
                                 <h:outputText value="#{shotApplication.operationDate}">
                                     <f:convertDateTime pattern="dd/MM/yyyy" />
                                 </h:outputText>
-							
                             </p:column>
-                            <p:column width="60" sortBy="#{shotApplication.startDate}">
+                            <p:column width="10%" sortBy="#{shotApplication.startDate}">
 								<f:facet name="header">
 									<h:outputText value="#{messages['walletOperation.startDate']}" />
 								</f:facet>
@@ -1160,7 +1155,7 @@
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText>
 							</p:column>
-							<p:column width="60" sortBy="#{shotApplication.endDate}">
+							<p:column width="10%" sortBy="#{shotApplication.endDate}" >
 								<f:facet name="header">
 									<h:outputText value="#{messages['walletOperation.endDate']}" />
 								</f:facet>
@@ -1168,7 +1163,7 @@
 									<f:convertDateTime pattern="dd/MM/yyyy" />
 								</h:outputText> 
 							</p:column> 
-							<p:column sortBy="#{shotApplication.quantity}">
+							<p:column width="10%" sortBy="#{shotApplication.quantity}">
 								<f:facet name="header">
 									<h:outputText value="#{messages['walletOperation.quantity']}" />
 								</f:facet>
@@ -1182,20 +1177,20 @@
 								<h:outputText value="#{shotApplication.parameter2}">
 								</h:outputText>
 							</p:column>
-							<p:column sortBy="#{shotApplication.amountWithoutTax}">
+							<p:column width="10%" sortBy="#{shotApplication.amountWithoutTax}">
 								<f:facet name="header">
 									<h:outputText
 										value="#{messages['walletOperation.amountWithoutTax']}" />
 								</f:facet>
 								<h:outputText value="#{shotApplication.amountWithoutTax}" converter="bigDecimal12DigitsConverter" />
 							</p:column>
-							<p:column rendered="#{!appProvider.entreprise}" sortBy="#{shotApplication.amountWithTax}">
+							<p:column width="10%" rendered="#{!appProvider.entreprise}" sortBy="#{shotApplication.amountWithTax}">
 								<f:facet name="header">
 									<h:outputText value="#{messages['walletOperation.amountWithTax']}" />
 								</f:facet>
 								<h:outputText value="#{shotApplication.amountWithTax}" converter="bigDecimal12DigitsConverter" />
 							</p:column>
-							<p:column width="44px;"  sortBy="#{shotApplication.status}">
+							<p:column width="44px"  sortBy="#{shotApplication.status}">
 								<f:facet name="header">
 									<h:outputText value="#{messages['walletOperation.status']}" />
 								</f:facet>

@@ -46,10 +46,13 @@ import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ProductInstance;
+import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
@@ -145,11 +148,11 @@ public class QuoteApi extends BaseApi {
      *
      * @param productQuote Quote
      * @return Quote updated
-     * @throws MissingParameterException         missing parameter exception
-     * @throws IncorrectSusbcriptionException    incorrect subscription exception
+     * @throws MissingParameterException missing parameter exception
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
      * @throws IncorrectServiceInstanceException incorection servicer exception
-     * @throws BusinessException                 business exception
-     * @throws MeveoApiException                 meveo api exception.
+     * @throws BusinessException business exception
+     * @throws MeveoApiException meveo api exception.
      */
     public ProductQuote createQuote(ProductQuote productQuote) throws MeveoApiException, BusinessException {
 
@@ -247,14 +250,14 @@ public class QuoteApi extends BaseApi {
 
             // For modify and delete actions, product offering might not be specified
             if (productQuoteItem.getProductOffering() != null) {
-                Date subscriptionDate = ((Date) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
-                        Date.class, DateUtils.setTimeToZero(quote.getQuoteDate())));
+                Date subscriptionDate = ((Date) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
+                    DateUtils.setTimeToZero(quote.getQuoteDate())));
 
                 mainProductOffering = productOfferingService.findByCode(productQuoteItem.getProductOffering().getId(), subscriptionDate);
 
                 if (mainProductOffering == null) {
-                    throw new EntityDoesNotExistsException(ProductOffering.class, productQuoteItem.getProductOffering().getId() + " / " + DateUtils
-                            .formatDateWithPattern(subscriptionDate, paramBeanFactory.getInstance().getDateTimeFormat()));
+                    throw new EntityDoesNotExistsException(ProductOffering.class,
+                        productQuoteItem.getProductOffering().getId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, paramBeanFactory.getInstance().getDateTimeFormat()));
                 }
                 productOfferings.add(new QuoteItemProductOffering(quoteItem, mainProductOffering, 0));
 
@@ -262,8 +265,8 @@ public class QuoteApi extends BaseApi {
                     for (BundledProductReference bundledProductOffering : productQuoteItem.getProductOffering().getBundledProductOffering()) {
                         ProductOffering productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId(), subscriptionDate);
                         if (productOfferingInDB == null) {
-                            throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId() + " / " + DateUtils
-                                    .formatDateWithPattern(subscriptionDate, paramBeanFactory.getInstance().getDateTimeFormat()));
+                            throw new EntityDoesNotExistsException(ProductOffering.class,
+                                bundledProductOffering.getReferencedId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, paramBeanFactory.getInstance().getDateTimeFormat()));
                         }
                         productOfferings.add(new QuoteItemProductOffering(quoteItem, productOfferingInDB, productOfferings.size()));
                     }
@@ -309,8 +312,7 @@ public class QuoteApi extends BaseApi {
 
             List<Product> products = new ArrayList<>();
             products.add(productQuoteItem.getProduct());
-            if (productOfferings.size() > 1 && productQuoteItem.getProduct().getProductRelationship() != null && !productQuoteItem.getProduct().getProductRelationship()
-                    .isEmpty()) {
+            if (productOfferings.size() > 1 && productQuoteItem.getProduct().getProductRelationship() != null && !productQuoteItem.getProduct().getProductRelationship().isEmpty()) {
                 for (ProductRelationship productRelationship : productQuoteItem.getProduct().getProductRelationship()) {
                     products.add(productRelationship.getProduct());
                     if (productOfferings.size() >= products.size()) {
@@ -408,7 +410,7 @@ public class QuoteApi extends BaseApi {
     /**
      * Process quote item for workflow
      *
-     * @param quote     Quote
+     * @param quote Quote
      * @param quoteItem Quote item
      * @throws BusinessException business exception
      * @throws MeveoApiException meveo api exception.
@@ -498,7 +500,7 @@ public class QuoteApi extends BaseApi {
     /**
      * Prepare info for invoicing for quote item.
      *
-     * @param quote     Quote
+     * @param quote Quote
      * @param quoteItem Quote item
      * @return Instantiated product instances and subscriptions and other grouped information of quote item ready for invoicing
      * @throws BusinessException business exception
@@ -568,8 +570,7 @@ public class QuoteApi extends BaseApi {
                 fromDate = productInstance.getApplicationDate();
             }
         }
-        if (productQuoteItem.getSubscriptionPeriod() != null && productQuoteItem.getSubscriptionPeriod().getStartDateTime() != null && productQuoteItem.getSubscriptionPeriod()
-                .getStartDateTime().before(fromDate)) {
+        if (productQuoteItem.getSubscriptionPeriod() != null && productQuoteItem.getSubscriptionPeriod().getStartDateTime() != null && productQuoteItem.getSubscriptionPeriod().getStartDateTime().before(fromDate)) {
             fromDate = productQuoteItem.getSubscriptionPeriod().getStartDateTime();
         }
         if (toDate == null && productQuoteItem.getSubscriptionPeriod() != null) {
@@ -581,8 +582,7 @@ public class QuoteApi extends BaseApi {
 
         // log.error("AKK date from {} to {}", fromDate, toDate);
 
-        QuoteInvoiceInfo quoteInvoiceInfo = new org.meveo.service.quote.QuoteInvoiceInfo(quote.getCode(), productQuoteItem.getConsumptionCdr(), subscription, productInstances,
-                fromDate, toDate);
+        QuoteInvoiceInfo quoteInvoiceInfo = new org.meveo.service.quote.QuoteInvoiceInfo(quote.getCode(), productQuoteItem.getConsumptionCdr(), subscription, productInstances, fromDate, toDate);
 
         // Serialize back the productOrderItem with updated invoice attachments
         quoteItem.setSource(ProductQuoteItem.serializeQuoteItem(productQuoteItem));
@@ -599,8 +599,7 @@ public class QuoteApi extends BaseApi {
 
         Product product = productQuoteItem.getProduct();
 
-        String subscriptionCode = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_CODE.getCharacteristicName(), String.class,
-                UUID.randomUUID().toString());
+        String subscriptionCode = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_CODE.getCharacteristicName(), String.class, UUID.randomUUID().toString());
 
         Subscription subscription = new Subscription();
         subscription.setCode(subscriptionCode);
@@ -609,8 +608,8 @@ public class QuoteApi extends BaseApi {
             subscription.setSeller(quoteItem.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
         }
         subscription.setOffer(offerTemplate);
-        subscription.setSubscriptionDate((Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
-                DateUtils.setTimeToZero(quoteItem.getQuote().getQuoteDate())));
+        subscription.setSubscriptionDate(
+            (Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class, DateUtils.setTimeToZero(quoteItem.getQuote().getQuoteDate())));
         subscription.setEndAgreementDate((Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
 
         String terminationReasonCode = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(), String.class, null);
@@ -664,18 +663,15 @@ public class QuoteApi extends BaseApi {
         return subscription;
     }
 
-    private ProductInstance instantiateVirtualProduct(ProductTemplate productTemplate, Product product, QuoteItem quoteItem, ProductQuoteItem productQuoteItem,
-            Subscription subscription) throws BusinessException, MeveoApiException {
+    private ProductInstance instantiateVirtualProduct(ProductTemplate productTemplate, Product product, QuoteItem quoteItem, ProductQuoteItem productQuoteItem, Subscription subscription)
+            throws BusinessException, MeveoApiException {
 
         log.debug("Instantiating virtual product from product template {} for quote {} line {}", productTemplate.getCode(), quoteItem.getQuote().getCode(), quoteItem.getItemId());
 
-        BigDecimal quantity = ((BigDecimal) getProductCharacteristic(product, OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), BigDecimal.class,
-                new BigDecimal(1)));
-        Date chargeDate = ((Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
-                DateUtils.setTimeToZero(quoteItem.getQuote().getQuoteDate())));
+        BigDecimal quantity = ((BigDecimal) getProductCharacteristic(product, OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), BigDecimal.class, new BigDecimal(1)));
+        Date chargeDate = ((Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class, DateUtils.setTimeToZero(quoteItem.getQuote().getQuoteDate())));
 
-        String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class,
-                UUID.randomUUID().toString());
+        String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class, UUID.randomUUID().toString());
 
         String criteria1 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_1.getCharacteristicName(), String.class, null);
         String criteria2 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_2.getCharacteristicName(), String.class, null);
@@ -692,8 +688,7 @@ public class QuoteApi extends BaseApi {
             seller = quoteItem.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller();
         }
 
-        ProductInstance productInstance = new ProductInstance(quoteItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
-                productTemplate.getDescription(), null, seller);
+        ProductInstance productInstance = new ProductInstance(quoteItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code, productTemplate.getDescription(), null, seller);
         productInstance.setOrderNumber(quoteItem.getQuote().getCode());
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class);
@@ -727,7 +722,7 @@ public class QuoteApi extends BaseApi {
 
                 CustomFieldTemplate cft = cfts.get(characteristic.getName());
                 CustomFieldDto cftDto = entityToDtoConverter.customFieldToDTO(characteristic.getName(), CustomFieldValue.parseValueFromString(cft, characteristic.getValue()),
-                        cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY, cft);
+                    cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY, cft);
                 customFieldsDto.getCustomField().add(cftDto);
             }
         }
@@ -784,20 +779,14 @@ public class QuoteApi extends BaseApi {
 
             ServiceInstance serviceInstance = new ServiceInstance();
             serviceInstance.setCode(serviceCode);
-            serviceInstance.setQuantity(
-                    (BigDecimal) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), BigDecimal.class,
-                            new BigDecimal(1)));
-            serviceInstance.setSubscriptionDate(
-                    (Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
-                            subscription.getSubscriptionDate()));
-            serviceInstance.setEndAgreementDate(
-                    (Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class,
-                            subscription.getEndAgreementDate()));
-            serviceInstance.setRateUntilDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.RATE_UNTIL_DATE.getCharacteristicName(), Date.class,
-                    subscription.getEndAgreementDate()));
+            serviceInstance.setQuantity((BigDecimal) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), BigDecimal.class, new BigDecimal(1)));
+            serviceInstance.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class, subscription.getSubscriptionDate()));
 
-            String terminationReasonCode = (String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(),
-                    String.class, null);
+            serviceInstance
+                .setEndAgreementDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, subscription.getEndAgreementDate()));
+            serviceInstance.setRateUntilDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.RATE_UNTIL_DATE.getCharacteristicName(), Date.class, subscription.getEndAgreementDate()));
+
+            String terminationReasonCode = (String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(), String.class, null);
 
             Date terminationDate = (Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(), Date.class, null);
 
@@ -839,6 +828,19 @@ public class QuoteApi extends BaseApi {
             }
 
             serviceInstanceService.serviceInstanciation(serviceInstance, null, null, true);
+
+            List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances();
+            for (SubscriptionChargeInstance oneShotChargeInstance : oneShotCharges) {
+                oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());
+                oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
+            }
+
+            List<RecurringChargeInstance> recurringChargeInstances = serviceInstance.getRecurringChargeInstances();
+            for (RecurringChargeInstance recurringChargeInstance : recurringChargeInstances) {
+                recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
+                recurringChargeInstance.setQuantity(serviceInstance.getQuantity());
+                recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
+            }
         }
     }
 
@@ -846,7 +848,7 @@ public class QuoteApi extends BaseApi {
      * @param quoteId quote id
      * @return product quote
      * @throws EntityDoesNotExistsException entity not exist exception
-     * @throws BusinessException            business exception.
+     * @throws BusinessException business exception.
      */
     public ProductQuote getQuote(String quoteId) throws EntityDoesNotExistsException, BusinessException {
 
@@ -877,7 +879,7 @@ public class QuoteApi extends BaseApi {
     }
 
     /**
-     * @param quoteId      quote id
+     * @param quoteId quote id
      * @param productQuote product quote.
      * @return product quote
      * @throws BusinessException business exception
@@ -912,8 +914,8 @@ public class QuoteApi extends BaseApi {
     /**
      * @param quoteId quote id
      * @throws EntityDoesNotExistsException exception when entity is not existed.
-     * @throws ActionForbiddenException     forbidden exception
-     * @throws BusinessException            business exception
+     * @throws ActionForbiddenException forbidden exception
+     * @throws BusinessException business exception
      */
     public void deleteQuote(String quoteId) throws EntityDoesNotExistsException, ActionForbiddenException, BusinessException {
 
@@ -991,7 +993,7 @@ public class QuoteApi extends BaseApi {
      * Distinguish bundled products which could be either services or products.
      *
      * @param productQuoteItem Product order item DTO
-     * @param quoteItem        Order item entity
+     * @param quoteItem Order item entity
      * @return An array of List&lt;Product&gt; elements, first being list of products, and second - list of services
      */
     @SuppressWarnings("unchecked")
@@ -1032,11 +1034,11 @@ public class QuoteApi extends BaseApi {
         handleMissingParameters();
 
         Quote quote = quoteService.findByCode(quoteCode);
-        
-        if(quote == null) {
-        	throw new EntityDoesNotExistsException(Quote.class, quoteCode);
+
+        if (quote == null) {
+            throw new EntityDoesNotExistsException(Quote.class, quoteCode);
         }
-        
+
         ProductOrder productOrder = new ProductOrder();
         productOrder.setOrderDate(new Date());
         productOrder.setRequestedStartDate(quote.getFulfillmentStartDate());

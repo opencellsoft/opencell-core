@@ -2971,5 +2971,12 @@ END $$;]]>
         <sql>update ${db.schema.adapted}billing_rated_transaction  set accounting_code_id = iv.accounting_code_id from billing_invoice_sub_cat iv where invoice_sub_category_id = iv.id and invoice_sub_category_id is not null </sql>
     </changeSet>
 
+    
+    <changeSet id="#5163_20200415" author="AndriusKarpavicius">
+        <addColumn tableName="billing_charge_instance">
+            <column name="charged_to_date" type="datetime"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
 

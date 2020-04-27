@@ -61,14 +61,21 @@ public class RecurringChargeInstance extends ChargeInstance {
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
-    protected Date subscriptionDate;
+    private Date subscriptionDate;
 
     /**
-     * Next charge date
+     * The next date a charge will be applied. Is an estimate, as it depends on a current recurring calendar, which might differ from the calendar used during last rating.
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "next_charge_date")
-    protected Date nextChargeDate;
+    private Date nextChargeDate;
+
+    /**
+     * The date to which charge was applied to.
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "charged_to_date")
+    private Date chargedToDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counter_id")
@@ -79,7 +86,7 @@ public class RecurringChargeInstance extends ChargeInstance {
      */
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
     @NotNull
-    protected BigDecimal quantity = BigDecimal.ONE;
+    private BigDecimal quantity = BigDecimal.ONE;
 
     /**
      * The calendar
@@ -99,8 +106,7 @@ public class RecurringChargeInstance extends ChargeInstance {
 
     }
 
-    public RecurringChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, RecurringChargeTemplate recurringChargeTemplate, ServiceInstance serviceInstance,
-            InstanceStatusEnum status) {
+    public RecurringChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, RecurringChargeTemplate recurringChargeTemplate, ServiceInstance serviceInstance, InstanceStatusEnum status) {
 
         super(amountWithoutTax, amountWithTax, recurringChargeTemplate, serviceInstance, status);
 
@@ -108,14 +114,16 @@ public class RecurringChargeInstance extends ChargeInstance {
         this.quantity = serviceInstance.getQuantity() == null ? BigDecimal.ONE : serviceInstance.getQuantity();
 
     }
-    public RecurringChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, RecurringChargeTemplate recurringChargeTemplate, ServiceInstance serviceInstance,
-                                   InstanceStatusEnum status, Calendar calendar, Boolean applyInAdvance) {
+
+    public RecurringChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, RecurringChargeTemplate recurringChargeTemplate, ServiceInstance serviceInstance, InstanceStatusEnum status, Calendar calendar,
+            Boolean applyInAdvance) {
         this(amountWithoutTax, amountWithTax, recurringChargeTemplate, serviceInstance, status);
         this.calendar = calendar;
         this.applyInAdvance = applyInAdvance;
     }
-    public RecurringChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, Date subscriptionDate, Subscription subscription, Seller seller,
-            TradingCountry tradingCountry, TradingCurrency tradingCurrency, RecurringChargeTemplate recurringChargeTemplate) {
+
+    public RecurringChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, Date subscriptionDate, Subscription subscription, Seller seller, TradingCountry tradingCountry,
+            TradingCurrency tradingCurrency, RecurringChargeTemplate recurringChargeTemplate) {
 
         this.code = recurringChargeTemplate.getCode();
         this.description = recurringChargeTemplate.getDescription();
@@ -153,12 +161,32 @@ public class RecurringChargeInstance extends ChargeInstance {
         this.subscriptionDate = subscriptionDate;
     }
 
+    /**
+     * @return The next date a charge will be applied.
+     */
     public Date getNextChargeDate() {
         return nextChargeDate;
     }
 
+    /**
+     * @param nextChargeDate The next date a charge will be applied.
+     */
     public void setNextChargeDate(Date nextChargeDate) {
         this.nextChargeDate = nextChargeDate;
+    }
+
+    /**
+     * @return The date to which charge was applied to.
+     */
+    public Date getChargedToDate() {
+        return chargedToDate;
+    }
+
+    /**
+     * @param chargedToDate The date to which charge was applied to.
+     */
+    public void setChargedToDate(Date chargedToDate) {
+        this.chargedToDate = chargedToDate;
     }
 
     /**
@@ -217,5 +245,18 @@ public class RecurringChargeInstance extends ChargeInstance {
      */
     public void setApplyInAdvance(Boolean applyInAdvance) {
         this.applyInAdvance = applyInAdvance;
+    }
+
+    /**
+     * Advance forward charge dates
+     * 
+     * @param chargeDate Last date charge was applied
+     * @param nextChargeDate Next date charge should be applied on
+     * @param chargedToDate Date to which charges were applied - should match either chargeDate or nextChargeDate depending if applied in advance or not
+     */
+    public void advanceChargeDates(Date chargeDate, Date nextChargeDate, Date chargedToDate) {
+        this.chargeDate = chargeDate;
+        this.nextChargeDate = nextChargeDate;
+        this.chargedToDate = chargedToDate;
     }
 }
