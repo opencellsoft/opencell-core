@@ -26,7 +26,10 @@
 		<c:set var="tabLabel" value="${messages['generic.wfHistory.tabLabel']}" />
 	</c:if>
 	
-	<c:set var="entity" value="#{backingBean.entity}" />
+	<c:if test="${entity == null}">
+		<c:set var="entity" value="#{backingBean.entity}" />
+	</c:if>
+	
 	<c:set var="clazz" value="#{backingBean.clazz}" />
 	
 	<p:tab id="wfHistoryTab" title="${tabLabel}"
