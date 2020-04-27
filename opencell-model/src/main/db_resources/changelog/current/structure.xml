@@ -2947,6 +2947,18 @@ END $$;]]>
         <addPrimaryKey columnNames="chrg_instance_id, indx" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter"/>
 
     </changeSet>
+    
+    <changeSet id="#5174_20200423" author="AbdelmounaimAkadid">
+    	<addColumn tableName="ord_order_item">
+    		<column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime" />
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
 
