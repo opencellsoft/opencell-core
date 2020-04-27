@@ -36,6 +36,8 @@ import javax.inject.Inject;
 import org.infinispan.Cache;
 import org.infinispan.commons.CacheException;
 import org.infinispan.context.Flag;
+import org.infinispan.util.function.SerializableBiFunction;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -45,7 +47,6 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
-import org.infinispan.util.function.SerializableBiFunction;
 
 /**
  * Provides cache related services (tracking running jobs) for job running related operations
@@ -134,6 +135,18 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             return JobRunningStatusEnum.NOT_RUNNING;
         }
         List<String> runningInNodes = runningJobsCache.get(new CacheKeyLong(currentProvider, jobInstanceId));
+
+        return getJobRunningStatus(runningInNodes);
+    }
+
+    /**
+     * Convert a list of nodes that job is running on to a job running status Enum
+     * 
+     * @param runningInNodes A list of nodes that job is running on
+     * @return Job running status
+     */
+    private JobRunningStatusEnum getJobRunningStatus(List<String> runningInNodes) {
+
         if (runningInNodes == null || runningInNodes.isEmpty()) {
             return JobRunningStatusEnum.NOT_RUNNING;
 
@@ -162,27 +175,16 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     // @Lock(LockType.WRITE)
     public JobRunningStatusEnum markJobAsRunning(Long jobInstanceId, boolean limitToSingleNode) {
-        JobRunningStatusEnum[] isRunning = new JobRunningStatusEnum[1];
+
         String currentNode = EjbUtils.getCurrentClusterNode();
         String currentProvider = currentUser.getProviderCode();
 
         SerializableBiFunction<? super CacheKeyLong, ? super List<String>, ? extends List<String>> remappingFunction = (jobInstIdFullKey, nodesOld) -> {
 
-            if (nodesOld == null || nodesOld.isEmpty()) {
-                isRunning[0] = JobRunningStatusEnum.NOT_RUNNING;
-
-                // If already running, don't modify nodes
-            } else if (nodesOld.contains(currentNode)) {
-                isRunning[0] = JobRunningStatusEnum.RUNNING_THIS;
+            // If already running, don't modify nodes
+            // If limited to run on a single node, don't modify nodes
+            if ((nodesOld != null && !nodesOld.isEmpty()) && (nodesOld.contains(currentNode) || limitToSingleNode)) {
                 return nodesOld;
-
-            } else {
-                isRunning[0] = JobRunningStatusEnum.RUNNING_OTHER;
-
-                // If limited to run on a single node, don't modify nodes
-                if (limitToSingleNode) {
-                    return nodesOld;
-                }
             }
 
             List<String> nodes = new ArrayList<>();
@@ -194,18 +196,34 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             return nodes;
         };
 
+        JobRunningStatusEnum previousStatus = isJobRunning(jobInstanceId);
+        if (previousStatus == JobRunningStatusEnum.RUNNING_THIS) {
+            log.trace("Job {} of provider {} attempted to be marked as running in job cache for node {}. Job is already running on {} node.", jobInstanceId, currentProvider, currentNode, currentNode);
+            return previousStatus;
+        }
+
         CacheKeyLong cacheKey = new CacheKeyLong(currentProvider, jobInstanceId);
 
         // if the param is not found in properties file then a default value will be set , and if it's not a valid number then also default value will be returned
         long delay = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_DELAY, "5"), 5);
         long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"), 3);
 
-        List<String> nodes = this.computeCacheWithRetry(cacheKey ,remappingFunction, delay, times);
+        List<String> nodes = this.computeCacheWithRetry(cacheKey, remappingFunction, delay, times);
 
-        log.trace("Job {} of provider {} marked as running in job cache. Job is currently running on {} nodes. Previous job running status is {}", jobInstanceId, currentProvider,
-            nodes, isRunning[0]);
-        return isRunning[0];
+        log.trace("Job {} of provider {} attempted to be marked as running in job cache for node {}. Job is currently running on {} nodes. Previous job running status is {}", jobInstanceId, currentProvider, currentNode,
+            nodes == null || nodes.isEmpty() ? "no nodes" : nodes.toString(), previousStatus);
 
+        JobRunningStatusEnum currentStatus = getJobRunningStatus(nodes);
+        if (currentStatus == JobRunningStatusEnum.RUNNING_THIS) {
+            return previousStatus;
+
+        } else if (currentStatus == JobRunningStatusEnum.RUNNING_OTHER) {
+            return JobRunningStatusEnum.RUNNING_OTHER;
+
+            // This case should not happen - currentStatus == JobRunningStatusEnum.NOT_RUNNING
+        } else {
+            throw new BusinessException("Failed to mark job as running");
+        }
     }
 
     /**
@@ -217,8 +235,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @param times
      * @return list of nodes
      */
-    private List<String> computeCacheWithRetry(CacheKeyLong cacheKey, SerializableBiFunction<? super CacheKeyLong, ? super List<String>, ? extends List<String>> remappingFunction, long delay,
-            final long times) {
+    private List<String> computeCacheWithRetry(CacheKeyLong cacheKey, SerializableBiFunction<? super CacheKeyLong, ? super List<String>, ? extends List<String>> remappingFunction, long delay, final long times) {
 
         try {
             return runningJobsCache.compute(cacheKey, remappingFunction);
@@ -244,7 +261,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @param delay
      * @param times
      */
-    private void putInCacheWithRetry(CacheKeyLong cacheKey, long delay,final long times) {
+    private void putInCacheWithRetry(CacheKeyLong cacheKey, long delay, final long times) {
 
         try {
             // Use flags to not return previous value
@@ -295,9 +312,10 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         long delay = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_DELAY, "5"), 5);
         long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"), 3);
 
-        List<String> nodes = this.computeCacheWithRetry(new CacheKeyLong(currentProvider, jobInstanceId) ,remappingFunction, delay, times);
+        List<String> nodes = this.computeCacheWithRetry(new CacheKeyLong(currentProvider, jobInstanceId), remappingFunction, delay, times);
 
-        log.trace("Job {}  of Provider {} marked as NOT running in job cache. Job is currently running on {} nodes.", jobInstanceId, currentProvider, nodes);
+        log.trace("Job {} of Provider {} marked as NOT running in job cache for node {}. Job is currently running on {} nodes.", jobInstanceId, currentProvider, currentNode,
+            nodes == null || nodes.isEmpty() ? "no nodes" : nodes);
     }
 
     /**
@@ -309,8 +327,8 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         String currentProvider = currentUser.getProviderCode();
 
         // if the param is not found in properties file then a default value will be set , and if it's not a valid number then also default value will be returned
-        long delay = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_DELAY, "5"),5);
-        long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"),3);
+        long delay = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_DELAY, "5"), 5);
+        long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"), 3);
 
         this.putInCacheWithRetry(new CacheKeyLong(currentProvider, jobInstanceId), delay, times);
         log.trace("Job {} of Provider {} marked as not running in job cache", jobInstanceId, currentProvider);
@@ -344,10 +362,10 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         };
 
         // if the param is not found in properties file then a default value will be set , and if it's not a valid number then also default value will be returned
-        long delay = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_DELAY, "5"),5);
-        long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"),3);
+        long delay = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_DELAY, "5"), 5);
+        long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"), 3);
 
-        this.computeCacheWithRetry(new CacheKeyLong(currentUser.getProviderCode(), jobInstanceId), remappingFunction,delay ,times);
+        this.computeCacheWithRetry(new CacheKeyLong(currentUser.getProviderCode(), jobInstanceId), remappingFunction, delay, times);
     }
 
     /**
@@ -359,19 +377,20 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         String currentProvider = currentUser.getProviderCode();
 
         // if the param is not found in properties file then a default value will be set , and if it's not a valid number then also default value will be returned
-        long delay = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_DELAY, "5"),5);
-        long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"),3);
+        long delay = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_DELAY, "5"), 5);
+        long times = NumberUtils.parseLongDefault(ParamBean.getInstance().getProperty(CACHE_RETRY_TIMES, "3"), 3);
 
         this.removeFromCacheWithRetry(new CacheKeyLong(currentProvider, jobInstanceId), delay, times);
     }
 
     /**
      * * Remove item from the cache , and in case of CacheException , retry based on times and delay params.
+     * 
      * @param cacheKey
      * @param delay
      * @param times
      */
-    private void removeFromCacheWithRetry(CacheKeyLong cacheKey, long delay,final long times) {
+    private void removeFromCacheWithRetry(CacheKeyLong cacheKey, long delay, final long times) {
 
         try { // adding Flag.IGNORE_RETURN_VALUES to enhence the update perfs since we dont need a return value
             runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(cacheKey);
