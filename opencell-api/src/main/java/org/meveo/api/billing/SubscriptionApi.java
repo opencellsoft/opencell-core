@@ -743,7 +743,7 @@ public class SubscriptionApi extends BaseApi {
         for (ServiceInstance serviceInstance : serviceInstances) {
 
             try {
-                serviceInstanceService.serviceActivation(serviceInstance, null, null);
+                serviceInstanceService.serviceActivation(serviceInstance);
             } catch (BusinessException e) {
                 log.error("Failed to activate a service {}/{} on subscription {}", serviceInstance.getId(), serviceInstance.getCode(), subscription.getCode(), e);
                 throw e;

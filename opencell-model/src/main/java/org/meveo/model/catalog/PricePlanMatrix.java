@@ -325,6 +325,27 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Temporal(TemporalType.TIMESTAMP)
     private Date validityDate;
 
+    /**
+     * An El expression used to override wallet operation's parameter1El.
+     */
+    @Column(name = "parameter1_el", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String parameter1El;
+
+    /**
+     * An El expression used to override wallet operation's parameter2El.
+     */
+    @Column(name = "parameter2_el", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String parameter2El;
+
+    /**
+     * An El expression used to override wallet operation's parameter3El.
+     */
+    @Column(name = "parameter3_el", columnDefinition = "TEXT")
+    @Size(max = 2000)
+    private String parameter3El;
+
     public String getEventCode() {
         return eventCode;
     }
@@ -844,5 +865,59 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
 
     public void setValidityDate(Date validityDate) {
         this.validityDate = validityDate;
+    }
+
+    /**
+     * Gets the parameter1El EL expression.
+     *
+     * @return an El expression
+     */
+    public String getParameter1El() {
+        return parameter1El;
+    }
+
+    /**
+     * Sets the parameter1El EL expression.
+     *
+     * @param parameter1El an El expression
+     */
+    public void setParameter1El(String parameter1El) {
+        this.parameter1El = parameter1El;
+    }
+
+    /**
+     * Gets the parameter2El EL expression.
+     *
+     * @return an El expression
+     */
+    public String getParameter2El() {
+        return parameter2El;
+    }
+
+    /**
+     * Sets the parameter2El EL expression.
+     *
+     * @param parameter2El an El expression
+     */
+    public void setParameter2El(String parameter2El) {
+        this.parameter2El = parameter2El;
+    }
+
+    /**
+     * Gets the parameter3El EL expression.
+     *
+     * @return an El expression
+     */
+    public String getParameter3El() {
+        return parameter3El;
+    }
+
+    /**
+     * Sets the parameter3El EL expression.
+     *
+     * @param parameter3El an El expression
+     */
+    public void setParameter3El(String parameter3El) {
+        this.parameter3El = parameter3El;
     }
 }

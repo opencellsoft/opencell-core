@@ -284,7 +284,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     }
 
     /**
-     * Apply a charge that was instantiated before
+     * Apply a charge that WAS INSTANTIATED before
      * 
      * @param oneShotChargeInstance A charge to apply
      * @param chargeDate Charge date

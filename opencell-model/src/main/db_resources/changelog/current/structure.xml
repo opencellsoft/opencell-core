@@ -2947,6 +2947,13 @@ END $$;]]>
         <addPrimaryKey columnNames="chrg_instance_id, indx" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter"/>
 
     </changeSet>
+    <changeSet id="#2447_20200421" author="khalidHORRI">
+        <addColumn tableName="cat_price_plan_matrix">
+            <column name="parameter1_el" type="varchar(2000)"/>
+            <column name="parameter2_el" type="varchar(2000)"/>
+            <column name="parameter3_el" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
 
     <changeSet id="#40167_20200407" author="AndriusKarpavicius">
         <addColumn tableName="billing_rated_transaction">
@@ -2962,6 +2969,13 @@ END $$;]]>
 
         <sql>update ${db.schema.adapted}billing_wallet_operation  set accounting_code_id = iv.accounting_code_id from billing_invoice_sub_cat iv where invoice_sub_category_id = iv.id and invoice_sub_category_id is not null </sql>
         <sql>update ${db.schema.adapted}billing_rated_transaction  set accounting_code_id = iv.accounting_code_id from billing_invoice_sub_cat iv where invoice_sub_category_id = iv.id and invoice_sub_category_id is not null </sql>
+    </changeSet>
+
+    
+    <changeSet id="#5163_20200415" author="AndriusKarpavicius">
+        <addColumn tableName="billing_charge_instance">
+            <column name="charged_to_date" type="datetime"/>
+        </addColumn>
     </changeSet>
 
 </databaseChangeLog>

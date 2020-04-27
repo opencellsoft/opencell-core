@@ -60,7 +60,7 @@ public class EnumBuilder {
 	}
 
 	public static void put(Class enumType, Map<String, Object> newItems) {
-		log.debug("adding newItems={} to enumType={}", newItems, enumType);
+
 		final String enumName = enumType.getName();
 		Map<String, Object> enumItems = MAP_EXTENSIBLE_ENUMs.get(enumName);
 		if (enumItems == null) {
@@ -81,7 +81,7 @@ public class EnumBuilder {
 	}
 
 	public static Object[] values(String enumName) {
-		log.debug("values of enumName={}", enumName);
+
 		Map<String, Object> enumItems = MAP_EXTENSIBLE_ENUMs.get(enumName);
 		if (enumItems == null) {
 			log.error("no enum found for enumName={} MAP_EXTENSIBLE_ENUMs={}", enumName, MAP_EXTENSIBLE_ENUMs);
@@ -91,7 +91,7 @@ public class EnumBuilder {
 	}
 
 	public static Object build(String code, Class enumType) {
-		log.debug("building Enum code={} for enumType={}", code, enumType);
+
 		final String enumName = enumType.getName();
 		Map<String, Object> enumItems = MAP_EXTENSIBLE_ENUMs.get(enumName);
 		if (enumItems == null) {
