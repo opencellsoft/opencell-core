@@ -180,6 +180,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         JobRunningStatusEnum previousStatus = isJobRunning(jobInstanceId);
         if (previousStatus == JobRunningStatusEnum.RUNNING_THIS) {
+            log.error("Job {} of provider {} attempted to be marked as running in job cache for node {}. Job is already running on {} node.", jobInstanceId, currentProvider, currentNode, currentNode);
             return previousStatus;
         }
 
