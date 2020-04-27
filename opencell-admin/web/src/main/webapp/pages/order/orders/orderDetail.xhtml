@@ -29,10 +29,10 @@
         <hftl:entityPopup id="userAccountPopup" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}" searchField1Label="#{messages['businessEntity.code']}"
             searchField1="code" searchField2Label="#{messages['userAccount.name']}" searchField2="name" column1Label="#{messages['businessEntity.code']}" column1="code"
             column2Label="#{messages['userAccount.name']}" column2="name" selection="#{orderBean.selectedOrderItem.userAccount}"
-            updateField=":orderForm:tabView:userAccount :orderForm:tabView:userAccount_text">
+            updateField=":orderForm:tabView:orderLineTabView:userAccount :orderForm:tabView:orderLineTabView:userAccount_text">
         </hftl:entityPopup>
         <hftl:entityPopup id="subscriptionPopup" header="#{messages['access.subscription']}"
-            updateField=":orderForm:tabView:subscription :orderForm:tabView:subscription_text :orderForm:tabView:offerTree  :orderForm:tabView:offerConfigurations" backingBean="#{subscriptionBean}"
+            updateField=":orderForm:tabView:orderLineTabView:subscription :orderForm:tabView:orderLineTabView:subscription_text :orderForm:tabView:orderLineTabView:offerTree  :orderForm:tabView:orderLineTabView:offerConfigurations" backingBean="#{subscriptionBean}"
             searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
             column2Label="#{messages['businessEntity.description']}" column2="description" selectionListenerBean="#{orderBean}" selectionListenerMethod="onSubscriptionSet">
         </hftl:entityPopup>
@@ -41,7 +41,7 @@
             searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to" column1Label="#{messages['businessEntity.code']}" column1="code"
             column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
             column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" lazy="false" dataModel="#{productOfferingBean.listActive()}" width="1000"
-            updateField=":orderForm:tabView:offer  :orderForm:tabView:offer_text :orderForm:tabView:offerTree  :orderForm:tabView:offerConfigurations" selectionListenerBean="#{orderBean}"
+            updateField=":orderForm:tabView:orderLineTabView:offer  :orderForm:tabView:orderLineTabView:offer_text :orderForm:tabView:orderLineTabView:offerTree  :orderForm:tabView:orderLineTabView:offerConfigurations" selectionListenerBean="#{orderBean}"
             selectionListenerMethod="onMainProductOfferingSet">
         </hftl:entityPopup>
         <hftl:entityPopup id="billingCyclePopup"
