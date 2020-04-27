@@ -1803,7 +1803,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * @param counterCode the counter code
      * @return the counter value.
      */
-    public static BigDecimal getCounterValue(ICounterEntity entity, String counterCode) {
+    public static Object getCounterValue(ICounterEntity entity, String counterCode) {
 
         return getCounterPeriodService().getCounterValue(entity, counterCode);
     }
@@ -1816,7 +1816,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * @param date the date to be compared to start and end date of a CounterPeriod
      * @return the counter value.
      */
-    public static BigDecimal getCounterValueByDate(ICounterEntity entity, String counterCode, Date date) {
+    public static Object getCounterValueByDate(ICounterEntity entity, String counterCode, Date date) {
 
         return getCounterPeriodService().getCounterValueByDate(entity, counterCode, date);
     }

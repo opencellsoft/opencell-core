@@ -19,7 +19,9 @@
 package org.meveo.api.dto.billing;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
+import org.meveo.model.catalog.AccumulatorCounterTypeEnum;
 import org.meveo.model.catalog.CounterTypeEnum;
 
 public class CounterPeriodDto {
@@ -29,6 +31,36 @@ public class CounterPeriodDto {
     private String periodStartDate;
     private String periodEndDate;
     private BigDecimal value;
+    /**
+     * Check if is it an accumulator account.
+     */
+    private Boolean accumulator;
+    /**
+     * Accumulated values.
+     */
+    private Map<String, BigDecimal> accumulatedValues;
+
+    /**
+     * The type field can be "Multi-value" if the accumulator is true.
+     */
+    private AccumulatorCounterTypeEnum accumulatorType;
+
+    /**
+     * An EL expression that returns a boolean that tells us if we accumulate or not.
+     */
+
+    private String filterEl;
+    /**
+     * An EL expression that Returns a string that is an identifier for what we count.
+     */
+
+    private String keyEl;
+
+    /**
+     * An EL expression that returns a number (BigDecimal) that contains the quantity we count.
+     */
+
+    private String valueEl;
 
     public CounterTypeEnum getCounterType() {
         return counterType;
@@ -68,5 +100,53 @@ public class CounterPeriodDto {
 
     public void setValue(BigDecimal value) {
         this.value = value;
+    }
+
+    public Boolean getAccumulator() {
+        return accumulator;
+    }
+
+    public void setAccumulator(Boolean accumulator) {
+        this.accumulator = accumulator;
+    }
+
+    public Map<String, BigDecimal> getAccumulatedValues() {
+        return accumulatedValues;
+    }
+
+    public void setAccumulatedValues(Map<String, BigDecimal> accumulatedValues) {
+        this.accumulatedValues = accumulatedValues;
+    }
+
+    public AccumulatorCounterTypeEnum getAccumulatorType() {
+        return accumulatorType;
+    }
+
+    public void setAccumulatorType(AccumulatorCounterTypeEnum accumulatorType) {
+        this.accumulatorType = accumulatorType;
+    }
+
+    public String getFilterEl() {
+        return filterEl;
+    }
+
+    public void setFilterEl(String filterEl) {
+        this.filterEl = filterEl;
+    }
+
+    public String getKeyEl() {
+        return keyEl;
+    }
+
+    public void setKeyEl(String keyEl) {
+        this.keyEl = keyEl;
+    }
+
+    public String getValueEl() {
+        return valueEl;
+    }
+
+    public void setValueEl(String valueEl) {
+        this.valueEl = valueEl;
     }
 }
