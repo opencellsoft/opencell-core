@@ -180,7 +180,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         JobRunningStatusEnum previousStatus = isJobRunning(jobInstanceId);
         if (previousStatus == JobRunningStatusEnum.RUNNING_THIS) {
-            log.error("Job {} of provider {} attempted to be marked as running in job cache for node {}. Job is already running on {} node.", jobInstanceId, currentProvider, currentNode, currentNode);
+            log.trace("Job {} of provider {} attempted to be marked as running in job cache for node {}. Job is already running on {} node.", jobInstanceId, currentProvider, currentNode, currentNode);
             return previousStatus;
         }
 
@@ -192,7 +192,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         List<String> nodes = this.computeCacheWithRetry(cacheKey, remappingFunction, delay, times);
 
-        log.error("Job {} of provider {} attempted to be marked as running in job cache for node {}. Job is currently running on {} nodes. Previous job running status is {}", jobInstanceId, currentProvider, currentNode,
+        log.trace("Job {} of provider {} attempted to be marked as running in job cache for node {}. Job is currently running on {} nodes. Previous job running status is {}", jobInstanceId, currentProvider, currentNode,
             nodes == null || nodes.isEmpty() ? "no nodes" : nodes.toString(), previousStatus);
 
         JobRunningStatusEnum currentStatus = getJobRunningStatus(nodes);

@@ -50,10 +50,6 @@ public class MediationJob extends Job {
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
         Boolean oneFilePerJob = (Boolean) this.getParamOrCFValue(jobInstance, "oneFilePerJob", Boolean.FALSE);
         try {
-
-            log.error("AKK will sleep");
-            Thread.sleep(15000);
-            log.error("AKK end sleep");
             
             ParamBean parambean = paramBeanFactory.getInstance();
             String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "metering" + File.separator;
