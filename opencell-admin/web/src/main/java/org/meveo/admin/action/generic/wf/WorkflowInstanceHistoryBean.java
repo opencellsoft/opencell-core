@@ -17,6 +17,7 @@
  */
 package org.meveo.admin.action.generic.wf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.view.ViewScoped;
@@ -83,7 +84,10 @@ public class WorkflowInstanceHistoryBean extends BaseBean<WorkflowInstanceHistor
      */
 
     public List<WorkflowInstance> getWorkflowInstances(BusinessEntity entity, Class<?> clazz) {
-        return workflowInstanceService.findByEntityIdAndClazz(entity.getId(), clazz);
+        if(entity != null) {
+            return workflowInstanceService.findByEntityIdAndClazz(entity.getId(), clazz);
+        }
+        return new ArrayList<WorkflowInstance>();
     }
 
     /**
