@@ -141,7 +141,7 @@ public class ProviderDto extends AuditableEntityDto {
     private Boolean recognizeRevenue;
 
     /** The invoice configuration. */
-    private InvoiceConfigurationDto invoiceConfiguration = new InvoiceConfigurationDto();
+    private InvoiceConfigurationDto invoiceConfiguration;
 
     /** The custom fields. */
     @XmlElement(required = false)
@@ -603,11 +603,10 @@ public class ProviderDto extends AuditableEntityDto {
      */
     @Override
     public String toString() {
-        return "ProviderDto [code=" + code + ", description=" + description + ", currency=" + currency + ", country=" + country + ", language=" + language + ", multiCurrency="
-                + multiCurrency + ", multiCountry=" + multiCountry + ", multiLanguage=" + multiLanguage + ", userAccount=" + userAccount + ", enterprise=" + enterprise
-                + ", levelDuplication=" + levelDuplication + ", rounding=" + rounding + ", prepaidReservationExpirationDelayinMillisec="
-                + prepaidReservationExpirationDelayinMillisec + ", discountAccountingCode=" + discountAccountingCode + ", email=" + email + ", bankCoordinates=" + bankCoordinates
-                + ", recognizeRevenue=" + recognizeRevenue + ", invoiceConfiguration=" + invoiceConfiguration + ", customFields=" + customFields + "]";
+        return "ProviderDto [code=" + code + ", description=" + description + ", currency=" + currency + ", country=" + country + ", language=" + language + ", multiCurrency=" + multiCurrency + ", multiCountry="
+                + multiCountry + ", multiLanguage=" + multiLanguage + ", userAccount=" + userAccount + ", enterprise=" + enterprise + ", levelDuplication=" + levelDuplication + ", rounding=" + rounding
+                + ", prepaidReservationExpirationDelayinMillisec=" + prepaidReservationExpirationDelayinMillisec + ", discountAccountingCode=" + discountAccountingCode + ", email=" + email + ", bankCoordinates="
+                + bankCoordinates + ", recognizeRevenue=" + recognizeRevenue + ", invoiceConfiguration=" + invoiceConfiguration + ", customFields=" + customFields + "]";
     }
 
 }

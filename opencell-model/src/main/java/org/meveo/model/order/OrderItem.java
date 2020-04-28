@@ -41,8 +41,10 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
@@ -55,11 +57,12 @@ import org.meveo.model.shared.Address;
  * @author Andrius Karpavicius
  */
 @Entity
+@WorkflowedEntity
 @ExportIdentifier({ "order.code", "itemId" })
 @Table(name = "ord_order_item")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ord_order_item_seq"), })
-public class OrderItem extends BaseEntity {
+public class OrderItem extends BusinessEntity implements IWFEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 

@@ -44684,7 +44684,7 @@ public class ForgotPassword extends ModuleScript{
       </con:property>
       <con:property>
         <con:name>invoice1_amount</con:name>
-        <con:value>90.000000000000</con:value>
+        <con:value>89.410000000000</con:value>
       </con:property>
       <con:property>
         <con:name>invoice2_number</con:name>
@@ -44692,7 +44692,7 @@ public class ForgotPassword extends ModuleScript{
       </con:property>
       <con:property>
         <con:name>invoice2_amount</con:name>
-        <con:value>26.000000000000</con:value>
+        <con:value>26.400000000000</con:value>
       </con:property>
     </con:properties>
   </con:testSuite>

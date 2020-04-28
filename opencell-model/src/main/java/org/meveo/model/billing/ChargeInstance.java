@@ -127,7 +127,8 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     protected Calendar invoicingCalendar;
 
     /**
-     * Charge instantiation date
+     * Charge instantiation date - one shot and usage charges<br>
+     * or the last date charge applied on - recurring charges
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "charge_date")
@@ -294,7 +295,6 @@ public abstract class ChargeInstance extends BusinessCFEntity {
 
         this(amountWithoutTax, amountWithTax, chargeTemplate, serviceInstance.getSubscription(), status);
 
-        
         this.serviceInstance = serviceInstance;
         this.orderNumber = serviceInstance.getOrderNumber();
         this.invoicingCalendar = serviceInstance.getInvoicingCalendar();
@@ -376,10 +376,18 @@ public abstract class ChargeInstance extends BusinessCFEntity {
         }
     }
 
+    /**
+     * @return Charge instantiation date - one shot and usage charges<br>
+     *         or the last date charge applied on - recurring charges
+     */
     public Date getChargeDate() {
         return chargeDate;
     }
 
+    /**
+     * @param chargeDate Charge instantiation date - one shot and usage charges<br>
+     *        or the last date charge applied on - recurring charges
+     */
     public void setChargeDate(Date chargeDate) {
         this.chargeDate = chargeDate;
     }
