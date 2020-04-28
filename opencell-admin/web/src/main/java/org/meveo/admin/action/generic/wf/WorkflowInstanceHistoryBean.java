@@ -84,7 +84,7 @@ public class WorkflowInstanceHistoryBean extends BaseBean<WorkflowInstanceHistor
      */
 
     public List<WorkflowInstance> getWorkflowInstances(BusinessEntity entity, Class<?> clazz) {
-        if(entity != null) {
+        if(entity != null && clazz != null) {
             return workflowInstanceService.findByEntityIdAndClazz(entity.getId(), clazz);
         }
         return new ArrayList<WorkflowInstance>();
