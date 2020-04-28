@@ -563,7 +563,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return List of rated transaction groups for entity and a flag indicating if there are more Rated transactions to retrieve
      * @throws BusinessException BusinessException
      */
-    private RatedTransactionsToInvoice getRatedTransactionGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun,
+    protected RatedTransactionsToInvoice getRatedTransactionGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun,
             BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType, Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft,
             PaymentMethod defaultPaymentMethod) throws BusinessException {
 
@@ -3686,25 +3686,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Rated transactions to invoice
      */
-    private class RatedTransactionsToInvoice {
+    protected class RatedTransactionsToInvoice {
 
         /**
          * Indicates that there are more RTs to be retrieved and aggregated in invoice before invoice can be closed
          */
-        private boolean moreRatedTransactions;
+        protected boolean moreRatedTransactions;
 
         /**
          * Rated transactions split for invoicing based on Billing account, seller and invoice type
          */
-        private List<RatedTransactionGroup> ratedTransactionGroups;
+        protected List<RatedTransactionGroup> ratedTransactionGroups;
 
         /**
          * Constructor
-         * 
-         * @param moreRatedTransactions Indicates that there are more RTs to be retrieved and aggregated in invoice before invoice can be closed
+         *
+         * @param moreRatedTransactions  Indicates that there are more RTs to be retrieved and aggregated in invoice before invoice can be closed
          * @param ratedTransactionGroups Rated transactions split for invoicing based on Billing account, seller and invoice type
          */
-        private RatedTransactionsToInvoice(boolean moreRatedTransactions, List<RatedTransactionGroup> ratedTransactionGroups) {
+        protected RatedTransactionsToInvoice(boolean moreRatedTransactions, List<RatedTransactionGroup> ratedTransactionGroups) {
             super();
             this.moreRatedTransactions = moreRatedTransactions;
             this.ratedTransactionGroups = ratedTransactionGroups;
