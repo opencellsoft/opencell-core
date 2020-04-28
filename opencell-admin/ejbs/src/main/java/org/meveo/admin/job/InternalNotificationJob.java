@@ -70,6 +70,7 @@ public class InternalNotificationJob extends Job {
         filterCode.setFieldType(CustomFieldTypeEnum.STRING);
         filterCode.setValueRequired(true);
         filterCode.setMaxValue(50L);
+        filterCode.setGuiPosition("tab:Configuration:0;field:0");
         result.put("InternalNotificationJob_filterCode", filterCode);
 
         CustomFieldTemplate notificationCode = new CustomFieldTemplate();
@@ -80,6 +81,7 @@ public class InternalNotificationJob extends Job {
         notificationCode.setFieldType(CustomFieldTypeEnum.STRING);
         notificationCode.setValueRequired(true);
         notificationCode.setMaxValue(50L);
+        notificationCode.setGuiPosition("tab:Configuration:0;field:1");
         result.put("InternalNotificationJob_notificationCode", notificationCode);
 
         return result;

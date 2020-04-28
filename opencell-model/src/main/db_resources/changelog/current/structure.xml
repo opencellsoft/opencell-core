@@ -3020,4 +3020,10 @@ END $$;]]>
         </addColumn>
     </changeSet>
 
+    <changeSet id="#5193_20200428" author="AndriusKarpavicius">
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%')</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_mcols where cft_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%')</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%'</sql>     
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%'</sql>
+    </changeSet>
 </databaseChangeLog>

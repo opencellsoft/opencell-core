@@ -73,6 +73,7 @@ public class XMLInvoiceGenerationJob extends Job {
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbRuns.setValueRequired(false);
         customFieldNbRuns.setDefaultValue("-1");
+        customFieldNbRuns.setGuiPosition("tab:Configuration:0;field:0");
         result.put("nbRuns", customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
@@ -83,6 +84,7 @@ public class XMLInvoiceGenerationJob extends Job {
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbWaiting.setValueRequired(false);
         customFieldNbWaiting.setDefaultValue("0");
+        customFieldNbWaiting.setGuiPosition("tab:Configuration:0;field:1");
         result.put("waitingMillis", customFieldNbWaiting);
         
         CustomFieldTemplate customFieldInvToProcess = new CustomFieldTemplate();
@@ -101,6 +103,7 @@ public class XMLInvoiceGenerationJob extends Job {
 		customFieldInvToProcess.setFieldType(CustomFieldTypeEnum.LIST);
 		customFieldInvToProcess.setValueRequired(true);
 		customFieldInvToProcess.setListValues(invoicesToProcessValues);
+		customFieldInvToProcess.setGuiPosition("tab:Configuration:0;field:2");
 		result.put(cfInvToProcessCode, customFieldInvToProcess);
 
         return result;
