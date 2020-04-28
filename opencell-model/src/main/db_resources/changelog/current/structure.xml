@@ -2967,6 +2967,36 @@ END $$;]]>
             <column name="parameter3_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
+    <changeSet id="#5130_20200414" author="khalidHORRI">
+    <addColumn tableName="cat_counter_template">
+        <column name="accumulator_type" type="varchar(35)"/>
+        <column name="filter_el" type="varchar(2000)"/>
+        <column name="key_el" type="varchar(2000)"/>
+        <column name="value_el" type="varchar(2000)"/>
+    </addColumn>
+    <addColumn tableName="billing_counter_period">
+        <column name="accumulator_type" type="varchar(35)"/>
+        <column name="filter_el" type="varchar(2000)"/>
+        <column name="key_el" type="varchar(2000)"/>
+        <column name="value_el" type="varchar(2000)"/>
+    </addColumn>
+    <createTable tableName="billing_counter_period_values">
+        <column name="counter_key" type="varchar(255)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="counter_value" type="numeric(19,2)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="counterperiod_id" type="bigint">
+            <constraints nullable="false"/>
+        </column>
+
+    </createTable>
+        <addPrimaryKey tableName="billing_counter_period_values" columnNames="counterperiod_id,counter_key" constraintName="billing_counter_period_values_pkey"/>
+        <addForeignKeyConstraint baseTableName="billing_counter_period_values" baseColumnNames="counterperiod_id"
+                                 constraintName="billing_counter_period_values_counterperiod_id_fk" referencedTableName="billing_counter_period"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 
 </databaseChangeLog>
 
