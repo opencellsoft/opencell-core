@@ -49,6 +49,7 @@ import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
@@ -222,6 +223,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param startdate Charge period start date if applicable
      * @param endDate Charge period end date if applicable.
      * @param chargeMode Charge mode
+     * @param fullRatingPeriod Full rating period dates when prorata is applied. In such case startDate-endDate will be shorted than fullRatingPeriod. Is NOT provided when prorata is not applied.
      * @param edr EDR being rated
      * @param isReservation - is this a reservation instead of a real wallet operation
      * @param isVirtual Is this a virtual charge - simulation of rating, charge instance will be matched by code to the charge instantiated in subscription
@@ -230,7 +232,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
     public RatingResult rateCharge(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, String orderNumberOverride,
-            Date startdate, Date endDate, ChargeApplicationModeEnum chargeMode, EDR edr, boolean isReservation, boolean isVirtual) throws BusinessException, RatingException {
+            Date startdate, Date endDate, DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode,  EDR edr, boolean isReservation, boolean isVirtual) throws BusinessException, RatingException {
 
         // For virtual operation, lookup charge in the subscription
         if (isVirtual && chargeInstance.getSubscription() != null) {
@@ -259,6 +261,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 edr != null ? edr.getParameter4() : null, null, startdate, endDate, null);
         }
         walletOperation.setChargeMode(chargeMode);
+        walletOperation.setFullRatingPeriod(fullRatingPeriod);
 
 //        String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
 //
@@ -295,8 +298,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param inputQuantity Input quantity
      * @param quantityInChargeUnits Input quantity converted to charge units. If null, will be calculated automatically
      * @param orderNumberOverride Order number to override. If not provided, will default to an order number from a charge instance
-     * @param startdate Charge period start date if applicable
+     * @param startDate Charge period start date if applicable
      * @param endDate Charge period end date if applicable.
+     * @param fullRatingPeriod Full rating period dates when prorata is applied. In such case startDate-endDate will be shorted than fullRatingPeriod. Is NOT provided when prorata is not applied.
      * @param chargeMode Charge mode
      * @param edr EDR being rated
      * @param forSchedule - is it to be scheduled
@@ -307,9 +311,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
     public RatingResult rateChargeAndTriggerEDRs(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits,
-            String orderNumberOverride, Date startdate, Date endDate, ChargeApplicationModeEnum chargeMode, EDR edr, boolean forSchedule, boolean isVirtual) throws BusinessException, RatingException {
+            String orderNumberOverride, Date startDate, Date endDate, DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode, EDR edr, boolean forSchedule, boolean isVirtual) throws BusinessException, RatingException {
 
-        RatingResult ratedEDRResult = rateCharge(chargeInstance,  applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, startdate, endDate, chargeMode, edr, false, isVirtual);
+        RatingResult ratedEDRResult = rateCharge(chargeInstance,  applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, startDate, endDate, fullRatingPeriod,chargeMode,  edr, false, isVirtual);
 
         // Do not trigger EDRs for virtual or Scheduled operations
         if (forSchedule || isVirtual) {

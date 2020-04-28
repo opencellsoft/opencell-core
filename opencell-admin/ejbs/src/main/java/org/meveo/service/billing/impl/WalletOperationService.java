@@ -153,7 +153,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, multiplicator={}, applicationDate={}, chargeInstance.id={}, chargeInstance.desc={}", new Object[] { subscription.getId(),
                 quantityInChargeUnits, chargeTemplateService.evaluateUnitRating(chargeInstance.getChargeTemplate()), applicationDate, chargeInstance.getId(), chargeInstance.getDescription() });
 
-        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, null, null, null, null, false, isVirtual);
+        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, null, null, null,
+            ChargeApplicationModeEnum.SUBSCRIPTION, null, false, isVirtual);
 
         WalletOperation walletOperation = ratingResult.getWalletOperation();
 
@@ -482,18 +483,17 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     inputQuantity);
 
                 if (recurringChargeTemplate.isProrataOnPriceChange()) {
-                    walletOperations.addAll(generateWalletOperationsByPricePlan(chargeInstance, chargeMode, forSchedule, effectivePeriodFromDate, effectivePeriodToDate, inputQuantity,
-                        orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), isApplyInAdvance, isVirtual));
+                    walletOperations.addAll(generateWalletOperationsByPricePlan(chargeInstance, chargeMode, forSchedule, effectivePeriodFromDate, effectivePeriodToDate,
+                        prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, inputQuantity, orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(),
+                        isApplyInAdvance, isVirtual));
 
                 } else {
                     RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, isApplyInAdvance ? effectivePeriodFromDate : effectivePeriodToDate, inputQuantity, null,
-                        orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), effectivePeriodFromDate, effectivePeriodToDate, chargeMode, null, forSchedule, false);
+                        orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), effectivePeriodFromDate, effectivePeriodToDate,
+                        prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, chargeMode, null, forSchedule, false);
 
                     WalletOperation walletOperation = ratingResult.getWalletOperation();
                     walletOperation.setSubscriptionDate(chargeInstance.getSubscriptionDate());
-                    if (prorate) {
-                        walletOperation.setFullRatingPeriod(new DatePeriod(currentPeriodFromDate, currentPeriodToDate));
-                    }
 
                     if (forSchedule) {
                         walletOperation.changeStatus(WalletOperationStatusEnum.SCHEDULED);
@@ -532,7 +532,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     // TODO AKK what if rateCharge would return multiple WOs as alternative to this method??
     private List<WalletOperation> generateWalletOperationsByPricePlan(RecurringChargeInstance chargeInstance, ChargeApplicationModeEnum chargeMode, boolean forSchedule, Date periodStartDate, Date periodEndDate,
-            BigDecimal inputQuantity, String orderNumberToOverride, boolean isApplyInAdvance, boolean isVirtual) {
+            DatePeriod fullRatingPeriod, BigDecimal inputQuantity, String orderNumberToOverride, boolean isApplyInAdvance, boolean isVirtual) {
 
         String recurringChargeTemplateCode = chargeInstance.getRecurringChargeTemplate().getCode();
 
@@ -546,7 +546,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 BigDecimal computedInputQuantityHolder = inputQuantity.multiply(new BigDecimal(ratio + ""));
 
                 RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, isApplyInAdvance ? computedApplyChargeOnDate : computedNextChargeDate, computedInputQuantityHolder, null,
-                    orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), computedApplyChargeOnDate, computedNextChargeDate, chargeMode, null, forSchedule, false);
+                    orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), computedApplyChargeOnDate, computedNextChargeDate, fullRatingPeriod, chargeMode, null, forSchedule, false);
 
                 WalletOperation walletOperation = ratingResult.getWalletOperation();
                 walletOperation.setSubscriptionDate(chargeInstance.getSubscriptionDate());

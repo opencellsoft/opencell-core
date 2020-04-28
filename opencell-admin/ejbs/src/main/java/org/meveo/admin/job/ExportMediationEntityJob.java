@@ -89,7 +89,7 @@ public class ExportMediationEntityJob extends Job {
         lastTransactionDate.setDescription(resourceMessages.getString("exportEntityJob.lastTransactionDate"));
         lastTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
         lastTransactionDate.setValueRequired(false);
-        lastTransactionDate.setGuiPosition("tab:Custom fields:0;fieldGroup:Dates configuration:0;field:1");
+        lastTransactionDate.setGuiPosition("tab:Configuration:0;fieldGroup:Dates configuration:0;field:1");
         result.put("ExportMediationEntityJob_lastTransactionDate", lastTransactionDate);
 
         CustomFieldTemplate firstTransactionDate = new CustomFieldTemplate();
@@ -99,7 +99,7 @@ public class ExportMediationEntityJob extends Job {
         firstTransactionDate.setDescription(resourceMessages.getString("exportEntityJob.firstTransactionDate"));
         firstTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
         firstTransactionDate.setValueRequired(true);
-        firstTransactionDate.setGuiPosition("tab:Custom fields:0;fieldGroup:Dates configuration:0;field:0");
+        firstTransactionDate.setGuiPosition("tab:Configuration:0;fieldGroup:Dates configuration:0;field:0");
         result.put("ExportMediationEntityJob_firstTransactionDate", firstTransactionDate);
 
         CustomFieldTemplate maxResult = new CustomFieldTemplate();
@@ -109,7 +109,7 @@ public class ExportMediationEntityJob extends Job {
         maxResult.setDescription(resourceMessages.getString("exportEntityJob.maxResult"));
         maxResult.setFieldType(CustomFieldTypeEnum.LONG);
         maxResult.setValueRequired(false);
-        maxResult.setGuiPosition("tab:Custom fields:0;fieldGroup:Configuration:0;field:0");
+        maxResult.setGuiPosition("tab:Configuration:0;fieldGroup:Configuration:0;field:0");
         result.put("ExportMediationEntityJob_maxResult", maxResult);
 
         CustomFieldTemplate exportFileName = new CustomFieldTemplate();
@@ -120,7 +120,7 @@ public class ExportMediationEntityJob extends Job {
         exportFileName.setFieldType(CustomFieldTypeEnum.STRING);
         exportFileName.setMaxValue(100L);
         exportFileName.setValueRequired(false);
-        exportFileName.setGuiPosition("tab:Custom fields:0;fieldGroup:Configuration:0;field:1");
+        exportFileName.setGuiPosition("tab:Configuration:0;fieldGroup:Configuration:0;field:1");
         result.put(EXPORT_MEDIATION_ENTITY_JOB_FILE_NAME, exportFileName);
 
         CustomFieldTemplate edrStatusCf = new CustomFieldTemplate();
@@ -136,7 +136,7 @@ public class ExportMediationEntityJob extends Job {
             edrStatusList.put(e.name(), resourceMessages.getString(e.getLabel()));
         }
         edrStatusCf.setListValues(edrStatusList);
-        edrStatusCf.setGuiPosition("tab:Custom fields:0;fieldGroup:Status:0;field:0");
+        edrStatusCf.setGuiPosition("tab:Configuration:0;fieldGroup:Status:0;field:0");
         result.put(EXPORT_MEDIATION_ENTITY_JOB_EDR_STATUS_CF, edrStatusCf);
 
         CustomFieldTemplate rtStatusCf = new CustomFieldTemplate();
@@ -152,7 +152,7 @@ public class ExportMediationEntityJob extends Job {
             rtStatusList.put(e.name(), resourceMessages.getString(e.getLabel()));
         }
         rtStatusCf.setListValues(rtStatusList);
-        rtStatusCf.setGuiPosition("tab:Custom fields:0;fieldGroup:Status:0;field:1");
+        rtStatusCf.setGuiPosition("tab:Configuration:0;fieldGroup:Status:0;field:1");
         result.put(EXPORT_MEDIATION_ENTITY_JOB_RT_STATUS_CF, rtStatusCf);
 
         CustomFieldTemplate woStatusCf = new CustomFieldTemplate();
@@ -168,7 +168,7 @@ public class ExportMediationEntityJob extends Job {
             woStatusList.put(e.name(), resourceMessages.getString(e.getLabel()));
         }
         woStatusCf.setListValues(woStatusList);
-        woStatusCf.setGuiPosition("tab:Custom fields:0;fieldGroup:Status:0;field:2");
+        woStatusCf.setGuiPosition("tab:Configuration:0;fieldGroup:Status:0;field:2");
         result.put(EXPORT_MEDIATION_ENTITY_JOB_WO_STATUS_CF, woStatusCf);
 
         return result;

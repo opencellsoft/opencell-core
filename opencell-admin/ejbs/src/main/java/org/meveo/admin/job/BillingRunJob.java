@@ -71,6 +71,7 @@ public class BillingRunJob extends Job {
         lastTransactionDate.setDescription(resourceMessages.getString("jobExecution.lastTransationDate"));
         lastTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
         lastTransactionDate.setValueRequired(false);
+        lastTransactionDate.setGuiPosition("tab:Configuration:0;field:0");
         result.put("BillingRunJob_lastTransactionDate", lastTransactionDate);
 
         CustomFieldTemplate invoiceDate = new CustomFieldTemplate();
@@ -80,6 +81,7 @@ public class BillingRunJob extends Job {
         invoiceDate.setDescription(resourceMessages.getString("jobExecution.InvoiceDate"));
         invoiceDate.setFieldType(CustomFieldTypeEnum.DATE);
         invoiceDate.setValueRequired(false);
+        invoiceDate.setGuiPosition("tab:Configuration:0;field:1");
         result.put("BillingRunJob_invoiceDate", invoiceDate);
 
         CustomFieldTemplate billingCycle = new CustomFieldTemplate();
@@ -91,6 +93,7 @@ public class BillingRunJob extends Job {
         billingCycle.setStorageType(CustomFieldStorageTypeEnum.LIST);
         billingCycle.setEntityClazz("org.meveo.model.billing.BillingCycle");
         billingCycle.setValueRequired(true);
+        billingCycle.setGuiPosition("tab:Configuration:0;field:2");
         result.put("BillingRunJob_billingCycle", billingCycle);
 
         CustomFieldTemplate billingCycleType = new CustomFieldTemplate();
@@ -106,6 +109,7 @@ public class BillingRunJob extends Job {
         }
         billingCycleType.setListValues(listValues);
         billingCycleType.setValueRequired(false);
+        billingCycleType.setGuiPosition("tab:Configuration:0;field:3");
         result.put("BillingRunJob_billingRun_Process", billingCycleType);
 
         return result;
