@@ -102,8 +102,8 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
         log.debug("Apply product charge. User account {}, subscription {}, charge {}, quantity {}, date {}", userAccount != null ? userAccount.getCode() : null, subscription != null ? subscription.getCode() : null,
             chargeTemplate.getCode(), productChargeInstance.getQuantity(), productChargeInstance.getChargeDate());
 
-        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(productChargeInstance, productChargeInstance.getChargeDate(), productChargeInstance.getQuantity(), null, null, null, null, null, null, false,
-            isVirtual);
+        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(productChargeInstance, productChargeInstance.getChargeDate(), productChargeInstance.getQuantity(), null, null, null, null, null, null, null,
+            false, isVirtual);
 
         WalletOperation walletOperation = ratingResult.getWalletOperation();
         if (!isVirtual) {
