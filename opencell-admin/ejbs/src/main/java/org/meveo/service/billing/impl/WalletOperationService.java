@@ -524,7 +524,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         // The counter will be decremented by charge quantity
         if (!isVirtual && firstChargeCounterPeriod != null) {
             CounterValueChangeInfo counterValueChangeInfo = counterInstanceService.deduceCounterValue(firstChargeCounterPeriod, chargeInstance.getQuantity(), false);
-            applyAccumulatorCounter(chargeInstance, walletOperations, false);
             counterInstanceService.triggerCounterPeriodEvent(counterValueChangeInfo, firstChargeCounterPeriod);
         }
 

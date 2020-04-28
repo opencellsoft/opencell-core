@@ -130,6 +130,33 @@ public class CounterTemplate extends EnableBusinessEntity {
     @Column(name = "is_accumulator")
     private Boolean accumulator = Boolean.FALSE;
 
+    /**
+     * The type field can be "Multi-value" if the accumulator is true
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "accumulator_type")
+    private AccumulatorCounterTypeEnum accumulatorType;
+
+    /**
+     * An EL expression that returns a boolean that tells us if we accumulate or not.
+     */
+    @Column(name = "filter_el", length = 2000)
+    @Size(max = 2000)
+    private String filterEl;
+    /**
+     * An EL expression that Returns a string that is an identifier for what we count
+     */
+    @Column(name = "key_el", length = 2000)
+    @Size(max = 2000)
+    private String keyEl;
+
+    /**
+     * An EL expression that returns a number (BigDecimal) that contains the quantity we count
+     */
+    @Column(name = "value_el", length = 2000)
+    @Size(max = 2000)
+    private String valueEl;
+
     public CounterTypeEnum getCounterType() {
         return counterType;
     }
@@ -200,5 +227,69 @@ public class CounterTemplate extends EnableBusinessEntity {
 
     public void setAccumulator(Boolean accumulator) {
         this.accumulator = accumulator;
+    }
+
+    /**
+     * Gets the accumulator type multiple or single
+     * @return an accumulator counter type enum.
+     */
+    public AccumulatorCounterTypeEnum getAccumulatorType() {
+        return accumulatorType;
+    }
+
+    /**
+     * Sets the accumulator counter type.
+     * @param accumulatorType AccumulatorCounterTypeEnum
+     */
+    public void setAccumulatorType(AccumulatorCounterTypeEnum accumulatorType) {
+        this.accumulatorType = accumulatorType;
+    }
+
+    /**
+     * Gets the EL filter
+     * @return the EL Filter
+     */
+    public String getFilterEl() {
+        return filterEl;
+    }
+
+    /**
+     * Sets the EL filter
+     * @param filterEl
+     */
+    public void setFilterEl(String filterEl) {
+        this.filterEl = filterEl;
+    }
+
+    /**
+     * Gets the EL key expression
+     * @return the EL key expression
+     */
+    public String getKeyEl() {
+        return keyEl;
+    }
+
+    /**
+     * Sets EL key expression
+     * @param keyEl El key expression
+     */
+    public void setKeyEl(String keyEl) {
+        this.keyEl = keyEl;
+    }
+
+    /**
+     * Gets the EL value expression
+     * @return EL value expression
+     */
+    public String getValueEl() {
+        return valueEl;
+    }
+
+    /**
+     * Sets EL value expression
+     * @param valueEl EL value expression
+     */
+    public void setValueEl(String valueEl) {
+        this.valueEl = valueEl;
     }
 }
