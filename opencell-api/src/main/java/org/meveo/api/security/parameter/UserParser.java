@@ -23,6 +23,9 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.config.SecureMethodParameterConfig;
 import org.meveo.model.admin.User;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * This parser is used to retrieve the {@link User} object from the method parameters.
  * 
@@ -32,7 +35,7 @@ import org.meveo.model.admin.User;
 public class UserParser extends SecureMethodParameterParser<User> {
 
     @Override
-    public User getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
+    public List<User> getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
         if (parameterConfig == null) {
             return null;
         }
@@ -42,6 +45,6 @@ public class UserParser extends SecureMethodParameterParser<User> {
             throw new InvalidParameterException("Parameter received at index: " + parameterConfig.getIndex() + " is not a User instance.");
         }
 
-        return (User) parameterValue;
+        return Collections.singletonList((User) parameterValue);
     }
 }

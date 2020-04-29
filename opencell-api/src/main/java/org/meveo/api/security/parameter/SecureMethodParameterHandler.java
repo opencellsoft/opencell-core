@@ -19,6 +19,7 @@
 package org.meveo.api.security.parameter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.inject.Any;
@@ -67,13 +68,13 @@ public class SecureMethodParameterHandler {
 	 * @throws MeveoApiException Meveo api exception
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values , Class<T> resultClass) throws MeveoApiException {
+	public <T> List<T> getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values , Class<T> resultClass) throws MeveoApiException {
 		SecureMethodParameterParser<?> parser = getParser(parameterConfig);
 		if (parser == null) {
 		    return null;
 		}
 		Object parameterValue = parser.getParameterValue(parameterConfig, values);
-		return (T) parameterValue;
+		return (List<T>) parameterValue;
 	}
 
 	private SecureMethodParameterParser<?> getParser(SecureMethodParameterConfig parameterConfig) {

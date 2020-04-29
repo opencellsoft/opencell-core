@@ -31,6 +31,11 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.meveo.service.security.SecuredBusinessEntityService;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * This will process a parameter of type {@link CRMAccountHierarchyDto} passed to a method annotated with {@link SecuredBusinessEntityMethod}.
  * 
@@ -46,7 +51,7 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
     private SecuredBusinessEntityService securedBusinessEntityService;
 
     @Override
-    public BusinessEntity getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
+    public List<BusinessEntity> getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
 
         if (parameterConfig == null) {
             return null;
@@ -62,7 +67,7 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
         // entity that will be checked for authorization.
         BusinessEntity entity = getEntity(accountHierarchyTypeEnum, dto);
 
-        return entity;
+        return Collections.singletonList(entity);
     }
 
     private CRMAccountHierarchyDto extractAccountHierarchyDto(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException {
