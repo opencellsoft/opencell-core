@@ -427,27 +427,27 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
         Map<Object, Object> userMap = new HashMap<Object, Object>();
 
-        if (expression.indexOf("seller") >= 0) {
-            userMap.put("seller", seller);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_SELLER) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_SELLER, seller);
         }
-        if (expression.indexOf("cust") >= 0) {
-            userMap.put("cust", billingAccount.getCustomerAccount().getCustomer());
-            userMap.put("c", billingAccount.getCustomerAccount().getCustomer());
+        if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER) >= 0 || expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_SHORT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_CUSTOMER, billingAccount.getCustomerAccount().getCustomer());
+            userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_SHORT, billingAccount.getCustomerAccount().getCustomer());
         }
-        if (expression.indexOf("ca") >= 0) {
-            userMap.put("ca", billingAccount.getCustomerAccount());
+        if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, billingAccount.getCustomerAccount());
         }
-        if (expression.indexOf("ba") >= 0) {
-            userMap.put("ba", billingAccount);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
         }
-        if (expression.indexOf("date") >= 0) {
-            userMap.put("date", date);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_DATE) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_DATE, date);
         }
-        if (expression.indexOf("taxCategory") >= 0) {
-            userMap.put("taxCategory", taxCategory);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_TAX_CATEGORY) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_TAX_CATEGORY, taxCategory);
         }
-        if (expression.indexOf("taxClass") >= 0) {
-            userMap.put("taxClass", taxClass);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_TAX_CLASS) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_TAX_CLASS, taxClass);
         }
 
         return userMap;
@@ -500,7 +500,6 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @param billingAccount Billing account
      * @return Tax category
      */
-    @SuppressWarnings("deprecation")
     private TaxCategory evaluateTaxCategoryExpression(String expression, BillingAccount billingAccount) throws BusinessException {
 
         if (StringUtils.isBlank(expression)) {
@@ -511,15 +510,15 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         if (expression.indexOf("seller") >= 0) {
             userMap.put("seller", billingAccount.getCustomerAccount().getCustomer().getSeller());
         }
-        if (expression.indexOf("cust") >= 0) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER) >= 0) {
             userMap.put("cust", billingAccount.getCustomerAccount().getCustomer());
             userMap.put("c", billingAccount.getCustomerAccount().getCustomer());
         }
-        if (expression.indexOf("ca") >= 0) {
-            userMap.put("ca", billingAccount.getCustomerAccount());
+        if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, billingAccount.getCustomerAccount());
         }
-        if (expression.indexOf("ba") >= 0) {
-            userMap.put("ba", billingAccount);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
         }
 
         String code = null;

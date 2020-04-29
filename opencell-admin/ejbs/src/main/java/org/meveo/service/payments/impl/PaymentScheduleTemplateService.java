@@ -76,7 +76,7 @@ public class PaymentScheduleTemplateService extends BusinessService<PaymentSched
         }
 
         Map<Object, Object> userMap = new HashMap<Object, Object>();
-        userMap.put("serviceInstance", serviceInstance);
+        userMap.put(ValueExpressionWrapper.VAR_SERVICE_INSTANCE, serviceInstance);
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         try {
             result = (Boolean) res;
@@ -100,7 +100,7 @@ public class PaymentScheduleTemplateService extends BusinessService<PaymentSched
         }
 
         Map<Object, Object> userMap = new HashMap<Object, Object>();
-        userMap.put("serviceInstance", serviceInstance);
+        userMap.put(ValueExpressionWrapper.VAR_SERVICE_INSTANCE, serviceInstance);
 
         Object res = null;
         try {
