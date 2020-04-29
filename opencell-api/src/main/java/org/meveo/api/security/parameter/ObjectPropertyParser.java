@@ -27,6 +27,10 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * This parser retrieves the entity class that will be checked for authorization by looking up a property value from the given parameter of a {@link SecuredBusinessEntityMethod}
  * annotated method.
@@ -37,16 +41,15 @@ import org.meveo.model.BusinessEntity;
 public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEntity> {
 
     @Override
-    public BusinessEntity getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
+    public List<BusinessEntity> getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
         if (parameterConfig == null) {
             return null;
         }
         // get the code
         try {
-            String code = extractPropertyValue(parameterConfig, values);
-            // retrieve the entity
-            BusinessEntity entity = extractBusinessEntity(parameterConfig, code);
-            return entity;
+            List<String> codes = extractPropertyValue(parameterConfig, values);
+            // retrieve the entities
+            return extractBusinessEntity(parameterConfig, codes);
         } catch (MissingParameterException e) {
             // TODO how to handle when entity to filter can not be resolved because it is null - is it an error?
             return null;
@@ -63,38 +66,58 @@ public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEn
      * @throws InvalidParameterException Parameter value was not resolved because of wrong path, or other parsing errors
      * @throws MissingParameterException Parameter value was null
      */
-    private String extractPropertyValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
+    private List<String> extractPropertyValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
 
-        // retrieve the dto and property based on the parameterConfig annotation
-        Object dto = values[parameterConfig.getIndex()];
+        // retrieve the param and property based on the parameterConfig annotation
+        Object param = values[parameterConfig.getIndex()];
         String property = parameterConfig.getProperty();
-        String propertyValue = null;
+        List<String> resolvedValues = new ArrayList<>();
+        Object propertyValue = null;
         try {
-            propertyValue = (String) ReflectionUtils.getPropertyValue(dto, property);
+            propertyValue = ReflectionUtils.getPropertyValue(param, property);
+            if(propertyValue instanceof Collection) {
+                for (Object propertyItem : (Collection) propertyValue) {
+                    if (propertyItem instanceof String) {
+                        resolvedValues.add((String) propertyItem);
+                    } else if (propertyItem instanceof BusinessEntity) {
+                        resolvedValues.add(((BusinessEntity) propertyItem).getCode());
+                    }
+                }
+            } else {
+                if (propertyValue instanceof String) {
+                    resolvedValues.add((String) propertyValue);
+                } else if (propertyValue instanceof BusinessEntity) {
+                    resolvedValues.add(((BusinessEntity) propertyValue).getCode());
+                }
+            }
         } catch (IllegalAccessException e) {
-            String message = String.format("Failed to retrieve property %s.%s.", dto.getClass().getName(), property);
+            String message = String.format("Failed to retrieve property %s.%s.", param.getClass().getName(), property);
             log.error(message, e);
             throw new InvalidParameterException(message);
         }
 
-        if (StringUtils.isBlank(propertyValue)) {
-            throw new MissingParameterException(String.format("%s.%s returned an empty value.", dto.getClass().getName(), property));
+        if (StringUtils.isBlank(resolvedValues)) {
+            throw new MissingParameterException(String.format("%s.%s returned an empty value.", param.getClass().getName(), property));
         }
-        return propertyValue;
+        return resolvedValues;
     }
 
-    private BusinessEntity extractBusinessEntity(SecureMethodParameterConfig parameterConfig, String code) throws InvalidParameterException {
+    private List<BusinessEntity> extractBusinessEntity(SecureMethodParameterConfig parameterConfig, List<String> codes) throws InvalidParameterException {
         Class<? extends BusinessEntity> entityClass = parameterConfig.getEntityClass();
-        BusinessEntity entity = null;
+        List<BusinessEntity> entities = new ArrayList<>();
         try {
-            entity = entityClass.newInstance();
-            entity.setCode(code);
+            for (String code : codes) {
+                BusinessEntity entity = entityClass.newInstance();
+                entity.setCode(code);
+                entities.add(entity);
+            }
+
         } catch (InstantiationException | IllegalAccessException e) {
             String message = String.format("Failed to create new %s instance.", entityClass.getName());
             log.error(message, e);
             throw new InvalidParameterException(message);
         }
-        return entity;
+        return entities;
     }
 
 }

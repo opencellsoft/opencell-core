@@ -26,6 +26,9 @@ import org.meveo.api.security.config.SecureMethodParameterConfig;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * This is the default parser for {@link SecuredBusinessEntityMethod} annotated methods. It simply retrieves the parameter value and assigns it to the instance of the entity
  * described in the entity attribute of the corresponding {@link SecureMethodParameter} annotation.
@@ -36,7 +39,7 @@ import org.meveo.model.BusinessEntity;
 public class CodeParser extends SecureMethodParameterParser<BusinessEntity> {
 
     @Override
-    public BusinessEntity getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
+    public List<BusinessEntity> getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
         if (parameterConfig == null) {
             return null;
         }
@@ -62,7 +65,7 @@ public class CodeParser extends SecureMethodParameterParser<BusinessEntity> {
             throw new InvalidParameterException(message);
         }
 
-        return entity;
+        return Collections.singletonList(entity);
     }
 
 }

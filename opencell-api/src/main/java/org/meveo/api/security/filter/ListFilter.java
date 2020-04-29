@@ -27,8 +27,10 @@ import org.meveo.api.security.config.FilterResultsConfig;
 import org.meveo.api.security.config.SecureMethodParameterConfig;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
+import org.meveo.model.billing.Subscription;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.security.SecuredBusinessEntityService;
 
@@ -75,12 +77,12 @@ public class ListFilter extends SecureMethodResultFilter {
 
                     Collection resolvedValues = new ArrayList<>();
                     Object resolvedValue = ReflectionUtils.getPropertyValue(itemToFilter, filterPropertyConfig.getProperty());
-                    if (resolvedValue == null) {
+                    if (isEmptyValue(resolvedValue)) {
                         if (filterPropertyConfig.isAllowAccessIfNull()) {
                             log.debug("Adding item {} to filtered list.", itemToFilter);
                             filteredList.add(itemToFilter);
                         } else {
-                            log.debug("Property " + filterPropertyConfig.getProperty() + " on item to filter " + itemToFilter + " was resolved to null. Entity will be filtered out");
+                            log.debug("Property " + filterPropertyConfig.getProperty() + " on item to filter " + itemToFilter + " was resolved to null or empty. Entity will be filtered out");
                         }
                         continue;
 
@@ -101,6 +103,8 @@ public class ListFilter extends SecureMethodResultFilter {
                         BusinessEntity entity = filterPropertyConfig.getEntityClass().newInstance();
                         if(value instanceof String) {
                             entity.setCode((String) value);
+                        } else if (value instanceof BusinessEntity) {
+                            entity.setCode(((BusinessEntity) value).getCode());
                         } else if(ReflectionUtils.hasField(value, "code")) {
                             entity.setCode((String) ReflectionUtils.getPropertyValue(value, "code"));
                         }
@@ -174,6 +178,10 @@ public class ListFilter extends SecureMethodResultFilter {
         String fieldName = property.substring(0, fieldIndex);
         Object fieldValue = FieldUtils.readField(obj, fieldName, true);
         updateItemsCount(fieldValue, property.substring(fieldIndex + 1), totalRecords);
+    }
+
+    private boolean isEmptyValue(Object resolvedValue) {
+        return resolvedValue == null || (resolvedValue instanceof Collection && ((Collection)resolvedValue).size() == 0);
     }
 
 }

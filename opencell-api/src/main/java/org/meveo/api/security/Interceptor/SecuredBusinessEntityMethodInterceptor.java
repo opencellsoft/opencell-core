@@ -18,6 +18,8 @@
 
 package org.meveo.api.security.Interceptor;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.immutables.value.internal.$processor$.meta.$TreesIncludeMirror;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.AccessDeniedException;
@@ -131,8 +133,8 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         log.debug("Checking method {}.{} for secured BusinessEntities", objectName, methodName);
 
         Object[] values = context.getParameters();
-        List<SecuredEntity> securedEntities = allSecuredEntitiesMap.values().stream().flatMap(Set::stream).collect(Collectors.toList());
-        addSecuredEntitiesToFilters(securedEntities, values);
+        //List<SecuredEntity> securedEntities = allSecuredEntitiesMap.values().stream().flatMap(Set::stream).collect(Collectors.toList());
+        //addSecuredEntitiesToFilters(securedEntities, values);
 
         SecuredMethodConfig securedMethodConfig = sbeConfig.getSecuredMethodConfig();
 
@@ -140,12 +142,16 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         SecureMethodParameterConfig[] parametersForValidation = securedMethodConfig.getValidate();
         if (parametersForValidation != null) {
             for (SecureMethodParameterConfig parameterConfig : parametersForValidation) {
-                BusinessEntity entity = parameterHandler.getParameterValue(parameterConfig, values, BusinessEntity.class);
-                if (entity == null) {
-                    // TODO what to do if entity was not resolved because parameterConfig value was null e.g. doing a search by a restricted field and dont provide any field value - that
-                    // means that instead of filtering search criteria, results should be filtered instead
-                } else {
-                    if (!securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
+                List<BusinessEntity> entities = parameterHandler.getParameterValue(parameterConfig, values, BusinessEntity.class);
+                if (CollectionUtils.isNotEmpty(entities)) {
+                    boolean isAllowed = false;
+                    for (BusinessEntity entity : entities) {
+                        if (entity != null && securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
+                            isAllowed =true;
+                            break;
+                        }
+                    }
+                    if(!isAllowed) {
                         throw new AccessDeniedException("Access to entity details is not allowed.");
                     }
                 }
@@ -241,7 +247,8 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         for (SecuredEntity securedEntity : securedEntities) {
             final String entityClass = securedEntity.getEntityClass();
             //extract the field name from entity class, I supposed that the field name is the same as the Class name.
-            final String fieldName = entityClass.substring(entityClass.lastIndexOf('.') + 1).toLowerCase();
+            String simpleClassName = entityClass.substring(entityClass.lastIndexOf('.') + 1);
+            String fieldName = simpleClassName.substring(0, 1).toLowerCase() + simpleClassName.substring(1);
             log.debug("Code = {} for entity = {}", securedEntity.getCode(), fieldName);
             final String keyInList = "inList " + fieldName + ".code";
             if (filters.containsKey(fieldName)) {

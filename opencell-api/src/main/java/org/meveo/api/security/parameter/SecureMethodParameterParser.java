@@ -27,6 +27,8 @@ import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.config.SecureMethodParameterConfig;
 import org.slf4j.Logger;
 
+import java.util.List;
+
 /**
  * This is the base class of parser implementations that can be used with methods annotated with {@link SecureMethodParameter}. A parser is used to to retrieve the value from a
  * method parameter.
@@ -50,6 +52,6 @@ public abstract class SecureMethodParameterParser<T> {
      * @throws InvalidParameterException Parameter value was not resolved because of wrong path, or other parsing errors
      * @throws MissingParameterException Parameter value was null
      */
-    public abstract T getParameterValue(SecureMethodParameterConfig parameter, Object[] values) throws InvalidParameterException, MissingParameterException;
+    public abstract List<T> getParameterValue(SecureMethodParameterConfig parameter, Object[] values) throws InvalidParameterException, MissingParameterException;
 
 }

@@ -59,9 +59,9 @@ public class ObjectFilter extends SecureMethodResultFilter {
         filterLoop: for (FilterPropertyConfig propertyConfig : filterResultsConfig.getItemPropertiesToFilter()) {
             try {
 
-                Collection resolvedValues = new ArrayList<>();
+                Collection resolvedValues;
                 Object resolvedValue = ReflectionUtils.getPropertyValue(itemToFilter, propertyConfig.getProperty());
-                if (resolvedValue == null) {
+                if (isEmptyValue(resolvedValue)) {
                     if (propertyConfig.isAllowAccessIfNull()) {
                         log.debug("Adding item {} to filtered list.", itemToFilter);
                         allowAccess = true;
@@ -87,6 +87,8 @@ public class ObjectFilter extends SecureMethodResultFilter {
                     BusinessEntity entity = propertyConfig.getEntityClass().newInstance();
                     if(value instanceof String) {
                         entity.setCode((String) value);
+                    } else if (value instanceof BusinessEntity) {
+                        entity.setCode(((BusinessEntity) value).getCode());
                     } else if(ReflectionUtils.hasField(value, "code")) {
                         entity.setCode((String) ReflectionUtils.getPropertyValue(value, "code"));
                     }
@@ -103,8 +105,12 @@ public class ObjectFilter extends SecureMethodResultFilter {
         }
 
         if (!allowAccess) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException("Access to entity details is not allowed.");
         }
         return result;
+    }
+
+    private boolean isEmptyValue(Object resolvedValue) {
+        return resolvedValue == null || (resolvedValue instanceof Collection && ((Collection)resolvedValue).size() == 0);
     }
 }
