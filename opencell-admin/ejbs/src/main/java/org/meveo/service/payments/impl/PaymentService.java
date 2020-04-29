@@ -114,7 +114,7 @@ public class PaymentService extends PersistenceService<Payment> {
         super.create(entity);
         if (entity.getId() != null && entity.getPaymentMethod().isSimple()) {
             PaymentMethod paymentMethod  = getPaymentMethod(entity);
-            paymentHistoryService.addHistory(entity.getCustomerAccount(), entity, null, entity.getAmount().multiply(new BigDecimal(100)).longValue(), PaymentStatusEnum.ACCEPTED, null, null, null, OperationCategoryEnum.CREDIT, null, paymentMethod);
+            paymentHistoryService.addHistory(entity.getCustomerAccount(), entity, null, entity.getAmount().multiply(new BigDecimal(100)).longValue(), PaymentStatusEnum.ACCEPTED, null, null, null, OperationCategoryEnum.CREDIT, null, paymentMethod,null);
         }
     }
 
@@ -400,20 +400,20 @@ public class PaymentService extends PersistenceService<Payment> {
 			Payment payment = (isPayment && aoPaymentId != null) ? findById(aoPaymentId) : null;
 
 			paymentHistoryService.addHistory(customerAccount, payment, refund, ctsAmount, status, doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(),
-					errorType, operationCat, paymentGateway.getCode(), preferredMethod);
+					errorType, operationCat, paymentGateway.getCode(), preferredMethod,aoIdsToPay);
 
         } catch (PaymentException e) {
             log.error("PaymentException during payment AO:", e);
-            doPaymentResponseDto = processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat, e.getCode(), e.getMessage());
+            doPaymentResponseDto = processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat, e.getCode(), e.getMessage(),aoIdsToPay);
         } catch (Exception e) {
             log.error("Error during payment AO:", e);
-            doPaymentResponseDto = processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat, null, e.getMessage());
+            doPaymentResponseDto = processPaymentException(customerAccount, ctsAmount, paymentGateway, doPaymentResponseDto, preferredMethod, operationCat, null, e.getMessage(),aoIdsToPay);
         }
         return doPaymentResponseDto;
     }
 
     private PaymentResponseDto processPaymentException(CustomerAccount customerAccount, Long ctsAmount, PaymentGateway paymentGateway, PaymentResponseDto doPaymentResponseDto,
-            PaymentMethod preferredMethod, OperationCategoryEnum operationCat, String code, String msg) throws BusinessException {
+            PaymentMethod preferredMethod, OperationCategoryEnum operationCat, String code, String msg,List<Long> aoIdsToPay) throws BusinessException {
         if (doPaymentResponseDto == null) {
             doPaymentResponseDto = new PaymentResponseDto();
         }
@@ -421,7 +421,7 @@ public class PaymentService extends PersistenceService<Payment> {
         doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
         doPaymentResponseDto.setErrorCode(code);
         paymentHistoryService.addHistory(customerAccount, null, null, ctsAmount, PaymentStatusEnum.ERROR, code, msg, PaymentErrorTypeEnum.ERROR, operationCat,
-            paymentGateway.getCode(), preferredMethod);
+            paymentGateway.getCode(), preferredMethod,aoIdsToPay);
         return doPaymentResponseDto;
     }
 

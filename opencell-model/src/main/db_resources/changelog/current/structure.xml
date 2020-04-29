@@ -2441,6 +2441,16 @@ END $$;]]>
 	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'SepaRejectedTransactionsJob'</sql>
 	     <sql>update ${db.schema.adapted}meveo_job_instance set job_category = 'PAYMENT' where job_template = 'CheckPaymentScheduleCallbackJob'</sql>
     </changeSet>
+    
+      <changeSet id="#5172_20200426" author="anasseh">
+         <addColumn tableName="ar_account_operation">
+            <column name="payment_history_id" type="bigint"></column>
+        </addColumn>
+       
+        <addForeignKeyConstraint baseColumnNames="payment_history_id" baseTableName="ar_account_operation" constraintName="fk_pay_hisyo" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_history" />
+                    
+     </changeSet>
 
 </databaseChangeLog>
 
