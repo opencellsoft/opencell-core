@@ -8,12 +8,22 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionGroup;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.order.Order;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
@@ -35,6 +45,7 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.billing.TaxScriptService;
 import org.meveo.service.tax.TaxClassService;
 import org.meveo.service.tax.TaxMappingService;
+import org.meveo.util.ApplicationProvider;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -43,7 +54,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,9 +64,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -68,6 +84,20 @@ public class InvoiceServiceTest {
 
     @Mock
     private EntityManager entityManager;
+
+    @Mock
+    @ApplicationProvider
+    protected Provider appProvider;
+
+    @Mock
+    private BillingAccountService billingAccountService;
+
+    @Mock
+    @CurrentUser
+    protected MeveoUser currentUser;
+
+    @Mock
+    private CustomFieldInstanceService customFieldInstanceService;
 
     @Before
     public void setUp() {
@@ -86,17 +116,6 @@ public class InvoiceServiceTest {
         });
         doReturn(entityManager).when(invoiceService).getEntityManager();
 
-        doAnswer(new Answer<InvoiceService.RatedTransactionsToInvoice>() {
-            @Override
-            public InvoiceService.RatedTransactionsToInvoice answer(InvocationOnMock invocation) throws Throwable {
-                RatedTransactionGroup rtg = new RatedTransactionGroup();
-                rtg.setBillingAccount((BillingAccount) invocation.getArguments()[2]);
-                rtg.setSeller(mock(Seller.class));
-                rtg.setBillingCycle((BillingCycle) invocation.getArguments()[4]);
-                rtg.setPaymentMethod((PaymentMethod) invocation.getArguments()[9]);
-                return null;
-            }
-        }).when(invoiceService).getRatedTransactionGroups(any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), any());
     }
 
     private RatedTransaction getRatedTransaction(IBillableEntity entity, long sellerId) {
@@ -113,6 +132,12 @@ public class InvoiceServiceTest {
         Seller seller = new Seller();
         seller.setId(sellerId);
         rt.setSeller(seller);
+        rt.setAmountWithoutTax(BigDecimal.ZERO);
+        rt.setAmountWithTax(BigDecimal.ZERO);
+        rt.setAmountTax(BigDecimal.ZERO);
+        InvoiceSubCategory invoiceSubCategory = new InvoiceSubCategory();
+        invoiceSubCategory.setInvoiceCategory(mock(InvoiceCategory.class));
+        rt.setInvoiceSubCategory(invoiceSubCategory);
         return rt;
     }
 
@@ -154,6 +179,7 @@ public class InvoiceServiceTest {
         BillingCycle bc = mock(BillingCycle.class);
         InvoiceType invoiceType = mock(InvoiceType.class);
         PaymentMethod paymentMethod = mock(PaymentMethod.class);
+
         InvoiceService.RatedTransactionsToInvoice ratedTransactionsToInvoice = invoiceService
                 .getRatedTransactionGroups(order, ba, null, bc, invoiceType, null, null, null, false, paymentMethod);
         assertThat(ratedTransactionsToInvoice).isNotNull();
@@ -162,4 +188,5 @@ public class InvoiceServiceTest {
         Assert.assertEquals(ratedTransactionGroup.getBillingAccount(), ba);
         Assert.assertEquals(ratedTransactionGroup.getInvoiceKey().split("_").length, 5);
     }
+
 }
