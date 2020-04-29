@@ -208,10 +208,10 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         // Detach and clear ids of entity and related entities
         detach(offerToDuplicate);
 
-        OfferTemplate offer;
+        OfferTemplate offer = new OfferTemplate();
         try {
-            offer = (OfferTemplate) BeanUtils.cloneBean(offerToDuplicate);
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+             BeanUtils.copyProperties(offer, offerToDuplicate);
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new BusinessException("Failed to clone offer template", e);
         }
 
