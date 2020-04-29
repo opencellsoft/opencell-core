@@ -141,6 +141,7 @@ public class SepaRejectedTransactionsJob extends Job {
         inputDirectoryCF.setDefaultValue(null);
         inputDirectoryCF.setValueRequired(true);
         inputDirectoryCF.setMaxValue(256L);
+        inputDirectoryCF.setGuiPosition("tab:Configuration:0;field:0");
         result.put("RejectSepaJob_inputDir", inputDirectoryCF);
 
         CustomFieldTemplate fileNamePrefixCF = new CustomFieldTemplate();
@@ -152,6 +153,7 @@ public class SepaRejectedTransactionsJob extends Job {
         fileNamePrefixCF.setDefaultValue(null);
         fileNamePrefixCF.setValueRequired(true);
         fileNamePrefixCF.setMaxValue(256L);
+        fileNamePrefixCF.setGuiPosition("tab:Configuration:0;field:1");
         result.put("RejectSepaJob_fileNamePrefix", fileNamePrefixCF);
 
         CustomFieldTemplate fileNameExtensionCF = new CustomFieldTemplate();
@@ -163,6 +165,7 @@ public class SepaRejectedTransactionsJob extends Job {
         fileNameExtensionCF.setDefaultValue(null);
         fileNameExtensionCF.setValueRequired(true);
         fileNameExtensionCF.setMaxValue(256L);
+        fileNameExtensionCF.setGuiPosition("tab:Configuration:0;field:2");
         result.put("RejectSepaJob_fileNameExtension", fileNameExtensionCF);
 
         CustomFieldTemplate payentGatewayCF = new CustomFieldTemplate();
@@ -173,6 +176,7 @@ public class SepaRejectedTransactionsJob extends Job {
         payentGatewayCF.setFieldType(CustomFieldTypeEnum.ENTITY);
         payentGatewayCF.setEntityClazz(DDRequestBuilder.class.getName());
         payentGatewayCF.setValueRequired(true);
+        payentGatewayCF.setGuiPosition("tab:Configuration:0;field:3");
         result.put("RejectSepaJob_ddRequestBuilder", payentGatewayCF);
         
         Map<String, String> lisValuesCreditDebit = new HashMap<String, String>();
@@ -188,6 +192,7 @@ public class SepaRejectedTransactionsJob extends Job {
         creditOrDebitCF.setFieldType(CustomFieldTypeEnum.LIST);
         creditOrDebitCF.setValueRequired(true);
         creditOrDebitCF.setListValues(lisValuesCreditDebit);
+        creditOrDebitCF.setGuiPosition("tab:Configuration:0;field:4");
         result.put("RejectSepaJob_creditOrDebit", creditOrDebitCF);
 
         return result;

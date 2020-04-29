@@ -53,6 +53,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
@@ -472,6 +473,18 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
+
+    /**
+     * A full rating period when prorating was applied
+     */
+    @Transient
+    private DatePeriod fullRatingPeriod;
+
+    /**
+     * Charge mode
+     */
+    @Transient
+    private ChargeApplicationModeEnum chargeMode;
 
     /**
      * Constructor
@@ -992,6 +1005,8 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         result.setCreated(created);
         result.setUpdated(updated);
         result.setTaxClass(taxClass);
+        result.setFullRatingPeriod(fullRatingPeriod);
+        result.setChargeMode(chargeMode);
 
         return result;
     }
@@ -1280,5 +1295,33 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      */
     public void setAccountingCode(AccountingCode accountingCode) {
         this.accountingCode = accountingCode;
+    }
+
+    /**
+     * @return A full rating period when prorating was applied
+     */
+    public DatePeriod getFullRatingPeriod() {
+        return fullRatingPeriod;
+    }
+
+    /**
+     * @param fullRatingPeriod A full rating period when prorating was applied
+     */
+    public void setFullRatingPeriod(DatePeriod fullRatingPeriod) {
+        this.fullRatingPeriod = fullRatingPeriod;
+    }
+
+    /**
+     * @return Charge mode
+     */
+    public ChargeApplicationModeEnum getChargeMode() {
+        return chargeMode;
+    }
+
+    /**
+     * @param chargeMode
+     */
+    public void setChargeMode(ChargeApplicationModeEnum chargeMode) {
+        this.chargeMode = chargeMode;
     }
 }

@@ -75,10 +75,10 @@ public class InvoiceConfigurationDto implements Serializable {
     /** The display orders. */
     private Boolean displayOrders;
     
-    private Long currentInvoiceNb = 0L;
+    private Long currentInvoiceNb;
     
     /** display wallet operations. */
-    private Boolean displayWalletOperations = false;
+    private Boolean displayWalletOperations;
 
     /**
      * Instantiates a new invoice configuration dto.

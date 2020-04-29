@@ -71,6 +71,9 @@ public class RealtimeChargingService {
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
 
+    @Inject
+    private RecurringChargeInstanceService recurringChargeInstanceService;
+
     /**
      * Gets the application price.
      *
@@ -172,10 +175,10 @@ public class RealtimeChargingService {
         RecurringChargeInstance chargeInstance = new RecurringChargeInstance(null, null, quantity, subscriptionDate, null, ba.getCustomerAccount().getCustomer().getSeller(), ba.getTradingCountry(),
             ba.getCustomerAccount().getTradingCurrency(), chargeTemplate);
 
-        Date nextApplicationDate = walletOperationService.initChargeDateAndGetNextChargeDate(chargeInstance);
+        Date nextApplicationDate = walletOperationService.getRecurringPeriodEndDate(chargeInstance, chargeInstance.getSubscriptionDate());
         List<WalletOperation> ops;
         try {
-            ops = walletOperationService.applyFirstRecurringCharge(chargeInstance, nextApplicationDate, true);
+            ops = recurringChargeInstanceService.applyRecurringCharge(chargeInstance, nextApplicationDate, false, true);
 
         } catch (RatingException e) {
             log.trace("Failed to rate a recurring charge {}: {}", chargeInstance, e.getRejectionReason());

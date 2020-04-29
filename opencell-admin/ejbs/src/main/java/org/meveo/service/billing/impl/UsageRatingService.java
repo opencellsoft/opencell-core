@@ -285,8 +285,7 @@ public class UsageRatingService implements Serializable {
             quantityToCharge = deducedQuantity;
         }
 
-        RatingResult ratingResult = ratingService
-                .rateChargeAndTriggerEDRs(usageChargeInstance, null, edr.getEventDate(), quantityToCharge, null, null, null, null, null, edr, false, isVirtual);
+        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(usageChargeInstance, edr.getEventDate(), quantityToCharge, null, null, null, null, null, null, edr, false, isVirtual);
         ratingResult.setFullyRated(fullyRated);
 
         if (!isVirtual) {
@@ -350,7 +349,7 @@ public class UsageRatingService implements Serializable {
             quantityToCharge = deducedQuantity;
         }
 
-        RatingResult ratingResult = ratingService.rateCharge(usageChargeInstance, null, edr.getEventDate(), quantityToCharge, null, null, null, null, null, edr, true, false);
+        RatingResult ratingResult = ratingService.rateCharge(usageChargeInstance, edr.getEventDate(), quantityToCharge, null, null, null, null, null, null, edr, true, false);
 
         WalletReservation walletReservation = (WalletReservation) ratingResult.getWalletOperation();
 

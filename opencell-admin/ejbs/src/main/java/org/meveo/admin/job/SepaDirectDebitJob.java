@@ -75,6 +75,7 @@ public class SepaDirectDebitJob extends Job {
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         nbRuns.setValueRequired(false);
         nbRuns.setDefaultValue("1");
+        nbRuns.setGuiPosition("tab:Configuration:0;field:0");
         result.put("nbRuns", nbRuns);
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
@@ -85,6 +86,7 @@ public class SepaDirectDebitJob extends Job {
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
         waitingMillis.setValueRequired(false);
         waitingMillis.setDefaultValue("0");
+        waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
         result.put("waitingMillis", waitingMillis);
         
         CustomFieldTemplate payentGatewayCF = new CustomFieldTemplate();
@@ -95,6 +97,7 @@ public class SepaDirectDebitJob extends Job {
         payentGatewayCF.setFieldType(CustomFieldTypeEnum.ENTITY);
         payentGatewayCF.setEntityClazz(DDRequestBuilder.class.getName());
         payentGatewayCF.setValueRequired(true);
+        payentGatewayCF.setGuiPosition("tab:Configuration:0;field:2");
         result.put("SepaJob_ddRequestBuilder", payentGatewayCF);
         
         // CF to set a custom script filtering AOs to pay
@@ -106,8 +109,7 @@ public class SepaDirectDebitJob extends Job {
         aoFilterScript.setDescription(resourceMessages.getString("paymentJob.aoFilterScript"));
         aoFilterScript.setFieldType(CustomFieldTypeEnum.ENTITY);
         aoFilterScript.setEntityClazz("org.meveo.model.scripts.ScriptInstance");
-        aoFilterScript.setValueRequired(false);
-        aoFilterScript.setDefaultValue("");
+        aoFilterScript.setGuiPosition("tab:Configuration:0;field:3");
         result.put(cfAoFilterScriptCode, aoFilterScript);
         
         CustomFieldTemplate sellerCF = new CustomFieldTemplate();
@@ -119,7 +121,7 @@ public class SepaDirectDebitJob extends Job {
         sellerCF.setFieldType(CustomFieldTypeEnum.ENTITY);
         sellerCF.setEntityClazz("org.meveo.model.admin.Seller");
         sellerCF.setValueRequired(false);
-        sellerCF.setDefaultValue("");
+        sellerCF.setGuiPosition("tab:Configuration:0;field:4");
         result.put(sellerCFcode, sellerCF);
 
         Map<String, String> lisValuesCreditDebit = new HashMap<String, String>();
@@ -135,6 +137,7 @@ public class SepaDirectDebitJob extends Job {
         creditOrDebitCF.setFieldType(CustomFieldTypeEnum.LIST);
         creditOrDebitCF.setValueRequired(true);
         creditOrDebitCF.setListValues(lisValuesCreditDebit);
+        creditOrDebitCF.setGuiPosition("tab:Configuration:0;field:5");
         result.put("SepaJob_paymentOrRefund", creditOrDebitCF);
         return result;
     }

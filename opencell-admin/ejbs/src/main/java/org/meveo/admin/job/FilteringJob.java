@@ -74,6 +74,7 @@ public class FilteringJob extends Job {
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         nbRuns.setValueRequired(false);
         nbRuns.setDefaultValue("-1");
+        nbRuns.setGuiPosition("tab:Configuration:0;field:0");
         result.put("nbRuns", nbRuns);
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
@@ -84,6 +85,7 @@ public class FilteringJob extends Job {
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
         waitingMillis.setValueRequired(false);
         waitingMillis.setDefaultValue("0");
+        waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
         result.put("waitingMillis", waitingMillis);
 
         CustomFieldTemplate filter = new CustomFieldTemplate();
@@ -94,6 +96,7 @@ public class FilteringJob extends Job {
         filter.setFieldType(CustomFieldTypeEnum.ENTITY);
         filter.setEntityClazz(Filter.class.getName());
         filter.setValueRequired(true);
+        filter.setGuiPosition("tab:Configuration:0;field:2");
         result.put("FilteringJob_filter", filter);
 
         CustomFieldTemplate scriptCF = new CustomFieldTemplate();
@@ -104,6 +107,7 @@ public class FilteringJob extends Job {
         scriptCF.setFieldType(CustomFieldTypeEnum.ENTITY);
         scriptCF.setEntityClazz(ScriptInstance.class.getName());
         scriptCF.setValueRequired(true);
+        scriptCF.setGuiPosition("tab:Configuration:0;field:3");
         result.put("FilteringJob_script", scriptCF);
 
         CustomFieldTemplate variablesCF = new CustomFieldTemplate();
@@ -116,6 +120,7 @@ public class FilteringJob extends Job {
         variablesCF.setValueRequired(false);
         variablesCF.setMaxValue(256L);
         variablesCF.setMapKeyType(CustomFieldMapKeyEnum.STRING);
+        variablesCF.setGuiPosition("tab:Configuration:0;field:4");
         result.put("FilteringJob_variables", variablesCF);
 
         CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
@@ -127,6 +132,7 @@ public class FilteringJob extends Job {
         recordVariableName.setFieldType(CustomFieldTypeEnum.STRING);
         recordVariableName.setValueRequired(false);
         recordVariableName.setMaxValue(256L);
+        recordVariableName.setGuiPosition("tab:Configuration:0;field:5");
         result.put("FilteringJob_recordVariableName", recordVariableName);
 
         return result;

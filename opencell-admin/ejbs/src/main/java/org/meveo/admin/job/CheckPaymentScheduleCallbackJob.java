@@ -71,6 +71,7 @@ public class CheckPaymentScheduleCallbackJob extends Job {
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbRuns.setValueRequired(false);
         customFieldNbRuns.setDefaultValue("-1");
+        customFieldNbRuns.setGuiPosition("tab:Configuration:0;field:0");
         result.put("nbRuns", customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
@@ -81,6 +82,7 @@ public class CheckPaymentScheduleCallbackJob extends Job {
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbWaiting.setDefaultValue("0");
         customFieldNbWaiting.setValueRequired(false);
+        customFieldNbWaiting.setGuiPosition("tab:Configuration:0;field:1");
         result.put("waitingMillis", customFieldNbWaiting);
 
         return result;

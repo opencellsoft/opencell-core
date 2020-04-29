@@ -70,15 +70,6 @@ public class GenericWorkflowJob extends Job {
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<>();
 
-        CustomFieldTemplate worklowCF = new CustomFieldTemplate();
-        worklowCF.setCode("gwfJob_generic_wf");
-        worklowCF.setAppliesTo("JobInstance_GenericWorkflowJob");
-        worklowCF.setActive(true);
-        worklowCF.setDescription("Generic workflow");
-        worklowCF.setFieldType(CustomFieldTypeEnum.ENTITY);
-        worklowCF.setEntityClazz(GenericWorkflow.class.getName());
-        worklowCF.setValueRequired(true);
-        result.put("gwfJob_generic_wf", worklowCF);
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
         nbRuns.setCode("gwfJob_nbRuns");
@@ -88,6 +79,7 @@ public class GenericWorkflowJob extends Job {
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         nbRuns.setValueRequired(false);
         nbRuns.setDefaultValue("1");
+        nbRuns.setGuiPosition("tab:Configuration:0;field:0");
         result.put("gwfJob_nbRuns", nbRuns);
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
@@ -98,8 +90,20 @@ public class GenericWorkflowJob extends Job {
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
         waitingMillis.setValueRequired(false);
         waitingMillis.setDefaultValue("0");
+        waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
         result.put("gwfJob_waitingMillis", waitingMillis);
 
+        CustomFieldTemplate worklowCF = new CustomFieldTemplate();
+        worklowCF.setCode("gwfJob_generic_wf");
+        worklowCF.setAppliesTo("JobInstance_GenericWorkflowJob");
+        worklowCF.setActive(true);
+        worklowCF.setDescription("Generic workflow");
+        worklowCF.setFieldType(CustomFieldTypeEnum.ENTITY);
+        worklowCF.setEntityClazz(GenericWorkflow.class.getName());
+        worklowCF.setValueRequired(true);
+        worklowCF.setGuiPosition("tab:Configuration:0;field:2");
+        result.put("gwfJob_generic_wf", worklowCF);
+        
         return result;
     }
 }

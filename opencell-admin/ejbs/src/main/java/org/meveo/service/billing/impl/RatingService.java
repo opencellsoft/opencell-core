@@ -49,8 +49,8 @@ import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
@@ -216,7 +216,6 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * Rate a charge. Note: DOES NOT persist walletOperation to DB.
      * 
      * @param chargeInstance Charge instance to rate
-     * @param applicationType Application type
      * @param applicationDate Date of application
      * @param inputQuantity Input quantity
      * @param quantityInChargeUnits Input quantity converted to charge units. If null, will be calculated automatically
@@ -224,6 +223,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param startdate Charge period start date if applicable
      * @param endDate Charge period end date if applicable.
      * @param chargeMode Charge mode
+     * @param fullRatingPeriod Full rating period dates when prorata is applied. In such case startDate-endDate will be shorted than fullRatingPeriod. Is NOT provided when prorata is not applied.
      * @param edr EDR being rated
      * @param isReservation - is this a reservation instead of a real wallet operation
      * @param isVirtual Is this a virtual charge - simulation of rating, charge instance will be matched by code to the charge instantiated in subscription
@@ -231,8 +231,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @throws BusinessException General business exception
      * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RatingResult rateCharge(ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, String orderNumberOverride,
-            Date startdate, Date endDate, ChargeApplicationModeEnum chargeMode, EDR edr, boolean isReservation, boolean isVirtual) throws BusinessException, RatingException {
+    public RatingResult rateCharge(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, String orderNumberOverride,
+            Date startdate, Date endDate, DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode,  EDR edr, boolean isReservation, boolean isVirtual) throws BusinessException, RatingException {
 
         // For virtual operation, lookup charge in the subscription
         if (isVirtual && chargeInstance.getSubscription() != null) {
@@ -259,8 +259,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 orderNumberOverride != null ? (orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride) : chargeInstance.getOrderNumber(),
                 edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
                 edr != null ? edr.getParameter4() : null, null, startdate, endDate, null);
-
         }
+        walletOperation.setChargeMode(chargeMode);
+        walletOperation.setFullRatingPeriod(fullRatingPeriod);
 
 //        String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
 //
@@ -288,18 +289,18 @@ public class RatingService extends PersistenceService<WalletOperation> {
     }
 
     /**
-     * Rate a charges and triggerEDR. Same as rateCharge but in addition triggers EDRs, unless its a virtual operation. NOTE: Does not persist WO.
+     * Rate a charge and triggerEDR. Same as rateCharge but in addition triggers EDRs, unless its a virtual operation. NOTE: Does not persist WO.
      * 
      * 
      * 
      * @param chargeInstance Charge instance to rate
-     * @param applicationType Application type
      * @param applicationDate Date of application
      * @param inputQuantity Input quantity
      * @param quantityInChargeUnits Input quantity converted to charge units. If null, will be calculated automatically
      * @param orderNumberOverride Order number to override. If not provided, will default to an order number from a charge instance
-     * @param startdate Charge period start date if applicable
+     * @param startDate Charge period start date if applicable
      * @param endDate Charge period end date if applicable.
+     * @param fullRatingPeriod Full rating period dates when prorata is applied. In such case startDate-endDate will be shorted than fullRatingPeriod. Is NOT provided when prorata is not applied.
      * @param chargeMode Charge mode
      * @param edr EDR being rated
      * @param forSchedule - is it to be scheduled
@@ -309,10 +310,10 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @throws BusinessException business exception
      * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RatingResult rateChargeAndTriggerEDRs(ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits,
-            String orderNumberOverride, Date startdate, Date endDate, ChargeApplicationModeEnum chargeMode, EDR edr, boolean forSchedule, boolean isVirtual) throws BusinessException, RatingException {
+    public RatingResult rateChargeAndTriggerEDRs(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits,
+            String orderNumberOverride, Date startDate, Date endDate, DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode, EDR edr, boolean forSchedule, boolean isVirtual) throws BusinessException, RatingException {
 
-        RatingResult ratedEDRResult = rateCharge(chargeInstance, applicationType, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, startdate, endDate, chargeMode, edr, false, isVirtual);
+        RatingResult ratedEDRResult = rateCharge(chargeInstance,  applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, startDate, endDate, fullRatingPeriod,chargeMode,  edr, false, isVirtual);
 
         // Do not trigger EDRs for virtual or Scheduled operations
         if (forSchedule || isVirtual) {
@@ -542,6 +543,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
                     log.info("charge is shared " + sharedQuantity + " times, so unit price is " + unitPriceWithoutTaxOverridden);
                 }
             }
+            // Override wallet operation parameters using PP EL parameters
+            bareWalletOperation = overrideWalletOperationParameters(bareWalletOperation, pricePlan);
 
             calculateAmounts(bareWalletOperation, unitPriceWithoutTaxOverridden, unitPriceWithTaxOverriden);
 
@@ -579,6 +582,36 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
     }
 
+    /**
+     * Override wallet operation parameters using EL paramaters in the price plan.
+     *
+     * @param bareWalletOperation the wallet operation
+     * @param pricePlan           the Price plan
+     * @return a wallet operation
+     */
+    private WalletOperation overrideWalletOperationParameters(WalletOperation bareWalletOperation, PricePlanMatrix pricePlan) {
+        if (pricePlan != null && StringUtils.isNotBlank(pricePlan.getParameter1El())) {
+            String parameter1 = evaluateStringExpression(pricePlan.getParameter1El(), bareWalletOperation, null, pricePlan, null);
+            if (parameter1 != null) {
+                bareWalletOperation.setParameter1(parameter1);
+            }
+        }
+        if (pricePlan != null && StringUtils.isNotBlank(pricePlan.getParameter2El())) {
+            String parameter2 = evaluateStringExpression(pricePlan.getParameter2El(), bareWalletOperation, null, pricePlan, null);
+            if (parameter2 != null) {
+                bareWalletOperation.setParameter2(parameter2);
+            }
+        }
+        if (pricePlan != null && StringUtils.isNotBlank(pricePlan.getParameter3El())) {
+            String parameter3 = evaluateStringExpression(pricePlan.getParameter3El(), bareWalletOperation, null, pricePlan, null);
+            if (parameter3 != null) {
+                bareWalletOperation.setParameter3(parameter3);
+            }
+        }
+
+        return bareWalletOperation;
+    }
+
     public List<PricePlanMatrix> getActivePricePlansByChargeCode(String code) {
         return pricePlanMatrixService.getActivePricePlansByChargeCode(code);
     }
@@ -586,7 +619,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
     /**
      * Calculate, round (if needed) and set total amounts and taxes: [B2C] amountWithoutTax = round(amountWithTax) - round(amountTax) [B2B] amountWithTax = round(amountWithoutTax)
      * + round(amountTax)
-     * 
+     *
      * Unit prices and taxes are not rounded
      * 
      * @param walletOperation Wallet operation

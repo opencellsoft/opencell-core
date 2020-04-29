@@ -108,6 +108,7 @@ public class ImportSubscriptionsJob extends Job {
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbRuns.setValueRequired(false);
         customFieldNbRuns.setDefaultValue("-1");
+        customFieldNbRuns.setGuiPosition("tab:Configuration:0;field:0");
         result.put("nbRuns", customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
@@ -118,6 +119,7 @@ public class ImportSubscriptionsJob extends Job {
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbWaiting.setValueRequired(false);
         customFieldNbWaiting.setDefaultValue("0");
+        customFieldNbWaiting.setGuiPosition("tab:Configuration:0;field:1");
         result.put("waitingMillis", customFieldNbWaiting);
 
         return result;

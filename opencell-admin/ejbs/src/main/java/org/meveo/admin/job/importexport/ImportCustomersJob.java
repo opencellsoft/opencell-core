@@ -111,6 +111,7 @@ public class ImportCustomersJob extends Job {
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbRuns.setDefaultValue("-1");
         customFieldNbRuns.setValueRequired(false);
+        customFieldNbRuns.setGuiPosition("tab:Configuration:0;field:0");
         result.put("nbRuns", customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
@@ -121,6 +122,7 @@ public class ImportCustomersJob extends Job {
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbWaiting.setDefaultValue("500");
         customFieldNbWaiting.setValueRequired(false);
+        customFieldNbWaiting.setGuiPosition("tab:Configuration:0;field:1");
         result.put("waitingMillis", customFieldNbWaiting);
 
         return result;

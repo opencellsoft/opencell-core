@@ -433,7 +433,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         // using a new ArrayList (cloning the original one) to avoid ConcurrentModificationException
         for (ServiceInstance si : new ArrayList<>(emptyIfNull(sub.getServiceInstances()))) {
             if (si.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
-                serviceInstanceService.serviceActivation(si, null, null);
+                serviceInstanceService.serviceActivation(si);
             }
         }
     }

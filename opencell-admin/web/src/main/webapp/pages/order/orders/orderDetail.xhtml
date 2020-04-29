@@ -29,10 +29,10 @@
         <hftl:entityPopup id="userAccountPopup" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}" searchField1Label="#{messages['businessEntity.code']}"
             searchField1="code" searchField2Label="#{messages['userAccount.name']}" searchField2="name" column1Label="#{messages['businessEntity.code']}" column1="code"
             column2Label="#{messages['userAccount.name']}" column2="name" selection="#{orderBean.selectedOrderItem.userAccount}"
-            updateField=":orderForm:tabView:userAccount :orderForm:tabView:userAccount_text">
+            updateField=":orderForm:tabView:orderLineTabView:userAccount :orderForm:tabView:orderLineTabView:userAccount_text">
         </hftl:entityPopup>
         <hftl:entityPopup id="subscriptionPopup" header="#{messages['access.subscription']}"
-            updateField=":orderForm:tabView:subscription :orderForm:tabView:subscription_text :orderForm:tabView:offerTree  :orderForm:tabView:offerConfigurations" backingBean="#{subscriptionBean}"
+            updateField=":orderForm:tabView:orderLineTabView:subscription :orderForm:tabView:orderLineTabView:subscription_text :orderForm:tabView:orderLineTabView:offerTree  :orderForm:tabView:orderLineTabView:offerConfigurations" backingBean="#{subscriptionBean}"
             searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
             column2Label="#{messages['businessEntity.description']}" column2="description" selectionListenerBean="#{orderBean}" selectionListenerMethod="onSubscriptionSet">
         </hftl:entityPopup>
@@ -41,7 +41,7 @@
             searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to" column1Label="#{messages['businessEntity.code']}" column1="code"
             column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
             column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" lazy="false" dataModel="#{productOfferingBean.listActive()}" width="1000"
-            updateField=":orderForm:tabView:offer  :orderForm:tabView:offer_text :orderForm:tabView:offerTree  :orderForm:tabView:offerConfigurations" selectionListenerBean="#{orderBean}"
+            updateField=":orderForm:tabView:orderLineTabView:offer  :orderForm:tabView:orderLineTabView:offer_text :orderForm:tabView:orderLineTabView:offerTree  :orderForm:tabView:orderLineTabView:offerConfigurations" selectionListenerBean="#{orderBean}"
             selectionListenerMethod="onMainProductOfferingSet">
         </hftl:entityPopup>
         <hftl:entityPopup id="billingCyclePopup"
@@ -242,14 +242,23 @@
                         <p:separator rendered="#{orderBean.selectedOrderItem!=null}" />
 
 
+
                         <p:panel header="#{messages['order.orderItemHeader']}" rendered="#{orderBean.selectedOrderItem!=null}">
 
 
 
                             <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
-                                <hftl:formField entity="#{orderBean.selectedOrderItem}" label="#{messages['order.itemId']}" field="itemId" edit="false" componentWidth="10" />
+                            
+                            <p:tabView id="orderLineTabView">
+                            
+                            	<p:tab title="#{messages['order.orderItemHeader']}" id="orderLine">
+                            	
+                            		                                
+                            	<hftl:formField entity="#{orderBean.selectedOrderItem}" label="#{messages['order.itemId']}" field="itemId" edit="false" componentWidth="10" />
+                                <hftl:formField entity="#{orderBean.selectedOrderItem}" label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" allowEdit="false" />
+                                
                                 <hftl:formField entity="#{orderBean.selectedOrderItem}" label="#{messages['order.action']}" field="action" required="true" componentWidth="25"
-                                    listenerUpdate="orderItemDetails" actionListenerBean="#{orderBean}" actionListenerMethod="onActionTypeChange"
+                                    listenerUpdate=":orderForm:tabView:orderItemDetails" actionListenerBean="#{orderBean}" actionListenerMethod="onActionTypeChange"
                                     edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                                 <h:panelGroup>
                                     <hftl:formField id="userAccount" entity="#{orderBean.selectedOrderItem}" label="#{messages['order.userAccount']}" field="userAccount" valueLabelField="code"
@@ -329,8 +338,8 @@
                                                             required="#{itemConfiguration.isMain()}" pattern="#{paramBean.dateFormat}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
                                                             <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"
-                                                                update="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':' '}"
-                                                                process="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':'@this'}" immediate="true" partialSubmit="true"
+                                                                update="#{itemConfiguration.isMain()?':orderForm:tabView:orderLineTabView:offerConfigurations':' '}"
+                                                                process="#{itemConfiguration.isMain()?':orderForm:tabView:orderLineTabView:offerConfigurations':'@this'}" immediate="true" partialSubmit="true"
                                                                 partialSubmitFilter=":not([name*='omitFromSubmit'])" />
                                                             <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
                                                             <f:attribute name="characteristic" value="#{CharacteristicsEnum.SUBSCRIPTION_DATE.characteristicName}" />
@@ -512,8 +521,8 @@
                                                             value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_DATE]}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and (orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD or orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY)}">
                                                             <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"
-                                                                update="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':' '}"
-                                                                process="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':'@this'}" immediate="true" partialSubmit="true"
+                                                                update="#{itemConfiguration.isMain()?':orderForm:tabView:orderLineTabView:offerConfigurations':' '}"
+                                                                process="#{itemConfiguration.isMain()?':orderForm:tabView:orderLineTabView:offerConfigurations':'@this'}" immediate="true" partialSubmit="true"
                                                                 partialSubmitFilter=":not([name*='omitFromSubmit'])" />
                                                             <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
                                                             <f:attribute name="characteristic" value="#{CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName}" />
@@ -530,7 +539,7 @@
                                                         rendered="#{itemConfiguration.isOffer() and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}" newLine="true">
                                                         <p:inputText id="subscriptionCode_#{itemStatus.index}" value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_CODE]}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
-                                                            <p:ajax update=":orderForm:tabView:configTab:cf_#{itemStatus.index}_panel"
+                                                            <p:ajax update=":orderForm:tabView:orderLineTabView:configTab:cf_#{itemStatus.index}_panel"
                                                                 listener="#{orderBean.updateCFEntityCode(itemConfiguration, CharacteristicsEnum.SUBSCRIPTION_CODE)}" event="change" partialSubmit="true"
                                                                 process="@this" />
                                                         </p:inputText>
@@ -544,7 +553,7 @@
                                                         <p:inputText id="productInstanceCode_#{itemStatus.index}"
                                                             value="#{itemConfiguration.characteristics[CharacteristicsEnum.PRODUCT_INSTANCE_CODE]}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
-                                                            <p:ajax update=":orderForm:tabView:configTab:cf_#{itemStatus.index}_panel"
+                                                            <p:ajax update=":orderForm:tabView:orderLineTabView:configTab:cf_#{itemStatus.index}_panel"
                                                                 listener="#{orderBean.updateCFEntityCode(itemConfiguration, CharacteristicsEnum.PRODUCT_INSTANCE_CODE)}" event="change"
                                                                 partialSubmit="true" process="@this" />
                                                         </p:inputText>
@@ -569,8 +578,8 @@
                                                             pattern="#{paramBean.dateFormat}" required="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
                                                             <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"
-                                                                update="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':' '}"
-                                                                process="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':'@this'}" immediate="true" partialSubmit="true"
+                                                                update="#{itemConfiguration.isMain()?':orderForm:tabView:orderLineTabView:offerConfigurations':' '}"
+                                                                process="#{itemConfiguration.isMain()?':orderForm:tabView:orderLineTabView:offerConfigurations':'@this'}" immediate="true" partialSubmit="true"
                                                                 partialSubmitFilter=":not([name*='omitFromSubmit'])" />
                                                             <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
                                                             <f:attribute name="characteristic" value="#{CharacteristicsEnum.TERMINATION_DATE.characteristicName}" />
@@ -608,11 +617,20 @@
                                                     </h:panelGroup>
                                                 </p:tab>
                                             </c:forEach>
+                                                                                         
                                         </p:tabView>
                                     </p:panel>
                                 </h:panelGroup>
 
 
+                            		
+                            	
+                            	
+                            	</p:tab>
+								
+								<hftl:displayGenericWFsHistory entity="#{orderBean.selectedOrderItem}" backingBean="#{orderItemBean}" />
+							</p:tabView>
+                            
 
                                 <h:panelGroup rendered="#{orderBean.entity.status != OrderStatusEnum.IN_CREATION and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
 
@@ -626,6 +644,8 @@
                                             componentWidth="50" />
                                     </p:fieldset>
                                 </h:panelGroup>
+                                
+                                
 
                             </p:outputPanel>
 
@@ -639,6 +659,9 @@
                                     process="@this" />
                             </h:panelGroup>
                         </p:panel>
+                   
+                   		
+                   			
                     </h:panelGroup>
                 </p:tab>
                 <c:if test="#{orderBean.entity.id != null}">

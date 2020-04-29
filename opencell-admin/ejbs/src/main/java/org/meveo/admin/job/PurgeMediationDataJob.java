@@ -85,7 +85,7 @@ public class PurgeMediationDataJob extends Job {
         firstTransactionDate.setDescription(resourceMessages.getString("exportEntityJob.firstTransactionDate"));
         firstTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
         firstTransactionDate.setValueRequired(true);
-        firstTransactionDate.setGuiPosition("tab:Custom fields:0;fieldGroup:Date configuration:0;field:0");
+        firstTransactionDate.setGuiPosition("tab:Configuration:0;fieldGroup:Date configuration:0;field:0");
         result.put("PurgeMediationDataJob_firstTransactionDate", firstTransactionDate);
 
         CustomFieldTemplate lastTransactionDate = new CustomFieldTemplate();
@@ -95,7 +95,7 @@ public class PurgeMediationDataJob extends Job {
         lastTransactionDate.setDescription(resourceMessages.getString("exportEntityJob.lastTransactionDate"));
         lastTransactionDate.setFieldType(CustomFieldTypeEnum.DATE);
         lastTransactionDate.setValueRequired(false);
-        lastTransactionDate.setGuiPosition("tab:Custom fields:0;fieldGroup:Date configuration:0;field:1");
+        lastTransactionDate.setGuiPosition("tab:Configuration:0;fieldGroup:Date configuration:0;field:1");
         result.put("PurgeMediationDataJob_lastTransactionDate", lastTransactionDate);
 
         CustomFieldTemplate edrStatusCf = new CustomFieldTemplate();
@@ -111,7 +111,7 @@ public class PurgeMediationDataJob extends Job {
             edrStatusList.put(e.name(), resourceMessages.getString(e.getLabel()));
         }
         edrStatusCf.setListValues(edrStatusList);
-        edrStatusCf.setGuiPosition("tab:Custom fields:0;fieldGroup:Status:0;field:0");
+        edrStatusCf.setGuiPosition("tab:Configuration:0;fieldGroup:Status:0;field:0");
         result.put(PURGE_MEDIATION_DATA_JOB_EDR_STATUS_CF, edrStatusCf);
 
         CustomFieldTemplate rtStatusCf = new CustomFieldTemplate();
@@ -127,7 +127,7 @@ public class PurgeMediationDataJob extends Job {
             rtStatusList.put(e.name(), resourceMessages.getString(e.getLabel()));
         }
         rtStatusCf.setListValues(rtStatusList);
-        rtStatusCf.setGuiPosition("tab:Custom fields:0;fieldGroup:Status:0;field:1");
+        rtStatusCf.setGuiPosition("tab:Configuration:0;fieldGroup:Status:0;field:1");
         result.put(PURGE_MEDIATION_DATA_JOB_RT_STATUS_CF, rtStatusCf);
 
         CustomFieldTemplate woStatusCf = new CustomFieldTemplate();
@@ -143,7 +143,7 @@ public class PurgeMediationDataJob extends Job {
             woStatusList.put(e.name(), resourceMessages.getString(e.getLabel()));
         }
         woStatusCf.setListValues(woStatusList);
-        woStatusCf.setGuiPosition("tab:Custom fields:0;fieldGroup:Status:0;field:2");
+        woStatusCf.setGuiPosition("tab:Configuration:0;fieldGroup:Status:0;field:2");
         result.put(PURGE_MEDIATION_DATA_JOB_WO_STATUS_CF, woStatusCf);
 
         return result;

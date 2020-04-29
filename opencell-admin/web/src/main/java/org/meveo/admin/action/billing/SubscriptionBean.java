@@ -654,7 +654,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             log.debug("activateService:serviceInstance.getRecurrringChargeInstances.size={}", selectedServiceInstance.getRecurringChargeInstances().size());
 
             try {
-                serviceInstanceService.serviceActivation(selectedServiceInstance, null, null);
+                serviceInstanceService.serviceActivation(selectedServiceInstance);
 
             } catch (Exception e) {
                 messages.error(new BundleKey("messages", "activation.activateUnsuccessful"), e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());

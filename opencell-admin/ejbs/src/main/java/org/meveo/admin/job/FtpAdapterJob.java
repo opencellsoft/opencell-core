@@ -102,6 +102,7 @@ public class FtpAdapterJob extends Job {
         localDirectory.setFieldType(CustomFieldTypeEnum.STRING);
         localDirectory.setValueRequired(true);
         localDirectory.setMaxValue(150L);
+        localDirectory.setGuiPosition("tab:Configuration:0;field:0");
         result.put("FtpAdapterJob_localDirectory", localDirectory);
 
         CustomFieldTemplate remoteServer = new CustomFieldTemplate();
@@ -112,6 +113,7 @@ public class FtpAdapterJob extends Job {
         remoteServer.setFieldType(CustomFieldTypeEnum.STRING);
         remoteServer.setValueRequired(true);
         remoteServer.setMaxValue(150L);
+        remoteServer.setGuiPosition("tab:Configuration:0;field:1");
         result.put("FtpAdapterJob_remoteServer", remoteServer);
 
         CustomFieldTemplate remotePort = new CustomFieldTemplate();
@@ -121,6 +123,7 @@ public class FtpAdapterJob extends Job {
         remotePort.setDescription(resourceMessages.getString("FtpAdapter.remotePort"));
         remotePort.setFieldType(CustomFieldTypeEnum.LONG);
         remotePort.setValueRequired(true);
+        remotePort.setGuiPosition("tab:Configuration:0;field:2");
         result.put("FtpAdapterJob_remotePort", remotePort);
 
         CustomFieldTemplate removeOriginalFile = new CustomFieldTemplate();
@@ -134,6 +137,7 @@ public class FtpAdapterJob extends Job {
         removeOriginalFileListValues.put("FALSE", "False");
         removeOriginalFile.setListValues(removeOriginalFileListValues);
         removeOriginalFile.setValueRequired(true);
+        removeOriginalFile.setGuiPosition("tab:Configuration:0;field:3");
         result.put("FtpAdapterJob_removeOriginalFile", removeOriginalFile);
 
         CustomFieldTemplate remoteDirectory = new CustomFieldTemplate();
@@ -144,6 +148,7 @@ public class FtpAdapterJob extends Job {
         remoteDirectory.setFieldType(CustomFieldTypeEnum.STRING);
         remoteDirectory.setValueRequired(true);
         remoteDirectory.setMaxValue(100L);
+        remoteDirectory.setGuiPosition("tab:Configuration:0;field:4");
         result.put("FtpAdapterJob_remoteDirectory", remoteDirectory);
 
         CustomFieldTemplate ftpUsername = new CustomFieldTemplate();
@@ -154,6 +159,7 @@ public class FtpAdapterJob extends Job {
         ftpUsername.setFieldType(CustomFieldTypeEnum.STRING);
         ftpUsername.setValueRequired(true);
         ftpUsername.setMaxValue(50L);
+        ftpUsername.setGuiPosition("tab:Configuration:0;field:5");
         result.put("FtpAdapterJob_ftpUsername", ftpUsername);
 
         CustomFieldTemplate ftpPassword = new CustomFieldTemplate();
@@ -164,6 +170,7 @@ public class FtpAdapterJob extends Job {
         ftpPassword.setFieldType(CustomFieldTypeEnum.STRING);
         ftpPassword.setValueRequired(true);
         ftpPassword.setMaxValue(50L);
+        ftpPassword.setGuiPosition("tab:Configuration:0;field:6");
         result.put("FtpAdapterJob_ftpPassword", ftpPassword);
 
         CustomFieldTemplate ftpExtension = new CustomFieldTemplate();
@@ -174,6 +181,7 @@ public class FtpAdapterJob extends Job {
         ftpExtension.setFieldType(CustomFieldTypeEnum.STRING);
         ftpExtension.setValueRequired(true);
         ftpExtension.setMaxValue(50L);
+        ftpExtension.setGuiPosition("tab:Configuration:0;field:7");
         result.put("FtpAdapterJob_fileExtension", ftpExtension);
 
         CustomFieldTemplate ftpProtocol = new CustomFieldTemplate();
@@ -187,6 +195,7 @@ public class FtpAdapterJob extends Job {
         ftpProtocolListValues.put("SFTP", "SFTP");
         ftpProtocol.setListValues(ftpProtocolListValues);
         ftpProtocol.setValueRequired(true);
+        ftpProtocol.setGuiPosition("tab:Configuration:0;field:8");
         result.put("FtpAdapterJob_ftpProtocol", ftpProtocol);
 
         CustomFieldTemplate operation = new CustomFieldTemplate();
@@ -200,6 +209,7 @@ public class FtpAdapterJob extends Job {
         operationlListValues.put("EXPORT", "EXPORT");
         operation.setListValues(operationlListValues);
         operation.setValueRequired(true);
+        operation.setGuiPosition("tab:Configuration:0;field:9");
         result.put("FtpAdapterJob_operation", operation);
 
         return result;

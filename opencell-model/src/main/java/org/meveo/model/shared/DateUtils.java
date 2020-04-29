@@ -17,6 +17,7 @@
  */
 package org.meveo.model.shared;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -713,6 +714,34 @@ public class DateUtils {
         } catch (Exception e) {
             LOG.error(" error on changeFormat : [{}] ", e.getMessage());
             return dateValue;
+        }
+    }
+
+    /**
+     * Calculate prorata ration between two date periods
+     * 
+     * @param partFrom Partial period - start date
+     * @param partTo Partial period - end date
+     * @param overallFrom Full period - start date
+     * @param overallTo Full period - end date
+     * @param ignoreEmptyPeriod If TRUE, when full period is empty (start date = end date), a ZERO will be returned, If FALSE, a NULL value will be returned
+     * @return A protation value equal to partial period length/full period length
+     */
+    public static BigDecimal calculateProrataRatio(Date partFrom, Date partTo, Date overallFrom, Date overallTo, boolean ignoreEmptyPeriod) {
+
+        double part1 = DateUtils.daysBetween(partFrom, partTo);
+        double part2 = DateUtils.daysBetween(overallFrom, overallTo);
+
+        if (part2 == 0) {
+            if (ignoreEmptyPeriod) {
+                return BigDecimal.ZERO;
+            } else {
+                return null;
+            }
+        } else if (part1 != part2) {
+            return BigDecimal.valueOf(part1 / part2);
+        } else {
+            return BigDecimal.ONE;
         }
     }
 }

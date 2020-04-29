@@ -101,6 +101,7 @@ public class ScriptingJob extends Job {
         scriptCF.setFieldType(CustomFieldTypeEnum.ENTITY);
         scriptCF.setEntityClazz(ScriptInstance.class.getName());
         scriptCF.setValueRequired(true);
+        scriptCF.setGuiPosition("tab:Configuration:0;field:0");
         result.put("ScriptingJob_script", scriptCF);
 
         CustomFieldTemplate variablesCF = new CustomFieldTemplate();
@@ -113,6 +114,7 @@ public class ScriptingJob extends Job {
         variablesCF.setValueRequired(false);
         variablesCF.setMaxValue(256L);
         variablesCF.setMapKeyType(CustomFieldMapKeyEnum.STRING);
+        variablesCF.setGuiPosition("tab:Configuration:0;field:1");
         result.put("ScriptingJob_variables", variablesCF);
 
         return result;

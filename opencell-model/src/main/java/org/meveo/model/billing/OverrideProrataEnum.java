@@ -20,36 +20,46 @@ package org.meveo.model.billing;
 
 /**
  * An Enum to override prorata setting in the recurring charge when terminating a subscription
- * NO_OVERRIDE: which keeps the proata setting set on the recurring charge.
- * PRORATA :  applying the prorata
- * NO_PRORATA :  ignoring  the prorata
  *
  * @author Horri khalid
  */
 public enum OverrideProrataEnum {
-    NO_OVERRIDE(1, "overrideProrataEnum.noOverride"), PRORATA(2, "overrideProrataEnum.prorata"), NO_PRORATA(3, "overrideProrataEnum.noProrata");
+    /**
+     * Keeps the proata setting set on the recurring charge
+     */
+    NO_OVERRIDE,
 
-    private String label;
-    private Integer id;
+    /**
+     * Always prorate
+     */
+    PRORATA,
 
-    OverrideProrataEnum(Integer id, String label) {
-        this.label = label;
-        this.id = id;
-    }
+    /**
+     * Never prorate
+     */
+    NO_PRORATA;
 
     public String getLabel() {
-        return label;
+        return this.getClass().getSimpleName() + "." + this.name();
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    /**
+     * Determine if prorate should occur based on current enum value
+     * 
+     * @param defaultProrate Default prorate value in case directive is not to override
+     * @return True if proration should occur
+     */
+    public boolean isToProrate(boolean defaultProrate) {
+        switch (this) {
+        case NO_OVERRIDE:
+            return defaultProrate;
+        case PRORATA:
+            return true;
+        case NO_PRORATA:
+            return false;
+        default:
+            return defaultProrate;
+        }
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 }
