@@ -27,7 +27,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -36,11 +35,6 @@ import org.meveo.model.billing.RatingStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.slf4j.Logger;
-
-/**
- * 
- * @author anasseh
- */
 
 @Stateless
 public class UnitRecurringRatingJobBean implements Serializable {
@@ -54,24 +48,23 @@ public class UnitRecurringRatingJobBean implements Serializable {
     protected Logger log;
 
     @JpaAmpNewTx
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, Long ID_activeRecurringChargeInstance, Date maxDate) {
+    public void execute(JobExecutionResultImpl result, Long chargeInstanceId, Date maxDate) {
 
-        log.debug("Running with activeRecurringChargeInstanceID={}", ID_activeRecurringChargeInstance);
         try {
-            RatingStatus ratingStatus = recurringChargeInstanceService.applyRecurringCharge(ID_activeRecurringChargeInstance, maxDate);
+            RatingStatus ratingStatus = recurringChargeInstanceService.applyRecurringCharge(chargeInstanceId, maxDate);
             if (ratingStatus.getNbRating() == 1) {
                 result.registerSucces();
             } else if (ratingStatus.getNbRating() > 1) {
-                result.registerWarning(ID_activeRecurringChargeInstance + " rated " + ratingStatus.getNbRating() + " times");
+                result.registerWarning(chargeInstanceId + " rated " + ratingStatus.getNbRating() + " times");
             } else {
                 if (ratingStatus.getStatus() != RatingStatusEnum.NOT_RATED_FALSE_FILTER) {
-                    result.registerWarning(ID_activeRecurringChargeInstance + " not rated");
+                    result.registerWarning(chargeInstanceId + " not rated");
                 }
             }
-        } catch (BusinessException e) {
-            result.registerError(ID_activeRecurringChargeInstance, e.getMessage());
+        } catch (Exception e) {
+            result.registerError(chargeInstanceId, e.getMessage());
+            throw e;
         }
     }
 }
