@@ -358,6 +358,10 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
+    
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "payment_history_id")
+    private PaymentHistory paymentHistory;
 
 
     public Date getDueDate() {
@@ -826,4 +830,13 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
     }
+
+	public PaymentHistory getPaymentHistory() {
+		return paymentHistory;
+	}
+
+	public void setPaymentHistory(PaymentHistory paymentHistory) {
+		this.paymentHistory = paymentHistory;
+	}
+    
 }
