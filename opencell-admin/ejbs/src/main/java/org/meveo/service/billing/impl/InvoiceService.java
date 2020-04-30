@@ -533,7 +533,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         try {
             QueryBuilder qb = queryInvoiceIdsWithNoAccountOperation(br);
             if (excludeInvoicesWithoutAmount) {
-                qb.addSql("i.amount != 0 ");
+                qb.addSql("i.amount_with_tax != 0 ");
             }
             if (invoiceAccountable != null) {
                 qb.addSql("i.invoiceType.invoiceAccountable = ".concat(invoiceAccountable.toString()));
@@ -2147,10 +2147,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return result;
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
-        if (expression.indexOf("ba") >= 0) {
-            userMap.put("ba", billingAccount);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
         }
-        if (expression.indexOf("invoice") >= 0) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE) >= 0) {
             userMap.put("invoice", invoice);
         }
         if (expression.indexOf("order") >= 0) {
@@ -3215,20 +3215,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
 
-        if (expression.indexOf("ca") >= 0) {
-            userMap.put("ca", customerAccount);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, customerAccount);
         }
-        if (expression.indexOf("ba") >= 0) {
-            userMap.put("ba", billingAccount);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
         }
-        if (expression.indexOf("iv") >= 0) {
-            userMap.put("iv", invoice);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE_SHORT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_INVOICE_SHORT, invoice);
         }
-        if (expression.indexOf("invoice") >= 0) {
-            userMap.put("invoice", invoice);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_INVOICE, invoice);
         }
-        if (expression.indexOf("dpi") >= 0) {
-            userMap.put("dpi", dpi);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_DISCOUNT_PLAN_INSTANCE) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_DISCOUNT_PLAN_INSTANCE, dpi);
         }
         if (expression.indexOf("su") >= 0) {
             userMap.put("su", invoice.getSubscription());
@@ -3257,8 +3257,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return null;
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
-        userMap.put("ca", userAccount.getBillingAccount().getCustomerAccount());
-        userMap.put("ba", userAccount.getBillingAccount());
+        userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, userAccount.getBillingAccount().getCustomerAccount());
+        userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, userAccount.getBillingAccount());
         userMap.put("iv", invoice);
         userMap.put("invoice", invoice);
         userMap.put("wa", wallet);
