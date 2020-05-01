@@ -40,6 +40,7 @@ import org.slf4j.Logger;
  * annotation.
  * 
  * @author Tony Alejandro
+ * @author Mounir Boukayoua
  *
  */
 @Singleton
@@ -57,14 +58,14 @@ public class SecureMethodParameterHandler {
 
 	/**
 	 * Retrieves the parser defined in the {@link SecureMethodParameter}
-	 * parameter, uses the parser to extract the value from the values array,
+	 * parameter, uses the parser to extract a list of values from the values array,
 	 * then returns it.
 	 * 
 	 * @param <T> The result class.
 	 * @param parameterConfig the {@link SecureMethodParameter} describing which parameter is going to be evaluated and what parser to use to extract the data.
 	 * @param values The array of parameters that was passed into the method.
 	 * @param resultClass The class of the value that will be extracted from the parameter.
-	 * @return The parameter value
+	 * @return list of values from the parameter
 	 * @throws MeveoApiException Meveo api exception
 	 */
 	@SuppressWarnings("unchecked")

@@ -51,7 +51,6 @@ public class ObjectFilter extends SecureMethodResultFilter {
         if (filterResultsConfig == null) {
             return result;
         }
-
         boolean allowAccess = false;
         Object itemToFilter = result;
 
@@ -72,18 +71,15 @@ public class ObjectFilter extends SecureMethodResultFilter {
 
                 } else if (resolvedValue instanceof Collection) {
                     resolvedValues = (Collection) resolvedValue;
-
                 } else {
                     resolvedValues = new ArrayList<>();
                     resolvedValues.add(resolvedValue);
                 }
 
                 for (Object value : resolvedValues) {
-
                     if (value == null) {
                         continue;
                     }
-
                     BusinessEntity entity = propertyConfig.getEntityClass().newInstance();
                     if(value instanceof String) {
                         entity.setCode((String) value);
@@ -92,9 +88,9 @@ public class ObjectFilter extends SecureMethodResultFilter {
                     } else if(ReflectionUtils.hasField(value, "code")) {
                         entity.setCode((String) ReflectionUtils.getPropertyValue(value, "code"));
                     }
-
+                    log.debug("Checking if secured entity {} is allowed for the currentUser", entity);
                     if (securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
-                        log.debug("Adding item {} to filtered list.", entity);
+                        log.debug("Entity check Ok. Adding item {} to filtered list.", entity);
                         allowAccess = true;
                         break filterLoop;
                     }

@@ -34,12 +34,13 @@ import java.util.List;
  * described in the entity attribute of the corresponding {@link SecureMethodParameter} annotation.
  * 
  * @author Tony Alejandro
- *
+ * @author Mounir Boukayoua
  */
 public class CodeParser extends SecureMethodParameterParser<BusinessEntity> {
 
     @Override
-    public List<BusinessEntity> getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
+    public List<BusinessEntity> getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values)
+            throws InvalidParameterException, MissingParameterException {
         if (parameterConfig == null) {
             return null;
         }

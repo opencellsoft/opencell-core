@@ -40,15 +40,6 @@ public abstract class SecureMethodResultFilter {
     protected Logger log;
 
     /**
-     * This method returns the class instance. It is used by the {@link SecureMethodResultFilterFactory} for locating the correct filter.
-     * 
-     * @return The class instance of this filter class.
-     */
-    public Class<? extends SecureMethodResultFilter> getFilterClass() {
-        return this.getClass();
-    }
-
-    /**
      * This method should check if the result object contains {@link SecuredEntity} instances and if the user is not authorized to access these entities, should be filtered out.
      * 
      * @param filterResultsConfig Method definition where filtering is applied to

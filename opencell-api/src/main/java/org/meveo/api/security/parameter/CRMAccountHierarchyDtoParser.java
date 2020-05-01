@@ -40,7 +40,7 @@ import java.util.List;
  * This will process a parameter of type {@link CRMAccountHierarchyDto} passed to a method annotated with {@link SecuredBusinessEntityMethod}.
  * 
  * @author Tony Alejandro
- *
+ * @author Mounir Boukayoua
  */
 public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<BusinessEntity> {
 

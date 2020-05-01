@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.security.config.SecuredMethodConfig;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.config.SecureMethodParameterConfig;
@@ -34,6 +35,7 @@ import java.util.List;
  * method parameter.
  * 
  * @author tonys
+ * @author Mounir Boukayoua
  *
  * @param <T> the type of the entity
  */
@@ -43,11 +45,11 @@ public abstract class SecureMethodParameterParser<T> {
     protected Logger log;
 
     /**
-     * This method implements the algorithm for parsing method parameters from {@link SecuredBusinessEntityMethod} annotated methods.
+     * This method implements the algorithm for parsing method parameters from {@link SecuredMethodConfig}
      * 
-     * @param parameter The {@link SecureMethodParameter} instance that describe the parameter that will be evaluated.
-     * @param values The method parameters received by the method that was annotated with {@link SecuredBusinessEntityMethod}
-     * @return The resulting object that was retrieved by the parser.
+     * @param parameter The {@link SecureMethodParameterConfig} instance that describe the parameter that will be evaluated.
+     * @param values The method parameters received by the method that was annotated with {@link SecuredMethodConfig}
+     * @return The resulting list of objects that was retrieved by the parser.
      *
      * @throws InvalidParameterException Parameter value was not resolved because of wrong path, or other parsing errors
      * @throws MissingParameterException Parameter value was null

@@ -19,7 +19,6 @@
 package org.meveo.api.security.Interceptor;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.immutables.value.internal.$processor$.meta.$TreesIncludeMirror;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.AccessDeniedException;
@@ -28,6 +27,7 @@ import org.meveo.api.security.config.SecuredBusinessEntityConfig;
 import org.meveo.api.security.config.SecuredBusinessEntityConfigFactory;
 import org.meveo.api.security.config.SecuredMethodConfig;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityAnnotationConfigFactory;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.SecureMethodResultFilter;
 import org.meveo.api.security.filter.SecureMethodResultFilterFactory;
@@ -59,6 +59,7 @@ import java.util.stream.Collectors;
  * @author Tony Alejandro
  * @author Wassim Drira
  * @author mohamed stitane
+ * @author Mounir Boukayoua
  * @lastModifiedVersion 5.0
  */
 public class SecuredBusinessEntityMethodInterceptor implements Serializable {
@@ -90,6 +91,10 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
+    /**
+     * Default one which is injected
+     * is {@link SecuredBusinessEntityAnnotationConfigFactory}
+     */
     @Inject
     protected SecuredBusinessEntityConfigFactory securedBusinessEntityConfigFactory;
 
@@ -108,8 +113,14 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         return checkForSecuredEntities(context, sbeConfig);
     }
 
+    /**
+     * Check an API method for configured secured entities
+     * @param context method invocation context
+     * @param sbeConfig {@link SecuredBusinessEntityConfig} instance
+     * @return the method result if check is success
+     * @throws Exception exception if check is failed
+     */
     protected Object checkForSecuredEntities(InvocationContext context, SecuredBusinessEntityConfig sbeConfig) throws Exception {
-
         if (sbeConfig == null || sbeConfig.getSecuredMethodConfig() == null ) {
             return context.proceed();
         }
@@ -146,7 +157,9 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
                 if (CollectionUtils.isNotEmpty(entities)) {
                     boolean isAllowed = false;
                     for (BusinessEntity entity : entities) {
+                        log.debug("Checking if entity={} is allowed for currentUser", entity);
                         if (entity != null && securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
+                            log.debug("Checked entity is OK");
                             isAllowed =true;
                             break;
                         }
@@ -157,7 +170,6 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
                 }
             }
         }
-
         log.debug("Allowing method {}.{} to be invoked.", objectName, methodName);
         Object result = context.proceed();
 
