@@ -27,10 +27,8 @@ import org.meveo.api.security.config.FilterResultsConfig;
 import org.meveo.api.security.config.SecureMethodParameterConfig;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
-import org.meveo.model.billing.Subscription;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.security.SecuredBusinessEntityService;
 
@@ -50,12 +48,10 @@ public class ListFilter extends SecureMethodResultFilter {
             log.warn("Result is empty. Skipping filter...");
             return result;
         }
-
         // Result is not annotated for filtering,
         if (filterResultsConfig == null) {
             return result;
         }
-
         List filteredList = new ArrayList<>();
         List itemsToFilter = null;
 
@@ -74,8 +70,7 @@ public class ListFilter extends SecureMethodResultFilter {
             // Various property filters are connected by OR - any filter match will consider item as a valid one
             filterLoop: for (FilterPropertyConfig filterPropertyConfig : filterResultsConfig.getItemPropertiesToFilter()) {
                 try {
-
-                    Collection resolvedValues = new ArrayList<>();
+                    Collection resolvedValues;
                     Object resolvedValue = ReflectionUtils.getPropertyValue(itemToFilter, filterPropertyConfig.getProperty());
                     if (isEmptyValue(resolvedValue)) {
                         if (filterPropertyConfig.isAllowAccessIfNull()) {
@@ -85,21 +80,17 @@ public class ListFilter extends SecureMethodResultFilter {
                             log.debug("Property " + filterPropertyConfig.getProperty() + " on item to filter " + itemToFilter + " was resolved to null or empty. Entity will be filtered out");
                         }
                         continue;
-
                     } else if (resolvedValue instanceof Collection) {
                         resolvedValues = (Collection) resolvedValue;
-
                     } else {
                         resolvedValues = new ArrayList<>();
                         resolvedValues.add(resolvedValue);
                     }
 
                     for (Object value : resolvedValues) {
-
                         if (value == null) {
                             continue;
                         }
-
                         BusinessEntity entity = filterPropertyConfig.getEntityClass().newInstance();
                         if(value instanceof String) {
                             entity.setCode((String) value);
@@ -109,8 +100,9 @@ public class ListFilter extends SecureMethodResultFilter {
                             entity.setCode((String) ReflectionUtils.getPropertyValue(value, "code"));
                         }
 
+                        log.debug("Checking if secured entity {} is allowed for the currentUser", entity);
                         if (securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
-                            log.debug("Adding item {} to filtered list.", entity);
+                            log.debug("Entity check OK. Adding item {} to filtered list.", itemToFilter);
                             filteredList.add(itemToFilter);
                             break filterLoop;
                         }

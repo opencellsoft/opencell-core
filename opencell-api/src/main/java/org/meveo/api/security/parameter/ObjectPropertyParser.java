@@ -36,7 +36,7 @@ import java.util.List;
  * annotated method.
  * 
  * @author Tony Alejandro
- *
+ * @author Mounir Boukayoua
  */
 public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEntity> {
 
@@ -45,10 +45,10 @@ public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEn
         if (parameterConfig == null) {
             return null;
         }
-        // get the code
+        // get the list of codes
         try {
             List<String> codes = extractPropertyValue(parameterConfig, values);
-            // retrieve the entities
+            // build entities to check using extracted codes
             return extractBusinessEntity(parameterConfig, codes);
         } catch (MissingParameterException e) {
             // TODO how to handle when entity to filter can not be resolved because it is null - is it an error?
@@ -60,20 +60,21 @@ public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEn
     /**
      * The value is determined by getting the parameterConfig object and returning the value of the property.
      * 
-     * @param parameterConfig {@link SecureMethodParameter} instance that has the entity, index, and property attributes set.
+     * @param parameterConfig {@link SecureMethodParameterConfig} instance that has the entity, index, and property attributes set.
      * @param values The method parameters.
-     * @return The value retrieved from the object.
+     * @return one or more values retrieved from the object.
      * @throws InvalidParameterException Parameter value was not resolved because of wrong path, or other parsing errors
      * @throws MissingParameterException Parameter value was null
      */
     private List<String> extractPropertyValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
 
-        // retrieve the param and property based on the parameterConfig annotation
+        // retrieve the param and property based on the parameterConfig object
         Object param = values[parameterConfig.getIndex()];
         String property = parameterConfig.getProperty();
         List<String> resolvedValues = new ArrayList<>();
         Object propertyValue = null;
         try {
+            log.debug("Parsing value(s) from property {} of the parameter {}", property, param);
             propertyValue = ReflectionUtils.getPropertyValue(param, property);
             if(propertyValue instanceof Collection) {
                 for (Object propertyItem : (Collection) propertyValue) {
@@ -81,6 +82,8 @@ public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEn
                         resolvedValues.add((String) propertyItem);
                     } else if (propertyItem instanceof BusinessEntity) {
                         resolvedValues.add(((BusinessEntity) propertyItem).getCode());
+                    } else {
+                        log.warn("No value parsed from the object {}", propertyItem);
                     }
                 }
             } else {
@@ -88,6 +91,8 @@ public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEn
                     resolvedValues.add((String) propertyValue);
                 } else if (propertyValue instanceof BusinessEntity) {
                     resolvedValues.add(((BusinessEntity) propertyValue).getCode());
+                } else {
+                    log.warn("No value parsed from the object {}", propertyValue);
                 }
             }
         } catch (IllegalAccessException e) {
@@ -111,7 +116,6 @@ public class ObjectPropertyParser extends SecureMethodParameterParser<BusinessEn
                 entity.setCode(code);
                 entities.add(entity);
             }
-
         } catch (InstantiationException | IllegalAccessException e) {
             String message = String.format("Failed to create new %s instance.", entityClass.getName());
             log.error(message, e);
