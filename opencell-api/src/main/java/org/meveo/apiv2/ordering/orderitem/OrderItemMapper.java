@@ -113,7 +113,8 @@ public class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.ordering.ord
     public OrderItem toEntity(org.meveo.apiv2.ordering.orderItem.OrderItem resource) {
         OrderItem orderItem=new OrderItem();
         orderItem.setId(resource.getId());
-        orderItem.setItemId(resource.getItemId());
+        String itemId = resource.getItemId();
+		
         if(resource.getStatus() != null){
             orderItem.setStatus(resource.getStatus());
         } else {
@@ -123,13 +124,15 @@ public class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.ordering.ord
         if(resource.getAction() != null){
             orderItem.setAction(resource.getAction());
         }
-
+        
         if(resource.getOrder() != null){
             Order order = new Order();
             order.setId(resource.getOrder().getId());
             orderItem.setOrder(order);
+			itemId = itemId != null ? itemId : order.getOrderItems() == null ? "1" : "" + (order.getOrderItems().size() + 1);
+            orderItem.setCode(order.getCode()+"_"+itemId);
         }
-
+        orderItem.setItemId(itemId);
         if(resource.getSubscription() != null){
             orderItem.setSubscription(constructSubscription(resource.getSubscription()));
         }

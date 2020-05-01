@@ -180,7 +180,8 @@ public class OrderApi extends BaseApi {
             order.setQuote(orderService.getReference(Quote.class, quoteId));
         }
         
-        order.setCode(UUID.randomUUID().toString());
+        String orderCode = UUID.randomUUID().toString();
+		order.setCode(orderCode);
         order.setCategory(productOrder.getCategory());
         // order.setDeliveryInstructions("");
         order.setDescription(productOrder.getDescription());
@@ -218,9 +219,11 @@ public class OrderApi extends BaseApi {
         if (productOrder.getOrderItem() == null){
             productOrder.setOrderItem(Collections.emptyList());
         }
+        int i=0;
         for (ProductOrderItem productOrderItem : productOrder.getOrderItem()) {
 
             org.meveo.model.order.OrderItem orderItem = new org.meveo.model.order.OrderItem();
+            orderItem.setCode(orderCode+i++);
             List<OrderItemProductOffering> productOfferings = new ArrayList<>();
             ProductOffering mainProductOffering = null;
 
