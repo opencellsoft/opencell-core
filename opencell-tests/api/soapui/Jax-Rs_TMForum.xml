@@ -26008,7 +26008,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="e7abf757-1227-4015-8713-3d659acd8967" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="21473e26-99d7-4163-8c32-6a6ec8a457c8" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -27172,7 +27172,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="2571bb7c-4bb6-4bef-b9b0-03215a581ccf" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="ba3cbee9-e21a-4062-a8eb-b983f3ff5d78" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -28242,7 +28242,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="f4422150-4ecc-4af8-96e7-42add927af6c" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="08441866-91e8-48b3-a9bd-c48274d0d2d7" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -31006,7 +31006,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>55</con:value>
+        <con:value>56</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -32814,7 +32814,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>105</con:value>
+        <con:value>106</con:value>
       </con:property>
       <con:property>
         <con:name>orderNrThatCreatedSubscription</con:name>
@@ -33863,7 +33863,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>81</con:value>
+        <con:value>82</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -34034,7 +34034,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     </con:property>
     <con:property>
       <con:name>opencell.url2</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://localhost:8080/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>
