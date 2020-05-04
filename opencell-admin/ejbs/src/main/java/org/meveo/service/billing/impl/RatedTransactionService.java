@@ -1480,56 +1480,57 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         Map<Object, Object> contextMap = new HashMap<Object, Object>();
         if (expression.startsWith("#{")) {
-            if (expression.indexOf("serviceInstance") >= 0) {
-                contextMap.put("serviceInstance", serviceInstance);
+            if (expression.indexOf(ValueExpressionWrapper.VAR_SERVICE_INSTANCE) >= 0) {
+                contextMap.put(ValueExpressionWrapper.VAR_SERVICE_INSTANCE, serviceInstance);
             }
 
-            if (expression.indexOf("sub") >= 0) {
+            if (expression.indexOf(ValueExpressionWrapper.VAR_SUBSCRIPTION) >= 0) {
                 if (subscription == null) {
                     subscription = serviceInstance.getSubscription();
                 }
-                contextMap.put("sub", subscription);
+                contextMap.put(ValueExpressionWrapper.VAR_SUBSCRIPTION, subscription);
             }
-            if (expression.indexOf("offer") >= 0) {
+            if (expression.indexOf(ValueExpressionWrapper.VAR_OFFER) >= 0) {
                 if (subscription == null) {
                     subscription = serviceInstance.getSubscription();
                 }
-                contextMap.put("offer", subscription.getOffer());
+                contextMap.put(ValueExpressionWrapper.VAR_OFFER, subscription.getOffer());
             }
 
-            if (expression.indexOf("ua") >= 0) {
+            if (expression.indexOf(ValueExpressionWrapper.VAR_USER_ACCOUNT) >= 0) {
                 if (ua == null) {
                     ua = subscription != null ? subscription.getUserAccount() : serviceInstance.getSubscription().getUserAccount();
                 }
 
-                contextMap.put("ua", ua);
+                contextMap.put(ValueExpressionWrapper.VAR_USER_ACCOUNT, ua);
             }
 
-            if (expression.indexOf("ba") >= 0) {
+            if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
                 if (ba == null) {
                     ba = subscription != null ? subscription.getUserAccount().getBillingAccount() : serviceInstance.getSubscription().getUserAccount().getBillingAccount();
                 }
 
-                contextMap.put("ba", ba);
+                contextMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, ba);
             }
 
-            if (expression.indexOf("ca") >= 0) {
+            if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) >= 0) {
 
                 if (ba == null) {
                     ba = subscription != null ? subscription.getUserAccount().getBillingAccount() : serviceInstance.getSubscription().getUserAccount().getBillingAccount();
                 }
-                contextMap.put("ca", ba.getCustomerAccount());
+                contextMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, ba.getCustomerAccount());
             }
 
-            if (expression.indexOf("c") >= 0) {
+            if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_SHORT) >= 0 || expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER) >= 0) {
                 if (ba == null) {
                     ba = subscription != null ? subscription.getUserAccount().getBillingAccount() : serviceInstance.getSubscription().getUserAccount().getBillingAccount();
                 }
-                contextMap.put("c", ba.getCustomerAccount().getCustomer());
+                contextMap.put(ValueExpressionWrapper.VAR_CUSTOMER_SHORT, ba.getCustomerAccount().getCustomer());
+                contextMap.put(ValueExpressionWrapper.VAR_CUSTOMER, ba.getCustomerAccount().getCustomer());
             }
 
-            if (expression.indexOf("prov") >= 0) {
-                contextMap.put("prov", appProvider);
+            if (expression.indexOf(ValueExpressionWrapper.VAR_PROVIDER) >= 0) {
+                contextMap.put(ValueExpressionWrapper.VAR_PROVIDER, appProvider);
             }
         }
         return contextMap;

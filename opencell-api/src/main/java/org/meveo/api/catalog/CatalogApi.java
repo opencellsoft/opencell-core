@@ -184,10 +184,11 @@ public class CatalogApi extends BaseApi {
                     price.setTaxIncludedAmount(wo.getUnitAmountWithTax());
                 }
 
+                // TODO Might not be accurate as neither service instance nor charge instance is present to resolve EL
                 String calendarCode = serviceChargeTemplateRecurring.getChargeTemplate().getCalendar().getCode();
                 if (!StringUtils.isBlank(serviceChargeTemplateRecurring.getChargeTemplate().getCalendarCodeEl())) {
                     calendarCode = recurringChargeTemplateService
-                        .getCalendarFromEl(serviceChargeTemplateRecurring.getChargeTemplate().getCalendarCodeEl(), null, serviceTemplate, serviceChargeTemplateRecurring.getChargeTemplate()).getCode();
+                        .getCalendarFromEl(serviceChargeTemplateRecurring.getChargeTemplate().getCalendarCodeEl(), null, serviceTemplate, serviceChargeTemplateRecurring.getChargeTemplate(), null).getCode();
                 }
                 String priceName = StringUtils.isBlank(calendarCode) ? serviceTemplate.getCode() : serviceTemplate.getCode() + " " + calendarCode;
 

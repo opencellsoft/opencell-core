@@ -255,7 +255,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
         Calendar cal = chargeInstance.getCalendar();
         if (!StringUtils.isBlank(recurringChargeTemplate.getCalendarCodeEl())) {
-            cal = recurringChargeTemplateService.getCalendarFromEl(recurringChargeTemplate.getCalendarCodeEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
+            cal = recurringChargeTemplateService.getCalendarFromEl(recurringChargeTemplate.getCalendarCodeEl(), chargeInstance.getServiceInstance(), null, recurringChargeTemplate, chargeInstance);
         }
         return cal;
     }
@@ -269,8 +269,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     public boolean isApplyInAdvance(RecurringChargeInstance recurringChargeInstance) {
         boolean isApplyInAdvance = (recurringChargeInstance.getApplyInAdvance() == null) ? false : recurringChargeInstance.getApplyInAdvance();
         if (!StringUtils.isBlank(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl())) {
-            isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl(), recurringChargeInstance.getServiceInstance(),
-                recurringChargeInstance.getRecurringChargeTemplate());
+            isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl(), recurringChargeInstance.getServiceInstance(), null, null,
+                recurringChargeInstance);
         }
 
         return isApplyInAdvance;
@@ -410,7 +410,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
                     boolean prorateSubscription = recurringChargeTemplate.getSubscriptionProrata() == null ? false : recurringChargeTemplate.getSubscriptionProrata();
                     if (!StringUtils.isBlank(recurringChargeTemplate.getSubscriptionProrataEl())) {
-                        prorateSubscription = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getSubscriptionProrataEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
+                        prorateSubscription = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getSubscriptionProrataEl(), chargeInstance.getServiceInstance(), null, recurringChargeTemplate,
+                            chargeInstance);
                     }
 
                     prorateFirstPeriod = prorateSubscription;
