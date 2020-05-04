@@ -533,7 +533,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         try {
             QueryBuilder qb = queryInvoiceIdsWithNoAccountOperation(br);
             if (excludeInvoicesWithoutAmount) {
-                qb.addSql("i.amount_with_tax != 0 ");
+                qb.addSql("i.amountWithTax != 0 ");
             }
             if (invoiceAccountable != null) {
                 qb.addSql("i.invoiceType.invoiceAccountable = ".concat(invoiceAccountable.toString()));
