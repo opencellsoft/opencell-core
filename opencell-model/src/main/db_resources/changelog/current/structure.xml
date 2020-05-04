@@ -3019,11 +3019,17 @@ END $$;]]>
             <column name="updater" type="varchar(100)" />
         </addColumn>
     </changeSet>
-
+    
     <changeSet id="#5193_20200428" author="AndriusKarpavicius">
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%')</sql>
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_mcols where cft_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%')</sql>
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%'</sql>     
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%'</sql>
     </changeSet>
+    
+    <changeSet id="#5174_20200504" author="AbdelmounaimAkadid">
+    	<sql>update ${db.schema.adapted}ord_order_item set code = id where code is null</sql>
+    	<addUniqueConstraint columnNames="code" constraintName="uk_order_item_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="ord_order_item" />
+    </changeSet>
+    
 </databaseChangeLog>
