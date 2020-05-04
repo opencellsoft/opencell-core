@@ -156,23 +156,23 @@ public class OCCTemplateService extends BusinessService<OCCTemplate> {
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         BillingAccount billingAccount = invoice.getBillingAccount();
 
-        if (expression.indexOf("invoice") >= 0) {
-            userMap.put("invoice", invoice);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_INVOICE, invoice);
         }
-        if (expression.indexOf("br") >= 0) {
-            userMap.put("br", billingRun);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_RUN) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_BILLING_RUN, billingRun);
         }
-        if (expression.indexOf("ba") >= 0) {
-            userMap.put("ba", billingAccount);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
         }
-        if (expression.indexOf("ca") >= 0) {
-            userMap.put("ca", billingAccount.getCustomerAccount());
+        if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, billingAccount.getCustomerAccount());
         }
-        if (expression.indexOf("c") >= 0) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_SHORT) >= 0) {
             userMap.put("c", billingAccount.getCustomerAccount().getCustomer());
         }
-        if (expression.indexOf("prov") >= 0) {
-            userMap.put("prov", appProvider);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_PROVIDER) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_PROVIDER, appProvider);
         }
 
         return userMap;

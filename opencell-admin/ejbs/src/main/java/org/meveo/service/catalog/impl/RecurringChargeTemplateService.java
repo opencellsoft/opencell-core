@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -60,28 +61,28 @@ public class RecurringChargeTemplateService extends ChargeTemplateService<Recurr
      * @return the recurring chrg not associated
      */
     public List<RecurringChargeTemplate> getRecurringChrgNotAssociated() {
-        return (List<RecurringChargeTemplate>) getEntityManager().createNamedQuery("recurringChargeTemplate.getRecurringChrgNotAssociated", RecurringChargeTemplate.class)
-            .getResultList();
+        return (List<RecurringChargeTemplate>) getEntityManager().createNamedQuery("recurringChargeTemplate.getRecurringChrgNotAssociated", RecurringChargeTemplate.class).getResultList();
     }
 
     /**
      * Match expression.
      *
-     * @param expression the expression
-     * @param serviceInstance the service instance
-     * @param serviceTemplate the service template
-     * @param recurringChargeTemplate the recurring charge template
+     * @param expression Expression to evaluate
+     * @param serviceInstance Service instance
+     * @param serviceTemplate Service template
+     * @param recurringChargeTemplate Recurring charge template
+     * @param recurringChargeInstance Recurring charge instance
      * @return true, if successful
      * @throws BusinessException the business exception
      */
-    public boolean matchExpression(String expression, ServiceInstance serviceInstance, ServiceTemplate serviceTemplate, RecurringChargeTemplate recurringChargeTemplate)
+    public boolean matchExpression(String expression, ServiceInstance serviceInstance, ServiceTemplate serviceTemplate, RecurringChargeTemplate recurringChargeTemplate, RecurringChargeInstance recurringChargeInstance)
             throws BusinessException {
         Boolean result = true;
         if (StringUtils.isBlank(expression)) {
             return result;
         }
 
-        Map<Object, Object> userMap = constructElContext(expression, serviceInstance, serviceTemplate, recurringChargeTemplate);
+        Map<Object, Object> userMap = constructElContext(expression, serviceInstance, serviceTemplate, recurringChargeTemplate, recurringChargeInstance);
 
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         try {
@@ -93,42 +94,50 @@ public class RecurringChargeTemplateService extends ChargeTemplateService<Recurr
     }
 
     /**
-     * Match expression.
-     *
-     * @param expression the expression
-     * @param serviceInstance the service instance
-     * @param recurringChargeTemplate the recurring charge template
-     * @return true, if successful
-     * @throws BusinessException the business exception
-     */
-    public boolean matchExpression(String expression, ServiceInstance serviceInstance, RecurringChargeTemplate recurringChargeTemplate) throws BusinessException {
-        return matchExpression(expression, serviceInstance, null, recurringChargeTemplate);
-    }
-
-    /**
      * Construct el context.
      *
-     * @param expression the expression
-     * @param serviceInstance the service instance
-     * @param serviceTemplate the service template
-     * @param recurringChargeTemplate the recurring charge template
+     * @param expression Expression to evaluate
+     * @param serviceInstance Service instance
+     * @param serviceTemplate Service template
+     * @param recurringChargeTemplate Recurring charge template
+     * @param recurringChargeInstance Recurring charge instance
      * @return the context el map
      */
-    private Map<Object, Object> constructElContext(String expression, ServiceInstance serviceInstance, ServiceTemplate serviceTemplate,
-            RecurringChargeTemplate recurringChargeTemplate) {
+    private Map<Object, Object> constructElContext(String expression, ServiceInstance serviceInstance, ServiceTemplate serviceTemplate, RecurringChargeTemplate recurringChargeTemplate,
+            RecurringChargeInstance recurringChargeInstance) {
+
         Map<Object, Object> userMap = new HashMap<Object, Object>();
-        if (expression.indexOf("serviceInstance") >= 0) {
-            userMap.put("serviceInstance", serviceInstance);
+
+        if (expression.indexOf(ValueExpressionWrapper.VAR_SERVICE_INSTANCE) >= 0) {
+            if (serviceInstance == null && recurringChargeInstance != null) {
+                serviceInstance = recurringChargeInstance.getServiceInstance();
+            }
+            userMap.put(ValueExpressionWrapper.VAR_SERVICE_INSTANCE, serviceInstance);
         }
-        if (expression.indexOf("serviceTemplate") >= 0) {
-            userMap.put("serviceTemplate", serviceTemplate);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_SERVICE_TEMPLATE) >= 0) {
+            if (serviceTemplate != null) {
+                userMap.put(ValueExpressionWrapper.VAR_SERVICE_TEMPLATE, serviceTemplate);
+            } else if (serviceInstance != null) {
+                userMap.put(ValueExpressionWrapper.VAR_SERVICE_TEMPLATE, serviceInstance.getServiceTemplate());
+            }
         }
-        if (expression.indexOf("recChargeTmpl") >= 0) {
-            userMap.put("recChargeTmpl", recurringChargeTemplate);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_CHARGE_TEMPLATE) >= 0 || expression.indexOf(ValueExpressionWrapper.VAR_CHARGE_TEMPLATE_SHORT) >= 0) {
+
+            if (recurringChargeTemplate != null) {
+                userMap.put(ValueExpressionWrapper.VAR_CHARGE_TEMPLATE_SHORT, recurringChargeTemplate);
+                userMap.put(ValueExpressionWrapper.VAR_CHARGE_TEMPLATE, recurringChargeTemplate);
+            } else if (recurringChargeInstance != null) {
+                userMap.put(ValueExpressionWrapper.VAR_CHARGE_TEMPLATE_SHORT, recurringChargeInstance.getRecurringChargeTemplate());
+                userMap.put(ValueExpressionWrapper.VAR_CHARGE_TEMPLATE, recurringChargeInstance.getRecurringChargeTemplate());
+
+            }
+        }
+        if (expression.indexOf(ValueExpressionWrapper.VAR_CHARGE_INSTANCE) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_CHARGE_INSTANCE, recurringChargeInstance);
         }
 
-        if (expression.indexOf("prov") >= 0) {
-            userMap.put("prov", appProvider);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_PROVIDER) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_PROVIDER, appProvider);
         }
 
         return userMap;
@@ -139,32 +148,20 @@ public class RecurringChargeTemplateService extends ChargeTemplateService<Recurr
      *
      * @param expression the expression
      * @param serviceInstance the service instance
-     * @param recurringChargeTemplate the recurring charge template
-     * @return the evaluated string
-     * @throws BusinessException the business exception
-     */
-    public String evaluateStringExpression(String expression, ServiceInstance serviceInstance, RecurringChargeTemplate recurringChargeTemplate) throws BusinessException {
-        return evaluateStringExpression(expression, serviceInstance, null, recurringChargeTemplate);
-    }
-
-    /**
-     * Evaluate string expression.
-     *
-     * @param expression the expression
-     * @param serviceInstance the service instance
      * @param serviceTemplate the service template
      * @param recurringChargeTemplate the recurring charge template
+     * @param recurringChargeInstance Recurring charge instance
      * @return the evaluated string
      * @throws BusinessException the business exception
      */
-    public String evaluateStringExpression(String expression, ServiceInstance serviceInstance, ServiceTemplate serviceTemplate, RecurringChargeTemplate recurringChargeTemplate)
-            throws BusinessException {
+    public String evaluateStringExpression(String expression, ServiceInstance serviceInstance, ServiceTemplate serviceTemplate, RecurringChargeTemplate recurringChargeTemplate,
+            RecurringChargeInstance recurringChargeInstance) throws BusinessException {
         String result = null;
         if (StringUtils.isBlank(expression)) {
             return result;
         }
 
-        Map<Object, Object> userMap = constructElContext(expression, serviceInstance, serviceTemplate, recurringChargeTemplate);
+        Map<Object, Object> userMap = constructElContext(expression, serviceInstance, serviceTemplate, recurringChargeTemplate, recurringChargeInstance);
 
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
         try {
@@ -180,27 +177,15 @@ public class RecurringChargeTemplateService extends ChargeTemplateService<Recurr
      *
      * @param calendarCodeEl the calendar code el
      * @param serviceInstance the service instance
-     * @param recurringChargeTemplate the recurring charge template
-     * @return the calendar from  calendar code el
-     * @throws BusinessException the business exception
-     */
-    public Calendar getCalendarFromEl(String calendarCodeEl, ServiceInstance serviceInstance, RecurringChargeTemplate recurringChargeTemplate) throws BusinessException {
-        return getCalendarFromEl(calendarCodeEl, serviceInstance, null, recurringChargeTemplate);
-    }
-
-    /**
-     * Gets the calendar from el.
-     *
-     * @param calendarCodeEl the calendar code el
-     * @param serviceInstance the service instance
      * @param serviceTemplate the service template
      * @param recurringChargeTemplate the recurring charge template
-     * @return the calendar from  calendar code el
+     * @param recurringChargeInstance Recurring charge instance
+     * @return the calendar from calendar code el
      * @throws BusinessException the business exception
      */
-    public Calendar getCalendarFromEl(String calendarCodeEl, ServiceInstance serviceInstance, ServiceTemplate serviceTemplate, RecurringChargeTemplate recurringChargeTemplate)
-            throws BusinessException {
-        String calendarCode = evaluateStringExpression(calendarCodeEl, serviceInstance, serviceTemplate, recurringChargeTemplate);
+    public Calendar getCalendarFromEl(String calendarCodeEl, ServiceInstance serviceInstance, ServiceTemplate serviceTemplate, RecurringChargeTemplate recurringChargeTemplate,
+            RecurringChargeInstance recurringChargeInstance) throws BusinessException {
+        String calendarCode = evaluateStringExpression(calendarCodeEl, serviceInstance, serviceTemplate, recurringChargeTemplate, recurringChargeInstance);
         Calendar calendar = calendarService.findByCode(calendarCode);
         if (calendar == null) {
             throw new BusinessException("Cant found calendar by code:" + calendarCode);

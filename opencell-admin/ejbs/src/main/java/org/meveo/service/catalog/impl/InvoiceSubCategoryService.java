@@ -60,13 +60,13 @@ public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategor
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
 
-        if (expression.indexOf("ca") >= 0) {
-            userMap.put("ca", billingAccount.getCustomerAccount());
+        if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, billingAccount.getCustomerAccount());
         }
-        if (expression.indexOf("ba") >= 0) {
-            userMap.put("ba", billingAccount);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
         }
-        if (expression.indexOf("iv") >= 0 || expression.indexOf("invoice") >= 0) {
+        if (expression.indexOf("iv") >= 0 || expression.indexOf(ValueExpressionWrapper.VAR_INVOICE) >= 0) {
             userMap.put("iv", invoice);
             userMap.put("invoice", invoice);
         }

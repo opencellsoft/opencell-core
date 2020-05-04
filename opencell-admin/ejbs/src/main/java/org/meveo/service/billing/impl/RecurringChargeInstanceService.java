@@ -426,7 +426,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         // Take care of the first charge period that termination date falls into
         boolean isTerminationProrata = recurringChargeTemplate.getTerminationProrata() == null ? false : recurringChargeTemplate.getTerminationProrata();
         if (!StringUtils.isBlank(recurringChargeTemplate.getTerminationProrataEl())) {
-            isTerminationProrata = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getTerminationProrataEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
+            isTerminationProrata = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getTerminationProrataEl(), chargeInstance.getServiceInstance(), null, null, chargeInstance);
         }
         isTerminationProrata = overrideProrata.isToProrate(isTerminationProrata);
 
@@ -469,7 +469,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         // Take care of the last charge period that termination date falls into
         boolean isTerminationProrata = recurringChargeTemplate.getTerminationProrata() == null ? false : recurringChargeTemplate.getTerminationProrata();
         if (!StringUtils.isBlank(recurringChargeTemplate.getTerminationProrataEl())) {
-            isTerminationProrata = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getTerminationProrataEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
+            isTerminationProrata = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getTerminationProrataEl(), chargeInstance.getServiceInstance(), null, null, chargeInstance);
         }
         isTerminationProrata = overrideProrata.isToProrate(isTerminationProrata);
 

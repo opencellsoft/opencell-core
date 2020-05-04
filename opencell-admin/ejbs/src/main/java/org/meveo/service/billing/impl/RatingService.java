@@ -1046,71 +1046,72 @@ public class RatingService extends PersistenceService<WalletOperation> {
             chargeInstance = (ChargeInstance) ((HibernateProxy) walletOperation.getChargeInstance()).getHibernateLazyInitializer().getImplementation();
         }
         if (edr != null) {
-            userMap.put("edr", edr);
+            userMap.put(ValueExpressionWrapper.VAR_EDR, edr);
         }
-        userMap.put("op", walletOperation);
+        userMap.put(ValueExpressionWrapper.VAR_WALLET_OPERATION, walletOperation);
         if (amount != null) {
-            userMap.put("amount", amount.doubleValue());
+            userMap.put(ValueExpressionWrapper.VAR_AMOUNT, amount.doubleValue());
         }
-        if (expression.indexOf("access") >= 0 && walletOperation.getEdr() != null && walletOperation.getEdr().getAccessCode() != null) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_ACCESS) >= 0 && walletOperation.getEdr() != null && walletOperation.getEdr().getAccessCode() != null) {
             Access access = accessService.findByUserIdAndSubscription(walletOperation.getEdr().getAccessCode(), chargeInstance.getSubscription(), walletOperation.getEdr().getEventDate());
-            userMap.put("access", access);
+            userMap.put(ValueExpressionWrapper.VAR_ACCESS, access);
         }
 
-        if (expression.indexOf("priceplan") >= 0 || expression.indexOf("pp") >= 0) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_PRICE_PLAN) >= 0 || expression.indexOf(ValueExpressionWrapper.VAR_PRICE_PLAN_SHORT) >= 0) {
             if (priceplan == null && walletOperation.getPriceplan() != null) {
                 priceplan = walletOperation.getPriceplan();
             }
             if (priceplan != null) {
-                userMap.put("priceplan", priceplan);
-                userMap.put("pp", priceplan);
+                userMap.put(ValueExpressionWrapper.VAR_PRICE_PLAN, priceplan);
+                userMap.put(ValueExpressionWrapper.VAR_PRICE_PLAN_SHORT, priceplan);
             }
         }
-        if (expression.indexOf("charge") >= 0 || expression.indexOf("chargeTemplate") >= 0) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_CHARGE_TEMPLATE_SHORT) >= 0 || expression.indexOf(ValueExpressionWrapper.VAR_CHARGE_TEMPLATE) >= 0) {
             ChargeTemplate charge = chargeInstance.getChargeTemplate();
-            userMap.put("charge", charge);
-            userMap.put("chargeTemplate", charge);
+            userMap.put(ValueExpressionWrapper.VAR_CHARGE_TEMPLATE_SHORT, charge);
+            userMap.put(ValueExpressionWrapper.VAR_CHARGE_TEMPLATE, charge);
         }
-        if (expression.indexOf("serviceInstance") >= 0) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_SERVICE_INSTANCE) >= 0) {
             ServiceInstance service = chargeInstance.getServiceInstance();
             if (service != null) {
-                userMap.put("serviceInstance", service);
+                userMap.put(ValueExpressionWrapper.VAR_SERVICE_INSTANCE, service);
             }
         }
-        if (expression.indexOf("productInstance") >= 0) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_PRODUCT_INSTANCE) >= 0) {
             ProductInstance productInstance = null;
             if (chargeInstance instanceof ProductChargeInstance) {
                 productInstance = ((ProductChargeInstance) chargeInstance).getProductInstance();
 
             }
             if (productInstance != null) {
-                userMap.put("productInstance", productInstance);
+                userMap.put(ValueExpressionWrapper.VAR_PRODUCT_INSTANCE, productInstance);
             }
         }
-        if (expression.indexOf("offer") >= 0) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_OFFER) >= 0) {
             OfferTemplate offer = chargeInstance.getSubscription().getOffer();
-            userMap.put("offer", offer);
+            userMap.put(ValueExpressionWrapper.VAR_OFFER, offer);
         }
-        if (expression.contains("ua") || expression.contains("ba") || expression.contains("ca") || expression.contains("c")) {
+        if (expression.contains(ValueExpressionWrapper.VAR_USER_ACCOUNT) || expression.contains(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) || expression.contains(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) || expression.contains(ValueExpressionWrapper.VAR_CUSTOMER_SHORT)|| expression.contains(ValueExpressionWrapper.VAR_CUSTOMER)) {
             if (ua == null) {
                 ua = chargeInstance.getUserAccount();
             }
-            if (expression.indexOf("ua") >= 0) {
-                userMap.put("ua", ua);
+            if (expression.indexOf(ValueExpressionWrapper.VAR_USER_ACCOUNT) >= 0) {
+                userMap.put(ValueExpressionWrapper.VAR_USER_ACCOUNT, ua);
             }
-            if (expression.indexOf("ba") >= 0) {
-                userMap.put("ba", ua.getBillingAccount());
+            if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
+                userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, ua.getBillingAccount());
             }
-            if (expression.indexOf("ca") >= 0) {
-                userMap.put("ca", ua.getBillingAccount().getCustomerAccount());
+            if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) >= 0) {
+                userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, ua.getBillingAccount().getCustomerAccount());
             }
-            if (expression.indexOf("c") >= 0) {
-                userMap.put("c", ua.getBillingAccount().getCustomerAccount().getCustomer());
+            if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_SHORT) >= 0 || expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER) >= 0) {
+                userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_SHORT, ua.getBillingAccount().getCustomerAccount().getCustomer());
+                userMap.put(ValueExpressionWrapper.VAR_CUSTOMER, ua.getBillingAccount().getCustomerAccount().getCustomer());
             }
         }
 
-        if (expression.indexOf("prov") >= 0) {
-            userMap.put("prov", appProvider);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_PROVIDER) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_PROVIDER, appProvider);
         }
 
         return userMap;
