@@ -1,5 +1,6 @@
 package org.meveo.apiv2.services.generic;
 
+import org.meveo.apiv2.OpencellRestful;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.catalog.OfferServiceTemplate;
 
@@ -32,5 +33,9 @@ public class GenericHelper {
         Class entityClass = entitiesByName.get(entityName.toLowerCase());
         checkEntityClass(entityClass);
         return entityClass;
+    }
+
+    public static Long getDefaultLimit() {
+        return OpencellRestful.API_LIST_DEFAULT_LIMIT;
     }
 }

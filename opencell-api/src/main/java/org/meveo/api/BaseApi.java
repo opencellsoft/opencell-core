@@ -51,6 +51,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -102,6 +103,8 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseApi {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
+    
+    private static final int limitDefaultValue = 100;
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
@@ -145,6 +148,8 @@ public abstract class BaseApi {
 
     @Inject
     private AuditableFieldService auditableFieldService;
+
+	private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
     protected void handleMissingParameters() throws MissingParameterException {
         if (!missingParameters.isEmpty()) {
@@ -1151,11 +1156,19 @@ public abstract class BaseApi {
         return paginationConfig;
     }
 
-	private PaginationConfiguration initPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder,
-			List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
-		return new PaginationConfiguration(pagingAndFiltering != null ? pagingAndFiltering.getOffset() : null,
-            pagingAndFiltering != null ? pagingAndFiltering.getLimit() : null, pagingAndFiltering != null ? pagingAndFiltering.getFilters() : null,
-            pagingAndFiltering != null ? pagingAndFiltering.getFullTextFilter() : null, fetchFields,
+    private PaginationConfiguration initPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder,
+    		List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
+    	Integer limit = paramBean.getPropertyAsInteger("api.list.defaultLimit", limitDefaultValue);
+		if (pagingAndFiltering != null) {
+			if (pagingAndFiltering.getLimit() != null) {
+				limit = pagingAndFiltering.getLimit();
+			} else {
+				pagingAndFiltering.setLimit(limit);
+			}
+		}
+		
+		return new PaginationConfiguration(pagingAndFiltering != null ? pagingAndFiltering.getOffset() : null, limit,
+            pagingAndFiltering != null ? pagingAndFiltering.getFilters() : null, pagingAndFiltering != null ? pagingAndFiltering.getFullTextFilter() : null, fetchFields,
             pagingAndFiltering != null && pagingAndFiltering.getSortBy() != null ? pagingAndFiltering.getSortBy() : defaultSortBy,
             pagingAndFiltering != null && pagingAndFiltering.getSortOrder() != null ? SortOrder.valueOf(pagingAndFiltering.getSortOrder().name()) : defaultSortOrder);
 	}

@@ -24,9 +24,10 @@ public interface GenericPagingAndFiltering {
     @Nullable
     Long getTotal();
     @Nullable
-    @Value.Default default Long getLimit(){
-        return 100L;
-    };
+    Long getLimit();
+    @Value.Auxiliary default Long getLimitOrDefault(Long defaultValue){
+        return getLimit() != null ? getLimit() : defaultValue;
+    }
     @Value.Default default Long getOffset(){
         return 0L;
     }
