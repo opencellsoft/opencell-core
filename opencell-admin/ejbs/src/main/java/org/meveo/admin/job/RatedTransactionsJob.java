@@ -72,7 +72,7 @@ public class RatedTransactionsJob extends Job {
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbRuns.setValueRequired(false);
         customFieldNbRuns.setDefaultValue("-1");
-        customFieldNbRuns.setGuiPosition("tab:Custom fields:0;fieldGroup:Configuration:0;field:0");
+        customFieldNbRuns.setGuiPosition("tab:Configuration:0;fieldGroup:Configuration:0;field:0");
         result.put("nbRuns", customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
@@ -83,7 +83,7 @@ public class RatedTransactionsJob extends Job {
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbWaiting.setDefaultValue("0");
         customFieldNbWaiting.setValueRequired(false);
-        customFieldNbWaiting.setGuiPosition("tab:Custom fields:0;fieldGroup:Configuration:0;field:1");
+        customFieldNbWaiting.setGuiPosition("tab:Configuration:0;fieldGroup:Configuration:0;field:1");
         result.put("waitingMillis", customFieldNbWaiting);
 
         // aggregations
@@ -96,7 +96,7 @@ public class RatedTransactionsJob extends Job {
         cfActivateAggregation.setFieldType(CustomFieldTypeEnum.BOOLEAN);
         cfActivateAggregation.setDefaultValue("false");
         cfActivateAggregation.setValueRequired(false);
-        cfActivateAggregation.setGuiPosition("tab:Custom fields:0;fieldGroup:Aggregation Settings:1;field:0");
+        cfActivateAggregation.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:0");
         result.put("activateAggregation", cfActivateAggregation);
 
         CustomFieldTemplate cfGlobalAggregation = new CustomFieldTemplate();
@@ -107,7 +107,7 @@ public class RatedTransactionsJob extends Job {
         cfGlobalAggregation.setFieldType(CustomFieldTypeEnum.BOOLEAN);
         cfGlobalAggregation.setDefaultValue("false");
         cfGlobalAggregation.setValueRequired(false);
-        cfGlobalAggregation.setGuiPosition("tab:Custom fields:0;fieldGroup:Aggregation Settings:1;field:1");
+        cfGlobalAggregation.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:1");
         result.put("globalAggregation", cfGlobalAggregation);
 
         CustomFieldTemplate cfAggregateByDay = new CustomFieldTemplate();
@@ -118,7 +118,7 @@ public class RatedTransactionsJob extends Job {
         cfAggregateByDay.setFieldType(CustomFieldTypeEnum.BOOLEAN);
         cfAggregateByDay.setDefaultValue("true");
         cfAggregateByDay.setValueRequired(false);
-        cfAggregateByDay.setGuiPosition("tab:Custom fields:0;fieldGroup:Aggregation Settings:1;field:2");
+        cfAggregateByDay.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:2");
         result.put("aggregateByDay", cfAggregateByDay);
 
         Map<String, String> listValues = new HashMap<>();
@@ -138,7 +138,7 @@ public class RatedTransactionsJob extends Job {
         cfAggregateByDay.setDefaultValue(AggregationLevelEnum.BA.name());
         cfAggregationLevel.setValueRequired(false);
         cfAggregationLevel.setListValues(listValues);
-        cfAggregationLevel.setGuiPosition("tab:Custom fields:0;fieldGroup:Aggregation Settings:1;field:3");
+        cfAggregationLevel.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:3");
         result.put("aggregationLevel", cfAggregationLevel);
 
         CustomFieldTemplate cfCriteriaOrder = new CustomFieldTemplate();
@@ -149,7 +149,7 @@ public class RatedTransactionsJob extends Job {
         cfCriteriaOrder.setFieldType(CustomFieldTypeEnum.BOOLEAN);
         cfCriteriaOrder.setDefaultValue("false");
         cfCriteriaOrder.setValueRequired(false);
-        cfCriteriaOrder.setGuiPosition("tab:Custom fields:0;fieldGroup:Additional Criteria:2;field:0");
+        cfCriteriaOrder.setGuiPosition("tab:Configuration:0;fieldGroup:Additional Criteria:2;field:0");
         result.put("criteriaOrder", cfCriteriaOrder);
 
         CustomFieldTemplate cfCriteriaParam1 = new CustomFieldTemplate();
@@ -160,7 +160,7 @@ public class RatedTransactionsJob extends Job {
         cfCriteriaParam1.setFieldType(CustomFieldTypeEnum.BOOLEAN);
         cfCriteriaParam1.setDefaultValue("false");
         cfCriteriaParam1.setValueRequired(false);
-        cfCriteriaParam1.setGuiPosition("tab:Custom fields:0;fieldGroup:Additional Criteria:2;field:1");
+        cfCriteriaParam1.setGuiPosition("tab:Configuration:0;fieldGroup:Additional Criteria:2;field:1");
         result.put("criteriaParam1", cfCriteriaParam1);
 
         CustomFieldTemplate cfCriteriaParam2 = new CustomFieldTemplate();
@@ -171,7 +171,7 @@ public class RatedTransactionsJob extends Job {
         cfCriteriaParam2.setFieldType(CustomFieldTypeEnum.BOOLEAN);
         cfCriteriaParam2.setDefaultValue("false");
         cfCriteriaParam2.setValueRequired(false);
-        cfCriteriaParam2.setGuiPosition("tab:Custom fields:0;fieldGroup:Additional Criteria:2;field:2");
+        cfCriteriaParam2.setGuiPosition("tab:Configuration:0;fieldGroup:Additional Criteria:2;field:2");
         result.put("criteriaParam2", cfCriteriaParam2);
 
         CustomFieldTemplate cfCriteriaParam3 = new CustomFieldTemplate();
@@ -182,7 +182,7 @@ public class RatedTransactionsJob extends Job {
         cfCriteriaParam3.setFieldType(CustomFieldTypeEnum.BOOLEAN);
         cfCriteriaParam3.setDefaultValue("false");
         cfCriteriaParam3.setValueRequired(false);
-        cfCriteriaParam3.setGuiPosition("tab:Custom fields:0;fieldGroup:Additional Criteria:2;field:3");
+        cfCriteriaParam3.setGuiPosition("tab:Configuration:0;fieldGroup:Additional Criteria:2;field:3");
         result.put("criteriaParam3", cfCriteriaParam3);
 
         CustomFieldTemplate cfCriteriaExtra = new CustomFieldTemplate();
@@ -193,7 +193,7 @@ public class RatedTransactionsJob extends Job {
         cfCriteriaExtra.setFieldType(CustomFieldTypeEnum.BOOLEAN);
         cfCriteriaExtra.setDefaultValue("false");
         cfCriteriaExtra.setValueRequired(false);
-        cfCriteriaExtra.setGuiPosition("tab:Custom fields:0;fieldGroup:Additional Criteria:2;field:4");
+        cfCriteriaExtra.setGuiPosition("tab:Configuration:0;fieldGroup:Additional Criteria:2;field:4");
         result.put("criteriaExtra", cfCriteriaExtra);
         
         CustomFieldTemplate cfAggregateByUnitAmount = new CustomFieldTemplate();
@@ -204,7 +204,7 @@ public class RatedTransactionsJob extends Job {
         cfAggregateByUnitAmount.setFieldType(CustomFieldTypeEnum.BOOLEAN);
         cfAggregateByUnitAmount.setDefaultValue("true");
         cfAggregateByUnitAmount.setValueRequired(false);
-        cfAggregateByUnitAmount.setGuiPosition("tab:Custom fields:0;fieldGroup:Aggregation Settings:1;field:5");
+        cfAggregateByUnitAmount.setGuiPosition("tab:Configuration:0;fieldGroup:Aggregation Settings:1;field:5");
         result.put("aggregateByUnitAmount", cfAggregateByUnitAmount);
 
         return result;

@@ -285,7 +285,7 @@ public class UsageRatingService implements Serializable {
             quantityToCharge = deducedQuantity;
         }
 
-        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(usageChargeInstance, edr.getEventDate(), quantityToCharge, null, null, null, null, null, edr, false, isVirtual);
+        RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(usageChargeInstance, edr.getEventDate(), quantityToCharge, null, null, null, null, null, null, edr, false, isVirtual);
         ratingResult.setFullyRated(fullyRated);
 
         if (!isVirtual) {
@@ -349,7 +349,7 @@ public class UsageRatingService implements Serializable {
             quantityToCharge = deducedQuantity;
         }
 
-        RatingResult ratingResult = ratingService.rateCharge(usageChargeInstance, edr.getEventDate(), quantityToCharge, null, null, null, null, null, edr, true, false);
+        RatingResult ratingResult = ratingService.rateCharge(usageChargeInstance, edr.getEventDate(), quantityToCharge, null, null, null, null, null, null, edr, true, false);
 
         WalletReservation walletReservation = (WalletReservation) ratingResult.getWalletOperation();
 
@@ -692,11 +692,11 @@ public class UsageRatingService implements Serializable {
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("edr", edr);
         userMap.put("op", walletOperation);
-        if (expression.indexOf("ua") >= 0) {
-            userMap.put("ua", walletOperation.getWallet().getUserAccount());
+        if (expression.indexOf(ValueExpressionWrapper.VAR_USER_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_USER_ACCOUNT, walletOperation.getWallet().getUserAccount());
         }
         if (expression.indexOf("serviceInstance") >= 0) {
-            userMap.put("serviceInstance", walletOperation.getServiceInstance());
+            userMap.put(ValueExpressionWrapper.VAR_SERVICE_INSTANCE, walletOperation.getServiceInstance());
         }
 
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);

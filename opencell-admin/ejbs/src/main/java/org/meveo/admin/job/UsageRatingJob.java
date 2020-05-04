@@ -71,6 +71,7 @@ public class UsageRatingJob extends Job {
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         nbRuns.setValueRequired(false);
         nbRuns.setDefaultValue("-1");
+        nbRuns.setGuiPosition("tab:Configuration:0;field:0");
         result.put("nbRuns", nbRuns);
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
@@ -81,6 +82,7 @@ public class UsageRatingJob extends Job {
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
         waitingMillis.setValueRequired(false);
         waitingMillis.setDefaultValue("0");
+        waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
         result.put("waitingMillis", waitingMillis);
 
         CustomFieldTemplate rateUntilDate = new CustomFieldTemplate();
@@ -91,6 +93,7 @@ public class UsageRatingJob extends Job {
         rateUntilDate.setFieldType(CustomFieldTypeEnum.DATE);
         rateUntilDate.setValueRequired(false);
         rateUntilDate.setMaxValue(50L);
+        rateUntilDate.setGuiPosition("tab:Configuration:0;field:2");
         result.put("rateUntilDate", rateUntilDate);
         
         CustomFieldTemplate ratingGroup = new CustomFieldTemplate();
@@ -102,6 +105,7 @@ public class UsageRatingJob extends Job {
         ratingGroup.setValueRequired(false);
         ratingGroup.setDefaultValue(null);
         ratingGroup.setMaxValue(50L);
+        ratingGroup.setGuiPosition("tab:Configuration:0;field:3");
         result.put("ratingGroup", ratingGroup);
 
         return result;

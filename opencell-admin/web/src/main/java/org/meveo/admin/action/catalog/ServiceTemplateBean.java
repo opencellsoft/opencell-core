@@ -33,7 +33,6 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
@@ -46,7 +45,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
@@ -86,9 +84,6 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
     private ServiceChargeTemplateRecurringService serviceChargeTemplateRecurringService;
     @Inject
     private ServiceChargeTemplateUsageService serviceChargeTemplateUsageService;
-
-    @Inject
-    private RecurringChargeTemplateService recurringChargeTemplateService;
 
     @Inject
     private CounterTemplateService counterTemplateService;
@@ -254,24 +249,10 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
         this.recurringWallets = perks;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        List<ServiceChargeTemplateRecurring> recurringCharges = entity.getServiceRecurringCharges();
-        for (ServiceChargeTemplateRecurring recurringCharge : recurringCharges) {
-            boolean isApplyInAdvance = recurringCharge.getChargeTemplate().getApplyInAdvance() == null ? false : recurringCharge.getChargeTemplate().getApplyInAdvance();
-            if (!StringUtils.isBlank(recurringCharge.getChargeTemplate().getApplyInAdvanceEl())) {
-                isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringCharge.getChargeTemplate().getApplyInAdvanceEl(), null, entity, recurringCharge.getChargeTemplate());
-            }
-            if (!isApplyInAdvance) {
-                break;
-            }
-        }
+
         boolean newEntity = (entity.getId() == null);
 
         String outcome = super.saveOrUpdate(killConversation);

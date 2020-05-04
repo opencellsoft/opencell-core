@@ -122,6 +122,7 @@ public class SubscriptionStatusJob extends Job {
         untilDate.setDescription(resourceMessages.getString("jobExecution.subscriptionUntilDate"));
         untilDate.setFieldType(CustomFieldTypeEnum.DATE);
         untilDate.setValueRequired(false);
+        untilDate.setGuiPosition("tab:Configuration:0;field:0");
         result.put("untilDate", untilDate);
 
         return result;

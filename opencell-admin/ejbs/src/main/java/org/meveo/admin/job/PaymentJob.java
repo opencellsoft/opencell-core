@@ -76,6 +76,7 @@ public class PaymentJob extends Job {
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         nbRuns.setValueRequired(false);
         nbRuns.setDefaultValue("-1");
+        nbRuns.setGuiPosition("tab:Configuration:0;field:0");
         result.put("nbRuns", nbRuns);
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
@@ -86,6 +87,7 @@ public class PaymentJob extends Job {
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
         waitingMillis.setValueRequired(false);
         waitingMillis.setDefaultValue("0");
+        waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
         result.put("waitingMillis", waitingMillis);
 
         Map<String, String> lisValuesYesNo = new HashMap<String, String>();
@@ -101,6 +103,7 @@ public class PaymentJob extends Job {
         createAO.setFieldType(CustomFieldTypeEnum.LIST);
         createAO.setValueRequired(false);
         createAO.setListValues(lisValuesYesNo);
+        createAO.setGuiPosition("tab:Configuration:0;field:2");
         result.put("PaymentJob_createAO", createAO);
 
         CustomFieldTemplate matchingAO = new CustomFieldTemplate();
@@ -112,6 +115,7 @@ public class PaymentJob extends Job {
         matchingAO.setFieldType(CustomFieldTypeEnum.LIST);
         matchingAO.setValueRequired(false);
         matchingAO.setListValues(lisValuesYesNo);
+        matchingAO.setGuiPosition("tab:Configuration:0;field:3");
         result.put("PaymentJob_matchingAO", matchingAO);
 
         Map<String, String> lisValuesCreditDebit = new HashMap<String, String>();
@@ -127,6 +131,7 @@ public class PaymentJob extends Job {
         creditOrDebit.setFieldType(CustomFieldTypeEnum.LIST);
         creditOrDebit.setValueRequired(true);
         creditOrDebit.setListValues(lisValuesCreditDebit);
+        creditOrDebit.setGuiPosition("tab:Configuration:0;field:4");
         result.put("PaymentJob_creditOrDebit", creditOrDebit);
 
         CustomFieldTemplate payentGatewayCF = new CustomFieldTemplate();
@@ -137,6 +142,7 @@ public class PaymentJob extends Job {
         payentGatewayCF.setFieldType(CustomFieldTypeEnum.ENTITY);
         payentGatewayCF.setEntityClazz(PaymentGateway.class.getName());
         payentGatewayCF.setValueRequired(false);
+        payentGatewayCF.setGuiPosition("tab:Configuration:0;field:5");
         result.put("PaymentJob_paymentGateway", payentGatewayCF);
 
         Map<String, String> lisValuesCardDD = new HashMap<String, String>();
@@ -152,6 +158,7 @@ public class PaymentJob extends Job {
         cardOrDD.setFieldType(CustomFieldTypeEnum.LIST);
         cardOrDD.setValueRequired(true);
         cardOrDD.setListValues(lisValuesCardDD);
+        cardOrDD.setGuiPosition("tab:Configuration:0;field:6");
         result.put("PaymentJob_cardOrDD", cardOrDD);
 
         Map<String, String> lisValuesAOorCA = new HashMap<String, String>();
@@ -167,6 +174,7 @@ public class PaymentJob extends Job {
         AOorCA.setFieldType(CustomFieldTypeEnum.LIST);
         AOorCA.setValueRequired(true);
         AOorCA.setListValues(lisValuesAOorCA);
+        AOorCA.setGuiPosition("tab:Configuration:0;field:7");
         result.put("PaymentJob_AOorCA", AOorCA);
 
         CustomFieldTemplate fromDueDate = new CustomFieldTemplate();
@@ -177,6 +185,7 @@ public class PaymentJob extends Job {
         fromDueDate.setFieldType(CustomFieldTypeEnum.DATE);
         fromDueDate.setValueRequired(false);
         fromDueDate.setDefaultValue("");
+        fromDueDate.setGuiPosition("tab:Configuration:0;field:8");
         result.put("PaymentJob_fromDueDate", fromDueDate);
         
         CustomFieldTemplate toDueDate = new CustomFieldTemplate();
@@ -187,6 +196,7 @@ public class PaymentJob extends Job {
         toDueDate.setFieldType(CustomFieldTypeEnum.DATE);
         toDueDate.setValueRequired(false);
         toDueDate.setDefaultValue("");
+        toDueDate.setGuiPosition("tab:Configuration:0;field:9");
         result.put("PaymentJob_toDueDate", toDueDate);
         
         // CF to set a custom script filtering AOs to pay
@@ -200,6 +210,7 @@ public class PaymentJob extends Job {
         aoFilterScript.setEntityClazz("org.meveo.model.scripts.ScriptInstance");
         aoFilterScript.setValueRequired(false);
         aoFilterScript.setDefaultValue("");
+        aoFilterScript.setGuiPosition("tab:Configuration:0;field:10");
         result.put(cfAoFilterScriptCode, aoFilterScript);
         
         // CF to set a custom script computing Due date range 
@@ -213,6 +224,7 @@ public class PaymentJob extends Job {
         dueDateRangeScript.setEntityClazz("org.meveo.model.scripts.ScriptInstance");
         dueDateRangeScript.setValueRequired(false);
         dueDateRangeScript.setDefaultValue("");
+        dueDateRangeScript.setGuiPosition("tab:Configuration:0;field:11");
         result.put(cfDueDateRangeScriptCode, dueDateRangeScript);
 
         return result;

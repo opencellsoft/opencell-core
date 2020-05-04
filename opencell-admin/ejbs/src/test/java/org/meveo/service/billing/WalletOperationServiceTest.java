@@ -61,7 +61,7 @@ public class WalletOperationServiceTest {
         }
         calendar.setDays(days);
 
-        when(ratingService.rateChargeAndTriggerEDRs(any(), any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenAnswer(new Answer<RatingResult>() {
+        when(ratingService.rateChargeAndTriggerEDRs(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenAnswer(new Answer<RatingResult>() {
             public RatingResult answer(InvocationOnMock invocation) throws Throwable {
 
                 WalletOperation wo = new WalletOperation();
@@ -69,6 +69,7 @@ public class WalletOperationServiceTest {
                 wo.setQuantity((BigDecimal) invocation.getArguments()[2]);
                 wo.setStartDate((Date) invocation.getArguments()[5]);
                 wo.setEndDate((Date) invocation.getArguments()[6]);
+                wo.setFullRatingPeriod((DatePeriod) invocation.getArgument(7));
 
                 RatingResult ratingResult = new RatingResult();
                 ratingResult.setWalletOperation(wo);

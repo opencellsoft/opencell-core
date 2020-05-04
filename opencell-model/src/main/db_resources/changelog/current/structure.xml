@@ -2947,13 +2947,43 @@ END $$;]]>
         <addPrimaryKey columnNames="chrg_instance_id, indx" constraintName="billing_chrg_inst_counter_pkey" tableName="billing_chrg_inst_counter"/>
 
     </changeSet>
-    
+
     <changeSet id="#2447_20200421" author="khalidHORRI">
         <addColumn tableName="cat_price_plan_matrix">
             <column name="parameter1_el" type="varchar(2000)"/>
             <column name="parameter2_el" type="varchar(2000)"/>
             <column name="parameter3_el" type="varchar(2000)"/>
         </addColumn>
+    </changeSet>
+    <changeSet id="#5130_20200414" author="khalidHORRI">
+    <addColumn tableName="cat_counter_template">
+        <column name="accumulator_type" type="varchar(35)"/>
+        <column name="filter_el" type="varchar(2000)"/>
+        <column name="key_el" type="varchar(2000)"/>
+        <column name="value_el" type="varchar(2000)"/>
+    </addColumn>
+    <addColumn tableName="billing_counter_period">
+        <column name="accumulator_type" type="varchar(35)"/>
+        <column name="filter_el" type="varchar(2000)"/>
+        <column name="key_el" type="varchar(2000)"/>
+        <column name="value_el" type="varchar(2000)"/>
+    </addColumn>
+    <createTable tableName="billing_counter_period_values">
+        <column name="counter_key" type="varchar(255)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="counter_value" type="numeric(19,2)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="counterperiod_id" type="bigint">
+            <constraints nullable="false"/>
+        </column>
+
+    </createTable>
+        <addPrimaryKey tableName="billing_counter_period_values" columnNames="counterperiod_id,counter_key" constraintName="billing_counter_period_values_pkey"/>
+        <addForeignKeyConstraint baseTableName="billing_counter_period_values" baseColumnNames="counterperiod_id"
+                                 constraintName="billing_counter_period_values_counterperiod_id_fk" referencedTableName="billing_counter_period"
+                                 referencedColumnNames="id"/>
     </changeSet>
 
     <changeSet id="#40167_20200407" author="AndriusKarpavicius">
@@ -2971,13 +3001,13 @@ END $$;]]>
         <sql>update ${db.schema.adapted}billing_wallet_operation  set accounting_code_id = iv.accounting_code_id from billing_invoice_sub_cat iv where invoice_sub_category_id = iv.id and invoice_sub_category_id is not null </sql>
         <sql>update ${db.schema.adapted}billing_rated_transaction  set accounting_code_id = iv.accounting_code_id from billing_invoice_sub_cat iv where invoice_sub_category_id = iv.id and invoice_sub_category_id is not null </sql>
     </changeSet>
-    
+
     <changeSet id="#5163_20200415" author="AndriusKarpavicius">
         <addColumn tableName="billing_charge_instance">
             <column name="charged_to_date" type="datetime"/>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#5174_20200423" author="AbdelmounaimAkadid">
     	<addColumn tableName="ord_order_item">
     		<column name="code" type="varchar(255)">
@@ -2990,4 +3020,10 @@ END $$;]]>
         </addColumn>
     </changeSet>
 
+    <changeSet id="#5193_20200428" author="AndriusKarpavicius">
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%')</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_mcols where cft_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%')</sql>
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%'</sql>     
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%'</sql>
+    </changeSet>
 </databaseChangeLog>

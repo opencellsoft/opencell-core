@@ -74,6 +74,7 @@ public class SendInvoiceJob extends Job {
         sendDraft.setDescription(resourceMessages.getString("jobExecution.sendDraft"));
         sendDraft.setFieldType(CustomFieldTypeEnum.BOOLEAN);
         sendDraft.setValueRequired(false);
+        sendDraft.setGuiPosition("tab:Configuration:0;field:0");
         result.put("sendDraft", sendDraft);
 
         CustomFieldTemplate overrideEmailEl = new CustomFieldTemplate();
@@ -84,6 +85,7 @@ public class SendInvoiceJob extends Job {
         overrideEmailEl.setFieldType(CustomFieldTypeEnum.STRING);
         overrideEmailEl.setValueRequired(false);
         overrideEmailEl.setMaxValue(Long.MAX_VALUE);
+        overrideEmailEl.setGuiPosition("tab:Configuration:0;field:1");
         result.put("overrideEmailEl", overrideEmailEl);
 
         return result;

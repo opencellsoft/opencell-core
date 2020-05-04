@@ -19,6 +19,7 @@
 package org.meveo.api.dto.catalog;
 
 import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.model.catalog.AccumulatorCounterTypeEnum;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTemplateLevel;
 import org.meveo.model.catalog.CounterTypeEnum;
@@ -87,6 +88,28 @@ public class CounterTemplateDto extends EnableBusinessDto implements Serializabl
      */
     private Boolean accumulator;
 
+
+    /**
+     * The type field can be "Multi-value" if the accumulator is true
+     */
+    private AccumulatorCounterTypeEnum accumulatorType;
+
+    /**
+     * An EL expression that returns a boolean that tells us if we accumulate or not.
+     */
+    private String filterEl;
+
+    /**
+     * An EL expression that Returns a string that is an identifier for what we count
+     */
+    private String keyEl;
+
+    /**
+     * An EL expression that returns a number (BigDecimal) that contains the quantity we count
+     */
+    private String valueEl;
+
+
     /**
      * Instantiates a new counter template dto.
      */
@@ -109,6 +132,10 @@ public class CounterTemplateDto extends EnableBusinessDto implements Serializabl
         ceilingExpressionEl = counterTemplate.getCeilingExpressionEl();
         notificationLevels = counterTemplate.getNotificationLevels();
         accumulator = counterTemplate.getAccumulator();
+        accumulatorType = counterTemplate.getAccumulatorType();
+        filterEl = counterTemplate.getFilterEl();
+        keyEl = counterTemplate.getKeyEl();
+        valueEl = counterTemplate.getValueEl();
     }
 
     /**
@@ -267,6 +294,70 @@ public class CounterTemplateDto extends EnableBusinessDto implements Serializabl
      */
     public void setAccumulator(Boolean accumulator) {
         this.accumulator = accumulator;
+    }
+
+    /**
+     * Gets the accumulator type multiple or single
+     * @return an accumulator counter type enum.
+     */
+    public AccumulatorCounterTypeEnum getAccumulatorType() {
+        return accumulatorType;
+    }
+
+    /**
+     * Sets the accumulator counter type.
+     * @param accumulatorType AccumulatorCounterTypeEnum
+     */
+    public void setAccumulatorType(AccumulatorCounterTypeEnum accumulatorType) {
+        this.accumulatorType = accumulatorType;
+    }
+
+    /**
+     * Gets the EL filter
+     * @return the EL Filter
+     */
+    public String getFilterEl() {
+        return filterEl;
+    }
+
+    /**
+     * Sets the EL filter
+     * @param filterEl
+     */
+    public void setFilterEl(String filterEl) {
+        this.filterEl = filterEl;
+    }
+
+    /**
+     * Gets the EL key expression
+     * @return the EL key expression
+     */
+    public String getKeyEl() {
+        return keyEl;
+    }
+
+    /**
+     * Sets EL key expression
+     * @param keyEl El key expression
+     */
+    public void setKeyEl(String keyEl) {
+        this.keyEl = keyEl;
+    }
+
+    /**
+     * Gets the EL value expression
+     * @return EL value expression
+     */
+    public String getValueEl() {
+        return valueEl;
+    }
+
+    /**
+     * Sets EL value expression
+     * @param valueEl EL value expression
+     */
+    public void setValueEl(String valueEl) {
+        this.valueEl = valueEl;
     }
 
     @Override

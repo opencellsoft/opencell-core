@@ -35,9 +35,9 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
-
 /**
  * The Class RecurringRatingJob apply recurring charge for next billingCycle.
+ * 
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
@@ -48,19 +48,16 @@ public class RecurringRatingJob extends Job {
     @Inject
     private RecurringRatingJobBean recurringRatingJobBean;
 
-
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         recurringRatingJobBean.execute(result, jobInstance);
     }
 
-
     @Override
     public JobCategoryEnum getJobCategory() {
         return MeveoJobCategoryEnum.RATING;
     }
-
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
@@ -74,6 +71,7 @@ public class RecurringRatingJob extends Job {
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbRuns.setValueRequired(false);
         customFieldNbRuns.setDefaultValue("-1");
+        customFieldNbRuns.setGuiPosition("tab:Configuration:0;field:0");
         result.put("nbRuns", customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
@@ -84,6 +82,7 @@ public class RecurringRatingJob extends Job {
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbWaiting.setValueRequired(false);
         customFieldNbWaiting.setDefaultValue("0");
+        customFieldNbWaiting.setGuiPosition("tab:Configuration:0;field:1");
         result.put("waitingMillis", customFieldNbWaiting);
 
         CustomFieldTemplate rateUntilDate = new CustomFieldTemplate();
@@ -93,6 +92,7 @@ public class RecurringRatingJob extends Job {
         rateUntilDate.setDescription(resourceMessages.getString("jobExecution.rateUntilDate"));
         rateUntilDate.setFieldType(CustomFieldTypeEnum.DATE);
         rateUntilDate.setValueRequired(false);
+        rateUntilDate.setGuiPosition("tab:Configuration:0;field:2");
         result.put("rateUntilDate", rateUntilDate);
 
         return result;

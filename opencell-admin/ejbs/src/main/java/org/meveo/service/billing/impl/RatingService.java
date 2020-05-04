@@ -49,6 +49,7 @@ import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
@@ -222,6 +223,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param startdate Charge period start date if applicable
      * @param endDate Charge period end date if applicable.
      * @param chargeMode Charge mode
+     * @param fullRatingPeriod Full rating period dates when prorata is applied. In such case startDate-endDate will be shorted than fullRatingPeriod. Is NOT provided when prorata is not applied.
      * @param edr EDR being rated
      * @param isReservation - is this a reservation instead of a real wallet operation
      * @param isVirtual Is this a virtual charge - simulation of rating, charge instance will be matched by code to the charge instantiated in subscription
@@ -230,7 +232,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
     public RatingResult rateCharge(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, String orderNumberOverride,
-            Date startdate, Date endDate, ChargeApplicationModeEnum chargeMode, EDR edr, boolean isReservation, boolean isVirtual) throws BusinessException, RatingException {
+            Date startdate, Date endDate, DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode,  EDR edr, boolean isReservation, boolean isVirtual) throws BusinessException, RatingException {
 
         // For virtual operation, lookup charge in the subscription
         if (isVirtual && chargeInstance.getSubscription() != null) {
@@ -259,6 +261,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 edr != null ? edr.getParameter4() : null, null, startdate, endDate, null);
         }
         walletOperation.setChargeMode(chargeMode);
+        walletOperation.setFullRatingPeriod(fullRatingPeriod);
 
 //        String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
 //
@@ -295,8 +298,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param inputQuantity Input quantity
      * @param quantityInChargeUnits Input quantity converted to charge units. If null, will be calculated automatically
      * @param orderNumberOverride Order number to override. If not provided, will default to an order number from a charge instance
-     * @param startdate Charge period start date if applicable
+     * @param startDate Charge period start date if applicable
      * @param endDate Charge period end date if applicable.
+     * @param fullRatingPeriod Full rating period dates when prorata is applied. In such case startDate-endDate will be shorted than fullRatingPeriod. Is NOT provided when prorata is not applied.
      * @param chargeMode Charge mode
      * @param edr EDR being rated
      * @param forSchedule - is it to be scheduled
@@ -307,9 +311,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
     public RatingResult rateChargeAndTriggerEDRs(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits,
-            String orderNumberOverride, Date startdate, Date endDate, ChargeApplicationModeEnum chargeMode, EDR edr, boolean forSchedule, boolean isVirtual) throws BusinessException, RatingException {
+            String orderNumberOverride, Date startDate, Date endDate, DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode, EDR edr, boolean forSchedule, boolean isVirtual) throws BusinessException, RatingException {
 
-        RatingResult ratedEDRResult = rateCharge(chargeInstance,  applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, startdate, endDate, chargeMode, edr, false, isVirtual);
+        RatingResult ratedEDRResult = rateCharge(chargeInstance,  applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, startDate, endDate, fullRatingPeriod,chargeMode,  edr, false, isVirtual);
 
         // Do not trigger EDRs for virtual or Scheduled operations
         if (forSchedule || isVirtual) {
@@ -1042,71 +1046,72 @@ public class RatingService extends PersistenceService<WalletOperation> {
             chargeInstance = (ChargeInstance) ((HibernateProxy) walletOperation.getChargeInstance()).getHibernateLazyInitializer().getImplementation();
         }
         if (edr != null) {
-            userMap.put("edr", edr);
+            userMap.put(ValueExpressionWrapper.VAR_EDR, edr);
         }
-        userMap.put("op", walletOperation);
+        userMap.put(ValueExpressionWrapper.VAR_WALLET_OPERATION, walletOperation);
         if (amount != null) {
-            userMap.put("amount", amount.doubleValue());
+            userMap.put(ValueExpressionWrapper.VAR_AMOUNT, amount.doubleValue());
         }
-        if (expression.indexOf("access") >= 0 && walletOperation.getEdr() != null && walletOperation.getEdr().getAccessCode() != null) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_ACCESS) >= 0 && walletOperation.getEdr() != null && walletOperation.getEdr().getAccessCode() != null) {
             Access access = accessService.findByUserIdAndSubscription(walletOperation.getEdr().getAccessCode(), chargeInstance.getSubscription(), walletOperation.getEdr().getEventDate());
-            userMap.put("access", access);
+            userMap.put(ValueExpressionWrapper.VAR_ACCESS, access);
         }
 
-        if (expression.indexOf("priceplan") >= 0 || expression.indexOf("pp") >= 0) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_PRICE_PLAN) >= 0 || expression.indexOf(ValueExpressionWrapper.VAR_PRICE_PLAN_SHORT) >= 0) {
             if (priceplan == null && walletOperation.getPriceplan() != null) {
                 priceplan = walletOperation.getPriceplan();
             }
             if (priceplan != null) {
-                userMap.put("priceplan", priceplan);
-                userMap.put("pp", priceplan);
+                userMap.put(ValueExpressionWrapper.VAR_PRICE_PLAN, priceplan);
+                userMap.put(ValueExpressionWrapper.VAR_PRICE_PLAN_SHORT, priceplan);
             }
         }
-        if (expression.indexOf("charge") >= 0 || expression.indexOf("chargeTemplate") >= 0) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_CHARGE_TEMPLATE_SHORT) >= 0 || expression.indexOf(ValueExpressionWrapper.VAR_CHARGE_TEMPLATE) >= 0) {
             ChargeTemplate charge = chargeInstance.getChargeTemplate();
-            userMap.put("charge", charge);
-            userMap.put("chargeTemplate", charge);
+            userMap.put(ValueExpressionWrapper.VAR_CHARGE_TEMPLATE_SHORT, charge);
+            userMap.put(ValueExpressionWrapper.VAR_CHARGE_TEMPLATE, charge);
         }
-        if (expression.indexOf("serviceInstance") >= 0) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_SERVICE_INSTANCE) >= 0) {
             ServiceInstance service = chargeInstance.getServiceInstance();
             if (service != null) {
-                userMap.put("serviceInstance", service);
+                userMap.put(ValueExpressionWrapper.VAR_SERVICE_INSTANCE, service);
             }
         }
-        if (expression.indexOf("productInstance") >= 0) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_PRODUCT_INSTANCE) >= 0) {
             ProductInstance productInstance = null;
             if (chargeInstance instanceof ProductChargeInstance) {
                 productInstance = ((ProductChargeInstance) chargeInstance).getProductInstance();
 
             }
             if (productInstance != null) {
-                userMap.put("productInstance", productInstance);
+                userMap.put(ValueExpressionWrapper.VAR_PRODUCT_INSTANCE, productInstance);
             }
         }
-        if (expression.indexOf("offer") >= 0) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_OFFER) >= 0) {
             OfferTemplate offer = chargeInstance.getSubscription().getOffer();
-            userMap.put("offer", offer);
+            userMap.put(ValueExpressionWrapper.VAR_OFFER, offer);
         }
-        if (expression.contains("ua") || expression.contains("ba") || expression.contains("ca") || expression.contains("c")) {
+        if (expression.contains(ValueExpressionWrapper.VAR_USER_ACCOUNT) || expression.contains(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) || expression.contains(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) || expression.contains(ValueExpressionWrapper.VAR_CUSTOMER_SHORT)|| expression.contains(ValueExpressionWrapper.VAR_CUSTOMER)) {
             if (ua == null) {
                 ua = chargeInstance.getUserAccount();
             }
-            if (expression.indexOf("ua") >= 0) {
-                userMap.put("ua", ua);
+            if (expression.indexOf(ValueExpressionWrapper.VAR_USER_ACCOUNT) >= 0) {
+                userMap.put(ValueExpressionWrapper.VAR_USER_ACCOUNT, ua);
             }
-            if (expression.indexOf("ba") >= 0) {
-                userMap.put("ba", ua.getBillingAccount());
+            if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
+                userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, ua.getBillingAccount());
             }
-            if (expression.indexOf("ca") >= 0) {
-                userMap.put("ca", ua.getBillingAccount().getCustomerAccount());
+            if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) >= 0) {
+                userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, ua.getBillingAccount().getCustomerAccount());
             }
-            if (expression.indexOf("c") >= 0) {
-                userMap.put("c", ua.getBillingAccount().getCustomerAccount().getCustomer());
+            if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_SHORT) >= 0 || expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER) >= 0) {
+                userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_SHORT, ua.getBillingAccount().getCustomerAccount().getCustomer());
+                userMap.put(ValueExpressionWrapper.VAR_CUSTOMER, ua.getBillingAccount().getCustomerAccount().getCustomer());
             }
         }
 
-        if (expression.indexOf("prov") >= 0) {
-            userMap.put("prov", appProvider);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_PROVIDER) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_PROVIDER, appProvider);
         }
 
         return userMap;

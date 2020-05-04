@@ -60,11 +60,11 @@ public class RecurringChargeAsync {
     private CurrentUserProvider currentUserProvider;
 
     /**
-     * Process recurring charges of given recuring charge instances. Once charge instance at a time in a separate transaction.
+     * Process recurring charges of given recurring charge instances. Once charge instance at a time in a separate transaction.
      * 
      * @param ids A list of recurring charge instance ids
      * @param result Job execution result
-     * @param maxDate Process untill date
+     * @param maxDate Process until date. Will rate recurring charges where net charge date is before a given date.
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
      * @return Future String
@@ -81,10 +81,15 @@ public class RecurringChargeAsync {
             if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
-            log.debug("run recurringChargeInstace ID {}", id);
-            unitRecurringRatingJobBean.execute(result, id, maxDate);
+            log.trace("Process recurring charges for ID {}", id);
+
+            try {
+                unitRecurringRatingJobBean.execute(result, id, maxDate);
+
+            } catch (Exception e) {
+                // Ignore error here - it was caught already
+            }
         }
-        log.debug("End launchAndForget!");
 
         return new AsyncResult<String>("OK");
     }

@@ -73,6 +73,7 @@ public class ReportExtractJob extends Job {
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbRuns.setValueRequired(false);
         customFieldNbRuns.setDefaultValue("-1");
+        customFieldNbRuns.setGuiPosition("tab:Configuration:0;field:0");
         result.put("nbRuns", customFieldNbRuns);
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
@@ -83,6 +84,7 @@ public class ReportExtractJob extends Job {
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
         customFieldNbWaiting.setDefaultValue("0");
         customFieldNbWaiting.setValueRequired(false);
+        customFieldNbWaiting.setGuiPosition("tab:Configuration:0;field:1");
         result.put("waitingMillis", customFieldNbWaiting);
 
         CustomFieldTemplate customFieldStartDate = new CustomFieldTemplate();
@@ -92,6 +94,7 @@ public class ReportExtractJob extends Job {
         customFieldStartDate.setDescription(resourceMessages.getString("jobExecution.startDate"));
         customFieldStartDate.setFieldType(CustomFieldTypeEnum.DATE);
         customFieldStartDate.setValueRequired(false);
+        customFieldStartDate.setGuiPosition("tab:Configuration:0;field:2");
         result.put("startDate", customFieldStartDate);
 
         CustomFieldTemplate customFieldEndDate = new CustomFieldTemplate();
@@ -101,6 +104,7 @@ public class ReportExtractJob extends Job {
         customFieldEndDate.setDescription(resourceMessages.getString("jobExecution.endDate"));
         customFieldEndDate.setFieldType(CustomFieldTypeEnum.DATE);
         customFieldEndDate.setValueRequired(false);
+        customFieldEndDate.setGuiPosition("tab:Configuration:0;field:3");
         result.put("endDate", customFieldEndDate);
 
         return result;
