@@ -40,6 +40,7 @@ import org.meveo.model.shared.DateUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.ordering.orderItem.OrderItem, OrderItem> {
@@ -114,6 +115,7 @@ public class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.ordering.ord
         OrderItem orderItem=new OrderItem();
         orderItem.setId(resource.getId());
         orderItem.setItemId(resource.getItemId());
+		
         if(resource.getStatus() != null){
             orderItem.setStatus(resource.getStatus());
         } else {
@@ -123,13 +125,14 @@ public class OrderItemMapper extends ResourceMapper<org.meveo.apiv2.ordering.ord
         if(resource.getAction() != null){
             orderItem.setAction(resource.getAction());
         }
-
+        
         if(resource.getOrder() != null){
             Order order = new Order();
             order.setId(resource.getOrder().getId());
             orderItem.setOrder(order);
+            orderItem.setCode(UUID.randomUUID().toString());
         }
-
+        
         if(resource.getSubscription() != null){
             orderItem.setSubscription(constructSubscription(resource.getSubscription()));
         }

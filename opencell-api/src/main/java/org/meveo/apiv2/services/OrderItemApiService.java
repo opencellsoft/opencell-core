@@ -145,6 +145,7 @@ public class OrderItemApiService implements ApiService<OrderItem> {
         if(orderItem.getOrder() != null && orderItem.getOrder().getId() != null) {
             Order orderById = orderService.findById(orderItem.getOrder().getId());
             orderItem.setOrder(orderById);
+            orderItem.setCode(UUID.randomUUID().toString());
         }
 
         if(orderItem.getUserAccount() != null) {
