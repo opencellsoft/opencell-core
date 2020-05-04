@@ -2998,5 +2998,10 @@ END $$;]]>
                                  referencedColumnNames="id"/>
     </changeSet>
 
+	 <changeSet id="#5174_20200504" author="AbdelmounaimAkadid">
+    	<sql>update ${db.schema.adapted}ord_order_item set code = id where code is null</sql>
+    	<addUniqueConstraint columnNames="code" constraintName="uk_order_item_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="ord_order_item" />
+    </changeSet>
+    
 </databaseChangeLog>
 
