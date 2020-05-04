@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.meveo.model.admin.Seller;
+import org.meveo.model.payments.PaymentMethod;
 
 /**
  * Rated transactions split for invoicing based on Billing account, seller and invoice type
@@ -62,6 +63,11 @@ public class RatedTransactionGroup implements Serializable {
     private String invoiceKey;
 
     /**
+     * Which payment method used
+     */
+    private PaymentMethod paymentMethod;
+
+    /**
      * Rated transactions
      */
     private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
@@ -85,6 +91,25 @@ public class RatedTransactionGroup implements Serializable {
         this.billingCycle = billingCycle;
         this.invoiceType = invoiceType;
         this.prepaid = prepaid;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param billingAccount Billing account
+     * @param seller         Seller
+     * @param billingCycle   Billing cycle
+     * @param invoiceType    Invoice type
+     * @param prepaid        Is this for prepaid transactions
+     * @param invoiceKey     invoice key
+     * @param paymentMethod  Payment method
+     */
+    public RatedTransactionGroup(BillingAccount billingAccount, Seller seller, BillingCycle billingCycle, InvoiceType invoiceType, boolean prepaid, String invoiceKey,
+            PaymentMethod paymentMethod) {
+
+        this(billingAccount, seller, billingCycle, invoiceType, prepaid);
+        this.invoiceKey = invoiceKey;
+        this.paymentMethod = paymentMethod;
     }
 
     /**
@@ -170,8 +195,21 @@ public class RatedTransactionGroup implements Serializable {
     public String getInvoiceKey() {
 
         if (invoiceKey == null) {
-            invoiceKey = billingAccount.getId() + "_" + seller.getId() + "_" + invoiceType.getId() + "_" + prepaid;
+            invoiceKey = billingAccount.getId() + "_" + seller.getId() + "_" + invoiceType.getId() + "_" + prepaid + "_" + paymentMethod;
         }
         return invoiceKey;
     }
+
+    public void setInvoiceKey(String invoiceKey) {
+        this.invoiceKey = invoiceKey;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
 }
