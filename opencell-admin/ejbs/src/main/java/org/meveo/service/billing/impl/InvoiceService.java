@@ -630,7 +630,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         for (RatedTransactionGroup rtGroup : rtGroups.values()) {
 
             if (rtGroup.getBillingCycle().getScriptInstance() != null) {
-                convertedRtGroups.addAll(executeBCScript(billingRun, rtGroup.getInvoiceType(), rtGroup.getRatedTransactions(), entityToInvoice, rtGroup.getBillingCycle().getScriptInstance().getCode()));
+                convertedRtGroups.addAll(executeBCScript(billingRun, rtGroup.getInvoiceType(), rtGroup.getRatedTransactions(), entityToInvoice,
+                        rtGroup.getBillingCycle().getScriptInstance().getCode(), rtGroup.getPaymentMethod()));
             } else {
                 convertedRtGroups.add(rtGroup);
             }
@@ -1051,7 +1052,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Execute a script to group rated transactions by invoice type
-     * 
+     *
      * @param billingRun Billing run
      * @param invoiceType Current Invoice type
      * @param ratedTransactions Rated transactions to group
@@ -1061,8 +1062,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException
      */
     @SuppressWarnings("unchecked")
-    private List<RatedTransactionGroup> executeBCScript(BillingRun billingRun, InvoiceType invoiceType, List<RatedTransaction> ratedTransactions, IBillableEntity entity, String scriptInstanceCode)
-            throws BusinessException {
+    private List<RatedTransactionGroup> executeBCScript(BillingRun billingRun, InvoiceType invoiceType, List<RatedTransaction> ratedTransactions, IBillableEntity entity,
+            String scriptInstanceCode, PaymentMethod paymentMethod) throws BusinessException {
 
         HashMap<String, Object> context = new HashMap<String, Object>();
         context.put(Script.CONTEXT_ENTITY, entity);
@@ -1071,6 +1072,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         context.put("br", billingRun);
         context.put("invoiceType", invoiceType);
         context.put("ratedTransactions", ratedTransactions);
+        context.put("paymentMethod", paymentMethod);
         scriptInstanceService.executeCached(scriptInstanceCode, context);
         return (List<RatedTransactionGroup>) context.get(Script.RESULT_VALUE);
     }
