@@ -35,6 +35,7 @@
     <cc:attribute name="prefix" required="true" />
     <cc:attribute name="disabled" default="#{!cc.attrs.entity.transient and !cc.attrs.cft.allowEdit}" />
     <cc:attribute name="cfValueHolder" default="#{customFieldDataEntryBean.getFieldValueHolderByUUID(cc.attrs.entity.uuid)}" />
+    <cc:attribute name="cftIndex" required="false"></cc:attribute>
 </cc:interface>
 
 <cc:implementation>
@@ -66,7 +67,7 @@
                 componentWidth="100" displayOneLine="false" prefix="#{cc.attrs.prefix}">
             <hf:customFieldCTW entity="#{cc.attrs.entity}" cft="#{cc.attrs.cft}" edit="#{cc.attrs.edit}" messagesId="#{cc.attrs.messagesId}" datePattern="#{cc.attrs.datePattern}"
                                dateTimePattern="#{cc.attrs.dateTimePattern}"
-                               prefix="#{cc.attrs.prefix}"/>
+                               prefix="#{cc.attrs.prefix}" cftIndex="#{cc.attrs.cftIndex}"/>
         </hftl:decorateFormField>
     </c:if>
     <c:if test="#{cc.attrs.cft.fieldType ne CustomFieldTypeEnum.CHILD_ENTITY and cc.attrs.cft.fieldType ne CustomFieldTypeEnum.CHECKBOX_LIST and cc.attrs.cft.fieldType ne CustomFieldTypeEnum.CUSTOM_TABLE_WRAPPER}">

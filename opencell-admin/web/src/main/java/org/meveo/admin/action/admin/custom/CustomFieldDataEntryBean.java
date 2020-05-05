@@ -1256,7 +1256,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             List<Object> listValue = new ArrayList<>();
             if (CustomFieldTypeEnum.CHECKBOX_LIST.name().equalsIgnoreCase(cft.getFieldType().name())) {
-                listValue.addAll(customFieldValue.getListValue());
+            	if(customFieldValue != null && customFieldValue.getListValue() != null) {
+            		listValue.addAll(customFieldValue.getListValue());
+            	}
             } else {
             for (Map<String, Object> listItem : customFieldValue.getMapValuesForGUI()) {
                 if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
@@ -2314,14 +2316,13 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     private String setCustomTableName(ICustomFieldEntity entity, CustomFieldTemplate cft) {
-        if (customTableName == null) {
-            String customTableCode = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getCustomTableCodeEL(), "entity", entity);
+
+        String customTableCode = ValueExpressionWrapper.evaluateToStringIgnoreErrors(cft.getCustomTableCodeEL(), "entity", entity);
             CustomEntityTemplate cet = customTableService.getCET(customTableCode);
             if (cet == null) {
                 throw new BusinessException("Custom Entity Template not found for the Custom Table:" + customTableCode);
             }
             customTableName = cet.getDbTablename();
-        }
         return customTableName;
     }
 

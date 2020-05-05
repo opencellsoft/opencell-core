@@ -25,14 +25,14 @@
 
 <ui:composition>
 
-    <c:forEach items="${cfTab.children}" var="cfFieldOrFg">
+    <c:forEach items="${cfTab.children}" var="cfFieldOrFg" varStatus="cfFieldLoop">
         <c:if test="#{cfFieldOrFg.type == 'field'}">
 
             <c:set var="cft" value="#{cfFieldOrFg.data}"/>
             <c:if
                     test="#{!cft.hideInGUI and ((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBooleanOneVariable(cft.applicableOnEl,'entity',entity)}">
                 <hf:customField entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}" dateTimePattern="#{dateTimePattern}"
-                                prefix="#{prefix}"/>
+                                prefix="#{prefix}" cftIndex="#{cfFieldLoop.index}"/>
             </c:if>
         </c:if>
         <c:if test="#{cfFieldOrFg.type == 'fieldGroup'}">
@@ -40,11 +40,12 @@
                 <p:fieldset legend="#{cfFieldOrFg.data.getLabel(customFieldDataEntryBean.currentLocale.ISO3Language)}">
                     <c:forEach items="${cfFieldOrFg.children}" var="cfField">
                         <c:set var="cft" value="#{cfField.data}"/>
+
                         <c:if
                                 test="#{!cft.hideInGUI and ((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBooleanOneVariable(cft.applicableOnEl,'entity',entity)}">
                             <hf:customField entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}"
                                             dateTimePattern="#{dateTimePattern}"
-                                            prefix="#{prefix}"/>
+                                            prefix="#{prefix}" cftIndex="#{cfFieldLoop.index}"/>
                         </c:if>
                     </c:forEach>
                 </p:fieldset>
