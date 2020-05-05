@@ -21,22 +21,25 @@
  */
 package org.meveo.service.payments.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentErrorTypeEnum;
-import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentStatusEnum;
@@ -48,11 +51,26 @@ import org.meveo.service.base.PersistenceService;
  * @lastModifiedVersion 5.0.2
  */
 public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
+	
+    /** The account operation service. */
+    @Inject
+    private AccountOperationService accountOperationService;
+	
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void addHistory(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode,String errorMessage,
-            PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod) throws BusinessException {
+            PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod,List<Long> aoIdsToPay) throws BusinessException {
+    	List<AccountOperation> aoToPay = new ArrayList<AccountOperation>();
+    	for(Long aoId : aoIdsToPay) {
+    		aoToPay.add(accountOperationService.findById(aoId));
+        }
+    	addHistoryAOs(customerAccount, payment, refund, amountCts, status, errorCode, errorMessage, errorType, operationCategory, paymentGatewayCode, paymentMethod, aoToPay);
+    }
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void addHistoryAOs(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode,String errorMessage,
+            PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod,List<AccountOperation> aoToPay) throws BusinessException {
         PaymentHistory paymentHistory = new PaymentHistory();
         paymentHistory.setCustomerAccountCode(customerAccount.getCode());
         paymentHistory.setCustomerAccountName(customerAccount.getName() == null ? null : customerAccount.getName().getFullName());
@@ -94,6 +112,12 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
             }
             paymentHistory.setPaymentMethodName(pmVal);
         }
+        
+        for(AccountOperation ao : aoToPay) {
+        	ao.setPaymentHistory(paymentHistory);
+        	paymentHistory.getListAoPaid().add(ao);
+        }
+        
         super.create(paymentHistory);
 
     }
