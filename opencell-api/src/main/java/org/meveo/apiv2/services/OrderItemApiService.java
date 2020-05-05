@@ -277,6 +277,7 @@ public class OrderItemApiService implements ApiService<OrderItem> {
                 oldOrderItem.setUserAccount(orderItem.getUserAccount());
                 oldOrderItem.setProductInstances(orderItem.getProductInstances());
                 oldOrderItem.setSubscription(orderItem.getSubscription());
+                oldOrderItem.setCfValues(orderItem.getCfValues());
 
                 orderItemService.update(oldOrderItem);
                 refreshOrRetrieveOrderItemProductInstanceProduct(oldOrderItem);
@@ -302,6 +303,9 @@ public class OrderItemApiService implements ApiService<OrderItem> {
                 }
                 if(orderItem.getAction() != null){
                     oldOrderItem.setAction(orderItem.getAction());
+                }
+                if(orderItem.getCfValues() != null){
+                    oldOrderItem.setCfValues(orderItem.getCfValues());
                 }
                 populateOrderItemFields(orderItem);
                 if(orderItem.getUserAccount() != null){
