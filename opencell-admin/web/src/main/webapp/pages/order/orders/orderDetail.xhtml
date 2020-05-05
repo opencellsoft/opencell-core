@@ -628,6 +628,8 @@
                             	
                             	</p:tab>
 								
+                            	
+								<hftl:customFields backingBean="#{orderItemBean}" entity="#{orderBean.selectedOrderItem}" messagesId=":orderForm:messages" />
 								<hftl:displayGenericWFsHistory entity="#{orderBean.selectedOrderItem}" backingBean="#{orderItemBean}" />
 							</p:tabView>
                             
