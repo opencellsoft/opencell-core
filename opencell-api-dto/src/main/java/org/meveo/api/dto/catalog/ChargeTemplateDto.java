@@ -120,16 +120,26 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
      */
     private String ratingScriptCode;
 
-    /** The custom fields. */
+    /**
+     * The custom fields.
+     */
     private CustomFieldsDto customFields;
 
-    /** The triggered edrs. */
+    /**
+     * The triggered edrs.
+     */
     private TriggeredEdrTemplatesDto triggeredEdrs = new TriggeredEdrTemplatesDto();
 
     /**
      * Enable/disable removing WO rated to 0.
      */
     private boolean dropZeroWo;
+
+    /**
+     * Sorting index EL.
+     */
+    @Size(max = 2000)
+    private String sortIndexEl = null;
 
     /**
      * Instantiates a new charge template dto.
@@ -182,6 +192,7 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
             ratingScriptCode = chargeTemplate.getRatingScript().getCode();
         }
         dropZeroWo = chargeTemplate.isDropZeroWo();
+        sortIndexEl = chargeTemplate.getSortIndexEl();
     }
 
     /**
@@ -545,5 +556,23 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
      */
     public void setDropZeroWo(boolean dropZeroWo) {
         this.dropZeroWo = dropZeroWo;
+    }
+
+    /**
+     * Gets sorting index EL.
+     *
+     * @return an EL expression for sorting index
+     */
+    public String getSortIndexEl() {
+        return sortIndexEl;
+    }
+
+    /**
+     * Sets sorting index EL.
+     *
+     * @param sortIndexEl El expression for sorting index
+     */
+    public void setSortIndexEl(String sortIndexEl) {
+        this.sortIndexEl = sortIndexEl;
     }
 }

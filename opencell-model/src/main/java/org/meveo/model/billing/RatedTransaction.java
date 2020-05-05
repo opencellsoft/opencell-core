@@ -474,6 +474,12 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     private UnitOfMeasure ratingUnitOfMeasure;
 
     /**
+     * Sorting index
+     */
+    @Column(name = "sort_index")
+    private Integer sortIndex;
+
+    /**
      * Accounting code
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -486,7 +492,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
     /**
      * Constructor
-     * 
+     *
      * @param usageDate Operation date
      * @param unitAmountWithoutTax Unit amount without tax
      * @param unitAmountWithTax Unit amount with tax
@@ -1204,5 +1210,23 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
      */
     public void setAccountingCode(AccountingCode accountingCode) {
         this.accountingCode = accountingCode;
+    }
+
+    /**
+     * Gets the sorting index.
+     *
+     * @return the sorting index
+     */
+    public Integer getSortIndex() {
+        return sortIndex;
+    }
+
+    /**
+     * Sets the sorting index.
+     *
+     * @param sortIndex the sorting index
+     */
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
     }
 }

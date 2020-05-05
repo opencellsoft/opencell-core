@@ -83,6 +83,12 @@ public class InvoiceSubCategory extends BusinessCFEntity {
     @JoinColumn(name = "occ_templ_negative_id")
     private OCCTemplate occTemplateNegative;
 
+    /**
+     * Sorting index
+     */
+    @Column(name = "sort_index")
+    private Integer sortIndex;
+
     public AccountingCode getAccountingCode() {
         return accountingCode;
     }
@@ -126,7 +132,7 @@ public class InvoiceSubCategory extends BusinessCFEntity {
     /**
      * Instantiate descriptionI18n field if it is null. NOTE: do not use this method unless you have an intention to modify it's value, as entity will be marked dirty and record
      * will be updated in DB
-     * 
+     *
      * @return descriptionI18n value or instantiated descriptionI18n field value
      */
     public Map<String, String> getDescriptionI18nNullSafe() {
@@ -164,4 +170,21 @@ public class InvoiceSubCategory extends BusinessCFEntity {
         this.occTemplateNegative = occTemplateNegative;
     }
 
+    /**
+     * Gets the sorting index.
+     *
+     * @return the sorting index
+     */
+    public Integer getSortIndex() {
+        return sortIndex;
+    }
+
+    /**
+     * Sets the sorting index.
+     *
+     * @param sortIndex the sorting index
+     */
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
+    }
 }

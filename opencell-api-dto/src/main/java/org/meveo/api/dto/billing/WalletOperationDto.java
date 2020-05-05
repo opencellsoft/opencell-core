@@ -179,14 +179,20 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
      */
     private Long walletId;
 
-
-    /** The custom fields. */
+    /**
+     * The custom fields.
+     */
     private CustomFieldsDto customFields;
 
     /**
      * Charge tax class code
      */
     private String taxClassCode;
+
+    /**
+     * Sorting index.
+     */
+    private Integer sortIndex;
 
     /**
      * Instantiates a new wallet operation dto.
@@ -930,13 +936,32 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         this.customFields = customFields;
     }
 
+    /**
+     * Gets the sorting index.
+     *
+     * @return the sorting index
+     */
+    public Integer getSortIndex() {
+        return sortIndex;
+    }
+
+    /**
+     * Sets the sorting index.
+     *
+     * @param sortIndex the sorting index.
+     */
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
+    }
+
     @Override
     public String toString() {
-        return "WalletOperationDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate=" + walletTemplate + ", seller=" + seller
-                + ", chargeInstance=" + chargeInstance + ", chargeInstanceId=" + chargeInstanceId + ", currency=" + currency + ", type=" + type + ", status=" + status + ", ratingUnitDescription=" + ratingUnitDescription
-                + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", unitAmountWithTax=" + unitAmountWithTax + ", unitAmountTax=" + unitAmountTax + ", quantity=" + quantity
-                + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", amountTax=" + amountTax + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3
-                + ", parameterExtra=" + parameterExtra + ", orderNumber=" + orderNumber + ", startDate=" + startDate + ", endDate=" + endDate + ", operationDate=" + operationDate + ", subscriptionDate="
-                + subscriptionDate + ", offerCode=" + offerCode + "]";
+        return "WalletOperationDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", subscription=" + subscription + ", walletTemplate="
+                + walletTemplate + ", seller=" + seller + ", chargeInstance=" + chargeInstance + ", chargeInstanceId=" + chargeInstanceId + ", currency=" + currency + ", type="
+                + type + ", status=" + status + ", ratingUnitDescription=" + ratingUnitDescription + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax
+                + ", unitAmountWithTax=" + unitAmountWithTax + ", unitAmountTax=" + unitAmountTax + ", quantity=" + quantity + ", amountWithoutTax=" + amountWithoutTax
+                + ", amountWithTax=" + amountWithTax + ", amountTax=" + amountTax + ", parameter1=" + parameter1 + ", parameter2=" + parameter2 + ", parameter3=" + parameter3
+                + ", parameterExtra=" + parameterExtra + ", orderNumber=" + orderNumber + ", startDate=" + startDate + ", endDate=" + endDate + ", operationDate=" + operationDate
+                + ", subscriptionDate=" + subscriptionDate + ", offerCode=" + offerCode + "]";
     }
 }
