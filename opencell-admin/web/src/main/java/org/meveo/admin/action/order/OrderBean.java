@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,6 +39,7 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.billing.OrderApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Seller;
@@ -72,6 +72,7 @@ import org.meveo.model.payments.WirePaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -80,7 +81,6 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.meveo.service.order.OrderService;
-import org.meveo.commons.utils.PersistenceUtils;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -135,6 +135,9 @@ public class OrderBean extends CustomFieldBean<Order> {
 
     @Inject
     private AuditableFieldService auditableFieldService;
+    
+    @Inject
+    private EntityToDtoConverter entityToDtoConverter;
 
     private OrderItem selectedOrderItem;
 
@@ -276,6 +279,8 @@ public class OrderBean extends CustomFieldBean<Order> {
             orderItemDto.setBillingAccount(billingAccountDtos);
             orderItemDto.setProductOffering(new org.tmf.dsmapi.catalog.resource.product.ProductOffering());
             orderItemDto.setProduct(new Product());
+            customFieldDataEntryBean.saveCustomFieldsToEntity(selectedOrderItem, true);
+            orderItemDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(selectedOrderItem));
 
             // Save products and services when main offer is an offer
             if (selectedOrderItem.getMainOffering() instanceof OfferTemplate) {
