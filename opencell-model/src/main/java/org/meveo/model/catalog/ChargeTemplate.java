@@ -239,6 +239,12 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Column(name = "drop_zero_wo")
     protected boolean dropZeroWo;
 
+    /**
+     * El expression for sorting index used in WO and rated transaction
+     */
+    @Column(name = "sort_index_el")
+    @Size(max = 2000)
+    private String sortIndexEl;
 
     // Calculated values
     @Transient
@@ -539,5 +545,23 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
      */
     public void setDropZeroWo(boolean dropZeroWo) {
         this.dropZeroWo = dropZeroWo;
+    }
+
+    /**
+     * Gets an El expression for the sorting index.
+     *
+     * @return an El expression
+     */
+    public String getSortIndexEl() {
+        return sortIndexEl;
+    }
+
+    /**
+     * Sets the El expression for the sorting index.
+     *
+     * @param sortIndexEl the sorting index El
+     */
+    public void setSortIndexEl(String sortIndexEl) {
+        this.sortIndexEl = sortIndexEl;
     }
 }

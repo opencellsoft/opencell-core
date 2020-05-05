@@ -467,21 +467,28 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @JoinColumn(name = "input_unitofmeasure")
     private UnitOfMeasure inputUnitOfMeasure;
 
-	/**
+    /**
      * rating_unit_unitOfMeasure
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rating_unitofmeasure")
     private UnitOfMeasure ratingUnitOfMeasure;
 
+    /**
+     * Sorting index
+     */
+    @Column(name = "sort_index")
+    private Integer sortIndex;
+
     public RatedTransaction() {
         super();
     }
 
-    public RatedTransaction(Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax,
-            BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet, BillingAccount billingAccount, UserAccount userAccount, InvoiceSubCategory invoiceSubCategory, String parameter1,
-            String parameter2, String parameter3, String parameterExtra, String orderNumber, Subscription subscription, String inputUnitDescription, String ratingUnitDescription, PricePlanMatrix priceplan,
-            OfferTemplate offerTemplate, EDR edr, String code, String description, Date startDate, Date endDate, Seller seller, Tax tax, BigDecimal taxPercent, ServiceInstance serviceInstance, TaxClass taxClass) {
+    public RatedTransaction(Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity,
+            BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet, BillingAccount billingAccount,
+            UserAccount userAccount, InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String parameterExtra, String orderNumber,
+            Subscription subscription, String inputUnitDescription, String ratingUnitDescription, PricePlanMatrix priceplan, OfferTemplate offerTemplate, EDR edr, String code,
+            String description, Date startDate, Date endDate, Seller seller, Tax tax, BigDecimal taxPercent, ServiceInstance serviceInstance, TaxClass taxClass) {
 
         super();
 
@@ -1130,14 +1137,32 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 	}
 
 	public void setInputUnitOfMeasure(UnitOfMeasure inputUnitOfMeasure) {
-		this.inputUnitOfMeasure = inputUnitOfMeasure;
-	}
+        this.inputUnitOfMeasure = inputUnitOfMeasure;
+    }
 
-	public UnitOfMeasure getRatingUnitOfMeasure() {
-		return ratingUnitOfMeasure;
-	}
+    public UnitOfMeasure getRatingUnitOfMeasure() {
+        return ratingUnitOfMeasure;
+    }
 
-	public void setRatingUnitOfMeasure(UnitOfMeasure ratingUnitOfMeasure) {
-		this.ratingUnitOfMeasure = ratingUnitOfMeasure;
-	}
+    public void setRatingUnitOfMeasure(UnitOfMeasure ratingUnitOfMeasure) {
+        this.ratingUnitOfMeasure = ratingUnitOfMeasure;
+    }
+
+    /**
+     * Gets the sorting index.
+     *
+     * @return the sorting index
+     */
+    public Integer getSortIndex() {
+        return sortIndex;
+    }
+
+    /**
+     * Sets the sorting index.
+     *
+     * @param sortIndex the sorting index
+     */
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
+    }
 }

@@ -2998,10 +2998,25 @@ END $$;]]>
                                  referencedColumnNames="id"/>
     </changeSet>
 
-	 <changeSet id="#5174_20200504" author="AbdelmounaimAkadid">
-    	<sql>update ${db.schema.adapted}ord_order_item set code = id where code is null</sql>
-    	<addUniqueConstraint columnNames="code" constraintName="uk_order_item_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="ord_order_item" />
+    <changeSet id="#5174_20200504" author="AbdelmounaimAkadid">
+        <sql>update ${db.schema.adapted}ord_order_item set code = id where code is null</sql>
+        <addUniqueConstraint columnNames="code" constraintName="uk_order_item_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="ord_order_item"/>
     </changeSet>
-    
+
+    <changeSet id="#4792_20200504" author="khalidHORRI">
+        <addColumn tableName="billing_invoice_sub_cat">
+            <column name="sort_index" type="int4"/>
+        </addColumn>
+        <addColumn tableName="billing_wallet_operation">
+            <column name="sort_index" type="int4"/>
+        </addColumn>
+        <addColumn tableName="billing_rated_transaction">
+            <column name="sort_index" type="int4"/>
+        </addColumn>
+        <addColumn tableName="cat_charge_template">
+            <column name="sort_index_el" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
 
