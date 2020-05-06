@@ -16,30 +16,22 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api.security.filter;
+package org.meveo.api.security.config;
 
-import java.util.Map;
-import java.util.Set;
-
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
-import org.meveo.api.security.config.FilterResultsConfig;
-import org.meveo.model.admin.SecuredEntity;
-import org.meveo.security.MeveoUser;
+import javax.interceptor.InvocationContext;
 
 /**
- * This is the default result filter. I does not do any filtering. It is used if
- * a resultFilter attribute is not defined in the
- * {@link SecuredBusinessEntityMethod}. i.e. when the method result does not
- * need to be filtered.
- * 
- * @author Tony Alejandro
- *
+ * Configuration factory that is responsible to build an instance of
+ * {@code SecuredBusinessEntityConfig} depending on the configuration implementation
+ * @author Mounir Boukayoua
+ * @since 10.0
  */
-public class NullFilter extends SecureMethodResultFilter {
+public interface SecuredBusinessEntityConfigFactory {
 
-	@Override
-	public Object filterResult(FilterResultsConfig filterResultsConfig, Object result, MeveoUser currentUser, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap) {
-		return result;
-	}
-
+    /**
+     * Get secured entities configuration defined on a method
+     * @param context method's invocation context
+     * @return {@code SecuredBusinessEntityConfig} instance
+     */
+    SecuredBusinessEntityConfig get(InvocationContext context);
 }

@@ -18,16 +18,15 @@
 
 package org.meveo.api.security.filter;
 
-import java.lang.reflect.Method;
 import java.util.*;
 
 import javax.inject.Inject;
 
-import org.meveo.api.dto.account.FilterProperty;
-import org.meveo.api.dto.account.FilterResults;
 import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.security.config.FilterPropertyConfig;
+import org.meveo.api.security.config.FilterResultsConfig;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
@@ -41,69 +40,73 @@ public class ObjectFilter extends SecureMethodResultFilter {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public Object filterResult(Method methodContext, Object result, MeveoUser currentUser, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap) throws MeveoApiException {
+    public Object filterResult(FilterResultsConfig filterResultsConfig, Object result, MeveoUser currentUser, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap) throws MeveoApiException {
         if (result == null) {
             // result is empty. no need to filter.
             log.warn("Result is empty. Skipping filter...");
             return result;
         }
 
-        FilterResults filterResults = methodContext.getAnnotation(FilterResults.class);
-
         // Result is not annotated for filtering,
-        if (filterResults == null) {
+        if (filterResultsConfig == null) {
             return result;
         }
-
         boolean allowAccess = false;
         Object itemToFilter = result;
 
         // Various property filters are connected by OR - any filter match will consider item as a valid one
-        filterLoop: for (FilterProperty filterProperty : filterResults.itemPropertiesToFilter()) {
+        filterLoop: for (FilterPropertyConfig propertyConfig : filterResultsConfig.getItemPropertiesToFilter()) {
             try {
 
-                Collection resolvedValues = new ArrayList<>();
-                Object resolvedValue = ReflectionUtils.getPropertyValue(itemToFilter, filterProperty.property());
-                if (resolvedValue == null) {
-                    if (filterProperty.allowAccessIfNull()) {
+                Collection resolvedValues;
+                Object resolvedValue = ReflectionUtils.getPropertyValue(itemToFilter, propertyConfig.getProperty());
+                if (isEmptyValue(resolvedValue)) {
+                    if (propertyConfig.isAllowAccessIfNull()) {
                         log.debug("Adding item {} to filtered list.", itemToFilter);
                         allowAccess = true;
                     } else {
-                        log.debug("Property " + filterProperty.property() + " on item to filter " + itemToFilter + " was resolved to null. Entity will be filtered out");
+                        log.debug("Property " + propertyConfig.getProperty() + " on item to filter " + itemToFilter + " was resolved to null. Entity will be filtered out");
                     }
                     continue;
 
                 } else if (resolvedValue instanceof Collection) {
                     resolvedValues = (Collection) resolvedValue;
-
                 } else {
                     resolvedValues = new ArrayList<>();
                     resolvedValues.add(resolvedValue);
                 }
 
                 for (Object value : resolvedValues) {
-
                     if (value == null) {
                         continue;
                     }
-
-                    BusinessEntity entity = filterProperty.entityClass().newInstance();
-                    entity.setCode((String) value);// FilterProperty could be expanded to include a target property to set instead of using "code"
-
+                    BusinessEntity entity = propertyConfig.getEntityClass().newInstance();
+                    if(value instanceof String) {
+                        entity.setCode((String) value);
+                    } else if (value instanceof BusinessEntity) {
+                        entity.setCode(((BusinessEntity) value).getCode());
+                    } else if(ReflectionUtils.hasField(value, "code")) {
+                        entity.setCode((String) ReflectionUtils.getPropertyValue(value, "code"));
+                    }
+                    log.debug("Checking if secured entity {} is allowed for the currentUser", entity);
                     if (securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
-                        log.debug("Adding item {} to filtered list.", entity);
+                        log.debug("Entity check Ok. Adding item {} to filtered list.", entity);
                         allowAccess = true;
                         break filterLoop;
                     }
                 }
             } catch (InstantiationException | IllegalAccessException e) {
-                throw new InvalidParameterException("Failed to create new instance of: " + filterProperty.entityClass());
+                throw new InvalidParameterException("Failed to create new instance of: " + propertyConfig.getEntityClass());
             }
         }
 
         if (!allowAccess) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException("Access to entity details is not allowed.");
         }
         return result;
+    }
+
+    private boolean isEmptyValue(Object resolvedValue) {
+        return resolvedValue == null || (resolvedValue instanceof Collection && ((Collection)resolvedValue).size() == 0);
     }
 }

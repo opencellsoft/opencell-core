@@ -16,14 +16,16 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api.security.parameter;
+package org.meveo.api.security.config.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.parameter.CodeParser;
+import org.meveo.api.security.parameter.SecureMethodParameterParser;
 import org.meveo.model.BusinessEntity;
 
 /**
