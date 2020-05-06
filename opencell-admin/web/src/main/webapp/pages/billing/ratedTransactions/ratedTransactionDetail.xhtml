@@ -17,7 +17,7 @@
             </p:breadCrumb>
         </h:form>
         <hftl:formPanel id="formPanel" label="#{messages['ratedTransaction.panel']}" backingBean="#{ratedTransactionBean}" showDeleteButton="false" showBackButton="true"
-            edit="#{!ratedTransactionBean.isBilled()">
+            edit="#{!ratedTransactionBean.isBilled()}" showEditButton="#{!ratedTransactionBean.isBilled()}">
             <!--  showFormButtons="#{ratedTransactionBean.entity.invoice.invoiceNumber!=null ? false : true}" -->
             <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" disabled="#{ratedTransactionBean.isBilled()}" />
             <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" disabled="#{ratedTransactionBean.isBilled()}" />
@@ -61,12 +61,12 @@
             <hftl:formField label="#{messages['ratedTransaction.doNotTriggerInvoicing']}" field="doNotTriggerInvoicing" disabled="#{ratedTransactionBean.isBilled()}" />
 
             <ui:param name="buttons" value="true" />
-            <ui:define name="buttons">
-                <p:button id="backButton" value="#{messages['action.back']}" outcome="#{ratedTransactionBean.back()}"
-                    rendered="#{ratedTransactionBean.entity.invoice.invoiceNumber!=null}">
-                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                </p:button>
-            </ui:define>
+            <!--             <ui:define name="buttons"> -->
+            <!--                 <p:button id="backButton" value="#{messages['action.back']}" outcome="#{ratedTransactionBean.back()}" -->
+            <!--                     rendered="#{ratedTransactionBean.entity.invoice.invoiceNumber!=null}"> -->
+            <!--                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" /> -->
+            <!--                 </p:button> -->
+            <!--             </ui:define> -->
         </hftl:formPanel>
     </ui:define>
 

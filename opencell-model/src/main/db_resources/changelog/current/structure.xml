@@ -2985,6 +2985,16 @@ END $$;]]>
                                  constraintName="billing_counter_period_values_counterperiod_id_fk" referencedTableName="billing_counter_period"
                                  referencedColumnNames="id"/>
     </changeSet>
+    
+    <changeSet author="MohammedELAZZOUZI"  id="#4004_ Add_CustomField_to_OrderItem">
+        <addColumn tableName="ord_order_item">
+            <column name="uuid" type="varchar(60)"/>
+            <column name="cf_values" type="${type.json}" />
+            <column name="cf_values_accum" type="${type.json}" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}ord_order_item set uuid = 'oi'||id</sql>
+        <addNotNullConstraint tableName="ord_order_item" columnName="uuid"/>
+    </changeSet>
 
     <changeSet id="#40167_20200407" author="AndriusKarpavicius">
         <addColumn tableName="billing_rated_transaction">
@@ -3031,5 +3041,15 @@ END $$;]]>
     	<sql>update ${db.schema.adapted}ord_order_item set code = id where code is null</sql>
     	<addUniqueConstraint columnNames="code" constraintName="uk_order_item_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="ord_order_item" />
     </changeSet>
+    
+    <changeSet id="#5172_20200426" author="anasseh">
+         <addColumn tableName="ar_account_operation">
+            <column name="payment_history_id" type="bigint"></column>
+        </addColumn>
+       
+        <addForeignKeyConstraint baseColumnNames="payment_history_id" baseTableName="ar_account_operation" constraintName="fk_pay_hisyo" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_history" />
+                    
+     </changeSet>
     
 </databaseChangeLog>

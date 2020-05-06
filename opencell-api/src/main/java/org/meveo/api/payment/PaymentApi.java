@@ -467,8 +467,18 @@ public class PaymentApi extends BaseApi {
         paymentHistoryDto.setSyncStatus(paymentHistory.getSyncStatus());
         paymentHistoryDto.setStatus(paymentHistory.getStatus());
         paymentHistoryDto.setLastUpdateDate(paymentHistory.getLastUpdateDate());
-        AccountOperationsDto accountOperationsDto = new AccountOperationsDto();
-        accountOperationsDto.setAccountOperation(getAosPaidByPayment(paymentHistory.getRefund() == null ? paymentHistory.getPayment() : paymentHistory.getRefund()));
+        
+        AccountOperationsDto accountOperationsDto = new AccountOperationsDto();		
+        //Backward compatibility
+		if (paymentHistory.getListAoPaid() == null || paymentHistory.getListAoPaid().isEmpty()) {
+			accountOperationsDto.setAccountOperation(getAosPaidByPayment(paymentHistory.getRefund() == null ? paymentHistory.getPayment() : paymentHistory.getRefund()));
+			
+		} else {
+			for (AccountOperation ao : paymentHistory.getListAoPaid()) {
+				accountOperationsDto.getAccountOperation()
+						.add(new AccountOperationDto(ao, entityToDtoConverter.getCustomFieldsDTO(ao, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+			}
+		}
         paymentHistoryDto.setListAoPaid(accountOperationsDto);
         return paymentHistoryDto;
 
