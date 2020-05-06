@@ -963,14 +963,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                                 }
                             }
 
-                            if (condition == null) {
+                            if (condition == null || "eq".equalsIgnoreCase(condition)) {
                                 queryBuilder.addSqlCriterion("type(a) in (:typeClass)", "typeClass", classes);
                             } else if ("ne".equalsIgnoreCase(condition)) {
                                 queryBuilder.addSqlCriterion("type(a) not in (:typeClass)", "typeClass", classes);
                             }
 
                         } else if (filterValue instanceof Class) {
-                            if (condition == null) {
+                            if (condition == null || "eq".equalsIgnoreCase(condition)) {
                                 queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", filterValue);
                             } else if ("ne".equalsIgnoreCase(condition)) {
                                 queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", filterValue);
@@ -978,7 +978,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                         } else if (filterValue instanceof String) {
                             try {
-                                if (condition == null) {
+                                if (condition == null || "eq".equalsIgnoreCase(condition)) {
                                     queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", Class.forName((String) filterValue));
                                 } else if ("ne".equalsIgnoreCase(condition)) {
                                     queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", Class.forName((String) filterValue));
