@@ -96,6 +96,8 @@ public class UserAccountDto extends AccountDto {
 		setTerminationDate(e.getTerminationDate());
 		setStatus(e.getStatus());
 		setStatusDate(e.getStatusDate());
+        setRegistrationNo(e.getRegistrationNo());
+        setVatNo(e.getVatNo());
 	}
 
     /**
