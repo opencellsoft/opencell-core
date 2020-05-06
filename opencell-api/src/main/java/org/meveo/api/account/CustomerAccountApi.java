@@ -325,6 +325,10 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getDunningLevel())) {
             customerAccount.setDunningLevel(postData.getDunningLevel());
         }
+        
+        if(postData.getDateDunningLevel()!=null) {
+    		customerAccount.setDateDunningLevel(postData.getDateDunningLevel());
+        }
 
         if (businessAccountModel != null) {
             customerAccount.setBusinessAccountModel(businessAccountModel);
