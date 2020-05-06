@@ -119,6 +119,8 @@ public class UserAccountDto extends AccountDto {
         if (e.getMinimumLabelEl() != null) {
             setMinimumLabelEl(e.getMinimumLabelEl());
         }
+        setRegistrationNo(e.getRegistrationNo());
+        setVatNo(e.getVatNo());
     }
 
     /**
