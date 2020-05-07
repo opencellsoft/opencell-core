@@ -32,6 +32,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 
@@ -62,6 +63,7 @@ import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
@@ -263,20 +265,21 @@ public class RatingService extends PersistenceService<WalletOperation> {
         walletOperation.setChargeMode(chargeMode);
         walletOperation.setFullRatingPeriod(fullRatingPeriod);
 
-//        String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
-//
-//        String translationKey = "CT_" + chargeTemplate.getCode() + languageCode;
-//        String descTranslated = descriptionMap.get(translationKey);
-//        if (descTranslated == null) {
-//            descTranslated = (chargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : chargeInstance.getDescription();
-//            if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().get(languageCode) != null) {
-//                descTranslated = chargeTemplate.getDescriptionI18n().get(languageCode);
-//            }
-//            descriptionMap.put(translationKey, descTranslated);
-//        }
-//
-//        walletOperation.setDescription(descTranslated);
-
+        //        String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
+        //
+        //        String translationKey = "CT_" + chargeTemplate.getCode() + languageCode;
+        //        String descTranslated = descriptionMap.get(translationKey);
+        //        if (descTranslated == null) {
+        //            descTranslated = (chargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : chargeInstance.getDescription();
+        //            if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().get(languageCode) != null) {
+        //                descTranslated = chargeTemplate.getDescriptionI18n().get(languageCode);
+        //            }
+        //            descriptionMap.put(translationKey, descTranslated);
+        //        }
+        //
+        //        walletOperation.setDescription(descTranslated);
+        Integer sortIndex = getSortIndex(walletOperation);
+        walletOperation.setSortIndex(sortIndex);
         walletOperation.setEdr(edr);
 
         rateBareWalletOperation(walletOperation, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), chargeInstance.getCountry().getId(), chargeInstance.getCurrency());
@@ -286,6 +289,23 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         return ratedEDRResult;
 
+    }
+
+    public static Integer getSortIndex(WalletOperation wo) {
+        if (wo.getChargeInstance() == null) {
+            return null;
+        }
+        ChargeTemplate chargeTemplate = wo.getChargeInstance().getChargeTemplate();
+        String expression = chargeTemplate.getSortIndexEl();
+        if (StringUtils.isBlank(expression)) {
+            return null;
+        }
+
+        Map<Object, Object> userMap = new HashMap<>();
+        userMap.put("op", wo);
+
+        Integer sortIndex = ValueExpressionWrapper.evaluateExpression(expression, userMap, Integer.class);
+        return sortIndex;
     }
 
     /**

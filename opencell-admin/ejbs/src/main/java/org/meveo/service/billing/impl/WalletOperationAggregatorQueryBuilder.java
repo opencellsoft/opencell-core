@@ -149,6 +149,7 @@ public class WalletOperationAggregatorQueryBuilder {
 				+ ", " + getParameter2Field() //
 				+ ", " + getParameter3Field() //
 				+ ", " + getParameterExtraField() //
+				+ ", MIN(o.sortIndex) "  //
 				+ ")" + " FROM WalletOperation o " //
 				+ " WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate) AND o.status='OPEN' " //
 				+ " GROUP BY o.seller.id, o.tax, o.taxClass, o.invoiceSubCategory, " + groupBy;

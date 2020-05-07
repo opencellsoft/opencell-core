@@ -633,6 +633,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         if (ratingUnitDescription == null) {
             this.ratingUnitDescription = walletOperation.getChargeInstance().getChargeTemplate().getRatingUnitDescription();
         }
+        this.sortIndex = walletOperation.getSortIndex();
     }
 
     public WalletInstance getWallet() {
