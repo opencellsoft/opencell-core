@@ -355,7 +355,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             facesContext.validationFailed();
             return null;
         }
-
+        setObjectId(entity.getId());
         if (entity.getOffer().isDisabled()) {
             messages.error(new BundleKey("messages", "message.subscription.offerIsDisabled"));
             return null;
@@ -769,7 +769,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         terminationReason = null;
         terminationDate = null;
-
+        setObjectId(entity.getId());
         messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
         return "subscriptionDetail";
     }
