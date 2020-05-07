@@ -270,6 +270,7 @@ public class OrderApi extends BaseApi {
             orderItem.setOrder(order);
             orderItem.setSource(ProductOrderItem.serializeOrderItem(productOrderItem));
             orderItem.setOrderItemProductOfferings(productOfferings);
+            orderItem.setCode(UUID.randomUUID().toString());
 
             if (productOrderItem.getState() != null) {
                 orderItem.setStatus(OrderStatusEnum.valueByApiState(productOrderItem.getState()));
