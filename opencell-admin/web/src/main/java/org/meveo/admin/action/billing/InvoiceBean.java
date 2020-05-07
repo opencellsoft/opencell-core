@@ -279,8 +279,19 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             headerCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
             headerCategories.add(headerCat);
 
-            Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
+            List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList(categoryInvoiceAgregate.getSubCategoryInvoiceAgregates());
             LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = headerCat.getInvoiceSubCategoryDTOMap();
+
+            Collections.sort(subCategoryInvoiceAgregates, new Comparator<SubCategoryInvoiceAgregate>() {
+                public int compare(SubCategoryInvoiceAgregate c0, SubCategoryInvoiceAgregate c1) {
+                    if (c0.getInvoiceSubCategory() != null && c1.getInvoiceSubCategory() != null && c0.getInvoiceSubCategory().getSortIndex() != null
+                            && c1.getInvoiceSubCategory().getSortIndex() != null) {
+                        return c0.getInvoiceSubCategory().getSortIndex().compareTo(c1.getInvoiceSubCategory().getSortIndex());
+                    }
+                    return 0;
+                }
+            });
+
             for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
                 if (!subCatInvoiceAgregate.isDiscountAggregate()) {
                     InvoiceSubCategory invoiceSubCategory = subCatInvoiceAgregate.getInvoiceSubCategory();

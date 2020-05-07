@@ -152,14 +152,12 @@ public class InvoicingAsync {
     /**
      * Creates the aggregates and invoice async. One entity at a time in a separate transaction.
      *
-     * @param entities the entity objects
-     * @param billingRun the billing run
-     * @param jobInstanceId the job instance id
-     * @param instantiateMinRtsForService Should rated transactions to reach minimum invoicing amount be checked and instantiated on service level.
-     * @param instantiateMinRtsForSubscription Should rated transactions to reach minimum invoicing amount be checked and instantiated on subscription level.
-     * @param instantiateMinRtsForBA Should rated transactions to reach minimum invoicing amount be checked and instantiated on Billing account level.
-     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
-     *        expirations), current user might be lost, thus there is a need to reestablish.
+     * @param entities             the entity objects
+     * @param billingRun           the billing run
+     * @param jobInstanceId        the job instance id
+     * @param minAmountForAccounts Check if min amount is enabled in any account level
+     * @param lastCurrentUser      Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *                             expirations), current user might be lost, thus there is a need to reestablish.
      * @return the future
      */
     @Asynchronous
