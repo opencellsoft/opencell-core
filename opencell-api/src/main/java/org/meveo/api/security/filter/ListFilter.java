@@ -18,23 +18,22 @@
 
 package org.meveo.api.security.filter;
 
-import java.lang.reflect.Method;
-import java.util.*;
-
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.meveo.api.dto.account.FilterProperty;
-import org.meveo.api.dto.account.FilterResults;
 import org.meveo.api.dto.response.SearchResponse;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.security.config.FilterPropertyConfig;
+import org.meveo.api.security.config.FilterResultsConfig;
+import org.meveo.api.security.config.SecureMethodParameterConfig;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.security.SecuredBusinessEntityService;
+
+import javax.inject.Inject;
+import java.util.*;
 
 public class ListFilter extends SecureMethodResultFilter {
 
@@ -43,75 +42,73 @@ public class ListFilter extends SecureMethodResultFilter {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public Object filterResult(Method methodContext, Object result, MeveoUser currentUser, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap) throws MeveoApiException {
+    public Object filterResult(FilterResultsConfig filterResultsConfig, Object result, MeveoUser currentUser, Map<Class<?>, Set<SecuredEntity>> allSecuredEntitiesMap) throws MeveoApiException {
         if (result == null) {
             // result is empty. no need to filter.
             log.warn("Result is empty. Skipping filter...");
             return result;
         }
-
-        FilterResults filterResults = methodContext.getAnnotation(FilterResults.class);
-
         // Result is not annotated for filtering,
-        if (filterResults == null) {
+        if (filterResultsConfig == null) {
             return result;
         }
-
         List filteredList = new ArrayList<>();
         List itemsToFilter = null;
 
         try {
-            itemsToFilter = (List) getItemsForFiltering(result, filterResults.propertyToFilter());
+            itemsToFilter = (List) getItemsForFiltering(result, filterResultsConfig.getPropertyToFilter());
 
             // Nothing found to filter
             if (itemsToFilter == null || itemsToFilter.isEmpty()) {
                 return result;
             }
         } catch (IllegalAccessException e) {
-            throw new InvalidParameterException(String.format("Failed to retrieve property: %s of DTO %s.", filterResults.propertyToFilter(), result));
+            throw new InvalidParameterException(String.format("Failed to retrieve property: %s of DTO %s.", filterResultsConfig.getPropertyToFilter(), result));
         }
 
         for (Object itemToFilter : itemsToFilter) {
             // Various property filters are connected by OR - any filter match will consider item as a valid one
-            filterLoop: for (FilterProperty filterProperty : filterResults.itemPropertiesToFilter()) {
+            filterLoop: for (FilterPropertyConfig filterPropertyConfig : filterResultsConfig.getItemPropertiesToFilter()) {
                 try {
-
-                    Collection resolvedValues = new ArrayList<>();
-                    Object resolvedValue = ReflectionUtils.getPropertyValue(itemToFilter, filterProperty.property());
-                    if (resolvedValue == null) {
-                        if (filterProperty.allowAccessIfNull()) {
+                    Collection resolvedValues;
+                    Object resolvedValue = ReflectionUtils.getPropertyValue(itemToFilter, filterPropertyConfig.getProperty());
+                    if (isEmptyValue(resolvedValue)) {
+                        if (filterPropertyConfig.isAllowAccessIfNull()) {
                             log.debug("Adding item {} to filtered list.", itemToFilter);
                             filteredList.add(itemToFilter);
                         } else {
-                            log.debug("Property " + filterProperty.property() + " on item to filter " + itemToFilter + " was resolved to null. Entity will be filtered out");
+                            log.debug("Property " + filterPropertyConfig.getProperty() + " on item to filter " + itemToFilter + " was resolved to null or empty. Entity will be filtered out");
                         }
                         continue;
-
                     } else if (resolvedValue instanceof Collection) {
                         resolvedValues = (Collection) resolvedValue;
-
                     } else {
                         resolvedValues = new ArrayList<>();
                         resolvedValues.add(resolvedValue);
                     }
 
                     for (Object value : resolvedValues) {
-
                         if (value == null) {
                             continue;
                         }
+                        BusinessEntity entity = filterPropertyConfig.getEntityClass().newInstance();
+                        if(value instanceof String) {
+                            entity.setCode((String) value);
+                        } else if (value instanceof BusinessEntity) {
+                            entity.setCode(((BusinessEntity) value).getCode());
+                        } else if(ReflectionUtils.hasField(value, "code")) {
+                            entity.setCode((String) ReflectionUtils.getPropertyValue(value, "code"));
+                        }
 
-                        BusinessEntity entity = filterProperty.entityClass().newInstance();
-                        entity.setCode((String) value);// FilterProperty could be expanded to include a target property to set instead of using "code"
-
+                        log.debug("Checking if secured entity {} is allowed for the currentUser", entity);
                         if (securedBusinessEntityService.isEntityAllowed(entity, allSecuredEntitiesMap, false)) {
-                            log.debug("Adding item {} to filtered list.", entity);
+                            log.debug("Entity check OK. Adding item {} to filtered list.", itemToFilter);
                             filteredList.add(itemToFilter);
                             break filterLoop;
                         }
                     }
                 } catch (InstantiationException | IllegalAccessException e) {
-                    throw new InvalidParameterException("Failed to create new instance of: " + filterProperty.entityClass());
+                    throw new InvalidParameterException("Failed to create new instance of: " + filterPropertyConfig.getEntityClass());
                 }
             }
         }
@@ -122,7 +119,7 @@ public class ListFilter extends SecureMethodResultFilter {
         	SearchResponse response = (SearchResponse)result;
         	int totalRecords = filteredList.size();
 			response.getPaging().setTotalNumberOfRecords(totalRecords);
-        	String totalRecordsPropertyName = filterResults.totalRecords();
+        	String totalRecordsPropertyName = filterResultsConfig.getTotalRecords();
 			if (!totalRecordsPropertyName.isEmpty()) {
 				try {
 					updateItemsCount(response, totalRecordsPropertyName, totalRecords);
@@ -142,7 +139,7 @@ public class ListFilter extends SecureMethodResultFilter {
      * 
      * e.g. If we received an Object named obj and given a string property of code.name, then the value of obj.code.name will be returned.
      * 
-     * Logic is the same as {@link ObjectPropertyParser#getPropertyValue()}
+     * Logic is the same as {@link ObjectPropertyParser#getParameterValue(SecureMethodParameterConfig, Object[])}
      * 
      * @param obj The object that contains the property value.
      * @param property The property of the object that contains the data.
@@ -173,6 +170,10 @@ public class ListFilter extends SecureMethodResultFilter {
         String fieldName = property.substring(0, fieldIndex);
         Object fieldValue = FieldUtils.readField(obj, fieldName, true);
         updateItemsCount(fieldValue, property.substring(fieldIndex + 1), totalRecords);
+    }
+
+    private boolean isEmptyValue(Object resolvedValue) {
+        return resolvedValue == null || (resolvedValue instanceof Collection && ((Collection)resolvedValue).size() == 0);
     }
 
 }
