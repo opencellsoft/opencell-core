@@ -62,9 +62,11 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
     public void addHistory(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode,String errorMessage,
             PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod,List<Long> aoIdsToPay) throws BusinessException {
     	List<AccountOperation> aoToPay = new ArrayList<AccountOperation>();
-    	for(Long aoId : aoIdsToPay) {
-    		aoToPay.add(accountOperationService.findById(aoId));
-        }
+    	if(aoIdsToPay != null) {
+        	for(Long aoId : aoIdsToPay) {
+        		aoToPay.add(accountOperationService.findById(aoId));
+            }
+    	}
     	addHistoryAOs(customerAccount, payment, refund, amountCts, status, errorCode, errorMessage, errorType, operationCategory, paymentGatewayCode, paymentMethod, aoToPay);
     }
     @JpaAmpNewTx
