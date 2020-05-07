@@ -3051,5 +3051,73 @@ END $$;]]>
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_history" />
                     
      </changeSet>
+     
+     <changeSet id="#5206_20200505" author="AndriusKarpavicius" dbms="postgresql" >
+        <sql>drop index adm_file_type_code_index</sql>
+        <sql>drop index flat_file_code_index</sql>
+           
+        <sql>CREATE UNIQUE INDEX adm_file_type_code_index ON ${db.schema.adapted}adm_file_type(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX adm_file_format_code_index ON ${db.schema.adapted}adm_file_format(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX flat_file_code_index ON ${db.schema.adapted}flat_file(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX adm_language_code_index ON ${db.schema.adapted}adm_language(lower(language_code))</sql>
+        <sql>CREATE UNIQUE INDEX billing_tax_category_code_index ON ${db.schema.adapted}billing_tax_category(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX billing_tax_class_code_index ON ${db.schema.adapted}billing_tax_class(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX ord_order_item_code_index ON ${db.schema.adapted}ord_order_item(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX wf_generic_workflow_code_index ON ${db.schema.adapted}wf_generic_workflow(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX billing_invoice_template_filename_index ON ${db.schema.adapted}billing_invoice_template(lower(file_name))</sql>
+        <sql>CREATE UNIQUE INDEX adm_notification_code_index ON ${db.schema.adapted}adm_notification(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX cat_discount_plan_code_index ON ${db.schema.adapted}cat_discount_plan(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX cat_price_plan_matrix_code_index ON ${db.schema.adapted}cat_price_plan_matrix(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX com_contact_coords_code_index ON ${db.schema.adapted}com_contact_coords(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX billing_subscrip_termin_reason_code_index ON ${db.schema.adapted}billing_subscrip_termin_reason(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX billing_cycle_code_index ON ${db.schema.adapted}billing_cycle(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX adm_currency_code_index ON ${db.schema.adapted}adm_currency(lower(currency_code))</sql>
+        <sql>CREATE UNIQUE INDEX cat_triggered_edr_code_index ON ${db.schema.adapted}cat_triggered_edr(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX com_sender_config_code_index ON ${db.schema.adapted}com_sender_config(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX billing_tax_code_index ON ${db.schema.adapted}billing_tax(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX crm_provider_code_index ON ${db.schema.adapted}crm_provider(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX adm_inbound_request_code_index ON ${db.schema.adapted}adm_inbound_request(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX com_campaign_code_index ON ${db.schema.adapted}com_campaign(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX com_msg_var_value_code_index ON ${db.schema.adapted}com_msg_var_value(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX com_msg_tmpl_variable_code_index ON ${db.schema.adapted}com_msg_tmpl_variable(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX billing_invoice_template_code_index ON ${db.schema.adapted}billing_invoice_template(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX cat_wallet_template_code_index ON ${db.schema.adapted}cat_wallet_template(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX cat_calendar_code_index ON ${db.schema.adapted}cat_calendar(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX adm_user_username_index ON ${db.schema.adapted}adm_user(lower(username))</sql>
+        <sql>CREATE UNIQUE INDEX crm_provider_contact_code_index ON ${db.schema.adapted}crm_provider_contact(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX rm_service_param_template_code_index ON ${db.schema.adapted}rm_service_param_template(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX cat_counter_template_code_index ON ${db.schema.adapted}cat_counter_template(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX ar_occ_template_code_index ON ${db.schema.adapted}ar_occ_template(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX dwh_chart_code_index ON ${db.schema.adapted}dwh_chart(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX billing_invoice_sub_cat_code_index ON ${db.schema.adapted}billing_invoice_sub_cat(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX billing_invoice_cat_code_index ON ${db.schema.adapted}billing_invoice_cat(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX com_message_template_code_index ON ${db.schema.adapted}com_message_template(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX dwh_measurable_quant_code_index ON ${db.schema.adapted}dwh_measurable_quant(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX bi_job_name_index ON ${db.schema.adapted}bi_job(lower(name))</sql>
+        <sql>CREATE UNIQUE INDEX ar_credit_category_code_index ON ${db.schema.adapted}ar_credit_category(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX meveo_filter_code_index ON ${db.schema.adapted}meveo_filter(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX meveo_script_instance_code_index ON ${db.schema.adapted}meveo_script_instance(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX com_meveo_instance_code_index ON ${db.schema.adapted}com_meveo_instance(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX meveo_job_instance_code_index ON ${db.schema.adapted}meveo_job_instance(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX meveo_timer_code_index ON ${db.schema.adapted}meveo_timer(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX meveo_module_code_index ON ${db.schema.adapted}meveo_module(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX cat_offer_template_category_code_index ON ${db.schema.adapted}cat_offer_template_category(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX billing_invoice_type_code_index ON ${db.schema.adapted}billing_invoice_type(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX wf_workflow_code_index ON ${db.schema.adapted}wf_workflow(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX cat_channel_code_index ON ${db.schema.adapted}cat_channel(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX ord_order_code_index ON ${db.schema.adapted}ord_order(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX cat_digital_resource_code_index ON ${db.schema.adapted}cat_digital_resource(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX ord_quote_code_index ON ${db.schema.adapted}ord_quote(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX cust_cet_code_index ON ${db.schema.adapted}cust_cet(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX billing_accounting_code_code_index ON ${db.schema.adapted}billing_accounting_code(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX com_contact_email_index ON ${db.schema.adapted}com_contact(lower(email))</sql>
+        <sql>CREATE UNIQUE INDEX billing_finance_segment_code_index ON ${db.schema.adapted}billing_finance_segment(lower(code))</sql>
+        <sql>CREATE UNIQUE INDEX billing_general_ledger_code_index ON ${db.schema.adapted}billing_general_ledger(lower(code))</sql>
+        
+        
+        <sql>CREATE UNIQUE INDEX hierarchy_entity_code_index ON ${db.schema.adapted}hierarchy_entity(lower(code), hierarchy_type)</sql>
+        <sql>CREATE UNIQUE INDEX account_entity_code_index ON ${db.schema.adapted}account_entity(lower(code), account_type)</sql>
+        
+    </changeSet>
     
 </databaseChangeLog>
