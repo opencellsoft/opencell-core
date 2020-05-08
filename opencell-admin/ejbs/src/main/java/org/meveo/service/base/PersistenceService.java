@@ -36,6 +36,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.annotation.PostConstruct;
@@ -937,11 +938,21 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                                 paramName, filterValue);
 
                         } else {
+                            String paramName = queryBuilder.convertFieldToParam(fieldName);
                             if (filterValue instanceof String) {
-                                queryBuilder.addSql(fieldWAlias + (isNot ? " NOT " : "") + " IN (" + filterValue + ")");
+                                queryBuilder.addSqlCriterion("lower(" + fieldWAlias + ")" + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, filterValue);
+
                             } else if (filterValue instanceof Collection) {
-                                String paramName = queryBuilder.convertFieldToParam(fieldName);
-                                queryBuilder.addSqlCriterion(fieldWAlias + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, filterValue);
+
+                                // Convert to lowercase and do case insensitive search for String based search
+                                Object firstValue = ((Collection) filterValue).iterator().next();
+                                if (firstValue instanceof String) {
+                                    filterValue = ((Collection<String>) filterValue).stream().map(val -> val != null ? val.toLowerCase() : val).collect(Collectors.toList());
+                                    queryBuilder.addSqlCriterion("lower(" + fieldWAlias + ")" + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, filterValue);
+
+                                } else {
+                                    queryBuilder.addSqlCriterion(fieldWAlias + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, filterValue);
+                                }
                             }
                         }
 
