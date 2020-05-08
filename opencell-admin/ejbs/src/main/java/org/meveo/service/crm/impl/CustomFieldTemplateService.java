@@ -736,7 +736,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                         StringBuilder keyBuilder = new StringBuilder();
                         for (String column : keyColumns) {
                             keyBuilder.append(keyColumns.indexOf(column) == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
-                            keyBuilder.append(csvLine.get(column));
+                            keyBuilder.append(csvLine.get(column) != null ? csvLine.get(column) : "");
                         }
                         mapValue.put(keyBuilder.toString(), value);
                     }

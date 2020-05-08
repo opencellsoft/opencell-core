@@ -1337,7 +1337,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                 StringBuilder keyBuilder = new StringBuilder();
                 for (String column : keyColumns) {
                     keyBuilder.append(keyColumns.indexOf(column) == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
-                    keyBuilder.append(mapItem.get(column));
+                    keyBuilder.append(mapItem.get(column) != null ? mapItem.get(column) : "");
                 }
 
                 mapValue.put(keyBuilder.toString(), value);
