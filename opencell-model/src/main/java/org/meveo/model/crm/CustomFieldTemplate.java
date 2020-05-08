@@ -984,18 +984,20 @@ public class CustomFieldTemplate extends EnableBusinessEntity implements Compara
         String[] splitValues = multiValue.split("\\" + CustomFieldValue.MATRIX_KEY_SEPARATOR);
         for (int i = 0; i < splitValues.length; i++) {
             CustomFieldMapKeyEnum dataType = matrixValueColumns.get(i).getKeyType();
-            if (dataType == CustomFieldMapKeyEnum.STRING) {
-                values.put(matrixValueColumns.get(i).getCode(), splitValues[i]);
-
-            } else if (!StringUtils.isBlank(splitValues[i])) {
-                try {
-                    if (dataType == CustomFieldMapKeyEnum.LONG) {
-                        values.put(matrixValueColumns.get(i).getCode(), Long.parseLong(splitValues[i]));
-                    } else if (dataType == CustomFieldMapKeyEnum.DOUBLE) {
-                        values.put(matrixValueColumns.get(i).getCode(), Double.parseDouble(splitValues[i]));
+            if (!StringUtils.isBlank(splitValues[i])) {
+                if (dataType == CustomFieldMapKeyEnum.STRING) {
+                    values.put(matrixValueColumns.get(i).getCode(), splitValues[i]);
+                    
+                } else {
+                    try {
+                        if (dataType == CustomFieldMapKeyEnum.LONG) {
+                            values.put(matrixValueColumns.get(i).getCode(), Long.parseLong(splitValues[i]));
+                        } else if (dataType == CustomFieldMapKeyEnum.DOUBLE) {
+                            values.put(matrixValueColumns.get(i).getCode(), Double.parseDouble(splitValues[i]));
+                        }
+                    } catch (Exception e) {
+                        // Was not a number - ignore
                     }
-                } catch (Exception e) {
-                    // Was not a number - ignore
                 }
             }
         }
