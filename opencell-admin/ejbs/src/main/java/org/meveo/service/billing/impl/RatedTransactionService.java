@@ -176,17 +176,22 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Convert Wallet operations to Rated transactions for a given billable entity up to a given date
+     * Convert Wallet operations to Rated transactions for a given entity up to a given date
      * 
-     * @param entityToInvoice Entity to invoice
-     * @param invoicingDate Invoicing date
-     * @throws BusinessException General business exception.
+     * @param entityToInvoice Entity for which to convert Wallet operations to Rated transactions
+     * @param uptoInvoicingDate Up to invoicing date. Convert Wallet operations which invoicingDate is null or less than a specified date
      */
-    public void createRatedTransaction(IBillableEntity entityToInvoice, Date invoicingDate) throws BusinessException {
-        List<WalletOperation> walletOps = walletOperationService.listToRate(entityToInvoice, invoicingDate);
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createRatedTransactions(IBillableEntity entityToInvoice, Date uptoInvoicingDate) {
+        List<WalletOperation> walletOps = walletOperationService.listToRate(entityToInvoice, uptoInvoicingDate);
+
+        EntityManager em = getEntityManager();
 
         for (WalletOperation walletOp : walletOps) {
-            createRatedTransaction(walletOp, false);
+            RatedTransaction ratedTransaction = new RatedTransaction(walletOp);
+            create(ratedTransaction);
+            em.createNamedQuery("WalletOperation.setStatusToTreatedWithRT").setParameter("rt", ratedTransaction).setParameter("id", walletOp.getId()).executeUpdate();
         }
     }
 
