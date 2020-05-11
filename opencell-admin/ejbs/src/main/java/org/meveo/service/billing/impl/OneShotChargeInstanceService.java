@@ -337,7 +337,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
     public void terminateOneShotChargeInstance(OneShotChargeInstance oneShotChargeInstance) throws BusinessException {
 
-        getEntityManager().createNamedQuery("WalletOperation.setStatusToCanceled").setParameter("chargeInstance", oneShotChargeInstance);
+        getEntityManager().createNamedQuery("WalletOperation.setStatusToCanceled").setParameter("chargeInstance", oneShotChargeInstance).setParameter("now", new Date());
         oneShotChargeInstance.setStatus(InstanceStatusEnum.CANCELED);
 
         update(oneShotChargeInstance);
