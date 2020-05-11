@@ -41,6 +41,7 @@
         showOnlyOnConsult - show field only in entity view mode
         doNotShowOnNew - show field NOT in new entity creation mode
         newLine - display field in a new line
+		autocomplete - use browser autocomplete 
         
      Additional attributes applicable to Text type fields
         size - a size attribute of inputText control
@@ -375,7 +376,7 @@
                 componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
                 labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" listType="${listType}"
                 showFields="${showFields}" dualListModel="${dualListModel}" listBean="${listBean}" listElements="${listElements}" deleteButton="${deleteButton}" showButtonAddNew="${showButtonAddNew}"
-                valueLabelField="${valueLabelField}" valueLabelField2="${valueLabelField2}" fieldGenericsType="${fieldInfo.fieldGenericsType}" newEntity="${newEntity}" edit="#{edit}" />
+                valueLabelField="${valueLabelField}" valueLabelField2="${valueLabelField2}" fieldGenericsType="${fieldInfo.fieldGenericsType}" newEntity="${newEntity}" edit="#{edit}" autocomplete="${autocomplete}"/>
         </c:if>
 
         <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Image}">
