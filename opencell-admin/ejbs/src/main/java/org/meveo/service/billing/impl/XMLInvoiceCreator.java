@@ -47,6 +47,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.InvoiceCategoryComparatorUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -1491,15 +1492,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             }
         }
 
-        Collections.sort(categoryInvoiceAgregates, new Comparator<CategoryInvoiceAgregate>() {
-            public int compare(CategoryInvoiceAgregate c0, CategoryInvoiceAgregate c1) {
-                if (c0.getInvoiceCategory() != null && c1.getInvoiceCategory() != null && c0.getInvoiceCategory().getSortIndex() != null
-                        && c1.getInvoiceCategory().getSortIndex() != null) {
-                    return c0.getInvoiceCategory().getSortIndex().compareTo(c1.getInvoiceCategory().getSortIndex());
-                }
-                return 0;
-            }
-        });
+        Collections.sort(categoryInvoiceAgregates, InvoiceCategoryComparatorUtils.getInvoiceCategoryComparator());
 
         for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
             
@@ -1537,15 +1530,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     category.appendChild(subCategories);
                     // List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates =
                     // userAccountService.listByInvoice(invoice);//categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
-                    Collections.sort(subCategoryInvoiceAgregates, new Comparator<SubCategoryInvoiceAgregate>() {
-                        public int compare(SubCategoryInvoiceAgregate c0, SubCategoryInvoiceAgregate c1) {
-                            if (c0.getInvoiceSubCategory() != null && c1.getInvoiceSubCategory() != null && c0.getInvoiceSubCategory().getSortIndex() != null
-                                    && c1.getInvoiceSubCategory().getSortIndex() != null) {
-                                return c0.getInvoiceSubCategory().getSortIndex().compareTo(c1.getInvoiceSubCategory().getSortIndex());
-                            }
-                            return 0;
-                        }
-                    });
+                    Collections.sort(subCategoryInvoiceAgregates, InvoiceCategoryComparatorUtils.getInvoiceSubCategoryComparator());
                     for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
                         CategoryInvoiceAgregate categoryInvoiceAgregate2 = subCatInvoiceAgregate.getCategoryInvoiceAgregate();
                         if (categoryInvoiceAgregate2 != null && categoryInvoiceAgregate != null && categoryInvoiceAgregate2.getId() != null
@@ -1582,14 +1567,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
                         subCategory.setAttribute("sortIndex", (invoiceSubCat.getSortIndex() != null) ? invoiceSubCat.getSortIndex() + "" : "");
 
-                        Collections.sort(ratedTransactions, new Comparator<RatedTransaction>() {
-                            public int compare(RatedTransaction r0, RatedTransaction r1) {
-                                if (r0 != null && r1 != null && r0.getSortIndex() != null && r1.getSortIndex() != null) {
-                                    return r0.getSortIndex().compareTo(r1.getSortIndex());
-                                }
-                                return 0;
-                            }
-                        });
+                        Collections.sort(ratedTransactions, InvoiceCategoryComparatorUtils.getRatedTransactionComparator());
 
                         for (RatedTransaction ratedTransaction : ratedTransactions) {
                             if (!(ratedTransaction.getWallet() != null && ratedTransaction.getWallet().getId().longValue() == wallet.getId()
@@ -1923,15 +1901,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             }
         }
 
-        Collections.sort(categoryInvoiceAgregates, new Comparator<CategoryInvoiceAgregate>() {
-            public int compare(CategoryInvoiceAgregate c0, CategoryInvoiceAgregate c1) {
-                if (c0.getInvoiceCategory() != null && c1.getInvoiceCategory() != null && c0.getInvoiceCategory().getSortIndex() != null
-                        && c1.getInvoiceCategory().getSortIndex() != null) {
-                    return c0.getInvoiceCategory().getSortIndex().compareTo(c1.getInvoiceCategory().getSortIndex());
-                }
-                return 0;
-            }
-        });
+        Collections.sort(categoryInvoiceAgregates, InvoiceCategoryComparatorUtils.getInvoiceCategoryComparator());
 
         for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
             InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
@@ -1958,15 +1928,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
             if (subCategoryInvoiceAgregates != null) {
 
-                Collections.sort(subCategoryInvoiceAgregates, new Comparator<SubCategoryInvoiceAgregate>() {
-                    public int compare(SubCategoryInvoiceAgregate c0, SubCategoryInvoiceAgregate c1) {
-                        if (c0.getInvoiceSubCategory() != null && c1.getInvoiceSubCategory() != null && c0.getInvoiceSubCategory().getSortIndex() != null
-                                && c1.getInvoiceSubCategory().getSortIndex() != null) {
-                            return c0.getInvoiceSubCategory().getSortIndex().compareTo(c1.getInvoiceSubCategory().getSortIndex());
-                        }
-                        return 0;
-                    }
-                });
+                Collections.sort(subCategoryInvoiceAgregates, InvoiceCategoryComparatorUtils.getInvoiceSubCategoryComparator());
                 for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
                     CategoryInvoiceAgregate categoryInvoiceAgregate2 = subCatInvoiceAgregate.getCategoryInvoiceAgregate();
                     if (categoryInvoiceAgregate2 != null && categoryInvoiceAgregate != null && categoryInvoiceAgregate2.getId() != null && categoryInvoiceAgregate.getId() != null
@@ -1980,15 +1942,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 }
             } else {
                 List<SubCategoryInvoiceAgregate> virtualSubCategoryInvoiceAgregates = new ArrayList(categoryInvoiceAgregate.getSubCategoryInvoiceAgregates());
-                Collections.sort(virtualSubCategoryInvoiceAgregates, new Comparator<SubCategoryInvoiceAgregate>() {
-                    public int compare(SubCategoryInvoiceAgregate c0, SubCategoryInvoiceAgregate c1) {
-                        if (c0.getInvoiceSubCategory() != null && c1.getInvoiceSubCategory() != null && c0.getInvoiceSubCategory().getSortIndex() != null
-                                && c1.getInvoiceSubCategory().getSortIndex() != null) {
-                            return c0.getInvoiceSubCategory().getSortIndex().compareTo(c1.getInvoiceSubCategory().getSortIndex());
-                        }
-                        return 0;
-                    }
-                });
+                Collections.sort(virtualSubCategoryInvoiceAgregates, InvoiceCategoryComparatorUtils.getInvoiceSubCategoryComparator());
                 for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : virtualSubCategoryInvoiceAgregates) {
                     headerCat.getSubCategoryInvoiceAgregates().add(subCatInvoiceAgregate);
                     headerCategories.put(invoiceCategory.getCode(), headerCat);
