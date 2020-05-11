@@ -1,6 +1,7 @@
 package org.meveo.admin.job;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
@@ -35,64 +36,83 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
-        if (nbRuns == -1) {
-            nbRuns = (long) Runtime.getRuntime().availableProcessors();
-        }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+        Map<String, Set<String>> allManagedEntities = getAPIv2ManagedClassesByPackages();
+        Map<String, Set<String>> permissionsByEntities = getAllAPIv2Permissions();
 
-        Set<String> allEntities = getAPIv2ManagedClasses();
-        Map<String, List<String>> permissionsByEntities = getAllAPIv2Permissions();
+        allManagedEntities.forEach((subPackage, subPackageEntities) -> {
 
-        for (String entityName : allEntities) {
-            String entitySimpleName = entityName.substring(entityName.indexOf(".") + 1);
-            List<String> entityPermissionList = permissionsByEntities.get(entitySimpleName);
+            Role thematicRole = getOrCreateThematicRole(subPackage);
 
-            Role thematicRole = getOrCreateThematicRole(entityName);
+            for (String entityFullName : subPackageEntities) {
+                String entityName = entityFullName.substring(entityFullName.indexOf(".") + 1);
 
-            createPermissionIfDosentExist("all", entityName, entityPermissionList);
-            createPermissionIfDosentExist("list", entityName, entityPermissionList);
-            createPermissionIfDosentExist("create", entityName, entityPermissionList);
-            createPermissionIfDosentExist("update", entityName, entityPermissionList);
-            createPermissionIfDosentExist("remove", entityName, entityPermissionList);
-        }
+                Set<String> entityOperationList = null;
+                if (permissionsByEntities != null) entityOperationList = permissionsByEntities.get(entityName);
 
-
-
-
-
-
+                createPermissionForOperationIfDoseNotExist("all", entityName, thematicRole, entityOperationList);
+                createPermissionForOperationIfDoseNotExist("list", entityName, thematicRole, entityOperationList);
+                createPermissionForOperationIfDoseNotExist("create", entityName, thematicRole, entityOperationList);
+                createPermissionForOperationIfDoseNotExist("update", entityName, thematicRole, entityOperationList);
+                createPermissionForOperationIfDoseNotExist("remove", entityName, thematicRole, entityOperationList);
+            }
+        });
     }
 
-    private void createPermissionIfDosentExist(String operation, String entityName, List<String> entityPermissionList) {
+    private void createPermissionForOperationIfDoseNotExist(String operation, String entityName, Role thematicRole, Set<String> entityOperationList) {
         // If the permission for the given operation and entity
-        if (CollectionUtils.isEmpty(entityPermissionList) || !entityPermissionList.contains(operation)) {
+        if (CollectionUtils.isEmpty(entityOperationList) || !entityOperationList.contains(operation)) {
             // Create permission
-            String entitySimpleName = entityName.substring(entityName.lastIndexOf(".") + 1);
-            String permission = entitySimpleName + "." + operation;
-
+            String permission = entityName + "." + operation;
             Permission permissionEntity = new Permission();
             permissionEntity.setName(permission);
             permissionEntity.setPermission(permission);
+
             permissionService.create(permissionEntity);
 
+            //Add it to thematic role
+            thematicRole.getAllPermissions().add(permissionEntity);
+            roleService.update(thematicRole);
         }
     }
 
-    private Role getOrCreateThematicRole(String entityName) {
-        String entityPackage = entityName.substring(0, entityName.lastIndexOf("."));
-        //String thematicRole =
-        return null;
+    private Role getOrCreateThematicRole(String subPackage) {
+        // Create thematicRole if doesn't exist
+        Role thematicRole = roleService.findByName(subPackage);
+
+        if (thematicRole == null) {
+            thematicRole = new Role();
+            thematicRole.setName(subPackage);
+            thematicRole.setDescription(subPackage);
+            roleService.create(thematicRole);
+        }
+        return thematicRole;
     }
 
-    private Set<String> getAPIv2ManagedClasses() {
+    private Map<String, Set<String>> getAPIv2ManagedClassesByPackages() {
+        Map<String, Set<String>> entitiesByPackages = new HashMap<>();
         Set<Class<?>> classesAnnotatedWith = ReflectionUtils.getClassesAnnotatedWith(Entity.class);
-        return classesAnnotatedWith.stream().map(Class::getName).map(String::toLowerCase)
+        Set<String> managedEntities = classesAnnotatedWith.stream().map(Class::getName).map(String::toLowerCase)
                 .collect(Collectors.toSet());
+
+        for (String entityName : managedEntities) {
+            // Get first sub package name under model package of the entity.
+            // If the entity is directly under model package then return COMMON
+            int subPackageStart = StringUtils.ordinalIndexOf(entityName, ".", 3);
+            int subPackageEnd = StringUtils.ordinalIndexOf(entityName, ".", 4);
+            String subPackageName;
+            if (subPackageEnd != -1) {
+                subPackageName = "APIv2_" + entityName.substring(subPackageStart + 1, subPackageEnd).toUpperCase();
+            } else {
+                subPackageName = "APIv2_COMMON";
+            }
+
+            entitiesByPackages.computeIfAbsent(subPackageName, key -> new HashSet<>()).add(entityName);
+        }
+        return entitiesByPackages;
     }
 
-    private Map<String, List<String>> getAllAPIv2Permissions() {
-        Role apiv2SuperRole = roleService.findByName("APIV2_FULL_ACCESS");
+    private Map<String, Set<String>> getAllAPIv2Permissions() {
+        Role apiv2SuperRole = roleService.findByName(APIV2_FULL_ACCESS);
         // create role if not exists
         if (apiv2SuperRole == null) {
             apiv2SuperRole = new Role();
@@ -106,20 +126,13 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
         if (CollectionUtils.isEmpty(apiv2AllPermissions)) {
             return null;
         }
-        // Map permissions by entities names
-        Map<String, String> permissionsByEntities = apiv2AllPermissions.stream()
+        // Split each permission to entity name and operation,
+        // then group operations by entity name
+        return apiv2AllPermissions.stream()
                 .map(Permission::getPermission).map(permission -> permission.split("\\."))
-                .collect(Collectors.toMap(permissonParts -> permissonParts[0], permissonParts -> permissonParts[1]));
+                .collect(Collectors.groupingBy(permissionParts -> permissionParts[0],
+                        Collectors.mapping(permissionParts -> permissionParts[1], Collectors.toSet())));
 
-        // Group permissions into lists by entities names
-        Map<String, List<String>> permissionsListByEntities = new HashMap<>();
-        for (Map.Entry<String, String> permissionEntry : permissionsByEntities.entrySet()) {
-            permissionsListByEntities
-                    .computeIfAbsent(permissionEntry.getKey(), key -> new ArrayList<>())
-                    .add(permissionEntry.getValue());
-        }
-        return permissionsListByEntities;
+
     }
-
-
 }
