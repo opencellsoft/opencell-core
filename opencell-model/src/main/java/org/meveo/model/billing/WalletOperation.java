@@ -103,7 +103,7 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "WalletOperation.setStatusToCanceled", query = "UPDATE WalletOperation o SET o.status='CANCELED', o.updated = :now where o.status<>'TREATED' and o.chargeInstance=:chargeInstance"),
 
-        @NamedQuery(name = "WalletOperation.setStatusToTreatedWithRT", query = "UPDATE WalletOperation o SET o.status='TREATED', o.ratedTransaction=:rt where o.id=:id"), 
+        @NamedQuery(name = "WalletOperation.setStatusToTreatedWithRT", query = "UPDATE WalletOperation o SET o.status='TREATED', o.updated = :now, o.ratedTransaction=:rt where o.id=:id"), 
         
         @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE o.chargeInstance=:chargeInstance AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"),
 

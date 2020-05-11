@@ -970,11 +970,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     em.flush(); // Need to flush, so RTs can be updated in mass
 
+                    Date now = new Date();
                     for (Object[] aggregateAndRtIds : rtMassUpdates) {
                         SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRtIds[0];
                         List<Long> rtIds = (List<Long>) aggregateAndRtIds[1];
                         em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", subCategoryAggregate)
-                            .setParameter("ids", rtIds).executeUpdate();
+                            .setParameter("now", now).setParameter("ids", rtIds).executeUpdate();
                     }
 
                     for (Object[] aggregateAndRts : rtUpdates) {
@@ -982,7 +983,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         List<RatedTransaction> rts = (List<RatedTransaction>) aggregateAndRts[1];
                         for (RatedTransaction rt : rts) {
                             em.createNamedQuery("RatedTransaction.updateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", subCategoryAggregate)
-                                .setParameter("id", rt.getId()).setParameter("unitAmountWithoutTax", rt.getUnitAmountWithoutTax()).setParameter("unitAmountWithTax", rt.getUnitAmountWithTax())
+                                .setParameter("now", now).setParameter("id", rt.getId()).setParameter("unitAmountWithoutTax", rt.getUnitAmountWithoutTax()).setParameter("unitAmountWithTax", rt.getUnitAmountWithTax())
                                 .setParameter("unitAmountTax", rt.getUnitAmountTax()).setParameter("amountWithoutTax", rt.getAmountWithoutTax()).setParameter("amountWithTax", rt.getAmountWithTax())
                                 .setParameter("amountTax", rt.getAmountTax()).setParameter("tax", rt.getTax()).setParameter("taxPercent", rt.getTaxPercent()).executeUpdate();
                         }

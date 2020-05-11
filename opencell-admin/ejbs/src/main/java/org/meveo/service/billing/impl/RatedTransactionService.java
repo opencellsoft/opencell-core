@@ -188,10 +188,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         EntityManager em = getEntityManager();
 
+        Date now = new Date();
         for (WalletOperation walletOp : walletOps) {
             RatedTransaction ratedTransaction = new RatedTransaction(walletOp);
             create(ratedTransaction);
-            em.createNamedQuery("WalletOperation.setStatusToTreatedWithRT").setParameter("rt", ratedTransaction).setParameter("id", walletOp.getId()).executeUpdate();
+            em.createNamedQuery("WalletOperation.setStatusToTreatedWithRT").setParameter("rt", ratedTransaction).setParameter("now", now).setParameter("id", walletOp.getId()).executeUpdate();
         }
     }
 
@@ -1809,7 +1810,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param invoice Invoice
      */
     public void uninvoiceRTs(Invoice invoice) {
-        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoice").setParameter("invoice", invoice).executeUpdate();
+        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoice").setParameter("invoice", invoice).setParameter("now", new Date()).executeUpdate();
     }
 
     /**
@@ -1818,7 +1819,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param billingRun Billing run
      */
     public void uninvoiceRTs(BillingRun billingRun) {
-        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByBR").setParameter("billingRun", billingRun).executeUpdate();
+        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByBR").setParameter("billingRun", billingRun).setParameter("now", new Date()).executeUpdate();
     }
 
     /**
@@ -1946,7 +1947,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param invoicesIds invoices Ids
      */
     public void uninvoiceRTs(Collection<Long> invoicesIds) {
-        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoiceIds").setParameter("invoiceIds", invoicesIds).executeUpdate();
+        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoiceIds").setParameter("now", new Date()).setParameter("invoiceIds", invoicesIds).executeUpdate();
 
     }
 
