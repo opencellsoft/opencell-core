@@ -46,7 +46,7 @@
                             <h:outputText style="text-align:right;" value="#{listElement}" converter="#{getConverter.forType(listElement)}" />
                         </c:if>
                         <c:if test="#{edit}">
-                            <p:inputText value="#{listElement}" size="50" maxlength="100" valueChangeListener="#{backingBean.updateItemInCollection}">
+                            <p:inputText autocomplete="#{autocomplete}" value="#{listElement}" size="50" maxlength="100" valueChangeListener="#{backingBean.updateItemInCollection}">
                                 <f:attribute name="values" value="#{fieldItem}" />
                                 <f:attribute name="itemIndex" value="#{rowIndex}" />
                             </p:inputText>

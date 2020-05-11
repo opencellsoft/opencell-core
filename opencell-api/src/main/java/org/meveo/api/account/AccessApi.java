@@ -140,16 +140,7 @@ public class AccessApi extends BaseApi {
 
     }
 
-    @Deprecated
-    public AccessDto find(String accessCode, String subscriptionCode) throws MeveoApiException {
-        return find(accessCode, subscriptionCode, new Date(), new Date());
-    }
-
-    public AccessDto find(String accessCode, String subscriptionCode, Date usageDate) throws MeveoApiException {
-        return find(accessCode, subscriptionCode, usageDate, usageDate);
-    }
-
-    public AccessDto find(String accessCode, String subscriptionCode, Date startDate, Date endDate) throws MeveoApiException {
+    public AccessDto find(String accessCode, String subscriptionCode, Date startDate, Date endDate, Date usageDate) throws MeveoApiException {
 
         if (StringUtils.isBlank(accessCode)) {
             missingParameters.add("accessCode");
@@ -157,11 +148,16 @@ public class AccessApi extends BaseApi {
         if (StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
         }
-        if (startDate == null) {
-            missingParameters.add("startDate");
-        }
-        if (endDate == null) {
-            missingParameters.add("endDate");
+        if (StringUtils.isBlank(startDate) && StringUtils.isBlank(endDate)) {
+        	startDate = usageDate;
+        	endDate = usageDate;
+        } else {
+	        if (StringUtils.isBlank(startDate)) {
+	            missingParameters.add("startDate");
+	        }
+	    	if (StringUtils.isBlank(endDate)) {
+	            missingParameters.add("endDate");
+	        }
         }
 
         handleMissingParameters();
@@ -263,7 +259,7 @@ public class AccessApi extends BaseApi {
     public void createOrUpdatePartial(AccessDto accessDto) throws MeveoApiException, BusinessException {
         AccessDto existedAccessDto = null;
         try {
-            existedAccessDto = find(accessDto.getCode(), accessDto.getSubscription(), accessDto.getStartDate(), accessDto.getEndDate());
+            existedAccessDto = find(accessDto.getCode(), accessDto.getSubscription(), accessDto.getStartDate(), accessDto.getEndDate(), null);
         } catch (Exception e) {
             existedAccessDto = null;
         }

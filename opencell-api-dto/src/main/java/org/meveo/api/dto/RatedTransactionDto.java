@@ -218,8 +218,11 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
         this.setRawAmountWithoutTax(ratedTransaction.getRawAmountWithoutTax());
         this.setRawAmountWithTax(ratedTransaction.getRawAmountWithTax());
         taxClassCode = ratedTransaction.getTaxClass() != null ? ratedTransaction.getTaxClass().getCode() : null;
-        this.inputUnitOfMeasure = ratedTransaction.getInputUnitOfMeasure()!=null?ratedTransaction.getInputUnitOfMeasure().getCode():null;
-        this.ratingUnitOfMeasure = ratedTransaction.getRatingUnitOfMeasure()!=null?ratedTransaction.getRatingUnitOfMeasure().getCode():null;
+        this.inputUnitOfMeasure = ratedTransaction.getInputUnitOfMeasure() != null ? ratedTransaction.getInputUnitOfMeasure().getCode() : null;
+        this.ratingUnitOfMeasure = ratedTransaction.getRatingUnitOfMeasure() != null ? ratedTransaction.getRatingUnitOfMeasure().getCode() : null;
+        if (ratedTransaction.getSortIndex() != null) {
+            this.sortIndex = ratedTransaction.getSortIndex();
+        }
     }
 
     /**

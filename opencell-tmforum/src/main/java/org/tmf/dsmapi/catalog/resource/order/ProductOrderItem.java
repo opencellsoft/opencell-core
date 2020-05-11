@@ -31,8 +31,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
-import org.tmf.dsmapi.quote.ProductQuoteItem;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -50,6 +50,7 @@ public class ProductOrderItem implements Serializable {
     private List<BillingAccount> billingAccount;
     private ProductOffering productOffering;
     private Product product;
+    private CustomFieldsDto customFields;
     
     private static JAXBContext jaxbCxt;
     
@@ -169,4 +170,18 @@ public class ProductOrderItem implements Serializable {
             throw new BusinessException(e);
         }
     }
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
 }

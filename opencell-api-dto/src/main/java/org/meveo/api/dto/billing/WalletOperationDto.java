@@ -248,7 +248,9 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         subscriptionDate = walletOperation.getSubscriptionDate();
         walletTemplate = walletOperation.getWallet().getCode();
         userAccount = walletOperation.getWallet().getUserAccount().getCode();
-        offerCode = walletOperation.getOfferCode() != null ? walletOperation.getOfferCode() : walletOperation.getOfferTemplate() != null ? walletOperation.getOfferTemplate().getCode() : null;
+        offerCode = walletOperation.getOfferCode() != null ?
+                walletOperation.getOfferCode() :
+                walletOperation.getOfferTemplate() != null ? walletOperation.getOfferTemplate().getCode() : null;
         chargeInstance = walletOperation.getChargeInstance().getCode();
         chargeInstanceId = walletOperation.getChargeInstance().getId();
         rawAmountWithoutTax = walletOperation.getRawAmountWithoutTax();
@@ -256,6 +258,9 @@ public class WalletOperationDto extends BaseEntityDto implements IEntityDto {
         updated = walletOperation.getUpdated();
         this.customFields = customFields;
         taxClassCode = walletOperation.getTaxClass() != null ? walletOperation.getTaxClass().getCode() : null;
+        if (walletOperation.getSortIndex() != null) {
+            sortIndex = walletOperation.getSortIndex();
+        }
     }
 
     /**
