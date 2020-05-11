@@ -129,7 +129,7 @@ public interface ServiceTemplateRs extends IBaseRs {
      * @param pagingAndFiltering PagingAndFiltering config.
      * @return Return serviceTemplate list
      */
-    @GET
+    @POST
     @Path("/list")
     GetListServiceTemplateResponseDto list(PagingAndFiltering pagingAndFiltering);
 }
