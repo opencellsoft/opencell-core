@@ -273,7 +273,6 @@ public class DefaultObserver {
 
     private void fieldUpdated(BaseEntity entity, AuditableFieldEvent field, NotificationEventTypeEnum notificationType) throws BusinessException {
         if (entity != null) {
-            log.debug("observe a dirty status of entity {} with id {}", entity.getClass().getName(), entity.getId());
             checkEvent(notificationType, field);
         }
     }

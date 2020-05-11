@@ -37,7 +37,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 
-// TODO: Auto-generated Javadoc
 /**
  * Ventilation of payment to customerAccount.
  *

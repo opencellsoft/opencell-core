@@ -243,6 +243,8 @@ public class BillingAccountDto extends AccountDto {
         setMailingType(e.getMailingType() != null ? e.getMailingType().getLabel() : null);
         setEmailTemplate(e.getEmailTemplate() != null ? e.getEmailTemplate().getCode() : null);
         setCcedEmails(e.getCcedEmails());
+        setRegistrationNo(e.getRegistrationNo());
+        setVatNo(e.getVatNo());
 
         if (e.getTaxCategory() != null) {
             taxCategoryCode = e.getTaxCategory().getCode();

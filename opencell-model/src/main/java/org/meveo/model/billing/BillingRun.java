@@ -196,14 +196,14 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     private BillingProcessTypesEnum processType;
 
     /**
-     * Include Rated transactions between the dates - from date
+     * Include Rated transactions from Billing Accounts which next invoicing date is between the dates - from date
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_date")
     private Date startDate;
 
     /**
-     * Include Rated transactions between the dates - to date
+     * Include Rated transactions from Billing Accounts which next invoicing date is between the dates - to date
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_date")

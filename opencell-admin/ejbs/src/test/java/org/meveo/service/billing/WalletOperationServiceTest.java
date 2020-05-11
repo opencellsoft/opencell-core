@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.CalendarYearly;
@@ -65,6 +66,7 @@ public class WalletOperationServiceTest {
             public RatingResult answer(InvocationOnMock invocation) throws Throwable {
 
                 WalletOperation wo = new WalletOperation();
+                wo.setChargeInstance((ChargeInstance) invocation.getArguments()[0]);
                 wo.setOperationDate((Date) invocation.getArguments()[1]);
                 wo.setQuantity((BigDecimal) invocation.getArguments()[2]);
                 wo.setStartDate((Date) invocation.getArguments()[5]);
@@ -415,6 +417,112 @@ public class WalletOperationServiceTest {
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 5, 1, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
+    }
+
+    // TEST CALENDAR CHANGE
+
+    // Test that calendar change in mid period
+    @Test
+    public void test_applyReccuringCharge_cycleForward_existingCharge_calendarChange() {
+
+        RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 4, 1, 0, 0, 0), DateUtils.newDate(2018, 4, 1, 0, 0, 0), true, false);
+
+        CalendarYearly newCalendar = new CalendarYearly();
+        List<DayInYear> days = new ArrayList<DayInYear>();
+
+        for (int i = 1; i <= 12; i = i + 2) {
+            DayInYear day = new DayInYear();
+            day.setMonth(MonthEnum.getValue(i));
+            day.setDay(1);
+            days.add(day);
+        }
+        newCalendar.setDays(days);
+
+        when(ratingService.rateChargeAndTriggerEDRs(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenAnswer(new Answer<RatingResult>() {
+            public RatingResult answer(InvocationOnMock invocation) throws Throwable {
+
+                WalletOperation wo = new WalletOperation();
+                wo.setChargeInstance((ChargeInstance) invocation.getArguments()[0]);
+                wo.setOperationDate((Date) invocation.getArguments()[1]);
+                wo.setQuantity((BigDecimal) invocation.getArguments()[2]);
+                wo.setStartDate((Date) invocation.getArguments()[5]);
+                wo.setEndDate(DateUtils.parseDateWithPattern("2019-07-01", DateUtils.DATE_PATTERN));
+                wo.setFullRatingPeriod(getPeriod("2019-05-01", "2019-07-01"));
+
+                ((RecurringChargeInstance) wo.getChargeInstance()).setCalendar(newCalendar);
+
+                RatingResult ratingResult = new RatingResult();
+                ratingResult.setWalletOperation(wo);
+
+                return ratingResult;
+            }
+        });
+
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, false, null, null, false);
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
+
+        assertThat(wos.size()).isEqualTo(1);
+
+        assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
+        assertThat(wos.get(0).getFullRatingPeriod()).isEqualTo(getPeriod("2019-05-01", "2019-07-01"));
+    }
+
+    // Test that calendar change in mid period
+    @Test
+    public void test_applyReccuringCharge_cycleEnd_existingCharge_calendarChange() {
+
+        RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 4, 1, 0, 0, 0), DateUtils.newDate(2018, 4, 1, 0, 0, 0), false, false);
+
+        CalendarYearly newCalendar = new CalendarYearly();
+        List<DayInYear> days = new ArrayList<DayInYear>();
+
+        for (int i = 1; i <= 12; i = i + 2) {
+            DayInYear day = new DayInYear();
+            day.setMonth(MonthEnum.getValue(i));
+            day.setDay(1);
+            days.add(day);
+        }
+        newCalendar.setDays(days);
+
+        when(ratingService.rateChargeAndTriggerEDRs(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenAnswer(new Answer<RatingResult>() {
+            public RatingResult answer(InvocationOnMock invocation) throws Throwable {
+
+                WalletOperation wo = new WalletOperation();
+                wo.setChargeInstance((ChargeInstance) invocation.getArguments()[0]);
+                wo.setOperationDate(DateUtils.parseDateWithPattern("2019-07-01", DateUtils.DATE_PATTERN));
+                wo.setQuantity((BigDecimal) invocation.getArguments()[2]);
+                wo.setStartDate((Date) invocation.getArguments()[5]);
+                wo.setEndDate(DateUtils.parseDateWithPattern("2019-07-01", DateUtils.DATE_PATTERN));
+                wo.setFullRatingPeriod(getPeriod("2019-05-01", "2019-07-01"));
+
+                ((RecurringChargeInstance) wo.getChargeInstance()).setCalendar(newCalendar);
+
+                RatingResult ratingResult = new RatingResult();
+                ratingResult.setWalletOperation(wo);
+
+                return ratingResult;
+            }
+        });
+
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.SUBSCRIPTION, false, false, null, null, false);
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 8, 1, 0, 0, 0));
+
+        assertThat(wos.size()).isEqualTo(1);
+
+        assertThat(wos.get(0).getQuantity().doubleValue()).isEqualTo(100d);
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
+        assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 4, 1, 0, 0, 0));
+        assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 6, 1, 0, 0, 0));
+        assertThat(wos.get(0).getFullRatingPeriod()).isEqualTo(getPeriod("2019-05-01", "2019-07-01"));
     }
 
     // TEST TERMINATION OF RECURRING CHARGES
@@ -869,4 +977,7 @@ public class WalletOperationServiceTest {
         return chargeInstance;
     }
 
+    private DatePeriod getPeriod(String date1, String date2) {
+        return new DatePeriod(date1 != null ? DateUtils.parseDateWithPattern(date1, DateUtils.DATE_PATTERN) : null, date2 != null ? DateUtils.parseDateWithPattern(date2, DateUtils.DATE_PATTERN) : null);
+    }
 }
