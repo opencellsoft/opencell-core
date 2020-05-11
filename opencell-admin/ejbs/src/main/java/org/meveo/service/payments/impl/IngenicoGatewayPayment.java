@@ -72,7 +72,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCardD
  *
  * @author anasseh
  * @author Mounir Bahije
- * @lastModifiedVersion 5.5.2
+ * @lastModifiedVersion 9.3
  */
 @PaymentGatewayClass
 public class IngenicoGatewayPayment implements GatewayPaymentInterface {
@@ -235,7 +235,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             CreatePaymentResponse response = getClient().merchant(paymentGateway.getMarchandId()).payments().create(body);
             
             if (response != null) {
-            	log.info("RESPONSE:"+marshaller.marshal(response));
+            	log.info("doPayment RESPONSE:"+marshaller.marshal(response));
                 PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
                 doPaymentResponseDto.setPaymentID(response.getPayment().getId());
                 doPaymentResponseDto.setPaymentStatus(mappingStaus(response.getPayment().getStatus()));
@@ -251,7 +251,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
                         List<APIError> errors = statusOutput.getErrors();
                         if (CollectionUtils.isNotEmpty(errors)) {
                             doPaymentResponseDto.setErrorMessage(errors.toString());
-                            doPaymentResponseDto.setErrorCode(errors.get(0).getCode()); 
+                            doPaymentResponseDto.setErrorCode(errors.get(0).getId()); 
                         }
                     }
                 }
@@ -496,10 +496,10 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			body.setReferences(references);
 			//body.setCustomer(customer);	
 			getClient();
-			log.info("REQUEST:"+marshaller.marshal(body));
+			log.info("doRefundToken REQUEST:"+marshaller.marshal(body));
 			PayoutResponse response = client.merchant(paymentGateway.getMarchandId()).payouts().create(body);			
 			if (response != null) {
-				log.info("RESPONSE:"+marshaller.marshal(response));
+				log.info("doRefundToken RESPONSE:"+marshaller.marshal(response));
 				PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
 				doPaymentResponseDto.setPaymentID(response.getId());
 				doPaymentResponseDto.setPaymentStatus(mappingStaus(response.getStatus()));
@@ -512,7 +512,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 					List<APIError> errors = statusOutput.getErrors();
 					if (CollectionUtils.isNotEmpty(errors)) {
 						doPaymentResponseDto.setErrorMessage(errors.toString());
-						doPaymentResponseDto.setErrorCode(errors.get(0).getCode());
+						doPaymentResponseDto.setErrorCode(errors.get(0).getId());
 					}
 				}
 				return doPaymentResponseDto;
