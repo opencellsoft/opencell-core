@@ -111,41 +111,45 @@ public class AggregatedWalletOperation {
 	 * Extra Parameter. This parameter is only use when charging a usage.
 	 */
 	private String parameterExtra;
-	
+
 	/**
 	 * The order number.
 	 */
 	private String orderNumber;
-	
+
 	/**
 	 * Tax class
 	 */
 	private TaxClass taxClass;
-	
-    /**
-     * Unit amount with tax
-     */
-    private BigDecimal unitAmountWithTax = BigDecimal.ZERO;
-    /**
-     * Unit amount without tax
-     */
-    private BigDecimal unitAmountWithoutTax = BigDecimal.ZERO;
-    /**
-     * Unit amount tax
-     */
-    private BigDecimal unitAmountTax = BigDecimal.ZERO;
+
+	/**
+	 * Unit amount with tax
+	 */
+	private BigDecimal unitAmountWithTax = BigDecimal.ZERO;
+	/**
+	 * Unit amount without tax
+	 */
+	private BigDecimal unitAmountWithoutTax = BigDecimal.ZERO;
+	/**
+	 * Unit amount tax
+	 */
+	private BigDecimal unitAmountTax = BigDecimal.ZERO;
+	/**
+	 * Sorting index
+	 */
+	private Integer sortIndex;
 
 	/**
 	 * List of wallet operations.
 	 */
 	private List<Long> walletOperationsIds;
 
-	public AggregatedWalletOperation(String walletOpsIds, Long sellerId, Integer year, Integer month, Integer day, Tax tax, 
-			InvoiceSubCategory invoiceSubCategory, Object id, BigDecimal amountWithTax, BigDecimal amountWithoutTax, BigDecimal amountTax,
-			TaxClass taxClass, BigDecimal quantity, BigDecimal unitAmountWithoutTax, String orderNumber, String parameter1, String parameter2, String parameter3, String parameterExtra) {
+	public AggregatedWalletOperation(String walletOpsIds, Long sellerId, Integer year, Integer month, Integer day, Tax tax, InvoiceSubCategory invoiceSubCategory, Object id,
+			BigDecimal amountWithTax, BigDecimal amountWithoutTax, BigDecimal amountTax, TaxClass taxClass, BigDecimal quantity, BigDecimal unitAmountWithoutTax,
+			String orderNumber, String parameter1, String parameter2, String parameter3, String parameterExtra, Integer sortIndex) {
 		String[] stringIds = walletOpsIds.split(",");
-		List<Long> ids = Arrays.asList(stringIds).stream().map(x-> new Long(x)).collect(Collectors.toList());
-		this.walletOperationsIds=ids;
+		List<Long> ids = Arrays.asList(stringIds).stream().map(x -> new Long(x)).collect(Collectors.toList());
+		this.walletOperationsIds = ids;
 		this.sellerId = sellerId;
 		this.year = year;
 		this.month = month;
@@ -157,9 +161,13 @@ public class AggregatedWalletOperation {
 		this.amountWithoutTax = amountWithoutTax;
 		this.amountTax = amountTax;
 		MathContext mc = new MathContext(12, RoundingMode.HALF_UP);
-		this.unitAmountWithoutTax = (amountWithoutTax.compareTo(BigDecimal.ZERO)!=0 && quantity.compareTo( BigDecimal.ZERO)!=0) ? (amountWithoutTax.divide(quantity, mc)) : BigDecimal.ZERO;
-		this.unitAmountWithTax = (amountWithTax.compareTo(BigDecimal.ZERO)!=0 && quantity.compareTo( BigDecimal.ZERO)!=0) ? (amountWithTax.divide(quantity, mc)) : BigDecimal.ZERO;
-        this.unitAmountTax = this.unitAmountWithTax.subtract(this.unitAmountWithoutTax);
+		this.unitAmountWithoutTax = (amountWithoutTax.compareTo(BigDecimal.ZERO) != 0 && quantity.compareTo(BigDecimal.ZERO) != 0) ?
+				(amountWithoutTax.divide(quantity, mc)) :
+				BigDecimal.ZERO;
+		this.unitAmountWithTax = (amountWithTax.compareTo(BigDecimal.ZERO) != 0 && quantity.compareTo(BigDecimal.ZERO) != 0) ?
+				(amountWithTax.divide(quantity, mc)) :
+				BigDecimal.ZERO;
+		this.unitAmountTax = this.unitAmountWithTax.subtract(this.unitAmountWithoutTax);
 		this.quantity = quantity;
 		this.taxClass = taxClass;
 		this.orderNumber = orderNumber;
@@ -167,6 +175,7 @@ public class AggregatedWalletOperation {
 		this.parameter2 = parameter2;
 		this.parameter3 = parameter3;
 		this.parameterExtra = parameterExtra;
+		this.sortIndex = sortIndex;
 	}
 
 	public AggregatedWalletOperation() {
@@ -387,4 +396,17 @@ public class AggregatedWalletOperation {
 		this.unitAmountTax = unitAmountTax;
 	}
 
+	/**
+	 * @return Sorting index
+	 */
+	public Integer getSortIndex() {
+		return sortIndex;
+	}
+
+	/**
+	 * @param sortIndex The sorting index
+	 */
+	public void setSortIndex(Integer sortIndex) {
+		this.sortIndex = sortIndex;
+	}
 }

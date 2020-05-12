@@ -60,6 +60,7 @@
                         dualListModel="#{productChargeTemplateBean.edrTemplatesDM}" newLine="true" />
 
                     <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
+                    <hftl:formField label="#{messages['chargeTemplate.sortIndexEl']}" field="sortIndexEl" textArea="true" rows="1" maxlength="2000" componentWidth="25"/>
                 </p:tab>
 
                 <p:tab title="#{messages['pricePlanMatrix.panel']}" rendered="#{chargeTemplateBean.objectId!=null}">

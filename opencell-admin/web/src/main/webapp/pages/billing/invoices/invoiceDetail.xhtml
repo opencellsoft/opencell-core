@@ -192,17 +192,20 @@
 																<p:column headerText="#{messages['ratedTransaction.startDate']}">
 																	<h:outputText value="#{rated.startDate}">
 																		<f:convertDateTime pattern="#{datePattern}" />
-																	</h:outputText>
-																</p:column>
-																<p:column headerText="#{messages['ratedTransaction.endDate']}">
-																	<h:outputText value="#{rated.endDate}">
-																		<f:convertDateTime pattern="#{datePattern}" />
-																	</h:outputText>
-																</p:column>
-																<p:column headerText="#{messages['order.number']}">
-																	<h:outputText value="#{rated.orderNumber}" />
-																</p:column>
-															</p:dataTable>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                <p:column headerText="#{messages['ratedTransaction.endDate']}">
+                                                                    <h:outputText value="#{rated.endDate}">
+                                                                        <f:convertDateTime pattern="#{datePattern}"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                <p:column headerText="#{messages['order.number']}">
+                                                                    <h:outputText value="#{rated.orderNumber}"/>
+                                                                </p:column>
+                                                                <p:column headerText="#{messages['order.number']}">
+                                                                    <h:outputText value="#{rated.sortIndex}"/>
+                                                                </p:column>
+                                                            </p:dataTable>
 													</p:tab>
 		                        				</p:accordionPanel>
 		                        			</p:column>

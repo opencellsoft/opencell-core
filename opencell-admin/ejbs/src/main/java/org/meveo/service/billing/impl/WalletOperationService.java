@@ -194,7 +194,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     /**
      * Determine recurring period start date
-     * 
+     *
      * @param chargeInstance Charge instance
      * @param date Date to calculate period for
      * @return Recurring period start date
@@ -213,7 +213,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     /**
      * Determine recurring period end date
-     * 
+     *
      * @param chargeInstance Charge instance
      * @param date Date to calculate period for
      * @return Recurring period end date
@@ -298,7 +298,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * <li>Apply charge that is applied at the end of calendar period - for charge instance with appliedInAdvance = false</li>
      * <li>Apply the recurring charge in advance of calendar period - for charge instance with appliedInAdvance = true</li>
      * </ul>
-     * 
+     *
      * <b>Apply charge that is applied at the end of calendar period</b> applyInAdvance = false:<br>
      * <br>
      * Will create a WalletOperation with wo.operationDate = chargeInstance.nextChargeDate, wo.startDate = chargeInstance.chargeDate and
@@ -314,7 +314,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * ---<br>
      * It will also update chargeInstance.chargeDate = chargeInstance.nextChargeDate and chargeInstance.nextChargeDate = nextCalendarDate(chargeInstance.nextChargeDate)
      * 
-     * 
+     *
      * @param chargeInstance Charge instance
      * @param chargeMode Charge application mode
      * @param forSchedule Is this a scheduled charge
@@ -1052,7 +1052,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     dto.getUnitAmountTax(), dto.getQuantity(), dto.getAmountWithoutTax(), dto.getAmountWithTax(), dto.getAmountTax(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(),
                     dto.getParameterExtra(), dto.getStartDate(), dto.getEndDate(), dto.getSubscriptionDate(), offer, seller, null, dto.getRatingUnitDescription(), null, null, null, null, dto.getStatus());
             }
-
+            Integer sortIndex = RatingService.getSortIndex(wo);
+            wo.setSortIndex(sortIndex);
             create(wo);
         }
     }

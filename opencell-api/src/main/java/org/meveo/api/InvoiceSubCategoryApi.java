@@ -113,7 +113,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
             }
             invoiceSubCategory.setAccountingCode(accountingCode);
         }
-
+        invoiceSubCategory.setSortIndex(postData.getSortIndex());
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), invoiceSubCategory, true, true);
@@ -183,6 +183,9 @@ public class InvoiceSubCategoryApi extends BaseApi {
                 throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getOccTemplateNegativeCode());
             }
             invoiceSubCategory.setOccTemplateNegative(occTemplateNegative);
+        }
+        if (postData.getSortIndex() != null) {
+            invoiceSubCategory.setSortIndex(postData.getSortIndex());
         }
 
         // populate customFields
