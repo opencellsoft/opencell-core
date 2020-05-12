@@ -88,6 +88,7 @@ public class InvoiceCategoryDto extends BusinessEntityDto {
         if(invoiceCategory.getOccTemplateNegative() != null) {
             setOccTemplateNegativeCode(invoiceCategory.getOccTemplateNegative().getCode());
         }
+        sortIndex = invoiceCategory.getSortIndex();
     }
 
     /**
