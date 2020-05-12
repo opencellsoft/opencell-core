@@ -102,6 +102,7 @@
 						<!--<include>${project.build.directory}/**/layout/*.xhtml</include> -->
 						<include>${project.build.directory}/opencell/layout/*.xhtml</include>
 						<include>${project.build.directory}/opencell/about.xhtml</include>
+						<include>${project.build.outputDirectory}/version.json</include>
 					</includes>
 					<replacements>
 						<replacement>
