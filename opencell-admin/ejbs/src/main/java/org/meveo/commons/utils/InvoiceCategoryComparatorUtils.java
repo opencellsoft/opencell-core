@@ -70,7 +70,7 @@ public class InvoiceCategoryComparatorUtils {
                     if (c0.getSortIndex() == null && c1.getSortIndex() == null) {
                         return c0.getDescription().compareToIgnoreCase(c0.getDescription());
                     } else {
-                        return c0.getSortIndex() == null ? c1.getSortIndex() == null ? 0 : -1 : 1;
+                        return c0.getSortIndex() == null ? c1.getSortIndex() == null ? 0 : 1 : -1;
                     }
                 }
 
