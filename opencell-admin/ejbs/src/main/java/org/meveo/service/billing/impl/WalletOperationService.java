@@ -1444,11 +1444,13 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 if (dto.getCurrency() != null) {
                     currency = currencyService.findByCode(dto.getCurrency());
                 }
-                wo = new WalletOperation(dto.getCode(), "description", wallet, dto.getOperationDate(), null, dto.getType(), currency, tax, dto.getUnitAmountWithoutTax(), dto.getUnitAmountWithTax(),
-                    dto.getUnitAmountTax(), dto.getQuantity(), dto.getAmountWithoutTax(), dto.getAmountWithTax(), dto.getAmountTax(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(),
-                    dto.getParameterExtra(), dto.getStartDate(), dto.getEndDate(), dto.getSubscriptionDate(), offer, seller, null, dto.getRatingUnitDescription(), null, null, null, dto.getStatus());
+                wo = new WalletOperation(dto.getCode(), "description", wallet, dto.getOperationDate(), null, dto.getType(), currency, tax, dto.getUnitAmountWithoutTax(),
+                        dto.getUnitAmountWithTax(), dto.getUnitAmountTax(), dto.getQuantity(), dto.getAmountWithoutTax(), dto.getAmountWithTax(), dto.getAmountTax(),
+                        dto.getParameter1(), dto.getParameter2(), dto.getParameter3(), dto.getParameterExtra(), dto.getStartDate(), dto.getEndDate(), dto.getSubscriptionDate(),
+                        offer, seller, null, dto.getRatingUnitDescription(), null, null, null, dto.getStatus());
             }
-
+            Integer sortIndex = RatingService.getSortIndex(wo);
+            wo.setSortIndex(sortIndex);
             create(wo);
         }
     }

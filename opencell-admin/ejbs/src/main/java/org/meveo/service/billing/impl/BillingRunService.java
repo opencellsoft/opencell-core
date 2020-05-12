@@ -702,14 +702,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     /**
      * Creates the agregates and invoice.
      *
-     * @param billingRun                       billing run
-     * @param nbRuns                           nb of runs
-     * @param waitingMillis                    waiting millis
-     * @param jobInstanceId                    the job instance id
-     * @param entities                         list of entities
-     * @param instantiateMinRtsForService      Should rated transactions to reach minimum invoicing amount be checked and instantiated on service level.
-     * @param instantiateMinRtsForSubscription Should rated transactions to reach minimum invoicing amount be checked and instantiated on subscription level.
-     * @param instantiateMinRtsForBA           Should rated transactions to reach minimum invoicing amount be checked and instantiated on Billing account level.
+     * @param billingRun           billing run
+     * @param nbRuns               nb of runs
+     * @param waitingMillis        waiting millis
+     * @param jobInstanceId        the job instance id
+     * @param entities             list of entities
+     * @param minAmountForAccounts Check if min amount is enabled in any account level
      * @throws BusinessException business exception.
      */
     private void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, List<? extends IBillableEntity> entities,

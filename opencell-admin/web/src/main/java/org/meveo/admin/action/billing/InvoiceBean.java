@@ -45,6 +45,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.InvoiceCategoryComparatorUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
@@ -259,14 +260,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                 categoryInvoiceAgregates.add(categoryInvoiceAgregate);
             }
         }
-        Collections.sort(categoryInvoiceAgregates, new Comparator<CategoryInvoiceAgregate>() {
-            public int compare(CategoryInvoiceAgregate c0, CategoryInvoiceAgregate c1) {
-                if (c0.getInvoiceCategory() != null && c1.getInvoiceCategory() != null && c0.getInvoiceCategory().getSortIndex() != null && c1.getInvoiceCategory().getSortIndex() != null) {
-                    return c0.getInvoiceCategory().getSortIndex().compareTo(c1.getInvoiceCategory().getSortIndex());
-                }
-                return 0;
-            }
-        });
+        Collections.sort(categoryInvoiceAgregates, InvoiceCategoryComparatorUtils.getInvoiceCategoryComparator());
 
         List<InvoiceCategoryDTO> headerCategories = new ArrayList<>();
 
@@ -279,8 +273,11 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             headerCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
             headerCategories.add(headerCat);
 
-            Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
+            List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList(categoryInvoiceAgregate.getSubCategoryInvoiceAgregates());
             LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = headerCat.getInvoiceSubCategoryDTOMap();
+
+            Collections.sort(subCategoryInvoiceAgregates, InvoiceCategoryComparatorUtils.getInvoiceSubCategoryComparator());
+
             for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
                 if (!subCatInvoiceAgregate.isDiscountAggregate()) {
                     InvoiceSubCategory invoiceSubCategory = subCatInvoiceAgregate.getInvoiceSubCategory();

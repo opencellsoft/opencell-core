@@ -183,6 +183,9 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
             chargeTemplate.setDisabled(postData.isDisabled());
         }
         chargeTemplate.setDropZeroWo(postData.isDropZeroWo());
+        if (postData.getSortIndexEl() != null) {
+            chargeTemplate.setSortIndexEl(postData.getSortIndexEl());
+        }
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, isNew);

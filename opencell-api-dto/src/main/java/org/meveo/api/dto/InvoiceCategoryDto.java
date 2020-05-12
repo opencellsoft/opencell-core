@@ -43,16 +43,27 @@ public class InvoiceCategoryDto extends BusinessEntityDto {
 
     /** The language descriptions. */
     private List<LanguageDescriptionDto> languageDescriptions;
-    
-    /** The occ template code. */
+
+    /**
+     * The occ template code.
+     */
     @XmlElement(required = true)
     private String occTemplateCode;
 
-    /** The occ template negative code. */
-    private String occTemplateNegativeCode;    
+    /**
+     * The occ template negative code.
+     */
+    private String occTemplateNegativeCode;
 
-    /** The custom fields. */
+    /**
+     * The custom fields.
+     */
     private CustomFieldsDto customFields;
+
+    /**
+     * Sorting index.
+     */
+    private Integer sortIndex;
 
     /**
      * Instantiates a new invoice category dto.
@@ -77,6 +88,7 @@ public class InvoiceCategoryDto extends BusinessEntityDto {
         if(invoiceCategory.getOccTemplateNegative() != null) {
             setOccTemplateNegativeCode(invoiceCategory.getOccTemplateNegative().getCode());
         }
+        sortIndex = invoiceCategory.getSortIndex();
     }
 
     /**
@@ -145,11 +157,28 @@ public class InvoiceCategoryDto extends BusinessEntityDto {
         this.occTemplateNegativeCode = occTemplateNegativeCode;
     }
 
+    /**
+     * Gets the sorting index.
+     *
+     * @return the sorting index
+     */
+    public Integer getSortIndex() {
+        return sortIndex;
+    }
+
+    /**
+     * Sets the sorting index.
+     *
+     * @param sortIndex the sorting index.
+     */
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
+    }
 
     @Override
     public String toString() {
-        return "InvoiceCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", languageDescriptions=" + languageDescriptions + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode=" + occTemplateNegativeCode
-                + ", customFields=" + customFields
+        return "InvoiceCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", languageDescriptions=" + languageDescriptions + ", occTemplateCode="
+                + occTemplateCode + ", occTemplateNegativeCode=" + occTemplateNegativeCode + ", customFields=" + customFields
                 + "]";
     }
 

@@ -155,7 +155,7 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
      * Charge tax class code
      */
     private String taxClassCode;
-    
+
     /**
      * input_unit_unitOfMeasure
      */
@@ -165,6 +165,11 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
      * rating_unit_unitOfMeasure
      */
     private String ratingUnitOfMeasure;
+
+    /**
+     * Sorting index.
+     */
+    private Integer sortIndex;
 
     /**
      * Instantiates a new rated transaction dto.
@@ -213,8 +218,11 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
         this.setRawAmountWithoutTax(ratedTransaction.getRawAmountWithoutTax());
         this.setRawAmountWithTax(ratedTransaction.getRawAmountWithTax());
         taxClassCode = ratedTransaction.getTaxClass() != null ? ratedTransaction.getTaxClass().getCode() : null;
-        this.inputUnitOfMeasure = ratedTransaction.getInputUnitOfMeasure()!=null?ratedTransaction.getInputUnitOfMeasure().getCode():null;
-        this.ratingUnitOfMeasure = ratedTransaction.getRatingUnitOfMeasure()!=null?ratedTransaction.getRatingUnitOfMeasure().getCode():null;
+        this.inputUnitOfMeasure = ratedTransaction.getInputUnitOfMeasure() != null ? ratedTransaction.getInputUnitOfMeasure().getCode() : null;
+        this.ratingUnitOfMeasure = ratedTransaction.getRatingUnitOfMeasure() != null ? ratedTransaction.getRatingUnitOfMeasure().getCode() : null;
+        if (ratedTransaction.getSortIndex() != null) {
+            this.sortIndex = ratedTransaction.getSortIndex();
+        }
     }
 
     /**
@@ -759,14 +767,32 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
 	/**
 	 * @return the inputUnitOfMeasure
 	 */
-	public String getInputUnitOfMeasure() {
-		return inputUnitOfMeasure;
-	}
+    public String getInputUnitOfMeasure() {
+        return inputUnitOfMeasure;
+    }
 
-	/**
-	 * @param inputUnitOfMeasure the inputUnitOfMeasure to set
-	 */
-	public void setInputUnitOfMeasure(String inputUnitOfMeasure) {
-		this.inputUnitOfMeasure = inputUnitOfMeasure;
-	}
+    /**
+     * @param inputUnitOfMeasure the inputUnitOfMeasure to set
+     */
+    public void setInputUnitOfMeasure(String inputUnitOfMeasure) {
+        this.inputUnitOfMeasure = inputUnitOfMeasure;
+    }
+
+    /**
+     * Gets the sorting index.
+     *
+     * @return the sorting index
+     */
+    public Integer getSortIndex() {
+        return sortIndex;
+    }
+
+    /**
+     * Sets the sorting index.
+     *
+     * @param sortIndex the sorting index.
+     */
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
+    }
 }

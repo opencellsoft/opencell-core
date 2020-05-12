@@ -31,19 +31,22 @@
 
             <p:tabView id="tabView" activeIndex="#{invoiceCategoryBean.activeTab}">
                 <p:tab title="#{messages['customer.tab.information']}">
-                    <hftl:formField label="#{messages['invoiceCategory.code']}" field="code" required="true" validateUnique="true" />
+                    <hftl:formField label="#{messages['invoiceCategory.code']}" field="code" required="true" validateUnique="true"/>
 
                     <!-- <hftl:formField label="#{messages['invoiceCategory.subcategories']}"
 						field="invoiceSubCategories" edit="true"
 						showFields="invoiceSubCategory.code,code;invoiceSubCategory.accountingCode,accountingCode"
 		
 						deleteButton="false" />	 -->
-                    <hftl:formLanguageFields  field="description" />
+                    <hftl:formLanguageFields field="description"/>
                     <!-- <hftl:formField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
-            <hftl:formField label="#{messages['invoiceType.occTemplate']}" id="occTemplateSelectedId" field="occTemplate" valueLabelField="code" showResetButton="true" popup="true" popupId="searchOccTemplatePopup"
-               />
-            <hftl:formField label="#{messages['invoiceType.occTemplateNegative']}" id="occTemplateNegativeSelectedId" field="occTemplateNegative" valueLabelField="code" popup="true"
-                popupId="searchOccTemplateNegativePopup" showResetButton="true" required="false" />                    
+                    <hftl:formField label="#{messages['invoiceType.occTemplate']}" id="occTemplateSelectedId" field="occTemplate" valueLabelField="code" showResetButton="true"
+                                    popup="true" popupId="searchOccTemplatePopup"
+                    />
+                    <hftl:formField label="#{messages['invoiceType.occTemplateNegative']}" id="occTemplateNegativeSelectedId" field="occTemplateNegative" valueLabelField="code"
+                                    popup="true"
+                                    popupId="searchOccTemplateNegativePopup" showResetButton="true" required="false"/>
+                    <hftl:formField label="#{messages['invoiceCategory.sortIndex']}" field="sortIndex"/>
                 </p:tab>
 
                 <hftl:customFields backingBean="#{invoiceCategoryBean}" messagesId=":invoiceCatFormId:messages" />
