@@ -644,13 +644,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Creates invoices and their aggregates - IN new transaction
      *
-     * @param entityToInvoice entity to be billed
-     * @param billingRun billing run
+     * @param entityToInvoice        entity to be billed
+     * @param billingRun             billing run
      * @param ratedTransactionFilter rated transaction filter
-     * @param invoiceDate date of invoice
-     * @param firstTransactionDate date of first transaction
-     * @param lastTransactionDate date of last transaction
-     * @param isDraft Is this a draft invoice
+     * @param invoiceDate            date of invoice
+     * @param firstTransactionDate   date of first transaction
+     * @param lastTransactionDate    date of last transaction
+     * @param minAmountForAccounts   Check if min amount is enabled in any account level
+     * @param isDraft                Is this a draft invoice
      * @return A list of created invoices
      * @throws BusinessException business exception
      */

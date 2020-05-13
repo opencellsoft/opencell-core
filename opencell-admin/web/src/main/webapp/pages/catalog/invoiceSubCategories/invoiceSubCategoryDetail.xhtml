@@ -63,18 +63,22 @@
 
                         <hftl:formField id="categorySelectId" label="#{messages['invoiceSubCategory.invoiceCategory']}" field="invoiceCategory" valueLabelField="code" required="true"
                             listBean="#{invoiceCategoryBean}" />
-                        <hftl:formField label="#{messages['invoiceSubCategory.code']}" field="code" required="true" validateUnique="true" useConverter="false" />
-						<hftl:formField id="accountingCodeId"
-							label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode"
-							valueLabelField="code" listenerUpdate="@this" popup="true"
-							popupId="accountingCodePopup" showResetButton="true" />
-                        <hftl:formLanguageFields field="description" />
-						<hftl:formField id="taxScriptSelectId" label="#{messages['invoiceSubCategory.taxScript']}" field="taxScript" valueLabelField="code" required="false" popup="true" popupId="taxScriptPopup" showResetButton="true" />
-						<hftl:formField label="#{messages['invoiceType.occTemplate']}" id="occTemplateSelectedId" field="occTemplate" valueLabelField="code" showResetButton="true" popup="true" popupId="searchOccTemplatePopup"
-               />
-                         <hftl:formField label="#{messages['invoiceType.occTemplateNegative']}" id="occTemplateNegativeSelectedId" field="occTemplateNegative" valueLabelField="code" popup="true"
-                popupId="searchOccTemplateNegativePopup" showResetButton="true" required="false" />   
-					</hftl:formPanel>
+                        <hftl:formField label="#{messages['invoiceSubCategory.code']}" field="code" required="true" validateUnique="true" useConverter="false"/>
+                        <hftl:formField id="accountingCodeId"
+                                        label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode"
+                                        valueLabelField="code" listenerUpdate="@this" popup="true"
+                                        popupId="accountingCodePopup" showResetButton="true"/>
+                        <hftl:formLanguageFields field="description"/>
+                        <hftl:formField id="taxScriptSelectId" label="#{messages['invoiceSubCategory.taxScript']}" field="taxScript" valueLabelField="code" required="false"
+                                        popup="true" popupId="taxScriptPopup" showResetButton="true"/>
+                        <hftl:formField label="#{messages['invoiceType.occTemplate']}" id="occTemplateSelectedId" field="occTemplate" valueLabelField="code" showResetButton="true"
+                                        popup="true" popupId="searchOccTemplatePopup"
+                        />
+                        <hftl:formField label="#{messages['invoiceType.occTemplateNegative']}" id="occTemplateNegativeSelectedId" field="occTemplateNegative" valueLabelField="code"
+                                        popup="true"
+                                        popupId="searchOccTemplateNegativePopup" showResetButton="true" required="false"/>
+                        <hftl:formField label="#{messages['invoiceSubCategory.sortIndex']}" field="sortIndex"/>
+                    </hftl:formPanel>
 
                 </p:tab>
 

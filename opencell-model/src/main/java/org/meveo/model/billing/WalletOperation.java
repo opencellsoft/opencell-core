@@ -469,6 +469,12 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     private String uuid;
 
     /**
+     * Sorting index
+     */
+    @Column(name = "sort_index")
+    private Integer sortIndex;
+
+    /**
      * Constructor
      */
     public WalletOperation() {
@@ -476,7 +482,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
     /**
      * Constructor
-     * 
+     *
      * @param chargeInstance Charge instance
      * @param inputQuantity Input quantity
      * @param quantityInChargeUnits Quantity in charge units
@@ -1249,5 +1255,23 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         String oldUuid = uuid;
         uuid = UUID.randomUUID().toString();
         return oldUuid;
+    }
+
+    /**
+     * Gets the sorting index.
+     *
+     * @return the sorting index
+     */
+    public Integer getSortIndex() {
+        return sortIndex;
+    }
+
+    /**
+     * Sets the sorting index.
+     *
+     * @param sortIndex the sorting index
+     */
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
     }
 }
