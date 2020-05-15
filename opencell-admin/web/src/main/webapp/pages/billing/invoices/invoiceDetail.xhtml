@@ -240,7 +240,7 @@
 
                         <p:fieldset legend="#{messages['invoice.linkedInvoices']}">
 
-                            <p:dataTable var="entity" value="#{invoiceBean.getEntity().linkedInvoices}" paginator="true" rows="10"
+                            <p:dataTable var="entity" value="#{invoiceBean.linkedInvoices}" paginator="true" rows="10"
                                          paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                          rowsPerPageTemplate="10,20" lazy="false" resizableColumns="true" styleClass="custom-grid" rowKey="#{entity.id}" reflow="true"
                                          paginatorPosition="both">

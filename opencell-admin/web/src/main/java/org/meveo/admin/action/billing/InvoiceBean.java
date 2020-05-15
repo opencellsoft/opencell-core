@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -135,6 +134,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     private Map<Long, ServiceBasedLazyDataModel<RatedTransaction>> ratedTransactionsDM = new HashMap<>();
 
     private List<InvoiceCategoryDTO> categoryDTOs;
+
+	private Set<Invoice> linkedInvoices;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -876,5 +877,14 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      */
     public boolean getShowBtnNewIADetailed() {
         return !entity.isPrepaid();
+    }
+    
+    public Set<Invoice> getLinkedInvoices() {
+		entity = invoiceService.refreshOrRetrieve(entity);
+        return entity.getLinkedInvoices();
+    }
+
+    public void setLinkedInvoices(Set<Invoice> linkedInvoices) {
+        entity.setLinkedInvoices(linkedInvoices);
     }
 }
