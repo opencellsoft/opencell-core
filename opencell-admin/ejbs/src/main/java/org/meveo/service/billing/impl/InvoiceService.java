@@ -533,7 +533,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         try {
             QueryBuilder qb = queryInvoiceIdsWithNoAccountOperation(br);
             if (excludeInvoicesWithoutAmount) {
-                qb.addSql("i.amount != 0 ");
+                qb.addSql("i.amountWithTax != 0 ");
             }
             if (invoiceAccountable != null) {
                 qb.addSql("i.invoiceType.invoiceAccountable = ".concat(invoiceAccountable.toString()));
@@ -546,7 +546,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Get rated transactions for entity grouped by billing account, seller and invoice type
+     * Get rated transactions for entity grouped by billing account, seller and invoice type and payment method
      *
      * @param entityToInvoice entity to be billed
      * @param billingAccount Payment method. Provided in case of Billing account or Subscription billable entity type. Order can span multiple billing accounts and therefore will
@@ -559,10 +559,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param firstTransactionDate date of first transaction
      * @param lastTransactionDate date of last transaction
      * @param isDraft Is it a draft invoice
+     * @param defaultPaymentMethod The default payment method
      * @return List of rated transaction groups for entity and a flag indicating if there are more Rated transactions to retrieve
+     * @throws BusinessException BusinessException
      */
-    private RatedTransactionsToInvoice getRatedTransactionGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun, BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType,
-            Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) throws BusinessException {
+    protected RatedTransactionsToInvoice getRatedTransactionGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun, BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType,
+            Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, PaymentMethod defaultPaymentMethod) throws BusinessException {
 
         List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter, rtPaginationSize);
 
@@ -579,6 +581,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         BillingCycle billingCycle = defaultBillingCycle;
         InvoiceType postPaidInvoiceType = defaultInvoiceType;
+        PaymentMethod paymentMethod = defaultPaymentMethod;
 
         EntityManager em = getEntityManager();
 
@@ -589,6 +592,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 // Retrieve BA and determine postpaid invoice type only if it has not changed from the last iteration
                 if (billingAccount == null || !billingAccount.getId().equals(rt.getBillingAccount().getId())) {
                     billingAccount = rt.getBillingAccount();
+                    if (defaultPaymentMethod == null) {
+                        paymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
+                    }
                     if (defaultBillingCycle == null) {
                         billingCycle = billingAccount.getBillingCycle();
                     }
@@ -603,11 +609,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceType = determineInvoiceType(true, isDraft, null, null, null);
             }
 
-            String invoiceKey = billingAccount.getId() + "_" + rt.getSeller().getId() + "_" + invoiceType.getId() + "_" + isPrepaid;
+            String invoiceKey = billingAccount.getId() + "_" + rt.getSeller().getId() + "_" + invoiceType.getId() + "_" + isPrepaid + "_" + paymentMethod.getId();
             RatedTransactionGroup rtGroup = rtGroups.get(invoiceKey);
 
             if (rtGroup == null) {
-                rtGroup = new RatedTransactionGroup(billingAccount, rt.getSeller(), billingCycle != null ? billingCycle : billingAccount.getBillingCycle(), invoiceType, isPrepaid);
+                rtGroup = new RatedTransactionGroup(billingAccount, rt.getSeller(), billingCycle != null ? billingCycle : billingAccount.getBillingCycle(), invoiceType, isPrepaid, invoiceKey, paymentMethod);
                 rtGroups.put(invoiceKey, rtGroup);
             }
             rtGroup.getRatedTransactions().add(rt);
@@ -621,7 +627,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         for (RatedTransactionGroup rtGroup : rtGroups.values()) {
 
             if (rtGroup.getBillingCycle().getScriptInstance() != null) {
-                convertedRtGroups.addAll(executeBCScript(billingRun, rtGroup.getInvoiceType(), rtGroup.getRatedTransactions(), entityToInvoice, rtGroup.getBillingCycle().getScriptInstance().getCode()));
+                convertedRtGroups
+                    .addAll(executeBCScript(billingRun, rtGroup.getInvoiceType(), rtGroup.getRatedTransactions(), entityToInvoice, rtGroup.getBillingCycle().getScriptInstance().getCode(), rtGroup.getPaymentMethod()));
             } else {
                 convertedRtGroups.add(rtGroup);
             }
@@ -634,16 +641,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Creates invoices and their aggregates - IN new transaction
      *
-     * @param entityToInvoice entity to be billed
-     * @param billingRun billing run
+     * @param entityToInvoice        entity to be billed
+     * @param billingRun             billing run
      * @param ratedTransactionFilter rated transaction filter
-     * @param invoiceDate date of invoice
-     * @param firstTransactionDate date of first transaction
-     * @param lastTransactionDate date of last transaction
-     * @param instantiateMinRtsForService Should rated transactions to reach minimum invoicing amount be checked and instantiated on service level.
-     * @param instantiateMinRtsForSubscription Should rated transactions to reach minimum invoicing amount be checked and instantiated on subscription level.
-     * @param instantiateMinRtsForBA Should rated transactions to reach minimum invoicing amount be checked and instantiated on Billing account level.
-     * @param isDraft Is this a draft invoice
+     * @param invoiceDate            date of invoice
+     * @param firstTransactionDate   date of first transaction
+     * @param lastTransactionDate    date of last transaction
+     * @param minAmountForAccounts   Check if min amount is enabled in any account level
+     * @param isDraft                Is this a draft invoice
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
@@ -658,16 +663,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Creates invoices and their aggregates
      *
-     * @param entityToInvoice entity to be billed
-     * @param billingRun billing run
+     * @param entityToInvoice        entity to be billed
+     * @param billingRun             billing run
      * @param ratedTransactionFilter rated transaction filter
-     * @param invoiceDate date of invoice
-     * @param firstTransactionDate date of first transaction
-     * @param lastTransactionDate date of last transaction
-     * @param instantiateMinRtsForService Should rated transactions to reach minimum invoicing amount be checked and instantiated on service level.
-     * @param instantiateMinRtsForSubscription Should rated transactions to reach minimum invoicing amount be checked and instantiated on subscription level.
-     * @param instantiateMinRtsForBA Should rated transactions to reach minimum invoicing amount be checked and instantiated on Billing account level.
-     * @param isDraft Is this a draft invoice
+     * @param invoiceDate            date of invoice
+     * @param firstTransactionDate   date of first transaction
+     * @param lastTransactionDate    date of last transaction
+     * @param minAmountForAccounts   Check if min amount is enabled in any account level
+     * @param isDraft                Is this a draft invoice
      * @return A list of created invoices
      * @throws BusinessException business exception
      */
@@ -852,7 +855,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             // Retrieve Rated transactions and split them into BA/seller combinations
             RatedTransactionsToInvoice rtsToInvoice = getRatedTransactionGroups(entityToInvoice, billingAccount, billingRun, defaultBillingCycle, defaultInvoiceType, ratedTransactionFilter, firstTransactionDate,
-                lastTransactionDate, isDraft);
+                lastTransactionDate, isDraft, defaultPaymentMethod);
 
             List<RatedTransactionGroup> ratedTransactionGroupsPaged = rtsToInvoice.ratedTransactionGroups;
             moreRatedTransactionsExpected = rtsToInvoice.moreRatedTransactions;
@@ -968,22 +971,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     em.flush(); // Need to flush, so RTs can be updated in mass
 
+                    Date now = new Date();
                     for (Object[] aggregateAndRtIds : rtMassUpdates) {
                         SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRtIds[0];
                         List<Long> rtIds = (List<Long>) aggregateAndRtIds[1];
                         em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", subCategoryAggregate)
-                            .setParameter("ids", rtIds).executeUpdate();
+                            .setParameter("now", now).setParameter("ids", rtIds).executeUpdate();
                     }
 
                     for (Object[] aggregateAndRts : rtUpdates) {
                         SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRts[0];
                         List<RatedTransaction> rts = (List<RatedTransaction>) aggregateAndRts[1];
                         for (RatedTransaction rt : rts) {
-                            rt.setBillingRun(billingRun);
-                            rt.setInvoice(invoice);
-                            rt.setInvoiceAgregateF(subCategoryAggregate);
-                            rt.changeStatus(RatedTransactionStatusEnum.BILLED);
-                            em.merge(rt);
+                            em.createNamedQuery("RatedTransaction.updateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", subCategoryAggregate)
+                                .setParameter("now", now).setParameter("id", rt.getId()).setParameter("unitAmountWithoutTax", rt.getUnitAmountWithoutTax()).setParameter("unitAmountWithTax", rt.getUnitAmountWithTax())
+                                .setParameter("unitAmountTax", rt.getUnitAmountTax()).setParameter("amountWithoutTax", rt.getAmountWithoutTax()).setParameter("amountWithTax", rt.getAmountWithTax())
+                                .setParameter("amountTax", rt.getAmountTax()).setParameter("tax", rt.getTax()).setParameter("taxPercent", rt.getTaxPercent()).executeUpdate();
                         }
                     }
                     // End of alternative 1 for 4326
@@ -1009,11 +1012,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 orderNums.add(((Order) entityToInvoice).getOrderNumber());
             }
             if (orderNums != null && !orderNums.isEmpty()) {
-                List<Order> orders = new ArrayList<Order>();
-                for (String orderNum : orderNums) {
-                    orders.add(orderService.findByCodeOrExternalId(orderNum));
+                List<Order> orders = orderService.findByCodeOrExternalId(orderNums);
+                if (!orders.isEmpty()) {
+                    invoiceAggregateProcessingInfo.invoice.setOrders(orders);
                 }
-                invoiceAggregateProcessingInfo.invoice.setOrders(orders);
             }
 
             invoiceAggregateProcessingInfo.invoice.assignTemporaryInvoiceNumber();
@@ -1047,7 +1049,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Execute a script to group rated transactions by invoice type
-     * 
+     *
      * @param billingRun Billing run
      * @param invoiceType Current Invoice type
      * @param ratedTransactions Rated transactions to group
@@ -1057,8 +1059,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException
      */
     @SuppressWarnings("unchecked")
-    private List<RatedTransactionGroup> executeBCScript(BillingRun billingRun, InvoiceType invoiceType, List<RatedTransaction> ratedTransactions, IBillableEntity entity, String scriptInstanceCode)
-            throws BusinessException {
+    private List<RatedTransactionGroup> executeBCScript(BillingRun billingRun, InvoiceType invoiceType, List<RatedTransaction> ratedTransactions, IBillableEntity entity, String scriptInstanceCode,
+            PaymentMethod paymentMethod) throws BusinessException {
 
         HashMap<String, Object> context = new HashMap<String, Object>();
         context.put(Script.CONTEXT_ENTITY, entity);
@@ -1067,6 +1069,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         context.put("br", billingRun);
         context.put("invoiceType", invoiceType);
         context.put("ratedTransactions", ratedTransactions);
+        context.put("paymentMethod", paymentMethod);
         scriptInstanceService.executeCached(scriptInstanceCode, context);
         return (List<RatedTransactionGroup>) context.get(Script.RESULT_VALUE);
     }
@@ -1994,6 +1997,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
 
+        Date invoiceDate = generateInvoiceRequestDto.getInvoicingDate();
+        Date lastTransactionDate = generateInvoiceRequestDto.getLastTransactionDate();
+        if (lastTransactionDate == null) {
+            lastTransactionDate = invoiceDate;
+        }
+
+        // Create missing rated transactions up to a last transaction date
+        ratedTransactionService.createRatedTransactions(entityToInvoice, lastTransactionDate);
+
         List<Invoice> invoices = invoiceService.createInvoice(entityToInvoice, generateInvoiceRequestDto, ratedTxFilter, isDraft);
 
         List<Invoice> invoicesWNumber = new ArrayList<Invoice>();
@@ -2017,8 +2029,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Create pending Rated transactions and generate invoice for the billingAccount. DOES NOT assign an invoice number NOR create XML/PDF files nor account operation. Use
-     * generateInvoice() instead.
+     * Generate invoice for the billingAccount. Asumes tha all Rated transactions are created already. DOES NOT assign an invoice number NOR create XML/PDF files nor account
+     * operation. Use generateInvoice() instead.
      * 
      * @param entity Entity to invoice
      * @param generateInvoiceRequestDto Generate invoice request
@@ -2060,8 +2072,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new BusinessException("The entity is already in an billing run with status " + entity.getBillingRun().getStatus());
         }
 
-        // Create missing rated transactions up to a last transaction date
-        ratedTransactionService.createRatedTransaction(entity, lastTransactionDate);
+//        // Create missing rated transactions up to a last transaction date
+//        ratedTransactionService.createRatedTransaction(entity, lastTransactionDate);
 
         MinAmountForAccounts minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated(entity, applyMinimumModeEnum);
 
@@ -2147,10 +2159,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return result;
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
-        if (expression.indexOf("ba") >= 0) {
-            userMap.put("ba", billingAccount);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
         }
-        if (expression.indexOf("invoice") >= 0) {
+        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE) >= 0) {
             userMap.put("invoice", invoice);
         }
         if (expression.indexOf("order") >= 0) {
@@ -2928,18 +2940,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             cAggregate.addSubCategoryInvoiceAggregate(scAggregate);
         }
-        
+
         for (CategoryInvoiceAgregate cAggregate : categoryAggregates.values()) {
             invoice.addAmountWithoutTax(cAggregate.getAmountWithoutTax());
             invoice.addAmountWithTax(cAggregate.getAmountWithTax());
             invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : cAggregate.getAmountTax());
         }
-        
-        
+
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates) {
 
             Map<Tax, BigDecimal> amountCumulativeForTax = scAggregate.getAmountsByTax();
-            
+
             InvoiceSubCategory invoiceSubCategory = scAggregate.getInvoiceSubCategory();
             String caKey = (scAggregate.getUserAccount() != null ? scAggregate.getUserAccount().getId() : "") + "_" + invoiceSubCategory.getInvoiceCategory().getId();
             CategoryInvoiceAgregate cAggregate = categoryAggregates.get(caKey);
@@ -3215,20 +3226,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
 
-        if (expression.indexOf("ca") >= 0) {
-            userMap.put("ca", customerAccount);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, customerAccount);
         }
-        if (expression.indexOf("ba") >= 0) {
-            userMap.put("ba", billingAccount);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
         }
-        if (expression.indexOf("iv") >= 0) {
-            userMap.put("iv", invoice);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE_SHORT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_INVOICE_SHORT, invoice);
         }
-        if (expression.indexOf("invoice") >= 0) {
-            userMap.put("invoice", invoice);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_INVOICE, invoice);
         }
-        if (expression.indexOf("dpi") >= 0) {
-            userMap.put("dpi", dpi);
+        if (expression.indexOf(ValueExpressionWrapper.VAR_DISCOUNT_PLAN_INSTANCE) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_DISCOUNT_PLAN_INSTANCE, dpi);
         }
         if (expression.indexOf("su") >= 0) {
             userMap.put("su", invoice.getSubscription());
@@ -3257,8 +3268,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return null;
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
-        userMap.put("ca", userAccount.getBillingAccount().getCustomerAccount());
-        userMap.put("ba", userAccount.getBillingAccount());
+        userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, userAccount.getBillingAccount().getCustomerAccount());
+        userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, userAccount.getBillingAccount());
         userMap.put("iv", invoice);
         userMap.put("invoice", invoice);
         userMap.put("wa", wallet);
@@ -3688,25 +3699,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Rated transactions to invoice
      */
-    private class RatedTransactionsToInvoice {
+    protected class RatedTransactionsToInvoice {
 
         /**
          * Indicates that there are more RTs to be retrieved and aggregated in invoice before invoice can be closed
          */
-        private boolean moreRatedTransactions;
+        protected boolean moreRatedTransactions;
 
         /**
          * Rated transactions split for invoicing based on Billing account, seller and invoice type
          */
-        private List<RatedTransactionGroup> ratedTransactionGroups;
+        protected List<RatedTransactionGroup> ratedTransactionGroups;
 
         /**
          * Constructor
-         * 
+         *
          * @param moreRatedTransactions Indicates that there are more RTs to be retrieved and aggregated in invoice before invoice can be closed
          * @param ratedTransactionGroups Rated transactions split for invoicing based on Billing account, seller and invoice type
          */
-        private RatedTransactionsToInvoice(boolean moreRatedTransactions, List<RatedTransactionGroup> ratedTransactionGroups) {
+        protected RatedTransactionsToInvoice(boolean moreRatedTransactions, List<RatedTransactionGroup> ratedTransactionGroups) {
             super();
             this.moreRatedTransactions = moreRatedTransactions;
             this.ratedTransactionGroups = ratedTransactionGroups;

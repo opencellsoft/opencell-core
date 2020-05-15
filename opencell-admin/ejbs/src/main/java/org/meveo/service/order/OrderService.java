@@ -19,6 +19,7 @@
 package org.meveo.service.order;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -65,8 +67,7 @@ public class OrderService extends BusinessService<Order> {
         startDate.setTime(endDate.getTime());
         startDate.add(Calendar.DATE, -1);
 
-        String sqlQuery = "select count(*) from " + Order.class.getName()
-                + " a where a.status = :orderStatus AND a.auditable.created <= :endDate AND a.auditable.created > :startDate";
+        String sqlQuery = "select count(*) from " + Order.class.getName() + " a where a.status = :orderStatus AND a.auditable.created <= :endDate AND a.auditable.created > :startDate";
         Query query = getEntityManager().createQuery(sqlQuery);
 
         query.setParameter("orderStatus", OrderStatusEnum.ACKNOWLEDGED);
@@ -103,12 +104,31 @@ public class OrderService extends BusinessService<Order> {
         return query.getResultList();
     }
 
+    /**
+     * Get a list of order with matching code or external identifier
+     * 
+     * @param codeOrExternalId Code or external identifier
+     * @return A list of orders
+     */
+    public List<Order> findByCodeOrExternalId(Collection<String> codeOrExternalId) {
+
+        TypedQuery<Order> query = getEntityManager().createNamedQuery("Order.listByCodeOrExternalId", Order.class).setParameter("code", codeOrExternalId);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Find an order with matching code or external identifier
+     * 
+     * @param codeOrExternalId Code or external identifier
+     * @return Order matched
+     */
     public Order findByCodeOrExternalId(String codeOrExternalId) {
-        Order order = null;
-        Query query = getEntityManager().createQuery("from " + Order.class.getName() + " a left join fetch a.billingRun where (a.code = :code OR  a.externalId = :code) ");
-        query.setParameter("code", codeOrExternalId);
+
+        TypedQuery<Order> query = getEntityManager().createNamedQuery("Order.findByCodeOrExternalId", Order.class).setParameter("code", codeOrExternalId);
+
         try {
-            order = (Order) query.getSingleResult();
+            return query.getSingleResult();
         } catch (NoResultException e) {
             log.debug("No {} of code/externalId {} found", Order.class.getSimpleName(), codeOrExternalId);
             return null;
@@ -116,7 +136,6 @@ public class OrderService extends BusinessService<Order> {
             log.error("More than one entity of type {} with code/externalId {} found", Order.class, codeOrExternalId);
             return null;
         }
-        return order;
     }
 
     @Override

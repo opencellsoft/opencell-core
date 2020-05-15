@@ -103,6 +103,8 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "WalletOperation.setStatusToCanceled", query = "UPDATE WalletOperation o SET o.status='CANCELED', o.updated = :now where o.status<>'TREATED' and o.chargeInstance=:chargeInstance"),
 
+        @NamedQuery(name = "WalletOperation.setStatusToTreatedWithRT", query = "UPDATE WalletOperation o SET o.status='TREATED', o.updated = :now, o.ratedTransaction=:rt where o.id=:id"),
+
         @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE o.chargeInstance=:chargeInstance AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"),
 
         @NamedQuery(name = "WalletOperation.findByUAAndCode", query = "SELECT o FROM WalletOperation o WHERE o.wallet.userAccount=:userAccount and o.code=:code"),
@@ -115,6 +117,7 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "WalletOperation.listNotOpenedWObetweenTwoDates", query = "SELECT o FROM WalletOperation o WHERE o.status != 'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate and o.id >:lastId order by o.id asc"),
         @NamedQuery(name = "WalletOperation.listWObetweenTwoDatesByStatus", query = "SELECT o FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate and o.id >:lastId order by o.id asc"),
+
         @NamedQuery(name = "WalletOperation.deleteNotOpenWObetweenTwoDates", query = "delete FROM WalletOperation o WHERE o.status<>'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate"),
         @NamedQuery(name = "WalletOperation.deleteWObetweenTwoDatesByStatus", query = "delete FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate"),
         @NamedQuery(name = "WalletOperation.deleteZeroWO", query = "delete FROM WalletOperation o WHERE o.quantity=0 AND o.chargeInstance.id in (select c.id FROM ChargeInstance c where c.chargeTemplate.dropZeroWo=true)") })
@@ -485,6 +488,12 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      */
     @Transient
     private ChargeApplicationModeEnum chargeMode;
+
+    /**
+     * Sorting index
+     */
+    @Column(name = "sort_index")
+    private Integer sortIndex;
 
     /**
      * Constructor
@@ -1323,5 +1332,32 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      */
     public void setChargeMode(ChargeApplicationModeEnum chargeMode) {
         this.chargeMode = chargeMode;
+    }
+
+    /**
+     * Was this operation applied in advance - that is operation date start dates match
+     *
+     * @return True if it was applied in advance.
+     */
+    public boolean isApplyInAdvance() {
+        return operationDate.equals(startDate);
+    }
+
+    /**
+     * Gets the sorting index.
+     *
+     * @return the sorting index
+     */
+    public Integer getSortIndex() {
+        return sortIndex;
+    }
+
+    /**
+     * Sets the sorting index.
+     *
+     * @param sortIndex the sorting index
+     */
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
     }
 }

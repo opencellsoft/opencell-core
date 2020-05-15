@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
-import javax.inject.Named;
+import javax.faces.convert.FacesConverter;
 
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -34,7 +34,7 @@ import org.meveo.commons.utils.ParamBeanFactory;
  * @lastModifiedVersion 5.0
  *
  */
-@Named("dateTimeConverter")
+@FacesConverter("dateTimeConverter")
 public class DateTimeConverter implements Converter {
 
     @Override

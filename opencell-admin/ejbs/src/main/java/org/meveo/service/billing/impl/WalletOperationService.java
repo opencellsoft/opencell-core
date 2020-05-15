@@ -194,7 +194,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     /**
      * Determine recurring period start date
-     * 
+     *
      * @param chargeInstance Charge instance
      * @param date Date to calculate period for
      * @return Recurring period start date
@@ -213,7 +213,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     /**
      * Determine recurring period end date
-     * 
+     *
      * @param chargeInstance Charge instance
      * @param date Date to calculate period for
      * @return Recurring period end date
@@ -255,7 +255,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
         Calendar cal = chargeInstance.getCalendar();
         if (!StringUtils.isBlank(recurringChargeTemplate.getCalendarCodeEl())) {
-            cal = recurringChargeTemplateService.getCalendarFromEl(recurringChargeTemplate.getCalendarCodeEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
+            cal = recurringChargeTemplateService.getCalendarFromEl(recurringChargeTemplate.getCalendarCodeEl(), chargeInstance.getServiceInstance(), null, recurringChargeTemplate, chargeInstance);
         }
         return cal;
     }
@@ -269,8 +269,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     public boolean isApplyInAdvance(RecurringChargeInstance recurringChargeInstance) {
         boolean isApplyInAdvance = (recurringChargeInstance.getApplyInAdvance() == null) ? false : recurringChargeInstance.getApplyInAdvance();
         if (!StringUtils.isBlank(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl())) {
-            isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl(), recurringChargeInstance.getServiceInstance(),
-                recurringChargeInstance.getRecurringChargeTemplate());
+            isApplyInAdvance = recurringChargeTemplateService.matchExpression(recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvanceEl(), recurringChargeInstance.getServiceInstance(), null, null,
+                recurringChargeInstance);
         }
 
         return isApplyInAdvance;
@@ -298,7 +298,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * <li>Apply charge that is applied at the end of calendar period - for charge instance with appliedInAdvance = false</li>
      * <li>Apply the recurring charge in advance of calendar period - for charge instance with appliedInAdvance = true</li>
      * </ul>
-     * 
+     *
      * <b>Apply charge that is applied at the end of calendar period</b> applyInAdvance = false:<br>
      * <br>
      * Will create a WalletOperation with wo.operationDate = chargeInstance.nextChargeDate, wo.startDate = chargeInstance.chargeDate and
@@ -314,7 +314,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * ---<br>
      * It will also update chargeInstance.chargeDate = chargeInstance.nextChargeDate and chargeInstance.nextChargeDate = nextCalendarDate(chargeInstance.nextChargeDate)
      * 
-     * 
+     *
      * @param chargeInstance Charge instance
      * @param chargeMode Charge application mode
      * @param forSchedule Is this a scheduled charge
@@ -410,7 +410,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
                     boolean prorateSubscription = recurringChargeTemplate.getSubscriptionProrata() == null ? false : recurringChargeTemplate.getSubscriptionProrata();
                     if (!StringUtils.isBlank(recurringChargeTemplate.getSubscriptionProrataEl())) {
-                        prorateSubscription = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getSubscriptionProrataEl(), chargeInstance.getServiceInstance(), recurringChargeTemplate);
+                        prorateSubscription = recurringChargeTemplateService.matchExpression(recurringChargeTemplate.getSubscriptionProrataEl(), chargeInstance.getServiceInstance(), null, recurringChargeTemplate,
+                            chargeInstance);
                     }
 
                     prorateFirstPeriod = prorateSubscription;
@@ -443,7 +444,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             boolean prorate = false;
 
             // Check if prorating is needed on first period of termination or on subscription
-            Date effectivePeriodFromDate = currentPeriodFromDate;
+            Date effectiveChargeFromDate = currentPeriodFromDate;
             if (periodIndex == 0 && prorateFirstPeriodFromDate != null) {
                 currentPeriodFromDate = prorateFirstPeriodFromDate;
                 prorate = true && prorateFirstPeriod;
@@ -451,13 +452,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
             // Check if prorating is needed on last period
             Date currentPeriodToDate = getRecurringPeriodEndDate(chargeInstance, currentPeriodFromDate);
-            Date effectivePeriodToDate = currentPeriodToDate;
+            Date effectiveChargeToDate = currentPeriodToDate;
             if (chargeToDate != null && currentPeriodToDate.after(chargeToDate)) {
-                effectivePeriodToDate = chargeToDate;
+                effectiveChargeToDate = chargeToDate;
                 prorate = true && proratePartialPeriods;
             }
-
-            // TODO Check how to handle prorating at the last period
 
             // If charge is not applicable for current period, skip it
             if (!isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
@@ -469,31 +468,35 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
                 // Apply prorating if needed
                 if (prorate) {
-                    BigDecimal prorata = DateUtils.calculateProrataRatio(effectivePeriodFromDate, effectivePeriodToDate, currentPeriodFromDate, currentPeriodToDate, false);
+                    BigDecimal prorata = DateUtils.calculateProrataRatio(effectiveChargeFromDate, effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, false);
                     if (prorata == null) {
                         throw new BusinessException("Failed to calculate prorating for charge id=" + chargeInstance.getId() + " : periodFrom=" + currentPeriodFromDate + ", periodTo=" + currentPeriodToDate
-                                + ", proratedFrom=" + effectivePeriodFromDate + ", proratedTo=" + effectivePeriodToDate);
+                                + ", proratedFrom=" + effectiveChargeFromDate + ", proratedTo=" + effectiveChargeToDate);
                     }
 
                     inputQuantity = inputQuantity.multiply(prorata);
                 }
 
                 log.debug("Applying {} recurring charge {} for period {} - {}, quantity {}",
-                    chargeMode == ChargeApplicationModeEnum.REIMBURSMENT ? "reimbursement" : isApplyInAdvance ? "start of period" : "end of period", chargeInstance.getId(), effectivePeriodFromDate, effectivePeriodToDate,
+                    chargeMode == ChargeApplicationModeEnum.REIMBURSMENT ? "reimbursement" : isApplyInAdvance ? "start of period" : "end of period", chargeInstance.getId(), effectiveChargeFromDate, effectiveChargeToDate,
                     inputQuantity);
 
                 if (recurringChargeTemplate.isProrataOnPriceChange()) {
-                    walletOperations.addAll(generateWalletOperationsByPricePlan(chargeInstance, chargeMode, forSchedule, effectivePeriodFromDate, effectivePeriodToDate,
+                    walletOperations.addAll(generateWalletOperationsByPricePlan(chargeInstance, chargeMode, forSchedule, effectiveChargeFromDate, effectiveChargeToDate,
                         prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, inputQuantity, orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(),
                         isApplyInAdvance, isVirtual));
 
                 } else {
-                    RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, isApplyInAdvance ? effectivePeriodFromDate : effectivePeriodToDate, inputQuantity, null,
-                        orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), effectivePeriodFromDate, effectivePeriodToDate,
+                    RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, isApplyInAdvance ? effectiveChargeFromDate : effectiveChargeToDate, inputQuantity, null,
+                        orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), effectiveChargeFromDate, effectiveChargeToDate,
                         prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, chargeMode, null, forSchedule, false);
 
                     WalletOperation walletOperation = ratingResult.getWalletOperation();
-                    walletOperation.setSubscriptionDate(chargeInstance.getSubscriptionDate());
+
+                    // Handle cases when rating script modify a calendar and effectively a chargedTo date
+                    if (walletOperation.getFullRatingPeriod() != null && currentPeriodToDate.compareTo(walletOperation.getFullRatingPeriod().getTo()) != 0) {
+                        effectiveChargeToDate = walletOperation.getFullRatingPeriod().getTo();
+                    }
 
                     if (forSchedule) {
                         walletOperation.changeStatus(WalletOperationStatusEnum.SCHEDULED);
@@ -511,13 +514,14 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 }
             }
 
-            // TODO this should happen before the rating, so rating script can change the nextChargeDate value
+            // Update charge, nextCharge and chargedToDates
             if (isApplyInAdvance) {
-                chargeInstance.advanceChargeDates(effectivePeriodFromDate, effectivePeriodToDate, effectivePeriodToDate);
+                chargeInstance.advanceChargeDates(effectiveChargeFromDate, effectiveChargeToDate, effectiveChargeToDate);
             } else {
-                chargeInstance.advanceChargeDates(effectivePeriodToDate, getRecurringPeriodEndDate(chargeInstance, effectivePeriodToDate), effectivePeriodToDate);
+                chargeInstance.advanceChargeDates(effectiveChargeToDate, getRecurringPeriodEndDate(chargeInstance, effectiveChargeToDate), effectiveChargeToDate);
             }
-            currentPeriodFromDate = currentPeriodToDate;
+
+            currentPeriodFromDate = chargeInstance.getChargedToDate(); // currentPeriodToDate;
             periodIndex++;
         }
 
@@ -847,7 +851,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         if (!walletIdList.isEmpty()) {
             // cancelled selected rts
-            getEntityManager().createNamedQuery("RatedTransaction.cancelByWOIds").setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
+            getEntityManager().createNamedQuery("RatedTransaction.cancelByWOIds").setParameter("notBilledWalletIdList", walletIdList).setParameter("now", new Date()).executeUpdate();
             // set selected wo to rerate and ratedTx.id=null
             walletsOpToRerate = getEntityManager().createNamedQuery("WalletOperation.setStatusToRerate").setParameter("now", new Date()).setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
 
@@ -1048,7 +1052,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     dto.getUnitAmountTax(), dto.getQuantity(), dto.getAmountWithoutTax(), dto.getAmountWithTax(), dto.getAmountTax(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(),
                     dto.getParameterExtra(), dto.getStartDate(), dto.getEndDate(), dto.getSubscriptionDate(), offer, seller, null, dto.getRatingUnitDescription(), null, null, null, null, dto.getStatus());
             }
-
+            Integer sortIndex = RatingService.getSortIndex(wo);
+            wo.setSortIndex(sortIndex);
             create(wo);
         }
     }

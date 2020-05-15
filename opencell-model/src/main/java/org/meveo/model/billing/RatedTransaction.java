@@ -118,11 +118,11 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "RatedTransaction.sumInvoiceableForCustomerWithMinAmountBySubscription", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), r.billingAccount.customerAccount.customer.id, r.seller.id FROM RatedTransaction r WHERE r.status='OPEN' AND :firstTransactionDate<=r.usageDate AND r.usageDate<:lastTransactionDate and r.subscription=:subscription and r.billingAccount.customerAccount.customer.minimumAmountEl is not null GROUP BY r.seller.id, r.billingAccount.customerAccount.customer.id"),
 
-        @NamedQuery(name = "RatedTransaction.cancelByWOIds", query = "UPDATE RatedTransaction r SET r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED WHERE id IN (SELECT wo.ratedTransaction.id FROM WalletOperation wo WHERE wo.id IN :notBilledWalletIdList)"),
+        @NamedQuery(name = "RatedTransaction.cancelByWOIds", query = "UPDATE RatedTransaction r SET r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.updated = :now  WHERE id IN (SELECT wo.ratedTransaction.id FROM WalletOperation wo WHERE wo.id IN :notBilledWalletIdList)"),
         @NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", query = "select r from RatedTransaction r where r.invoice=:invoice and r.invoiceSubCategory=:invoiceSubCategory "),
 
-        @NamedQuery(name = "RatedTransaction.unInvoiceByInvoice", query = "update RatedTransaction r set r.status='OPEN', r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice=:invoice"),
-        @NamedQuery(name = "RatedTransaction.unInvoiceByBR", query = "update RatedTransaction r set r.status='OPEN', r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.billingRun=:billingRun"),
+        @NamedQuery(name = "RatedTransaction.unInvoiceByInvoice", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice=:invoice"),
+        @NamedQuery(name = "RatedTransaction.unInvoiceByBR", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.billingRun=:billingRun"),
 
         @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByInvoice", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.invoice=:invoice"),
         @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByBR", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.billingRun=:billingRun"),
@@ -133,10 +133,11 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByUA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.wallet.userAccount=:userAccount"),
         @NamedQuery(name = "RatedTransaction.countNotInvoicedByCA", query = "SELECT count(*) FROM RatedTransaction r WHERE r.status <> org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND r.billingAccount.customerAccount=:customerAccount"),
 
-        @NamedQuery(name = "RatedTransaction.cancelByRTIds", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED where r.id IN :rsIds "),
+        @NamedQuery(name = "RatedTransaction.cancelByRTIds", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.CANCELED, r.updated = :now where r.id IN :rsIds "),
         @NamedQuery(name = "RatedTransaction.findByWalletOperationId", query = "SELECT wo.ratedTransaction FROM WalletOperation wo WHERE wo.id=:walletOperationId"),
 
-        @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfo", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice where r.id in :ids"),
+        @NamedQuery(name = "RatedTransaction.massUpdateWithInvoiceInfo", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, r.updated = :now , r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice where r.id in :ids"),
+        @NamedQuery(name = "RatedTransaction.updateWithInvoiceInfo", query = "UPDATE RatedTransaction r set r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED, r.updated = :now, r.invoiceAgregateF=:invoiceAgregateF, r.billingRun=:billingRun, r.invoice=:invoice, r.unitAmountWithoutTax=:unitAmountWithoutTax, r.unitAmountWithTax=:unitAmountWithTax, r.unitAmountTax=:unitAmountTax, r.amountWithoutTax=:amountWithoutTax, r.amountWithTax=:amountWithTax, r.amountTax=:amountTax, r.tax=:tax, r.taxPercent=:taxPercent where r.id=:id"),
 
         @NamedQuery(name = "RatedTransaction.listNotOpenedBetweenTwoDates", query = "SELECT r FROM RatedTransaction r where r.status!='OPEN' AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate AND r.id>:lastId order by r.id "),
         @NamedQuery(name = "RatedTransaction.listBetweenTwoDatesByStatus", query = "SELECT r FROM RatedTransaction r where r.status in (:status) AND :firstTransactionDate<=r.usageDate AND r.usageDate<=:lastTransactionDate AND r.id>:lastId order by r.id "),
@@ -149,7 +150,7 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "RatedTransaction.sumPositiveRTByBillingRun", query = "select sum(r.amountWithoutTax), sum(r.amountWithTax), r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id "
                 + "FROM RatedTransaction r where r.billingRun.id=:billingRunId and r.amountWithoutTax > 0 and r.status='BILLED' group by r.invoice.id, r.billingAccount.id, r.billingAccount.customerAccount.id, r.billingAccount.customerAccount.customer.id"),
-        @NamedQuery(name = "RatedTransaction.unInvoiceByInvoiceIds", query = "update RatedTransaction r set r.status='OPEN', r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice.id IN (:invoiceIds)"),
+        @NamedQuery(name = "RatedTransaction.unInvoiceByInvoiceIds", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now , r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null where r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED and r.invoice.id IN (:invoiceIds)"),
         @NamedQuery(name = "RatedTransaction.deleteSupplementalRTByInvoiceIds", query = "DELETE from RatedTransaction r WHERE r.wallet IS null and r.invoice.id IN (:invoicesIds)") })
 public class RatedTransaction extends BaseEntity implements ISearchable {
 
@@ -473,6 +474,12 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     private UnitOfMeasure ratingUnitOfMeasure;
 
     /**
+     * Sorting index
+     */
+    @Column(name = "sort_index")
+    private Integer sortIndex;
+
+    /**
      * Accounting code
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -485,7 +492,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
 
     /**
      * Constructor
-     * 
+     *
      * @param usageDate Operation date
      * @param unitAmountWithoutTax Unit amount without tax
      * @param unitAmountWithTax Unit amount with tax
@@ -626,6 +633,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
         if (ratingUnitDescription == null) {
             this.ratingUnitDescription = walletOperation.getChargeInstance().getChargeTemplate().getRatingUnitDescription();
         }
+        this.sortIndex = walletOperation.getSortIndex();
     }
 
     public WalletInstance getWallet() {
@@ -1203,5 +1211,23 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
      */
     public void setAccountingCode(AccountingCode accountingCode) {
         this.accountingCode = accountingCode;
+    }
+
+    /**
+     * Gets the sorting index.
+     *
+     * @return the sorting index
+     */
+    public Integer getSortIndex() {
+        return sortIndex;
+    }
+
+    /**
+     * Sets the sorting index.
+     *
+     * @param sortIndex the sorting index
+     */
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
     }
 }

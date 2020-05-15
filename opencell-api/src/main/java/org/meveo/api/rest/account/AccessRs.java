@@ -68,40 +68,17 @@ public interface AccessRs extends IBaseRs {
 
     /**
      * Search for an access with a given access code and subscription code.
-     *
-     * @param accessCode Access code
-     * @param subscriptionCode Subscription code
-     * @return Access
-     */
-    @GET
-    @Deprecated
-    @Path("/")
-    GetAccessResponseDto find(@QueryParam("accessCode") String accessCode, @QueryParam("subscriptionCode") String subscriptionCode);
-
-    /**
-     * Search for an access with a given access code and subscription code.
-     *
-     * @param accessCode Access code
-     * @param subscriptionCode Subscription code
-     * @param usageDate a usage date
-     * @return Access
-     */
-    @GET
-    @Path("/")
-    GetAccessResponseDto find(@QueryParam("accessCode") String accessCode, @QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("usageDate") Date usageDate);
-
-    /**
-     * Search for an access with a given access code and subscription code.
      * 
      * @param accessCode Access code
      * @param subscriptionCode Subscription code
      * @param startDate Access startDate
      * @param endDate Access endDate
+     * @param usageDate a usage date
      * @return Access
      */
     @GET
     @Path("/")
-    GetAccessResponseDto find(@QueryParam("accessCode") String accessCode, @QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("startDate") Date startDate, @QueryParam("endDate") Date endDate);
+    GetAccessResponseDto find(@QueryParam("accessCode") String accessCode, @QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("startDate") Date startDate, @QueryParam("endDate") Date endDate, @QueryParam("usageDate") Date usageDate);
 
     /**
      * Remove an access with a given access code and subscription code.

@@ -83,6 +83,7 @@ public class InvoiceCategoryApi extends BaseApi {
         invoiceCategory.setDescription(postData.getDescription());
         invoiceCategory.setOccTemplate(occTemplate);
         invoiceCategory.setOccTemplateNegative(occTemplateNegative);
+        invoiceCategory.setSortIndex(postData.getSortIndex());
 
         // populate customFields
         try {
@@ -138,7 +139,9 @@ public class InvoiceCategoryApi extends BaseApi {
             }
             invoiceCategory.setOccTemplateNegative(occTemplateNegative);
         }
-        
+        if (postData.getSortIndex() != null) {
+            invoiceCategory.setSortIndex(postData.getSortIndex());
+        }
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), invoiceCategory, false, true);

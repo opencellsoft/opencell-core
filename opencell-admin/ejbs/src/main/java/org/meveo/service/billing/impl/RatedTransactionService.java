@@ -176,17 +176,23 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Convert Wallet operations to Rated transactions for a given billable entity up to a given date
+     * Convert Wallet operations to Rated transactions for a given entity up to a given date
      * 
-     * @param entityToInvoice Entity to invoice
-     * @param invoicingDate Invoicing date
-     * @throws BusinessException General business exception.
+     * @param entityToInvoice Entity for which to convert Wallet operations to Rated transactions
+     * @param uptoInvoicingDate Up to invoicing date. Convert Wallet operations which invoicingDate is null or less than a specified date
      */
-    public void createRatedTransaction(IBillableEntity entityToInvoice, Date invoicingDate) throws BusinessException {
-        List<WalletOperation> walletOps = walletOperationService.listToRate(entityToInvoice, invoicingDate);
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createRatedTransactions(IBillableEntity entityToInvoice, Date uptoInvoicingDate) {
+        List<WalletOperation> walletOps = walletOperationService.listToRate(entityToInvoice, uptoInvoicingDate);
 
+        EntityManager em = getEntityManager();
+
+        Date now = new Date();
         for (WalletOperation walletOp : walletOps) {
-            createRatedTransaction(walletOp, false);
+            RatedTransaction ratedTransaction = new RatedTransaction(walletOp);
+            create(ratedTransaction);
+            em.createNamedQuery("WalletOperation.setStatusToTreatedWithRT").setParameter("rt", ratedTransaction).setParameter("now", now).setParameter("id", walletOp.getId()).executeUpdate();
         }
     }
 
@@ -355,6 +361,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         ratedTransaction.setUnitAmountWithTax(aggregatedWo.getUnitAmountWithTax());
         ratedTransaction.setUnitAmountTax(aggregatedWo.getUnitAmountTax());
         ratedTransaction.setUnitAmountWithoutTax(aggregatedWo.getUnitAmountWithoutTax());
+        ratedTransaction.setSortIndex(aggregatedWo.getSortIndex());
 
         if (!isVirtual) {
             create(ratedTransaction);
@@ -1480,56 +1487,57 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         Map<Object, Object> contextMap = new HashMap<Object, Object>();
         if (expression.startsWith("#{")) {
-            if (expression.indexOf("serviceInstance") >= 0) {
-                contextMap.put("serviceInstance", serviceInstance);
+            if (expression.indexOf(ValueExpressionWrapper.VAR_SERVICE_INSTANCE) >= 0) {
+                contextMap.put(ValueExpressionWrapper.VAR_SERVICE_INSTANCE, serviceInstance);
             }
 
-            if (expression.indexOf("sub") >= 0) {
+            if (expression.indexOf(ValueExpressionWrapper.VAR_SUBSCRIPTION) >= 0) {
                 if (subscription == null) {
                     subscription = serviceInstance.getSubscription();
                 }
-                contextMap.put("sub", subscription);
+                contextMap.put(ValueExpressionWrapper.VAR_SUBSCRIPTION, subscription);
             }
-            if (expression.indexOf("offer") >= 0) {
+            if (expression.indexOf(ValueExpressionWrapper.VAR_OFFER) >= 0) {
                 if (subscription == null) {
                     subscription = serviceInstance.getSubscription();
                 }
-                contextMap.put("offer", subscription.getOffer());
+                contextMap.put(ValueExpressionWrapper.VAR_OFFER, subscription.getOffer());
             }
 
-            if (expression.indexOf("ua") >= 0) {
+            if (expression.indexOf(ValueExpressionWrapper.VAR_USER_ACCOUNT) >= 0) {
                 if (ua == null) {
                     ua = subscription != null ? subscription.getUserAccount() : serviceInstance.getSubscription().getUserAccount();
                 }
 
-                contextMap.put("ua", ua);
+                contextMap.put(ValueExpressionWrapper.VAR_USER_ACCOUNT, ua);
             }
 
-            if (expression.indexOf("ba") >= 0) {
+            if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
                 if (ba == null) {
                     ba = subscription != null ? subscription.getUserAccount().getBillingAccount() : serviceInstance.getSubscription().getUserAccount().getBillingAccount();
                 }
 
-                contextMap.put("ba", ba);
+                contextMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, ba);
             }
 
-            if (expression.indexOf("ca") >= 0) {
+            if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) >= 0) {
 
                 if (ba == null) {
                     ba = subscription != null ? subscription.getUserAccount().getBillingAccount() : serviceInstance.getSubscription().getUserAccount().getBillingAccount();
                 }
-                contextMap.put("ca", ba.getCustomerAccount());
+                contextMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, ba.getCustomerAccount());
             }
 
-            if (expression.indexOf("c") >= 0) {
+            if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_SHORT) >= 0 || expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER) >= 0) {
                 if (ba == null) {
                     ba = subscription != null ? subscription.getUserAccount().getBillingAccount() : serviceInstance.getSubscription().getUserAccount().getBillingAccount();
                 }
-                contextMap.put("c", ba.getCustomerAccount().getCustomer());
+                contextMap.put(ValueExpressionWrapper.VAR_CUSTOMER_SHORT, ba.getCustomerAccount().getCustomer());
+                contextMap.put(ValueExpressionWrapper.VAR_CUSTOMER, ba.getCustomerAccount().getCustomer());
             }
 
-            if (expression.indexOf("prov") >= 0) {
-                contextMap.put("prov", appProvider);
+            if (expression.indexOf(ValueExpressionWrapper.VAR_PROVIDER) >= 0) {
+                contextMap.put(ValueExpressionWrapper.VAR_PROVIDER, appProvider);
             }
         }
         return contextMap;
@@ -1803,7 +1811,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param invoice Invoice
      */
     public void uninvoiceRTs(Invoice invoice) {
-        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoice").setParameter("invoice", invoice).executeUpdate();
+        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoice").setParameter("invoice", invoice).setParameter("now", new Date()).executeUpdate();
     }
 
     /**
@@ -1812,7 +1820,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param billingRun Billing run
      */
     public void uninvoiceRTs(BillingRun billingRun) {
-        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByBR").setParameter("billingRun", billingRun).executeUpdate();
+        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByBR").setParameter("billingRun", billingRun).setParameter("now", new Date()).executeUpdate();
     }
 
     /**
@@ -1940,7 +1948,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param invoicesIds invoices Ids
      */
     public void uninvoiceRTs(Collection<Long> invoicesIds) {
-        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoiceIds").setParameter("invoiceIds", invoicesIds).executeUpdate();
+        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoiceIds").setParameter("now", new Date()).setParameter("invoiceIds", invoicesIds).executeUpdate();
 
     }
 

@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
+import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -169,6 +170,10 @@ public class ServiceTemplateDto extends EnableBusinessDto {
                         serviceChargeTemplateRecurring.getWallets().getWallet().add(wallet.getCode());
                     }
 
+                    for (CounterTemplate accumulatorCounterTemplate : recCharge.getAccumulatorCounterTemplates()) {
+                        serviceChargeTemplateRecurring.getAccumulatorCounterTemplates().getCounterTemplate().add(accumulatorCounterTemplate.getCode());
+                    }
+
                     serviceChargeTemplateRecurrings.getServiceChargeTemplateRecurring().add(serviceChargeTemplateRecurring);
                 }
             }
@@ -185,6 +190,10 @@ public class ServiceTemplateDto extends EnableBusinessDto {
                         serviceChargeTemplateSubscription.getWallets().getWallet().add(wallet.getCode());
                     }
 
+                    for (CounterTemplate accumulatorCounterTemplate : subCharge.getAccumulatorCounterTemplates()) {
+                        serviceChargeTemplateSubscription.getAccumulatorCounterTemplates().getCounterTemplate().add(accumulatorCounterTemplate.getCode());
+                    }
+
                     serviceChargeTemplateSubscriptions.getServiceChargeTemplateSubscription().add(serviceChargeTemplateSubscription);
                 }
             }
@@ -199,6 +208,10 @@ public class ServiceTemplateDto extends EnableBusinessDto {
 
                     for (WalletTemplate wallet : terminationCharge.getWalletTemplates()) {
                         serviceChargeTemplateTermination.getWallets().getWallet().add(wallet.getCode());
+                    }
+
+                    for (CounterTemplate accumulatorCounterTemplate : terminationCharge.getAccumulatorCounterTemplates()) {
+                        serviceChargeTemplateTermination.getAccumulatorCounterTemplates().getCounterTemplate().add(accumulatorCounterTemplate.getCode());
                     }
 
                     serviceChargeTemplateTerminations.getServiceChargeTemplateTermination().add(serviceChargeTemplateTermination);
@@ -220,6 +233,10 @@ public class ServiceTemplateDto extends EnableBusinessDto {
 
                     for (WalletTemplate wallet : usageCharge.getWalletTemplates()) {
                         serviceUsageChargeTemplate.getWallets().getWallet().add(wallet.getCode());
+                    }
+
+                    for (CounterTemplate accumulatorCounterTemplate : usageCharge.getAccumulatorCounterTemplates()) {
+                        serviceUsageChargeTemplate.getAccumulatorCounterTemplates().getCounterTemplate().add(accumulatorCounterTemplate.getCode());
                     }
 
                     serviceChargeTemplateUsages.getServiceChargeTemplateUsage().add(serviceUsageChargeTemplate);

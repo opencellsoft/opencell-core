@@ -692,11 +692,11 @@ public class UsageRatingService implements Serializable {
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("edr", edr);
         userMap.put("op", walletOperation);
-        if (expression.indexOf("ua") >= 0) {
-            userMap.put("ua", walletOperation.getWallet().getUserAccount());
+        if (expression.indexOf(ValueExpressionWrapper.VAR_USER_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_USER_ACCOUNT, walletOperation.getWallet().getUserAccount());
         }
         if (expression.indexOf("serviceInstance") >= 0) {
-            userMap.put("serviceInstance", walletOperation.getServiceInstance());
+            userMap.put(ValueExpressionWrapper.VAR_SERVICE_INSTANCE, walletOperation.getServiceInstance());
         }
 
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);

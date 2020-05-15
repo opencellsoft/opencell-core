@@ -34,9 +34,9 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.payment.PaymentMethodApi;
-import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
-import org.meveo.api.security.parameter.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
@@ -183,7 +183,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         CustomerAccount customerAccount = new CustomerAccount();
         populate(postData, customerAccount);
-        customerAccount.setDateDunningLevel(new Date());
+		customerAccount.setDateDunningLevel(postData.getDateDunningLevel()!=null?postData.getDateDunningLevel():new Date());
         customerAccount.setCustomer(customer);
         customerAccount.setTradingCurrency(tradingCurrency);
         customerAccount.setTradingLanguage(tradingLanguage);
@@ -324,6 +324,10 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         if (!StringUtils.isBlank(postData.getDunningLevel())) {
             customerAccount.setDunningLevel(postData.getDunningLevel());
+        }
+        
+        if(postData.getDateDunningLevel()!=null) {
+    		customerAccount.setDateDunningLevel(postData.getDateDunningLevel());
         }
 
         if (businessAccountModel != null) {

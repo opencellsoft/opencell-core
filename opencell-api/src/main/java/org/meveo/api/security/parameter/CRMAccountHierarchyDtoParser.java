@@ -23,18 +23,24 @@ import javax.inject.Inject;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.security.config.SecureMethodParameterConfig;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.AccountHierarchyTypeEnum;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.meveo.service.security.SecuredBusinessEntityService;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * This will process a parameter of type {@link CRMAccountHierarchyDto} passed to a method annotated with {@link SecuredBusinessEntityMethod}.
  * 
  * @author Tony Alejandro
- *
+ * @author Mounir Boukayoua
  */
 public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<BusinessEntity> {
 
@@ -45,13 +51,13 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
     private SecuredBusinessEntityService securedBusinessEntityService;
 
     @Override
-    public BusinessEntity getParameterValue(SecureMethodParameter parameter, Object[] values) throws InvalidParameterException, MissingParameterException {
+    public List<BusinessEntity> getParameterValue(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException, MissingParameterException {
 
-        if (parameter == null) {
+        if (parameterConfig == null) {
             return null;
         }
         // retrieve the DTO
-        CRMAccountHierarchyDto dto = extractAccountHierarchyDto(parameter, values);
+        CRMAccountHierarchyDto dto = extractAccountHierarchyDto(parameterConfig, values);
 
         // retrieve the type of account hierarchy based on the dto that was
         // received.
@@ -61,16 +67,16 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
         // entity that will be checked for authorization.
         BusinessEntity entity = getEntity(accountHierarchyTypeEnum, dto);
 
-        return entity;
+        return Collections.singletonList(entity);
     }
 
-    private CRMAccountHierarchyDto extractAccountHierarchyDto(SecureMethodParameter parameter, Object[] values) throws InvalidParameterException {
+    private CRMAccountHierarchyDto extractAccountHierarchyDto(SecureMethodParameterConfig parameterConfig, Object[] values) throws InvalidParameterException {
 
-        // get the parameter value based on the index.
-        Object parameterValue = values[parameter.index()];
+        // get the parameterConfig value based on the index.
+        Object parameterValue = values[parameterConfig.getIndex()];
 
         if (!(parameterValue instanceof CRMAccountHierarchyDto)) {
-            throw new InvalidParameterException("Parameter received at index: " + parameter.index() + " is not an instance of CRMAccountHierarchyDto.");
+            throw new InvalidParameterException("Parameter received at index: " + parameterConfig.getIndex() + " is not an instance of CRMAccountHierarchyDto.");
         }
 
         // since we are sure it is of the correct type, cast it and return the
