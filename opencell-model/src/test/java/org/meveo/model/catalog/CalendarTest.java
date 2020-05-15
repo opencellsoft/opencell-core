@@ -30,6 +30,53 @@ import com.google.common.collect.Lists;
 
 public class CalendarTest {
 
+	@Test 
+	public void testFixedDateCalendar_PreviousDateOK_NextDateOK() {
+		CalendarFixed calendar = new CalendarFixed();
+		calendar.addFixedDate(DateUtils.newDate(2020, java.util.Calendar.FEBRUARY, 10, 15, 30, 0));
+		calendar.addFixedDate(DateUtils.newDate(2019, java.util.Calendar.JANUARY, 20, 0, 20, 0));
+		calendar.addFixedDate(DateUtils.newDate(2020, java.util.Calendar.OCTOBER, 3, 0, 10, 0));
+		calendar.addFixedDate(DateUtils.newDate(2019, java.util.Calendar.NOVEMBER, 2, 0, 05, 0));
+		calendar.addFixedDate(DateUtils.newDate(2020, java.util.Calendar.NOVEMBER, 15, 0, 03, 0));
+
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2020, java.util.Calendar.JANUARY, 1, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2020, java.util.Calendar.FEBRUARY, 10, 15, 30, 0), nextDate);
+
+        Date previousDate = calendar.previousCalendarDate(DateUtils.newDate(2020, java.util.Calendar.JANUARY, 1, 0, 0, 0));
+        Assert.assertEquals(DateUtils.newDate(2019, java.util.Calendar.NOVEMBER, 2, 0, 05, 0), previousDate);
+	}
+	
+	@Test 
+	public void testFixedDateCalendar_PreviousDateOK_NextDateKO() {
+		CalendarFixed calendar = new CalendarFixed();
+		calendar.addFixedDate(DateUtils.newDate(2020, java.util.Calendar.FEBRUARY, 10, 15, 30, 0));
+		calendar.addFixedDate(DateUtils.newDate(2019, java.util.Calendar.JANUARY, 20, 0, 20, 0));
+		calendar.addFixedDate(DateUtils.newDate(2020, java.util.Calendar.OCTOBER, 3, 0, 10, 0));
+		calendar.addFixedDate(DateUtils.newDate(2019, java.util.Calendar.NOVEMBER, 2, 0, 05, 0));
+		calendar.addFixedDate(DateUtils.newDate(2020, java.util.Calendar.NOVEMBER, 15, 0, 03, 0));
+
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2020, java.util.Calendar.NOVEMBER, 15, 0, 03, 0));
+        Assert.assertNull(nextDate);
+
+        Date previousDate = calendar.previousCalendarDate(DateUtils.newDate(2020, java.util.Calendar.NOVEMBER, 15, 0, 03, 0));
+        Assert.assertEquals(DateUtils.newDate(2020, java.util.Calendar.OCTOBER, 3, 0, 10, 0), previousDate);
+	}
+	
+	@Test 
+	public void testFixedDateCalendar_PreviousDateKO_NextDateOK() {
+		CalendarFixed calendar = new CalendarFixed();
+		calendar.addFixedDate(DateUtils.newDate(2020, java.util.Calendar.FEBRUARY, 10, 15, 30, 0));
+		calendar.addFixedDate(DateUtils.newDate(2019, java.util.Calendar.JANUARY, 20, 0, 20, 0));
+		calendar.addFixedDate(DateUtils.newDate(2020, java.util.Calendar.OCTOBER, 3, 0, 10, 0));
+		calendar.addFixedDate(DateUtils.newDate(2019, java.util.Calendar.NOVEMBER, 2, 0, 05, 0));
+		calendar.addFixedDate(DateUtils.newDate(2020, java.util.Calendar.NOVEMBER, 15, 0, 03, 0));
+		
+        Date nextDate = calendar.nextCalendarDate(DateUtils.newDate(2019, java.util.Calendar.JANUARY, 20, 0, 20, 0));
+        Assert.assertEquals(DateUtils.newDate(2019, java.util.Calendar.NOVEMBER, 2, 0, 05, 0), nextDate);
+
+        Date previousDate = calendar.previousCalendarDate(DateUtils.newDate(2019, java.util.Calendar.JANUARY, 20, 0, 20, 0));
+        Assert.assertNull(previousDate);
+	}
     @Test
     public void testYearCalendar() {
 

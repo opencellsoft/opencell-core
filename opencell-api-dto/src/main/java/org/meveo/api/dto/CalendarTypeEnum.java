@@ -35,6 +35,11 @@ public enum CalendarTypeEnum {
     DAILY,
 
     /**
+     * Fixed Date calendar. E.g. 12/02/2017 11:13:12.
+     */
+    FIXED,
+    
+    /**
      * A period of X months, days, hours, minutes, seconds. 
      * See CalendarPeriodUnitEnum for unit definition.
      */

@@ -17,9 +17,13 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +44,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarDateInterval;
+import org.meveo.model.catalog.CalendarFixed;
 import org.meveo.model.catalog.CalendarHoliday;
 import org.meveo.model.catalog.CalendarInterval;
 import org.meveo.model.catalog.CalendarIntervalTypeEnum;
@@ -52,6 +57,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DayInYearService;
+import org.meveo.service.catalog.impl.FixedDateService;
 import org.meveo.service.catalog.impl.HourInDayService;
 import org.omnifaces.cdi.Param;
 import org.primefaces.model.DualListModel;
@@ -75,6 +81,9 @@ public class CalendarBean extends BaseBean<Calendar> {
     private HourInDayService hourInDayService;
 
     @Inject
+    private FixedDateService fixedDateService;
+
+    @Inject
     @Param
     private String classType;
 
@@ -90,6 +99,8 @@ public class CalendarBean extends BaseBean<Calendar> {
 
     private Integer weekendFrom;
     private Integer weekendTo;
+    
+    public static String FIXED_DATE_FORMAT = "dd/MM/yyyy HH:mm";
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -188,6 +199,7 @@ public class CalendarBean extends BaseBean<Calendar> {
     public Map<String, String> getCalendarTypes() {
         Map<String, String> values = new HashMap<String, String>();
 
+        values.put("FIXED", resourceMessages.getString("calendar.calendarType.FIXED"));
         values.put("DAILY", resourceMessages.getString("calendar.calendarType.DAILY"));
         values.put("YEARLY", resourceMessages.getString("calendar.calendarType.YEARLY"));
         values.put("PERIOD", resourceMessages.getString("calendar.calendarType.PERIOD"));
@@ -215,7 +227,7 @@ public class CalendarBean extends BaseBean<Calendar> {
 
         String newType = (String) ((EditableValueHolder) event.getComponent()).getValue();
 
-        Class[] classes = { CalendarYearly.class, CalendarDaily.class, CalendarPeriod.class, CalendarInterval.class, CalendarJoin.class, CalendarBanking.class };
+        Class[] classes = { CalendarYearly.class, CalendarFixed.class, CalendarDaily.class, CalendarPeriod.class, CalendarInterval.class, CalendarJoin.class, CalendarBanking.class };
         for (Class clazz : classes) {
 
             if (newType.equalsIgnoreCase(((DiscriminatorValue) clazz.getAnnotation(DiscriminatorValue.class)).value())) {
@@ -271,9 +283,37 @@ public class CalendarBean extends BaseBean<Calendar> {
         Collections.sort(((CalendarDaily) entity).getHours());
 
     }
-
+    
     public void removeTime(HourInDay hourInDay) {
         ((CalendarDaily) entity).getHours().remove(hourInDay);
+    }
+
+    public void addFixedDate() throws BusinessException {
+    	Date fixedDate = null;
+        if (timeToAdd == null) {
+            return;
+        }
+        try {
+			LocalDateTime.parse(timeToAdd, DateTimeFormatter.ofPattern(FIXED_DATE_FORMAT));
+			fixedDate = new SimpleDateFormat(FIXED_DATE_FORMAT).parse(timeToAdd);
+        } catch(Exception ex) {
+        	return;
+        }
+        ((CalendarFixed) entity).addFixedDate(fixedDate); 
+        timeToAdd = null;
+    }
+
+    public void removeFixedDate(Date fixedDate) {
+        ((CalendarFixed) entity).removeFixedDate(fixedDate);
+    }
+
+    public String getFixedDate(Date date) {
+        try {
+	        SimpleDateFormat formatter = new SimpleDateFormat(FIXED_DATE_FORMAT);
+	        return formatter.format(date);
+        } catch(Exception e) {
+        	return "";
+        }
     }
 
     public void addInterval() throws BusinessException {
@@ -389,8 +429,8 @@ public class CalendarBean extends BaseBean<Calendar> {
                 ((CalendarYearly) getEntity()).getDays().clear();
             }
             ((CalendarYearly) getEntity()).getDays().addAll(dayInYearService.refreshOrRetrieve(dayInYearListModel.getTarget()));
-        }
-
+        } 
+      
         return super.saveOrUpdate(killConversation);
     }
 
