@@ -141,6 +141,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     private List<InvoiceCategoryDTO> categoryDTOs;
 
+	private Set<Invoice> linkedInvoices;
+
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -886,5 +888,14 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      */
     public boolean getShowBtnNewIADetailed() {
         return !entity.isPrepaid();
+    }
+    
+    public Set<Invoice> getLinkedInvoices() {
+		entity = invoiceService.refreshOrRetrieve(entity);
+        return entity.getLinkedInvoices();
+    }
+
+    public void setLinkedInvoices(Set<Invoice> linkedInvoices) {
+        entity.setLinkedInvoices(linkedInvoices);
     }
 }
