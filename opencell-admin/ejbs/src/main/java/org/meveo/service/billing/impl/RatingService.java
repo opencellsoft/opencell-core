@@ -225,7 +225,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param startdate Charge period start date if applicable
      * @param endDate Charge period end date if applicable.
      * @param chargeMode Charge mode
-     * @param fullRatingPeriod Full rating period dates when prorata is applied. In such case startDate-endDate will be shorted than fullRatingPeriod. Is NOT provided when prorata is not applied.
+     * @param fullRatingPeriod Full rating period dates when prorata is applied. In such case startDate-endDate will be shorted than fullRatingPeriod. Is NOT provided when prorata
+     *        is not applied.
      * @param edr EDR being rated
      * @param isReservation - is this a reservation instead of a real wallet operation
      * @param isVirtual Is this a virtual charge - simulation of rating, charge instance will be matched by code to the charge instantiated in subscription
@@ -233,8 +234,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @throws BusinessException General business exception
      * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RatingResult rateCharge(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, String orderNumberOverride,
-            Date startdate, Date endDate, DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode,  EDR edr, boolean isReservation, boolean isVirtual) throws BusinessException, RatingException {
+    public RatingResult rateCharge(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, String orderNumberOverride, Date startdate, Date endDate,
+            DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode, EDR edr, boolean isReservation, boolean isVirtual) throws BusinessException, RatingException {
 
         // For virtual operation, lookup charge in the subscription
         if (isVirtual && chargeInstance.getSubscription() != null) {
@@ -320,7 +321,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @param orderNumberOverride Order number to override. If not provided, will default to an order number from a charge instance
      * @param startDate Charge period start date if applicable
      * @param endDate Charge period end date if applicable.
-     * @param fullRatingPeriod Full rating period dates when prorata is applied. In such case startDate-endDate will be shorted than fullRatingPeriod. Is NOT provided when prorata is not applied.
+     * @param fullRatingPeriod Full rating period dates when prorata is applied. In such case startDate-endDate will be shorted than fullRatingPeriod. Is NOT provided when prorata
+     *        is not applied.
      * @param chargeMode Charge mode
      * @param edr EDR being rated
      * @param forSchedule - is it to be scheduled
@@ -330,10 +332,10 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * @throws BusinessException business exception
      * @throws RatingException Failure to rate charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RatingResult rateChargeAndTriggerEDRs(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits,
-            String orderNumberOverride, Date startDate, Date endDate, DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode, EDR edr, boolean forSchedule, boolean isVirtual) throws BusinessException, RatingException {
+    public RatingResult rateChargeAndTriggerEDRs(ChargeInstance chargeInstance, Date applicationDate, BigDecimal inputQuantity, BigDecimal quantityInChargeUnits, String orderNumberOverride, Date startDate, Date endDate,
+            DatePeriod fullRatingPeriod, ChargeApplicationModeEnum chargeMode, EDR edr, boolean forSchedule, boolean isVirtual) throws BusinessException, RatingException {
 
-        RatingResult ratedEDRResult = rateCharge(chargeInstance,  applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, startDate, endDate, fullRatingPeriod,chargeMode,  edr, false, isVirtual);
+        RatingResult ratedEDRResult = rateCharge(chargeInstance, applicationDate, inputQuantity, quantityInChargeUnits, orderNumberOverride, startDate, endDate, fullRatingPeriod, chargeMode, edr, false, isVirtual);
 
         // Do not trigger EDRs for virtual or Scheduled operations
         if (forSchedule || isVirtual) {
@@ -606,7 +608,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
      * Override wallet operation parameters using EL paramaters in the price plan.
      *
      * @param bareWalletOperation the wallet operation
-     * @param pricePlan           the Price plan
+     * @param pricePlan the Price plan
      * @return a wallet operation
      */
     private WalletOperation overrideWalletOperationParameters(WalletOperation bareWalletOperation, PricePlanMatrix pricePlan) {
@@ -1111,7 +1113,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
             OfferTemplate offer = chargeInstance.getSubscription().getOffer();
             userMap.put(ValueExpressionWrapper.VAR_OFFER, offer);
         }
-        if (expression.contains(ValueExpressionWrapper.VAR_USER_ACCOUNT) || expression.contains(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) || expression.contains(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) || expression.contains(ValueExpressionWrapper.VAR_CUSTOMER_SHORT)|| expression.contains(ValueExpressionWrapper.VAR_CUSTOMER)) {
+        if (expression.contains(ValueExpressionWrapper.VAR_USER_ACCOUNT) || expression.contains(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) || expression.contains(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT)
+                || expression.contains(ValueExpressionWrapper.VAR_CUSTOMER_SHORT) || expression.contains(ValueExpressionWrapper.VAR_CUSTOMER)) {
             if (ua == null) {
                 ua = chargeInstance.getUserAccount();
             }
@@ -1137,13 +1140,23 @@ public class RatingService extends PersistenceService<WalletOperation> {
         return userMap;
     }
 
-    private void executeRatingScript(WalletOperation bareWalletOperation, ScriptInstance scriptInstance) throws RatingScriptExecutionErrorException {
+    /**
+     * Execute a rating script
+     * 
+     * @param bareWalletOperation Wallet operation to rate
+     * @param scriptInstance Script to execute
+     * @throws RatingException Rating exception
+     */
+    private void executeRatingScript(WalletOperation bareWalletOperation, ScriptInstance scriptInstance) throws RatingException {
 
         String scriptInstanceCode = scriptInstance.getCode();
         try {
             log.debug("Will execute priceplan script " + scriptInstanceCode);
 
             scriptInstanceService.executeCached(bareWalletOperation, scriptInstanceCode, null);
+
+        } catch (RatingException e) {
+            throw e;
 
         } catch (BusinessException e) {
             throw new RatingScriptExecutionErrorException("Failed when run script " + scriptInstanceCode + ", info " + e.getMessage(), e);

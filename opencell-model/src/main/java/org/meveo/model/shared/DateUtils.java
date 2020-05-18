@@ -744,4 +744,26 @@ public class DateUtils {
             return BigDecimal.ONE;
         }
     }
+    
+    /**
+     * Compares two dates. Handles null dates without exception
+     * 
+     * @param one First date
+     * @param two Second date
+     * @return Matches Date.compare() return value as in one.compare(two)
+     */
+    public static int compare(Date one, Date two) {
+
+        if (one == null && two != null) {
+            return 1;
+        } else if (one != null && two == null) {
+            return -1;
+        } else if (one == null && two == null) {
+            return 0;
+        } else if (one != null && two != null) {
+            return one.compareTo(two);
+        }
+
+        return 0;
+    }
 }
