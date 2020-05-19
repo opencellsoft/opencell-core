@@ -16,5 +16,6 @@ public class MeveoSQLDialect extends PostgreSQL94Dialect {
 		registerFunction("bigIntFromJson", new LongPostgreSQLJsonSearchFunction());
 		registerFunction("timestampFromJson", new DatePostgreSQLJsonSearchFunction());
 		registerFunction("booleanFromJson", new BooleanPostgreSQLJsonSearchFunction());
+		registerFunction("entityFromJson", new EntityReferencePostgreSQLJsonSearchFunction());
 	}
 }
