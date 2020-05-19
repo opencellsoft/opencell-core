@@ -101,4 +101,18 @@ public class CustomEntityInstanceService extends BusinessService<CustomEntityIns
     public void remove(String cetCode, Set<Long> ids){
         ids.forEach(id -> remove(cetCode, id));
     }
+
+	/**
+	 * @param cetCode
+	 * @param cftCode
+	 * @param entityCode
+	 * @return
+	 */
+	public List<CustomEntityInstance> listByReferencedEntity(String cetCode, String cftCode, String entityCode) {
+        QueryBuilder qb = new QueryBuilder(getEntityClass(), "cei", null);
+        qb.addCriterion("cei.cetCode", "=", cetCode, true);
+        qb.addCriterion("entityFromJson(cf_values,"+cftCode+",entity,null)","=",entityCode,true);
+        Query query = qb.getQuery(getEntityManager());
+        return (List<CustomEntityInstance>) qb.getQuery(getEntityManager()).getResultList();
+	}
 }
