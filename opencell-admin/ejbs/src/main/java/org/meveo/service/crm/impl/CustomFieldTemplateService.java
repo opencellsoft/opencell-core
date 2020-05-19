@@ -38,6 +38,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
@@ -49,6 +50,7 @@ import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.PersistenceUtils;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
@@ -170,6 +172,22 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
         List<CustomFieldTemplate> values = getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTByAppliesTo", CustomFieldTemplate.class)
             .setParameter("appliesTo", appliesTo).getResultList();
+
+        Map<String, CustomFieldTemplate> cftMap = values.stream().collect(Collectors.toMap(cft -> cft.getCode(), cft -> cft));
+
+        return cftMap;
+    }
+    
+    /**
+     * Find a list of custom field templates referencing a given entity - always do a lookup in DB
+     * 
+     * @param referencedEntity Entity full name 
+     * @return A list of custom field templates mapped by a template key
+     */
+    public Map<String, CustomFieldTemplate> findByReferencedEntityNoCache(String referencedEntity) {
+
+        List<CustomFieldTemplate> values = getEntityManager().createNamedQuery("CustomFieldTemplate.getReferencedCFTByEntity", CustomFieldTemplate.class)
+            .setParameter("referencedEntity", referencedEntity).getResultList();
 
         Map<String, CustomFieldTemplate> cftMap = values.stream().collect(Collectors.toMap(cft -> cft.getCode(), cft -> cft));
 
@@ -763,4 +781,18 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     	return findByAppliesTo(cet.getAppliesTo());
     }
 
+	/**
+	 * @param customField
+	 * @param code
+	 * @param entityClass
+	 * @return
+	 */
+	public List getReferencedEntities(CustomFieldTemplate customField, String code, Class entityClass) {
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a");
+        queryBuilder.addCriterion("entityFromJson(cf_values,"+customField.getCode()+",entity,null)","=",code,true);
+        Query query = queryBuilder.getQuery(getEntityManager());
+        List resultList = query.getResultList();
+		return resultList;
+	}
+    
 }
