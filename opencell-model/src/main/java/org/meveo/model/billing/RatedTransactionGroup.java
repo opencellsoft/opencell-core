@@ -205,6 +205,9 @@ public class RatedTransactionGroup implements Serializable {
     }
 
     public PaymentMethod getPaymentMethod() {
+        if (paymentMethod == null) {
+            paymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
+        }
         return paymentMethod;
     }
 
