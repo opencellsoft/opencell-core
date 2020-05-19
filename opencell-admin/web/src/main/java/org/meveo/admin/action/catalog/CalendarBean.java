@@ -40,6 +40,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.CalendarDaily;
@@ -57,7 +58,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DayInYearService;
-import org.meveo.service.catalog.impl.FixedDateService;
 import org.meveo.service.catalog.impl.HourInDayService;
 import org.omnifaces.cdi.Param;
 import org.primefaces.model.DualListModel;
@@ -81,9 +81,6 @@ public class CalendarBean extends BaseBean<Calendar> {
     private HourInDayService hourInDayService;
 
     @Inject
-    private FixedDateService fixedDateService;
-
-    @Inject
     @Param
     private String classType;
 
@@ -99,7 +96,7 @@ public class CalendarBean extends BaseBean<Calendar> {
 
     private Integer weekendFrom;
     private Integer weekendTo;
-    
+
     public static String FIXED_DATE_FORMAT = "dd/MM/yyyy HH:mm";
 
     /**
@@ -283,37 +280,9 @@ public class CalendarBean extends BaseBean<Calendar> {
         Collections.sort(((CalendarDaily) entity).getHours());
 
     }
-    
+
     public void removeTime(HourInDay hourInDay) {
         ((CalendarDaily) entity).getHours().remove(hourInDay);
-    }
-
-    public void addFixedDate() throws BusinessException {
-    	Date fixedDate = null;
-        if (timeToAdd == null) {
-            return;
-        }
-        try {
-			LocalDateTime.parse(timeToAdd, DateTimeFormatter.ofPattern(FIXED_DATE_FORMAT));
-			fixedDate = new SimpleDateFormat(FIXED_DATE_FORMAT).parse(timeToAdd);
-        } catch(Exception ex) {
-        	return;
-        }
-        ((CalendarFixed) entity).addFixedDate(fixedDate); 
-        timeToAdd = null;
-    }
-
-    public void removeFixedDate(Date fixedDate) {
-        ((CalendarFixed) entity).removeFixedDate(fixedDate);
-    }
-
-    public String getFixedDate(Date date) {
-        try {
-	        SimpleDateFormat formatter = new SimpleDateFormat(FIXED_DATE_FORMAT);
-	        return formatter.format(date);
-        } catch(Exception e) {
-        	return "";
-        }
     }
 
     public void addInterval() throws BusinessException {
@@ -429,8 +398,8 @@ public class CalendarBean extends BaseBean<Calendar> {
                 ((CalendarYearly) getEntity()).getDays().clear();
             }
             ((CalendarYearly) getEntity()).getDays().addAll(dayInYearService.refreshOrRetrieve(dayInYearListModel.getTarget()));
-        } 
-      
+        }
+
         return super.saveOrUpdate(killConversation);
     }
 
@@ -467,5 +436,41 @@ public class CalendarBean extends BaseBean<Calendar> {
             break;
         }
         return false;
+    }
+    public void addFixedDate() throws BusinessException {
+        CalendarFixed calendarFixed = (CalendarFixed) entity;
+        Date fromDate = null;
+        Date toDate = null;
+        if (timeToAdd == null || timeToAdd.split("-").length != 2) {
+            return;
+        }
+        try {
+            LocalDateTime.parse(timeToAdd.split("-")[0].trim(), DateTimeFormatter.ofPattern(FIXED_DATE_FORMAT));
+            LocalDateTime.parse(timeToAdd.split("-")[1].trim(), DateTimeFormatter.ofPattern(FIXED_DATE_FORMAT));
+
+            fromDate = new SimpleDateFormat(FIXED_DATE_FORMAT).parse(timeToAdd.split("-")[0].trim());
+            toDate = new SimpleDateFormat(FIXED_DATE_FORMAT).parse(timeToAdd.split("-")[1].trim());
+            
+            if(! calendarFixed.isValidFixedDate(new DatePeriod(fromDate, toDate))) {
+                return;
+            }
+            calendarFixed.addFixedDate(new DatePeriod(fromDate, toDate));
+        } catch (Exception ex) {
+            return;
+        }     
+        timeToAdd = null;
+    }
+
+    public void removeFixedDate(DatePeriod datePeriod) {
+        ((CalendarFixed) entity).removeFixedDate(datePeriod); 
+    }
+
+    public String getFixedDate(DatePeriod datePeriod) {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat(FIXED_DATE_FORMAT);
+            return formatter.format(datePeriod.getFrom()) + " - " + formatter.format(datePeriod.getTo());
+        } catch (Exception e) {
+            return "";
+        }
     }
 }

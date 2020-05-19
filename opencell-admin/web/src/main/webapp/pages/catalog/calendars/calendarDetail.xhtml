@@ -63,7 +63,7 @@
 					<f:selectItem itemValue="YEARLY"
 						itemLabel="#{messages['calendar.calendarType.YEARLY']}" />
 					<f:selectItem itemValue="FIXED"
-						itemLabel="#{messages['calendar.calendarType.FIXED']}" />
+						itemLabel="#{messages['calendar.calendarType.FIXED']}" />			
 					<f:selectItem itemValue="DAILY"
 						itemLabel="#{messages['calendar.calendarType.DAILY']}" />
 					<f:selectItem itemValue="PERIOD"
@@ -91,14 +91,13 @@
 				dualListModel="#{calendarBean.dayInYearModel}"
 				rendered="#{calendarBean.entity['class'].simpleName eq 'CalendarYearly'}"
 				newLine="true" />
-
-			<h:panelGrid columns="2"
+			<h:panelGrid columns="2" 
 				rendered="#{calendarBean.entity['class'].simpleName eq 'CalendarFixed'}"
 				styleClass="clearLeft">
 				<h:panelGrid id="calendarFixed">
 					<h:panelGrid columns="2">
-						<p:inputMask id="fixed-date" value="#{calendarBean.timeToAdd}"
-							mask="99/99/9999 99:99" rendered="#{calendarBean.edit}" />
+						<p:inputMask id="fixed-date" value="#{calendarBean.timeToAdd}" size="50"
+							mask="99/99/9999 99:99    -    99/99/9999 99:99" rendered="#{calendarBean.edit}" />
 						<p:commandButton icon="ui-icon-plus"
 							action="#{calendarBean.addFixedDate()}" partialSubmit="true"
 							process=":formId:fixed-date, @this"
@@ -107,16 +106,16 @@
 					</h:panelGrid>
 					<p:dataTable id="calendarFixedDates" resizableColumns="true"
 						value="#{calendarBean.entity.fixedDates}" var="record"
-						paginator="false" styleClass="paginated" style="width:25%">
+						paginator="false" styleClass="paginated" style="width:30%">
 						<f:facet name="header">#{messages['calendar.fixedDates']}</f:facet>
 						<p:column width="80%">
-							<h:outputText value="#{calendarBean.getFixedDate(record.fixedDate)}"
+							<h:outputText value="#{calendarBean.getFixedDate(record.datePeriod)}"
 								style="display:inline-block" />
 						</p:column>
 						<p:column width="20%">
 							<p:commandLink styleClass="ui-icon ui-icon-trash"
 								style="float:right;margin-right:10px"
-								action="#{calendarBean.removeFixedDate(record.fixedDate)}"
+								action="#{calendarBean.removeFixedDate(record.datePeriod)}"
 								partialSubmit="true" process="@this"
 								update=":formId:calendarFixedDates"
 								rendered="#{calendarBean.edit}">

@@ -25,72 +25,77 @@ import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
+
+import org.meveo.model.DatePeriod;
 
 @Entity
 @DiscriminatorValue("FIXED")
 public class CalendarFixed extends Calendar {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@OneToMany(mappedBy = "calendarFixed", cascade = { CascadeType.ALL }, orphanRemoval=true)
-	@OrderBy("fixedDate")
-	private List<FixedDate> fixedDates;
+    @OneToMany(mappedBy = "calendarFixed", cascade = { CascadeType.ALL }, orphanRemoval = true)
+    private List<FixedDate> fixedDates;
 
-	public CalendarFixed() {
-		fixedDates = new ArrayList<>();
-	}
+    public CalendarFixed() {
+        fixedDates = new ArrayList<>();
+    }
 
-	public List<FixedDate> getFixedDates() {
-		return fixedDates;
-	}
+    public List<FixedDate> getFixedDates() {
+        return fixedDates;
+    }
 
-	public void setFixedDates(List<FixedDate> fixedDates) {
-		this.fixedDates = fixedDates;
-	}
+    public void setFixedDates(List<FixedDate> fixedDates) {
+        this.fixedDates = fixedDates;
+    }
 
-	public void addFixedDate(Date date) {
-		FixedDate fixedDate = new FixedDate(date);
-		fixedDate.setCalendarFixed(this);
-		fixedDates.add(fixedDate);
-	}
+    public void addFixedDate(DatePeriod datePeriod) {
+        FixedDate fixedDate = new FixedDate(datePeriod);
+        fixedDate.setCalendarFixed(this);
+        fixedDates.add(fixedDate);
+    }
 
-	public void removeFixedDate(Date date) {
-		FixedDate fixedDate = new FixedDate(date);
-		fixedDates.remove(fixedDate);
-	}
+    public Boolean isValidFixedDate(DatePeriod datePeriod) {
+        for (FixedDate fixedDate : fixedDates) {
+            if (fixedDate.getDatePeriod().isCorrespondsToPeriod(datePeriod, false)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	/**
-	 * Checks for next calendar date.
-	 * 
-	 * @param date Current date.
-	 * @return Next calendar date.
-	 */
-	public Date nextCalendarDate(Date date) {
-		return fixedDates.stream().map(FixedDate::getFixedDate)
-				   .filter(fixedDate -> date.before(fixedDate))
-				   .min(Date::compareTo).orElse(null);
-	}
+    public void removeFixedDate(DatePeriod datePeriod) {
+        FixedDate fixedDate = new FixedDate(datePeriod);
+        fixedDates.remove(fixedDate);
+    }
 
-	/**
-	 * Checks for previous calendar date. 
-	 * 
-	 * @param date Current date.
-	 * @return Next calendar date.
-	 */
-	public Date previousCalendarDate(Date date) {
-		 return fixedDates.stream().map(FixedDate::getFixedDate)
-						   .filter(fixedDate -> date.after(fixedDate))
-						   .max(Date::compareTo).orElse(null);
-	}
+    /**
+     * Checks for next calendar date.
+     * 
+     * @param date Current date.
+     * @return Next calendar date.
+     */
+    public Date nextCalendarDate(Date date) {
+        return fixedDates.stream().map(fixedDate -> fixedDate.getDatePeriod().getFrom()).filter(fromDate -> date.before(fromDate)).min(Date::compareTo).orElse(null);
+    }
 
-	@Override
-	public Date previousPeriodEndDate(Date date) {
-		return null;
-	}
+    /**
+     * Checks for previous calendar date.
+     * 
+     * @param date Current date.
+     * @return Next calendar date.
+     */
+    public Date previousCalendarDate(Date date) {
+        return fixedDates.stream().map(fixedDate -> fixedDate.getDatePeriod().getFrom()).filter(fromDate -> date.after(fromDate)).max(Date::compareTo).orElse(null);
+    }
 
-	@Override
-	public Date nextPeriodStartDate(Date date) {
-		return null;
-	}
+    @Override
+    public Date previousPeriodEndDate(Date date) {
+        return null;
+    }
+
+    @Override
+    public Date nextPeriodStartDate(Date date) {
+        return null;
+    }
 }

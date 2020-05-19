@@ -35,11 +35,6 @@ public enum CalendarTypeEnum {
     DAILY,
 
     /**
-     * Fixed Date calendar. E.g. 12/02/2017 11:13:12.
-     */
-    FIXED,
-    
-    /**
      * A period of X months, days, hours, minutes, seconds. 
      * See CalendarPeriodUnitEnum for unit definition.
      */
@@ -64,7 +59,14 @@ public enum CalendarTypeEnum {
     /**
      * A union of two calendars. A union of calendars "Monday-Tuesday" and "Tuesday-Friday" would result in "Monday-Friday" time range
      */
-    BANKING;
+    BANKING,
+    
+    /**
+     * Fixed Date calendar. E.g. 12/02/2017 11:13:12.
+     */
+    FIXED;
+    
+    /**
 
     /**
      * Checks if is join.

@@ -17,20 +17,17 @@
  */
 package org.meveo.model.catalog;
 
-import java.util.Date;
-
 import javax.persistence.Cacheable;
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.DatePeriod;
 
 /**
  * Fixed Date entry for Fixed calendar
@@ -46,41 +43,41 @@ public class FixedDate extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-
-    @Column(name = "fixed_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fixedDate;
+    @Embedded
+    private DatePeriod datePeriod = new DatePeriod();
 
     @ManyToOne
-    @JoinColumn(name="cat_calendar_id", nullable=false,insertable = true,updatable = true)
+    @JoinColumn(name = "cat_calendar_id", nullable = false, insertable = true, updatable = true)
     private CalendarFixed calendarFixed;
-    
-    
-    public void setFixedDate(Date fixedDate) {
-		this.fixedDate = fixedDate;
-	}
-    
-    public Date getFixedDate() {
-		return fixedDate;
-	}
-    
+
     public void setCalendarFixed(CalendarFixed calendarFixed) {
-		this.calendarFixed = calendarFixed;
-	}
-    
+        this.calendarFixed = calendarFixed;
+    }
+
     public CalendarFixed getCalendarFixed() {
-		return calendarFixed;
-	}
-    
+        return calendarFixed;
+    }
+
+    public void setDatePeriod(DatePeriod datePeriod) {
+        this.datePeriod = datePeriod;
+    }
+
+    public DatePeriod getDatePeriod() {
+        if (datePeriod == null) {
+            datePeriod = new DatePeriod();
+        }
+        return datePeriod;
+    }
+
     public FixedDate() {
         super();
     }
 
-    public FixedDate(Date fixedDate) {
+    public FixedDate(DatePeriod datePeriod) {
         super();
-        this.fixedDate = fixedDate;
+        this.datePeriod = datePeriod;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -92,12 +89,6 @@ public class FixedDate extends BaseEntity {
         }
 
         FixedDate other = (FixedDate) obj;
-        if(this.getFixedDate().equals(other.getFixedDate())) {
-        	return true;
-        } else {
-        	return false;
-        }
+        return this.getDatePeriod().equals(other.getDatePeriod());
     }
-    
-    
 }

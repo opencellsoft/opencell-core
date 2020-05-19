@@ -20,7 +20,7 @@ package org.meveo.service.catalog.impl;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 
-import org.meveo.model.catalog.CalendarDaily;
+import org.meveo.model.catalog.CalendarFixed;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -28,6 +28,6 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 @Named
-public class CalendarFixedService extends PersistenceService<CalendarDaily> {
+public class CalendarFixedService extends PersistenceService<CalendarFixed> {
 
 }

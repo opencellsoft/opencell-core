@@ -142,7 +142,8 @@ public class CalendarDto extends BusinessEntityDto {
             CalendarFixed calendar = (CalendarFixed) calendarEntity;
             fixedDates = new ArrayList<>();
             for(FixedDate fixedDate : calendar.getFixedDates()) {
-            	fixedDates.add(DateUtils.formatDateWithPattern(fixedDate.getFixedDate(),"dd/MM/yyyy HH:mm"));      	
+            	fixedDates.add(DateUtils.formatDateWithPattern(fixedDate.getDatePeriod().getFrom(),"dd/MM/yyyy HH:mm")
+            	                + "-" + DateUtils.formatDateWithPattern(fixedDate.getDatePeriod().getTo(),"dd/MM/yyyy HH:mm"));      	
             }        
         } else if (calendarEntity instanceof CalendarPeriod) {
             CalendarPeriod calendar = (CalendarPeriod) calendarEntity;

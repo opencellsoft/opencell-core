@@ -82,7 +82,6 @@
         <createSequence sequenceName="cat_day_in_year_seq" startValue="367" />
         <createSequence sequenceName="cat_discount_plan_item_seq" />
         <createSequence sequenceName="cat_discount_plan_seq" />
-        <createSequence sequenceName="cat_fixed_date_seq" />
         <createSequence sequenceName="cat_hour_in_day_seq" />
         <createSequence sequenceName="cat_offer_template_seq" />
         <createSequence sequenceName="cat_price_plan_matrix_seq" />
@@ -677,12 +676,6 @@
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}cat_discount_plan_seq values(1)</sql>
-        <createTable tableName="cat_fixed_date_seq">
-            <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_fixed_date_seq_pk" />
-            </column>
-        </createTable>
-        <sql>insert into ${db.schema.adapted}cat_fixed_date_seq values(1)</sql>        
         <createTable tableName="cat_hour_in_day_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_hour_in_day_seq_pk" />
@@ -7333,21 +7326,6 @@
         </createTable>
         <addPrimaryKey columnNames="offer_tmpl_id, discount_plan_id" constraintName="cat_offer_tmpl_discount_plan_pkey" tableName="cat_offer_tmpl_discount_plan" />
     </changeSet>
-    <changeSet author="MohammedAmineTazi" id="rebuild-str-tbl-395">
-        <createTable tableName="cat_fixed_date">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_fixed_date_pkey" />
-            </column>
-            <column name="fixed_date" type="datetime" >
-            	<constraints nullable="false" />
-            </column>
-            <column name="cat_calendar_id" type="bigint" >
-            	<constraints nullable="false" />
-            </column>           
-            <column name="version" type="int4" />
-        </createTable>
-    </changeSet>
-    
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1" dbms="postgresql">
@@ -9417,10 +9395,6 @@
         <addForeignKeyConstraint constraintName="billing_discount_plan_instance_bs_fk" referencedTableName="billing_subscription" baseColumnNames="subscription_id" baseTableName="billing_discount_plan_instance"
             referencedColumnNames="id" />
     </changeSet>
-    <changeSet author="MohammedAmineTazi" id="rebuild-str-fk-1279">
-        <addForeignKeyConstraint constraintName="cat_fixed_date_cat_calendar_fk" baseColumnNames="cat_calendar_id" baseTableName="cat_fixed_date" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
-    </changeSet>  
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">

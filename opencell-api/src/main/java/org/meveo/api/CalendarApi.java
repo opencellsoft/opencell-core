@@ -43,6 +43,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.CalendarDaily;
@@ -87,7 +88,7 @@ public class CalendarApi extends BaseApi {
     private static final String INVALID_HOLIDAY_PERIOD = "Invalid holiday period! Possible values are from 101 to 1231";
 
     private static final String FIXED_DATE_FORMAT = "dd/MM/yyyy HH:mm";
-    
+
     public void create(CalendarDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -102,27 +103,38 @@ public class CalendarApi extends BaseApi {
         if (calendarService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Calendar.class, postData.getCode());
         }
-        
+
         if (postData.getCalendarType() == CalendarTypeEnum.FIXED) {
+            Date fromDate = null;
+            Date toDate = null;
+            DatePeriod datePeriod;
             CalendarFixed calendar = new CalendarFixed();
             calendar.setCode(postData.getCode());
             calendar.setDescription(postData.getDescription());
 
-    		List<FixedDate> fixedDates = new ArrayList<>();
-        	for (String date : postData.getFixedDates()) {
-				try {
-					LocalDateTime.parse(date, DateTimeFormatter.ofPattern(FIXED_DATE_FORMAT));
-					FixedDate fixedDate = new FixedDate(new SimpleDateFormat(FIXED_DATE_FORMAT).parse(date));
-					fixedDate.setCalendarFixed(calendar);
-	        		fixedDates.add(fixedDate);
-				} catch (ParseException e) {
-					throw new BusinessException(e);
-				}
-	    		calendar.setFixedDates(fixedDates);
-        	}
+            List<FixedDate> fixedDates = new ArrayList<>();
+            for (String date : postData.getFixedDates()) {
+                try {
+                    LocalDateTime.parse(date.split("-")[0].trim(), DateTimeFormatter.ofPattern(FIXED_DATE_FORMAT));
+                    LocalDateTime.parse(date.split("-")[1].trim(), DateTimeFormatter.ofPattern(FIXED_DATE_FORMAT));
+                    fromDate = new SimpleDateFormat(FIXED_DATE_FORMAT).parse(date.split("-")[0].trim());
+                    toDate = new SimpleDateFormat(FIXED_DATE_FORMAT).parse(date.split("-")[1].trim());
+                    datePeriod = new DatePeriod(fromDate, toDate);
+                    FixedDate fixedDate = new FixedDate(datePeriod);
+                    fixedDate.setCalendarFixed(calendar);
+                    
+                    if(! datePeriod.isValid()) {
+                        throw new BusinessException(datePeriod + " is not valid");
+                    }
+                    
+                    fixedDates.add(fixedDate);
+                } catch (ParseException e) {
+                    throw new BusinessException(e);
+                }               
+                calendar.setFixedDates(fixedDates);
+            }
             calendarService.create(calendar);
         } else if (postData.getCalendarType() == CalendarTypeEnum.YEARLY) {
-
             CalendarYearly calendar = new CalendarYearly();
             calendar.setCode(postData.getCode());
             calendar.setDescription(postData.getDescription());
@@ -251,6 +263,7 @@ public class CalendarApi extends BaseApi {
 
             calendarService.create(calendar);
 
+        
         } else {
             throw new BusinessApiException("invalid calendar type, possible values FIXED, YEARLY, DAILY, PERIOD, INTERVAL, JOIN, BANKING");
         }
@@ -276,17 +289,26 @@ public class CalendarApi extends BaseApi {
         calendar.setDescription(postData.getDescription());
 
         if (calendar instanceof CalendarFixed && postData.getFixedDates() != null && postData.getFixedDates().size() > 0) {
-    		CalendarFixed calendarFixed = (CalendarFixed) calendar;
-    		calendarFixed.getFixedDates().clear();
-        	for (String date : postData.getFixedDates()) {
-				try {
-					LocalDateTime.parse(date, DateTimeFormatter.ofPattern(FIXED_DATE_FORMAT));
-					Date fixedDate = new SimpleDateFormat(FIXED_DATE_FORMAT).parse(date);
-					calendarFixed.addFixedDate(fixedDate);
-				} catch (ParseException e) {
-					throw new BusinessException(e);
-				}
-        	}
+            Date fromDate = null;
+            Date toDate = null;
+            DatePeriod datePeriod;
+            CalendarFixed calendarFixed = (CalendarFixed) calendar;
+            calendarFixed.getFixedDates().clear();
+            for (String date : postData.getFixedDates()) {
+                try {
+                    LocalDateTime.parse(date.split("-")[0].trim(), DateTimeFormatter.ofPattern(FIXED_DATE_FORMAT));
+                    LocalDateTime.parse(date.split("-")[1].trim(), DateTimeFormatter.ofPattern(FIXED_DATE_FORMAT));
+                    fromDate = new SimpleDateFormat(FIXED_DATE_FORMAT).parse(date.split("-")[0].trim());
+                    toDate = new SimpleDateFormat(FIXED_DATE_FORMAT).parse(date.split("-")[1].trim());
+                    datePeriod = new DatePeriod(fromDate, toDate);
+                    if(! datePeriod.isValid()) {
+                        throw new BusinessException(datePeriod + " is not valid");
+                    }
+                    calendarFixed.addFixedDate(datePeriod);
+                } catch (ParseException e) {
+                    throw new BusinessException(e);
+                }
+            }
         } else if (calendar instanceof CalendarYearly) {
             if (postData.getDays() != null && postData.getDays().size() > 0) {
                 List<DayInYear> days = new ArrayList<DayInYear>();
