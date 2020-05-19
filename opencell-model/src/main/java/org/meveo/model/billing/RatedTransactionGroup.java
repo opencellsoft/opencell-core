@@ -195,7 +195,7 @@ public class RatedTransactionGroup implements Serializable {
     public String getInvoiceKey() {
 
         if (invoiceKey == null) {
-            invoiceKey = billingAccount.getId() + "_" + seller.getId() + "_" + invoiceType.getId() + "_" + prepaid + "_" + paymentMethod.getId();
+            invoiceKey = billingAccount.getId() + "_" + seller.getId() + "_" + invoiceType.getId() + "_" + prepaid + "_" + getPaymentMethod().getId();
         }
         return invoiceKey;
     }
