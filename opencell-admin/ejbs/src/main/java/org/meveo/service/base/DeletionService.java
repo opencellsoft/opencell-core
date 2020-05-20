@@ -80,7 +80,7 @@ public class DeletionService {
             		if(customField.getAppliesTo().startsWith(Job.CFT_PREFIX)) {
             			entityClass = JobInstance.class;
             		} else {
-            			entityClass = customEntityTemplateService.findByCode(EntityCustomizationUtils.getEntityCode(appliesTo));
+            			entityClass = entitiesByName.get(customEntityTemplateService.findByCode(EntityCustomizationUtils.getEntityCode(appliesTo)));
             		}
             		
                 }
