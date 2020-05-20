@@ -21,14 +21,18 @@
  */
 package org.meveo.model.payments;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -37,11 +41,12 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 
+
 /**
- * Payment history
- * 
+ * Payment history.
+ *
  * @author anasseh
- * @lastModifiedVersion 5.0.2
+ * @lastModifiedVersion 9.1.3
  */
 
 @Entity
@@ -50,6 +55,7 @@ import org.meveo.model.AuditableEntity;
         @Parameter(name = "sequence_name", value = "ar_payment_history_seq"), })
 public class PaymentHistory extends AuditableEntity {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4319694328397367053L;
 
     /** The customer Account Code. */
@@ -135,15 +141,23 @@ public class PaymentHistory extends AuditableEntity {
     @NotNull
     private OperationCategoryEnum operationCategory;
 
+    /** The payment. */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
+    /** The refund. */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "refund_id")
     private Refund refund;
+    
+	/** The list ao paid. */
+	@OneToMany(mappedBy = "paymentHistory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<AccountOperation> listAoPaid;
 
     /**
+     * Gets the seller code.
+     *
      * @return the sellerCode
      */
     public String getSellerCode() {
@@ -151,6 +165,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the seller code.
+     *
      * @param sellerCode the sellerCode to set
      */
     public void setSellerCode(String sellerCode) {
@@ -158,6 +174,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the operation date.
+     *
      * @return the operationDate
      */
     public Date getOperationDate() {
@@ -165,6 +183,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the operation date.
+     *
      * @param operationDate the operationDate to set
      */
     public void setOperationDate(Date operationDate) {
@@ -172,6 +192,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the amount cts.
+     *
      * @return the amountCts
      */
     public Long getAmountCts() {
@@ -179,6 +201,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the amount cts.
+     *
      * @param amountCts the amountCts to set
      */
     public void setAmountCts(Long amountCts) {
@@ -186,6 +210,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the sync status.
+     *
      * @return the syncStatus
      */
     public PaymentStatusEnum getSyncStatus() {
@@ -193,6 +219,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the sync status.
+     *
      * @param syncStatus the syncStatus to set
      */
     public void setSyncStatus(PaymentStatusEnum syncStatus) {
@@ -201,6 +229,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the async status.
+     *
      * @return the asyncStatus
      */
     public PaymentStatusEnum getAsyncStatus() {
@@ -208,6 +238,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the async status.
+     *
      * @param asyncStatus the asyncStatus to set
      */
     public void setAsyncStatus(PaymentStatusEnum asyncStatus) {
@@ -216,6 +248,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the external payment id.
+     *
      * @return the externalPaymentId
      */
     public String getExternalPaymentId() {
@@ -223,6 +257,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the external payment id.
+     *
      * @param externalPaymentId the externalPaymentId to set
      */
     public void setExternalPaymentId(String externalPaymentId) {
@@ -230,6 +266,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the error code.
+     *
      * @return the errorCode
      */
     public String getErrorCode() {
@@ -237,6 +275,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the error code.
+     *
      * @param errorCode the errorCode to set
      */
     public void setErrorCode(String errorCode) {
@@ -244,6 +284,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the error message.
+     *
      * @return the errorMessage
      */
     public String getErrorMessage() {
@@ -251,6 +293,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the error message.
+     *
      * @param errorMessage the errorMessage to set
      */
     public void setErrorMessage(String errorMessage) {
@@ -258,6 +302,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the error type.
+     *
      * @return the errorType
      */
     public PaymentErrorTypeEnum getErrorType() {
@@ -265,6 +311,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the error type.
+     *
      * @param errorType the errorType to set
      */
     public void setErrorType(PaymentErrorTypeEnum errorType) {
@@ -272,6 +320,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the customer account code.
+     *
      * @return the customerAccountCode
      */
     public String getCustomerAccountCode() {
@@ -279,6 +329,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the customer account code.
+     *
      * @param customerAccountCode the customerAccountCode to set
      */
     public void setCustomerAccountCode(String customerAccountCode) {
@@ -286,6 +338,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the customer account name.
+     *
      * @return the customerAccountName
      */
     public String getCustomerAccountName() {
@@ -293,6 +347,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the customer account name.
+     *
      * @param customerAccountName the customerAccountName to set
      */
     public void setCustomerAccountName(String customerAccountName) {
@@ -300,6 +356,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the status.
+     *
      * @return the status
      */
     public PaymentStatusEnum getStatus() {
@@ -307,6 +365,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the status.
+     *
      * @param status the status to set
      */
     public void setStatus(PaymentStatusEnum status) {
@@ -314,6 +374,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the payment gateway code.
+     *
      * @return the paymentGatewayCode
      */
     public String getPaymentGatewayCode() {
@@ -321,6 +383,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the payment gateway code.
+     *
      * @param paymentGatewayCode the paymentGatewayCode to set
      */
     public void setPaymentGatewayCode(String paymentGatewayCode) {
@@ -328,6 +392,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the payment method type.
+     *
      * @return the paymentMethodType
      */
     public PaymentMethodEnum getPaymentMethodType() {
@@ -335,6 +401,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the payment method type.
+     *
      * @param paymentMethodType the paymentMethodType to set
      */
     public void setPaymentMethodType(PaymentMethodEnum paymentMethodType) {
@@ -342,6 +410,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the payment method name.
+     *
      * @return the paymentMethodName
      */
     public String getPaymentMethodName() {
@@ -349,6 +419,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the payment method name.
+     *
      * @param paymentMethodName the paymentMethodName to set
      */
     public void setPaymentMethodName(String paymentMethodName) {
@@ -356,6 +428,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the operation category.
+     *
      * @return the operationCategory
      */
     public OperationCategoryEnum getOperationCategory() {
@@ -363,6 +437,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the operation category.
+     *
      * @param operationCategory the operationCategory to set
      */
     public void setOperationCategory(OperationCategoryEnum operationCategory) {
@@ -370,6 +446,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the payment.
+     *
      * @return the payment
      */
     public Payment getPayment() {
@@ -377,6 +455,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the payment.
+     *
      * @param payment the payment to set
      */
     public void setPayment(Payment payment) {
@@ -384,6 +464,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the refund.
+     *
      * @return the refund
      */
     public Refund getRefund() {
@@ -391,6 +473,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the refund.
+     *
      * @param refund the refund to set
      */
     public void setRefund(Refund refund) {
@@ -398,6 +482,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the last update date.
+     *
      * @return the lastUpdateDate
      */
     public Date getLastUpdateDate() {
@@ -405,6 +491,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the last update date.
+     *
      * @param lastUpdateDate the lastUpdateDate to set
      */
     public void setLastUpdateDate(Date lastUpdateDate) {
@@ -412,6 +500,8 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Gets the customer code.
+     *
      * @return the customerCode
      */
     public String getCustomerCode() {
@@ -419,9 +509,34 @@ public class PaymentHistory extends AuditableEntity {
     }
 
     /**
+     * Sets the customer code.
+     *
      * @param customerCode the customerCode to set
      */
     public void setCustomerCode(String customerCode) {
         this.customerCode = customerCode;
     }
+
+	/**
+	 * Gets the list ao paid.
+	 *
+	 * @return the list ao paid
+	 */
+	public List<AccountOperation> getListAoPaid() {
+		if (listAoPaid == null) {
+			return new ArrayList<AccountOperation>();
+		}
+		return listAoPaid;
+	}
+
+	/**
+	 * Sets the list ao paid.
+	 *
+	 * @param listAoPaid the new list ao paid
+	 */
+	public void setListAoPaid(List<AccountOperation> listAoPaid) {
+		this.listAoPaid = listAoPaid;
+	}
+
 }
+

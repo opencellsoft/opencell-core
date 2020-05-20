@@ -221,6 +221,7 @@
                         <p:column headerText="#{messages['commons.actions']}">
                             <p:commandButton icon="ui-icon-document" action="#{orderBean.editOrderItem(entity)}"
                                 update=":orderForm:messages :orderForm:tabView:orderItemMessages :orderForm:tabView:orderItemDetails" process="@this">
+                               <f:setPropertyActionListener value="#{entity}" target="#{orderItemBean.entity}" />
                             </p:commandButton>
                             <p:commandButton icon="ui-icon-trash" update="orderItems :orderForm:tabView:orderItemMessages :orderForm:tabView:orderItemDetails"
                                 rendered="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" process="@this">
@@ -628,6 +629,8 @@
                             	
                             	</p:tab>
 								
+                            	
+								<hftl:customFields backingBean="#{orderItemBean}" entity="#{orderBean.selectedOrderItem}" messagesId=":orderForm:messages" />
 								<hftl:displayGenericWFsHistory entity="#{orderBean.selectedOrderItem}" backingBean="#{orderItemBean}" />
 							</p:tabView>
                             

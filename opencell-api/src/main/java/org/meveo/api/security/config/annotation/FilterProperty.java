@@ -16,37 +16,44 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api.security.Interceptor;
+package org.meveo.api.security.config.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.meveo.api.security.filter.NullFilter;
-import org.meveo.api.security.filter.SecureMethodResultFilter;
-import org.meveo.api.security.parameter.SecureMethodParameter;
+import org.meveo.model.BusinessEntity;
 
 /**
- * Identifies API methods that require proper user permissions to access.
- *
- * @author Tony Alejandro
+ * Identifies the filtering rule to apply to items selected for filtering
+ * 
+ * Specifies how to reconstruct an object used to compare what user has access to. Used in conjunction with {@link FilterResults}
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD })
-public @interface SecuredBusinessEntityMethod {
+@Target({ ElementType.TYPE })
+public @interface FilterProperty {
 
     /**
-     * Contains an array of {@link SecureMethodParameter} annotations that describe how the method parameters are going to be validated.
+     * Name of a property of item selected for filtering. The value will be used to reconstruct an object of a given entity class
      * 
-     * @return Array off secure method parameter
+     * @return name of property.
      */
-    SecureMethodParameter[] validate() default {};
+    String property();
 
     /**
-     * The result filter class that will be used to filter the results for entities that should be accessible to the user.
+     * Identifies the entity type that property value corresponds to. e.g. if CustomerAccount.class is passed into this attribute, then property value resolved from a "property"
+     * will correspond to code field of a CustomerAccount object.
      * 
-     * @return The secure method result filter
+     * @return business entity class.
      */
-    Class<? extends SecureMethodResultFilter> resultFilter() default NullFilter.class;
+    Class<? extends BusinessEntity> entityClass();
+
+    /**
+     * Shall access to an entity be granted in cases when property is resolved to a null value. If set to True, user will have access to entities that match his security settings
+     * and those that have no property value set.
+     * 
+     * @return true/false
+     */
+    boolean allowAccessIfNull() default false;
 }

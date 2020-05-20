@@ -43,6 +43,7 @@ import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.payments.PaymentGatewayTypeEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.CountryService;
@@ -57,7 +58,7 @@ import org.primefaces.model.SortOrder;
  * 
  * @author anasseh
  * @author Mounir Bahije
- * @lastModifiedVersion 5.3
+ * @lastModifiedVersion 9.3
  */
 @Stateless
 public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewayDto> {
@@ -99,7 +100,23 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         if (paymentGatewayDto.getPaymentMethodType() == null) {
             missingParameters.add("paymentMethodType");
         }
+		if (StringUtils.isBlank(paymentGatewayDto.getSellerCode())) {
+			missingParameters.add("sellerCode");
+		}
 
+		if (paymentGatewayDto.getType() == PaymentGatewayTypeEnum.CUSTOM) {
+			if (StringUtils.isBlank(paymentGatewayDto.getScriptInstanceCode())) {
+				missingParameters.add("ScriptInstanceCode");
+			}
+		}
+
+		if (paymentGatewayDto.getType() == PaymentGatewayTypeEnum.NATIF) {
+			if (StringUtils.isBlank(paymentGatewayDto.getImplementationClassName())) {
+				missingParameters.add("ImplementationClassName");
+			}
+		}
+
+		handleMissingParameters();
         handleMissingParameters();
 
         PaymentGateway paymentGateway = paymentGatewayService.findByCode(code);

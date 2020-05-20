@@ -188,6 +188,8 @@ public class CustomerAccountDto extends AccountDto {
         setDueDateDelayEL(e.getDueDateDelayEL());
         setDueDateDelayELSpark(e.getDueDateDelayELSpark());
         setExcludedFromPayment(e.isExcludedFromPayment());
+        setRegistrationNo(e.getRegistrationNo());
+        setVatNo(e.getVatNo());
 
         if (e.getPaymentMethods() != null && !e.getPaymentMethods().isEmpty()) {
             setPaymentMethods(new ArrayList<>());

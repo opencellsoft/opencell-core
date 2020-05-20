@@ -150,11 +150,11 @@ public class UnitSepaDirectDebitJobBean {
 			}
 		}
 
-		paymentHistoryService.addHistory(ddrequestItem.getAccountOperations().get(0).getCustomerAccount(),
+		paymentHistoryService.addHistoryAOs(ddrequestItem.getAccountOperations().get(0).getCustomerAccount(),
 				(automatedPayment instanceof AutomatedPayment ? (Payment) automatedPayment : null),
 				(automatedPayment instanceof Refund ? (Refund) automatedPayment : null), (ddrequestItem.getAmount().multiply(new BigDecimal(100))).longValue(),
 				paymentStatusEnum, errorMsg, errorMsg, paymentErrorTypeEnum, ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum().getOperationCategoryToProcess(),
-				ddRequestLOT.getDdRequestBuilder().getCode(), ddrequestItem.getAccountOperations().get(0).getCustomerAccount().getPreferredPaymentMethod());
+				ddRequestLOT.getDdRequestBuilder().getCode(), ddrequestItem.getAccountOperations().get(0).getCustomerAccount().getPreferredPaymentMethod(),ddrequestItem.getAccountOperations());
 
 	}
 

@@ -29,6 +29,7 @@ public class XMLInvoiceHeaderCategoryDTO {
     private String code;
     private BigDecimal amountWithoutTax = BigDecimal.ZERO;
     private BigDecimal amountWithTax = BigDecimal.ZERO;
+    private Integer sortIndex;
 
     private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>();
 
@@ -98,4 +99,11 @@ public class XMLInvoiceHeaderCategoryDTO {
         this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
     }
 
+    public Integer getSortIndex() {
+        return sortIndex;
+    }
+
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
+    }
 }

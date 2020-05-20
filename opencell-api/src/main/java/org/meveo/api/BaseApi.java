@@ -1164,12 +1164,13 @@ public abstract class BaseApi {
 
     private PaginationConfiguration initPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
         Integer limit = paramBean.getPropertyAsInteger("api.list.defaultLimit", limitDefaultValue);
-        if (pagingAndFiltering != null && pagingAndFiltering.getLimit() == null) {
-            pagingAndFiltering.setLimit(limit);
-        }
-        if (pagingAndFiltering != null) {
-            limit = pagingAndFiltering.getLimit();
-        }
+		if (pagingAndFiltering != null) {
+			if (pagingAndFiltering.getLimit() != null) {
+				limit = pagingAndFiltering.getLimit();
+			} else {
+				pagingAndFiltering.setLimit(limit);
+			}
+		}
         return new PaginationConfiguration(pagingAndFiltering != null ? pagingAndFiltering.getOffset() : null, limit, pagingAndFiltering != null ? pagingAndFiltering.getFilters() : null,
             pagingAndFiltering != null ? pagingAndFiltering.getFullTextFilter() : null, fetchFields, pagingAndFiltering != null && pagingAndFiltering.getSortBy() != null ? pagingAndFiltering.getSortBy() : defaultSortBy,
             pagingAndFiltering != null && pagingAndFiltering.getSortOrder() != null ? SortOrder.valueOf(pagingAndFiltering.getSortOrder().name()) : defaultSortOrder);

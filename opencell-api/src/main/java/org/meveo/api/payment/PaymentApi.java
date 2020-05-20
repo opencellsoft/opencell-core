@@ -33,8 +33,8 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.account.FilterProperty;
-import org.meveo.api.dto.account.FilterResults;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.AccountOperationsDto;
 import org.meveo.api.dto.payment.PayByCardDto;
@@ -49,7 +49,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
@@ -467,8 +467,18 @@ public class PaymentApi extends BaseApi {
         paymentHistoryDto.setSyncStatus(paymentHistory.getSyncStatus());
         paymentHistoryDto.setStatus(paymentHistory.getStatus());
         paymentHistoryDto.setLastUpdateDate(paymentHistory.getLastUpdateDate());
-        AccountOperationsDto accountOperationsDto = new AccountOperationsDto();
-        accountOperationsDto.setAccountOperation(getAosPaidByPayment(paymentHistory.getRefund() == null ? paymentHistory.getPayment() : paymentHistory.getRefund()));
+        
+        AccountOperationsDto accountOperationsDto = new AccountOperationsDto();		
+        //Backward compatibility
+		if (paymentHistory.getListAoPaid() == null || paymentHistory.getListAoPaid().isEmpty()) {
+			accountOperationsDto.setAccountOperation(getAosPaidByPayment(paymentHistory.getRefund() == null ? paymentHistory.getPayment() : paymentHistory.getRefund()));
+			
+		} else {
+			for (AccountOperation ao : paymentHistory.getListAoPaid()) {
+				accountOperationsDto.getAccountOperation()
+						.add(new AccountOperationDto(ao, entityToDtoConverter.getCustomFieldsDTO(ao, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+			}
+		}
         paymentHistoryDto.setListAoPaid(accountOperationsDto);
         return paymentHistoryDto;
 

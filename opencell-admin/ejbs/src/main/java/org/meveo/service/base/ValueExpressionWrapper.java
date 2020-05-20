@@ -60,142 +60,142 @@ public class ValueExpressionWrapper {
     /**
      * EL expression variable - provider - 'prov'
      */
-    public static String VAR_PROVIDER = "prov";
+    public static final String VAR_PROVIDER = "prov";
 
     /**
      * EL expression variable - seller - 'seller'
      */
-    public static String VAR_SELLER = "seller";
+    public static final String VAR_SELLER = "seller";
 
     /**
      * EL expression variable - customer - 'c'
      */
-    public static String VAR_CUSTOMER_SHORT = "c";
+    public static final String VAR_CUSTOMER_SHORT = "c";
 
     /**
      * EL expression variable - customer - 'cust'
      */
-    public static String VAR_CUSTOMER = "cust";
+    public static final String VAR_CUSTOMER = "cust";
 
     /**
      * EL expression variable - customer account - 'ca'
      */
-    public static String VAR_CUSTOMER_ACCOUNT = "ca";
+    public static final String VAR_CUSTOMER_ACCOUNT = "ca";
 
     /**
      * EL expression variable - billing account - 'ba'
      */
-    public static String VAR_BILLING_ACCOUNT = "ba";
+    public static final String VAR_BILLING_ACCOUNT = "ba";
 
     /**
      * EL expression variable - user account - 'ua'
      */
-    public static String VAR_USER_ACCOUNT = "ua";
+    public static final String VAR_USER_ACCOUNT = "ua";
 
     /**
      * EL expression variable - access - 'access'
      */
-    public static String VAR_ACCESS = "access";
+    public static final String VAR_ACCESS = "access";
 
     /**
      * EL expression variable - subscription - 'sub'
      */
-    public static String VAR_SUBSCRIPTION = "sub";
+    public static final String VAR_SUBSCRIPTION = "sub";
 
     /**
      * EL expression variable - tax category - 'taxCategory'
      */
-    public static String VAR_TAX_CATEGORY = "taxCategory";
+    public static final String VAR_TAX_CATEGORY = "taxCategory";
 
     /**
      * EL expression variable - tax class - 'taxClass'
      */
-    public static String VAR_TAX_CLASS = "taxClass";
+    public static final String VAR_TAX_CLASS = "taxClass";
 
     /**
      * EL expression variable - invoice - 'iv'
      */
-    public static String VAR_INVOICE_SHORT = "iv";
+    public static final String VAR_INVOICE_SHORT = "iv";
 
     /**
      * EL expression variable - invoice - 'invoice'
      */
-    public static String VAR_INVOICE = "invoice";
+    public static final String VAR_INVOICE = "invoice";
 
     /**
      * EL expression variable - billing run - 'br'
      */
-    public static String VAR_BILLING_RUN = "br";
+    public static final String VAR_BILLING_RUN = "br";
 
     /**
      * EL expression variable - service template - 'serviceTemplate'
      */
-    public static String VAR_SERVICE_TEMPLATE = "serviceTemplate";
+    public static final String VAR_SERVICE_TEMPLATE = "serviceTemplate";
 
     /**
      * EL expression variable - service instance - 'serviceInstance'
      */
-    public static String VAR_SERVICE_INSTANCE = "serviceInstance";
+    public static final String VAR_SERVICE_INSTANCE = "serviceInstance";
 
     /**
      * EL expression variable - product instance - 'productInstance'
      */
-    public static String VAR_PRODUCT_INSTANCE = "productInstance";
+    public static final String VAR_PRODUCT_INSTANCE = "productInstance";
 
     /**
      * EL expression variable - offer - 'offer'
      */
-    public static String VAR_OFFER = "offer";
+    public static final String VAR_OFFER = "offer";
 
     /**
      * EL expression variable - price plan - 'pp'
      */
-    public static String VAR_PRICE_PLAN_SHORT = "pp";
+    public static final String VAR_PRICE_PLAN_SHORT = "pp";
 
     /**
      * EL expression variable - price plan - 'priceplan'
      */
-    public static String VAR_PRICE_PLAN = "priceplan";
+    public static final String VAR_PRICE_PLAN = "priceplan";
 
     /**
      * EL expression variable - dpi - 'dpi'
      */
-    public static String VAR_DISCOUNT_PLAN_INSTANCE = "dpi";
+    public static final String VAR_DISCOUNT_PLAN_INSTANCE = "dpi";
 
     /**
      * EL expression variable - EDR - 'edr'
      */
-    public static String VAR_EDR = "edr";
+    public static final String VAR_EDR = "edr";
 
     /**
      * EL expression variable - charge template - 'charge'
      */
-    public static String VAR_CHARGE_TEMPLATE_SHORT = "charge";
+    public static final String VAR_CHARGE_TEMPLATE_SHORT = "charge";
 
     /**
      * EL expression variable - charge template - 'chargeTemplate'
      */
-    public static String VAR_CHARGE_TEMPLATE = "chargeTemplate";
+    public static final String VAR_CHARGE_TEMPLATE = "chargeTemplate";
 
     /**
      * EL expression variable - charge instance - 'ci'
      */
-    public static String VAR_CHARGE_INSTANCE = "ci";
+    public static final String VAR_CHARGE_INSTANCE = "ci";
 
     /**
      * EL expression variable - wallet operation - 'op'
      */
-    public static String VAR_WALLET_OPERATION = "op";
+    public static final String VAR_WALLET_OPERATION = "op";
 
     /**
      * EL expression variable - date - 'date'
      */
-    public static String VAR_DATE = "date";
+    public static final String VAR_DATE = "date";
 
     /**
      * EL expression variable - amount - 'amount'
      */
-    public static String VAR_AMOUNT = "amount";
+    public static final String VAR_AMOUNT = "amount";
 
     /**
      * Evaluate expression.

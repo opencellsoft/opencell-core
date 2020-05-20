@@ -123,6 +123,9 @@ import java.io.Serializable;
      * @return the counter template
      */
     public CounterTemplatesDto getAccumulatorCounterTemplates() {
+        if (accumulatorCounterTemplates == null) {
+            accumulatorCounterTemplates = new CounterTemplatesDto();
+        }
         return accumulatorCounterTemplates;
     }
 
