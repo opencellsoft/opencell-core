@@ -96,6 +96,7 @@ public class WebHookNotifier {
 
         log.debug("webhook sendRequest");
         String result = "";
+        HttpURLConnection conn = null;
 
         try {
             String url = webHook.getHttpProtocol().name().toLowerCase() + "://" + webHook.getHost().replace("http://", "");
@@ -129,7 +130,7 @@ public class WebHookNotifier {
             log.debug("webhook url: {}", url);
             URL obj = new URL(url);
 
-            HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
+            conn = (HttpURLConnection) obj.openConnection();
 
             Map<String, String> headers = evaluateMap(webHook.getHeaders(), entityOrEvent, context);
             if (!StringUtils.isBlank(webHook.getUsername()) && !headers.containsKey("Authorization")) {
@@ -171,7 +172,7 @@ public class WebHookNotifier {
             }
             in.close();
             result = response.toString();
-            if (responseCode != 200) {
+            if (responseCode < 200 && responseCode > 299) {
                 try {
                     log.debug("webhook httpStatus error : " + responseCode + " response=" + result);
                     notificationHistoryService.create(webHook, entityOrEvent, "http error status=" + responseCode + " response=" + result, NotificationHistoryStatusEnum.FAILED);
@@ -181,7 +182,6 @@ public class WebHookNotifier {
             } else {
                 if (webHook.getScriptInstance() != null) {
                     HashMap<Object, Object> userMap = new HashMap<Object, Object>();
-                    userMap.put("event", entityOrEvent);
                     userMap.put("response", result);
 
                     try {
@@ -192,6 +192,7 @@ public class WebHookNotifier {
                             paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), userMap, String.class));
                         }
                         paramsEvaluated.put("response", result);
+                        paramsEvaluated.put("event", entityOrEvent);
                         if (webHook.getScriptInstance().isReuse()) {
                             scriptInstanceService.executeCached(webHook.getScriptInstance().getCode(), paramsEvaluated);
                         } else {
@@ -209,10 +210,21 @@ public class WebHookNotifier {
             }
         } catch (Exception e) {
             try {
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                String errorResult = response.toString();
+                log.debug("webhook Server error : ", errorResult);
                 log.debug("webhook business error : ", e);
-                notificationHistoryService.create(webHook, entityOrEvent, e.getMessage(),
-                    e instanceof IOException ? NotificationHistoryStatusEnum.TO_RETRY : NotificationHistoryStatusEnum.FAILED);
-            } catch (BusinessException e2) {
+                notificationHistoryService.create(webHook, entityOrEvent, e.getMessage() + "; Server Response: " + errorResult,
+                        e instanceof IOException ? NotificationHistoryStatusEnum.TO_RETRY : NotificationHistoryStatusEnum.FAILED);
+            } catch (BusinessException | IOException e2) {
                 log.error("Failed to create notification history", e2);
 
             }
