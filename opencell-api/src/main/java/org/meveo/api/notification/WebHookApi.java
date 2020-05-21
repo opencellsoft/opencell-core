@@ -63,6 +63,13 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
         if (webHookService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(WebHook.class, postData.getCode());
         }
+        WebHook webHook = new WebHook();
+        webHook = getWebHookFromDto(webHook, postData);
+        webHookService.create(webHook);
+        return webHook;
+    }
+
+    private WebHook getWebHookFromDto(WebHook webHook, WebHookDto postData) {
         ScriptInstance scriptInstance = null;
         if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
             scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
@@ -85,7 +92,6 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
             }
         }
 
-        WebHook webHook = new WebHook();
         webHook.setCode(postData.getCode());
         webHook.setClassNameFilter(postData.getClassNameFilter());
         webHook.setEventTypeFilter(postData.getEventTypeFilter());
@@ -117,7 +123,9 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
             webHook.setDisabled(postData.isDisabled());
         }
         webHook.setRunAsync(postData.isRunAsync());
-        webHookService.create(webHook);
+        if (postData.getBodyEl() != null) {
+            webHook.setBodyEL(postData.getBodyEl());
+        }
 
         return webHook;
     }
@@ -171,56 +179,7 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
         if (webHook == null) {
             throw new EntityDoesNotExistsException(WebHook.class, postData.getCode());
         }
-
-        ScriptInstance scriptInstance = null;
-        if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
-            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
-            if (scriptInstance == null) {
-                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
-            }
-        }
-
-        // check class
-        try {
-            Class.forName(postData.getClassNameFilter());
-        } catch (Exception e) {
-            throw new InvalidParameterException("classNameFilter", postData.getClassNameFilter());
-        }
-
-        CounterTemplate counterTemplate = null;
-        if (!StringUtils.isBlank(postData.getCounterTemplate())) {
-            counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate());
-            if (counterTemplate == null) {
-                throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCounterTemplate());
-            }
-        }
-
-        webHook.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        webHook.setClassNameFilter(postData.getClassNameFilter());
-        webHook.setEventTypeFilter(postData.getEventTypeFilter());
-        webHook.setScriptInstance(scriptInstance);
-        webHook.setParams(postData.getScriptParams());
-        webHook.setElFilter(postData.getElFilter());
-        webHook.setCounterTemplate(counterTemplate);
-
-        if (!StringUtils.isBlank(postData.getHttpProtocol())) {
-            webHook.setHttpProtocol(postData.getHttpProtocol());
-        }
-        webHook.setHost(postData.getHost());
-        webHook.setPort(postData.getPort());
-        webHook.setPage(postData.getPage());
-        webHook.setHttpMethod(postData.getHttpMethod());
-        webHook.setUsername(postData.getUsername());
-        webHook.setPassword(postData.getPassword());
-        if (postData.getHeaders() != null) {
-            webHook.getHeaders().putAll(postData.getHeaders());
-        }
-        if (postData.getParams() != null) {
-            webHook.getWebhookParams().putAll(postData.getParams());
-        }
-		if (postData.isRunAsync() != null) {
-			webHook.setRunAsync(postData.isRunAsync());
-		}
+        webHook = getWebHookFromDto(webHook, postData);
 
         webHook = webHookService.update(webHook);
 
