@@ -22,23 +22,12 @@
 											"script": {
 												"id": "ca045db9-4a80-4b87-afab-c027ac1e8e49",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -76,7 +65,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n\t\"description\": \"{{testDescription}}\",\r\n\t\"chartOfAccountTypeEnum\": \"ASSETS\",\r\n\t\"chartOfAccountViewTypeEnum\": \"REGULAR\"\r\n}",
+											"raw": "{\r\n    \"code\": \"{{testCode}}_AC\",\r\n\t\"description\": \"{{testDescription}}\",\r\n\t\"chartOfAccountTypeEnum\": \"ASSETS\",\r\n\t\"chartOfAccountViewTypeEnum\": \"REGULAR\"\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -103,22 +92,13 @@
 											"script": {
 												"id": "db4d865b-cc56-4bf6-93ed-271e5948242c",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Code is equal \" + pm.environment.get(\"testCode\"), function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.accountingCode.code).to.eql(pm.environment.get(\"testCode\"));",
-													"});",
-													"",
-													"pm.test(\"Description is equal \" + pm.environment.get(\"testDescription\"), function () {",
-													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
+													"    pm.expect(jsonData.accountingCode.code).to.eql(pm.environment.get(\"testCode\")+\"_AC\");",
 													"    pm.expect(jsonData.accountingCode.description).to.eql(pm.environment.get(\"testDescription\"));",
 													"});"
 												],
@@ -166,7 +146,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/billing/accountingCode?accountingCode={{testCode}}",
+											"raw": "{{opencell.url}}/billing/accountingCode?accountingCode={{testCode}}_AC",
 											"host": [
 												"{{opencell.url}}"
 											],
@@ -177,7 +157,7 @@
 											"query": [
 												{
 													"key": "accountingCode",
-													"value": "{{testCode}}"
+													"value": "{{testCode}}_AC"
 												}
 											]
 										}
@@ -192,23 +172,12 @@
 											"script": {
 												"id": "4cb1a92b-c6da-4e45-be6f-28424fa00e29",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(403);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_ALREADY_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"AccountingCode with code=\"+pm.environment.get(\"testCode\")+\" already exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"AccountingCode with code=\"+pm.environment.get(\"testCode\")+\"_AC already exists.\");",
 													"});",
 													""
 												],
@@ -247,7 +216,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n\t\"description\": \"{{testDescription}}\",\r\n\t\"chartOfAccountTypeEnum\": \"ASSETS\",\r\n\t\"chartOfAccountViewTypeEnum\": \"REGULAR\"\r\n}",
+											"raw": "{\r\n    \"code\": \"{{testCode}}_AC\",\r\n\t\"description\": \"{{testDescription}}\",\r\n\t\"chartOfAccountTypeEnum\": \"ASSETS\",\r\n\t\"chartOfAccountViewTypeEnum\": \"REGULAR\"\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -273,25 +242,13 @@
 											"script": {
 												"id": "256efd63-6539-43d1-8def-f356c042edfe",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"AccountingCode with code=NOT_EXIST does not exists.\");",
-													"});",
-													""
+													"    pm.expect(jsonData.message).to.eql(\"AccountingCode with code=NOT_EXIST does not exists.\");",
+													"});"
 												],
 												"type": "text/javascript"
 											}
@@ -354,25 +311,13 @@
 											"script": {
 												"id": "46b5cd84-35c3-4b66-8a4b-498dc063fcc4",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
-													"});",
-													""
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
 												],
 												"type": "text/javascript"
 											}
@@ -409,7 +354,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n\t\"description\": \"{{testDescription}} updated\",\r\n\t\"disabled\": false,\r\n\t\"chartOfAccountTypeEnum\": \"ASSETS\",\r\n\t\"chartOfAccountViewTypeEnum\": \"REGULAR\",\r\n\t\"migrated\": false\r\n}",
+											"raw": "{\r\n    \"code\": \"{{testCode}}_AC\",\r\n\t\"description\": \"{{testDescription}} updated\",\r\n\t\"disabled\": false,\r\n\t\"chartOfAccountTypeEnum\": \"ASSETS\",\r\n\t\"chartOfAccountViewTypeEnum\": \"REGULAR\",\r\n\t\"migrated\": false\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -435,23 +380,12 @@
 											"script": {
 												"id": "8af49a07-214c-4b9a-ba7b-15f141941a35",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});",
 													""
 												],
@@ -490,7 +424,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{testCode}}\",\r\n\t\"description\": \"{{testDescription}} updated\",\r\n\t\"disabled\": false,\r\n\t\"chartOfAccountTypeEnum\": \"ASSETS\",\r\n\t\"chartOfAccountViewTypeEnum\": \"REGULAR\",\r\n\t\"migrated\": false\r\n}",
+											"raw": "{\r\n    \"code\": \"{{testCode}}_AC\",\r\n\t\"description\": \"{{testDescription}} updated\",\r\n\t\"disabled\": false,\r\n\t\"chartOfAccountTypeEnum\": \"ASSETS\",\r\n\t\"chartOfAccountViewTypeEnum\": \"REGULAR\",\r\n\t\"migrated\": false\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -517,21 +451,13 @@
 											"script": {
 												"id": "af6f40f3-e16c-47c4-ac4d-6dd66c70c93d",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Code is equal \" + pm.environment.get(\"testCode\"), function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.accountingCode.code).to.eql(pm.environment.get(\"testCode\"));",
-													"});",
-													"pm.test(\"Description is equal \" + pm.environment.get(\"testDescription\"), function () {",
-													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
+													"    pm.expect(jsonData.accountingCode.code).to.eql(pm.environment.get(\"testCode\")+\"_AC\");",
 													"    pm.expect(jsonData.accountingCode.description).to.eql(pm.environment.get(\"testDescription\")+ \" updated\");",
 													"});"
 												],
@@ -579,7 +505,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/billing/accountingCode?accountingCode={{testCode}}",
+											"raw": "{{opencell.url}}/billing/accountingCode?accountingCode={{testCode}}_AC",
 											"host": [
 												"{{opencell.url}}"
 											],
@@ -590,7 +516,7 @@
 											"query": [
 												{
 													"key": "accountingCode",
-													"value": "{{testCode}}"
+													"value": "{{testCode}}_AC"
 												}
 											]
 										}
@@ -605,24 +531,14 @@
 											"script": {
 												"id": "afadff2b-213a-4d67-a503-f920cf8a8707",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(400);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"MISSING_PARAMETER\");",
+													"    pm.expect(jsonData.message).to.eql(\"The following parameters are required or contain invalid values: chartOfAccountTypeEnum, chartOfAccountViewTypeEnum.\");",
 													"});",
 													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"The following parameters are required or contain invalid values\");",
-													"});",
 													""
 												],
 												"type": "text/javascript"
@@ -687,25 +603,13 @@
 											"script": {
 												"id": "3028cdb9-e9d5-4987-b37c-262623802d62",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(400);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"INVALID_PARAMETER\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.message).to.contain(\"Cannot deserialize value of type `org.meveo.model.billing.ChartOfAccountViewTypeEnum`\");",
-													"});",
-													""
+													"});"
 												],
 												"type": "text/javascript"
 											}
@@ -776,23 +680,12 @@
 											"script": {
 												"id": "5c1ee560-bc1e-4ebc-ae39-7ffde61b1213",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -830,7 +723,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n  \"code\": \"{{testCode}}\",\r\n  \"accountingCode\": \"{{testCode}}\",\r\n  \"description\": \"{{testDescription}}\",\r\n  \"occCategory\": \"DEBIT\"\r\n}",
+											"raw": "{\r\n  \"code\": \"{{testCode}}_OCCT\",\r\n  \"accountingCode\": \"{{testCode}}_AC\",\r\n  \"description\": \"{{testDescription}}\",\r\n  \"occCategory\": \"DEBIT\"\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -856,23 +749,12 @@
 											"script": {
 												"id": "6f81ad43-512a-4ddc-b850-39301999098f",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(403);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_ALREADY_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"OCCTemplate with code=\"+pm.environment.get(\"testCode\")+\" already exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"OCCTemplate with code=\"+pm.environment.get(\"testCode\")+\"_OCCT already exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -910,7 +792,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n  \"code\": \"{{testCode}}\",\r\n  \"accountingCode\": \"{{testCode}}\",\r\n  \"description\": \"{{testDescription}}\",\r\n  \"occCategory\": \"DEBIT\"\r\n}",
+											"raw": "{\r\n  \"code\": \"{{testCode}}_OCCT\",\r\n  \"accountingCode\": \"{{testCode}}_AC\",\r\n  \"description\": \"{{testDescription}}\",\r\n  \"occCategory\": \"DEBIT\"\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -935,23 +817,12 @@
 											"script": {
 												"id": "1a0103fa-36c3-42d4-87c3-6208dc721b60",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"OCCTemplate with code=NOT_EXIST does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"OCCTemplate with code=NOT_EXIST does not exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -989,7 +860,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n  \"code\": \"NOT_EXIST\",\r\n  \"accountingCode\": \"{{testCode}}\",\r\n  \"description\": \"{{testDescription}}\",\r\n  \"occCategory\": \"DEBIT\"\r\n}",
+											"raw": "{\r\n  \"code\": \"NOT_EXIST\",\r\n  \"accountingCode\": \"{{testCode}}_AC\",\r\n  \"description\": \"{{testDescription}}\",\r\n  \"occCategory\": \"DEBIT\"\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -1014,24 +885,14 @@
 											"script": {
 												"id": "2abe19d1-df93-4cc4-b7f1-b8cc54dff5e0",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
-													"});"
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -1068,7 +929,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n  \"code\": \"{{testCode}}\",\r\n  \"accountingCode\": \"{{testCode}}\",\r\n  \"description\": \"{{testDescription}} updated\",\r\n  \"occCategory\": \"DEBIT\"\r\n}",
+											"raw": "{\r\n  \"code\": \"{{testCode}}_OCCT\",\r\n  \"accountingCode\": \"{{testCode}}_AC\",\r\n  \"description\": \"{{testDescription}} updated\",\r\n  \"occCategory\": \"DEBIT\"\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -1093,23 +954,12 @@
 											"script": {
 												"id": "a771037b-ed5f-4fa1-80a0-050ba8cdb68d",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -1147,7 +997,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n  \"code\": \"{{testCode}}\",\r\n  \"accountingCode\": \"{{testCode}}\",\r\n  \"description\": \"{{testDescription}} updated\",\r\n  \"occCategory\": \"DEBIT\"\r\n}",
+											"raw": "{\r\n  \"code\": \"{{testCode}}_OCCT\",\r\n  \"accountingCode\": \"{{testCode}}_AC\",\r\n  \"description\": \"{{testDescription}} updated\",\r\n  \"occCategory\": \"DEBIT\"\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -1173,23 +1023,12 @@
 											"script": {
 												"id": "41016934-4f4b-48f8-bd47-90901228f2b6",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(400);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"MISSING_PARAMETER\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"The following parameters are required or contain invalid values: accountCode / accountingCode.\");",
+													"    pm.expect(jsonData.message).to.eql(\"The following parameters are required or contain invalid values: accountCode / accountingCode.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -1227,7 +1066,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n  \"code\": \"{{testCode}}_Missing\",\r\n  \"description\": \"{{testDescription}} missing\",\r\n  \"occCategory\": \"DEBIT\"\r\n}",
+											"raw": "{\r\n  \"code\": \"{{testCode}}_OCCT_Missing\",\r\n  \"description\": \"{{testDescription}} missing\",\r\n  \"occCategory\": \"DEBIT\"\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -1253,22 +1092,11 @@
 											"script": {
 												"id": "d9ba5170-f0ec-40fa-b6b8-bc7c5ed1595b",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(400);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"INVALID_PARAMETER\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.message).to.contain(\"Cannot deserialize value of type `org.meveo.model.payments.OperationCategoryEnum` from String\");",
 													"});"
 												],
@@ -1340,22 +1168,11 @@
 											"script": {
 												"id": "cd80e7ad-9128-47b1-8d2a-2dbe3a8aa47b",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(500);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"GENERIC_API_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.message).to.contain(\"is still referenced from table\");",
 													"});"
 												],
@@ -1400,14 +1217,14 @@
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/billing/accountingCode/TEST",
+											"raw": "{{opencell.url}}/billing/accountingCode/TEST_AC",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
 												"billing",
 												"accountingCode",
-												"TEST"
+												"TEST_AC"
 											]
 										}
 									},
@@ -1421,23 +1238,12 @@
 											"script": {
 												"id": "5fbfe865-7415-4705-a49f-d6acfde71202",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -1481,13 +1287,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/occTemplate/{{testCode}}",
+											"raw": "{{opencell.url}}/occTemplate/{{testCode}}_OCCT",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
 												"occTemplate",
-												"{{testCode}}"
+												"{{testCode}}_OCCT"
 											]
 										}
 									},
@@ -1501,23 +1307,12 @@
 											"script": {
 												"id": "0fa436bc-6143-497e-8a00-c9d219818c36",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"OCCTemplate with code=\"+pm.environment.get(\"testCode\")+\" does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"OCCTemplate with code=\"+pm.environment.get(\"testCode\")+\"_OCCT does not exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -1561,13 +1356,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/occTemplate/{{testCode}}",
+											"raw": "{{opencell.url}}/occTemplate/{{testCode}}_OCCT",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
 												"occTemplate",
-												"{{testCode}}"
+												"{{testCode}}_OCCT"
 											]
 										}
 									},
@@ -1581,24 +1376,14 @@
 											"script": {
 												"id": "41ec2c1d-c240-4f45-a43c-eb98895bf09b",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
-													"});"
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -1641,14 +1426,14 @@
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/billing/accountingCode/TEST",
+											"raw": "{{opencell.url}}/billing/accountingCode/{{testCode}}_AC",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
 												"billing",
 												"accountingCode",
-												"TEST"
+												"{{testCode}}_AC"
 											]
 										}
 									},
@@ -1662,24 +1447,12 @@
 											"script": {
 												"id": "240d2e84-d285-40d0-817c-fe8e3599d199",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"AccountingCode with code=\"+pm.environment.get(\"testCode\")+\" does not exists.\");",
-													"",
+													"    pm.expect(jsonData.message).to.eql(\"AccountingCode with code=\"+pm.environment.get(\"testCode\")+\"_AC does not exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -1723,14 +1496,14 @@
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/billing/accountingCode/TEST",
+											"raw": "{{opencell.url}}/billing/accountingCode/{{testCode}}_AC",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
 												"billing",
 												"accountingCode",
-												"TEST"
+												"{{testCode}}_AC"
 											]
 										}
 									},
@@ -1758,23 +1531,12 @@
 											"script": {
 												"id": "ca3a465a-86fd-4133-b240-d2d6a2f080a2",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -1838,23 +1600,12 @@
 											"script": {
 												"id": "3fc11aa0-f3c7-47fa-9ce2-859288695029",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(403);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_ALREADY_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"BillingCycle with code=\"+pm.environment.get(\"testCode\")+\"_BC already exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"BillingCycle with code=\"+pm.environment.get(\"testCode\")+\"_BC already exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -1917,23 +1668,13 @@
 											"script": {
 												"id": "e49c123b-94eb-4270-9388-22cd59306629",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"",
-													"pm.test(\"Code is equal \" + pm.environment.get(\"testCode\"), function () {",
-													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
 													"    pm.expect(jsonData.billingCycle.code).to.eql(pm.environment.get(\"testCode\")+\"_BC\");",
-													"});",
-													"",
-													"pm.test(\"Description is equal \" + pm.environment.get(\"testDescription\"), function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.billingCycle.description).to.eql(pm.environment.get(\"testDescription\"));",
 													"});"
 												],
@@ -2006,23 +1747,12 @@
 											"script": {
 												"id": "65e2f021-2cac-438f-8c70-8ce0e69a3ef5",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"BillingCycle with code=NOT_EXIST does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"BillingCycle with code=NOT_EXIST does not exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -2085,23 +1815,12 @@
 											"script": {
 												"id": "b65340c4-5256-4dee-a51d-c492c4d91ef0",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -2164,23 +1883,12 @@
 											"script": {
 												"id": "9dd16440-1e36-420d-bfdf-5da74129d339",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -2244,23 +1952,13 @@
 											"script": {
 												"id": "af28b351-22f0-4b3a-a7fe-3dc50b5174ec",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"",
-													"pm.test(\"Code is equal \" + pm.environment.get(\"testCode\"), function () {",
-													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
 													"    pm.expect(jsonData.billingCycle.code).to.eql(pm.environment.get(\"testCode\")+\"_BC\");",
-													"});",
-													"",
-													"pm.test(\"Description is equal \" + pm.environment.get(\"testDescription\"), function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.billingCycle.description).to.eql(pm.environment.get(\"testDescription\")+\" updated\");",
 													"});"
 												],
@@ -2333,23 +2031,12 @@
 											"script": {
 												"id": "5fe5afa2-5590-480b-afcc-9eda3cef8e8b",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(400);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"MISSING_PARAMETER\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"The following parameters are required or contain invalid values: invoiceDateDelay.\");",
+													"    pm.expect(jsonData.message).to.eql(\"The following parameters are required or contain invalid values: invoiceDateDelay.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -2413,23 +2100,12 @@
 											"script": {
 												"id": "3e3c0184-6805-4422-9ed7-6fdaaacd1a6b",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"Calendar with code=NOT_EXIST does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"Calendar with code=NOT_EXIST does not exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -2500,23 +2176,12 @@
 											"script": {
 												"id": "2e823b3c-c4de-48a3-b34d-f7f9fc6d2082",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -2580,23 +2245,12 @@
 											"script": {
 												"id": "7cbc6c3d-f48e-47a4-ab8c-8c7c9fecc79e",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(403);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_ALREADY_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"Seller with code=\"+pm.environment.get(\"testCode\")+\"_SELLER already exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"Seller with code=\"+pm.environment.get(\"testCode\")+\"_SELLER already exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -2659,23 +2313,13 @@
 											"script": {
 												"id": "bac03cbe-10d7-440a-b17c-2eead21dcb4a",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"",
-													"pm.test(\"Code is equal \" + pm.environment.get(\"testCode\"), function () {",
-													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
 													"    pm.expect(jsonData.seller.code).to.eql(pm.environment.get(\"testCode\")+\"_SELLER\");",
-													"});",
-													"",
-													"pm.test(\"Description is equal \" + pm.environment.get(\"testDescription\"), function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.seller.description).to.eql(pm.environment.get(\"testDescription\"));",
 													"});"
 												],
@@ -2748,23 +2392,12 @@
 											"script": {
 												"id": "b61a8549-4c99-4c1a-ba70-8d8db176b515",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"Seller with code=NOT_EXIST does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"Seller with code=NOT_EXIST does not exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -2827,23 +2460,12 @@
 											"script": {
 												"id": "0b3b4439-eb4a-49df-8f65-4921ad417cec",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -2906,23 +2528,12 @@
 											"script": {
 												"id": "bf1f7f39-550c-41d9-a457-8cb3272ef2fb",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -2986,23 +2597,11 @@
 											"script": {
 												"id": "67c7fe4b-87c7-4927-aa68-091c7b886512",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"",
-													"pm.test(\"Code is equal \" + pm.environment.get(\"testCode\"), function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.seller.code).to.eql(pm.environment.get(\"testCode\")+\"_SELLER\");",
-													"});",
-													"",
-													"pm.test(\"Description is equal \" + pm.environment.get(\"testDescription\"), function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.seller.description).to.eql(pm.environment.get(\"testDescription\")+\" updated\");",
 													"});"
 												],
@@ -3075,23 +2674,12 @@
 											"script": {
 												"id": "76a277ba-8765-46ac-9ce5-27d2a1d2c8cd",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"Seller with code=NOT_EXIST does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"Seller with code=NOT_EXIST does not exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -3162,23 +2750,12 @@
 											"script": {
 												"id": "6329fb80-55c6-460d-a065-615a8ee57b09",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -3243,23 +2820,12 @@
 											"script": {
 												"id": "f637c349-31a1-4afb-865c-015b5394b7e2",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(403);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_ALREADY_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"CustomerBrand with code=\"+pm.environment.get(\"testCode\")+\"_CB already exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"CustomerBrand with code=\"+pm.environment.get(\"testCode\")+\"_CB already exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -3324,23 +2890,12 @@
 											"script": {
 												"id": "00f20cdb-2b3e-4d77-9ab1-09d46d293dc0",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"CustomerBrand with code=NOT_EXIST does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"CustomerBrand with code=NOT_EXIST does not exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -3405,23 +2960,12 @@
 											"script": {
 												"id": "2b154971-c655-4aff-ac6a-90e63cc1380f",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -3486,23 +3030,12 @@
 											"script": {
 												"id": "edd06429-43e4-4532-b058-9b3af21c2b09",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -3567,23 +3100,12 @@
 											"script": {
 												"id": "96a14710-e86f-4f95-996b-027a8c3724b2",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(400);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"MISSING_PARAMETER\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"The following parameters are required or contain invalid values: code.\");",
+													"    pm.expect(jsonData.message).to.eql(\"The following parameters are required or contain invalid values: code.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -3655,23 +3177,12 @@
 											"script": {
 												"id": "82c1517f-f675-44d1-8599-15d2e74224b1",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -3736,22 +3247,13 @@
 											"script": {
 												"id": "2185e0a4-e546-4fe0-bde0-146d0d895e13",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Code is equal \" + pm.environment.get(\"testCode\"), function () {",
-													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
 													"    pm.expect(jsonData.customerCategory.code).to.eql(pm.environment.get(\"testCode\")+\"_CC\");",
-													"});",
-													"",
-													"pm.test(\"Description is equal \" + pm.environment.get(\"testDescription\"), function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.customerCategory.description).to.eql(pm.environment.get(\"testDescription\"));",
 													"});"
 												],
@@ -3821,22 +3323,11 @@
 											"script": {
 												"id": "17b7b772-36a5-43ca-a21c-858c069f4798",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(403);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_ALREADY_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.message).to.contain(\"CustomerCategory with code=\"+pm.environment.get(\"testCode\")+\"_CC already exists.\");",
 													"});"
 												],
@@ -3902,22 +3393,11 @@
 											"script": {
 												"id": "b5928b8b-6dda-43e5-98fa-dbe0049f1726",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.message).to.contain(\"CustomerCategory with code=NOT_EXIST does not exists.\");",
 													"});"
 												],
@@ -3983,23 +3463,12 @@
 											"script": {
 												"id": "aba5538f-84e7-4fe2-99bc-bac746c0dd94",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -4064,23 +3533,12 @@
 											"script": {
 												"id": "f560178c-826b-442c-9dec-b775453425cf",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -4145,22 +3603,13 @@
 											"script": {
 												"id": "a91463a0-1544-4fd0-ba9e-dc955da2c8d7",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Code is equal \" + pm.environment.get(\"testCode\"), function () {",
-													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
 													"    pm.expect(jsonData.customerCategory.code).to.eql(pm.environment.get(\"testCode\")+\"_CC\");",
-													"});",
-													"",
-													"pm.test(\"Description is equal \" + pm.environment.get(\"testDescription\"), function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.customerCategory.description).to.eql(pm.environment.get(\"testDescription\")+\" updated\");",
 													"});"
 												],
@@ -4230,23 +3679,12 @@
 											"script": {
 												"id": "2bd8c3bc-ce47-4c17-b0f7-f0ae2f931365",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(400);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"MISSING_PARAMETER\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"The following parameters are required or contain invalid values: code.\");",
+													"    pm.expect(jsonData.message).to.eql(\"The following parameters are required or contain invalid values: code.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -4311,23 +3749,12 @@
 											"script": {
 												"id": "b82d82fd-adb4-4b9e-8c4c-cba0d288d5d0",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"AccountingCode with code=NOT_EXIST does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"AccountingCode with code=NOT_EXIST does not exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -4392,22 +3819,11 @@
 											"script": {
 												"id": "9c550b6f-69d5-49d8-9812-91f934fa8bbd",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(400);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"INVALID_PARAMETER\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.message).to.contain(\"Cannot deserialize value of type `java.lang.Boolean` from String\");",
 													"});"
 												],
@@ -4480,23 +3896,12 @@
 											"script": {
 												"id": "bb670620-dae2-4891-9444-420b71e1feb2",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -4561,22 +3966,13 @@
 											"script": {
 												"id": "958952b6-e7cb-4043-af78-3734aabdaf18",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Code is equal \" + pm.environment.get(\"testCode\"), function () {",
-													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
 													"    pm.expect(jsonData.customer.code).to.eql(pm.environment.get(\"testCode\")+\"_C\");",
-													"});",
-													"",
-													"pm.test(\"Description is equal \" + pm.environment.get(\"testDescription\"), function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.customer.description).to.eql(pm.environment.get(\"testDescription\"));",
 													"});"
 												],
@@ -4650,23 +4046,12 @@
 											"script": {
 												"id": "67eeaf6f-adb3-4111-9f99-3ce1eac5e33d",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(403);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_ALREADY_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"Customer with code=\"+pm.environment.get(\"testCode\")+\"_C already exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"Customer with code=\"+pm.environment.get(\"testCode\")+\"_C already exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -4730,23 +4115,12 @@
 											"script": {
 												"id": "1d1bd54f-1a3d-43ab-9cc1-00b2c7fdb244",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"Customer with code=NOT_EXIST does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"Customer with code=NOT_EXIST does not exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -4810,23 +4184,12 @@
 											"script": {
 												"id": "9b7ae9cb-d343-4c95-b3ee-65038145e656",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -4890,23 +4253,12 @@
 											"script": {
 												"id": "915fe46c-0835-4bf8-99ef-414441015c79",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -4971,22 +4323,13 @@
 											"script": {
 												"id": "bc00dcba-fd9e-4c7e-ad9c-b686a96afce1",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Code is equal \" + pm.environment.get(\"testCode\"), function () {",
-													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
 													"    pm.expect(jsonData.customer.code).to.eql(pm.environment.get(\"testCode\")+\"_C\");",
-													"});",
-													"",
-													"pm.test(\"Description is equal \" + pm.environment.get(\"testDescription\"), function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.customer.description).to.eql(pm.environment.get(\"testDescription\")+\" updated\");",
 													"});"
 												],
@@ -5060,23 +4403,12 @@
 											"script": {
 												"id": "a5281259-ffac-4066-9765-5624a2b56b4b",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(400);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"MISSING_PARAMETER\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"The following parameters are required or contain invalid values: customerCategory.\");",
+													"    pm.expect(jsonData.message).to.eql(\"The following parameters are required or contain invalid values: customerCategory.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -5141,22 +4473,11 @@
 											"script": {
 												"id": "809f5bf3-574f-4ddb-8a2c-9275ae891bdd",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(400);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"INVALID_PARAMETER\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.message).to.contain(\"Cannot deserialize value of type `java.util.Date` from String\");",
 													"});"
 												],
@@ -5222,23 +4543,12 @@
 											"script": {
 												"id": "d33a9c44-0119-4179-9f09-ee705fa3f8bf",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"Seller with code=NOT_EXIST does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"Seller with code=NOT_EXIST does not exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -5303,22 +4613,11 @@
 											"script": {
 												"id": "7ee50f46-6c41-450e-b19c-ecbb99f21201",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.message).to.contain(\"CustomerCategory with code=NOT_EXIST does not exists.\");",
 													"});"
 												],
@@ -5384,23 +4683,12 @@
 											"script": {
 												"id": "c568934f-e097-469e-88a0-95b7b25bfea7",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"CustomerBrand with code=NOT_EXIST does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"CustomerBrand with code=NOT_EXIST does not exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -5472,23 +4760,12 @@
 											"script": {
 												"id": "da502f56-1849-4587-991b-536de6df1202",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -5553,22 +4830,13 @@
 											"script": {
 												"id": "902d89fd-ab80-403c-87f5-c8b589974cb6",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Code is equal \" + pm.environment.get(\"testCode\"), function () {",
-													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
 													"    pm.expect(jsonData.customerAccount.code).to.eql(pm.environment.get(\"testCode\")+\"_CA\");",
-													"});",
-													"",
-													"pm.test(\"Description is equal \" + pm.environment.get(\"testDescription\"), function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.customerAccount.description).to.eql(pm.environment.get(\"testDescription\"));",
 													"});"
 												],
@@ -5642,23 +4910,11 @@
 											"script": {
 												"id": "0c5759e9-a697-4cb7-9c4d-95e7d3ca2402",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
-													"    pm.response.to.have.status(403);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_ALREADY_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"CustomerAccount with code=\"+pm.environment.get(\"testCode\")+\"_CA already exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"CustomerAccount with code=\"+pm.environment.get(\"testCode\")+\"_CA already exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -5722,22 +4978,11 @@
 											"script": {
 												"id": "06e15261-85fd-4cae-9fef-02f51550a724",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.message).to.contain(\"CustomerAccount with code=NOT_EXIST does not exists.\");",
 													"});"
 												],
@@ -5802,24 +5047,14 @@
 											"script": {
 												"id": "3c6f4790-92d0-4783-915b-ea9f726f5036",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
-													"});"
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -5882,24 +5117,14 @@
 											"script": {
 												"id": "9fc41722-50f1-4396-bfc0-c7091905fecb",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
-													"});"
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -5963,22 +5188,13 @@
 											"script": {
 												"id": "ecbf0f3e-7e27-4cb8-a7d5-0381fba6cae6",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Code is equal \" + pm.environment.get(\"testCode\"), function () {",
-													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
 													"    pm.expect(jsonData.customerAccount.code).to.eql(pm.environment.get(\"testCode\")+\"_CA\");",
-													"});",
-													"",
-													"pm.test(\"Description is equal \" + pm.environment.get(\"testDescription\"), function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.customerAccount.description).to.eql(pm.environment.get(\"testDescription\")+\" updated\");",
 													"});"
 												],
@@ -6052,23 +5268,12 @@
 											"script": {
 												"id": "3e74b91e-f964-4b8d-8705-553183a5e970",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(400);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"MISSING_PARAMETER\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"The following parameters are required or contain invalid values: currency, language.\");",
+													"    pm.expect(jsonData.message).to.eql(\"The following parameters are required or contain invalid values: currency, language.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -6133,22 +5338,11 @@
 											"script": {
 												"id": "0747f8bd-727a-4690-bf1e-684d7c207e7e",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(400);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"INVALID_PARAMETER\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.message).to.contain(\"Cannot deserialize value of type `java.util.Date` from String\");",
 													"});"
 												],
@@ -6214,23 +5408,12 @@
 											"script": {
 												"id": "2e319433-d08c-4494-bde4-1f6040b8ca82",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(404);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"Customer with code=NOT_EXIST does not exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"Customer with code=NOT_EXIST does not exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -6302,23 +5485,12 @@
 											"script": {
 												"id": "ad6bcd2c-822f-4c1b-a9bc-41ac3bb6c9e9",
 												"exec": [
-													"pm.test(\"Check Code\", function () {",
+													"pm.test(\"Check response of \"+ request.name, function(){",
+													"    var jsonData = pm.response.json();",
 													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Check Status\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
-													"});",
-													"",
-													"pm.test(\"Check ErrorCode\", function () {",
-													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.errorCode).to.eql();",
-													"});",
-													"",
-													"pm.test(\"Check Message\", function () {",
-													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -92518,6 +91690,1365 @@
 									""
 								]
 							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Filter search and invoicing",
+					"item": [
+						{
+							"name": "Data model",
+							"item": [
+								{
+									"name": "Create subscription",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "1c38f59d-2cdb-4588-93be-f6f237ec1382",
+												"exec": [
+													"pm.test(\"Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(\"Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_SUB_CHARGE\",\n    \"description\": \"{{entityPrefix}}_{{index}}_SUB\",\n    \"userAccount\": \"{{baseEntityPrefix}}_UA\",\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER1\",\n    \"subscriptionDate\": \"2016-02-01\",\n    \"endAgreementDate\": \"2017-02-01\"\n  }\n",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Activate services",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "42bf485e-1e44-4f46-9631-041f5e2c3cc6",
+												"exec": [
+													"pm.test(\"Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(\"Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"subscription\": \"{{entityPrefix}}_{{index}}_SUB_CHARGE\",\n    \"servicesToActivate\": {\n        \"service\": [\n            {\n                \"code\": \"{{baseEntityPrefix}}_SERVICE1\",\n                \"quantity\": \"1\",\n                \"subscriptionDate\": \"2016-02-01\"\n            }\n        ]\n    }\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription/activateServices",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription",
+												"activateServices"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create RatedTransactions Filter",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "b172f3e1-9930-41e6-a3ca-81cc68eada4b",
+												"exec": [
+													"pm.test(\"Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(\"Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_FilterRT\",\n    \"description\": \"Rated transactions for invoicing test\",\n    \"shared\": \"false\",\n    \"inputXml\": \"<filter>\\n    <primarySelector>\\n    <targetEntity>org.meveo.model.billing.RatedTransaction</targetEntity>\\n    <alias>r</alias>\\n    <displayFields>\\n      <field>code</field>\\n      <field>description</field>\\n      <field>usageDate</field>\\n    </displayFields>\\n    <exportFields/>\\n    <ignoreIfNotFoundForeignKeys/>\\n  </primarySelector>\\n  <secondarySelectors/>\\n  <disabled>false</disabled>\\n  <appendGeneratedCode>false</appendGeneratedCode>\\n  <filterCondition class=\\\"andCompositeFilterCondition\\\">\\n    <filterConditionType>COMPOSITE_AND</filterConditionType>\\n    <filterConditions>\\n        <filterCondition class=\\\"andCompositeFilterCondition\\\">\\n            <filterConditionType>COMPOSITE_AND</filterConditionType>\\n            <filterConditions>\\n                  <primitiveFilterCondition>\\n                    <filterConditionType>PRIMITIVE</filterConditionType>\\n                    <fieldName>usageDate</fieldName>\\n                    <operator><![CDATA[<=]]></operator>\\n                    <operand>date:01/05/2016</operand>\\n                  </primitiveFilterCondition>\\n            </filterConditions>\\n        </filterCondition>\\n        <filterCondition class=\\\"andCompositeFilterCondition\\\">\\n            <filterConditionType>COMPOSITE_AND</filterConditionType>\\n            <filterConditions>\\n                <primitiveFilterCondition>\\n                    <filterConditionType>PRIMITIVE</filterConditionType>\\n                    <fieldName>code</fieldName>\\n                    <operator>=</operator>\\n                    <operand>{{baseEntityPrefix}}_REC1</operand>\\n                  </primitiveFilterCondition>\\n            </filterConditions>\\n        </filterCondition>\\n    </filterConditions>\\n  </filterCondition>\\n</filter>\"\n  }",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/filter/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"filter",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Rated Transaction Job",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "2a58e75b-b904-4b7e-9dc3-8dcb644decb3",
+												"exec": [
+													"pm.test(\"Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(\"Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.contain(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"RT_Job\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Search",
+							"item": [
+								{
+									"name": "Search from filter",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "175448e7-4119-4bdc-b619-b66405d55aba",
+												"exec": [
+													"pm.test(\"Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(\"Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
+													"});",
+													"",
+													"",
+													"pm.test(\"Body matches string\", function () {",
+													"    pm.expect(pm.response.text()).not.to.include(\"<code>\"+pm.environment.get(\"baseEntityPrefix\")+\"_OS1</code>\");",
+													"    pm.expect(pm.response.text()).to.include(\"<code>\"+pm.environment.get(\"baseEntityPrefix\")+\"_REC1</code>\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_FilterRT\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/filteredList/listByFilter?from=0&size=100",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"filteredList",
+												"listByFilter"
+											],
+											"query": [
+												{
+													"key": "from",
+													"value": "0"
+												},
+												{
+													"key": "size",
+													"value": "100"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "08265124-ffac-4102-abac-e21d348b46db",
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"index\", 456);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "76610fa2-4dc2-4324-8f70-697c6d49d6ac",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Inbound Request Tests (Review)",
+					"item": [
+						{
+							"name": "Inbound 1",
+							"item": [
+								{
+									"name": "Create ScriptInstance",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "238271b3-682e-4742-a889-9268fdb4b1c6",
+												"exec": [
+													"pm.test(\"Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(\"Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"org.meveo.service.script.inbound.InboundServletScript\",\n    \"description\": \"InboundServletScript\",\n    \"type\": \"JAVA\",\n    \"script\": \"package org.meveo.service.script.inbound;\\n\\nimport java.math.BigDecimal;\\nimport java.util.Map;\\nimport org.meveo.admin.exception.BusinessException;\\nimport org.meveo.model.admin.User;\\nimport org.meveo.model.billing.WalletOperation;\\nimport org.meveo.service.script.Script;\\nimport org.slf4j.Logger;\\nimport org.slf4j.LoggerFactory;\\nimport org.meveo.model.notification.InboundRequest;\\n\\npublic class InboundServletScript extends Script {\\n\\n    private static final Logger log = LoggerFactory.getLogger(InboundServletScript.class);\\n\\n    public void execute(Map<String, Object> context) throws BusinessException {\\n        log.debug(\\\"InboundServlet script...\\\");\\n      \\n        InboundRequest inboundRequest = (InboundRequest) context.get(\\\"event\\\");\\n        inboundRequest.getHeaders().put(\\\"INBOUND_SCRIPT_VAR\\\", \\\"InboundServletScript\\\");\\n\\n    inboundRequest.setResponseBody(\\\"API test\\\");\\n\\n        if (inboundRequest.getParameters()!=null && inboundRequest.getParameters().get(\\\"returnStatus\\\")!=null){\\n            inboundRequest.setResponseStatus(Integer.parseInt(inboundRequest.getParameters().get(\\\"returnStatus\\\")));\\n        }\\n    }\\n}\",\n    \"executionRoles\": [\n        {\n            \"name\": \"administrateur\"\n        }\n    ],\n    \"sourcingRoles\": [\n        {\n            \"name\": \"administrateur\"\n        }\n    ]\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/scriptInstance/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"scriptInstance",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Notifications",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "0f37d40a-7a26-4524-98a6-74cb3d0aad71",
+												"exec": [
+													"pm.test(\"Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(\"Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"INBOUND_SERVLET_NOTIF\",\n    \"classNameFilter\": \"org.meveo.model.notification.InboundRequest\",\n    \"eventTypeFilter\": \"INBOUND_REQ\",\n    \"scriptInstanceCode\": \"org.meveo.service.script.inbound.InboundServletScript\",\n    \"elFilter\": \"#{event.parameters!=null and !event.parameters.containsKey('doNotFire')}\",\n    \"scriptParams\": {\n        \"event\": \"#{event}\"\n    }\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/notification/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"notification",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Fired=true",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "dbe20855-3144-492d-967a-dcd86626fc22",
+												"exec": [
+													"pm.test(\"Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(\"Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Fired - change return status to 230",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "18d5f260-266e-4ed0-abb8-6e8b38713c2e",
+												"exec": [
+													"pm.test(\"Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(\"Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Fired=false",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "90c1c7f3-85de-4748-81db-bef4cd6eae14",
+												"exec": [
+													"pm.test(\"Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(\"Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "List notification history",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "0879fbaf-7367-46b1-a09f-ee55ae21ace3",
+												"exec": [
+													"pm.test(\"Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(\"Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Data\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    var jsonBody = JSON.parse(pm.request.body);",
+													"",
+													"    pm.expect(jsonData.notification).to.deep.equal(jsonBody.notification);",
+													"    pm.expect(jsonData.entityClassName).to.deep.equal(jsonBody.entityClassName);",
+													"    pm.expect(jsonData.nbRetry).to.deep.equal(jsonBody.nbRetry);",
+													"",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"notification\": \"INBOUND_SERVLET_NOTIF\",\n    \"entityClassName\": \"org.meveo.model.notification.InboundRequest\",\n    \"nbRetry\": \"0\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/notification/listNotificationHistory",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"notification",
+												"listNotificationHistory"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						}
+					],
+					"description": "What is this for and what API is it using?",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a86d3030-5694-40cf-8b2f-06c179ed95bf",
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"index\", 377);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "7ebc723d-3cf4-4494-8a28-ae6fad0d70c9",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Jobs",
+					"item": [
+						{
+							"name": "Job Reporting",
+							"item": [
+								{
+									"name": "Execute 1",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "f588becf-605f-4cc1-a84e-ffd1f66b1de8",
+												"exec": [
+													"pm.test(\"Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(\"Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.contain(\"\");",
+													"});",
+													"",
+													"",
+													"var jsonData = pm.response.json();",
+													"pm.globals.set(\"job_id\", jsonData.actionStatus.message);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"M_Job\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Execute 2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "81492f07-800e-40e9-a7b8-ffad0a48c83b",
+												"exec": [
+													"pm.test(\"Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(\"Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.contain(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"M_Job\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Find by code",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "52361e3c-2083-472c-81b3-7b75d0a37d51",
+												"exec": [
+													"pm.test(\"Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(\"Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Data\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    var jsonBody = JSON.parse(pm.request.body);",
+													"",
+													"    pm.expect(jsonData.jobExecutionResultDto.jobInstanceCode).to.deep.equal(jsonBody.jobInstanceCode);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"jobInstanceCode\": \"M_Job\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/jobReport?code=M_Job",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"jobReport"
+											],
+											"query": [
+												{
+													"key": "code",
+													"value": "M_Job"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Find by id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6a6b8578-ab33-4de5-84fb-2bd3cef69da4",
+												"exec": [
+													"pm.test(\"Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(\"Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
+													"});",
+													"",
+													"pm.test(\"Check Data\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    var jsonBody = JSON.parse(pm.request.body);",
+													"",
+													"    pm.expect(jsonData.jobExecutionResultDto.jobInstanceCode).to.deep.equal(jsonBody.jobInstanceCode);",
+													"    pm.expect(jsonData.jobExecutionResultDto.id).to.deep.equal(jsonBody.id);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"id\": {{job_id}},\n\t\"jobInstanceCode\": \"M_Job\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/jobReport?id={{job_id}}",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"jobReport"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "{{job_id}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
 						}
 					],
 					"protocolProfileBehavior": {},
