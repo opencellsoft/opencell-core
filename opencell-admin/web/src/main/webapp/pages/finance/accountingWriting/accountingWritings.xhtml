@@ -35,6 +35,7 @@
 
 		<hftl:dataList backingBean="#{accountingWritingListBean}" sortBy="auditable.created">
 			<hftl:column label="#{messages['accountingWriting.writingDate']}" field="auditable.created" isDate="true" />
+			<hftl:column label="#{messages['accountingWriting.extraParam2']}" field="extraParam2" />
 			<hftl:column label="#{messages['accountingWriting.eventType']}" field="eventType" />
 			<hftl:column label="#{messages['accountingWriting.accountingCode']}" field="accountingCode.code" />
 			<hftl:column label="#{messages['accountingWriting.invoiceCategory']}" field="invoiceCategory.code" />
