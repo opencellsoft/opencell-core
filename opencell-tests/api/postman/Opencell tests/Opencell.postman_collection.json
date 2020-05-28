@@ -55258,6 +55258,28 @@
 							"_postman_isSubFolder": true
 						}
 					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "cd1e98f2-a23f-46d6-95dd-1aef747c8acd",
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"index\", 242);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "fb777f4f-3e0c-4290-8c3e-c0af456c7775",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
@@ -63597,7 +63619,7 @@
 									"days3before.setDate(today.getDate() - 3);",
 									"days2before.setDate(today.getDate() - 2);",
 									"",
-									"pm.globals.set(\"index\", 192);",
+									"pm.globals.set(\"index\", 194);",
 									"pm.globals.set(\"today\", today.toISOString().slice(0, 10));",
 									"pm.globals.set(\"terminationDate\", terminationDate.toISOString().slice(0, 10));",
 									"pm.globals.set(\"20daysBefore\", days20before.toISOString().slice(0, 10));",
@@ -92505,7 +92527,7 @@
 								"id": "6916c4eb-34f0-4cea-9cdb-604270afde24",
 								"type": "text/javascript",
 								"exec": [
-									"pm.globals.set(\"index\", 34);"
+									"pm.globals.set(\"index\", 453);"
 								]
 							}
 						},
@@ -93343,6 +93365,4397 @@
 													"key": "id",
 													"value": "{{job_id}}"
 												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Reporting",
+					"item": [
+						{
+							"name": "ReportExtract",
+							"item": [
+								{
+									"name": "Create ScriptInstance",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "3e3ee1b5-d750-4b77-af41-d22995ca9b36",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"org.meveo.service.script.finance.{{entityPrefix}}_{{index}}_RE_SCRIPT_1\",\n    \"description\": \"{{entityPrefix}}_{{index}}_RE_SCRIPT_1\",\n    \"type\": \"JAVA\",\n    \"script\": \"package org.meveo.service.script.finance;\\n\\nimport java.io.File;\\nimport java.io.FileWriter;\\nimport java.text.DateFormat;\\nimport java.text.SimpleDateFormat;\\nimport java.util.List;\\nimport java.util.Map;\\n\\nimport org.meveo.admin.exception.BusinessException;\\nimport org.meveo.model.payments.AccountOperation;\\nimport org.meveo.model.payments.CustomerAccount;\\nimport org.meveo.model.payments.RecordedInvoice;\\nimport org.meveo.service.payments.impl.AccountOperationService;\\nimport org.meveo.service.script.Script;\\nimport org.meveo.service.script.finance.ReportExtractScript;\\nimport org.slf4j.Logger;\\nimport org.slf4j.LoggerFactory;\\nimport java.util.Date;\\n\\npublic class {{entityPrefix}}_{{index}}_RE_SCRIPT_1 extends ReportExtractScript {\\n\\n    private static final Logger LOGGER = LoggerFactory.getLogger({{entityPrefix}}_{{index}}_RE_SCRIPT_1.class);\\n\\n    private AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(AccountOperationService.class.getSimpleName());\\n\\n\\n    @Override\\n    public void execute(Map<String, Object> initContext) throws BusinessException {\\n        try {\\n            LOGGER.debug(\\\"#####################Starting of script {{entityPrefix}}_{{index}}_RE_SCRIPT_1\\\");\\n    \\n            // Get transaction start and end date\\n            Date startDate = (Date) initContext.get(ReportExtractScript.START_DATE);    \\n            Date endDate = (Date) initContext.get(ReportExtractScript.END_DATE);\\n            DateFormat df = new SimpleDateFormat(\\\"yyyy-MM-dd\\\");\\n             \\n            List<AccountOperation> accountOperations = accountOperationService.list();\\n            //create export file\\n            String exportDir = String.valueOf(initContext.get(ReportExtractScript.DIR));\\n            File dir = new File(exportDir);\\n            if (!dir.exists()) {\\n                dir.mkdirs();\\n            }\\n            CustomerAccount customerAccount = null;\\n            StringBuilder sb =new StringBuilder();\\n            sb.append(\\\"Transaction Date;Transaction Type;Amount;Due Date;Reference;Transaction Category;Invoice Date;\\\"\\n                    + \\\"Customer Account Code;Customer Account Description\\\\n\\\");\\n            for (AccountOperation accountOperation : accountOperations) { \\n                if(accountOperation.getTransactionDate().equals(startDate) || accountOperation.getTransactionDate().equals(endDate)\\n                        || (accountOperation.getTransactionDate().after(startDate) && accountOperation.getTransactionDate().before(endDate))) {\\n                    \\n                    customerAccount = accountOperation.getCustomerAccount();\\n                    sb.append(nil(accountOperation.getTransactionDate().toString())+ \\\";\\\");\\n                    sb.append(nil(accountOperation.getType()) + \\\";\\\");\\n                    sb.append(nil(accountOperation.getAmount().toString()) + \\\";\\\");\\n                    sb.append(isNull(accountOperation.getDueDate()) + \\\";\\\");\\n                    sb.append(nil(accountOperation.getReference()) + \\\";\\\");\\n                    sb.append(nil(accountOperation.getTransactionCategory().toString()) + \\\";\\\");\\n                    if(accountOperation instanceof RecordedInvoice) {\\n                        RecordedInvoice invoice = (RecordedInvoice) accountOperation;\\n                        sb.append(invoice.getInvoiceDate().toString() + \\\";\\\");\\n                    } else {\\n                        sb.append(\\\";\\\");\\n                    }\\n                    sb.append(nil(customerAccount.getCode()) + \\\";\\\");\\n                    sb.append(nil(customerAccount.getDescriptionOrCode()) + \\\";\\\\n\\\");\\n\\n                    \\n                }\\n            }\\n              String strFilename = String.valueOf(initContext.get({{entityPrefix}}_{{index}}_RE_SCRIPT_1.FILENAME));\\n              LOGGER.debug(\\\"output={}\\\", strFilename);\\n            File file = new File(dir + File.separator + strFilename);\\n            file.createNewFile();\\n            FileWriter fileWriter = new FileWriter(file);\\n            fileWriter.write(sb.toString());\\n            fileWriter.close();\\n            \\n            LOGGER.debug(\\\"#####################Ending of script {{entityPrefix}}_{{index}}_RE_SCRIPT_1\\\");\\n        } catch (Exception e) {\\n            LOGGER.error(\\\"Exception:\\\", e);\\n            throw new BusinessException(e.getMessage());\\n        }\\n        \\n    }\\n  \\n  private String isNull(Object obj) {\\n    if(obj == null) {\\n      return \\\"\\\";\\n    } else {\\n      return obj.toString();\\n    }\\n  }\\n  \\n    private String nil(String word) {\\n        if (word == null || \\\"null\\\".equalsIgnoreCase(word)) {\\n            return \\\"\\\";\\n        } else {\\n            return word;\\n        }\\n    }\\n}\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/scriptInstance/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"scriptInstance",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CreateOrUpdate - SQL",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "d9d47d29-9829-45d4-88fc-23aeba43d294",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_RE_SQL_1\",\n    \"description\": \"{{entityPrefix}}_{{index}}_RE_SQL_1\",\n    \"scriptType\": \"SQL\",\n    \"filenameFormat\": \"#{re.category}_accounts-[yyyy_MM_dd].csv\",\n    \"outputDir\": \"reports/accounts\",\n    \"category\": \"accounts\",\n    \"sqlQuery\": \"select code, description from ${dbSchema}account_entity where :START_DATE<>:END_DATE\",\n    \"params\": {\n        \"START_DATE\": \"31/01/2017\",\n        \"END_DATE\": \"31/12/2018\"\n    }\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/finance/reportExtracts/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"finance",
+												"reportExtracts",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CreateOrUpdate - JAVA",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "4503161a-1719-4c7a-8366-78f95de23a21",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_RE_JAVA_1\",\n    \"description\": \"{{entityPrefix}}_{{index}}_RE_JAVA_1\",\n    \"scriptType\": \"JAVA\",\n    \"filenameFormat\": \"accounts-ops-[yyyy_MM_dd].csv\",\n    \"outputDir\": \"reports/accounts\",\n    \"category\": \"accounts\",\n    \"scriptInstanceCode\": \"org.meveo.service.script.finance.{{entityPrefix}}_{{index}}_RE_SCRIPT_1\",\n    \"params\": {\n        \"START_DATE\": \"31/01/2017\",\n        \"END_DATE\": \"31/12/2018\"\n    }\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/finance/reportExtracts/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"finance",
+												"reportExtracts",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run - SQL",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "296527ca-0c1d-4b2a-bbcc-69fdaba82d67",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_RE_SQL_1\",\n    \"params\": {\n        \"START_DATE\": \"31/01/2017\",\n        \"END_DATE\": \"31/12/2018\"\n    }\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/finance/reportExtracts/run",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"finance",
+												"reportExtracts",
+												"run"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run - JAVA",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "299c0d7d-f7f0-4779-8b00-087b3e5d11c8",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_RE_JAVA_1\",\n    \"params\": {\n        \"START_DATE\": \"31/01/2017\",\n        \"END_DATE\": \"31/12/2018\"\n    }\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/finance/reportExtracts/run",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"finance",
+												"reportExtracts",
+												"run"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Find - SQL 1",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "ba7a6a4c-c305-42ae-a87f-ba2f1f0612b4",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
+													"});",
+													"",
+													"",
+													"pm.test(request.name + \" - Check Data\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    var jsonBody = JSON.parse(pm.request.body);",
+													"",
+													"    pm.expect(jsonData.reportExtract.code).to.deep.equal(jsonBody.code);",
+													"    pm.expect(jsonData.reportExtract.description).to.deep.equal(jsonBody.description);",
+													"    pm.expect(jsonData.reportExtract.params).to.deep.equal(jsonBody.params);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_RE_SQL_1\",\n    \"description\": \"{{entityPrefix}}_{{index}}_RE_SQL_1\",\n    \"params\": {\n        \"START_DATE\": \"31/01/2017\",\n        \"END_DATE\": \"31/12/2018\"\n    }\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/finance/reportExtracts?reportExtractCode={{entityPrefix}}_{{index}}_RE_SQL_1",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"finance",
+												"reportExtracts"
+											],
+											"query": [
+												{
+													"key": "reportExtractCode",
+													"value": "{{entityPrefix}}_{{index}}_RE_SQL_1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Find - JAVA 1",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "fde70164-9737-43d0-a28f-839564937b85",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
+													"});",
+													"",
+													"",
+													"pm.test(request.name + \" - Check Data\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    var jsonBody = JSON.parse(pm.request.body);",
+													"",
+													"    pm.expect(jsonData.reportExtract.code).to.deep.equal(jsonBody.code);",
+													"    pm.expect(jsonData.reportExtract.description).to.deep.equal(jsonBody.description);",
+													"    pm.expect(jsonData.reportExtract.params).to.deep.equal(jsonBody.params);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_RE_JAVA_1\",\n    \"description\": \"{{entityPrefix}}_{{index}}_RE_JAVA_1\",\n    \"params\": {\n        \"START_DATE\": \"31/01/2017\",\n        \"END_DATE\": \"31/12/2018\"\n    }\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/finance/reportExtracts?reportExtractCode={{entityPrefix}}_{{index}}_RE_JAVA_1",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"finance",
+												"reportExtracts"
+											],
+											"query": [
+												{
+													"key": "reportExtractCode",
+													"value": "{{entityPrefix}}_{{index}}_RE_JAVA_1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Remove - SQL",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "dbb3f571-f6ff-496d-aaa0-b5d463dee3c1",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{{entityPrefix}}_{{index}}_RE_SQL_1",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/finance/reportExtracts",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"finance",
+												"reportExtracts"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Remove - JAVA",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "b682e1fc-f8e0-4c9e-99b7-dfe074076e67",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{{entityPrefix}}_{{index}}_RE_JAVA_1",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/finance/reportExtracts",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"finance",
+												"reportExtracts"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Find - SQL",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "43e09f22-d787-410e-9e2a-54d94798d36f",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(404);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"ReportExtract with code=\"+pm.environment.get(\"entityPrefix\")+\"_\"+pm.globals.get(\"index\")+\"_RE_SQL_1 does not exists.\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/finance/reportExtracts?reportExtractCode={{entityPrefix}}_{{index}}_RE_SQL_1",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"finance",
+												"reportExtracts"
+											],
+											"query": [
+												{
+													"key": "reportExtractCode",
+													"value": "{{entityPrefix}}_{{index}}_RE_SQL_1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Find - JAVA",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "be18a437-d2da-434c-8e1a-9d52ee9dd252",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(404);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql(\"ENTITY_DOES_NOT_EXISTS_EXCEPTION\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"ReportExtract with code=\"+pm.environment.get(\"entityPrefix\")+\"_\"+pm.globals.get(\"index\")+\"_RE_JAVA_1 does not exists.\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/finance/reportExtracts?reportExtractCode={{entityPrefix}}_{{index}}_RE_JAVA_1",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"finance",
+												"reportExtracts"
+											],
+											"query": [
+												{
+													"key": "reportExtractCode",
+													"value": "{{entityPrefix}}_{{index}}_RE_JAVA_1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Job",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "9f660d55-f5ca-4b3a-adac-49d440a30496",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"RE_Job\",\n    \"jobTemplate\": \"ReportExtractJob\",\n    \"timerCode\": \"Monthly\",\n    \"jobCategory\": \"DWH\",\n    \"limitToSingleNode\": \"true\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/jobInstance/create",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"jobInstance",
+												"create"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Execute Job",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "bd83795f-feff-49a6-b649-039e1d271716",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql(jsonData.jobExecutionResultDto.id+\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"RE_Job\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete script",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "b6e7988a-6d1c-42b3-9849-a125673d1aff",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/scriptInstance/org.meveo.service.script.finance.{{entityPrefix}}_{{index}}_RE_SCRIPT_1",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"scriptInstance",
+												"org.meveo.service.script.finance.{{entityPrefix}}_{{index}}_RE_SCRIPT_1"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "3b7efcaf-64bc-4d28-8c78-39ff5219e4a2",
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"index\", 339);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "806e2679-51b4-4f9b-b132-724a19e4a239",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "GDPR Erasure",
+					"item": [
+						{
+							"name": "Account operations",
+							"item": [
+								{
+									"name": "Create BillingCycle",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "4d2d0b8c-5b64-481d-892e-5eba745fb7e0",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"CYC_INV_MT_GDPR_AO_{{index}}\",\n    \"description\": \"Monthly Invoice Cycle GDPR AO {{index}}\",\n    \"transactionDateDelay\": \"0\",\n    \"invoiceDateProductionDelay\": \"0\",\n    \"dueDateDelay\": \"2\",\n    \"invoiceDateDelay\": \"4\",\n    \"calendar\": \"MONTHLY\",\n    \"invoiceTypeCode\": \"COM\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billingCycle/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billingCycle",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Customer",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "f0ac0d45-b1d4-477e-a41c-be01ca09167f",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"crmAccountType\": \"C_UA\",\n    \"crmParentCode\": \"SELLER_FR\",\n    \"code\": \"GDPR_{{index}}\",\n    \"description\": \"Name\",\n    \"name\": {\n        \"title\": \"MR\",\n        \"firstName\": \"Edward\",\n        \"lastName\": \"Legaspi\"\n    },\n    \"address\": {\n        \"address1\": \"14 rue Crespin du Gast\",\n        \"zipCode\": \"75011\",\n        \"city\": \"PARIS\",\n        \"state\": \"Paris Area\",\n        \"country\": \"FR\"\n    },\n    \"email\": \"edward.legaspi@opencellsoft.com\",\n    \"language\": \"FRA\",\n    \"customerCategory\": \"CLIENT\",\n    \"customerBrand\": \"DEFAULT\",\n    \"currency\": \"EUR\",\n    \"billingCycle\": \"CYC_INV_MT_GDPR_AO_{{index}}\",\n    \"country\": \"FR\",\n    \"electronicBilling\": \"true\",\n    \"contactInformation\": {\n        \"email\": \"edward.legaspi@opencellsoft.com\"\n    }\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"account",
+												"accountHierarchy",
+												"createOrUpdateCRMAccountHierarchy"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Created sub",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "852c23fc-5a7a-4f0d-a252-453fd51710a7",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{baseEntityPrefix}}_{{index}}_GDPR_AO_SUB\",\n    \"description\": \"{{baseEntityPrefix}}_{{index}}_GDPR_AO_SUB\",\n    \"userAccount\": \"GDPR_{{index}}\",\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER3\",\n    \"subscriptionDate\": \"2007-10-13\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Activate service",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "64a7aebd-78bb-437c-8e03-4ab26c8d5a2a",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"subscription\": \"{{baseEntityPrefix}}_{{index}}_GDPR_AO_SUB\",\n    \"servicesToActivate\": {\n        \"service\": [\n            {\n                \"code\": \"{{baseEntityPrefix}}_SERVICE3\",\n                \"subscriptionDate\": \"2007-10-13\",\n                \"quantity\": \"1\"\n            }\n        ]\n    }\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription/activateServices",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription",
+												"activateServices"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run RT",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "e9d5d26b-5ee3-4931-abba-f6a8262d958f",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql(jsonData.jobExecutionResultDto.id+\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"RT_Job\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Generate Previous Invoice old",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "e947a134-ae42-43ab-8a7a-f8b499c6f16e",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"targetCode\": \"GDPR_{{index}}\",\n    \"targetType\": \"BILLINGACCOUNT\",\n    \"invoicingDate\": \"2007-11-01\",\n    \"generateXML\": \"true\",\n    \"generatePDF\": \"true\",\n    \"generateAO\": \"true\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/invoice/generateInvoice",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"invoice",
+												"generateInvoice"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Payment for Invoice old",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "3c302769-0f35-40fe-ab3e-faa6779383fb",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"customerAccount\": \"GDPR_{{index}}\",\n    \"description\": \"Payment for ${#TestSuite#invoice1_number}\",\n    \"amount\": \"1017.10\",\n    \"unMatchingAmount\": \"1017.10\",\n    \"dueDate\": \"2007-09-01\",\n    \"type\": \"OCC\",\n    \"transactionDate\": \"2007-10-15\",\n    \"transactionCategory\": \"CREDIT\",\n    \"reference\": \"INV-CLASSIC-000000001\",\n    \"accountCode\": \"651100000\",\n    \"accountCodeClientSide\": \"651100000\",\n    \"code\": \"RG_PLVT\",\n    \"otherCreditAndCharge\": {\n        \"operationDate\": \"2007-10-15\"\n    },\n    \"matchingStatus\": \"O\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/accountOperation",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"accountOperation"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Created sub 2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "d39fe205-7283-47bd-b8a9-a39390340bff",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{baseEntityPrefix}}_{{index}}_GDPR_AO_SUB_NEW\",\n    \"description\": \"{{baseEntityPrefix}}_{{index}}_GDPR_AO_SUB_NEW\",\n    \"userAccount\": \"GDPR_{{index}}\",\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER3\",\n    \"subscriptionDate\": \"2017-10-13\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Activate service 2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "1f60650d-1648-4b6a-9fe5-c9540e777cc7",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"subscription\": \"{{baseEntityPrefix}}_{{index}}_GDPR_AO_SUB_NEW\",\n    \"servicesToActivate\": {\n        \"service\": [\n            {\n                \"code\": \"{{baseEntityPrefix}}_SERVICE3\",\n                \"subscriptionDate\": \"2017-10-13\",\n                \"quantity\": \"1\"\n            }\n        ]\n    }\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription/activateServices",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription",
+												"activateServices"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run RT 2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "bee0cb86-c781-430d-b389-9265d6ea8203",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql(jsonData.jobExecutionResultDto.id+\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"RT_Job\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Generate Previous Invoice new",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "5827d243-82a0-4795-8b8a-1b3d6d9055d3",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"targetCode\": \"GDPR_{{index}}\",\n    \"targetType\": \"BILLINGACCOUNT\",\n    \"invoicingDate\": \"2017-11-01\",\n    \"generateXML\": \"true\",\n    \"generatePDF\": \"true\",\n    \"generateAO\": \"true\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/invoice/generateInvoice",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"invoice",
+												"generateInvoice"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Payment for Invoice new",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "c0a6367b-7375-4b8c-b9e1-281c6abffc79",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"customerAccount\": \"GDPR_{{index}}\",\n    \"description\": \"Payment for ${#TestSuite#invoice1_number}\",\n    \"amount\": \"1017.10\",\n    \"unMatchingAmount\": \"1017.10\",\n    \"dueDate\": \"2017-09-01\",\n    \"type\": \"OCC\",\n    \"transactionDate\": \"2017-10-15\",\n    \"transactionCategory\": \"CREDIT\",\n    \"reference\": \"INV-CLASSIC-000000001\",\n    \"accountCode\": \"651100000\",\n    \"accountCodeClientSide\": \"651100000\",\n    \"code\": \"RG_PLVT\",\n    \"otherCreditAndCharge\": {\n        \"operationDate\": \"2017-10-15\"\n    },\n    \"matchingStatus\": \"O\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/accountOperation",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"accountOperation"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Undue payment 50",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "84b71c59-96ba-46fc-86e2-482d72337042",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.globals.set(\"undueRefundId\", jsonData.message);",
+													"});",
+													"",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"customerAccount\": \"GDPR_{{index}}\",\n    \"description\": \"Undue payment\",\n    \"amount\": \"50\",\n    \"unMatchingAmount\": \"50\",\n    \"type\": \"OCC\",\n    \"transactionDate\": \"2007-09-30\",\n    \"transactionCategory\": \"CREDIT\",\n    \"reference\": \"NO_REF\",\n    \"code\": \"RG_CHQ\",\n    \"otherCreditAndCharge\": {\n        \"operationDate\": \"2007-09-30\"\n    },\n    \"matchingStatus\": \"O\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/accountOperation",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"accountOperation"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Refund 50",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "381f4594-49b8-4f78-b56e-4544c70738dd",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.globals.set(\"unduePaymentId\", jsonData.message);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"customerAccount\": \"GDPR_{{index}}\",\n    \"description\": \"Refund undue payment\",\n    \"amount\": \"50\",\n    \"unMatchingAmount\": \"50\",\n    \"type\": \"OCC\",\n    \"transactionDate\": \"2007-10-31\",\n    \"transactionCategory\": \"DEBIT\",\n    \"reference\": \"NO_REF\",\n    \"code\": \"RG_CHQ\",\n    \"otherCreditAndCharge\": {\n        \"operationDate\": \"2007-10-31\"\n    },\n    \"matchingStatus\": \"O\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/accountOperation",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"accountOperation"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Match Undue payment and Refund",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "d56515f9-3879-4640-9c31-9a37c486598f",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"customerAccountCode\": \"GDPR_{{index}}\",\n    \"accountOperations\": {\n        \"accountOperation\": [\n            {\n                \"id\": {{unduePaymentId}}\n            },\n            {\n                \"id\": {{undueRefundId}}\n            }\n        ]\n    }\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/accountOperation/matchOperations",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"accountOperation",
+												"matchOperations"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Subscription",
+							"item": [
+								{
+									"name": "Created sub",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "8151b1a9-f438-4319-9207-f9596d404819",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_CREATED\",\n    \"description\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_CREATED\",\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER3\",\n    \"subscriptionDate\": \"2007-10-13\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Active sub",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "832d46e6-bf2e-475b-a6fd-79390401abf4",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_ACTIVE\",\n    \"description\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_ACTIVE\",\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER3\",\n    \"subscriptionDate\": \"2007-10-13\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Activate service",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "dcd1f234-615e-46bb-a269-38c05294c130",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"subscription\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_ACTIVE\",\n    \"servicesToActivate\": {\n        \"service\": [\n            {\n                \"code\": \"{{baseEntityPrefix}}_SERVICE3\",\n                \"subscriptionDate\": \"2007-10-13\",\n                \"quantity\": \"1\"\n            }\n        ]\n    }\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription/activateServices",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription",
+												"activateServices"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Suspended sub",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "c8cdabdb-4977-41ad-ad54-9ee32d2b2c49",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_SUSPENDED\",\n    \"description\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_SUSPENDED\",\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER3\",\n    \"subscriptionDate\": \"2007-10-13\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create access to suspended sub",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "4cb7bef0-9f60-4be7-bf3d-9420d2c3ced6",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_SUSPENDED_ACCESS\",\n    \"subscription\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_SUSPENDED\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/account/access",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"account",
+												"access"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Suspend sub",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "b81e8f3a-95f1-4d51-8fe3-2153cb80c124",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"subscriptionCode\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_SUSPENDED\",\n    \"actionDate\": \"2017-10-13\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription/suspend",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription",
+												"suspend"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Resiliated sub",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "e6424ff0-8994-4738-bdea-8d4c864bbf60",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_RESILIATED\",\n    \"description\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_RESILIATED\",\n    \"userAccount\": \"{{baseEntityPrefix}}_UA_3\",\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER3\",\n    \"subscriptionDate\": \"2007-10-13\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Activate service - Resiliated",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "b20c9b28-b6dd-4d9b-a546-49e6aaf63d35",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"subscription\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_RESILIATED\",\n    \"servicesToActivate\": {\n        \"service\": [\n            {\n                \"code\": \"{{baseEntityPrefix}}_SERVICE3\",\n                \"subscriptionDate\": \"2007-10-13\",\n                \"quantity\": \"1\"\n            }\n        ]\n    }\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription/activateServices",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription",
+												"activateServices"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Resiliate sub",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "bf9acd5b-79b9-4810-9e14-7eff4fa3bf1c",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"subscriptionCode\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_RESILIATED\",\n    \"terminationReason\": \"TERM_REASON_3\",\n    \"terminationDate\": \"2017-10-13\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription/terminate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription",
+												"terminate"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Order",
+							"item": [
+								{
+									"name": "Create old order",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "00c0425e-22aa-44e7-af3a-2da318cd4eb8",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"description\": \"{{entityPrefix}}_{{index}}_ORDER_OLD\",\n    \"orderDate\": \"2007-10-13T15:50:48+08:00\",\n    \"billingCycle\": \"CYC_INV_MT_3\",\n    \"orderItem\": [\n        {\n            \"id\": \"01\",\n            \"action\": \"add\",\n            \"billingAccount\": [\n                {\n                    \"id\": \"{{baseEntityPrefix}}_UA_3\"\n                }\n            ],\n            \"productOffering\": {\n                \"id\": \"{{baseEntityPrefix}}_OFFER3\"\n            },\n            \"product\": {\n                \"productCharacteristic\": [\n                    {\n                        \"name\": \"subscriptionCode\",\n                        \"value\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_ORDER_OLD\"\n                    },\n                    {\n                        \"name\": \"subscriptionDate\",\n                        \"value\": \"2007-10-13T15:10:18Z\"\n                    }\n                ],\n                \"productRelationship\": [\n                    {\n                        \"type\": \"bundled\",\n                        \"product\": {\n                            \"productCharacteristic\": [\n                                {\n                                    \"name\": \"serviceCode\",\n                                    \"value\": \"{{baseEntityPrefix}}_SERVICE3\"\n                                },\n                                {\n                                    \"name\": \"quantity\",\n                                    \"value\": \"1\"\n                                },\n                                {\n                                    \"name\": \"subscriptionDate\",\n                                    \"value\": \"2007-10-13T15:36:18+08:00\"\n                                },\n                                {\n                                    \"name\": \"{{baseEntityPrefix}}_SERVICE_CF_STRING\",\n                                    \"value\": \"Service CF value\"\n                                }\n                            ]\n                        }\n                    }\n                ]\n            }\n        }\n    ]\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/orderManagement/productOrder",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"orderManagement",
+												"productOrder"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create new order",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "5bc90cd2-2813-455c-a1ad-70273991052c",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"description\": \"{{entityPrefix}}_{{index}}_ORDER_OLD\",\n    \"orderDate\": \"2018-10-13T15:50:48+08:00\",\n    \"billingCycle\": \"CYC_INV_MT_3\",\n    \"orderItem\": [\n        {\n            \"id\": \"01\",\n            \"action\": \"add\",\n            \"billingAccount\": [\n                {\n                    \"id\": \"{{baseEntityPrefix}}_UA_3\"\n                }\n            ],\n            \"productOffering\": {\n                \"id\": \"{{baseEntityPrefix}}_OFFER3\"\n            },\n            \"product\": {\n                \"productCharacteristic\": [\n                    {\n                        \"name\": \"subscriptionCode\",\n                        \"value\": \"{{baseEntityPrefix}}_{{index}}_GDPR_SUB_ORDER_NEW\"\n                    },\n                    {\n                        \"name\": \"subscriptionDate\",\n                        \"value\": \"2007-10-13T15:10:18Z\"\n                    }\n                ],\n                \"productRelationship\": [\n                    {\n                        \"type\": \"bundled\",\n                        \"product\": {\n                            \"productCharacteristic\": [\n                                {\n                                    \"name\": \"serviceCode\",\n                                    \"value\": \"{{baseEntityPrefix}}_SERVICE3\"\n                                },\n                                {\n                                    \"name\": \"quantity\",\n                                    \"value\": \"1\"\n                                },\n                                {\n                                    \"name\": \"subscriptionDate\",\n                                    \"value\": \"2018-10-13T15:36:18+08:00\"\n                                },\n                                {\n                                    \"name\": \"{{baseEntityPrefix}}_SERVICE_CF_STRING\",\n                                    \"value\": \"Service CF value\"\n                                }\n                            ]\n                        }\n                    }\n                ]\n            }\n        }\n    ]\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/orderManagement/productOrder",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"orderManagement",
+												"productOrder"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Invoice",
+							"item": [
+								{
+									"name": "Create BillingCycle",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "1c259106-53ef-405a-ae95-95c161858ff0",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"CYC_INV_MT_GDPR_{{index}}\",\n    \"description\": \"Monthly Invoice Cycle GDPR_{{index}}\",\n    \"transactionDateDelay\": \"0\",\n    \"invoiceDateProductionDelay\": \"0\",\n    \"dueDateDelay\": \"2\",\n    \"invoiceDateDelay\": \"4\",\n    \"calendar\": \"MONTHLY\",\n    \"invoiceTypeCode\": \"COM\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billingCycle/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billingCycle",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create InvoiceType",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "64ed65cf-10d1-462f-8c3a-663a8830d0c1",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_GDPR\",\n    \"description\": \"{{entityPrefix}}_{{index}}_GDPR\",\n    \"occTemplateCode\": \"INV_STD\",\n    \"occTemplateNegativeCode\": \"PAY_TIP\",\n    \"sequenceDto\": {\n        \"prefixEL\": \"Fact_\",\n        \"sequenceSize\": \"9\",\n        \"currentInvoiceNb\": \"5000\"\n    },\n    \"appliesTo\": [\n        \"COM\"\n    ],\n    \"useSelfSequence\": \"true\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/invoiceType",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"invoiceType"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Billing Account",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "fd571c3c-2361-4924-855c-c2721a90957e",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_BA_GDPR\",\n    \"description\": \"{{entityPrefix}}_{{index}}_BA_GDPR\",\n    \"name\": {\n        \"title\": \"MR\",\n        \"firstName\": \"Edward\",\n        \"lastName\": \"Legaspi\"\n    },\n    \"address\": {\n        \"address1\": \"adress1\",\n        \"address2\": \"address2\",\n        \"address3\": \"adress3\",\n        \"zipCode\": \"21000\",\n        \"city\": \"Dijon\",\n        \"country\": \"France\"\n    },\n    \"customerAccount\": \"{{baseEntityPrefix}}_CA_3\",\n    \"billingCycle\": \"CYC_INV_MT_GDPR_{{index}}\",\n    \"country\": \"FR\",\n    \"language\": \"FRA\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/account/billingAccount/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"account",
+												"billingAccount",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create User Account",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "f62dcf6f-dd2e-487b-b5e0-4413db0aab56",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_UA_GDPR\",\n    \"description\": \"{{entityPrefix}}_{{index}}_UA_GDPR\",\n    \"billingAccount\": \"{{entityPrefix}}_{{index}}_BA_GDPR\",\n    \"name\": {\n        \"title\": \"MR\",\n        \"firstName\": \"Edward\",\n        \"lastName\": \"Legaspi\"\n    },\n    \"address\": {\n        \"address1\": \"adress1\",\n        \"address3\": \"adress3\",\n        \"zipCode\": \"21000\",\n        \"city\": \"Dijon\",\n        \"country\": \"France\"\n    }\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/account/userAccount/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"account",
+												"userAccount",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Created sub",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "8ad8e310-d0b5-4dea-969d-876024d18cff",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"{{entityPrefix}}_{{index}}_GDPR_SUB\",\n    \"description\": \"{{entityPrefix}}_{{index}}_GDPR_SUB\",\n    \"userAccount\": \"{{entityPrefix}}_{{index}}_UA_GDPR\",\n    \"offerTemplate\": \"{{baseEntityPrefix}}_OFFER3\",\n    \"subscriptionDate\": \"2018-08-13\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Apply one shot",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "30660e21-8e39-488f-96aa-b3510b52f40c",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"oneShotCharge\": \"{{baseEntityPrefix}}_OS_OTHER\",\n    \"subscription\": \"{{entityPrefix}}_{{index}}_GDPR_SUB\",\n    \"operationDate\": \"2018-08-13\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/subscription/applyOneShotChargeInstance",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"subscription",
+												"applyOneShotChargeInstance"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run RT",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "fd64cfe0-f3a9-43ec-add4-69fd21b939c2",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql(jsonData.jobExecutionResultDto.id+\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"RT_Job\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create BR",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "861411d7-1009-4b37-b7ab-274d4fc5665f",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.contain(\"\");",
+													"    pm.globals.set(\"billingRunId\", jsonData.message);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"billingCycleCode\": \"CYC_INV_MT_GDPR_{{index}}\",\n    \"billingRunTypeEnum\": \"AUTOMATIC\",\n    \"lastTransactionDate\": \"2018-08-31\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/billing/invoicing/createBillingRun",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"billing",
+												"invoicing",
+												"createBillingRun"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Invoicing Job",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "63939aef-4225-4266-bc5d-00864c01b11c",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql(jsonData.jobExecutionResultDto.id+\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"Inv_Job\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Validate BR",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "f1940699-afe6-4a61-9576-fe4282815839",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"xmlns:soapenv\": \"http://schemas.xmlsoap.org/soap/envelope/\",\n    \"xmlns:ws\": \"http://ws.api.meveo.org/\",\n    \"soapenv:Body\": {\n      \"ws:validateBillingRun\": { \"billingRunId\": \"1\" }\n    }\n  }",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create invoice",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "71016f22-801e-46ea-b9df-2d6ab1957144",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql();",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"invoiceType\": \"{{entityPrefix}}_{{index}}_GDPR\",\n    \"billingAccountCode\": \"{{entityPrefix}}_{{index}}_BA_GDPR\",\n    \"dueDate\": \"2007-10-13\",\n    \"invoiceDate\": \"2007-10-13\",\n    \"invoiceMode\": \"AGGREGATED\",\n    \"categoryInvoiceAgregate\": [\n        {\n            \"categoryInvoiceCode\": \"SUBSCRIPTION\",\n            \"description\": \"SUBSCRIPTION\",\n            \"subCategoryInvoiceAgregateDto\": [\n                {\n                    \"description\": \"SUB_DATA\",\n                    \"invoiceSubCategoryCode\": \"SUB_DATA\",\n                    \"amountWithoutTax\": \"100\",\n                    \"amountTax\": \"20\",\n                    \"amountWithTax\": \"120\",\n                    \"ratedTransaction\": [\n                        {\n                            \"code\": \"WS_BASE_OS_OTHER\",\n                            \"unitAmountWithoutTax\": \"100\",\n                            \"amountWithoutTax\": \"100\",\n                            \"quantity\": \"1\",\n                            \"description\": \"API\"\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/invoice",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"invoice"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "GDPR",
+							"item": [
+								{
+									"name": "Create GPDR Job",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "2ab2418d-946b-4315-ad29-017715236e8b",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"GDPR_Job\",\n    \"description\": \"GDPR_Job\",\n    \"jobTemplate\": \"GDPRJob\",\n    \"timerCode\": \"Monthly\",\n    \"jobCategory\": \"DWH\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/jobInstance/create",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"jobInstance",
+												"create"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Run GDPR Job",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "7d236646-1731-4488-8d41-44074c4b16f5",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.actionStatus.message).to.eql(jsonData.jobExecutionResultDto.id+\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"GDPR_Job\"\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/job/execute",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"job",
+												"execute"
 											]
 										}
 									},
