@@ -1,21 +1,3 @@
-/*
- * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
- * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
- * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
- * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
- * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
- * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
- *
- * For more information on the GNU Affero General Public License, please consult
- * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
- */
-
 package org.meveo.service.base;
 
 import java.util.Map;
@@ -26,25 +8,28 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 import javax.persistence.Entity;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableService;
+import org.meveo.service.job.Job;
+import org.meveo.util.EntityCustomizationUtils;
 
 public class DeletionService {
     private static final String CANNOT_REMOVE_ENTITY_CUSTOM_TABLE_REFERENCE_ERROR_MESSAGE = "Cannot remove entity: reference to the entity exists";
     private static final String CUSTOM_ENTITY_PREFIX = "CE_";
     private static final String CUSTOM_ENTITY_CLASS_PREFIX = "org.meveo.model.customEntities.CustomEntityTemplate - %s";
     private static Map<String, Class> entitiesByName;
-
+    
     static {
         entitiesByName = ReflectionUtils.getClassesAnnotatedWith(Entity.class).stream().collect(Collectors.toMap(clazz -> clazz.getSimpleName().toLowerCase(), clazz -> clazz));
     }
@@ -61,7 +46,7 @@ public class DeletionService {
 
     @Inject
     private CustomTableService customTableService;
-
+    
     public void checkTableNotreferenced(String tableName, Long id){
         CustomEntityInstance customEntityInstance = new CustomEntityInstance();
         customEntityInstance.setId(id);
@@ -72,6 +57,7 @@ public class DeletionService {
 
     public void checkEntityIsNotreferenced(IEntity entity) {
         String entityClass = entity instanceof CustomEntityInstance ? String.format(CUSTOM_ENTITY_CLASS_PREFIX, ((CustomEntityInstance)entity).getCetCode()) : entity.getClass().getName();
+
         boolean isIncluded = isIncluded(entity, entityClass);
 
         if (isIncluded) {
@@ -79,28 +65,36 @@ public class DeletionService {
         }
     }
 
-    private boolean isIncluded(IEntity entity, String entityClass) {
-        return customFieldTemplateService.list().stream().filter(c -> c.getEntityClazz() != null).filter(c -> c.getEntityClazz().equalsIgnoreCase(entityClass))
-                .anyMatch(customField -> isEitherIncludedInCustomTableOrInBusinessEntity(customField, entity));
-    }
+	private boolean isIncluded(IEntity entity, String entityClass) {
+		return customFieldTemplateService.findByReferencedEntityNoCache(entityClass).values().stream()
+				.anyMatch(cet -> isEitherIncludedInCustomTableOrInBusinessEntity(cet, entity));
+	}
 
     boolean isEitherIncludedInCustomTableOrInBusinessEntity(CustomFieldTemplate customField, IEntity dependency) {
             CustomEntityTemplate customEntityTemplate = customEntityTemplateService.findByCode(removePrefix(customField.getAppliesTo()));
 
             if(customEntityTemplate == null){
-                return tryWithBusinessEntity(customField, dependency);
-            }
-            if(customEntityTemplate.isStoreAsTable()){
+            	String appliesTo = customField.getAppliesTo().toLowerCase();
+				Class entityClass = entitiesByName.get(appliesTo);
+            	if(entityClass==null) {
+            		if(customField.getAppliesTo().startsWith(Job.CFT_PREFIX)) {
+            			entityClass = JobInstance.class;
+            		} else {
+            			entityClass = entitiesByName.get(customEntityTemplateService.findByCode(EntityCustomizationUtils.getEntityCode(appliesTo)));
+            		}
+            		
+                }
+            	return tryWithBusinessEntity(customField, dependency, entityClass);
+            } else if(customEntityTemplate.isStoreAsTable()){
                 return existsAsRecordInCustomTable(customField, dependency);
             }
 
-            String className = (dependency instanceof CustomEntityInstance) ? ((CustomEntityInstance) dependency).getCetCode() : dependency.getClass().getName();
             return getCodeAsStream(dependency)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .findFirst()
                     .map(Object::toString)
-                    .map(code -> isIncludedInBusinessOrCustomEntity(customEntityTemplate, code, className))
+                    .map(code -> isIncludedInBusinessOrCustomEntity(customField, code))
                     .orElse(false);
 
     }
@@ -113,46 +107,35 @@ public class DeletionService {
         return customTableService.containsRecordOfTableByColumn(removePrefix(customField.getAppliesTo()), customField.getCode(), Long.valueOf(entity.getId().toString()));
     }
 
-    private boolean tryWithBusinessEntity(CustomFieldTemplate customField, IEntity dependency) {
+    private boolean tryWithBusinessEntity(CustomFieldTemplate customField, IEntity dependency, Class entityClass) {
         return getCodeAsStream(dependency)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst()
                 .map(Object::toString)
-                .map(code -> verifyPersistenceService(customField, code))
+                .map(code -> verifyPersistenceService(customField, code, entityClass))
                 .orElse(false);
 
     }
 
-    private Boolean verifyPersistenceService(CustomFieldTemplate customField, String code) {
-        Optional<PersistenceService> persistenceService = getPersistenceService(entitiesByName.get(customField.getAppliesTo().toLowerCase()));
-        return persistenceService.map(p -> p.list().stream().anyMatch(holder -> verifyExistsReferenceInCfValues((ICustomFieldEntity) holder, code, customField.getEntityClazz()))).orElse(null);
+	private Boolean verifyPersistenceService(CustomFieldTemplate customField, String code, Class entityClass) {
+        
+		return CollectionUtils.isNotEmpty(customFieldTemplateService.getReferencedEntities(customField, code, entityClass));
     }
 
-    private boolean verifyExistsReferenceInCfValues(ICustomFieldEntity businessCFEntity, String code, String className) {
-        return Optional.ofNullable(businessCFEntity)
-                .map(ICustomFieldEntity::getCfValues)
-                .filter(c -> c.containsCfValue(code, className))
-                .isPresent();
-    }
-
-    private boolean isIncludedInBusinessOrCustomEntity(CustomEntityTemplate customEntityTemplate, String code, String className) {
-        return customEntityInstanceService.listByCet(customEntityTemplate.getCode())
-                .stream()
-                .anyMatch(s -> verifyExistsReferenceInCfValues(s, code, className));
+    private boolean isIncludedInBusinessOrCustomEntity(CustomFieldTemplate customFieldTemplate, String code) {
+    	return CollectionUtils.isNotEmpty(customEntityInstanceService.listByReferencedEntity(removePrefix(customFieldTemplate.getAppliesTo()), customFieldTemplate.getCode(), code));
     }
 
     String removePrefix(String appliesTo) {
         try {
             if(appliesTo.startsWith(CUSTOM_ENTITY_PREFIX)) {
-                return appliesTo.substring(CUSTOM_ENTITY_PREFIX.length());
+                return appliesTo.toUpperCase().substring(CUSTOM_ENTITY_PREFIX.length());
             }
             return appliesTo;
         } catch (ArrayIndexOutOfBoundsException ex) {
             return appliesTo;
         }
-
-
     }
 
     Optional<PersistenceService> getPersistenceService(Class entityClass) {
