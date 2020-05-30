@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Size;
+
 
 /**
  * @author Khalid HORRI
@@ -34,8 +36,10 @@ public class ParamProperty implements Comparable<ParamProperty>, IEntity{
 
 	private org.slf4j.Logger log;
 	
+	@Size(max=100)
 	private String key;
 
+	@Size(max = 500)
 	private String value;
 
 
