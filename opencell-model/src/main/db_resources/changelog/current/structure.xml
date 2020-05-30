@@ -3135,5 +3135,11 @@ END $$;]]>
         <sql>CREATE UNIQUE INDEX account_entity_code_index ON ${db.schema.adapted}account_entity(lower(code), account_type)</sql>
 
     </changeSet>
+    
+    <changeSet id="#5257_20200527" author="AndriusKarpavicius" dbms="postgresql" >
+        <addColumn tableName="billing_wallet_operation">
+            <column name="reject_reason" type="text"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

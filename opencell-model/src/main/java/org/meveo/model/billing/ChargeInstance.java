@@ -60,6 +60,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 import org.meveo.model.tax.TaxClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -230,7 +231,7 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     private List<WalletInstance> prepaidWalletInstances;
 
     /**
-     * Wallet operations srted by date
+     * Wallet operations sorted by date
      */
     @Transient
     protected List<WalletOperation> sortedWalletOperations;
@@ -585,4 +586,11 @@ public abstract class ChargeInstance extends BusinessCFEntity {
         }
         this.counterInstances.add(counterInstance);
     }
+
+    /**
+     * Get a charge main type
+     * 
+     * @return Charge main type
+     */
+    public abstract ChargeMainTypeEnum getChargeMainType();
 }

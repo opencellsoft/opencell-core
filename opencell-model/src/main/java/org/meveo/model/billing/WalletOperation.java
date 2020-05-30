@@ -98,16 +98,26 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "WalletOperation.getOpenByWallet", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and o.wallet=:wallet"),
 
-        @NamedQuery(name = "WalletOperation.setStatusToRerate", query = "UPDATE WalletOperation o SET o.status='TO_RERATE', o.updated = :now "
-                + " WHERE o.status='TREATED' AND o.ratedTransaction.id IN (SELECT o1.ratedTransaction.id FROM WalletOperation o1 WHERE o1.status='TREATED' and o1.id IN :notBilledWalletIdList)"),
+        @NamedQuery(name = "WalletOperation.setStatusToToRerate", query = "UPDATE WalletOperation o SET o.status='TO_RERATE', o.updated = :now "
+                + " WHERE (o.status='OPEN' and o.id IN :woIds) or (o.status='TREATED' AND o.ratedTransaction.id IN (SELECT o1.ratedTransaction.id FROM WalletOperation o1 WHERE o1.status='TREATED' and o1.id IN :woIds))"),
+        @NamedQuery(name = "WalletOperation.setStatusToReratedWithReratedWo", query = "UPDATE WalletOperation o SET o.status='RERATED', o.updated = :now, o.reratedWalletOperation=:newWo where o.id=:id"),
+        @NamedQuery(name = "WalletOperation.setStatusToFailedToRerate", query = "UPDATE WalletOperation o SET o.status='F_TO_RERATE', o.updated = :now, o.rejectReason=:rejectReason where o.id=:id"),
 
-        @NamedQuery(name = "WalletOperation.setStatusToCanceled", query = "UPDATE WalletOperation o SET o.status='CANCELED', o.updated = :now where o.status<>'TREATED' and o.chargeInstance=:chargeInstance"),
+        @NamedQuery(name = "WalletOperation.setStatusToCanceledById", query = "UPDATE WalletOperation o SET o.status='CANCELED', o.updated = :now WHERE (o.status<>'CANCELED' and o.status<>'RERATED') and o.id IN :woIds"),
+        @NamedQuery(name = "WalletOperation.setStatusToOpenForWosThatAreRelatedByRTsById", query = "UPDATE WalletOperation o SET o.status='OPEN', o.updated = :now "
+                + " WHERE o.status='TREATED' AND o.ratedTransaction.id IN (SELECT o1.ratedTransaction.id FROM WalletOperation o1 WHERE o1.ratedTransaction is not null and o1.id IN :woIds)"),       
+        
+        @NamedQuery(name = "WalletOperation.setStatusOfNotTreatedToCanceledByCharge", query = "UPDATE WalletOperation o SET o.status='CANCELED', o.updated = :now where o.status<>'TREATED' and o.chargeInstance=:chargeInstance"),
 
         @NamedQuery(name = "WalletOperation.setStatusToTreatedWithRT", query = "UPDATE WalletOperation o SET o.status='TREATED', o.updated = :now, o.ratedTransaction=:rt where o.id=:id"),
+        
+        @NamedQuery(name = "WalletOperation.changeStatus", query = "UPDATE WalletOperation o SET o.status=:status, o.updated = :now where o.id=:id"),
 
         @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE o.chargeInstance=:chargeInstance AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"),
 
         @NamedQuery(name = "WalletOperation.findByUAAndCode", query = "SELECT o FROM WalletOperation o WHERE o.wallet.userAccount=:userAccount and o.code=:code"),
+
+        @NamedQuery(name = "WalletOperation.findByChargeIdFromStartDate", query = "SELECT o.id FROM WalletOperation o WHERE o.chargeInstance.id=:chargeInstanceId and o.startDate>=:from"),
 
         @NamedQuery(name = "WalletOperation.countNotTreatedByBA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.wallet.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.wallet.userAccount=:userAccount"),
@@ -494,6 +504,13 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      */
     @Column(name = "sort_index")
     private Integer sortIndex;
+
+    /**
+     * Processing error reason
+     */
+    @Column(name = "reject_reason", columnDefinition = "text")
+    @Size(max = 255)
+    private String rejectReason;
 
     /**
      * Constructor
@@ -1359,5 +1376,19 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      */
     public void setSortIndex(Integer sortIndex) {
         this.sortIndex = sortIndex;
+    }
+
+    /**
+     * @return Processing error reason
+     */
+    public String getRejectReason() {
+        return rejectReason;
+    }
+
+    /**
+     * @param rejectReason Processing error reason
+     */
+    public void setRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
     }
 }

@@ -56,9 +56,6 @@ import org.meveo.commons.utils.NumberUtils;
                 + " OR u.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) ") })
 public class UsageChargeTemplate extends ChargeTemplate {
 
-    @Transient
-    public static final String CHARGE_TYPE = "USAGE";
-
     private static final long serialVersionUID = 1L;
 
     /**
@@ -161,8 +158,9 @@ public class UsageChargeTemplate extends ChargeTemplate {
         this.priority = priority;
     }
 
-    public String getChargeType() {
-        return CHARGE_TYPE;
+    @Override
+    public ChargeMainTypeEnum getChargeMainType() {
+        return ChargeMainTypeEnum.USAGE;
     }
 
     public BigDecimal getInChargeUnit(BigDecimal edrUnitValue) {

@@ -32,7 +32,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.ws.rs.core.Response;
 
@@ -43,7 +42,6 @@ import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.PriceELErrorException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.RatingScriptExecutionErrorException;
-import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.commons.utils.NumberUtils;
@@ -63,7 +61,6 @@ import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
@@ -138,6 +135,12 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
     @Inject
     private TriggeredEdrScriptService triggeredEdrScriptService;
+
+    @Inject
+    private WalletOperationService walletOperationService;
+
+    @EJB
+    private RatingService ratingServiceNewTX;
 
 //    private Map<String, String> descriptionMap = new HashMap<>();
 
@@ -266,19 +269,19 @@ public class RatingService extends PersistenceService<WalletOperation> {
         walletOperation.setChargeMode(chargeMode);
         walletOperation.setFullRatingPeriod(fullRatingPeriod);
 
-        //        String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
+        // String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
         //
-        //        String translationKey = "CT_" + chargeTemplate.getCode() + languageCode;
-        //        String descTranslated = descriptionMap.get(translationKey);
-        //        if (descTranslated == null) {
-        //            descTranslated = (chargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : chargeInstance.getDescription();
-        //            if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().get(languageCode) != null) {
-        //                descTranslated = chargeTemplate.getDescriptionI18n().get(languageCode);
-        //            }
-        //            descriptionMap.put(translationKey, descTranslated);
-        //        }
+        // String translationKey = "CT_" + chargeTemplate.getCode() + languageCode;
+        // String descTranslated = descriptionMap.get(translationKey);
+        // if (descTranslated == null) {
+        // descTranslated = (chargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : chargeInstance.getDescription();
+        // if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().get(languageCode) != null) {
+        // descTranslated = chargeTemplate.getDescriptionI18n().get(languageCode);
+        // }
+        // descriptionMap.put(translationKey, descTranslated);
+        // }
         //
-        //        walletOperation.setDescription(descTranslated);
+        // walletOperation.setDescription(descTranslated);
         Integer sortIndex = getSortIndex(walletOperation);
         walletOperation.setSortIndex(sortIndex);
         walletOperation.setEdr(edr);
@@ -883,6 +886,33 @@ public class RatingService extends PersistenceService<WalletOperation> {
     }
 
     /**
+     * Re-rate wallet operations. Each wallet operation is rerated independently and marked as failed to rerate if error occurs.
+     * 
+     * @param woIds Ids of wallet operations to be re-rated
+     * @param useSamePricePlan true if same price plan will be used
+     * @throws BusinessException business exception
+     * @throws RatingException Operation re-rating failure due to lack of funds, data validation, inconsistency or other rating related failure
+     */
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void reRate(List<Long> woIds, boolean useSamePricePlan) throws BusinessException, RatingException {
+
+        for (Long woId : woIds) {
+
+            try {
+                ratingServiceNewTX.reRate(woId, useSamePricePlan);
+
+            } catch (RatingException e) {
+                log.trace("Failed to rerate Wallet operation {}: {}", woId, e.getRejectionReason());
+                walletOperationService.markAsFailedToRerateInNewTx(woId, e);
+
+            } catch (BusinessException e) {
+                log.error("Failed to rerate Wallet operation {}: {}", woId, e.getMessage(), e);
+                walletOperationService.markAsFailedToRerateInNewTx(woId, e);
+            }
+        }
+    }
+
+    /**
      * Rerate wallet operation
      * 
      * @param operationToRerateId wallet operation to be rerated
@@ -895,69 +925,64 @@ public class RatingService extends PersistenceService<WalletOperation> {
     public void reRate(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException, RatingException {
 
         WalletOperation operationToRerate = getEntityManager().find(WalletOperation.class, operationToRerateId);
-        try {
 
-            // Change related Rated transaction status to Rerated
-            RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
+        // Change related Rated transaction status to Rerated
+        RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
+        if (ratedTransaction != null) {
             if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.BILLED) {
-                throw new UnrolledbackBusinessException("Can not rerate an already billed Wallet Operation. Wallet Operation " + operationToRerateId + " corresponds to rated transaction " + ratedTransaction.getId());
+
+                log.error("Can not rerate an already billed Wallet Operation. Wallet Operation " + operationToRerateId + " corresponds to rated transaction " + ratedTransaction.getId());
+                getEntityManager().createNamedQuery("WalletOperation.changeStatus").setParameter("now", new Date()).setParameter("status", WalletOperationStatusEnum.TREATED).setParameter("id", operationToRerateId)
+                    .executeUpdate();
+
+                return;
+
             } else if (ratedTransaction.getStatus() != RatedTransactionStatusEnum.CANCELED && ratedTransaction.getStatus() != RatedTransactionStatusEnum.RERATED) {
                 ratedTransaction.changeStatus(RatedTransactionStatusEnum.RERATED);
             }
+        }
 
-            WalletOperation operation = operationToRerate.getUnratedClone();
-            operationToRerate.setReratedWalletOperation(operation);
-            operationToRerate.changeStatus(WalletOperationStatusEnum.RERATED);
-            PricePlanMatrix priceplan = operation.getPriceplan();
-            WalletInstance wallet = operation.getWallet();
-            UserAccount userAccount = wallet.getUserAccount();
+        WalletOperation operation = operationToRerate.getUnratedClone();
+        PricePlanMatrix priceplan = operation.getPriceplan();
+        WalletInstance wallet = operation.getWallet();
+        UserAccount userAccount = wallet.getUserAccount();
 
-            if (useSamePricePlan) {
-                BigDecimal unitAmountWithTax = operation.getUnitAmountWithTax();
-                BigDecimal unitAmountWithoutTax = operation.getUnitAmountWithoutTax();
+        if (useSamePricePlan && priceplan != null) {
+            BigDecimal unitAmountWithTax = operation.getUnitAmountWithTax();
+            BigDecimal unitAmountWithoutTax = operation.getUnitAmountWithoutTax();
 
-                if (priceplan != null) {
-
-                    if (appProvider.isEntreprise()) {
-                        unitAmountWithoutTax = priceplan.getAmountWithoutTax();
-                        if (priceplan.getAmountWithoutTaxEL() != null) {
-                            unitAmountWithoutTax = evaluateAmountExpression(priceplan.getAmountWithoutTaxEL(), operation, userAccount, priceplan, unitAmountWithoutTax);
-                            if (unitAmountWithoutTax == null) {
-                                throw new BusinessException("Can't find unitPriceWithoutTax from PP :" + priceplan.getAmountWithoutTaxEL());
-                            }
-                        }
-
-                    } else {
-                        unitAmountWithTax = priceplan.getAmountWithTax();
-                        if (priceplan.getAmountWithTaxEL() != null) {
-                            unitAmountWithTax = evaluateAmountExpression(priceplan.getAmountWithTaxEL(), operation, userAccount, priceplan, unitAmountWithoutTax);
-                            if (unitAmountWithTax == null) {
-                                throw new BusinessException("Can't find unitPriceWithoutTax from PP :" + priceplan.getAmountWithTaxEL());
-                            }
-                        }
+            if (appProvider.isEntreprise()) {
+                unitAmountWithoutTax = priceplan.getAmountWithoutTax();
+                if (priceplan.getAmountWithoutTaxEL() != null) {
+                    unitAmountWithoutTax = evaluateAmountExpression(priceplan.getAmountWithoutTaxEL(), operation, userAccount, priceplan, unitAmountWithoutTax);
+                    if (unitAmountWithoutTax == null) {
+                        throw new BusinessException("Can't find unitPriceWithoutTax from PP :" + priceplan.getAmountWithoutTaxEL());
                     }
                 }
 
-                calculateAmounts(operation, unitAmountWithoutTax, unitAmountWithTax);
-
             } else {
-                operation.setUnitAmountWithoutTax(null);
-                operation.setUnitAmountWithTax(null);
-                operation.setUnitAmountTax(null);
-
-                rateBareWalletOperation(operation, null, null, priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(), priceplan.getTradingCurrency());
+                unitAmountWithTax = priceplan.getAmountWithTax();
+                if (priceplan.getAmountWithTaxEL() != null) {
+                    unitAmountWithTax = evaluateAmountExpression(priceplan.getAmountWithTaxEL(), operation, userAccount, priceplan, unitAmountWithoutTax);
+                    if (unitAmountWithTax == null) {
+                        throw new BusinessException("Can't find unitPriceWithoutTax from PP :" + priceplan.getAmountWithTaxEL());
+                    }
+                }
             }
-            create(operation);
-            updateNoCheck(operationToRerate);
-            log.debug("updated wallet operation");
 
-        } catch (UnrolledbackBusinessException e) {
-            log.error("Failed to reRate", e.getMessage());
-            operationToRerate.changeStatus(WalletOperationStatusEnum.TREATED);
-            operationToRerate.setReratedWalletOperation(null);
+            calculateAmounts(operation, unitAmountWithoutTax, unitAmountWithTax);
+
+        } else {
+            operation.setUnitAmountWithoutTax(null);
+            operation.setUnitAmountWithTax(null);
+            operation.setUnitAmountTax(null);
+
+            rateBareWalletOperation(operation, null, null, priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(), priceplan.getTradingCurrency());
         }
+        create(operation);
 
-        log.debug("end rerate wallet operation");
+        getEntityManager().createNamedQuery("WalletOperation.setStatusToReratedWithReratedWo").setParameter("now", new Date()).setParameter("newWo", operation).setParameter("id", operationToRerateId).executeUpdate();
+
     }
 
     /**

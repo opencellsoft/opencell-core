@@ -53,8 +53,6 @@ public class OneShotChargeTemplate extends ChargeTemplate {
 
     private static final long serialVersionUID = 5969419152119380029L;
 
-    public static final String CHARGE_TYPE = "ONESHOT";
-
     /**
      * One shot charge type
      */
@@ -86,7 +84,7 @@ public class OneShotChargeTemplate extends ChargeTemplate {
     }
 
     @Override
-    public String getChargeType() {
-        return CHARGE_TYPE;
+    public ChargeMainTypeEnum getChargeMainType() {
+        return ChargeMainTypeEnum.ONESHOT;
     }
 }

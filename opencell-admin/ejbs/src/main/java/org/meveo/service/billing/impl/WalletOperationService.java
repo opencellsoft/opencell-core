@@ -46,6 +46,7 @@ import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.DatePeriod;
@@ -844,25 +845,49 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return result;
     }
 
-    @SuppressWarnings("unchecked")
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public int updateToRerate(List<Long> walletIdList) {
-        int walletsOpToRerate = 0;
+    /**
+     * Update Wallet operations to status TO_RERATE and cancel related RTs. Only unbilled wallet operations will be considered. In case of Wallet operation aggregation to a single
+     * Rated transaction, all related wallet operations through the same Rated transaction, will be marked for re-rating as well. Note, that a number of Wallet operation ids passed
+     * and a number of Wallet operations marked for re-rating might not match if aggregation was used, or Wallet operation status were invalid.
+     * 
+     * @param walletOperationIds A list of Wallet operation ids to mark for re-rating
+     * @return Number of wallet operations marked for re-rating.
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public int markToRerateInNewTx(List<Long> walletOperationIds) {
+        return markToRerate(walletOperationIds);
+    }
+
+    /**
+     * Update Wallet operations to status TO_RERATE and cancel related RTs. Only unbilled wallet operations will be considered. In case of Wallet operation aggregation to a single
+     * Rated transaction, all related wallet operations through the same Rated transaction, will be marked for re-rating as well. Note, that a number of Wallet operation ids passed
+     * and a number of Wallet operations marked for re-rating might not match if aggregation was used, or Wallet operation status were invalid.
+     * 
+     * @param walletOperationIds A list of Wallet operation ids to mark for re-rating
+     * @return Number of wallet operations marked for re-rating.
+     */
+    public int markToRerate(List<Long> walletOperationIds) {
+
+        if (walletOperationIds.isEmpty()) {
+            return 0;
+        }
+
+        int nrOfWosToRerate = 0;
 
         // Ignore Rated transactions that were billed already
-        // TODO AKK check if RT table can be excluded and join is made directly between WOstatus and RTstatus tables
-        List<Long> walletOperationsBilled = (List<Long>) getEntityManager().createNamedQuery("WalletOperation.getWalletOperationsBilled").setParameter("walletIdList", walletIdList).getResultList();
-        walletIdList.removeAll(walletOperationsBilled);
+        List<Long> walletOperationsBilled = getEntityManager().createNamedQuery("WalletOperation.getWalletOperationsBilled", Long.class).setParameter("walletIdList", walletOperationIds).getResultList();
+        walletOperationIds.removeAll(walletOperationsBilled);
 
-        if (!walletIdList.isEmpty()) {
-            // cancelled selected rts
-            getEntityManager().createNamedQuery("RatedTransaction.cancelByWOIds").setParameter("notBilledWalletIdList", walletIdList).setParameter("now", new Date()).executeUpdate();
-            // set selected wo to rerate and ratedTx.id=null
-            walletsOpToRerate = getEntityManager().createNamedQuery("WalletOperation.setStatusToRerate").setParameter("now", new Date()).setParameter("notBilledWalletIdList", walletIdList).executeUpdate();
+        // Cancelled related RTS and change WO status to re-rate. Note: in case of aggregation, it will re-rate all WOs that are linked through the related RTs
+        if (!walletOperationIds.isEmpty()) {
+            getEntityManager().createNamedQuery("RatedTransaction.cancelByWOIds").setParameter("woIds", walletOperationIds).setParameter("now", new Date()).executeUpdate();
 
+            nrOfWosToRerate = getEntityManager().createNamedQuery("WalletOperation.setStatusToToRerate").setParameter("now", new Date()).setParameter("woIds", walletOperationIds).executeUpdate();
+
+            log.info("{} out of {} Wallet operations are marked for rerating", nrOfWosToRerate, walletOperationIds.size());
         }
-        getEntityManager().flush();
-        return walletsOpToRerate;
+        return nrOfWosToRerate;
     }
 
     public List<Long> listToRerate() {
@@ -1100,5 +1125,60 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      */
     public void removeZeroWalletOperation() {
         getEntityManager().createNamedQuery("WalletOperation.deleteZeroWO").executeUpdate();
+    }
+
+    /**
+     * Mark Wallet operation as failed to re-rate
+     * 
+     * @param id Wallet operation identifier
+     * @param e Exception
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void markAsFailedToRerateInNewTx(Long id, Exception e) {
+
+        String message = e instanceof NullPointerException ? "NPE" : e.getMessage();
+        getEntityManager().createNamedQuery("WalletOperation.setStatusFailedToRerate").setParameter("now", new Date()).setParameter("rejectReason", message).setParameter("id", id).executeUpdate();
+    }
+
+    /**
+     * Update Wallet operations to status Canceled and cancel related RTs. Only unbilled wallet operations will be considered. In case of Wallet operation aggregation to a single
+     * Rated transaction, all OTHER related wallet operations to the same Rated transaction, will be marked as Open (only the related ones).
+     * 
+     * Note, that a number of Wallet operation ids passed and a number of Wallet operations marked as Canceled and Opened might not match if aggregation was used, or Wallet
+     * operation status were invalid.
+     * 
+     * @param walletOperationIds A list of Wallet operation ids to mark as Canceled
+     * @return Number of wallet operations marked for Canceled
+     */
+    public int cancelWalletOperations(List<Long> walletOperationIds) {
+
+        if (walletOperationIds.isEmpty()) {
+            return 0;
+        }
+
+        int nrOfWosUpdated = 0;
+
+        // Ignore Rated transactions that were billed already
+        List<Long> walletOperationsBilled = getEntityManager().createNamedQuery("WalletOperation.getWalletOperationsBilled", Long.class).setParameter("walletIdList", walletOperationIds).getResultList();
+        walletOperationIds.removeAll(walletOperationsBilled);
+
+        // Cancel related RTS and change WO status to Canceled. Note: in case of aggregation, WOs that were aggregated under same RT will be marked as Open
+        if (!walletOperationIds.isEmpty()) {
+            // Cancel related RTS
+            int nrRtsCanceled = getEntityManager().createNamedQuery("RatedTransaction.cancelByWOIds").setParameter("woIds", walletOperationIds).setParameter("now", new Date()).executeUpdate();
+
+            // Change WO status to Canceled
+            nrOfWosUpdated = getEntityManager().createNamedQuery("WalletOperation.setStatusToCanceledById").setParameter("now", new Date()).setParameter("woIds", walletOperationIds).executeUpdate();
+
+            // In case of aggregation, WOs that were aggregated under same RT will be marked as Open
+            if (nrRtsCanceled > 0) {
+                nrOfWosUpdated = nrOfWosUpdated
+                        + getEntityManager().createNamedQuery("WalletOperation.setStatusToOpenForWosThatAreRelatedByRTsById").setParameter("now", new Date()).setParameter("woIds", walletOperationIds).executeUpdate();
+            }
+
+            log.info("{} out of {} Wallet operations are marked for rerating", nrOfWosUpdated, walletOperationIds.size());
+        }
+        return nrOfWosUpdated;
     }
 }
