@@ -76,26 +76,52 @@ public class CalendarFixed extends Calendar {
      * @return Next calendar date.
      */
     public Date nextCalendarDate(Date date) {
-        return fixedDates.stream().map(fixedDate -> fixedDate.getDatePeriod().getFrom()).filter(fromDate -> date.before(fromDate)).min(Date::compareTo).orElse(null);
+        return fixedDates.stream().map(FixedDate::getDatePeriod)
+            .filter(datePeriod -> datePeriod.isCorrespondsToPeriod(date))
+            .map(DatePeriod::getTo)
+            .findFirst()
+            .orElse(null);
     }
 
     /**
      * Checks for previous calendar date.
      * 
      * @param date Current date.
-     * @return Next calendar date.
+     * @return previous calendar date.
      */
     public Date previousCalendarDate(Date date) {
-        return fixedDates.stream().map(fixedDate -> fixedDate.getDatePeriod().getFrom()).filter(fromDate -> date.after(fromDate)).max(Date::compareTo).orElse(null);
+        return fixedDates.stream().map(FixedDate::getDatePeriod)
+                .filter(datePeriod -> datePeriod.isCorrespondsToPeriod(date))
+                .map(DatePeriod::getFrom)
+                .findFirst()
+                .orElse(null);
     }
 
+    /**
+     * Checks for previous period end date.
+     * 
+     * @param date Current date.
+     * @return previous period end date.
+     */
     @Override
     public Date previousPeriodEndDate(Date date) {
-        return null;
-    }
+        return fixedDates.stream().map(fixedDate -> fixedDate.getDatePeriod().getTo())
+                .filter(toDate -> toDate.before(date))
+                .max(Date::compareTo)
+                .orElse(null);    
+        }
 
+    /**
+     * Checks for next period start date.
+     * 
+     * @param date Current date.
+     * @return next period start date.
+     */
     @Override
     public Date nextPeriodStartDate(Date date) {
-        return null;
+        return fixedDates.stream().map(fixedDate -> fixedDate.getDatePeriod().getFrom())
+                .filter(fromDate -> fromDate.after(date))
+                .min(Date::compareTo)
+                .orElse(null);    
     }
 }
