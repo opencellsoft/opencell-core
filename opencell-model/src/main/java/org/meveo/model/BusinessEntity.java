@@ -85,6 +85,9 @@ public abstract class BusinessEntity extends AuditableEntity implements ISearcha
     }
 
     public String getDescription() {
+        if(description == null) {
+            return "";
+        }
         return description;
     }
 
