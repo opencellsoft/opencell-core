@@ -450,6 +450,12 @@ public class WalletOperationServiceTest {
                 wo.setFullRatingPeriod(getPeriod("2019-05-01", "2019-07-01"));
 
                 ((RecurringChargeInstance) wo.getChargeInstance()).setCalendar(newCalendar);
+                if (wo.isApplyInAdvance()) {
+                    ((RecurringChargeInstance) wo.getChargeInstance()).advanceChargeDates(wo.getOperationDate(), wo.getFullRatingPeriod().getTo(), wo.getFullRatingPeriod().getTo());
+                } else {
+                    ((RecurringChargeInstance) wo.getChargeInstance()).advanceChargeDates(wo.getFullRatingPeriod().getTo(),
+                        walletOperationService.getRecurringPeriodEndDate(((RecurringChargeInstance) wo.getChargeInstance()), wo.getFullRatingPeriod().getTo()), wo.getFullRatingPeriod().getTo());
+                }
 
                 RatingResult ratingResult = new RatingResult();
                 ratingResult.setWalletOperation(wo);
@@ -502,6 +508,12 @@ public class WalletOperationServiceTest {
                 wo.setFullRatingPeriod(getPeriod("2019-05-01", "2019-07-01"));
 
                 ((RecurringChargeInstance) wo.getChargeInstance()).setCalendar(newCalendar);
+                if (wo.isApplyInAdvance()) {
+                    ((RecurringChargeInstance) wo.getChargeInstance()).advanceChargeDates(wo.getOperationDate(), wo.getFullRatingPeriod().getTo(), wo.getFullRatingPeriod().getTo());
+                } else {
+                    ((RecurringChargeInstance) wo.getChargeInstance()).advanceChargeDates(wo.getFullRatingPeriod().getTo(),
+                        walletOperationService.getRecurringPeriodEndDate(((RecurringChargeInstance) wo.getChargeInstance()), wo.getFullRatingPeriod().getTo()), wo.getFullRatingPeriod().getTo());
+                }
 
                 RatingResult ratingResult = new RatingResult();
                 ratingResult.setWalletOperation(wo);

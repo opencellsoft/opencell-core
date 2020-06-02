@@ -53,7 +53,7 @@
             <hftl:formField label="#{messages['ratedTransaction.param3']}" field="parameter3" disabled="#{ratedTransactionBean.isBilled()}" />
             <hftl:formField label="#{messages['ratedTransaction.invoiceSubcategory']}" field="invoiceSubCategory" valueLabelField="descriptionOrCode"
                 listBean="#{invoiceSubCategoryBean}" disabled="#{ratedTransactionBean.isBilled()}" />
-            <hftl:formField label="#{messages['ratedTransaction.accountingCode']}" field="accountingCode" valueLabelField="descriptionOrCode" listBean="#{accountingCodeBean}"
+            <hftl:formField label="#{messages['ratedTransaction.accountingCode']}" field="accountingCode" valueLabelField="descriptionAndCode" listBean="#{accountingCodeBean}"
                 disabled="#{ratedTransactionBean.isBilled()}" />
 
             <hftl:formField label="#{messages['ratedTransaction.usageDate']}" field="usageDate" disabled="#{ratedTransactionBean.isBilled()}" />

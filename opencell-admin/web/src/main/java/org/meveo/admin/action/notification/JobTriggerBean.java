@@ -114,6 +114,7 @@ public class JobTriggerBean extends BaseNotificationBean<JobTrigger> {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         updateMapTypeFieldInEntity(entity.getParams(), "params");
+        updateMapTypeFieldInEntity(entity.getJobParams(), "jobParams");
 
         return super.saveOrUpdate(killConversation);
     }

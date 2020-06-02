@@ -37,29 +37,48 @@ import org.meveo.model.billing.InvoiceSubCategory;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InvoiceSubCategoryDto extends BusinessEntityDto {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
     private static final long serialVersionUID = 1832246068609179546L;
 
-    /** The invoice category. */
+    /**
+     * The invoice category.
+     */
     @XmlElement(required = true)
     private String invoiceCategory;
 
-    /** The accounting code. */
+    /**
+     * The accounting code.
+     */
     @XmlElement(required = true)
     private String accountingCode;
 
-    /** The language descriptions. */
+    /**
+     * The language descriptions.
+     */
     private List<LanguageDescriptionDto> languageDescriptions;
 
-    /** The custom fields. */
+    /**
+     * The custom fields.
+     */
     private CustomFieldsDto customFields;
 
-    /** The occ template code. */
+    /**
+     * The occ template code.
+     */
     @XmlElement(required = true)
     private String occTemplateCode;
 
-    /** The occ template negative code. */
+    /**
+     * The occ template negative code.
+     */
     private String occTemplateNegativeCode;
+
+    /**
+     * Sorting index.
+     */
+    private Integer sortIndex;
 
     /**
      * Instantiates a new invoice sub category dto.
@@ -91,6 +110,7 @@ public class InvoiceSubCategoryDto extends BusinessEntityDto {
         if (invoiceSubCategory.getOccTemplateNegative() != null) {
             occTemplateNegativeCode = invoiceSubCategory.getOccTemplateNegative().getCode();
         }
+        sortIndex = invoiceSubCategory.getSortIndex();
     }
 
     /**
@@ -198,4 +218,21 @@ public class InvoiceSubCategoryDto extends BusinessEntityDto {
         this.occTemplateNegativeCode = occTemplateNegativeCode;
     }
 
+    /**
+     * Gets the sorting index.
+     *
+     * @return the sorting index
+     */
+    public Integer getSortIndex() {
+        return sortIndex;
+    }
+
+    /**
+     * Sets the sorting index.
+     *
+     * @param sortIndex the sorting index.
+     */
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
+    }
 }

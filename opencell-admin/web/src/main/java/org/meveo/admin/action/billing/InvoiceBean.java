@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,6 +44,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.InvoiceCategoryComparatorUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
@@ -134,6 +134,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     private Map<Long, ServiceBasedLazyDataModel<RatedTransaction>> ratedTransactionsDM = new HashMap<>();
 
     private List<InvoiceCategoryDTO> categoryDTOs;
+
+	private Set<Invoice> linkedInvoices;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -259,14 +261,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                 categoryInvoiceAgregates.add(categoryInvoiceAgregate);
             }
         }
-        Collections.sort(categoryInvoiceAgregates, new Comparator<CategoryInvoiceAgregate>() {
-            public int compare(CategoryInvoiceAgregate c0, CategoryInvoiceAgregate c1) {
-                if (c0.getInvoiceCategory() != null && c1.getInvoiceCategory() != null && c0.getInvoiceCategory().getSortIndex() != null && c1.getInvoiceCategory().getSortIndex() != null) {
-                    return c0.getInvoiceCategory().getSortIndex().compareTo(c1.getInvoiceCategory().getSortIndex());
-                }
-                return 0;
-            }
-        });
+        Collections.sort(categoryInvoiceAgregates, InvoiceCategoryComparatorUtils.getInvoiceCategoryComparator());
 
         List<InvoiceCategoryDTO> headerCategories = new ArrayList<>();
 
@@ -279,8 +274,11 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             headerCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
             headerCategories.add(headerCat);
 
-            Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
+            List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList(categoryInvoiceAgregate.getSubCategoryInvoiceAgregates());
             LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = headerCat.getInvoiceSubCategoryDTOMap();
+
+            Collections.sort(subCategoryInvoiceAgregates, InvoiceCategoryComparatorUtils.getInvoiceSubCategoryComparator());
+
             for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
                 if (!subCatInvoiceAgregate.isDiscountAggregate()) {
                     InvoiceSubCategory invoiceSubCategory = subCatInvoiceAgregate.getInvoiceSubCategory();
@@ -879,5 +877,14 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
      */
     public boolean getShowBtnNewIADetailed() {
         return !entity.isPrepaid();
+    }
+    
+    public Set<Invoice> getLinkedInvoices() {
+		entity = invoiceService.refreshOrRetrieve(entity);
+        return entity.getLinkedInvoices();
+    }
+
+    public void setLinkedInvoices(Set<Invoice> linkedInvoices) {
+        entity.setLinkedInvoices(linkedInvoices);
     }
 }

@@ -38,6 +38,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NoResultException;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -49,6 +50,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
@@ -57,6 +59,7 @@ import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxClass;
@@ -84,6 +87,26 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 
     public enum ChargeTypeEnum {
         RECURRING, USAGE, SUBSCRIPTION, TERMINATION
+    }
+    
+    /**
+     * Main charge types
+     */
+    public enum ChargeMainTypeEnum {
+        /**
+         * Recurring charges
+         */
+        RECURRING,
+
+        /**
+         * One shot charges
+         */
+        ONESHOT,
+
+        /**
+         * Usage charges
+         */
+        USAGE
     }
 
     /**
@@ -239,6 +262,12 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Column(name = "drop_zero_wo")
     protected boolean dropZeroWo;
 
+    /**
+     * El expression for sorting index used in WO and rated transaction
+     */
+    @Column(name = "sort_index_el")
+    @Size(max = 2000)
+    private String sortIndexEl;
 
     // Calculated values
     @Transient
@@ -540,4 +569,23 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     public void setDropZeroWo(boolean dropZeroWo) {
         this.dropZeroWo = dropZeroWo;
     }
+
+    /**
+     * Gets an El expression for the sorting index.
+     *
+     * @return an El expression
+     */
+    public String getSortIndexEl() {
+        return sortIndexEl;
+    }
+
+    /**
+     * Sets the El expression for the sorting index.
+     *
+     * @param sortIndexEl the sorting index El
+     */
+    public void setSortIndexEl(String sortIndexEl) {
+        this.sortIndexEl = sortIndexEl;
+    }
+
 }

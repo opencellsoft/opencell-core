@@ -2985,7 +2985,7 @@ END $$;]]>
                                  constraintName="billing_counter_period_values_counterperiod_id_fk" referencedTableName="billing_counter_period"
                                  referencedColumnNames="id"/>
     </changeSet>
-    
+
     <changeSet author="MohammedELAZZOUZI"  id="#4004_ Add_CustomField_to_OrderItem">
         <addColumn tableName="ord_order_item">
             <column name="uuid" type="varchar(60)"/>
@@ -3029,33 +3029,49 @@ END $$;]]>
             <column name="updater" type="varchar(100)" />
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="#5193_20200428" author="AndriusKarpavicius">
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%')</sql>
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl_mcols where cft_id in (select id from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%')</sql>
-        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%'</sql>     
+        <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%'</sql>
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to like 'JobInstance_%'</sql>
     </changeSet>
-    
+
     <changeSet id="#5174_20200504" author="AbdelmounaimAkadid">
     	<sql>update ${db.schema.adapted}ord_order_item set code = id where code is null</sql>
     	<addUniqueConstraint columnNames="code" constraintName="uk_order_item_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="ord_order_item" />
     </changeSet>
-    
+
+    <changeSet id="#4792_20200504" author="khalidHORRI">
+        <addColumn tableName="billing_invoice_sub_cat">
+            <column name="sort_index" type="int4"/>
+        </addColumn>
+        <addColumn tableName="billing_wallet_operation">
+            <column name="sort_index" type="int4"/>
+        </addColumn>
+        <addColumn tableName="billing_rated_transaction">
+            <column name="sort_index" type="int4"/>
+        </addColumn>
+        <addColumn tableName="cat_charge_template">
+            <column name="sort_index_el" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
+
+
     <changeSet id="#5172_20200426" author="anasseh">
          <addColumn tableName="ar_account_operation">
             <column name="payment_history_id" type="bigint"></column>
         </addColumn>
-       
+
         <addForeignKeyConstraint baseColumnNames="payment_history_id" baseTableName="ar_account_operation" constraintName="fk_pay_hisyo" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_history" />
-                    
+
      </changeSet>
-     
+
      <changeSet id="#5206_20200505" author="AndriusKarpavicius" dbms="postgresql" >
         <sql>drop index adm_file_type_code_index</sql>
         <sql>drop index flat_file_code_index</sql>
-           
+
         <sql>CREATE UNIQUE INDEX adm_file_type_code_index ON ${db.schema.adapted}adm_file_type(lower(code))</sql>
         <sql>CREATE UNIQUE INDEX adm_file_format_code_index ON ${db.schema.adapted}adm_file_format(lower(code))</sql>
         <sql>CREATE UNIQUE INDEX flat_file_code_index ON ${db.schema.adapted}flat_file(lower(code))</sql>
@@ -3113,11 +3129,11 @@ END $$;]]>
         <sql>CREATE UNIQUE INDEX com_contact_email_index ON ${db.schema.adapted}com_contact(lower(email))</sql>
         <sql>CREATE UNIQUE INDEX billing_finance_segment_code_index ON ${db.schema.adapted}billing_finance_segment(lower(code))</sql>
         <sql>CREATE UNIQUE INDEX billing_general_ledger_code_index ON ${db.schema.adapted}billing_general_ledger(lower(code))</sql>
-        
-        
+
+
         <sql>CREATE UNIQUE INDEX hierarchy_entity_code_index ON ${db.schema.adapted}hierarchy_entity(lower(code), hierarchy_type)</sql>
         <sql>CREATE UNIQUE INDEX account_entity_code_index ON ${db.schema.adapted}account_entity(lower(code), account_type)</sql>
-        
+
     </changeSet>
-    
+
 </databaseChangeLog>

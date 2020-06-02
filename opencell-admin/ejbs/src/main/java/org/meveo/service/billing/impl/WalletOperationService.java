@@ -194,7 +194,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     /**
      * Determine recurring period start date
-     * 
+     *
      * @param chargeInstance Charge instance
      * @param date Date to calculate period for
      * @return Recurring period start date
@@ -213,7 +213,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     /**
      * Determine recurring period end date
-     * 
+     *
      * @param chargeInstance Charge instance
      * @param date Date to calculate period for
      * @return Recurring period end date
@@ -298,7 +298,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * <li>Apply charge that is applied at the end of calendar period - for charge instance with appliedInAdvance = false</li>
      * <li>Apply the recurring charge in advance of calendar period - for charge instance with appliedInAdvance = true</li>
      * </ul>
-     * 
+     *
      * <b>Apply charge that is applied at the end of calendar period</b> applyInAdvance = false:<br>
      * <br>
      * Will create a WalletOperation with wo.operationDate = chargeInstance.nextChargeDate, wo.startDate = chargeInstance.chargeDate and
@@ -314,7 +314,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * ---<br>
      * It will also update chargeInstance.chargeDate = chargeInstance.nextChargeDate and chargeInstance.nextChargeDate = nextCalendarDate(chargeInstance.nextChargeDate)
      * 
-     * 
+     *
      * @param chargeInstance Charge instance
      * @param chargeMode Charge application mode
      * @param forSchedule Is this a scheduled charge
@@ -458,6 +458,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 prorate = true && proratePartialPeriods;
             }
 
+            boolean chargeDatesAlreadyAdvanced = false;
+
             // If charge is not applicable for current period, skip it
             if (!isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
                 log.debug("IPIEL: not rating chargeInstance with id={}, filter expression evaluated to FALSE", chargeInstance.getId());
@@ -487,16 +489,17 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                         isApplyInAdvance, isVirtual));
 
                 } else {
+
+                    Date oldChargedToDate = chargeInstance.getChargedToDate();
+
                     RatingResult ratingResult = ratingService.rateChargeAndTriggerEDRs(chargeInstance, isApplyInAdvance ? effectiveChargeFromDate : effectiveChargeToDate, inputQuantity, null,
                         orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), effectiveChargeFromDate, effectiveChargeToDate,
                         prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, chargeMode, null, forSchedule, false);
 
                     WalletOperation walletOperation = ratingResult.getWalletOperation();
 
-                    // Handle cases when rating script modify a calendar and effectively a chargedTo date
-                    if (walletOperation.getFullRatingPeriod() != null && currentPeriodToDate.compareTo(walletOperation.getFullRatingPeriod().getTo()) != 0) {
-                        effectiveChargeToDate = walletOperation.getFullRatingPeriod().getTo();
-                    }
+                    // Check if rating script modified a chargedTo date
+                    chargeDatesAlreadyAdvanced = DateUtils.compare(oldChargedToDate, chargeInstance.getChargedToDate()) != 0;
 
                     if (forSchedule) {
                         walletOperation.changeStatus(WalletOperationStatusEnum.SCHEDULED);
@@ -514,11 +517,13 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 }
             }
 
-            // Update charge, nextCharge and chargedToDates
-            if (isApplyInAdvance) {
-                chargeInstance.advanceChargeDates(effectiveChargeFromDate, effectiveChargeToDate, effectiveChargeToDate);
-            } else {
-                chargeInstance.advanceChargeDates(effectiveChargeToDate, getRecurringPeriodEndDate(chargeInstance, effectiveChargeToDate), effectiveChargeToDate);
+            // Update charge, nextCharge and chargedToDates if not advanced already in some rating script
+            if (!chargeDatesAlreadyAdvanced) {
+                if (isApplyInAdvance) {
+                    chargeInstance.advanceChargeDates(effectiveChargeFromDate, effectiveChargeToDate, effectiveChargeToDate);
+                } else {
+                    chargeInstance.advanceChargeDates(effectiveChargeToDate, getRecurringPeriodEndDate(chargeInstance, effectiveChargeToDate), effectiveChargeToDate);
+                }
             }
 
             currentPeriodFromDate = chargeInstance.getChargedToDate(); // currentPeriodToDate;
@@ -1052,7 +1057,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     dto.getUnitAmountTax(), dto.getQuantity(), dto.getAmountWithoutTax(), dto.getAmountWithTax(), dto.getAmountTax(), dto.getParameter1(), dto.getParameter2(), dto.getParameter3(),
                     dto.getParameterExtra(), dto.getStartDate(), dto.getEndDate(), dto.getSubscriptionDate(), offer, seller, null, dto.getRatingUnitDescription(), null, null, null, null, dto.getStatus());
             }
-
+            Integer sortIndex = RatingService.getSortIndex(wo);
+            wo.setSortIndex(sortIndex);
             create(wo);
         }
     }

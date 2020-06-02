@@ -159,7 +159,7 @@ public class DateUtilsTest {
 
     @SuppressWarnings("deprecation")
     @Test()
-    public void getGetPeriodOverlap() {
+    public void getPeriodOverlap() {
 
         Date startDate = DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 15, 0, 0, 0);
         Date endDate = DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 25, 0, 0, 0);
@@ -201,4 +201,17 @@ public class DateUtilsTest {
         }
     }
 
+    @Test()
+    public void compare() {
+
+        Date one = DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 15, 0, 0, 0);
+        Date two = DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 25, 0, 0, 0);
+
+        Assert.assertEquals(0, DateUtils.compare(null, null));
+        Assert.assertEquals(1, DateUtils.compare(null, one));
+        Assert.assertEquals(-1, DateUtils.compare(one, null));
+        Assert.assertEquals(0, DateUtils.compare(one, one));
+        Assert.assertEquals(-1, DateUtils.compare(one, two));
+        Assert.assertEquals(1, DateUtils.compare(two, one));
+    }
 }
