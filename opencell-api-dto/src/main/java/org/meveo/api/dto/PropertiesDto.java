@@ -16,41 +16,37 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api.dto.response;
+package org.meveo.api.dto;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.PropertyDto;
-
-/**
- * The Class GetConfigurationResponse.
- *
- * @author Khalid HORRI
- * @lastModifiedVersion 7.0
- */
-@XmlRootElement(name = "GetConfigurationResponse")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class GetConfigurationResponse extends BaseResponse {
-
+public class PropertiesDto implements Serializable {
     /**
-     * The Constant serialVersionUID.
+     * 
      */
-    private static final long serialVersionUID = -1927118061401041786L;
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * The seller.
-     */
-    private List<PropertyDto> properties;
+    private List<PropertyDto> properties = new ArrayList<PropertyDto>();
 
-    /**
-     * Instantiates a new gets the configuration response.
-     */
-    public GetConfigurationResponse() {
-        super();
+    public PropertiesDto() {
+
+    }
+
+    public PropertiesDto(Properties properties) {
+        Iterator<Entry<Object, Object>> it = properties.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Object, Object> pair = it.next();
+            PropertyDto property = new PropertyDto(pair.getKey(), pair.getValue());
+            this.properties.add(property);
+            it.remove();
+        }
+
     }
 
     public List<PropertyDto> getProperties() {
@@ -61,8 +57,5 @@ public class GetConfigurationResponse extends BaseResponse {
         this.properties = properties;
     }
 
-    @Override
-    public String toString() {
-        return "GetConfigurationResponse [properties=" + properties + ", toString()=" + super.toString() + "]";
-    }
+
 }
