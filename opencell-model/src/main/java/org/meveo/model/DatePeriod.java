@@ -277,4 +277,13 @@ public class DatePeriod implements Comparable<DatePeriod>, Serializable {
     public void setToMatch(Date toMatch) {
         this.toMatch = toMatch;
     }
+
+    /**
+     * Check if Period duration is zero, that is start and end are the same
+     * 
+     * @return True if from=to
+     */
+    public boolean hasNoDuration() {
+        return from != null && to != null && from.compareTo(to) == 0;
+    }
 }
