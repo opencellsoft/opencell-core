@@ -104,7 +104,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
     /**
      * Execute workflow for Business Entity
-     * 
+     *
      * @param businessEntity
      * @param genericWorkflow
      * @return
@@ -123,7 +123,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
     /**
      * Execute workflow for wf instance
-     * 
+     *
      * @param workflowInstance
      * @param genericWorkflow
      * @return
@@ -142,9 +142,10 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
                 int startIndex = IntStream.range(0, endIndex).filter(idx -> genericWorkflow.getTransitions().get(idx).getFromStatus().equals(currentStatus)).findFirst().getAsInt();
                 List<GWFTransition> listByFromStatus = genericWorkflow.getTransitions().stream().collect(Collectors.toList()).subList(startIndex, endIndex);
                 List<GWFTransition> executedTransition = new ArrayList<>();
+                List<GWFTransition> blockedTransition = new ArrayList<>();
                 for (GWFTransition gWFTransition : listByFromStatus) {
 
-                    if (matchExpression(gWFTransition.getConditionEl(), iwfEntity) && isInSameBranch(gWFTransition, executedTransition)) {
+                    if (matchExpression(gWFTransition.getConditionEl(), iwfEntity) && isInSameBranch(gWFTransition, executedTransition, blockedTransition)) {
 
                         log.debug("Processing transition: {} on entity {}", gWFTransition, workflowInstance);
                         WorkflowInstanceHistory wfHistory = new WorkflowInstanceHistory();
@@ -181,6 +182,9 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
                         log.trace("Entity status will be updated to {}. Entity {}", workflowInstance, gWFTransition.getToStatus());
                         workflowInstance = workflowInstanceService.update(workflowInstance);
                         executedTransition.add(gWFTransition);
+
+                    } else {
+                        blockedTransition.add(gWFTransition);
                     }
                 }
             }
@@ -193,8 +197,8 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
         return workflowInstance;
     }
 
-    private boolean isInSameBranch(GWFTransition currentTransition, List<GWFTransition> executedTransition) {
-        if (executedTransition.isEmpty()) {
+    private boolean isInSameBranch(GWFTransition currentTransition, List<GWFTransition> executedTransition, List<GWFTransition> blockedTransition) {
+        if (executedTransition.isEmpty() && previousNotInBlockedTransitions(currentTransition, blockedTransition)) {
             return true;
         }
         for (GWFTransition transition : executedTransition) {
@@ -203,6 +207,15 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
             }
         }
         return false;
+    }
+
+    private boolean previousNotInBlockedTransitions(GWFTransition currentTransition, List<GWFTransition> blockedTransition) {
+        for (GWFTransition transition : blockedTransition) {
+            if (transition.getToStatus() != null && transition.getToStatus().equals(currentTransition.getFromStatus())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean matchExpression(String expression, Object object) throws BusinessException {
