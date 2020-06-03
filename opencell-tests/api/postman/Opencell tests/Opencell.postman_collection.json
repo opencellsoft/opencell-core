@@ -4883,6 +4883,86 @@
 									"response": []
 								},
 								{
+									"name": "Update Customer with no other Fields SUCCESS",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "662168fd-a431-4517-8556-b402f782e833",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"SUCCESS\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql();",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"code\": \"{{testCode}}_C\"\r\n}\r\n",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/account/customer",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"account",
+												"customer"
+											]
+										}
+									},
+									"response": []
+								},
+								{
 									"name": "CreateOrUpdate Customer SUCCESS",
 									"event": [
 										{
@@ -5114,7 +5194,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{testCode}}_C\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerBrand\": \"{{testCode}}_CB\",\r\n    \"seller\": \"{{testCode}}_SELLER\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n",
+											"raw": "{\r\n    \"code\": \"{{testCode}}_C_INVALID\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Ben\",\r\n        \"lastName\": \"Ohara\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"14 rue Crespin du Gast\",\r\n        \"address2\": null,\r\n        \"address3\": null,\r\n        \"zipCode\": \"75011\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\",\r\n        \"state\": \"Paris Area\"\r\n    },\r\n    \"contactInformation\": {\t\r\n        \"email\": \"ben.ohara@opencellsoft.com\",\r\n        \"phone\": null,\r\n        \"mobile\": null,\r\n        \"fax\": null\r\n    },\r\n    \"customerBrand\": \"{{testCode}}_CB\",\r\n    \"seller\": \"{{testCode}}_SELLER\",\r\n    \"mandateIdentification\": \"\"\r\n}\r\n",
 											"options": {
 												"raw": {}
 											}
@@ -14005,7 +14085,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"InvoiceCategory with code=\" + pm.environment.get(\"testCode\") + \"_OF already exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"offer Template with code=\" + pm.environment.get(\"testCode\") + \"_OF already exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -33187,7 +33267,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{testCode}}_PG\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"type\": \"CUSTOM\",\r\n    \"paymentMethodType\": \"CHECK\"\r\n}",
+											"raw": "{\r\n    \"code\": \"{{testCode}}_PG\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"sellerCode\": \"CLASSIC\",\r\n    \"scriptInstanceCode\": \"org.meveo.service.script.demo.CustomGatewayPaymentScript\",\r\n    \"type\": \"CUSTOM\",\r\n    \"paymentMethodType\": \"CHECK\"\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -33357,7 +33437,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{testCode}}_PG\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"type\": \"CUSTOM\",\r\n    \"paymentMethodType\": \"CHECK\"\r\n}",
+											"raw": "{\r\n    \"code\": \"{{testCode}}_PG\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"sellerCode\": \"CLASSIC\",\r\n    \"scriptInstanceCode\": \"org.meveo.service.script.demo.CustomGatewayPaymentScript\",\r\n    \"type\": \"CUSTOM\",\r\n    \"paymentMethodType\": \"CHECK\"\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -33517,7 +33597,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{testCode}}_PG\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"type\": \"CUSTOM\",\r\n    \"paymentMethodType\": \"CHECK\"\r\n}",
+											"raw": "{\r\n    \"code\": \"{{testCode}}_PG\",\r\n    \"description\": \"{{testDescription}}\",\r\n    \"sellerCode\": \"CLASSIC\",\r\n    \"scriptInstanceCode\": \"org.meveo.service.script.demo.CustomGatewayPaymentScript\",\r\n    \"type\": \"CUSTOM\",\r\n    \"paymentMethodType\": \"CHECK\"\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -33597,7 +33677,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{testCode}}_PG\",\r\n    \"description\": \"{{testDescription}} updated\",\r\n    \"type\": \"CUSTOM\",\r\n    \"paymentMethodType\": \"CHECK\"\r\n}",
+											"raw": "{\r\n    \"code\": \"{{testCode}}_PG\"\r\n}",
 											"options": {
 												"raw": {}
 											}
@@ -33729,7 +33809,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"The following parameters are required or contain invalid values: code, type, paymentMethodType.\");",
+													"    pm.expect(jsonData.message).to.eql(\"The following parameters are required or contain invalid values: code, type, paymentMethodType, sellerCode.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -44676,12 +44756,12 @@
 											"basic": [
 												{
 													"key": "password",
-													"value": "{{opencell.password}}",
+													"value": "{{opencell.superpassword}}",
 													"type": "string"
 												},
 												{
 													"key": "username",
-													"value": "{{opencell.username}}",
+													"value": "{{opencell.superusername}}",
 													"type": "string"
 												}
 											]
@@ -44701,19 +44781,19 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n\t\"property\": \"secured.entities.enabled\",\r\n\t\"value\": \"false\"\r\n}",
+											"raw": "{\n    \"properties\": [\n        {\n            \"key\": \"secured.entities.enabled\",\n            \"value\": \"false\"\n        }\n    ]\n}",
 											"options": {
 												"raw": {}
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/configurations/setProperty",
+											"raw": "{{opencell.url}}/configurations/properties",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
 												"configurations",
-												"setProperty"
+												"properties"
 											]
 										}
 									},
@@ -44756,12 +44836,12 @@
 											"basic": [
 												{
 													"key": "password",
-													"value": "{{opencell.password}}",
+													"value": "{{opencell.superpassword}}",
 													"type": "string"
 												},
 												{
 													"key": "username",
-													"value": "{{opencell.username}}",
+													"value": "{{opencell.superusername}}",
 													"type": "string"
 												}
 											]
@@ -44781,19 +44861,19 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n\t\"property\": \"service.allowMultiInstantiation\",\r\n\t\"value\": \"false\"\r\n}",
+											"raw": "{\n    \"properties\": [\n        {\n            \"key\": \"service.allowMultiInstantiation\",\n            \"value\": \"false\"\n        }\n    ]\n}",
 											"options": {
 												"raw": {}
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/configurations/setProperty",
+											"raw": "{{opencell.url}}/configurations/properties",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
 												"configurations",
-												"setProperty"
+												"properties"
 											]
 										}
 									},
@@ -51974,7 +52054,7 @@
 										"header": [
 											{
 												"key": "Authorization",
-												"value": "Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu"
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
 											},
 											{
 												"key": "Content-Type",
@@ -51985,19 +52065,19 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n\t\"property\": \"service.allowMultiInstantiation\",\r\n\t\"value\": \"true\"\r\n}",
+											"raw": "\r\n{\r\n    \"properties\": [\r\n        {\r\n            \"key\": \"service.allowMultiInstantiation\",\r\n            \"value\": \"true\"\r\n        }\r\n    ]\r\n}",
 											"options": {
 												"raw": {}
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/configurations/setProperty",
+											"raw": "{{opencell.url}}/configurations/properties",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
 												"configurations",
-												"setProperty"
+												"properties"
 											]
 										}
 									},
@@ -53946,12 +54026,12 @@
 											"basic": [
 												{
 													"key": "password",
-													"value": "{{opencell.password}}",
+													"value": "{{opencell.superpassword}}",
 													"type": "string"
 												},
 												{
 													"key": "username",
-													"value": "{{opencell.username}}",
+													"value": "{{opencell.superusername}}",
 													"type": "string"
 												}
 											]
@@ -53971,19 +54051,19 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n\t\"property\": \"service.allowMultiInstantiation\",\r\n\t\"value\": \"false\"\r\n}",
+											"raw": "{\r\n    \"properties\": [\r\n        {\r\n            \"key\": \"service.allowMultiInstantiation\",\r\n            \"value\": \"false\"\r\n        }\r\n    ]\r\n}",
 											"options": {
 												"raw": {}
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/configurations/setProperty",
+											"raw": "{{opencell.url}}/configurations/properties",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
 												"configurations",
-												"setProperty"
+												"properties"
 											]
 										}
 									},
@@ -69412,9 +69492,6 @@
 											}
 										}
 									],
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
 									"request": {
 										"auth": {
 											"type": "basic",
@@ -69431,7 +69508,7 @@
 												}
 											]
 										},
-										"method": "GET",
+										"method": "POST",
 										"header": [
 											{
 												"key": "Authorization",
@@ -69446,20 +69523,29 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"filter\": {\n      \"code\": \"{{entityPrefix}}_{{index}}_FilterCustomFields_PricePlanMatrix\"\n    },\n    \"from\": \"0\",\n    \"size\": \"100\",\n    \"parameters\": {\n      \"entry\": [\n        {\n          \"key\": \"PRICE_PLAN_START_RATING_DATE\",\n          \"value\": \"cfDate:2016-06-01\"\n        },\n        {\n          \"key\": \"PRICE_PLAN_END_RATING_DATE\",\n          \"value\": \"cfDate:2016-06-30\"\n        }\n      ]\n    }\n  }",
+											"raw": "{\n    \"filter\": {\n      \"code\": \"{{entityPrefix}}_{{index}}_FilterCustomFields_PricePlanMatrix\"\n    },\n    \"parameters\": {\n      \"entry\": [\n        {\n          \"key\": \"PRICE_PLAN_START_RATING_DATE\",\n          \"value\": \"cfDate:2016-06-01\"\n        },\n        {\n          \"key\": \"PRICE_PLAN_END_RATING_DATE\",\n          \"value\": \"cfDate:2016-06-30\"\n        }\n      ]\n    }\n  }",
 											"options": {
 												"raw": {}
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/",
+											"raw": "{{opencell.url}}/filteredList/listByFilter?from=0&size=100",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
-												""
+												"filteredList",
+												"listByFilter"
 											],
 											"query": [
+												{
+													"key": "from",
+													"value": "0"
+												},
+												{
+													"key": "size",
+													"value": "100"
+												},
 												{
 													"key": "query",
 													"value": "PRICE_PLAN_START_RATING_DATE:cfDate:2016-06-01&PRICE_PLAN_END_RATING_DATE:cfDate:2016-06-30",
@@ -69501,9 +69587,6 @@
 											}
 										}
 									],
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
 									"request": {
 										"auth": {
 											"type": "basic",
@@ -69520,7 +69603,7 @@
 												}
 											]
 										},
-										"method": "GET",
+										"method": "POST",
 										"header": [
 											{
 												"key": "Authorization",
@@ -69535,18 +69618,29 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"filter\": {\n      \"code\": \"{{entityPrefix}}_{{index}}_FilterCustomFields_PricePlanMatrix_Code\"\n    },\n    \"from\": \"0\",\n    \"size\": \"100\",\n    \"parameters\": {\n      \"entry\": {\n        \"key\": \"PRICE_PLAN_CODE\",\n        \"value\": \"cfString:{{baseEntityPrefix}}_TEST_REC1\"\n      }\n    }\n  }",
+											"raw": "{\n    \"filter\": {\n      \"code\": \"{{entityPrefix}}_{{index}}_FilterCustomFields_PricePlanMatrix_Code\"\n    },\n    \"parameters\": {\n      \"entry\": {\n        \"key\": \"PRICE_PLAN_CODE\",\n        \"value\": \"cfString:{{baseEntityPrefix}}_TEST_REC1\"\n      }\n    }\n  }",
 											"options": {
 												"raw": {}
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/",
+											"raw": "{{opencell.url}}/filteredList/listByFilter?from=0&size=100",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
-												""
+												"filteredList",
+												"listByFilter"
+											],
+											"query": [
+												{
+													"key": "from",
+													"value": "0"
+												},
+												{
+													"key": "size",
+													"value": "100"
+												}
 											]
 										}
 									},
@@ -69583,9 +69677,6 @@
 											}
 										}
 									],
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
 									"request": {
 										"auth": {
 											"type": "basic",
@@ -69602,7 +69693,7 @@
 												}
 											]
 										},
-										"method": "GET",
+										"method": "POST",
 										"header": [
 											{
 												"key": "Authorization",
@@ -69617,18 +69708,29 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"filter\": {\n      \"code\": \"{{entityPrefix}}_{{index}}_FilterCustomFields_PricePlanMatrix_Amount\"\n    },\n    \"from\": \"0\",\n    \"size\": \"100\",\n    \"parameters\": {\n      \"entry\": {\n        \"key\": \"AMOUNT\",\n        \"value\": \"cfDecimal:10\"\n      }\n    }\n  }",
+											"raw": "{\n    \"filter\": {\n      \"code\": \"{{entityPrefix}}_{{index}}_FilterCustomFields_PricePlanMatrix_Amount\"\n    },\n    \"parameters\": {\n      \"entry\": {\n        \"key\": \"AMOUNT\",\n        \"value\": \"cfDecimal:10\"\n      }\n    }\n  }",
 											"options": {
 												"raw": {}
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/",
+											"raw": "{{opencell.url}}/filteredList/listByFilter?from=0&size=100",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
-												""
+												"filteredList",
+												"listByFilter"
+											],
+											"query": [
+												{
+													"key": "from",
+													"value": "0"
+												},
+												{
+													"key": "size",
+													"value": "100"
+												}
 											]
 										}
 									},
@@ -69665,9 +69767,6 @@
 											}
 										}
 									],
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
 									"request": {
 										"auth": {
 											"type": "basic",
@@ -69684,7 +69783,7 @@
 												}
 											]
 										},
-										"method": "GET",
+										"method": "POST",
 										"header": [
 											{
 												"key": "Authorization",
@@ -69705,12 +69804,23 @@
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/",
+											"raw": "{{opencell.url}}/filteredList/listByFilter?from=0&size=100",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
-												""
+												"filteredList",
+												"listByFilter"
+											],
+											"query": [
+												{
+													"key": "from",
+													"value": "0"
+												},
+												{
+													"key": "size",
+													"value": "100"
+												}
 											]
 										}
 									},
@@ -69747,9 +69857,6 @@
 											}
 										}
 									],
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
 									"request": {
 										"auth": {
 											"type": "basic",
@@ -69766,7 +69873,7 @@
 												}
 											]
 										},
-										"method": "GET",
+										"method": "POST",
 										"header": [
 											{
 												"key": "Authorization",
@@ -69781,18 +69888,29 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"filter\": {\n      \"code\": \"{{entityPrefix}}_{{index}}_FilterCustomFields_RCT_Duration\"\n    },\n    \"from\": \"0\",\n    \"size\": \"100\",\n    \"parameters\": {\n      \"entry\": {\n        \"key\": \"DURATION\",\n        \"value\": \"cfInteger:10\"\n      }\n    }\n  }",
+											"raw": "{\n    \"filter\": {\n      \"code\": \"{{entityPrefix}}_{{index}}_FilterCustomFields_RCT_Duration\"\n    },\n    \"parameters\": {\n      \"entry\": {\n        \"key\": \"DURATION\",\n        \"value\": \"cfInteger:10\"\n      }\n    }\n  }",
 											"options": {
 												"raw": {}
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/",
+											"raw": "{{opencell.url}}/filteredList/listByFilter?from=0&size=100",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
-												""
+												"filteredList",
+												"listByFilter"
+											],
+											"query": [
+												{
+													"key": "from",
+													"value": "0"
+												},
+												{
+													"key": "size",
+													"value": "100"
+												}
 											]
 										}
 									},
@@ -69829,9 +69947,6 @@
 											}
 										}
 									],
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
 									"request": {
 										"auth": {
 											"type": "basic",
@@ -69848,7 +69963,7 @@
 												}
 											]
 										},
-										"method": "GET",
+										"method": "POST",
 										"header": [
 											{
 												"key": "Authorization",
@@ -69863,18 +69978,29 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"filter\": {\n      \"code\": \"{{entityPrefix}}_{{index}}_FilterCustomFields_RCT_Prorata\"\n    },\n    \"from\": \"0\",\n    \"size\": \"100\",\n    \"parameters\": {\n      \"entry\": {\n        \"key\": \"SUBSCRIPTION_PRORATA\",\n        \"value\": \"cfBoolean:true\"\n      }\n    }\n  }",
+											"raw": "{\n    \"filter\": {\n      \"code\": \"{{entityPrefix}}_{{index}}_FilterCustomFields_RCT_Prorata\"\n    },\n    \"parameters\": {\n      \"entry\": {\n        \"key\": \"SUBSCRIPTION_PRORATA\",\n        \"value\": \"cfBoolean:true\"\n      }\n    }\n  }",
 											"options": {
 												"raw": {}
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/",
+											"raw": "{{opencell.url}}/filteredList/listByFilter?from=0&size=100",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
-												""
+												"filteredList",
+												"listByFilter"
+											],
+											"query": [
+												{
+													"key": "from",
+													"value": "0"
+												},
+												{
+													"key": "size",
+													"value": "100"
+												}
 											]
 										}
 									},
@@ -73683,12 +73809,12 @@
 											"basic": [
 												{
 													"key": "password",
-													"value": "{{opencell.password}}",
+													"value": "{{opencell.superpassword}}",
 													"type": "string"
 												},
 												{
 													"key": "username",
-													"value": "{{opencell.username}}",
+													"value": "{{opencell.superusername}}",
 													"type": "string"
 												}
 											]
@@ -73708,18 +73834,19 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"property\": \"secured.entities.enabled\",\n    \"value\": \"true\"\n}\n",
+											"raw": "{\n    \"properties\": [\n        {\n            \"key\": \"secured.entities.enabled\",\n            \"value\": \"true\"\n        }\n    ]\n}",
 											"options": {
 												"raw": {}
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/",
+											"raw": "{{opencell.url}}/configurations/properties",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
-												""
+												"configurations",
+												"properties"
 											]
 										}
 									},
@@ -92082,12 +92209,12 @@
 											"basic": [
 												{
 													"key": "password",
-													"value": "{{opencell.password}}",
+													"value": "{{opencell.superpassword}}",
 													"type": "string"
 												},
 												{
 													"key": "username",
-													"value": "{{opencell.username}}",
+													"value": "{{opencell.superuser}}",
 													"type": "string"
 												}
 											]
@@ -92107,18 +92234,19 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"property\": \"secured.entities.enabled\",\n    \"value\": \"false\"\n}\n",
+											"raw": "\n{\n    \"properties\": [\n        {\n            \"key\": \"secured.entities.enabled\",\n            \"value\": \"false\"\n        }\n    ]\n}",
 											"options": {
 												"raw": {}
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/",
+											"raw": "{{opencell.url}}/configurations/properties",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
-												""
+												"configurations",
+												"properties"
 											]
 										}
 									},
@@ -100463,7 +100591,7 @@
 							"name": "GDPR",
 							"item": [
 								{
-									"name": "Create GPDR Job",
+									"name": "Create GDPR Job",
 									"event": [
 										{
 											"listen": "test",
@@ -100530,13 +100658,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/jobInstance/create",
+											"raw": "{{opencell.url}}/jobInstance/createOrUpdate",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
 												"jobInstance",
-												"create"
+												"createOrUpdate"
 											]
 										}
 									},
