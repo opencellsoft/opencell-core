@@ -16,10 +16,13 @@ import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomTableService;
+import org.meveo.service.job.Job;
+import org.meveo.util.EntityCustomizationUtils;
 
 public class DeletionService {
     private static final String CANNOT_REMOVE_ENTITY_CUSTOM_TABLE_REFERENCE_ERROR_MESSAGE = "Cannot remove entity: reference to the entity exists";
@@ -68,12 +71,21 @@ public class DeletionService {
 	}
 
     boolean isEitherIncludedInCustomTableOrInBusinessEntity(CustomFieldTemplate customField, IEntity dependency) {
-            CustomEntityTemplate customEntityTemplate = customEntityTemplateService.findByCode(removePrefix(customField.getAppliesTo().toUpperCase()));
+            CustomEntityTemplate customEntityTemplate = customEntityTemplateService.findByCode(removePrefix(customField.getAppliesTo()));
 
             if(customEntityTemplate == null){
-                return tryWithBusinessEntity(customField, dependency);
-            }
-            if(customEntityTemplate.isStoreAsTable()){
+            	String appliesTo = customField.getAppliesTo().toLowerCase();
+				Class entityClass = entitiesByName.get(appliesTo);
+            	if(entityClass==null) {
+            		if(customField.getAppliesTo().startsWith(Job.CFT_PREFIX)) {
+            			entityClass = JobInstance.class;
+            		} else {
+            			entityClass = entitiesByName.get(customEntityTemplateService.findByCode(EntityCustomizationUtils.getEntityCode(appliesTo)));
+            		}
+            		
+                }
+            	return tryWithBusinessEntity(customField, dependency, entityClass);
+            } else if(customEntityTemplate.isStoreAsTable()){
                 return existsAsRecordInCustomTable(customField, dependency);
             }
 
@@ -95,19 +107,19 @@ public class DeletionService {
         return customTableService.containsRecordOfTableByColumn(removePrefix(customField.getAppliesTo()), customField.getCode(), Long.valueOf(entity.getId().toString()));
     }
 
-    private boolean tryWithBusinessEntity(CustomFieldTemplate customField, IEntity dependency) {
+    private boolean tryWithBusinessEntity(CustomFieldTemplate customField, IEntity dependency, Class entityClass) {
         return getCodeAsStream(dependency)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst()
                 .map(Object::toString)
-                .map(code -> verifyPersistenceService(customField, code))
+                .map(code -> verifyPersistenceService(customField, code, entityClass))
                 .orElse(false);
 
     }
 
-	private Boolean verifyPersistenceService(CustomFieldTemplate customField, String code) {
-        Class entityClass = entitiesByName.get(customField.getAppliesTo().toLowerCase());
+	private Boolean verifyPersistenceService(CustomFieldTemplate customField, String code, Class entityClass) {
+        
 		return CollectionUtils.isNotEmpty(customFieldTemplateService.getReferencedEntities(customField, code, entityClass));
     }
 
@@ -118,7 +130,7 @@ public class DeletionService {
     String removePrefix(String appliesTo) {
         try {
             if(appliesTo.startsWith(CUSTOM_ENTITY_PREFIX)) {
-                return appliesTo.substring(CUSTOM_ENTITY_PREFIX.length());
+                return appliesTo.toUpperCase().substring(CUSTOM_ENTITY_PREFIX.length());
             }
             return appliesTo;
         } catch (ArrayIndexOutOfBoundsException ex) {
