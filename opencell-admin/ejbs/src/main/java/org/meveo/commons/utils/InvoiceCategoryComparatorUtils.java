@@ -19,7 +19,10 @@ public class InvoiceCategoryComparatorUtils {
 
                 if (c0.getInvoiceCategory().getSortIndex() == null || c1.getInvoiceCategory().getSortIndex() == null) {
                     if (c0.getInvoiceCategory().getSortIndex() == null && c1.getInvoiceCategory().getSortIndex() == null) {
-                        return c0.getInvoiceCategory().getDescription().compareToIgnoreCase(c0.getInvoiceCategory().getDescription());
+                        if(c0.getInvoiceCategory().getDescription() == null || c1.getInvoiceCategory().getDescription() == null) {
+                            return c0.getInvoiceCategory().getDescription() == null ? c1.getInvoiceCategory().getDescription() == null ? 0 : 1: -1;
+                        }
+                        return c0.getInvoiceCategory().getDescription().compareToIgnoreCase(c1.getInvoiceCategory().getDescription());
                     } else {
                         return c0.getInvoiceCategory().getSortIndex() == null ? c1.getInvoiceCategory().getSortIndex() == null ? 0 : 1 : -1;
                     }
@@ -45,7 +48,10 @@ public class InvoiceCategoryComparatorUtils {
 
                 if (c0.getInvoiceSubCategory().getSortIndex() == null || c1.getInvoiceSubCategory().getSortIndex() == null) {
                     if (c0.getInvoiceSubCategory().getSortIndex() == null && c1.getInvoiceSubCategory().getSortIndex() == null) {
-                        return c0.getInvoiceSubCategory().getDescription().compareToIgnoreCase(c0.getInvoiceSubCategory().getDescription());
+                        if(c0.getInvoiceSubCategory().getDescription() == null || c1.getInvoiceSubCategory().getDescription() == null) {
+                            return c0.getInvoiceSubCategory().getDescription() == null ? c1.getInvoiceSubCategory().getDescription() == null ? 0 : 1: -1;
+                        }
+                        return c0.getInvoiceSubCategory().getDescription().compareToIgnoreCase(c1.getInvoiceSubCategory().getDescription());
                     } else {
                         return c0.getInvoiceSubCategory().getSortIndex() == null ? c1.getInvoiceSubCategory().getSortIndex() == null ? 0 : 1 : -1;
                     }
@@ -68,7 +74,10 @@ public class InvoiceCategoryComparatorUtils {
 
                 if (c0.getSortIndex() == null || c1.getSortIndex() == null) {
                     if (c0.getSortIndex() == null && c1.getSortIndex() == null) {
-                        return c0.getDescription().compareToIgnoreCase(c0.getDescription());
+                        if(c0.getDescription() == null || c1.getDescription() == null) {
+                            return c0.getDescription() == null ? c1.getDescription() == null ? 0 : 1 : -1;
+                        }
+                        return c0.getDescription().compareToIgnoreCase(c1.getDescription());
                     } else {
                         return c0.getSortIndex() == null ? c1.getSortIndex() == null ? 0 : 1 : -1;
                     }
