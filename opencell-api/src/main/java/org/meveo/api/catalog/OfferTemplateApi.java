@@ -31,9 +31,14 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.billing.SubscriptionApi;
-import org.meveo.api.security.config.annotation.FilterProperty;
-import org.meveo.api.security.config.annotation.FilterResults;
-import org.meveo.api.dto.catalog.*;
+import org.meveo.api.dto.catalog.ChannelDto;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.catalog.OfferProductTemplateDto;
+import org.meveo.api.dto.catalog.OfferServiceTemplateDto;
+import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
+import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.catalog.ProductTemplateDto;
+import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -42,20 +47,38 @@ import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
-import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.catalog.*;
+import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.Channel;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
+import org.meveo.model.catalog.OfferProductTemplate;
+import org.meveo.model.catalog.OfferServiceTemplate;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.ProductOffering;
+import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.catalog.impl.*;
+import org.meveo.service.catalog.impl.BusinessOfferModelService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
+import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.model.SortOrder;
 
@@ -94,12 +117,6 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     @Inject
     private DiscountPlanService discountPlanService;
 
-    @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
-
-    @Inject
-    private OneShotChargeTemplateService oneShotChargeTemplateService;
-
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
     public OfferTemplate create(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
@@ -112,15 +129,17 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
         handleMissingParameters();
 
+        if (offerTemplateService.findByCode(postData.getCode(), postData.getValidFrom(),
+                postData.getValidTo()) != null) {
+            throw new EntityAlreadyExistsException(OfferTemplate.class,
+                    postData.getCode() + " / " + postData.getValidFrom() + " / " + postData.getValidTo());
+        }
+
         List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(), null, true);
         if (!matchedVersions.isEmpty()) {
             throw new InvalidParameterException(
                 "An offer, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBeanFactory.getInstance().getDateFormat())
                         + ", already exists. Please change the validity dates of an existing offer first.");
-        }
-
-        if (offerTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo()) != null) {
-            throw new EntityAlreadyExistsException(OfferTemplate.class, postData.getCode() + " / " + postData.getValidFrom() + " / " + postData.getValidTo());
         }
 
         OfferTemplate offerTemplate = populateFromDto(postData, null);
