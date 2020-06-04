@@ -14085,7 +14085,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"offer Template with code=\" + pm.environment.get(\"testCode\") + \"_OF already exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"OfferTemplate with code=\" + pm.environment.get(\"testCode\") + \"_OT / null / null already exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -54013,7 +54013,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql();",
+													"    pm.expect(jsonData.message).to.eql(\"\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -73808,13 +73808,13 @@
 											"type": "basic",
 											"basic": [
 												{
-													"key": "password",
-													"value": "{{opencell.superpassword}}",
+													"key": "username",
+													"value": "{{opencell.superusername}}",
 													"type": "string"
 												},
 												{
-													"key": "username",
-													"value": "{{opencell.superusername}}",
+													"key": "password",
+													"value": "{{opencell.superpassword}}",
 													"type": "string"
 												}
 											]
