@@ -713,7 +713,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceDate = billingRun.getInvoiceDate();
             }
 
-            if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("reset.lastTransactionDate", "true"))) {
+            if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("date.range.excludeEndDate", "true"))) {
                 lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
             }
 
