@@ -46,6 +46,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
 
@@ -278,6 +279,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             }
 
             if (endDate != null) {
+                if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("date.range.excludeEndDate", "true"))) {
+                    endDate = DateUtils.setTimeToZero(endDate);
+                }
                 qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate);
             }
 

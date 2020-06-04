@@ -130,6 +130,7 @@ public class CustomTableService extends NativePersistenceService {
     public Long create(String tableName, Map<String, Object> values) throws BusinessException {
 
         Long id = super.create(tableName, values, true, true); // Force to return ID as we need it to retrieve data for Elastic Search population
+        values.put("id", id);
         elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, values, false, true);
 
         return id;
@@ -147,6 +148,7 @@ public class CustomTableService extends NativePersistenceService {
 
         for (Map<String, Object> value : values) {
             Long id = super.create(tableName, value, true, fireNotifications); // Force to return ID as we need it to retrieve data for Elastic Search population
+            value.put("id", id);
             elasticClient.createOrUpdate(CustomTableRecord.class, tableName, id, value, false, false);
         }
 

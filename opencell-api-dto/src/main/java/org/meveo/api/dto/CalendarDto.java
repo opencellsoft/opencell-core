@@ -31,6 +31,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarDateInterval;
+import org.meveo.model.catalog.CalendarFixed;
 import org.meveo.model.catalog.CalendarHoliday;
 import org.meveo.model.catalog.CalendarInterval;
 import org.meveo.model.catalog.CalendarIntervalTypeEnum;
@@ -39,7 +40,9 @@ import org.meveo.model.catalog.CalendarPeriod;
 import org.meveo.model.catalog.CalendarPeriodUnitEnum;
 import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.catalog.DayInYear;
+import org.meveo.model.catalog.FixedDate;
 import org.meveo.model.catalog.HourInDay;
+import org.meveo.model.shared.DateUtils;
 
 
 /**
@@ -58,6 +61,9 @@ public class CalendarDto extends BusinessEntityDto {
     /** Calendar type. */
     @XmlElement(required = true)
     private CalendarTypeEnum calendarType;
+
+    /** Fixed Dates. */
+    private List<String> fixedDates;
 
     /** Days. */
     private List<DayInYearDto> days;
@@ -132,6 +138,13 @@ public class CalendarDto extends BusinessEntityDto {
                 }
             }
 
+        } else if (calendarEntity instanceof CalendarFixed) {
+            CalendarFixed calendar = (CalendarFixed) calendarEntity;
+            fixedDates = new ArrayList<>();
+            for(FixedDate fixedDate : calendar.getFixedDates()) {
+            	fixedDates.add(DateUtils.formatDateWithPattern(fixedDate.getDatePeriod().getFrom(),"dd/MM/yyyy HH:mm")
+            	                + "-" + DateUtils.formatDateWithPattern(fixedDate.getDatePeriod().getTo(),"dd/MM/yyyy HH:mm"));      	
+            }        
         } else if (calendarEntity instanceof CalendarPeriod) {
             CalendarPeriod calendar = (CalendarPeriod) calendarEntity;
             periodLength = calendar.getPeriodLength();
@@ -453,6 +466,23 @@ public class CalendarDto extends BusinessEntityDto {
     public void setHolidays(List<CalendarHolidayDto> holidays) {
         this.holidays = holidays;
     }
+
+    /**
+     * get Fixed Dates
+     * @return list of fixed dates
+     */
+	public List<String> getFixedDates() {
+		return fixedDates;
+	}
+
+	/**
+	 * set Fixed Dates
+	 * @param fixedDates fixed dates
+	 */
+	public void setFixedDates(List<String> fixedDates) {
+		this.fixedDates = fixedDates;
+	}
+    
     
     
 }
