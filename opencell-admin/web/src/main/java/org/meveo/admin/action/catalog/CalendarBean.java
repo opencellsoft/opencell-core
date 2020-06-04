@@ -17,9 +17,13 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,10 +40,12 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarBanking;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarDateInterval;
+import org.meveo.model.catalog.CalendarFixed;
 import org.meveo.model.catalog.CalendarHoliday;
 import org.meveo.model.catalog.CalendarInterval;
 import org.meveo.model.catalog.CalendarIntervalTypeEnum;
@@ -90,6 +96,8 @@ public class CalendarBean extends BaseBean<Calendar> {
 
     private Integer weekendFrom;
     private Integer weekendTo;
+
+    public static String FIXED_DATE_FORMAT = "dd/MM/yyyy HH:mm";
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -188,6 +196,7 @@ public class CalendarBean extends BaseBean<Calendar> {
     public Map<String, String> getCalendarTypes() {
         Map<String, String> values = new HashMap<String, String>();
 
+        values.put("FIXED", resourceMessages.getString("calendar.calendarType.FIXED"));
         values.put("DAILY", resourceMessages.getString("calendar.calendarType.DAILY"));
         values.put("YEARLY", resourceMessages.getString("calendar.calendarType.YEARLY"));
         values.put("PERIOD", resourceMessages.getString("calendar.calendarType.PERIOD"));
@@ -215,7 +224,7 @@ public class CalendarBean extends BaseBean<Calendar> {
 
         String newType = (String) ((EditableValueHolder) event.getComponent()).getValue();
 
-        Class[] classes = { CalendarYearly.class, CalendarDaily.class, CalendarPeriod.class, CalendarInterval.class, CalendarJoin.class, CalendarBanking.class };
+        Class[] classes = { CalendarYearly.class, CalendarFixed.class, CalendarDaily.class, CalendarPeriod.class, CalendarInterval.class, CalendarJoin.class, CalendarBanking.class };
         for (Class clazz : classes) {
 
             if (newType.equalsIgnoreCase(((DiscriminatorValue) clazz.getAnnotation(DiscriminatorValue.class)).value())) {
@@ -427,5 +436,41 @@ public class CalendarBean extends BaseBean<Calendar> {
             break;
         }
         return false;
+    }
+    public void addFixedDate() throws BusinessException {
+        CalendarFixed calendarFixed = (CalendarFixed) entity;
+        Date fromDate = null;
+        Date toDate = null;
+        if (timeToAdd == null || timeToAdd.split("-").length != 2) {
+            return;
+        }
+        try {
+            LocalDateTime.parse(timeToAdd.split("-")[0].trim(), DateTimeFormatter.ofPattern(FIXED_DATE_FORMAT));
+            LocalDateTime.parse(timeToAdd.split("-")[1].trim(), DateTimeFormatter.ofPattern(FIXED_DATE_FORMAT));
+
+            fromDate = new SimpleDateFormat(FIXED_DATE_FORMAT).parse(timeToAdd.split("-")[0].trim());
+            toDate = new SimpleDateFormat(FIXED_DATE_FORMAT).parse(timeToAdd.split("-")[1].trim());
+            
+            if(! calendarFixed.isValidFixedDate(new DatePeriod(fromDate, toDate))) {
+                return;
+            }
+            calendarFixed.addFixedDate(new DatePeriod(fromDate, toDate));
+        } catch (Exception ex) {
+            return;
+        }     
+        timeToAdd = null;
+    }
+
+    public void removeFixedDate(DatePeriod datePeriod) {
+        ((CalendarFixed) entity).removeFixedDate(datePeriod); 
+    }
+
+    public String getFixedDate(DatePeriod datePeriod) {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat(FIXED_DATE_FORMAT);
+            return formatter.format(datePeriod.getFrom()) + " - " + formatter.format(datePeriod.getTo());
+        } catch (Exception e) {
+            return "";
+        }
     }
 }
