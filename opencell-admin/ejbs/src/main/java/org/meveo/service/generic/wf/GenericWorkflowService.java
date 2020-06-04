@@ -104,7 +104,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
     /**
      * Execute workflow for Business Entity
-     * 
+     *
      * @param businessEntity
      * @param genericWorkflow
      * @return
@@ -123,7 +123,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
     /**
      * Execute workflow for wf instance
-     * 
+     *
      * @param workflowInstance
      * @param genericWorkflow
      * @return
@@ -141,7 +141,8 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
             if(!genericWorkflow.getTransitions().get(endIndex-1).getToStatus().equalsIgnoreCase(currentStatus)) {
                 int startIndex = IntStream.range(0, endIndex).filter(idx -> genericWorkflow.getTransitions().get(idx).getFromStatus().equals(currentStatus)).findFirst().getAsInt();
                 List<GWFTransition> listByFromStatus = genericWorkflow.getTransitions().stream().collect(Collectors.toList()).subList(startIndex, endIndex);
-                List<GWFTransition> executedTransition = new ArrayList<>();
+                List<GWFTransition> executedTransition = getExecutedTransitions(genericWorkflow, listByFromStatus);
+
                 for (GWFTransition gWFTransition : listByFromStatus) {
 
                     if (matchExpression(gWFTransition.getConditionEl(), iwfEntity) && isInSameBranch(gWFTransition, executedTransition)) {
@@ -181,6 +182,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
                         log.trace("Entity status will be updated to {}. Entity {}", workflowInstance, gWFTransition.getToStatus());
                         workflowInstance = workflowInstanceService.update(workflowInstance);
                         executedTransition.add(gWFTransition);
+
                     }
                 }
             }
@@ -191,6 +193,21 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
         }
 
         return workflowInstance;
+    }
+
+    private List<GWFTransition> getExecutedTransitions(GenericWorkflow genericWorkflow, List<GWFTransition> listByFromStatus) {
+        List<GWFTransition> executedTransition = new ArrayList<>();
+        List<GWFTransition> transitions = genericWorkflow.getTransitions();
+        transitions.removeAll(listByFromStatus);
+        List<WorkflowInstanceHistory> wfHistory = workflowInstanceHistoryService.findByGenericWorkflow(genericWorkflow);
+        for (GWFTransition transition : transitions) {
+            for (WorkflowInstanceHistory history : wfHistory) {
+                if (transition.getToStatus().equals(history.getToStatus())) {
+                    executedTransition.add(transition);
+                }
+            }
+        }
+        return executedTransition;
     }
 
     private boolean isInSameBranch(GWFTransition currentTransition, List<GWFTransition> executedTransition) {
