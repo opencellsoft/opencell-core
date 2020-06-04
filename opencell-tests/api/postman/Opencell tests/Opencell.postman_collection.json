@@ -33015,6 +33015,87 @@
 									"response": []
 								},
 								{
+									"name": "CreateOrUpdate Credit Category MISSING_PARAMETER",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "476b13fb-eea4-4014-a404-0dc609d0d6a7",
+												"exec": [
+													"pm.test(request.name + \" - Check Code\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Status\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.status).to.eql(\"FAIL\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check ErrorCode\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.errorCode).to.eql(\"MISSING_PARAMETER\");",
+													"});",
+													"",
+													"pm.test(request.name + \" - Check Message\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.message).to.eql(\"The following parameters are required or contain invalid values: code.\");",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "basic",
+											"basic": [
+												{
+													"key": "password",
+													"value": "{{opencell.password}}",
+													"type": "string"
+												},
+												{
+													"key": "username",
+													"value": "{{opencell.username}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+											},
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"description\": \"{{testDescription}}\"\r\n}",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{opencell.url}}/payment/creditCategory/createOrUpdate",
+											"host": [
+												"{{opencell.url}}"
+											],
+											"path": [
+												"payment",
+												"creditCategory",
+												"createOrUpdate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
 									"name": "Delete Credit Category SUCCESS",
 									"event": [
 										{
