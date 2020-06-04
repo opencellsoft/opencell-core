@@ -775,9 +775,6 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     }
 
     public String getDescription() {
-        if(description == null) {
-            return "";
-        }
         return description;
     }
 
