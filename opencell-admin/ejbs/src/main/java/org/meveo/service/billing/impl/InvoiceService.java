@@ -718,7 +718,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceDate = billingRun.getInvoiceDate();
             }
 
-            if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("date.range.excludeEndDate", "true"))) {
+            if (!Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
                 lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
             }
 

@@ -40,6 +40,7 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.model.tax.TaxMapping;
@@ -348,9 +349,12 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
             }
         }
 
-        log.warn("Failed to find Tax mapping with parameters {}/{}/{}/{}/{}", taxCategory.getId(), taxClass.getId(), sellersCountry.getId(), buyersCountry.getId(), applicationDate);
+        log.warn("Failed to find Tax mapping with parameters tax category={}/{}, tax class={}/{}, seller's country={}/{}, buyer's country={}/{}, date={}", taxCategory.getCode(), taxCategory.getId(), taxClass.getCode(),
+            taxClass.getId(), sellersCountry.getCode(), sellersCountry.getId(), buyersCountry.getCode(), buyersCountry.getId(), DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
 
-        throw new IncorrectChargeTemplateException("No Tax mapping matched for " + taxCategory.getId() + "/" + taxClass.getId() + "/" + sellersCountry.getId() + "/" + buyersCountry.getId() + "/" + applicationDate);
+        throw new IncorrectChargeTemplateException(
+            "No Tax mapping matched for tax category=" + taxCategory.getCode() + "/" + taxCategory.getId() + ", tax class=" + taxClass.getCode() + "/" + taxClass.getId() + ", seller's country=" + sellersCountry.getCode()
+                    + "/" + sellersCountry.getId() + ", buyer's country=" + buyersCountry.getCode() + "/" + buyersCountry.getId() + ", date=" + DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
     }
 
     /**

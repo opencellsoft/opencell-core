@@ -31,6 +31,7 @@ import javax.persistence.QueryHint;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 
 /**
  * Usage charge as part of subscribed service
@@ -118,5 +119,10 @@ public class UsageChargeInstance extends ChargeInstance {
 
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    @Override
+    public ChargeMainTypeEnum getChargeMainType() {
+        return ChargeMainTypeEnum.USAGE;
     }
 }

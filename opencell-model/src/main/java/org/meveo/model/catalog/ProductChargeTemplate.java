@@ -40,8 +40,6 @@ import javax.persistence.NamedQuery;
         @NamedQuery(name = "productChargeTemplate.getProductWithNotPricePlan", query = "from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "), })
 public class ProductChargeTemplate extends ChargeTemplate {
 
-    public static final String CHARGE_TYPE = "PRODUCT";
-
     private static final long serialVersionUID = 1L;
 
     /**
@@ -59,7 +57,7 @@ public class ProductChargeTemplate extends ChargeTemplate {
     }
 
     @Override
-    public String getChargeType() {
-        return CHARGE_TYPE;
+    public ChargeMainTypeEnum getChargeMainType() {
+        return ChargeMainTypeEnum.PRODUCT;
     }
 }
