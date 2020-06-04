@@ -483,7 +483,6 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         // Let charge template's rating script handle all the rating
         if (chargeInstance != null && chargeInstance.getChargeTemplate().getRatingScript() != null) {
-            log.debug("Will execute a rating script for charge {}", chargeInstance.getId());
 
             if (unitPriceWithoutTaxOverridden != null) {
                 bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTaxOverridden);
@@ -1176,7 +1175,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         String scriptInstanceCode = scriptInstance.getCode();
         try {
-            log.debug("Will execute priceplan script " + scriptInstanceCode);
+            if (log.isDebugEnabled()) {
+                log.debug("Will execute {} script {} for charge {}", bareWalletOperation.getPriceplan() != null ? "priceplan" : "rating", scriptInstanceCode, bareWalletOperation.getChargeInstance().getId());
+            }
 
             scriptInstanceService.executeCached(bareWalletOperation, scriptInstanceCode, null);
 

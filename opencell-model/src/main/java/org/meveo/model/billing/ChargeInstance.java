@@ -89,7 +89,14 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     /**
      * Specifies that charge does not apply to any order
      */
-    public static String NO_ORDER_NUMBER = "none";
+    public static final String NO_ORDER_NUMBER = "none";
+
+    /**
+     * Charge type (class discriminator value)
+     */
+    @Column(name = "charge_type", insertable = false, updatable = false)
+    @Size(max = 1)
+    private String chargeType;
 
     /**
      * Status
@@ -593,4 +600,18 @@ public abstract class ChargeInstance extends BusinessCFEntity {
      * @return Charge main type
      */
     public abstract ChargeMainTypeEnum getChargeMainType();
+
+    /**
+     * @return Charge type (class discriminator value)
+     */
+    public String getChargeType() {
+        return chargeType;
+    }
+
+    /**
+     * @param chargeType Charge type (class discriminator value)
+     */
+    public void setChargeType(String chargeType) {
+        this.chargeType = chargeType;
+    }
 }

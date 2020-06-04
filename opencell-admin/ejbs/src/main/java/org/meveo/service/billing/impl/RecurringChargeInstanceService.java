@@ -89,7 +89,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
     @Inject
     private CounterInstanceService counterInstanceService;
-    
+
     @EJB
     private RecurringChargeInstanceService recurringChargeInstanceServiceNewTx;
 
@@ -528,9 +528,13 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
         chargeInstance.setChargedToDate(fromDate);
+        chargeInstance.setChargeDate(fromDate);
+        chargeInstance.setNextChargeDate(fromDate);
 
-        List<Long> woIds = getEntityManager().createNamedQuery("WalletOperation.findByChargeIdFromStartDate", Long.class).setParameter("chargeInstanceId", chargeInstanceId).setParameter("fromDate", fromDate)
-            .getResultList();
+        log.info("Will reset recurring charge {} from charge/next/chargedTo:{}/{}/{} to {}", chargeInstance, DateUtils.formatAsDate(chargeInstance.getChargeDate()),
+            DateUtils.formatAsDate(chargeInstance.getNextChargeDate()), DateUtils.formatAsDate(chargeInstance.getChargedToDate()), DateUtils.formatAsDate(fromDate));
+
+        List<Long> woIds = getEntityManager().createNamedQuery("WalletOperation.findByChargeIdFromStartDate", Long.class).setParameter("chargeInstanceId", chargeInstanceId).setParameter("from", fromDate).getResultList();
 
         return walletOperationService.cancelWalletOperations(woIds);
     }
