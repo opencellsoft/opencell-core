@@ -60,6 +60,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 import org.meveo.model.tax.TaxClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +89,14 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     /**
      * Specifies that charge does not apply to any order
      */
-    public static String NO_ORDER_NUMBER = "none";
+    public static final String NO_ORDER_NUMBER = "none";
+
+    /**
+     * Charge type (class discriminator value)
+     */
+    @Column(name = "charge_type", insertable = false, updatable = false)
+    @Size(max = 1)
+    private String chargeType;
 
     /**
      * Status
@@ -230,7 +238,7 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     private List<WalletInstance> prepaidWalletInstances;
 
     /**
-     * Wallet operations srted by date
+     * Wallet operations sorted by date
      */
     @Transient
     protected List<WalletOperation> sortedWalletOperations;
@@ -584,5 +592,26 @@ public abstract class ChargeInstance extends BusinessCFEntity {
             this.counterInstances = new ArrayList<>();
         }
         this.counterInstances.add(counterInstance);
+    }
+
+    /**
+     * Get a charge main type
+     * 
+     * @return Charge main type
+     */
+    public abstract ChargeMainTypeEnum getChargeMainType();
+
+    /**
+     * @return Charge type (class discriminator value)
+     */
+    public String getChargeType() {
+        return chargeType;
+    }
+
+    /**
+     * @param chargeType Charge type (class discriminator value)
+     */
+    public void setChargeType(String chargeType) {
+        this.chargeType = chargeType;
     }
 }

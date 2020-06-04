@@ -18,39 +18,47 @@
 package org.meveo.model.billing;
 
 public enum WalletOperationStatusEnum {
-    OPEN(1, "walletOperationStatus.open"), TREATED(2, "walletOperationStatus.treated"), CANCELED(3, "walletOperationStatus.canceled"), RESERVED(4,
-            "walletOperationStatus.reserved"), TO_RERATE(5,
-                    "walletOperationStatus.to_rerate"), RERATED(6, "walletOperationStatus.rerated"), SCHEDULED(7, "walletOperationStatus.scheduled");
+    /**
+     * Wallet operation was created
+     */
+    OPEN,
 
-    private Integer id;
-    private String label;
+    /**
+     * A corresponding Rated transaction was created
+     */
+    TREATED,
 
-    private WalletOperationStatusEnum(Integer id, String label) {
-        this.id = id;
-        this.label = label;
-    }
+    /**
+     * Was canceled
+     */
+    CANCELED,
+
+    /**
+     * This is a reservation
+     */
+    RESERVED,
+
+    /**
+     * Failed to re-rate
+     */
+    F_TO_RERATE,
+
+    /**
+     * It is marked to be re-rated again
+     */
+    TO_RERATE,
+
+    /**
+     * A new version of wallet operation was created
+     */
+    RERATED,
+
+    /**
+     * It is a scheduled operation
+     */
+    SCHEDULED;
 
     public String getLabel() {
-        return label;
+        return this.getClass().getSimpleName() + "." + this.name();
     }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public static WalletOperationStatusEnum getValue(Integer id) {
-        if (id != null) {
-            for (WalletOperationStatusEnum status : values()) {
-                if (id.equals(status.getId())) {
-                    return status;
-                }
-            }
-        }
-        return null;
-    }
-
-    public String toString() {
-        return name();
-    }
-
 }

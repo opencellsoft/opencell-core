@@ -29,6 +29,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 
 /**
  * One shot charge as part of subscribed service
@@ -152,5 +153,10 @@ public class OneShotChargeInstance extends ChargeInstance {
      */
     public void setCounter(CounterInstance counter) {
         this.counter = counter;
+    }
+    
+    @Override
+    public ChargeMainTypeEnum getChargeMainType() {
+        return ChargeMainTypeEnum.ONESHOT;
     }
 }
