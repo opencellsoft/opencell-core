@@ -88,6 +88,26 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     public enum ChargeTypeEnum {
         RECURRING, USAGE, SUBSCRIPTION, TERMINATION
     }
+    
+    /**
+     * Main charge types
+     */
+    public enum ChargeMainTypeEnum {
+        /**
+         * Recurring charges
+         */
+        RECURRING,
+
+        /**
+         * One shot charges
+         */
+        ONESHOT,
+
+        /**
+         * Usage charges
+         */
+        USAGE
+    }
 
     /**
      * Operation type - Credit/Debit

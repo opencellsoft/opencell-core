@@ -278,9 +278,6 @@ public class CustomerApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add(DEFAULT_SORT_ORDER_CODE);
         }
-        if (StringUtils.isBlank(postData.getCustomerCategory())) {
-            missingParameters.add("customerCategory");
-        }
         if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle()) && StringUtils.isBlank(postData.getName().getLastName())) {
             missingParameters.add("name.lastName");
         }
