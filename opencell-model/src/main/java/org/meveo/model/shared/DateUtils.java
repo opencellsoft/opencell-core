@@ -64,6 +64,13 @@ public class DateUtils {
         return new Date(lastTime);
     }
 
+    /**
+     * Format date to a given pattern
+     * 
+     * @param value Date to format
+     * @param pattern Pattern to format to
+     * @return A date as a string
+     */
     public static String formatDateWithPattern(Date value, String pattern) {
         if (value == null) {
             return "";
@@ -78,6 +85,26 @@ public class DateUtils {
         }
 
         return result;
+    }
+
+    /**
+     * Format date to yyyy-MM-dd pattern
+     * 
+     * @param value Date to format
+     * @return Date as yyyy-MM-dd string
+     */
+    public static String formatAsDate(Date value) {
+        return formatDateWithPattern(value, DATE_PATTERN);
+    }
+
+    /**
+     * Format date to yyyy-MM-dd'T'hh:mm:ssXXX pattern
+     * 
+     * @param value Date to format
+     * @return Date as yyyy-MM-dd'T'hh:mm:ssXXX string
+     */
+    public static String formatAsTime(Date value) {
+        return formatDateWithPattern(value, DATE_TIME_PATTERN);
     }
 
     /**
@@ -744,7 +771,7 @@ public class DateUtils {
             return BigDecimal.ONE;
         }
     }
-    
+
     /**
      * Compares two dates. Handles null dates without exception
      * 

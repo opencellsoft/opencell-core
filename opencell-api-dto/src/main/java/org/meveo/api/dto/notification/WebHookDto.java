@@ -67,15 +67,26 @@ public class WebHookDto extends NotificationDto {
 
     /** The username. */
     private String username;
-    
-    /** The password. */
+
+    /**
+     * The password.
+     */
     private String password;
-    
-    /** The headers. */
+
+    /**
+     * The headers.
+     */
     private Map<String, String> headers = new HashMap<String, String>();
-    
-    /** The params. */
+
+    /**
+     * The params.
+     */
     private Map<String, String> params = new HashMap<String, String>();
+
+    /**
+     * El Expression for the body
+     */
+    private String bodyEl;
 
     /**
      * Instantiates a new web hook dto.
@@ -104,6 +115,7 @@ public class WebHookDto extends NotificationDto {
             params.putAll(webHook.getParams());
         }
         httpProtocol = webHook.getHttpProtocol();
+        bodyEl = webHook.getBodyEL();
     }
 
     /**
@@ -267,7 +279,21 @@ public class WebHookDto extends NotificationDto {
     public void setHttpProtocol(HttpProtocol httpProtocol) {
         this.httpProtocol = httpProtocol;
     }
-    
+
+    /**
+     * @return The EL expression for the body's request
+     */
+    public String getBodyEl() {
+        return bodyEl;
+    }
+
+    /**
+     * @param bodyEl The EL expression for the body's request
+     */
+    public void setBodyEl(String bodyEl) {
+        this.bodyEl = bodyEl;
+    }
+
     @Override
     public String toString() {
         return "WebhookDto [host=" + host + ", port=" + port + ", page=" + page + ", httpMethod=" + httpMethod + ", username=" + username + ", password=" + password + ", headers="

@@ -29,6 +29,8 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,7 +42,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 
@@ -717,7 +718,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceDate = billingRun.getInvoiceDate();
             }
 
-            if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("reset.lastTransactionDate", "true"))) {
+            if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("date.range.excludeEndDate", "true"))) {
                 lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
             }
 
@@ -1846,25 +1847,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new BusinessException("Invoice XML was not produced yet for invoice " + invoice.getInvoiceNumberOrTemporaryNumber());
         }
 
-        Scanner scanner = null;
         try {
-            scanner = new Scanner(xmlFile);
-            String xmlContent = scanner.useDelimiter("\\Z").next();
-            scanner.close();
-            return xmlContent;
+            return new String(Files.readAllBytes(Paths.get(xmlFileName)), StandardCharsets.UTF_8);
         } catch (Exception e) {
             log.error("Error reading invoice XML file {} contents", xmlFileName, e);
-
-        } finally {
-            if (scanner != null) {
-                try {
-                    scanner.close();
-                } catch (Exception e) {
-                    log.error("Error closing file scanner", e);
-                }
-            }
-
         }
+
         return null;
     }
 

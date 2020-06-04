@@ -3142,4 +3142,25 @@ END $$;]]>
         </addColumn>
     </changeSet>
 
+    <changeSet id="#4895_20200515" author="MohammedAmineTazi">        
+       <createSequence sequenceName="cat_fixed_date_seq"/> 
+        <createTable tableName="cat_fixed_date">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_fixed_date_pkey" />
+            </column>
+            <column name="start_date" type="datetime" >
+            	<constraints nullable="false" />
+            </column>
+         	<column name="end_date" type="datetime" >
+            	<constraints nullable="false" />
+            </column>
+            <column name="cat_calendar_id" type="bigint" >
+            	<constraints nullable="false" />
+            </column>           
+            <column name="version" type="int4" />
+        </createTable>
+        <addForeignKeyConstraint constraintName="cat_fixed_date_cat_calendar_fk" baseColumnNames="cat_calendar_id" baseTableName="cat_fixed_date" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />  
+    </changeSet>
+
 </databaseChangeLog>
