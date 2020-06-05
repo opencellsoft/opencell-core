@@ -79,9 +79,8 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         try {
             Subscription subscription = subscriptionApi.create(postData);
-            if (StringUtils.isBlank(postData.getCode())) {
-                result.setEntityCode(subscription.getCode());
-            }
+            result.setEntityCode(subscription.getCode());
+            result.setEntityId(subscription.getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -94,7 +93,9 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.update(postData);
+            Subscription subscription = subscriptionApi.update(postData);
+            result.setEntityCode(subscription.getCode());
+            result.setEntityId(subscription.getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -181,13 +182,12 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public SubscriptionsListResponseDto listGet(String userAccountCode, Boolean mergedCF, String query, String fields, Integer offset, Integer limit, String sortBy,
-            SortOrder sortOrder, CustomFieldInheritanceEnum inheritCF) {
+    public SubscriptionsListResponseDto listGet(String userAccountCode, Boolean mergedCF, String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder,
+            CustomFieldInheritanceEnum inheritCF) {
 
         SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
 
-        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering(userAccountCode != null ? "userAccount.code:" + userAccountCode : query, null, offset, limit, sortBy,
-            sortOrder);
+        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering(userAccountCode != null ? "userAccount.code:" + userAccountCode : query, null, offset, limit, sortBy, sortOrder);
 
         try {
             if (inheritCF != null) {
