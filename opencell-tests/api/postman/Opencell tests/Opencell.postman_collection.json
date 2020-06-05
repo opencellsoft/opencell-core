@@ -13989,7 +13989,7 @@
 													"    pm.expect(jsonData.actionStatus.status).to.eql(\"SUCCESS\");",
 													"});",
 													"",
-													"pm.test(request.name + \" - Code is equal \" + pm.environment.get(\"testCode\"), function () {",
+													"pm.test(request.name + \" - Code is equal \" + pm.environment.get(\"testCode\") + \"_OT\", function () {",
 													"    var jsonData = pm.response.json();",
 													"    pm.expect(jsonData.offerTemplate.code).to.eql(pm.environment.get(\"testCode\") + \"_OT\");",
 													"});",
@@ -14095,7 +14095,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"OfferTemplate with code=\" + pm.environment.get(\"testCode\") + \"_OT / Wed Jan 01 00:00:00 UTC 2020 / Sat Feb 01 00:00:00 UTC 2020 already exists.\");",
+													"    pm.expect(jsonData.message).to.eql(\"OfferTemplate with code=\" + pm.environment.get(\"testCode\") + \"_OT / Wed Jan 01 00:00:00 \"+pm.environment.get(\"timezone\")+\" 2020 / Sat Feb 01 00:00:00 \"+pm.environment.get(\"timezone\")+\" 2020 already exists.\");",
 													"});"
 												],
 												"type": "text/javascript"
