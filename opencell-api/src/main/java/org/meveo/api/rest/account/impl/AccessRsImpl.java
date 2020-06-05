@@ -49,7 +49,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accessApi.create(postData);
+            result.setEntityId(accessApi.create(postData).getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -62,7 +62,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accessApi.update(postData);
+            result.setEntityId(accessApi.update(postData).getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -75,7 +75,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
         GetAccessResponseDto result = new GetAccessResponseDto();
 
         try {
-            result.setAccess(accessApi.find(accessCode, subscriptionCode,startDate, endDate, usageDate));
+            result.setAccess(accessApi.find(accessCode, subscriptionCode, startDate, endDate, usageDate));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -142,7 +142,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            accessApi.enableOrDisable(accessCode, subscriptionCode, startDate, endDate,false);
+            accessApi.enableOrDisable(accessCode, subscriptionCode, startDate, endDate, false);
         } catch (Exception e) {
             processException(e, result);
         }

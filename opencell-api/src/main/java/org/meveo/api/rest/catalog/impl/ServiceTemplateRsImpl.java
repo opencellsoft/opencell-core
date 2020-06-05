@@ -51,7 +51,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            serviceTemplateApi.create(postData);
+            result.setEntityId(serviceTemplateApi.create(postData).getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -64,7 +64,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            serviceTemplateApi.update(postData);
+            result.setEntityId(serviceTemplateApi.update(postData).getId());
         } catch (Exception e) {
             processException(e, result);
         }

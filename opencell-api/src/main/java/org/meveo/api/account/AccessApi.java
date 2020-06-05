@@ -52,7 +52,7 @@ public class AccessApi extends BaseApi {
     @Inject
     private SubscriptionService subscriptionService;
 
-    public void create(AccessDto postData) throws MeveoApiException, BusinessException {
+    public Access create(AccessDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -94,9 +94,11 @@ public class AccessApi extends BaseApi {
 
         accessService.create(access);
 
+        return access;
+
     }
 
-    public void update(AccessDto postData) throws MeveoApiException, BusinessException {
+    public Access update(AccessDto postData) throws MeveoApiException, BusinessException {
 
         if (postData.getCode() == null) {
             missingParameters.add("code");
@@ -132,6 +134,7 @@ public class AccessApi extends BaseApi {
 
         access = accessService.update(access);
 
+        return access;
     }
 
     public AccessDto find(String accessCode, String subscriptionCode, Date startDate, Date endDate, Date usageDate) throws MeveoApiException {
@@ -143,15 +146,15 @@ public class AccessApi extends BaseApi {
             missingParameters.add("subscriptionCode");
         }
         if (StringUtils.isBlank(startDate) && StringUtils.isBlank(endDate)) {
-        	startDate = usageDate;
-        	endDate = usageDate;
+            startDate = usageDate;
+            endDate = usageDate;
         } else {
-	        if (StringUtils.isBlank(startDate)) {
-	            missingParameters.add("startDate");
-	        }
-	    	if (StringUtils.isBlank(endDate)) {
-	            missingParameters.add("endDate");
-	        }
+            if (StringUtils.isBlank(startDate)) {
+                missingParameters.add("startDate");
+            }
+            if (StringUtils.isBlank(endDate)) {
+                missingParameters.add("endDate");
+            }
         }
 
         handleMissingParameters();
