@@ -20,11 +20,14 @@ package org.meveo.api.rest;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ConfigurationDto;
+import org.meveo.api.dto.PropertiesDto;
 import org.meveo.api.dto.response.GetConfigurationResponse;
 
 /**
@@ -39,11 +42,20 @@ import org.meveo.api.dto.response.GetConfigurationResponse;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface ConfigurationRs extends IBaseRs {
 
-	/**
-	 * Converts system properties into json string.
-	 * @return system properties
-	 */
-	@GET
-	GetConfigurationResponse systemProperties();
+    /**
+     * Converts system properties into json string.
+     * 
+     * @return system properties
+     */
+    @GET
+    @Path("/properties")
+    GetConfigurationResponse getSystemProperties();
 
+    @POST
+    @Path("/")
+    ActionStatus setConfigurationProperty(ConfigurationDto configuration);
+
+    @POST
+    @Path("/properties")
+    ActionStatus setConfigurationProperty(PropertiesDto properties);
 }
