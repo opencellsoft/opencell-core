@@ -3162,12 +3162,10 @@ END $$;]]>
         <addForeignKeyConstraint constraintName="cat_fixed_date_cat_calendar_fk" baseColumnNames="cat_calendar_id" baseTableName="cat_fixed_date" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />  
     </changeSet>
-    
+
     <changeSet id="#5279_20200608_Cancellation of a billing run is impossible" author="anasseh">
         <sql>CREATE INDEX ao_inv_idx ON ${db.schema.adapted}ar_account_operation  (invoice_id)</sql>
-        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>
-        <sql>CREATE INDEX argg_taxarg_idx ON ${db.schema.adapted}billing_invoice_agregate  (tax_invoice_agregate)</sql>
-        <sql>CREATE INDEX argg_subcatarg_idx ON ${db.schema.adapted}billing_invoice_agregate  (sub_cat_invoice_agregate_id)</sql>                 
-    </changeSet>    
+        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>               
+    </changeSet>
 
 </databaseChangeLog>
