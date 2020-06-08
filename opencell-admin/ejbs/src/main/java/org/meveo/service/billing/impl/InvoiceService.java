@@ -713,8 +713,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceDate = billingRun.getInvoiceDate();
             }
 
-            if (!Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
-                lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
+            if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
+                lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
+            } else {
+            	lastTransactionDate = DateUtils.setDateToStartOfDay(lastTransactionDate);
             }
 
             // Instantiate additional RTs to reach minimum amount to invoice on service, subscription or BA level if needed
