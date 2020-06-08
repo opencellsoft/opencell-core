@@ -3027,6 +3027,11 @@ END $$;]]>
             <column name="sort_index_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#5279_20200608_Cancellation of a billing run is impossible" author="anasseh">
+        <sql>CREATE INDEX ao_inv_idx ON ${db.schema.adapted}ar_account_operation  (invoice_id)</sql>
+        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>             
+    </changeSet> 
 
 </databaseChangeLog>
 
