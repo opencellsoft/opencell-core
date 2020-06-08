@@ -279,10 +279,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             }
 
             if (endDate != null) {
-                if (!Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
-                    endDate = DateUtils.setTimeToZero(endDate);
+                if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
+                	qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate);
+                } else {
+                	qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false, false);
                 }
-                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate);
+                
             }
 
             qb.addOrderCriterionAsIs("id", true);
