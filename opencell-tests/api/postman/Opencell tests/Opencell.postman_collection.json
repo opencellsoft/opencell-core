@@ -14095,7 +14095,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"OfferTemplate with code=\" + pm.environment.get(\"testCode\") + \"_OT / Wed Jan 01 00:00:00 \"+pm.environment.get(\"timezone\")+\" 2020 / Sat Feb 01 00:00:00 \"+pm.environment.get(\"timezone\")+\" 2020 already exists.\");",
+													"    pm.expect(jsonData.message).to.contains(\"OfferTemplate with code=\" + pm.environment.get(\"testCode\") + \"_OT / Wed Jan 01\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -14175,7 +14175,7 @@
 													"",
 													"pm.test(request.name + \" - Check Message\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    pm.expect(jsonData.message).to.eql(\"OfferTemplate with code=NOT_EXIST / 01/01/2020 00:00 / 01/02/2020 00:00 does not exists.\");",
+													"    pm.expect(jsonData.message).to.contains(\"OfferTemplate with code=NOT_EXIST\");",
 													"});"
 												],
 												"type": "text/javascript"
@@ -14801,7 +14801,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/catalog/offerTemplate/{{testCode}}_OT?validFrom=2016-01-01&validTo=2016-01-01",
+											"raw": "{{opencell.url}}/catalog/offerTemplate/{{testCode}}_OT?validFrom=2020-01-01&validTo=2020-02-01",
 											"host": [
 												"{{opencell.url}}"
 											],
@@ -14813,11 +14813,11 @@
 											"query": [
 												{
 													"key": "validFrom",
-													"value": "2016-01-01"
+													"value": "2020-01-01"
 												},
 												{
 													"key": "validTo",
-													"value": "2016-01-01"
+													"value": "2020-02-01"
 												}
 											]
 										}
@@ -50752,13 +50752,12 @@
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/measurableQuantity/createOrUpdate",
+											"raw": "{{opencell.url}}/measurableQuantity",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
-												"measurableQuantity",
-												"createOrUpdate"
+												"measurableQuantity"
 											]
 										}
 									},
@@ -50832,14 +50831,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/chart/bar/createOrUpdate",
+											"raw": "{{opencell.url}}/chart/bar",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
 												"chart",
-												"bar",
-												"createOrUpdate"
+												"bar"
 											]
 										}
 									},
@@ -50913,14 +50911,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/chart/pie/createOrUpdate",
+											"raw": "{{opencell.url}}/chart/pie",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
 												"chart",
-												"pie",
-												"createOrUpdate"
+												"pie"
 											]
 										}
 									},
@@ -50994,14 +50991,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{opencell.url}}/chart/line/createOrUpdate",
+											"raw": "{{opencell.url}}/chart/line",
 											"host": [
 												"{{opencell.url}}"
 											],
 											"path": [
 												"chart",
-												"line",
-												"createOrUpdate"
+												"line"
 											]
 										}
 									},
