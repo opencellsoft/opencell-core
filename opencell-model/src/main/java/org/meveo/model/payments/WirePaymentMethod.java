@@ -35,16 +35,7 @@ public class WirePaymentMethod extends PaymentMethod {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (!(obj instanceof WirePaymentMethod)) {
-            return false;
-        }
-
-        // Only one wire payment can be as it has no extra information
-        return true;
+        return super.equals(obj);
     }
 
     @Override

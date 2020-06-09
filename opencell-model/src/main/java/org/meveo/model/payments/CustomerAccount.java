@@ -525,7 +525,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
         }
         PaymentMethod matchedPaymentMethod = null;
         for (PaymentMethod paymentMethod : getPaymentMethods()) {
-            if (paymentMethod instanceof CardPaymentMethod) {
+            if (paymentMethod.getClass() == CardPaymentMethod.class) {
                 if (((CardPaymentMethod) paymentMethod).isValidForDate(new Date()) && !paymentMethod.isDisabled()) {
                     paymentMethod.setPreferred(true);
                     matchedPaymentMethod = paymentMethod;
@@ -559,11 +559,15 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
         PaymentMethod paymentMethodMatched = null;
 
         for (PaymentMethod paymentMethod : paymentMethods) {
+            
+            if(paymentMethod.getClass().getSimpleName().contains("PaymentMethod")) {
+                return null;
+            }
 
             // Ensure that only one payment method is preferred (the first one found, or in case of CC - the first valid if currently preffered CC is expired)
             if (paymentMethod.isPreferred()) {
                 // If currently preferred payment method has expired, select a new valid card payment method if available. If not available - continue as is
-                if (paymentMethod instanceof CardPaymentMethod && !((CardPaymentMethod) paymentMethod).isValidForDate(new Date())) {
+                if (paymentMethod.getClass() == CardPaymentMethod.class && !((CardPaymentMethod) paymentMethod).isValidForDate(new Date())) {
                     paymentMethodMatched = markCurrentlyValidCardPaymentAsPreferred();
                     if (paymentMethodMatched == null) {
                         paymentMethodMatched = paymentMethod;
@@ -575,7 +579,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity {
             }
         }
 
-        if (paymentMethodMatched != null) {
+        if (paymentMethodMatched != null && !paymentMethodMatched.getClass().getSimpleName().equalsIgnoreCase("PaymentMethod")) {
             for (PaymentMethod paymentMethod : paymentMethods) {
                 if (!paymentMethod.equals(paymentMethodMatched)) {
                     paymentMethod.setPreferred(false);
