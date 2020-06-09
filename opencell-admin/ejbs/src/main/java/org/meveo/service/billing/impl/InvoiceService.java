@@ -947,6 +947,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
                         subAggregate.setRatedtransactionsToAssociate(new ArrayList<>());
                     }
+                    
+                    invoice = invoiceService.evalDueDate(invoice, rtGroup.getBillingCycle());
 
 // End of alternative 1 for 4326   
 // Start of alternative 2 for 4326       
@@ -3285,34 +3287,41 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.setPaymentMethod(paymentMethod);
         }
 
-        CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+        // Set due balance
+        invoice.setDueBalance(dueBalance.setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()));
 
+        return invoice;
+    }
+    
+    private Invoice evalDueDate(Invoice invoice, BillingCycle billingCycle) {
+    
+        BillingAccount billingAccount = invoice.getBillingAccount();
+        CustomerAccount customerAccount = invoice.getBillingAccount().getCustomerAccount();
+        Order order = invoice.getOrder();
+            
         // Determine invoice due date delay either from Order, Customer account or Billing cycle
         Integer delay = billingCycle.getDueDateDelay();
         if (order != null && !StringUtils.isBlank(order.getDueDateDelayEL())) {
             delay = evaluateDueDelayExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
-
+    
         } else if (!StringUtils.isBlank(customerAccount.getDueDateDelayEL())) {
             delay = evaluateDueDelayExpression(customerAccount.getDueDateDelayEL(), billingAccount, invoice, order);
-
+    
         } else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
             delay = evaluateDueDelayExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice, order);
         }
         if (delay == null) {
             delay = billingCycle.getDueDateDelay();
         }
-
-        Date dueDate = invoiceDate;
+    
+        Date dueDate = invoice.getInvoiceDate();
         if (delay != null) {
-            dueDate = DateUtils.addDaysToDate(invoiceDate, delay);
+            dueDate = DateUtils.addDaysToDate(invoice.getInvoiceDate(), delay);
         } else {
             throw new BusinessException("Due date delay is null");
         }
         invoice.setDueDate(dueDate);
-
-        // Set due balance
-        invoice.setDueBalance(dueBalance.setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode()));
-
+        
         return invoice;
     }
 
