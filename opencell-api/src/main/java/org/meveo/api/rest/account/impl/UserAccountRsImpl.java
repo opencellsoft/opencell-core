@@ -59,9 +59,8 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 
         try {
             UserAccount userAccount = userAccountApi.create(postData);
-            if (StringUtils.isBlank(postData.getCode())) {
-                result.setEntityCode(userAccount.getCode());
-            }
+            result.setEntityCode(userAccount.getCode());
+            result.setEntityId(userAccount.getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -74,7 +73,9 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userAccountApi.update(postData);
+            UserAccount userAccount = userAccountApi.update(postData);
+            result.setEntityCode(userAccount.getCode());
+            result.setEntityId(userAccount.getId());
         } catch (Exception e) {
             processException(e, result);
         }

@@ -15,50 +15,47 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
-package org.meveo.model.billing;
 
-public enum WalletOperationStatusEnum {
+package org.meveo.api.dto;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+
+public class PropertiesDto implements Serializable {
     /**
-     * Wallet operation was created
+     * 
      */
-    OPEN,
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * A corresponding Rated transaction was created
-     */
-    TREATED,
+    private List<PropertyDto> properties = new ArrayList<PropertyDto>();
 
-    /**
-     * Was canceled
-     */
-    CANCELED,
+    public PropertiesDto() {
 
-    /**
-     * This is a reservation
-     */
-    RESERVED,
-
-    /**
-     * Failed to re-rate
-     */
-    F_TO_RERATE,
-
-    /**
-     * It is marked to be re-rated again
-     */
-    TO_RERATE,
-
-    /**
-     * A new version of wallet operation was created
-     */
-    RERATED,
-
-    /**
-     * It is a scheduled operation
-     */
-    SCHEDULED;
-
-    public String getLabel() {
-        return this.getClass().getSimpleName() + "." + this.name();
     }
+
+    public PropertiesDto(Properties properties) {
+        Iterator<Entry<Object, Object>> it = properties.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Object, Object> pair = it.next();
+            PropertyDto property = new PropertyDto(pair.getKey(), pair.getValue());
+            this.properties.add(property);
+            it.remove();
+        }
+
+    }
+
+    public List<PropertyDto> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<PropertyDto> properties) {
+        this.properties = properties;
+    }
+
+
 }

@@ -18,12 +18,13 @@
 
 package org.meveo.api.dto.response;
 
-import org.meveo.api.dto.SellerDto;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Properties;
+
+import org.meveo.api.dto.PropertyDto;
 
 /**
  * The Class GetConfigurationResponse.
@@ -43,7 +44,7 @@ public class GetConfigurationResponse extends BaseResponse {
     /**
      * The seller.
      */
-    private Properties properties;
+    private List<PropertyDto> properties;
 
     /**
      * Instantiates a new gets the configuration response.
@@ -52,21 +53,11 @@ public class GetConfigurationResponse extends BaseResponse {
         super();
     }
 
-    /**
-     * Gets configuration as Properties
-     *
-     * @return a Properties object
-     */
-    public Properties getProperties() {
+    public List<PropertyDto> getProperties() {
         return properties;
     }
 
-    /**
-     * Sets configuration
-     *
-     * @param properties configuration properties
-     */
-    public void setProperties(Properties properties) {
+    public void setProperties(List<PropertyDto> properties) {
         this.properties = properties;
     }
 

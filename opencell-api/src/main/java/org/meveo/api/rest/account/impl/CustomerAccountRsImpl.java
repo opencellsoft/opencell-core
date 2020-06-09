@@ -61,9 +61,8 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
 
         try {
             CustomerAccount customerAccount = customerAccountApi.create(postData);
-            if (StringUtils.isBlank(postData.getCode())) {
-                result.setEntityCode(customerAccount.getCode());
-            }
+            result.setEntityCode(customerAccount.getCode());
+            result.setEntityId(customerAccount.getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -76,7 +75,9 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.update(postData);
+            CustomerAccount customerAccount = customerAccountApi.update(postData);
+            result.setEntityCode(customerAccount.getCode());
+            result.setEntityId(customerAccount.getId());
         } catch (Exception e) {
             processException(e, result);
         }

@@ -18,15 +18,18 @@
 
 package org.meveo.api;
 
+import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 
-import com.google.gson.Gson;
-
+import org.meveo.api.dto.PropertiesDto;
+import org.meveo.api.dto.PropertyDto;
 import org.meveo.commons.utils.ParamBean;
+
+import com.google.gson.Gson;
 
 /**
  * @author Wassim Drira
@@ -51,6 +54,15 @@ public class ConfigurationApi extends BaseApi {
     }
 
     @RolesAllowed(value = { "superAdministrateur" })
+    public void setProperties(List<PropertyDto> properties) {
+        ParamBean paramBean = paramBeanFactory.getInstance();
+        for (PropertyDto property : properties) {
+            paramBean.setProperty(property.getKey(), property.getValue());
+        }
+        paramBean.saveProperties();
+    }
+
+    @RolesAllowed(value = { "superAdministrateur" })
     public String getPropertiesAsJsonString() {
         ParamBean paramBean = paramBeanFactory.getInstance();
         Properties props = paramBean.getProperties();
@@ -59,9 +71,10 @@ public class ConfigurationApi extends BaseApi {
     }
 
     @RolesAllowed(value = { "superAdministrateur" })
-    public Properties getProperties() {
+    public List<PropertyDto> getProperties() {
         ParamBean paramBean = paramBeanFactory.getInstance();
-        return paramBean.getProperties();
+        PropertiesDto properties = new PropertiesDto(paramBean.getProperties());
+        return properties.getProperties();
     }
 
 }

@@ -15,50 +15,47 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
-package org.meveo.model.billing;
 
-public enum WalletOperationStatusEnum {
+package org.meveo.api.dto;
+
+import org.meveo.commons.utils.Property;
+
+public class PropertyDto extends BaseEntityDto {
     /**
-     * Wallet operation was created
+     * 
      */
-    OPEN,
+    private static final long serialVersionUID = 1L;
+    private String key;
+    private String value;
 
-    /**
-     * A corresponding Rated transaction was created
-     */
-    TREATED,
+    public PropertyDto() {
 
-    /**
-     * Was canceled
-     */
-    CANCELED,
-
-    /**
-     * This is a reservation
-     */
-    RESERVED,
-
-    /**
-     * Failed to re-rate
-     */
-    F_TO_RERATE,
-
-    /**
-     * It is marked to be re-rated again
-     */
-    TO_RERATE,
-
-    /**
-     * A new version of wallet operation was created
-     */
-    RERATED,
-
-    /**
-     * It is a scheduled operation
-     */
-    SCHEDULED;
-
-    public String getLabel() {
-        return this.getClass().getSimpleName() + "." + this.name();
     }
+
+    public PropertyDto(Object key, Object value) {
+        this.key = key.toString();
+        this.value = value.toString();
+    }
+
+    public PropertyDto(Property property) {
+        this.key = property.getKey();
+        this.value = property.getValue();
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
 }

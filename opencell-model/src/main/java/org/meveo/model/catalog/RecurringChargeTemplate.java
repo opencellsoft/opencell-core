@@ -43,17 +43,13 @@ import org.hibernate.annotations.Type;
 @DiscriminatorValue("R")
 @NamedQueries({
         @NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgNotAssociated", query = "select count(*) from RecurringChargeTemplate r where (r.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateRecurring serv) "
-                + " OR r.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null))", hints = {
-                        @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
+                + " OR r.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null))", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
 
         @NamedQuery(name = "recurringChargeTemplate.getRecurringChrgNotAssociated", query = "from RecurringChargeTemplate r where (r.id not in (select distinct serv.chargeTemplate.id from ServiceChargeTemplateRecurring serv) "
                 + " OR r.code not in (select distinct p.eventCode from  PricePlanMatrix p where p.eventCode is not null))  ") })
 public class RecurringChargeTemplate extends ChargeTemplate {
 
     private static final long serialVersionUID = -7456322224120515575L;
-
-    /** The Constant CHARGE_TYPE. */
-    public static final String CHARGE_TYPE = "RECURRING";
 
     /**
      * The recurrence type
@@ -273,8 +269,8 @@ public class RecurringChargeTemplate extends ChargeTemplate {
     }
 
     @Override
-    public String getChargeType() {
-        return CHARGE_TYPE;
+    public ChargeMainTypeEnum getChargeMainType() {
+        return ChargeMainTypeEnum.RECURRING;
     }
 
     /**

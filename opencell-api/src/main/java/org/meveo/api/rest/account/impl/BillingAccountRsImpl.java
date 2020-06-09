@@ -59,9 +59,8 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
 
         try {
             BillingAccount billingAccount = billingAccountApi.create(postData);
-            if (StringUtils.isBlank(postData.getCode())) {
-                result.setEntityCode(billingAccount.getCode());
-            }
+            result.setEntityCode(billingAccount.getCode());
+            result.setEntityId(billingAccount.getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -74,7 +73,9 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingAccountApi.update(postData);
+            BillingAccount billingAccount = billingAccountApi.update(postData);
+            result.setEntityCode(billingAccount.getCode());
+            result.setEntityId(billingAccount.getId());
         } catch (Exception e) {
             processException(e, result);
         }

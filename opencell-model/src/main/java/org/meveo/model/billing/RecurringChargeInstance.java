@@ -34,6 +34,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 
 /**
  * One shot charge as part of subscribed service
@@ -258,5 +259,10 @@ public class RecurringChargeInstance extends ChargeInstance {
         this.chargeDate = chargeDate;
         this.nextChargeDate = nextChargeDate;
         this.chargedToDate = chargedToDate;
+    }
+
+    @Override
+    public ChargeMainTypeEnum getChargeMainType() {
+        return ChargeMainTypeEnum.RECURRING;
     }
 }

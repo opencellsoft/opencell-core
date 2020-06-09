@@ -15,50 +15,27 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
-package org.meveo.model.billing;
 
-public enum WalletOperationStatusEnum {
-    /**
-     * Wallet operation was created
-     */
-    OPEN,
+package org.meveo.commons.utils;
 
-    /**
-     * A corresponding Rated transaction was created
-     */
-    TREATED,
+public class Property {
+    private String key;
+    private String value;
 
-    /**
-     * Was canceled
-     */
-    CANCELED,
-
-    /**
-     * This is a reservation
-     */
-    RESERVED,
-
-    /**
-     * Failed to re-rate
-     */
-    F_TO_RERATE,
-
-    /**
-     * It is marked to be re-rated again
-     */
-    TO_RERATE,
-
-    /**
-     * A new version of wallet operation was created
-     */
-    RERATED,
-
-    /**
-     * It is a scheduled operation
-     */
-    SCHEDULED;
-
-    public String getLabel() {
-        return this.getClass().getSimpleName() + "." + this.name();
+    public String getKey() {
+        return key;
     }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
 }

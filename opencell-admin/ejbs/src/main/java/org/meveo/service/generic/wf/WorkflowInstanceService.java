@@ -31,6 +31,7 @@ import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
@@ -117,11 +118,19 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
             }
             return listFilteredEntitiesWithoutWFInstance;
         } else {
-            String query = "From " + gwf.getTargetEntityClass()
-                    + " be where be.id " + operator  + "in (select wi.entityInstanceId from WorkflowInstance wi where wi.targetEntityClass=:entityClass)";
+            String query = "From " + gwf.getTargetEntityClass() + " be where be.id " + operator
+                    + "in (select wi.entityInstanceId from WorkflowInstance wi where wi.targetEntityClass=:entityClass)";
             params.put("entityClass", gwf.getTargetEntityClass());
 
-            return (List<BusinessEntity>) executeSelectQuery(query, params);
+            List<BusinessEntity> entities = (List<BusinessEntity>) executeSelectQuery(query, params);
+            if (gwf.getTargetEntityClass().equals(CustomEntityInstance.class.getName())) {
+                GenericWorkflow finalGwf = gwf;
+                return entities.stream().filter(entity -> {
+                    return ((CustomEntityInstance) entity).getCetCode().equals(finalGwf.getTargetCetCode());
+                }).collect(Collectors.toList());
+            } else {
+                return entities;
+            }
         }
     }
 
