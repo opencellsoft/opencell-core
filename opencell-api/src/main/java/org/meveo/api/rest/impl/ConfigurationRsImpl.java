@@ -25,14 +25,17 @@ import javax.interceptor.Interceptors;
 import org.meveo.api.ConfigurationApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.ConfigurationDto;
+import org.meveo.api.dto.PropertiesDto;
 import org.meveo.api.dto.response.GetConfigurationResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.ConfigurationRs;
 
-/** 
+/**
  * @author Edward P. Legaspi
  * @author Khalid HORRI
- * @lastModifiedVersion 7.1
+ * @author Franck VALOT
+ * @lastModifiedVersion 10
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -42,7 +45,7 @@ public class ConfigurationRsImpl extends BaseRs implements ConfigurationRs {
 	private ConfigurationApi configurationApi;
 
 	@Override
-	public GetConfigurationResponse systemProperties() {
+    public GetConfigurationResponse getSystemProperties() {
         GetConfigurationResponse result = new GetConfigurationResponse();
         try {
             result.setProperties(configurationApi.getProperties());
@@ -52,5 +55,27 @@ public class ConfigurationRsImpl extends BaseRs implements ConfigurationRs {
 
         return result;
 	}
+
+    @Override
+    public ActionStatus setConfigurationProperty(ConfigurationDto configuration) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            configurationApi.setProperty(configuration.getProperty(), configuration.getValue());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus setConfigurationProperty(PropertiesDto properties) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            configurationApi.setProperties(properties.getProperties());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
 
 }

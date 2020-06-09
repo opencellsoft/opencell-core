@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.CreditCategoryDto;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
@@ -68,10 +69,19 @@ public class CreditCategoryApi extends BaseApi {
 	}
 
 	public CreditCategory create(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
-		CreditCategory creditCategory = dtoToEntity(postData, null);
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParameters();
+
+        if (creditCategoryService.findByCode(postData.getCode()) != null) {
+            throw new EntityAlreadyExistsException(CreditCategory.class, postData.getCode());
+        }
+
+        CreditCategory creditCategory = dtoToEntity(postData, null);
 		creditCategoryService.create(creditCategory);
 
-		handleMissingParameters();
 		return creditCategory;
 	}
 
@@ -82,7 +92,7 @@ public class CreditCategoryApi extends BaseApi {
 
 		CreditCategory creditCategory = creditCategoryService.findByCode(postData.getCode());
 		if (creditCategory == null) {
-			throw new EntityDoesNotExistsException(CreditCategory.class, postData.getCode());
+            throw new EntityDoesNotExistsException(CreditCategory.class, postData.getCode());
 		}
 
 		creditCategory = dtoToEntity(postData, creditCategory);

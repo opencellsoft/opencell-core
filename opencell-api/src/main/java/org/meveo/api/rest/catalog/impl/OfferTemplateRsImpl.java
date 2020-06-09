@@ -58,9 +58,8 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
         try {
             OfferTemplate offerTemplate = offerTemplateApi.create(postData);
-            if (StringUtils.isBlank(postData.getCode())) {
-                result.setEntityCode(offerTemplate.getCode());
-            }
+            result.setEntityCode(offerTemplate.getCode());
+            result.setEntityId(offerTemplate.getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -73,7 +72,9 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateApi.update(postData);
+            OfferTemplate offerTemplate = offerTemplateApi.update(postData);
+            result.setEntityCode(offerTemplate.getCode());
+            result.setEntityId(offerTemplate.getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -82,13 +83,13 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
     }
 
     @Override
-    public GetOfferTemplateResponseDto find(String offerTemplateCode, Date validFrom, Date validTo, CustomFieldInheritanceEnum inheritCF, boolean loadOfferServiceTemplate,
-            boolean loadOfferProductTemplate, boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan) {
+    public GetOfferTemplateResponseDto find(String offerTemplateCode, Date validFrom, Date validTo, CustomFieldInheritanceEnum inheritCF, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
+            boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan) {
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo, inheritCF, loadOfferServiceTemplate, loadOfferProductTemplate,
-                loadServiceChargeTemplate, loadProductChargeTemplate, loadAllowedDiscountPlan));
+            result.setOfferTemplate(
+                offerTemplateApi.find(offerTemplateCode, validFrom, validTo, inheritCF, loadOfferServiceTemplate, loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate, loadAllowedDiscountPlan));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -97,8 +98,8 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
     }
 
     @Override
-    public GetListOfferTemplateResponseDto listGet(@Deprecated String code, @Deprecated @RestDateParam Date validFrom, @Deprecated @RestDateParam Date validTo, String query,
-            String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder, CustomFieldInheritanceEnum inheritCF) {
+    public GetListOfferTemplateResponseDto listGet(@Deprecated String code, @Deprecated @RestDateParam Date validFrom, @Deprecated @RestDateParam Date validTo, String query, String fields, Integer offset, Integer limit,
+            String sortBy, SortOrder sortOrder, CustomFieldInheritanceEnum inheritCF) {
 
         GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto();
 
