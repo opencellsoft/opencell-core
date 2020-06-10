@@ -99,7 +99,7 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
     }
 
     @Override
-    public void setCfValues(CustomFieldValues cfValues) {
+    public void updateCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
     }
 

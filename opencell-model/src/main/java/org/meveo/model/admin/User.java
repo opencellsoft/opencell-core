@@ -359,7 +359,7 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
     }
 
     @Override
-    public void setCfValues(CustomFieldValues cfValues) {
+    public void updateCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
     }
 
