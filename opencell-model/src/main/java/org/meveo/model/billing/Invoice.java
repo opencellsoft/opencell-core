@@ -782,7 +782,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     }
 
     @Override
-    public void setCfValues(CustomFieldValues cfValues) {
+    public void updateCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
     }
 
