@@ -22,6 +22,7 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.enterprise.context.RequestScoped;
@@ -35,6 +36,9 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 
+import org.hibernate.event.service.spi.EventListenerRegistry;
+import org.hibernate.event.spi.EventType;
+import org.hibernate.internal.SessionFactoryImpl;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
@@ -65,6 +69,16 @@ public class EntityManagerProvider {
     private Cache<String, EntityManagerFactory> entityManagerFactories;
 
     private static boolean isMultiTenancyEnabled = ParamBean.isMultitenancyEnabled();
+    
+
+    
+    /*  
+    @PostConstruct
+    protected void init() {
+        SessionFactoryImpl sessionFactory = emf.unwrap(SessionFactoryImpl.class);
+        EventListenerRegistry registry = sessionFactory.getServiceRegistry().getService(EventListenerRegistry.class);
+        registry.getEventListenerGroup(EventType.POST_UPDATE).appendListener(listener);
+    }*/
 
     /**
      * Instantiates an Entity manager for use CDI injection. Will consider a tenant that currently connected user belongs to.
