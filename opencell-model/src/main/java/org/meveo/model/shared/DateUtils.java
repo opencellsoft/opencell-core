@@ -17,13 +17,18 @@
  */
 package org.meveo.model.shared;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +40,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.DatePeriod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +51,6 @@ import org.slf4j.LoggerFactory;
  * @lastModifiedVersion 5.2
  */
 public class DateUtils {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DateUtils.class);
 
     private static long lastTime = System.currentTimeMillis() / 1000;
 
@@ -136,20 +140,63 @@ public class DateUtils {
         return gc.getTime();
     }
 
+    /**
+     * Parse date. Will consider formats in the following order: number of miliseconds, "yyyy-MM-dd'T'hh:mm:ssXXX", meveo.dateTimeFormat configuration value, "yyyy-MM-dd",
+     * meveo.dateFormat configuration value
+     *
+     * @param dateValue The date/timestamp as a number of miliseconds or a date/tiestamp string to parse
+     * @return Date object
+     */
+    public static Date parseDate(Object dateValue) {
+        if (dateValue instanceof Number) {
+            return new Date(((Number) dateValue).longValue());
+
+        } else if (dateValue instanceof String) {
+            String[] datePatterns = new String[] { DateUtils.DATE_TIME_PATTERN, ParamBean.getInstance().getDateTimeFormat(), DateUtils.DATE_PATTERN, ParamBean.getInstance().getDateFormat() };
+            return parseDate((String) dateValue, datePatterns);
+        }
+        return null;
+    }
+
+    /**
+     * Parse date
+     *
+     * @param dateValue The date/timestamp string to parse
+     * @param datePatterns Date patterns to consider for a date string
+     * @return Date object
+     */
+    public static Date parseDate(String dateValue, String[] datePatterns) {
+        if (datePatterns != null) {
+            for (String datePattern : datePatterns) {
+                Date date = parseDateWithPattern(dateValue, datePattern);
+                if (date != null) {
+                    return date;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Parse date with a given pattern
+     * 
+     * @param dateValue The date/timestamp string to parse
+     * @param pattern Date pattern to use for parsing
+     * @return Date object
+     */
     public static Date parseDateWithPattern(String dateValue, String pattern) {
-        if (dateValue == null || dateValue.trim().length() == 0) {
+        if (StringUtils.isBlank(dateValue)) {
             return null;
         }
-        Date result = null;
 
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        // sdf.setLenient(false);
 
         try {
-            result = sdf.parse(dateValue);
+            return sdf.parse(dateValue);
         } catch (Exception e) {
-            result = null;
+            return null;
         }
-        return result;
     }
 
     public static boolean isDateTimeWithinPeriod(Date date, Date periodStart, Date periodEnd) {
@@ -690,7 +737,77 @@ public class DateUtils {
         } else {
             return null;
         }
+    }
 
+    /**
+     * Normalize overlapping date periods. Split into smaller non-overlapping periods based on priority.
+     * 
+     * @param periods Date periods to normalize
+     * @return A list of non-overlapping date periods
+     */
+    public static List<DatePeriodSplit> normalizeOverlapingDatePeriods(DatePeriodSplit... periods) {
+
+        // Sort by priority and then period in ascending order
+        Arrays.sort(periods);
+
+        List<DatePeriodSplit> normalizedPeriods = new ArrayList<>();
+
+        for (int i = 0; i < periods.length; i++) {
+            DatePeriodSplit overlappingPeriod = periods[i];
+
+            Date nextDate = overlappingPeriod.period.getFrom();
+            overlapLoop: while (nextDate != null && (overlappingPeriod.period.getTo() == null || nextDate.before(overlappingPeriod.period.getTo()))) {
+
+                Date periodStart = nextDate;
+                Date periodEnd = overlappingPeriod.period.getTo();
+                boolean foundUnoverlappedSpace = false;
+
+                normalizedLoop: for (DatePeriodSplit normalizedPeriod : normalizedPeriods) {
+
+                    // if (!isPeriodsOverlap(overlappingPeriod.period.getFrom(), overlappingPeriod.period.getTo(), normalizedPeriod.getPeriod().getFrom(),
+                    // normalizedPeriod.getPeriod().getTo())) {
+                    // continue;
+                    // }
+
+                    Date normFrom = normalizedPeriod.getPeriod().getFrom();
+                    Date normTo = normalizedPeriod.getPeriod().getTo();
+
+                    // periodStart < normFrom < periodEnd
+                    // Handles case when period starts earlier than the normalized period. Will result in matching of the beginning of the period.
+                    // E.g. matching period 1-10 to a normalized period 3-12. Will result in match of the beginning: 1-3
+                    if (periodStart.before(normFrom) && (periodEnd == null || periodEnd.after(normFrom))) {
+                        periodEnd = normFrom;
+                        foundUnoverlappedSpace = true;
+
+                        // periodEnd <= normTo
+                        // Handles case when period ends within the normalized period.
+                        // E.g. matching period xx-10 to a normalized period xx-12. Will result in termination of matching.
+                        // In case, start of period was matched earlier (see IF above), it will be saved, otherwise will skip to a next period to match
+                    } else if (normTo == null || (periodEnd == null && normTo == null) || (periodEnd != null && periodEnd.compareTo(normTo) <= 0)) {
+                        if (foundUnoverlappedSpace) {
+                            break normalizedLoop;
+                        } else {
+                            break overlapLoop;
+                        }
+
+                        // periodStart < normTo Still falls in the period
+                        // Handles case when period starts within the normalized period. Will advance to the normalized period end.
+                        // E.g. matching period 1-20 to a normalized period 1-12. Will advance start date to 12
+                    } else if (normTo == null || periodStart.before(normTo)) {
+                        periodStart = normTo;
+                    }
+                }
+
+                normalizedPeriods.add(new DatePeriodSplit(new DatePeriod(periodStart, periodEnd), overlappingPeriod.getPriority(), overlappingPeriod.getValue()));
+                normalizedPeriods.sort(Comparator.comparing(DatePeriodSplit::getPeriod));
+
+                nextDate = periodEnd;
+            }
+        }
+
+        normalizedPeriods.sort(Comparator.comparing(DatePeriodSplit::getPeriod));
+
+        return normalizedPeriods;
     }
 
     /**
@@ -724,7 +841,8 @@ public class DateUtils {
             cal.set(Calendar.MILLISECOND, 0);
             return cal.getTime();
         } catch (Exception e) {
-            LOG.error(" error on truncateTime : [{}] ", e.getMessage());
+            Logger log = LoggerFactory.getLogger(DateUtils.class);
+            log.error(" error on truncateTime : [{}] ", e.getMessage());
             return date;
         }
     }
@@ -739,7 +857,8 @@ public class DateUtils {
             return formatDateWithPattern(date, toFormat);
 
         } catch (Exception e) {
-            LOG.error(" error on changeFormat : [{}] ", e.getMessage());
+            Logger log = LoggerFactory.getLogger(DateUtils.class);
+            log.error(" error on changeFormat : [{}] ", e.getMessage());
             return dateValue;
         }
     }
@@ -793,4 +912,106 @@ public class DateUtils {
 
         return 0;
     }
+
+    /**
+     * Used to normalize overlapping date periods holding some value into smaller non-overlapping periods by priority. Priority can either be a string or an integer. <br/>
+     * It must be of same data type across all the periods to normalize
+     */
+    public static class DatePeriodSplit implements Serializable, Comparable<DatePeriodSplit> {
+
+        private static final long serialVersionUID = 8310815516122393994L;
+
+        /**
+         * Date period
+         */
+        DatePeriod period;
+
+        /**
+         * Priority as string
+         */
+        String priority;
+
+        /**
+         * Priority as integer
+         */
+        int priorityInt;
+
+        /**
+         * Value
+         */
+        Object value;
+
+        /**
+         * Constructor
+         * 
+         * @param period Date period
+         * @param priority Priority as string
+         * @param value Value
+         */
+        public DatePeriodSplit(DatePeriod period, String priority, Object value) {
+            super();
+            this.period = period;
+            this.priority = priority;
+            this.value = value;
+        }
+
+        /**
+         * Constructor
+         * 
+         * @param period Date period
+         * @param priorityInt Priority as integer
+         * @param value Value
+         */
+        public DatePeriodSplit(DatePeriod period, int priorityInt, Object value) {
+            super();
+            this.period = period;
+            this.priorityInt = priorityInt;
+            this.value = value;
+        }
+
+        /**
+         * @return Date period
+         */
+        public DatePeriod getPeriod() {
+            return period;
+        }
+
+        /**
+         * @return Priority as String
+         */
+        public String getPriority() {
+            return priority;
+        }
+
+        /**
+         * @return Priority as integer
+         */
+        public int getPriorityInt() {
+            return priorityInt;
+        }
+
+        /**
+         * @return Value
+         */
+        public Object getValue() {
+            return value;
+        }
+
+        @Override
+        public int compareTo(DatePeriodSplit other) {
+
+            // Sort by priority and then period in ascending order
+            int priorityCompare = priority != null ? priority.compareTo(other.getPriority()) : priorityInt - other.getPriorityInt();
+            if (priorityCompare == 0) {
+                return period.compareTo(other.getPeriod());
+            }
+            return priorityCompare;
+        }
+
+        @Override
+        public String toString() {
+            return period.toString(DateUtils.DATE_TIME_PATTERN) + " - " + (priority != null ? priority : priorityInt) + " - " + value;
+        }
+    }
+
 }
