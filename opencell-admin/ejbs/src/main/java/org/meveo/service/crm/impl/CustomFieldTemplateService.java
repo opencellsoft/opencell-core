@@ -185,12 +185,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return A list of custom field templates mapped by a template key
      */
     public Map<String, CustomFieldTemplate> findByReferencedEntityNoCache(String referencedEntity) {
-
-        List<CustomFieldTemplate> values = getEntityManager().createNamedQuery("CustomFieldTemplate.getReferencedCFTByEntity", CustomFieldTemplate.class)
-            .setParameter("referencedEntity", referencedEntity).getResultList();
-
-        Map<String, CustomFieldTemplate> cftMap = values.stream().collect(Collectors.toMap(cft -> cft.getCode(), cft -> cft));
-
+    	Map<String, CustomFieldTemplate> cftMap = new TreeMap<>();
+    	if(referencedEntity!=null) {
+	        List<CustomFieldTemplate> values = getEntityManager().createNamedQuery("CustomFieldTemplate.getReferencedCFTByEntity", CustomFieldTemplate.class)
+	            .setParameter("referencedEntity", referencedEntity.toUpperCase()).getResultList();
+	        cftMap = values.stream().collect(Collectors.toMap(cft -> cft.getAppliesTo() + cft.getCode(), cft -> cft));
+    	}
         return cftMap;
     }
 
