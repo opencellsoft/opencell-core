@@ -18,6 +18,10 @@
 
 package org.meveo.api.rest.custom.impl;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.meveo.api.custom.CustomTableApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -28,10 +32,6 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.custom.CustomTableRs;
 import org.meveo.api.rest.impl.BaseRs;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
 /**
  * Rest API implementation for custom table data management
@@ -48,7 +48,7 @@ public class CustomTableRsImpl extends BaseRs implements CustomTableRs {
     @Override
     public ActionStatus append(CustomTableDataDto dto) {
 
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
 
@@ -64,7 +64,7 @@ public class CustomTableRsImpl extends BaseRs implements CustomTableRs {
     @Override
     public ActionStatus update(CustomTableDataDto dto) {
 
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
 
@@ -80,11 +80,11 @@ public class CustomTableRsImpl extends BaseRs implements CustomTableRs {
     @Override
     public ActionStatus remove(CustomTableDataDto dto) {
 
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
-
-            customTableApi.remove(dto);
+            int nrDeleted = customTableApi.remove(dto);
+            result.setNrAffected(nrDeleted);
 
         } catch (Exception e) {
             processException(e, result);
@@ -113,7 +113,7 @@ public class CustomTableRsImpl extends BaseRs implements CustomTableRs {
     @Override
     public ActionStatus createOrUpdate(CustomTableDataDto dto) {
 
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
 
@@ -129,7 +129,7 @@ public class CustomTableRsImpl extends BaseRs implements CustomTableRs {
     @Override
     public ActionStatus enable(CustomTableDataDto dto) {
 
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customTableApi.enableDisable(dto, true);
@@ -144,7 +144,7 @@ public class CustomTableRsImpl extends BaseRs implements CustomTableRs {
     @Override
     public ActionStatus disable(CustomTableDataDto dto) {
 
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customTableApi.enableDisable(dto, false);
@@ -166,6 +166,21 @@ public class CustomTableRsImpl extends BaseRs implements CustomTableRs {
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus remove(String customTableCode, PagingAndFiltering pagingAndFiltering) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            int nrDeleted = customTableApi.remove(customTableCode, pagingAndFiltering);
+            result.setNrAffected(nrDeleted);
+
+        } catch (Exception e) {
+            processException(e, result);
         }
 
         return result;

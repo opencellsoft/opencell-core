@@ -1171,6 +1171,9 @@ public abstract class BaseApi {
 				pagingAndFiltering.setLimit(limit);
 			}
 		}
+		
+
+		fetchFields = fetchFields!=null? fetchFields: pagingAndFiltering.getFields() != null ? Arrays.asList(pagingAndFiltering.getFields().split(",")) : null;
         return new PaginationConfiguration(pagingAndFiltering != null ? pagingAndFiltering.getOffset() : null, limit, pagingAndFiltering != null ? pagingAndFiltering.getFilters() : null,
             pagingAndFiltering != null ? pagingAndFiltering.getFullTextFilter() : null, fetchFields, pagingAndFiltering != null && pagingAndFiltering.getSortBy() != null ? pagingAndFiltering.getSortBy() : defaultSortBy,
             pagingAndFiltering != null && pagingAndFiltering.getSortOrder() != null ? SortOrder.valueOf(pagingAndFiltering.getSortOrder().name()) : defaultSortOrder);
