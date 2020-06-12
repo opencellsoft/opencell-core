@@ -2,7 +2,9 @@ package org.meveo.service.billing.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
+import javax.ejb.AccessTimeout;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -68,10 +70,10 @@ public class ServiceSingleton {
     private Provider appProvider;
 
     @Inject
-    private SellerService sellerService;
-
-    @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
+    
+    @Inject
+    private SellerService sellerService;
 
     @Inject
     private Logger log;
@@ -110,7 +112,11 @@ public class ServiceSingleton {
      *         numberOfInvoices value
      * @throws BusinessException business exception
      */
-    private InvoiceSequence incrementInvoiceNumberSequence(Date invoiceDate, InvoiceType invoiceType, Seller seller, String cfName, long incrementBy) throws BusinessException {
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @AccessTimeout(value = 30, unit=TimeUnit.SECONDS)
+    public InvoiceSequence incrementInvoiceNumberSequence(Date invoiceDate, InvoiceType invoiceType, Seller seller, String cfName, long incrementBy) throws BusinessException {
         Long currentNbFromCF = null;
         Long previousInvoiceNb = null;
 
@@ -166,7 +172,6 @@ public class ServiceSingleton {
 
         // As previousInVoiceNb is a transient value, set it after the update is called
         sequence.setPreviousInvoiceNb(previousInvoiceNb);
-
         return sequence;
     }
 
@@ -310,6 +315,7 @@ public class ServiceSingleton {
      */
     @Lock(LockType.WRITE)
     @JpaAmpNewTx
+    @AccessTimeout(value = 30, unit=TimeUnit.SECONDS)
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice assignInvoiceNumberVirtual(Invoice invoice) throws BusinessException {
         return assignInvoiceNumber(invoice, false);
@@ -322,6 +328,7 @@ public class ServiceSingleton {
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @AccessTimeout(value = 30, unit=TimeUnit.SECONDS)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice assignInvoiceNumber(Invoice invoice) throws BusinessException {
@@ -386,7 +393,6 @@ public class ServiceSingleton {
         }
         return invoice;
     }
-
     /**
      * Returns {@link InvoiceTypeSellerSequence} from the nearest parent.
      * 
@@ -403,4 +409,7 @@ public class ServiceSingleton {
 
         return sequence;
     }
+
+
+
 }
