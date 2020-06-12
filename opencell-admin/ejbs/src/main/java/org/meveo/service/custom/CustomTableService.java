@@ -247,6 +247,9 @@ public class CustomTableService extends NativePersistenceService {
 
     @Override
     public int remove(String tableName, Set<Long> ids) throws BusinessException {
+        if (ids == null || ids.isEmpty()) {
+            return 0;
+        }
         int nrDeleted = super.remove(tableName, ids);
         elasticClient.remove(CustomTableRecord.class, tableName, ids, true);
         return nrDeleted;
