@@ -269,7 +269,7 @@
                                     <hftl:decorateFormField label="#{messages['chargeTemplate.type']}">
                                         <h:outputText value="#{wallet.value.walletTemplate.walletType}" />
                                     </hftl:decorateFormField>
-                                    <p:fieldset legend="#{messages['walletOperationStatus.open']}" styleClass="clearLeft" style="width: 25%; float:left;">
+                                    <p:fieldset legend="#{messages['WalletOperationStatusEnum.OPEN']}" styleClass="clearLeft" style="width: 25%; float:left;">
                                         <hftl:decorateFormField label="#{messages['pricePlanMatrix.amountWithoutTax']}" displayOneLine="true" componentWidth="100" labelWidth="70" newLine="true">
                                             <h:outputText value="#{userAccountBean.getOpenBalanceWithoutTax(wallet.value)}" />
                                         </hftl:decorateFormField>
@@ -277,7 +277,7 @@
                                             <h:outputText value="#{userAccountBean.getOpenBalanceWithTax(wallet.value)}" />
                                         </hftl:decorateFormField>
                                     </p:fieldset>
-                                    <p:fieldset legend="#{messages['walletOperationStatus.reserved']}" style="width: 25%; float:left;">
+                                    <p:fieldset legend="#{messages['WalletOperationStatusEnum.RESERVED']}" style="width: 25%; float:left;">
                                         <hftl:decorateFormField label="#{messages['pricePlanMatrix.amountWithoutTax']}" displayOneLine="true" componentWidth="100" labelWidth="70" newLine="true">
                                             <h:outputText value="#{userAccountBean.getReservedBalanceWithoutTax(wallet.value)}" />
                                         </hftl:decorateFormField>
@@ -285,7 +285,7 @@
                                             <h:outputText value="#{userAccountBean.getReservedBalanceWithTax(wallet.value)}" />
                                         </hftl:decorateFormField>
                                     </p:fieldset>
-                                    <p:fieldset legend="#{messages['walletOperationStatus.current']}" style="width: 25%; float:left;">
+                                    <p:fieldset legend="#{messages['WalletOperationStatusEnum.current']}" style="width: 25%; float:left;">
                                         <hftl:decorateFormField label="#{messages['pricePlanMatrix.amountWithoutTax']}" displayOneLine="true" componentWidth="100" labelWidth="70" newLine="true">
                                             <h:outputText value="#{userAccountBean.getCurrentBalanceWithoutTax(wallet.value)}" />
                                         </hftl:decorateFormField>
