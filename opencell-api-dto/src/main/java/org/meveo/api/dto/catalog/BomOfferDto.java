@@ -19,6 +19,7 @@
 package org.meveo.api.dto.catalog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -31,6 +32,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.api.dto.account.CustomerCategoryDto;
+import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 
 /**
@@ -48,21 +52,21 @@ public class BomOfferDto extends BaseEntityDto {
     /** The bom code. */
     @NotNull
     @XmlAttribute(required = true)
-    private String bomCode;
+    private java.lang.String bomCode;
 
     /** The code. */
     @NotNull
     @XmlAttribute(required = true)
-    private String code;
+    private java.lang.String code;
 
     /** The name. */
     @NotNull
     @XmlAttribute(required = true)
-    private String name;
+    private java.lang.String name;
 
     /** The description. */
     @XmlAttribute
-    private String description;
+    private java.lang.String description;
 
     /** The custom fields. */
     @XmlElementWrapper(name = "parameters")
@@ -71,7 +75,7 @@ public class BomOfferDto extends BaseEntityDto {
 
     /** The prefix. */
     @Deprecated
-    private String prefix;
+    private java.lang.String prefix;
 
     /** The services to activate. */
     @XmlElementWrapper(name = "servicesToActivate")
@@ -97,17 +101,45 @@ public class BomOfferDto extends BaseEntityDto {
     private List<OfferTemplateCategoryDto> offerTemplateCategories;
 
     /** The image base64 encoding string. */
-    private String imageBase64;
+    private java.lang.String imageBase64;
     
     /** The image path. */
-    private String imagePath;
+    private java.lang.String imagePath;
+
+    /** The valid from. */
+    @XmlAttribute()
+    protected Date validFrom;
+
+    /** The valid to. */
+    @XmlAttribute()
+    protected Date validTo;
+
+    /** The renewal rule. */
+    private SubscriptionRenewalDto renewalRule;
+
+    /** The long description. */
+    protected java.lang.String longDescription;
+
+    /** The long descriptions translated. */
+    protected List<LanguageDescriptionDto> longDescriptionsTranslated;
+
+    /** The channels. */
+    @XmlElementWrapper(name = "channels")
+    private List<String> channels;
+
+    /** The sellers. */
+    @XmlElementWrapper(name = "sellers")
+    private List<String> sellers;
+
+    @XmlElementWrapper(name = "customerCategories")
+    private List<String> customerCategories;
 
     /**
      * Gets the bom code.
      *
      * @return the bom code
      */
-    public String getBomCode() {
+    public java.lang.String getBomCode() {
         return bomCode;
     }
 
@@ -116,7 +148,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param bomCode the new bom code
      */
-    public void setBomCode(String bomCode) {
+    public void setBomCode(java.lang.String bomCode) {
         this.bomCode = bomCode;
     }
 
@@ -125,7 +157,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the prefix
      */
-    public String getPrefix() {
+    public java.lang.String getPrefix() {
         return prefix;
     }
 
@@ -134,7 +166,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param prefix the new prefix
      */
-    public void setPrefix(String prefix) {
+    public void setPrefix(java.lang.String prefix) {
         this.prefix = prefix;
     }
 
@@ -143,7 +175,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the description
      */
-    public String getDescription() {
+    public java.lang.String getDescription() {
         return description;
     }
 
@@ -152,7 +184,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param description the new description
      */
-    public void setDescription(String description) {
+    public void setDescription(java.lang.String description) {
         this.description = description;
     }
 
@@ -197,7 +229,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the code
      */
-    public String getCode() {
+    public java.lang.String getCode() {
         return code;
     }
 
@@ -206,7 +238,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param code the new code
      */
-    public void setCode(String code) {
+    public void setCode(java.lang.String code) {
         this.code = code;
     }
 
@@ -215,7 +247,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the name
      */
-    public String getName() {
+    public java.lang.String getName() {
         return name;
     }
 
@@ -224,7 +256,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param name the new name
      */
-    public void setName(String name) {
+    public void setName(java.lang.String name) {
         this.name = name;
     }
 
@@ -306,7 +338,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the image Base64 encoding string
      */
-    public String getImageBase64() {
+    public java.lang.String getImageBase64() {
         return imageBase64;
     }
     
@@ -315,7 +347,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param imageBase64 the image Base64 encoding string
      */
-    public void setImageBase64(String imageBase64) {
+    public void setImageBase64(java.lang.String imageBase64) {
         this.imageBase64 = imageBase64;
     }
     
@@ -324,7 +356,7 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @return the image path
      */
-    public String getImagePath() {
+    public java.lang.String getImagePath() {
         return imagePath;
     }
 
@@ -333,12 +365,127 @@ public class BomOfferDto extends BaseEntityDto {
      *
      * @param imagePath the new image path
      */
-    public void setImagePath(String imagePath) {
+    public void setImagePath(java.lang.String imagePath) {
         this.imagePath = imagePath;
     }
 
+    public Date getValidFrom() {
+        return validFrom;
+    }
+
+    public void setValidFrom(Date validFrom) {
+        this.validFrom = validFrom;
+    }
+
+    public Date getValidTo() {
+        return validTo;
+    }
+
+    public void setValidTo(Date validTo) {
+        this.validTo = validTo;
+    }
+
+    /**
+     * Gets the channels.
+     *
+     * @return the channels
+     */
+    public List<java.lang.String> getChannels() {
+        return channels;
+    }
+
+    /**
+     * Sets the channels.
+     *
+     * @param channels the new channels
+     */
+    public void setChannels(List<java.lang.String> channels) {
+        this.channels = channels;
+    }
+
+
+    /**
+     * Gets the long description.
+     *
+     * @return the long description
+     */
+    public java.lang.String getLongDescription() {
+        return longDescription;
+    }
+
+    /**
+     * Sets the long description.
+     *
+     * @param longDescription the new long description
+     */
+    public void setLongDescription(java.lang.String longDescription) {
+        this.longDescription = longDescription;
+    }
+
+    /**
+     * Gets the long descriptions translated.
+     *
+     * @return the long descriptions translated
+     */
+    public List<LanguageDescriptionDto> getLongDescriptionsTranslated() {
+        return longDescriptionsTranslated;
+    }
+
+    /**
+     * Sets the long descriptions translated.
+     *
+     * @param longDescriptionsTranslated the new long descriptions translated
+     */
+    public void setLongDescriptionsTranslated(List<LanguageDescriptionDto> longDescriptionsTranslated) {
+        this.longDescriptionsTranslated = longDescriptionsTranslated;
+    }
+
+    /**
+     * Gets the renewal rule.
+     *
+     * @return the renewal rule
+     */
+    public SubscriptionRenewalDto getRenewalRule() {
+        return renewalRule;
+    }
+
+    /**
+     * Sets the renewal rule.
+     *
+     * @param renewalRule the new renewal rule
+     */
+    public void setRenewalRule(SubscriptionRenewalDto renewalRule) {
+        this.renewalRule = renewalRule;
+    }
+
+    /**
+     * Gets the sellers.
+     *
+     * @return the sellers
+     */
+    public List<java.lang.String> getSellers() {
+        return sellers;
+    }
+
+    /**
+     * Sets the sellers.
+     *
+     * @param sellers the new sellers
+     */
+    public void setSellers(List<java.lang.String> sellers) {
+        this.sellers = sellers;
+    }
+
+    public List<String> getCustomerCategories() {
+        return customerCategories;
+    }
+
+    public void setCustomerCategories(List<String> customerCategories) {
+        this.customerCategories = customerCategories;
+    }
+
     @Override
-    public String toString() {
+    public java.lang.String toString() {
         return "BomOfferDto [bomCode=" + bomCode + ", code=" + code + ", name=" + name + ", description=" + description + ", customFields=" + customFields + ", prefix=" + prefix
                 + ", servicesToActivate=" + servicesToActivate + ", productsToActivate=" + productsToActivate + ", businessServiceModels=" + businessServiceModels
                 + ", lifeCycleStatusEnum=" + lifeCycleStatusEnum + ", offerTemplateCategories=" + offerTemplateCategories + "]";
