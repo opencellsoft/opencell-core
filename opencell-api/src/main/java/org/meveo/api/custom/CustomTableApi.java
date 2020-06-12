@@ -294,6 +294,7 @@ public class CustomTableApi extends BaseApi {
      * @throws InvalidParameterException Invalid parameters passed
      * @throws ValidationException
      */
+    @SuppressWarnings("unchecked")
     public int remove(String customTableCode, PagingAndFiltering pagingAndFiltering) throws MissingParameterException, EntityDoesNotExistsException, InvalidParameterException, ValidationException {
 
         validateParams("customTableCode", customTableCode);
@@ -307,7 +308,9 @@ public class CustomTableApi extends BaseApi {
         PaginationConfiguration paginationConfig = toPaginationConfiguration(FIELD_ID, SortOrder.ASCENDING, Arrays.asList("id"), pagingAndFiltering, cfts);
 
         List<BigInteger> ids = customTableService.listAsObjects(cet.getDbTablename(), paginationConfig);
-
+        if (ids == null || ids.isEmpty()) {
+            return 0;
+        }
         Set<Long> idsToRemove = ids.stream().map(id -> id.longValue()).collect(Collectors.toSet());
 
         return customTableService.remove(cet.getDbTablename(), idsToRemove);
