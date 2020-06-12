@@ -71,7 +71,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus createField(CustomFieldTemplateDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customFieldTemplateApi.create(postData, null);
@@ -84,7 +84,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus updateField(CustomFieldTemplateDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customFieldTemplateApi.update(postData, null);
@@ -97,7 +97,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus removeField(String customFieldTemplateCode, String appliesTo) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customFieldTemplateApi.remove(customFieldTemplateCode, appliesTo);
@@ -123,7 +123,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus createOrUpdateField(CustomFieldTemplateDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
         try {
             customFieldTemplateApi.createOrUpdate(postData, null);
         } catch (Exception e) {
@@ -152,7 +152,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     @Override
     public ActionStatus removeEntityTemplate(String code) {
 
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customEntityTemplateApi.remove(code);
@@ -167,7 +167,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus createEntityTemplate(CustomEntityTemplateDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customEntityTemplateApi.create(postData);
@@ -181,7 +181,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus updateEntityTemplate(CustomEntityTemplateDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customEntityTemplateApi.update(postData);
@@ -195,7 +195,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus createOrUpdateEntityTemplate(CustomEntityTemplateDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customEntityTemplateApi.createOrUpdate(postData);
@@ -226,7 +226,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     @Override
     public ActionStatus removeCustomEntityInstance(String cetCode, String code) {
 
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customEntityInstanceApi.remove(cetCode, code);
@@ -240,7 +240,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus createCustomEntityInstance(CustomEntityInstanceDto dto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customEntityInstanceApi.create(dto);
@@ -254,7 +254,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus updateCustomEntityInstance(CustomEntityInstanceDto dto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customEntityInstanceApi.update(dto);
@@ -268,7 +268,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus createOrUpdateCustomEntityInstance(CustomEntityInstanceDto dto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customEntityInstanceApi.createOrUpdate(dto);
@@ -288,7 +288,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
      */
     @Override
     public ActionStatus createAction(EntityCustomActionDto dto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             entityCustomActionApi.create(dto, null);
@@ -308,7 +308,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
      */
     @Override
     public ActionStatus updateAction(EntityCustomActionDto dto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             entityCustomActionApi.update(dto, null);
@@ -330,7 +330,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     @Override
     public ActionStatus removeAction(String actionCode, String appliesTo) {
 
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             entityCustomActionApi.remove(actionCode, appliesTo);
@@ -373,7 +373,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     @Override
     public ActionStatus createOrUpdateAction(EntityCustomActionDto dto) {
 
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             entityCustomActionApi.createOrUpdate(dto, null);
@@ -387,7 +387,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     @Override
     public ActionStatus customizeEntity(EntityCustomizationDto dto) {
 
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customEntityTemplateApi.customizeEntity(dto);
@@ -465,7 +465,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus executeAction(String actionCode, String appliesTo, String entityCode) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             result.setMessage(entityCustomActionApi.execute(actionCode, appliesTo, entityCode));
@@ -582,7 +582,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus appendTableData(CustomTableDataDto dto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
 
@@ -597,7 +597,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus updateTableData(CustomTableDataDto dto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
 
@@ -612,11 +612,26 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus removeTableData(CustomTableDataDto dto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
 
-            customTableApi.remove(dto);
+            result.setNrAffected(customTableApi.remove(dto));
+
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus removeTableDataByFilter(String customTableCode, PagingAndFiltering pagingAndFiltering) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+
+            result.setNrAffected(customTableApi.remove(customTableCode, pagingAndFiltering));
 
         } catch (Exception e) {
             processException(e, result);
@@ -642,7 +657,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus createOrUpdateTableData(CustomTableDataDto dto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
 
@@ -658,7 +673,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     @Override
     public ActionStatus enableTableData(CustomTableDataDto dto) {
 
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customTableApi.enableDisable(dto, true);
@@ -672,7 +687,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
     @Override
     public ActionStatus disableTableData(CustomTableDataDto dto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus();
 
         try {
             customTableApi.enableDisable(dto, false);

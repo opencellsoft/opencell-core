@@ -80,12 +80,25 @@ public class DatePeriod implements Comparable<DatePeriod>, Serializable {
     public DatePeriod() {
     }
 
+    /**
+     * Constructor
+     * 
+     * @param from Date from. Optional
+     * @param to Date to. Optional
+     */
     public DatePeriod(Date from, Date to) {
         super();
         this.from = from;
         this.to = to;
     }
 
+    /**
+     * Constructor
+     * 
+     * @param from Date from. Optional
+     * @param to Date to. Optional
+     * @param datePattern Date pattern
+     */
     public DatePeriod(String from, String to, String datePattern) {
 
         if (from != null) {

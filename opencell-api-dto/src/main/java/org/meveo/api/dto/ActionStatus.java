@@ -60,16 +60,22 @@ public class ActionStatus {
     private String message;
 
     /**
-     * the entity identifier
+     * The entity identifier
      */
     @XmlElement
     private Long entityId;
 
     /**
-     * the entity code
+     * The entity code
      */
     @XmlElement
     private String entityCode;
+
+    /**
+     * Number of items/records affected by the action
+     */
+    @XmlElement
+    private Integer nrAffected;
 
     public ActionStatus() {
         status = ActionStatusEnum.SUCCESS;
@@ -164,19 +170,27 @@ public class ActionStatus {
         this.entityCode = entityCode;
     }
 
+    /**
+     * @return Number of items/records affected by the action
+     */
+    public Integer getNrAffected() {
+        return nrAffected;
+    }
+
+    /**
+     * @param nrAffected Number of items/records affected by the action
+     */
+    public void setNrAffected(Integer nrAffected) {
+        this.nrAffected = nrAffected;
+    }
+
     public String getjson() {
-        return "{\"status\":\"" + status + "\",\"errorCode\": \"" + errorCode + "\",\"message\": \""
-                + message + "\",\"entityId\": \"" + entityId + "\",\"entityCode\": \"" + entityCode + "\"}";
+        return "{\"status\":\"" + status + "\",\"errorCode\": \"" + errorCode + "\",\"message\": \"" + message + "\",\"entityId\": \"" + entityId + "\",\"entityCode\": \"" + entityCode + "\",\"nrAffected\": \""
+                + nrAffected + "\"}";
     }
 
     @Override
     public String toString() {
-        return "ActionStatus{" +
-                "status=" + status +
-                ", errorCode=" + errorCode +
-                ", message='" + message + '\'' +
-                ", entityId=" + entityId +
-                ", entityCode='" + entityCode + '\'' +
-                '}';
+        return "ActionStatus [status=" + status + ", errorCode=" + errorCode + ", message=" + message + ", entityId=" + entityId + ", entityCode=" + entityCode + ", nrAffected=" + nrAffected + "]";
     }
 }

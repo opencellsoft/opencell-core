@@ -18,6 +18,7 @@
 
 package org.meveo.api.rest.account.impl;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -146,6 +147,9 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
             for (CounterInstance ci : counters) {
                 result.getCountersInstances().getCounterInstance().add(new CounterInstanceDto(ci));
             }
+
+            result.getCountersInstances().getCounterInstance().sort(Comparator.comparing(CounterInstanceDto::getCode));
+            
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

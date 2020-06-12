@@ -76,6 +76,17 @@ public interface CustomTableRs extends IBaseRs {
     ActionStatus remove(CustomTableDataDto dto);
 
     /**
+     * Remove existing data from a custom table given search parameters
+     * 
+     * @param customTableCode Custom table code - can be either db table's name or a custom entity template code
+     * @param pagingAndFiltering Paging and search criteria
+     * @return Custom table data
+     */
+    @DELETE
+    @Path("/{customTableCode}")
+    ActionStatus remove(@PathParam("customTableCode") String customTableCode, PagingAndFiltering pagingAndFiltering);
+
+    /**
      * Search in custom tables
      * 
      * @param customTableCode Custom table code - can be either db table's name or a custom entity template code

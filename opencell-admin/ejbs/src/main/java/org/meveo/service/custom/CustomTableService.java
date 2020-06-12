@@ -96,6 +96,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.ColumnType;
 
+@SuppressWarnings("deprecation")
 @Stateless
 public class CustomTableService extends NativePersistenceService {
 
@@ -237,28 +238,38 @@ public class CustomTableService extends NativePersistenceService {
     }
 
     @Override
-    public void remove(String tableName, Long id) throws BusinessException {
+    public int remove(String tableName, Long id) throws BusinessException {
         validateExistance(tableName, Arrays.asList(id));
-        super.remove(tableName, id);
+        int nrDeleted = super.remove(tableName, id);
         elasticClient.remove(CustomTableRecord.class, tableName, id, true);
+        return nrDeleted;
     }
 
     @Override
-    public void remove(String tableName, Set<Long> ids) throws BusinessException {
-        validateExistance(tableName, new ArrayList<Long>(ids));
-        removeWithoutCheck(tableName, ids);
-    }
-
-    public void removeWithoutCheck(String tableName, Set<Long> ids) {
-        super.remove(tableName, ids);
-        customEntityInstanceService.remove(tableName, ids);
+    public int remove(String tableName, Set<Long> ids) throws BusinessException {
+        int nrDeleted = super.remove(tableName, ids);
         elasticClient.remove(CustomTableRecord.class, tableName, ids, true);
+        return nrDeleted;
+    }
+
+    /**
+     * Delete multiple records checking first if ID exists
+     *
+     * @param tableName Table name to delete from
+     * @param ids A set of record identifiers
+     * @return Number of records deleted
+     * @throws BusinessException General exception
+     */
+    public int removeWithCheck(String tableName, Set<Long> ids) {
+        validateExistance(tableName, new ArrayList<Long>(ids));
+        return remove(tableName, ids);
     }
 
     @Override
-    public void remove(String tableName) throws BusinessException {
-        super.remove(tableName);
+    public int remove(String tableName) throws BusinessException {
+        int nrDeleted = super.remove(tableName);
         elasticClient.remove(CustomTableRecord.class, tableName);
+        return nrDeleted;
     }
 
     /**
@@ -270,7 +281,7 @@ public class CustomTableService extends NativePersistenceService {
      * @throws BusinessException General exception
      */
     @Asynchronous
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
     public Future<DataImportExportStatistics> exportData(CustomEntityTemplate customEntityTemplate, PaginationConfiguration config) throws BusinessException {
 
         try {
@@ -922,7 +933,7 @@ public class CustomTableService extends NativePersistenceService {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
     private Map<String, Object> findRecordByIdAndTableName(Long id, String tableName) {
         QueryBuilder queryBuilder = getQuery(tableName, null);
         queryBuilder.addCriterion("id", "=", id, true);
@@ -946,7 +957,7 @@ public class CustomTableService extends NativePersistenceService {
             List<Map<String, Object>> mapList = extractMapListByFields(tableName, wildCode, fields);
             return mapList.stream().map(x -> new CustomTableRecordDto(getDisplay(tableName, x, eol), x)).collect(Collectors.toList());
         } catch (Exception ex) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 
@@ -955,7 +966,6 @@ public class CustomTableService extends NativePersistenceService {
         return tableName + " {" + vals + endOfLine;
     }
 
-    @SuppressWarnings("unchecked")
     public List<Map<String, Object>> selectAllRecordsOfATableAsMap(String tableName, String wildCode) {
         try {
             Map<String, CustomFieldTemplate> cftl = customFieldTemplateService.findCFTsByDbTbleName(tableName);
@@ -965,10 +975,11 @@ public class CustomTableService extends NativePersistenceService {
             }
             return extractMapListByFields(tableName, wildCode, fields);
         } catch (Exception ex) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 
+    @SuppressWarnings({ "deprecation", "unchecked", "rawtypes" })
     public List<Map<String, Object>> extractMapListByFields(String tableName, String wildCode, List<String> fields) {
         List<String> fetchFields = new ArrayList<>();
         fetchFields.add(FIELD_ID);
@@ -986,6 +997,7 @@ public class CustomTableService extends NativePersistenceService {
         return query.list();
     }
 
+    @SuppressWarnings({ "deprecation", "rawtypes" })
     public boolean containsRecordOfTableByColumn(String tableName, String columnName, Long id) {
         QueryBuilder queryBuilder = getQuery(tableName, null);
         queryBuilder.addCriterion(columnName, "=", id, true);
@@ -1067,7 +1079,7 @@ public class CustomTableService extends NativePersistenceService {
         return cfts.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().toLowerCase(), Map.Entry::getValue));
     }
 
-    public Map<String, CustomFieldTemplate> validateCfts(CustomEntityTemplate cet, boolean checkDisabledField) {
+    public Map<String, CustomFieldTemplate> retrieveAndValidateCfts(CustomEntityTemplate cet, boolean checkDisabledField) {
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
         if (cfts == null || cfts.isEmpty()) {
             throw new ValidationException("No fields are defined for custom table", "customTable.noFields");
