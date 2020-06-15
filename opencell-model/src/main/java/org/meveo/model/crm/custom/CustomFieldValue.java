@@ -1635,58 +1635,62 @@ public class CustomFieldValue implements Serializable, Cloneable {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public String toString() {
         final int maxLen = 10;
 
-        StringBuffer sb = new StringBuffer("CustomFieldValue [");
+        StringBuffer sb = new StringBuffer();
         if (source != null) {
-            sb.append("source=").append(source);
+            sb.append(", source=").append(source);
         }
         if (stringValue != null) {
-            sb.append("stringValue=").append(stringValue);
+            sb.append(", stringValue=").append(stringValue);
         }
         if (dateValue != null) {
-            sb.append("dateValue=").append(DateUtils.formatAsTime(dateValue));
+            sb.append(", dateValue=").append(DateUtils.formatAsTime(dateValue));
         }
         if (longValue != null) {
-            sb.append("longValue=").append(longValue);
+            sb.append(", longValue=").append(longValue);
         }
         if (doubleValue != null) {
-            sb.append("doubleValue=").append(doubleValue);
+            sb.append(", doubleValue=").append(doubleValue);
         }
         if (booleanValue != null) {
-            sb.append("booleanValue=").append(booleanValue);
+            sb.append(", booleanValue=").append(booleanValue);
         }
         if (entityReferenceValue != null) {
-            sb.append("entityReferenceValue=").append(entityReferenceValue);
+            sb.append(", entityReferenceValue=").append(entityReferenceValue);
         }
-        if (getListValue() != null) {
-            sb.append("listValue=").append(toString(getListValue(), maxLen));
+        List lValue = getListValue();
+        if (lValue != null && !lValue.isEmpty()) {
+            sb.append(", listValue=").append(toString(lValue, maxLen));
         }
-        if (getMapValue() != null) {
-            sb.append("mapValue=").append(toString(getMapValue().entrySet(), maxLen));
+        Map mValue = getMapValue();
+        if (mValue != null && !mValue.isEmpty()) {
+            sb.append(", mapValue=").append(toString(mValue.entrySet(), maxLen));
         }
-        if (mapValuesForGUI != null) {
-            sb.append("mapValuesForGUI=").append(toString(mapValuesForGUI, maxLen));
+        if (mapValuesForGUI != null && !mapValuesForGUI.isEmpty()) {
+            sb.append(", mapValuesForGUI=").append(toString(mapValuesForGUI, maxLen));
         }
-        if (matrixValuesForGUI != null) {
-            sb.append("matrixValuesForGUI=").append(toString(matrixValuesForGUI, maxLen));
+        if (matrixValuesForGUI != null && !matrixValuesForGUI.isEmpty()) {
+            sb.append(", matrixValuesForGUI=").append(toString(matrixValuesForGUI, maxLen));
         }
-        if (childEntityValuesForGUI != null) {
-            sb.append("childEntityValuesForGUI=").append(toString(childEntityValuesForGUI, maxLen));
+        if (childEntityValuesForGUI != null && !childEntityValuesForGUI.isEmpty()) {
+            sb.append(", childEntityValuesForGUI=").append(toString(childEntityValuesForGUI, maxLen));
         }
         if (entityReferenceValueForGUI != null) {
-            sb.append("entityReferenceValueForGUI=").append(entityReferenceValueForGUI);
+            sb.append(", entityReferenceValueForGUI=").append(entityReferenceValueForGUI);
         }
 
         if (period != null) {
-            sb.append(period.toString(DateUtils.DATE_TIME_PATTERN));
+            sb.append(", ").append(period.toString(DateUtils.DATE_TIME_PATTERN));
         }
         if (isNewPeriod) {
-            sb.append("isNewPeriod=true");
+            sb.append(", isNewPeriod=true");
         }
-        return sb.toString();
+
+        return "CustomFieldValue [" + sb.substring(2);
     }
 
     /**
