@@ -73,12 +73,15 @@ public class BillingAccountDto extends AccountDto {
     private String language;
 
     /** The next invoice date. */
+    @XmlElement
     private Date nextInvoiceDate;
 
     /** The subscription date. */
+    @XmlElement
     private Date subscriptionDate;
 
     /** The termination date. */
+    @XmlElement
     private Date terminationDate;
 
     /** The electronic billing. */
@@ -88,6 +91,7 @@ public class BillingAccountDto extends AccountDto {
     private AccountStatusEnum status;
 
     /** The status date. */
+    @XmlElement
     private Date statusDate;
 
     /** The termination reason. */

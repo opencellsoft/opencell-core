@@ -494,7 +494,7 @@ public class NativePersistenceService extends BaseService {
     }
 
     /**
-     * Disable a record
+     * Disable a record. Note: There is no check done that record exists.
      *
      * @param tableName Table name to update
      * @param id Record identifier
@@ -506,7 +506,7 @@ public class NativePersistenceService extends BaseService {
     }
 
     /**
-     * Disable multiple records
+     * Disable multiple records. Note: There is no check done that records exists.
      *
      * @param tableName Table name to update
      * @param ids A list of record identifiers
@@ -517,7 +517,7 @@ public class NativePersistenceService extends BaseService {
     }
 
     /**
-     * Enable a record
+     * Enable a record. Note: There is no check done that record exists.
      *
      * @param tableName Table name to update
      * @param id Record identifier
@@ -529,7 +529,7 @@ public class NativePersistenceService extends BaseService {
     }
 
     /**
-     * Enable multiple records
+     * Enable multiple records. Note: There is no check done that records exists.
      *
      * @param tableName Table name to update
      * @param ids A list of record identifiers
@@ -542,40 +542,45 @@ public class NativePersistenceService extends BaseService {
     }
 
     /**
-     * Delete a record
+     * Delete a record. Note: There is no check done that record exists.
      *
      * @param tableName Table name to update
      * @param id Record identifier
+     * @return Number of records deleted
      * @throws BusinessException General exception
      */
-    public void remove(String tableName, Long id) throws BusinessException {
+    public int remove(String tableName, Long id) throws BusinessException {
         this.deletionService.checkTableNotreferenced(tableName, id);
-        getEntityManager().createNativeQuery("delete from " + tableName + " where id=" + id).executeUpdate();
-        entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.REMOVED));
+        int nrDeleted = getEntityManager().createNativeQuery("delete from " + tableName + " where id=" + id).executeUpdate();
+        if (nrDeleted > 0) {
+            entityChangeEventProducer.fire(new CustomTableEvent(tableName, id, null, NotificationEventTypeEnum.REMOVED));
+        }
+        return nrDeleted;
     }
 
     /**
-     * Delete multiple records
+     * Delete multiple records. Note: There is no check done that records exists.
      *
-     * @param tableName Table name to update
+     * @param tableName Table name to delete from
      * @param ids A set of record identifiers
+     * @return Number of records deleted
      * @throws BusinessException General exception
      */
-    public void remove(String tableName, Set<Long> ids) throws BusinessException {
+    public int remove(String tableName, Set<Long> ids) throws BusinessException {
         ids.stream().forEach(id -> deletionService.checkTableNotreferenced(tableName, id));
-        getEntityManager().createNativeQuery("delete from " + tableName + " where id in :ids").setParameter("ids", ids).executeUpdate();
+        return getEntityManager().createNativeQuery("delete from " + tableName + " where id in :ids").setParameter("ids", ids).executeUpdate();
     }
 
     /**
      * Delete all records
      *
      * @param tableName Table name to update
+     * @return Number of records deleted
      * @throws BusinessException General exception
      */
-    public void remove(String tableName) throws BusinessException {
+    public int remove(String tableName) throws BusinessException {
         StringBuilder deleteQuery = new StringBuilder("delete from ").append(tableName);
-        getEntityManager().createNativeQuery(deleteQuery.toString()).executeUpdate();
-
+        return getEntityManager().createNativeQuery(deleteQuery.toString()).executeUpdate();
     }
 
     /**
@@ -684,8 +689,8 @@ public class NativePersistenceService extends BaseService {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public QueryBuilder getQuery(String tableName, PaginationConfiguration config) {
-        String fileds = (config != null && config.getFetchFields() != null) ? config.getFetchFields().stream().map(x -> " a." + x).collect(Collectors.joining(",")) : "*";
-        QueryBuilder queryBuilder = new QueryBuilder("select " + fileds + " from " + tableName + " a ", "a");
+        String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? config.getFetchFields().stream().map(x -> " a." + x).collect(Collectors.joining(",")) : "*";
+        QueryBuilder queryBuilder = new QueryBuilder("select " + fieldsToRetrieve + " from " + tableName + " a ", "a");
         if (config == null) {
             return queryBuilder;
         }
@@ -923,14 +928,15 @@ public class NativePersistenceService extends BaseService {
     }
 
     /**
-     * Load and return the list of the records IN A Object[] format from database according to sorting and paging information in {@link PaginationConfiguration} object.
+     * Load and return the list of the records IN A Object[] format from database according to sorting and paging information in {@link PaginationConfiguration} object. <br/>
+     * In case a list of fields is provided in search and paging configuration, only that list of fields will be retrieved. Otherwise all fields will be retrieved.
      *
      * @param tableName A name of a table to query
      * @param config Data filtering, sorting and pagination criteria
-     * @return A list of Object[] values for each record
+     * @return A list of Object[] values for each record. A full list of fields or only the ones specified in a list of fields in search and paging configuration
      */
-    @SuppressWarnings("unchecked")
-    public List<Object[]> listAsObjets(String tableName, PaginationConfiguration config) {
+    @SuppressWarnings({ "unchecked", "deprecation" })
+    public List listAsObjects(String tableName, PaginationConfiguration config) {
 
         QueryBuilder queryBuilder = getQuery(tableName, config);
         SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), false);
