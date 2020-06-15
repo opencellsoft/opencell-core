@@ -482,11 +482,11 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         ResourceBundle resourceBundle = ResourceBundle.getBundle("messages", Faces.getLocale());
 
         List<SelectItem> filterLockedOptions = new ArrayList<SelectItem>(
-            Arrays.asList(new SelectItem(WalletOperationStatusEnum.OPEN, resourceBundle.getString("walletOperationStatus.open")),
-                new SelectItem(WalletOperationStatusEnum.TREATED, resourceBundle.getString("walletOperationStatus.treated")),
-                new SelectItem(WalletOperationStatusEnum.CANCELED, resourceBundle.getString("walletOperationStatus.canceled")),
-                new SelectItem(WalletOperationStatusEnum.RESERVED, resourceBundle.getString("walletOperationStatus.reserved")),
-                new SelectItem(WalletOperationStatusEnum.TO_RERATE, resourceBundle.getString("walletOperationStatus.to_rerate"))));
+            Arrays.asList(new SelectItem(WalletOperationStatusEnum.OPEN, resourceBundle.getString("WalletOperationStatusEnum.OPEN")),
+                new SelectItem(WalletOperationStatusEnum.TREATED, resourceBundle.getString("WalletOperationStatusEnum.TREATED")),
+                new SelectItem(WalletOperationStatusEnum.CANCELED, resourceBundle.getString("WalletOperationStatusEnum.CANCELED")),
+                new SelectItem(WalletOperationStatusEnum.RESERVED, resourceBundle.getString("WalletOperationStatusEnum.RESERVED")),
+                new SelectItem(WalletOperationStatusEnum.TO_RERATE, resourceBundle.getString("WalletOperationStatusEnum.TO_RERATE"))));
 
         return filterLockedOptions;
     }

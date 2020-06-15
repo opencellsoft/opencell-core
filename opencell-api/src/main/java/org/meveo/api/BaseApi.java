@@ -1171,6 +1171,10 @@ public abstract class BaseApi {
 				pagingAndFiltering.setLimit(limit);
 			}
 		}
+		
+
+		// Commented out as regular API and customTable API has a different meaning of fields parameter - in customTableApi it will return only those fields, whereas in regularAPI it will consider as fields to join with.
+		// fetchFields = fetchFields!=null? fetchFields: pagingAndFiltering!=null && pagingAndFiltering.getFields() != null ? Arrays.asList(pagingAndFiltering.getFields().split(",")) : null;
         return new PaginationConfiguration(pagingAndFiltering != null ? pagingAndFiltering.getOffset() : null, limit, pagingAndFiltering != null ? pagingAndFiltering.getFilters() : null,
             pagingAndFiltering != null ? pagingAndFiltering.getFullTextFilter() : null, fetchFields, pagingAndFiltering != null && pagingAndFiltering.getSortBy() != null ? pagingAndFiltering.getSortBy() : defaultSortBy,
             pagingAndFiltering != null && pagingAndFiltering.getSortOrder() != null ? SortOrder.valueOf(pagingAndFiltering.getSortOrder().name()) : defaultSortOrder);

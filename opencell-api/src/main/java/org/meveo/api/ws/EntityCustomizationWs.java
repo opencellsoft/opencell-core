@@ -204,7 +204,7 @@ public interface EntityCustomizationWs extends IBaseWs {
     CustomEntityTemplatesResponseDto listEntityTemplates(@WebParam(name = "customEntityTemplateCode") String customEntityTemplateCode);
 
     @WebMethod
-    EntityCustomizationResponseDto listELFiltered(@WebParam(name = "appliesTo") String appliesTo, @WebParam(name = "entityCode") String entityCode, @WebParam(name="entityId") Long id);
+    EntityCustomizationResponseDto listELFiltered(@WebParam(name = "appliesTo") String appliesTo, @WebParam(name = "entityCode") String entityCode, @WebParam(name = "entityId") Long id);
 
     @WebMethod
     ActionStatus executeAction(@WebParam(name = "actionCode") String actionCode, @WebParam(name = "appliesTo") String appliesTo, @WebParam(name = "entityCode") String entityCode);
@@ -239,6 +239,16 @@ public interface EntityCustomizationWs extends IBaseWs {
     ActionStatus removeTableData(@WebParam(name = "tableData") CustomTableDataDto dto);
 
     /**
+     * Remove an existing data from a custom table matching search criteria
+     * 
+     * @param customTableCode Custom table code - can be either db table's name or a custom entity template code
+     * @param pagingAndFiltering Paging and search criteria
+     * @return Custom table data
+     */
+    @WebMethod
+    ActionStatus removeTableDataByFilter(@WebParam(name = "customTableCode") String customTableCode, @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+
+    /**
      * Search in custom tables
      * 
      * @param customTableCode Custom table code - can be either db table's name or a custom entity template code
@@ -246,8 +256,7 @@ public interface EntityCustomizationWs extends IBaseWs {
      * @return Custom table data
      */
     @WebMethod
-    CustomTableDataResponseDto listTableData(@WebParam(name = "customTableCode") String customTableCode,
-            @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+    CustomTableDataResponseDto listTableData(@WebParam(name = "customTableCode") String customTableCode, @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
     /**
      * Append or update data in a custom table
@@ -275,6 +284,5 @@ public interface EntityCustomizationWs extends IBaseWs {
      */
     @WebMethod
     ActionStatus disableTableData(@WebParam(name = "tableData") CustomTableDataDto dto);
-	
 
 }
