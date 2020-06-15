@@ -1910,7 +1910,7 @@
 									"response": []
 								},
 								{
-									"name": "Create Billing Cycle SUCCESS",
+									"name": "Read Billing Cycle SUCCESS",
 									"event": [
 										{
 											"listen": "test",
@@ -2237,7 +2237,7 @@
 									"response": []
 								},
 								{
-									"name": "Create Billing Cycle SUCCESS",
+									"name": "Read  Billing Cycle SUCCESS",
 									"event": [
 										{
 											"listen": "test",
@@ -2652,7 +2652,7 @@
 									"response": []
 								},
 								{
-									"name": "Create Seller SUCCESS",
+									"name": "Read Seller SUCCESS",
 									"event": [
 										{
 											"listen": "test",
@@ -2979,7 +2979,7 @@
 									"response": []
 								},
 								{
-									"name": "Create Seller SUCCESS",
+									"name": "Read Seller SUCCESS",
 									"event": [
 										{
 											"listen": "test",
