@@ -900,7 +900,7 @@ public class CustomerApi extends AccountEntityApi {
         gdprService.anonymize(entity);
     }
 
-    public void updateCustomerNumberSequence(GenericSequenceDto postData) throws MeveoApiException, BusinessException {
+    public synchronized void updateCustomerNumberSequence(GenericSequenceDto postData) throws MeveoApiException, BusinessException {
         if (postData.getSequenceSize() > 20) {
             throw new MeveoApiException("sequenceSize must be <= 20.");
         }
@@ -910,7 +910,7 @@ public class CustomerApi extends AccountEntityApi {
         providerService.update(provider);
     }
 
-    public GenericSequenceValueResponseDto getNextCustomerNumber() throws BusinessException {
+    public synchronized GenericSequenceValueResponseDto getNextCustomerNumber() throws BusinessException {
         GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
 
         GenericSequence genericSequence = providerService.getNextCustomerNumber();
