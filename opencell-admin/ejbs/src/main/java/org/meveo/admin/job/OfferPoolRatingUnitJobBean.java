@@ -112,7 +112,7 @@ public class OfferPoolRatingUnitJobBean {
 
         } catch (Exception e) {
             log.error("Failed to check overage usage for WalletOperationId={}: {}", walletOperationId, e);
-            result.registerError(e.getMessage());
+            result.registerError("Error on processing WOId="+ walletOperationId + ": " +e.getMessage());
         }
     }
 

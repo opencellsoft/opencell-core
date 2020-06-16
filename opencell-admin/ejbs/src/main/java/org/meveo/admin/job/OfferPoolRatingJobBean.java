@@ -4,6 +4,8 @@ import org.meveo.admin.async.OfferPoolRatingAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.MeveoUser;
@@ -28,19 +30,18 @@ import java.util.concurrent.Future;
 @Stateless
 public class OfferPoolRatingJobBean extends BaseJobBean {
 
-    /**
-     * Number of Wallet operations to process in a single job run
-     */
-    private static int PROCESS_NR_IN_JOB_RUN = 2000000;
-
-    private static final String OFFER_OPENED_WO_QUERY = "SELECT DISTINCT wo.id\n" +
-            "  FROM billing_wallet_operation_open wo\n" +
+    private String OFFER_OPENED_WO_COUNT_QUERY = "SELECT count(wo.id)\n" +
+            "  FROM billing_wallet_operation wo\n" +
             "   INNER JOIN cat_offer_template ot ON wo.offer_id = ot.id\n" +
             "  WHERE cast(ot.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF'\n" +
             "   AND wo.status = 'OPEN' AND wo.code LIKE '%_USG_%_IN' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' AND wo.parameter_2 != 'DEDUCTED_FROM_POOL'";
 
+    private String OFFER_WITH_SHARED_POOL = "SELECT DISTINCT ot.id " +
+            "  FROM cat_offer_template ot WHERE cast(ot.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF'";
+
     @Inject
-    private WalletOperationService walletOperationService;
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
 
     @Inject
     private Logger log;
@@ -60,23 +61,23 @@ public class OfferPoolRatingJobBean extends BaseJobBean {
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
 
         try {
+            BigInteger offersWOsCount = (BigInteger) emWrapper.getEntityManager().createNativeQuery(OFFER_OPENED_WO_COUNT_QUERY)
+                    .getSingleResult();
+
+            log.info("Nbrs of WOs with offers shared pools to process: {}", offersWOsCount.longValue());
+            result.setNbItemsToProcess(offersWOsCount.longValue());
 
             @SuppressWarnings("unchecked")
-            List<BigInteger> woIds = walletOperationService.getEntityManager().createNativeQuery(OFFER_OPENED_WO_QUERY)
+            List<BigInteger> offerIds = emWrapper.getEntityManager().createNativeQuery(OFFER_WITH_SHARED_POOL)
                     .getResultList();
 
-            log.info("WalletOperations using offer sharing level which overage usage should be checked ={}", woIds.size());
-            result.setNbItemsToProcess(woIds.size());
-
-            SubListCreator<BigInteger> subListCreator = new SubListCreator<>(woIds, nbRuns.intValue());
             List<Future<String>> futures = new ArrayList<>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
-            while (subListCreator.isHasNext()) {
+            for (BigInteger offerId : offerIds) {
 
-                futures.add(offerPoolRatingAsync.launchAndForget((List<BigInteger>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
+                futures.add(offerPoolRatingAsync.launchAndForget(offerId.longValue(), result, lastCurrentUser));
                 try {
                     Thread.sleep(waitingMillis.longValue());
-
                 } catch (InterruptedException e) {
                     log.error("", e);
                 }

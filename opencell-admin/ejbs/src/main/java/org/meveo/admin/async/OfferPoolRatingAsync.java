@@ -5,6 +5,8 @@ package org.meveo.admin.async;
 
 import org.meveo.admin.job.OfferPoolRatingUnitJobBean;
 import org.meveo.admin.job.UnitRatedTransactionsJobBean;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -25,28 +27,37 @@ import java.util.concurrent.Future;
 @Stateless
 public class OfferPoolRatingAsync {
 
+    private String OFFER_OPENED_WO_QUERY = "SELECT wo.id \n" +
+            "  FROM billing_wallet_operation wo \n" +
+            "  WHERE wo.offer_id = :offerId \n" +
+            "   AND wo.status = 'OPEN' AND wo.code LIKE '%_USG_%_IN' AND wo.parameter_1 NOT LIKE '%_NUM_SPE' \n" +
+            "   AND wo.parameter_2 != 'DEDUCTED_FROM_POOL'";
+
+
+    @Inject
+    @MeveoJpa
+    private EntityManagerWrapper emWrapper;
+
     @Inject
     private JobExecutionService jobExecutionService;
 
     @Inject
     private CurrentUserProvider currentUserProvider;
 
+    @Inject
     private OfferPoolRatingUnitJobBean offerPoolRatingUnitJobBean;
 
-    /**
-     * Rate wallet operations, one operation at a time in a separate transaction.
-     * 
-     * @param walletOperations A list of wallet operation ids to rate
-     * @param result Job execution result
-     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
-     *        expirations), current user might be lost, thus there is a need to reestablish.
-     * @return Future String
-     */
-    @Asynchronous
+
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<BigInteger> walletOperations, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
+    public Future<String> launchAndForget(Long offerId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
+        @SuppressWarnings("unchecked")
+        List<BigInteger> walletOperations = emWrapper.getEntityManager().createNativeQuery(OFFER_OPENED_WO_QUERY)
+                .setParameter("offerId", offerId)
+                .getResultList();
+
         int i = 0;
         for (BigInteger walletOperationId : walletOperations) {
             i++;
