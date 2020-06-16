@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -141,11 +142,11 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
             if(!genericWorkflow.getTransitions().get(endIndex-1).getToStatus().equalsIgnoreCase(currentStatus)) {
                 int startIndex = IntStream.range(0, endIndex).filter(idx -> genericWorkflow.getTransitions().get(idx).getFromStatus().equals(currentStatus)).findFirst().getAsInt();
                 List<GWFTransition> listByFromStatus = genericWorkflow.getTransitions().stream().collect(Collectors.toList()).subList(startIndex, endIndex);
-                List<GWFTransition> executedTransition = getExecutedTransitions(genericWorkflow, listByFromStatus);
+                List<GWFTransition> executedTransition = getExecutedTransitions(genericWorkflow, workflowInstance, listByFromStatus);
 
                 for (GWFTransition gWFTransition : listByFromStatus) {
 
-                    if (matchExpression(gWFTransition.getConditionEl(), iwfEntity) && isInSameBranch(gWFTransition, executedTransition)) {
+                    if (matchExpression(gWFTransition.getConditionEl(), iwfEntity) && isInSameBranch(gWFTransition, executedTransition, genericWorkflow)) {
 
                         log.debug("Processing transition: {} on entity {}", gWFTransition, workflowInstance);
                         WorkflowInstanceHistory wfHistory = new WorkflowInstanceHistory();
@@ -195,11 +196,11 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
         return workflowInstance;
     }
 
-    private List<GWFTransition> getExecutedTransitions(GenericWorkflow genericWorkflow, List<GWFTransition> listByFromStatus) {
+    private List<GWFTransition> getExecutedTransitions(GenericWorkflow genericWorkflow, WorkflowInstance workflowInstance, List<GWFTransition> listByFromStatus) {
         List<GWFTransition> executedTransition = new ArrayList<>();
-        List<GWFTransition> transitions = genericWorkflow.getTransitions();
+        List<GWFTransition> transitions = new ArrayList<>(genericWorkflow.getTransitions());
         transitions.removeAll(listByFromStatus);
-        List<WorkflowInstanceHistory> wfHistory = workflowInstanceHistoryService.findByGenericWorkflow(genericWorkflow);
+        List<WorkflowInstanceHistory> wfHistory = workflowInstanceHistoryService.findByWorkflowInstance(workflowInstance);
         for (GWFTransition transition : transitions) {
             for (WorkflowInstanceHistory history : wfHistory) {
                 if (transition.getToStatus().equals(history.getToStatus())) {
@@ -210,16 +211,33 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
         return executedTransition;
     }
 
-    private boolean isInSameBranch(GWFTransition currentTransition, List<GWFTransition> executedTransition) {
-        if (executedTransition.isEmpty()) {
+    private boolean isInSameBranch(GWFTransition currentTransition, List<GWFTransition> executedTransition, GenericWorkflow genericWorkflow) {
+        if (executedTransition.isEmpty() && genericWorkflow.getInitStatus().equals(currentTransition.getFromStatus())) {
             return true;
+        }
+        List<GWFTransition> previousTransitons = getPreviousTransitions(currentTransition, genericWorkflow.getTransitions());
+        if (previousTransitons == null || previousTransitons.isEmpty()) {
+            return true;
+        }
+        if (!containsAtLeastOne(executedTransition, previousTransitons)) {
+            return false;
         }
         for (GWFTransition transition : executedTransition) {
             if (transition.getToStatus() != null && transition.getToStatus().equals(currentTransition.getFromStatus())) {
                 return true;
             }
         }
-        return false;
+        return true;
+    }
+
+    private List<GWFTransition> getPreviousTransitions(GWFTransition currentTransition, List<GWFTransition> transitions) {
+        return transitions.stream().filter(transition -> {
+            if (transition.getToStatus() == null) {
+                return false;
+            } else {
+                return transition.getToStatus().equals(currentTransition.getFromStatus());
+            }
+        }).collect(Collectors.toList());
     }
 
     private boolean matchExpression(String expression, Object object) throws BusinessException {
@@ -233,5 +251,11 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
         }
 
         return ValueExpressionWrapper.evaluateToBooleanOneVariable(expression, "entity", object);
+    }
+
+    public boolean containsAtLeastOne(List<GWFTransition> executedTransition, List<GWFTransition> previousTransitions) {
+
+        previousTransitions.retainAll(executedTransition);
+        return 0 < previousTransitions.size();
     }
 }
