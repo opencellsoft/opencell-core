@@ -640,7 +640,7 @@ public class CustomerApi extends AccountEntityApi {
             customer = update(postData);
         }
         return customer;
-    }
+    } 
 
     /**
      * Create or update customer brand based on code.
@@ -807,17 +807,15 @@ public class CustomerApi extends AccountEntityApi {
         gdprService.anonymize(entity);
     }
 
-    public synchronized void updateCustomerNumberSequence(GenericSequenceDto postData) throws MeveoApiException, BusinessException {
+    public  void updateCustomerNumberSequence(GenericSequenceDto postData) throws  BusinessException {
         if (postData.getSequenceSize() > 20) {
             throw new MeveoApiException("sequenceSize must be <= 20.");
-        }
-        
-        Provider provider = providerService.findById(appProvider.getId());
-        provider.setCustomerNoSequence(GenericSequenceApi.toGenericSequence(postData, provider.getCustomerNoSequence()));
-        providerService.update(provider);           
+        }        
+        providerService.updateCustomerNumberSequence(GenericSequenceApi.toGenericSequence(postData, appProvider.getCustomerNoSequence())); 
+             
     }
 
-    public synchronized GenericSequenceValueResponseDto getNextCustomerNumber() throws BusinessException {
+    public  GenericSequenceValueResponseDto getNextCustomerNumber() throws BusinessException {
         GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();        
         GenericSequence genericSequence = providerService.getNextCustomerNumber();      
         String sequenceNumber = StringUtils.getLongAsNChar(genericSequence.getCurrentSequenceNb(), genericSequence.getSequenceSize());
