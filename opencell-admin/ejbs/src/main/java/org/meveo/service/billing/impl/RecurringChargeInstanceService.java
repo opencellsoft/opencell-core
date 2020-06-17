@@ -29,6 +29,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -526,15 +527,20 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public int resetRecurringCharge(Long chargeInstanceId, Date fromDate) {
 
+        List<Long> woIds = getEntityManager().createNamedQuery("WalletOperation.findByChargeIdFromStartDate", Long.class).setParameter("chargeInstanceId", chargeInstanceId).setParameter("from", fromDate).getResultList();
+        if (woIds.isEmpty()) {
+            log.warn("No wallet operations found to rerate for recurring charge {} from date {}. Rerating will be skipped.", chargeInstanceId, DateUtils.formatAsDate(fromDate));
+            return 0;
+        }
+
         RecurringChargeInstance chargeInstance = findById(chargeInstanceId);
-        chargeInstance.setChargedToDate(fromDate);
-        chargeInstance.setChargeDate(fromDate);
-        chargeInstance.setNextChargeDate(fromDate);
 
         log.info("Will reset recurring charge {} from charge/next/chargedTo:{}/{}/{} to {}", chargeInstance, DateUtils.formatAsDate(chargeInstance.getChargeDate()),
             DateUtils.formatAsDate(chargeInstance.getNextChargeDate()), DateUtils.formatAsDate(chargeInstance.getChargedToDate()), DateUtils.formatAsDate(fromDate));
 
-        List<Long> woIds = getEntityManager().createNamedQuery("WalletOperation.findByChargeIdFromStartDate", Long.class).setParameter("chargeInstanceId", chargeInstanceId).setParameter("from", fromDate).getResultList();
+        chargeInstance.setChargeDate(fromDate);
+        chargeInstance.setChargedToDate(fromDate);
+        chargeInstance.setNextChargeDate(fromDate);
 
         return walletOperationService.cancelWalletOperations(woIds);
     }
@@ -549,7 +555,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * @param maxDate Date to rate until. Only full periods will be considered
      * @throws BusinessException General business exception
      */
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.NEVER) // THIS IS NEVER, so two inner methods are executed in new transactions
     public void rerateRecurringChargeInNewTx(Long chargeInstanceId, Date fromDate, Date toDate) {
 
         int nrWOCanceled = recurringChargeInstanceServiceNewTx.resetRecurringCharge(chargeInstanceId, fromDate);
