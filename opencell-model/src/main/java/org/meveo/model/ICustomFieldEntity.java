@@ -3,6 +3,7 @@ package org.meveo.model;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
@@ -397,4 +398,12 @@ public interface ICustomFieldEntity {
 
         return null;
     }
+
+	/**
+	 * @return
+	 */
+	public default Boolean isDirtyCF() {
+		return getCfValues() != null && (CollectionUtils.isNotEmpty(getCfValues().getDirtyCfPeriods())
+						|| CollectionUtils.isNotEmpty(getCfValues().getDirtyCfValues()));
+	}
 }

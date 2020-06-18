@@ -40,12 +40,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.AccessTimeout;
 import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -69,6 +74,8 @@ import org.apache.poi.util.IOUtils;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VFSUtils;
 import org.jboss.vfs.VirtualFile;
+import org.joda.time.Instant;
+import org.joda.time.Interval;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
@@ -89,12 +96,14 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.qualifier.Updated;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
@@ -104,6 +113,7 @@ import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceModeEnum;
+import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
@@ -131,6 +141,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
@@ -259,6 +270,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private UserAccountService userAccountService;
+    
+    @Inject
+    private SellerService sellerService;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -713,8 +727,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceDate = billingRun.getInvoiceDate();
             }
 
-            if (!Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
-                lastTransactionDate = DateUtils.setTimeToZero(lastTransactionDate);
+            if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
+                lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
+            } else {
+            	lastTransactionDate = DateUtils.setDateToStartOfDay(lastTransactionDate);
             }
 
             // Instantiate additional RTs to reach minimum amount to invoice on service, subscription or BA level if needed
@@ -1071,7 +1087,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setInvoiceType(invoiceType);
         invoice.setBillingAccount(billingAccount);
         invoice.setInvoiceDate(new Date());
-        serviceSingleton.assignInvoiceNumberVirtual(invoice);
+        assignInvoiceNumberVirtual(invoice);
 
         PaymentMethod preferedPaymentMethod = invoice.getBillingAccount().getCustomerAccount().getPreferredPaymentMethod();
         if (preferedPaymentMethod != null) {
@@ -1084,7 +1100,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoice;
     }
 
-    /**
+	/**
      * Find by billing run.
      *
      * @param billingRun billing run
@@ -1991,7 +2007,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setCfValues(customFieldValues);
             }
             try {
-                invoicesWNumber.add(serviceSingleton.assignInvoiceNumber(invoice));
+                invoicesWNumber.add(assignInvoiceNumber(invoice));
             } catch (Exception e) {
                 log.error("Failed to assign invoice number for invoice {}/{}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber(), e);
                 continue;
@@ -3565,7 +3581,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         invoice.setNetToPay(netToPay);
         if (invoiceDTO.isAutoValidation() == null || invoiceDTO.isAutoValidation()) {
-            invoice = serviceSingleton.assignInvoiceNumberVirtual(invoice);
+            invoice = assignInvoiceNumberVirtual(invoice);
         }
         this.postCreate(invoice);
         return invoice;
@@ -3671,5 +3687,98 @@ public class InvoiceService extends PersistenceService<Invoice> {
          * Orders (numbers) referenced from Rated transactions
          */
         private Set<String> orderNumbers = new HashSet<String>();
+    }
+
+    /**
+     * Assign invoice number to a virtual invoice. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
+     *
+     * @param invoice invoice
+     * @throws BusinessException business exception
+     */
+    public Invoice assignInvoiceNumberVirtual(Invoice invoice) throws BusinessException {
+        return assignInvoiceNumber(invoice, false);
+    }
+
+    /**
+     * Assign invoice number to an invoice. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
+     *
+     * @param invoice invoice
+     * @throws BusinessException business exception
+     */
+    public Invoice assignInvoiceNumber(Invoice invoice) throws BusinessException {
+        return assignInvoiceNumber(invoice, true);
+    }
+
+    /**
+     * Assign invoice number to an invoice
+     *
+     * @param invoice invoice
+     * @param saveInvoice Should invoice be persisted
+     * @throws BusinessException business exception
+     */
+    @SuppressWarnings("deprecation")
+    private Invoice assignInvoiceNumber(Invoice invoice, boolean saveInvoice) throws BusinessException {
+
+        InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
+
+        String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
+        Customer cust = invoice.getBillingAccount().getCustomerAccount().getCustomer();
+
+        Seller seller = invoice.getSeller();
+        if (seller == null && cust.getSeller() != null) {
+            seller = cust.getSeller().findSellerForInvoiceNumberingSequence(cfName, invoice.getInvoiceDate(), invoiceType);
+        }
+        seller = sellerService.refreshOrRetrieve(seller);
+        InvoiceTypeSellerSequence invoiceTypeSellerSequence = null;
+        InvoiceTypeSellerSequence invoiceTypeSellerSequencePrefix = getInvoiceTypeSellerSequence(invoiceType, seller);
+        String prefix = invoiceType.getPrefixEL();
+        if (invoiceTypeSellerSequencePrefix != null) {
+            prefix = invoiceTypeSellerSequencePrefix.getPrefixEL();
+
+        } else if (seller != null) {
+            invoiceTypeSellerSequence = invoiceType.getSellerSequenceByType(seller);
+            if (invoiceTypeSellerSequence != null) {
+                prefix = invoiceTypeSellerSequence.getPrefixEL();
+            }
+        }
+
+        if (prefix != null && !StringUtils.isBlank(prefix)) {
+            prefix = InvoiceService.evaluatePrefixElExpression(prefix, invoice);
+
+        } else {
+            prefix = "";
+        }
+        InvoiceSequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType, seller, cfName, 1);
+        int sequenceSize = sequence.getSequenceSize();
+        long nextInvoiceNb = sequence.getCurrentInvoiceNb();
+        String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
+        // request to store invoiceNo in alias field
+        invoice.setAlias(invoiceNumber);
+        invoice.setInvoiceNumber(prefix + invoiceNumber);
+        if (saveInvoice) {
+            if (invoice.getId() == null) {
+                invoiceService.create(invoice);
+            } else {
+                invoice = invoiceService.update(invoice);
+            }
+        }
+        return invoice;
+    }
+    
+    /**
+     * Returns {@link InvoiceTypeSellerSequence} from the nearest parent.
+     * 
+     * @param invoiceType {@link InvoiceType}
+     * @param seller {@link Seller}
+     * @return {@link InvoiceTypeSellerSequence}
+     */
+    private InvoiceTypeSellerSequence getInvoiceTypeSellerSequence(InvoiceType invoiceType, Seller seller) {
+        InvoiceTypeSellerSequence sequence = invoiceType.getSellerSequenceByType(seller);
+
+        if (sequence == null && seller.getSeller() != null) {
+            sequence = getInvoiceTypeSellerSequence(invoiceType, seller.getSeller());
+        }
+
+        return sequence;
     }
 }
