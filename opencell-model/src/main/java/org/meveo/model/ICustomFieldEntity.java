@@ -18,10 +18,10 @@
 
 package org.meveo.model;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
@@ -33,10 +33,6 @@ import org.meveo.model.crm.custom.CustomFieldValues;
  * @lastModifiedVersion 5.3
  */
 public interface ICustomFieldEntity {
-	
-	public static final String CUSTOM_FIELD_PROPERTY_NAME = "cfValues";
-	
-	public ArrayList<String> dirtyCf = new ArrayList<>();
 
     /**
      * Get unique identifier.
@@ -67,23 +63,7 @@ public interface ICustomFieldEntity {
     /**
      * @param cfValues Custom field values holder
      */
-    public default void setCfValues(CustomFieldValues cfValues) {
-		checkDirtyCF(cfValues);
-		updateCfValues(cfValues);
-    }
-
-	public default void checkDirtyCF(CustomFieldValues cfValues) {
-		if(!dirtyCf.contains(CUSTOM_FIELD_PROPERTY_NAME)) {
-			if((getCfValues()==null && cfValues !=null) || (getCfValues()!=null && cfValues ==null) || (!getCfValues().toString().equals(cfValues.toString()))) {
-				dirtyCf.add(CUSTOM_FIELD_PROPERTY_NAME);
-			}
-		}
-	}
-    
-    /**
-     * @param cfValues Custom field values holder
-     */
-    public void updateCfValues(CustomFieldValues cfValues);
+    public void setCfValues(CustomFieldValues cfValues);
 
     /**
      * Instantiate custom field values holder if it is null (the case when entity with no CF values is retrieved from DB)
@@ -299,9 +279,6 @@ public interface ICustomFieldEntity {
      * @param value Value to set. If value is null, it will store a NULL value - consider using removeCfValue() instead if you want to remove CF value if it is null.
      */
     public default void setCfValue(String cfCode, Object value) {
-    	if(!dirtyCf.contains(CUSTOM_FIELD_PROPERTY_NAME)) {
-    		dirtyCf.add(CUSTOM_FIELD_PROPERTY_NAME);
-    	}
         getCfValuesNullSafe().setValue(cfCode, value);
     }
 
@@ -314,9 +291,6 @@ public interface ICustomFieldEntity {
      * @param value Value to set. If value is null, it will store a NULL value - consider using removeCfValue() instead if you want to remove CF value if it is null.
      */
     public default void setCfValue(String cfCode, DatePeriod period, Integer priority, Object value) {
-    	if(!dirtyCf.contains(CUSTOM_FIELD_PROPERTY_NAME)) {
-    		dirtyCf.add(CUSTOM_FIELD_PROPERTY_NAME);
-    	}
         getCfValuesNullSafe().setValue(cfCode, period, priority, value);
     }
 
@@ -444,18 +418,10 @@ public interface ICustomFieldEntity {
     }
 
 	/**
-	 * 
-	 */
-	public default void clearDirtyCF() {
-		if(dirtyCf.isEmpty()) {
-			dirtyCf.remove(CUSTOM_FIELD_PROPERTY_NAME);
-		}
-	}
-
-	/**
 	 * @return
 	 */
 	public default Boolean isDirtyCF() {
-		return !dirtyCf.isEmpty();
+		return getCfValues() != null && (CollectionUtils.isNotEmpty(getCfValues().getDirtyCfPeriods())
+						|| CollectionUtils.isNotEmpty(getCfValues().getDirtyCfValues()));
 	}
 }
