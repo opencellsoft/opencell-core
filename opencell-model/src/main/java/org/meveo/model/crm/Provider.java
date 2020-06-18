@@ -673,7 +673,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity, ISe
     }
 
     @Override
-    public void updateCfValues(CustomFieldValues cfValues) {
+    public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
     }
 

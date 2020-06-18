@@ -537,7 +537,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     }
 
     @Override
-    public void updateCfValues(CustomFieldValues cfValues) {
+    public void setCfValues(CustomFieldValues cfValues) {
         this.cfValues = cfValues;
     }
 
