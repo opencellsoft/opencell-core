@@ -24724,6 +24724,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <field code="Valid priority" description="Validity priority">
                   <fieldType>LONG</fieldType>
                </field>
+               <field code="Unique field" description="Unique field check">
+                  <fieldType>STRING</fieldType>
+                  <uniqueConstraint>true</uniqueConstraint>
+               </field>
             </fields>\r
          </customEntityTemplate>\r
       </ws:createEntityTemplate>\r
@@ -24833,6 +24837,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="JsonPath Match" id="b4d22e99-d1cb-4147-9247-3d94423d6d44" name="JsonPath Match 8">
+              <con:configuration>
+                <path>${="${#Project#esIndexPrefix}_${#Project#entityPrefix}_${#TestSuite#index}_CT_Zoning_v1".toLowerCase()}.mappings._doc.properties.unique_field</path>
+                <content>{"type":"keyword"}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -24903,6 +24916,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         <key>valid_priority</key>
                         <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">1</value>
                      </entry>
+                     <entry>
+                        <key>unique_field</key>
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">one</value>
+                     </entry>
                   </values>\r
                </record>\r
                <record>\r
@@ -24942,6 +24959,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                      <entry>
                         <key>valid_priority</key>
                         <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">1</value>
+                     </entry>
+                     <entry>
+                        <key>unique_field</key>
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">two</value>
                      </entry>
                   </values>\r
                </record>\r
@@ -24983,6 +25004,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         <key>valid_priority</key>
                         <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">1</value>
                      </entry>
+                     <entry>
+                        <key>unique_field</key>
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">three</value>
+                     </entry>
                   </values>\r
                </record>\r
                <record>\r
@@ -25019,6 +25044,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         <key>valid_priority</key>
                         <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">1</value>
                      </entry>
+                     <entry>
+                        <key>unique_field</key>
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">four</value>
+                     </entry>
                   </values>\r
                </record>\r
             </records>\r
@@ -25030,6 +25059,103 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
               <con:configuration>
                 <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Append duplicate data - ko" id="409e297a-92cd-483f-a8f6-ccdb8b3050f1">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createEntityTemplate</con:operation>
+          <con:request name="Append duplicate data - ko" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:appendTableData>\r
+         <tableData customTableCode="${#Project#entityPrefix}_${#TestSuite#index} CT Zoning">\r
+            <records>\r
+               <record>\r
+                  <values>\r
+                     <entry>\r
+                        <key>prefix</key>\r
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">123456789</value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>hour_from</key>\r
+                        <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">14</value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>hour_to</key>\r
+                        <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">15</value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>price</key>\r
+                        <value xsi:type="xs:decimal" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">15.880000000000</value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>zone</key>\r
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">Australia</value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>valid_from</key>\r
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">2016-05-08T00:00:00-03:00</value>\r
+                     </entry>\r
+                     <entry>\r
+                        <key>valid_to</key>\r
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">2017-01-01T00:00:00-03:00</value>\r
+                     </entry>\r
+                     <entry>
+                        <key>valid_priority</key>
+                        <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">1</value>
+                     </entry>
+                     <entry>
+                        <key>unique_field</key>
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">two</value>
+                     </entry>
+                  </values>\r
+               </record>\r
+            </records>\r
+         </tableData>\r
+      </ws:appendTableData>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>FAIL&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="a1b60db4-6d42-4261-b0c0-5c4dbf429024" name="Contains 1">
+              <con:configuration>
+                <token>&lt;errorCode>ENTITY_ALREADY_EXISTS_EXCEPTION&lt;/errorCode></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="e92ff566-d6a0-4cba-b50d-72c83339a143" name="Contains 2">
+              <con:configuration>
+                <token>&lt;message>unique_field field(s) must be unique. A record with value(s) 'two' already exists&lt;/message></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -25814,6 +25940,10 @@ public class CustomTables${#Project#entityPrefix}_${#TestSuite#index}TestScript 
                      <entry>
                         <key>valid_priority</key>
                         <value xsi:type="xs:integer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">2</value>
+                     </entry>
+                     <entry>
+                        <key>unique_field</key>
+                        <value xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">five</value>
                      </entry>
                   </values>\r
                </record>\r
