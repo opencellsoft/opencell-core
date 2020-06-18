@@ -199,6 +199,14 @@ public class DateUtils {
         }
     }
 
+    /**
+     * Check if given date is in the period [periodStart,periodEnd[. Start and end dates will NOT be truncated.
+     * 
+     * @param date date to check
+     * @param periodStart Period start date.
+     * @param periodEnd Period end date.
+     * @return True if date are in the period
+     */
     public static boolean isDateTimeWithinPeriod(Date date, Date periodStart, Date periodEnd) {
         if (date == null)
             return true;
@@ -227,12 +235,12 @@ public class DateUtils {
     }
 
     /**
-     * Check if given date are in period [periodStart,periodEnd[
+     * Check if given date is in the period [periodStart,periodEnd[. Start and end dates will be truncated to day.
      * 
      * @param date date to check
-     * @param periodStart periodStart
-     * @param periodEnd periodEnd
-     * @return true if date are in period
+     * @param periodStart Period start date. Will be truncated to day.
+     * @param periodEnd Period end date. Will be truncated to day.
+     * @return True if date are in the period
      */
     public static boolean isDateWithinPeriod(Date date, Date periodStart, Date periodEnd) {
         if (date == null)

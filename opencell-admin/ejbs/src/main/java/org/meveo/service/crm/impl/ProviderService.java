@@ -237,20 +237,16 @@ public class ProviderService extends PersistenceService<Provider> {
     }
 
     public GenericSequence getNextMandateNumber() throws BusinessException {
-        GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.RUM);
-        Provider provider = findById(appProvider.getId());
-        provider.setRumSequence(genericSequence);
-        update(provider);
-
+        GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.RUM);      
         return genericSequence;
     }
 
     public GenericSequence getNextCustomerNumber() throws BusinessException {
-        GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.CUSTOMER_NO);
-        Provider provider = findById(appProvider.getId());
-        provider.setCustomerNoSequence(genericSequence);
-        update(provider);
-
+        GenericSequence genericSequence = serviceSingleton.getNextSequenceNumber(SequenceTypeEnum.CUSTOMER_NO);       
         return genericSequence;
+    }
+    
+    public void updateCustomerNumberSequence(GenericSequence genericSequence) throws BusinessException {
+        serviceSingleton.updateCustomerNumberSequence(genericSequence);       
     }
 }
